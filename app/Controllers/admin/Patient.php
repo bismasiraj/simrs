@@ -16,6 +16,7 @@ use App\Models\DiagnosaModel;
 use App\Models\DoctorScheduleModel;
 use App\Models\EducationModel;
 use App\Models\EklaimModel;
+use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
@@ -84,6 +85,10 @@ class Patient extends \App\Controllers\BaseController
         $img_timestamp = $img_time->getTimestamp();
 
         //parameter
+
+        $eklaimModel = new EklaimModel();
+        $eklaim = $this->lowerKey($eklaimModel->findAll());
+        
         $coverageModel = new CoverageModel();
         $coverage = $this->lowerKey($coverageModel->findAll());
 
