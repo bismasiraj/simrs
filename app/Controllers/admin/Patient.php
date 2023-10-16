@@ -16,7 +16,6 @@ use App\Models\DiagnosaModel;
 use App\Models\DoctorScheduleModel;
 use App\Models\EducationModel;
 use App\Models\EklaimModel;
-use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
@@ -86,9 +85,6 @@ class Patient extends \App\Controllers\BaseController
 
         //parameter
 
-        $eklaimModel = new EklaimModel();
-        $eklaim = $this->lowerKey($eklaimModel->findAll());
-        
         $coverageModel = new CoverageModel();
         $coverage = $this->lowerKey($coverageModel->findAll());
 
@@ -2980,6 +2976,12 @@ This Function is used to Add Patient
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
+        $nosep = $this->request->getPost('nosep');
+        $dpjp = $this->request->getPost('kddpjp');
+        $tgl_kontrol = $this->request->getPost('tgl_control');
+        $clinic_id = $this->request->getPost('clinic_id');
+
         $cModel = new ClinicModel();
         $query = $cModel->select("kdpoli")->find($clinic_id);
         $kdpoli = $query['kdpoli'];
@@ -2992,7 +2994,7 @@ This Function is used to Add Patient
         $ws_data['user'] = user_id();
         $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/insert';
         $posting = $this->sendVclaim($url, 'POST', $ws_data);
-        $response = $posting
+        $response = $posting;
     }
 
     public function getDiagnosas()
