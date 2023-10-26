@@ -23,8 +23,10 @@ use App\Models\GenerateIdModel;
 use App\Models\GoodsModel;
 use App\Models\GrouperModel;
 use App\Models\InasisFaskesModel;
+use App\Models\InasisKontrolModel;
 use App\Models\InasisPoliModel;
 use App\Models\InasisPoloModel;
+use App\Models\InasisRujukanModel;
 use App\Models\IsattendedsModel;
 use App\Models\JenisPesertaModel;
 use App\Models\JobModel;
@@ -322,7 +324,7 @@ class Patient extends \App\Controllers\BaseController
         $clinicModel = new ClinicModel();
         $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5)")->findAll());
 
-        $scheduleModel = new DoctorScheduleModel();
+        $scheduleModel = new ClinicDoctorModel();
         $schedule = $this->lowerKey($scheduleModel->getSchedule());
 
         $wayModel = new VisitWayModel();
@@ -347,7 +349,6 @@ class Patient extends \App\Controllers\BaseController
 
         // $diagnosaModel = new DiagnosaModel();
         // $diagnosa = $this->lowerKey($diagnosaModel->findAll());
-
 
 
         $dokter = array();
@@ -1352,6 +1353,17 @@ This Function is used to Add Patient
         $ageyear = $this->request->getPost('ageyear');
         $kode_agama = $this->request->getPost('kode_agama');
         $aktif = $this->request->getPost('aktif');
+        $backcharge = $this->request->getPost('backcharge');
+        $tujuankunj = $this->request->getPost('tujuankunj');
+        $flagprocedure = $this->request->getPost('flagprocedure');
+        $kdpenunjang = $this->request->getPost('kdpenunjang');
+        $assesmenpel = $this->request->getPost('assesmenpel');
+        $valid_rm_date = $this->request->getPost('assesmenpel');
+        $penjamin = $this->request->getPost('penjamin');
+        $lokasilaka = $this->request->getPost('lokasilaka');
+        $ispertarif = $this->request->getPost('ispertarif');
+        $temptrans = $this->request->getPost('temptrans');
+        $delete_sep = $this->request->getPost('delete_sep');
 
 
 
@@ -1588,6 +1600,9 @@ This Function is used to Add Patient
 
         $pdModel = new PasienDiagnosaModel();
         $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        $irModel = new InasisRujukanModel();
+        // $nmprovider = $irModel->select('nmprovider')->find($pasienDiagnosa[0]['dirujukke']);
+        // $pasienDiagnosa['nmprovider'] = $nmprovider['nmprovider'];
 
         $userEmployee = user()->employee_id;
 
@@ -1641,6 +1656,7 @@ This Function is used to Add Patient
             }
         }
 
+        // dd($visit);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -2666,12 +2682,12 @@ This Function is used to Add Patient
     {
         $search_term = $this->request->getPost("searchTerm");
         if (isset($search_term) && $search_term != '') {
-            $rujukanModel = new RujukanModel();
-            $result = $this->lowerKey($rujukanModel->getppkrujukan($search_term));
+            $rujukanModel = new InasisFaskesModel();
+            $result = $this->lowerKey($rujukanModel->select('top(20) *')->like('kdprovider', '%' . $search_term . '%')->orLike('nmprovider', '%' . $search_term . '%')->findALl());
             $data   = array();
             if (!empty($result)) {
                 foreach ($result as $value) {
-                    $data[] = array("id" => $value['rujukan_id'], "text" => $value['name_of_rujukan'] . " (" . $value['rujukan_id'] . ")");
+                    $data[] = array("id" => $value['kdprovider'], "text" => $value['nmprovider'] . " (" . $value['kdprovider'] . ")");
                 }
             }
             echo json_encode($data);
@@ -2972,29 +2988,366 @@ This Function is used to Add Patient
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
     }
-    public function postKontrol(){
+    public function postKontrol()
+    {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $nosep = $this->request->getPost('nosep');
-        $dpjp = $this->request->getPost('kddpjp');
-        $tgl_kontrol = $this->request->getPost('tgl_control');
-        $clinic_id = $this->request->getPost('clinic_id');
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $nosep = $body['nosep'];
+        $dpjp = $body['kddpjp'];
+        $tgl_kontrol = $body['tgl_kontrol'];
+        $clinic_id = $body['clinic_id'];
+        $noSkdp = $body['noSkdp'];
+        $noSpri = $body['noSpri'];
+        $noKartu = $body['noKartu'];
+        // $noSuratKontrol = $body['noSkdp'];
+        $employee = $body['employee_id'];
+        $visit = $body['visit_id'];
+        $jenisSurat = $body['jenisKontrol'];
+
+        if ($dpjp == '') {
+            $empModel = new EmployeeAllModel();
+            $query = $empModel->select('dpjp')->find($employee);
+            $dpjp = $query['dpjp'];
+        }
+
+        $noSuratKontrol = ($jenisSurat == 1) ? $noSkdp : $noSpri;
+
+
 
         $cModel = new ClinicModel();
-        $query = $cModel->select("kdpoli")->find($clinic_id);
+        $query = $cModel->select("kdpoli, name_of_clinic")->where('clinic_id', $clinic_id)->find($clinic_id);
+        // return json_encode($query);
         $kdpoli = $query['kdpoli'];
+        $name_clinic = $query['name_of_clinic'];
 
         $ws_data = [];
-        $ws_data['noSEP'] = $nosep;
+        if ($noSuratKontrol != '') {
+            $method = 'PUT';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            if ($jenisSurat == 1) {
+                $url .= 'Update';
+                $ws_data['noSuratKontrol'] = $noSuratKontrol;
+            } else {
+                $url .= 'UpdateSPRI';
+                $ws_data['noSPRI'] = $noSuratKontrol;
+            }
+        } else {
+            $method = 'POST';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            if ($jenisSurat == 1) {
+                $url .= 'insert';
+            } else {
+                $url .= 'InsertSPRI';
+            }
+        }
+        if ($jenisSurat == 1) {
+            $ws_data['noSEP'] = $nosep;
+        } else {
+            $ws_data['noKartu'] = $noKartu;
+        }
         $ws_data['kodeDokter'] = $dpjp;
         $ws_data['poliKontrol'] = $kdpoli;
         $ws_data['tglRencanaKontrol'] = $tgl_kontrol;
         $ws_data['user'] = user_id();
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/insert';
-        $posting = $this->sendVclaim($url, 'POST', $ws_data);
+
+
+
+        $request['request'] = $ws_data;
+        $postdata = json_encode($request);
+        $posting = $this->sendVclaim($url, $method, $postdata);
         $response = $posting;
+
+        if (isset($response['metaData']['code'])) {
+            if ($response['metaData']['code'] == '200') {
+                $inasisKontrol = new InasisKontrolModel();
+                if ($jenisSurat == 1) {
+                    $noSuratKontrol = $response['response']['noSuratKontrol'];
+                } else {
+                    $noSuratKontrol = $response['response']['noSPRI'];
+                }
+                $data = [
+                    'visit_id' => $visit,
+                    'nosep' => $nosep,
+                    'surattype' => $jenisSurat,
+                    'nosuratkontrol' => $noSuratKontrol,
+                    'tglrenckontrol' => $tgl_kontrol,
+                    'polikontrol_kdpoli' => $kdpoli,
+                    'polikontrol_nmpoli' => $name_clinic,
+                    'kodedokter' => $dpjp,
+                    'modified_by' => user_id(),
+                    'responpost' => json_encode($response),
+                ];
+                $inasisKontrol->save($data);
+            }
+        }
+
+        return json_encode($response);
+    }
+    public function deleteKontrol()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $noSuratKontrol = $body['noSuratKontrol'];
+
+        $ws_data = [];
+        if ($noSuratKontrol == '') {
+            return '';
+        } else {
+            $method = 'DELETE';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/Delete';
+        }
+        $ws_data['noSuratKontrol'] = $noSuratKontrol;
+        $ws_data['user'] = user_id();
+        $request['request']['t_suratkontrol'] = $ws_data;
+        $postdata = json_encode($request);
+        // return $postdata;
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+
+        if (isset($response['metaData']['code'])) {
+            if ($response['metaData']['code'] == '200') {
+                $inasisKontrol = new InasisKontrolModel();
+                $inasisKontrol->delete($noSuratKontrol);
+            }
+        }
+
+        return json_encode($response);
+    }
+    public function postRujukan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $nosep = $body['nosep'];
+        $norujukan = $body['norujukan'];
+        $tglRujukan = $body['tglRujukan'];
+        $tglRencanaKunjungan = $body['tglRencanaKunjungan'];
+        $ppkdirujuk = $body['ppkdirujuk'];
+        $jnsPelayanan = $body['jnsPelayanan'];
+        $catatan = $body['catatan'];
+        $diagRujukan = $body['diagRujukan'];
+        $tipeRujukan = $body['tipeRujukan'];
+        $clinic_id = $body['poliRujukan'];
+        $visit = $body['visit'];
+        $ppkdirujukName = $body['ppkdirujukName'];
+        $diagRujukanName = $body['diagRujukanName'];
+        $sex = $body['sex'];
+        $nama = $body['nama'];
+        $nokartu = $body['nokartu'];
+        $nomr = $body['nomr'];
+
+
+
+
+
+        $cModel = new ClinicModel();
+        $query = $cModel->select("kdpoli, name_of_clinic")->where('clinic_id', $clinic_id)->find($clinic_id);
+        // return json_encode($query);
+        $poliRujukan = $query['kdpoli'];
+        $poliRujukanName = $query['name_of_clinic'];
+
+        $ws_data = [];
+        if ($norujukan != '') {
+            $method = 'PUT';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
+            $url .= 'Update';
+            $ws_data['noRujukan'] = $norujukan;
+        } else {
+            $method = 'POST';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
+            $url .= 'insert';
+            $ws_data['noSep'] = $nosep;
+        }
+        $ws_data['tglRujukan'] = $tglRujukan;
+        $ws_data['tglRencanaKunjungan'] = $tglRencanaKunjungan;
+        $ws_data['ppkDirujuk'] = $ppkdirujuk;
+        $ws_data['jnsPelayanan'] = $jnsPelayanan;
+        $ws_data['catatan'] = $catatan;
+        $ws_data['diagRujukan'] = $diagRujukan;
+        $ws_data['tipeRujukan'] = $tipeRujukan;
+        $ws_data['poliRujukan'] = $poliRujukan;
+        $ws_data['user'] = user_id();
+
+
+
+        $request['request']['t_rujukan'] = $ws_data;
+        $postdata = json_encode($request);
+        // return $postdata;
+        // $posting = $this->sendVclaim($url, $method, $postdata);
+        // $response = $posting;
+        $posting = ' {
+                        "metaData": {
+                            "code": "200",
+                            "message": "OK"
+                        },
+                        "response": {
+                            "rujukan": {
+                            "AsalRujukan": {
+                                "kode": "0301R001d",
+                                "nama": "RSUP DR M JAMIL PADANG"
+                            },
+                            "diagnosa": {
+                                "kode": "A15",
+                                "nama": "A15 - Respiratory tuberculosis, bacteriologically and histologically confirmed"
+                            },
+                            "noRujukan": "0301R0010321B000012",
+                            "peserta": {
+                                "asuransi": "-",
+                                "hakKelas": null,
+                                "jnsPeserta": "PBI (APBD)",
+                                "kelamin": "Laki-Laki",
+                                "nama": "FADLAN LISMI AZIZ",
+                                "noKartu": "0001329783085",
+                                "noMr": "00754610",
+                                "tglLahir": "2006-02-20"
+                            },
+                            "poliTujuan": {
+                                "kode": "",
+                                "nama": ""
+                            },
+                            "tglBerlakuKunjungan": "2021-06-16",
+                            "tglRencanaKunjungan": "2021-03-19",
+                            "tglRujukan": "2021-03-18",
+                            "tujuanRujukan": {
+                                "kode": "03010402",
+                                "nama": "PEGAMBIRAN"
+                            }
+                            }
+                        }
+                        }';
+        $response = json_decode($posting, true);
+
+        if (isset($response['metaData']['code'])) {
+            if ($response['metaData']['code'] == '200') {
+                $inasisRujukan = new InasisRujukanModel();
+                $norujukan = $response['response']['rujukan']['noRujukan'];
+
+                $data = [
+                    'visit_id' => $visit,
+                    'nosep' => $nosep,
+                    'tglsep' => $tglRujukan,
+                    'tglrujukan' => $tglRencanaKunjungan,
+                    'tiperujukan' => $tipeRujukan,
+                    'kdjnspelayanan' => $jnsPelayanan,
+                    'catatan' => $catatan,
+                    'kddiag' => $diagRujukan,
+                    'nmdiag' => $diagRujukanName,
+                    'polirujukan_kdpoli' => $poliRujukan,
+                    'polirujukan_nmpoli' => $poliRujukanName,
+                    'provrujukan_kdprovider' => $ppkdirujuk,
+                    'provrujukan_nmprovider' => $ppkdirujukName,
+                    'nokunjungan' => $norujukan,
+                    'sex' => $sex,
+                    'nama' => $nama,
+                    'nokartu' => $nokartu,
+                    'nomr' => $nomr,
+                    'modified_by' => user_id(),
+                ];
+                if ($method == 'PUT') {
+                    $data['responput'] = json_encode($response);
+                } else {
+
+                    $data['responpost'] = json_encode($response);
+                }
+                if ($jnsPelayanan == '1') {
+                    $data['jnspelayanan'] = 'Rawat Jalan';
+                } else {
+                    $data['jnspelayanan'] = 'Rawat Inap';
+                }
+                $inasisRujukan->save($data);
+            }
+        }
+
+        return json_encode($response);
+    }
+
+    public function deleteRujukan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $noRujukan = $body['noRujukan'];
+        $visit = $body['visit_id'];
+
+        $ws_data = [];
+        if ($noRujukan == '') {
+            return json_encode($noRujukan);
+        } else {
+            $method = 'DELETE';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/delete';
+        }
+        $ws_data['noRujukan'] = $noRujukan;
+        $ws_data['user'] = user_id();
+        $request['request']['t_rujukan'] = $ws_data;
+        $postdata = json_encode($request);
+        // $posting = $this->sendVclaim($url, $method, $postdata);
+        // $response = $posting;
+
+        //     $posting = '{
+        //    "metaData": {
+        //       "code": "200",
+        //       "message": "OK"
+        //    },
+        //    "response": 0301R0011117B000014 
+        // }';
+        $response['metaData']['code'] = "200";
+        $response['metaData']['message'] = "OK";
+        $response['response'] = "0301R0011117B000014";
+
+        if (isset($response['metaData']['code'])) {
+            if ($response['metaData']['code'] == '200') {
+                $inasisRujukan = new InasisRujukanModel();
+                $inasisRujukan->delete($noRujukan);
+            }
+        }
+        return json_encode($response);
+    }
+
+    public function getRujukan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $irModel = new InasisRujukanModel();
+        $result = $this->lowerKey($irModel->where('visit_id', $visit)->find());
+        return json_encode($result);
+    }
+    public function getSkdp()
+    {
+
+        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/ListRencanaKontrol/Bulan/10/Tahun/2023/Nokartu/0001827118427/filter/2';
+
+        $postdata = '';
+        // return $postdata;
+        $posting = $this->sendVclaim($url, 'GET', $postdata);
+        $response = $posting;
+
+
+        return json_encode($response);
     }
 
     public function getDiagnosas()
@@ -5685,7 +6038,7 @@ This Function is used to Add Patient
         echo json_encode($array);
     }
     private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
-    private $keybridging = '';
+    private $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
     function stringDecrypt($key, $string)
     {
 
@@ -5713,10 +6066,16 @@ This Function is used to Add Patient
         $pdo = db_connect();
 
 
-        //WATES
-        $consId = '30659';
-        $consSecret = 'rsud766wates38';
-        $userKey = '70b62d70a50f4866e8484a065a0de1bb';
+        // //WATES
+        // $consId = '30659';
+        // $consSecret = 'rsud766wates38';
+        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
+
+        //BENGKULU
+        $consId = '4633';
+        $consSecret = 'rsud344myns618';
+        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
+
 
 
         $current_timestamp = Time::now()->timestamp;
@@ -5826,7 +6185,7 @@ This Function is used to Add Patient
         array_push($headers, 'Content-length' . strlen($postdata));
         $result = $this->SendBridging($url, $method, $postdata, $headers);
 
-        return response($result);
+        return ($result);
         // ->json($result)
         // ->header('Access-Control-Allow-Origin','*')
         // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');

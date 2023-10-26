@@ -68,6 +68,7 @@ class PasienDiagnosaModel extends Model
         'kdpoli_kontrol',
         'procedure_05',
         'suffer_type',
+        'tglkontrol'
     ];
 
     // Dates

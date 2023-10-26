@@ -3,9 +3,7 @@
     var pasienDiagnosa = <?= json_encode($pasienDiagnosa); ?>;
     var currentIndex;
     var indexLength;
-    $(document).ready(function(e) {
-        // getDiagnosas()
-    })
+    $(document).ready(function(e) {})
 </script>
 
 
@@ -92,9 +90,10 @@
         $("#armorfologi_neoplasma").val(pasienDiagnosa.morfologi_neoplasma)
         $("#ardisability").val(pasienDiagnosa.disability)
         $("#arrencanatl").val(pasienDiagnosa.rencanatl)
-        $("#ardirujukke").val(pasienDiagnosa.dirujukke)
-        $("#artgl_kontrol").val(pasienDiagnosa.tgl_kontrol)
-        $("#arkdpoli_kontrol").val(pasienDiagnosa.kdpoli_kontrol)
+        var option = new Option(pasienDiagnosa.dirujukke, pasienDiagnosa.dirujukke, true, true);
+        $("#ardirujukke").append(option).trigger('change');
+        $("#artgl_kontrol").val(pasienDiagnosa.tglkontrol)
+        $("#arkdpoli_kontrol").val(pasienDiagnosa.clinic_id)
         $("#arprocedure_05").val(pasienDiagnosa.procedure_05)
         $("#arsuffer_type").val(pasienDiagnosa.suffer_type)
 
@@ -114,6 +113,7 @@
             getHistoryRekamMedis()
         <?php } ?>
 
+        tindakLanjut()
 
     }
 
@@ -289,6 +289,59 @@
         $("#currentHistory").html(text);
     }
 
+    function tindakLanjut() {
+        var tindakLanjutType = $("#arrencanatl").val()
+        if (tindakLanjutType == '1') {
+            $("#ardirujukkegroup").hide()
+            $("#artgl_kontrolgroup").hide()
+            $("#arkdpoli_kontrolgroup").hide()
+            $("#ardescriptiongroup").hide()
+            $("#arskdpgroup").hide()
+            $("#arsprigroup").hide()
+            $("#arrujukaneksternalgroup").hide()
+            $("#artiperujukan_group").hide()
+        } else if (tindakLanjutType == '2') {
+            $("#ardirujukkegroup").hide()
+            $("#artgl_kontrolgroup").hide()
+            $("#arkdpoli_kontrolgroup").hide()
+            $("#ardescriptiongroup").hide()
+            $("#arskdpgroup").hide()
+            $("#arsprigroup").hide()
+            $("#arrujukaneksternalgroup").hide()
+            $("#artiperujukan_group").hide()
+        } else if (tindakLanjutType == '3') {
+            $("#ardirujukkegroup").show()
+            $("#artgl_kontrolgroup").show()
+            $("#arkdpoli_kontrolgroup").show()
+            $("#ardescriptiongroup").show()
+            $("#arskdpgroup").hide()
+            $("#arsprigroup").hide()
+            $("#arrujukaneksternalgroup").show()
+            $("#artiperujukan_group").show()
+            getRujukan()
+        } else if (tindakLanjutType == '4') {
+            $("#ardirujukkegroup").hide()
+            $("#artgl_kontrolgroup").show()
+            $("#arkdpoli_kontrolgroup").show()
+            $("#ardescriptiongroup").show()
+            $("#arskdpgroup").show()
+            $("#arsprigroup").hide()
+            $("#arrujukaneksternalgroup").hide()
+            $("#artiperujukan_group").hide()
+        } else if (tindakLanjutType == '5') {
+            $("#ardirujukkegroup").hide()
+            $("#artgl_kontrolgroup").show()
+            $("#arkdpoli_kontrolgroup").hide()
+            $("#ardescriptiongroup").show()
+            $("#arskdpgroup").hide()
+            $("#arsprigroup").show()
+            $("#arrujukaneksternalgroup").hide()
+            $("#artiperujukan_group").hide()
+        } else {
+
+        }
+    }
+
     $("#formaddrm").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
@@ -331,28 +384,232 @@
         });
     }));
 
-    function addKontrol() {
+    function postKontrol(jenisKontrol) {
+        var clicked_submit_btn = $("#addskdp")
+        var clicked_spri_btn = $("#addspri")
+
+
+
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getBillEklaim18',
+            url: '<?php echo base_url(); ?>admin/patient/postKontrol',
             type: "POST",
             data: JSON.stringify({
-                'nosep': pasienDiagnosa.nosep,
+                'nosep': '<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>',
                 'kddpjp': '<?= $visit['kddpjp']; ?>',
                 'clinic_id': '<?= $visit['clinic_id']; ?>',
-                'tgl_kontrol': $("#artgl_kontrol").val()
+                'tgl_kontrol': $("#artgl_kontrol").val(),
+                'noSkdp': $("#arskdp").val(),
+                'noSpri': $("#arspri").val(),
+                'employee_id': '<?= $visit['employee_inap'] ?? $visit['employee_id']; ?>',
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'jenisKontrol': jenisKontrol,
+                'noKartu': '<?= $visit['pasien_id']; ?>'
             }),
             dataType: 'json',
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+                clicked_spri_btn.button('loading');
+            },
             success: function(data) {
+                if (data.metaData.code == '200') {
 
+                    if (jenisKontrol == 1) {
+                        var noSuratKontrol = data.response.noSuratKontrol
+                        $("#arskdp").val(noSuratKontrol);
+                        $("#arskdp").prop("disabled", true);
+                    } else {
+                        var noSuratKontrol = data.response.noSPRI
+                        $("#arspri").val(noSuratKontrol);
+                        $("#arspri").prop("disabled", true);
+                    }
+                }
 
             },
-            error: function() {
-
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_spri_btn.button('reset');
+                clicked_submit_btn.button('reset');
+            },
+            complete: function() {
+                clicked_spri_btn.button('reset');
+                clicked_submit_btn.button('reset');
             }
         });
+
+
+    }
+
+    function deleteKontrol(jenisKontrol) {
+        var clicked_submit_btn = $("#deleteskdp")
+
+
+        if (jenisKontrol == 1) {
+            var noSuratKontrol = $("#arskdp").val();
+        } else {
+            var noSuratKontrol = $("#arspri").val();
+        }
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/deleteKontrol',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'noSuratKontrol': noSuratKontrol,
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+                clicked_spri_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.metaData.code == '200') {
+                    if (jenisKontrol == 1) {
+                        $("#arskdp").val("");
+                    } else {
+                        $("#arspri").val("");
+                    }
+                }
+
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_spri_btn.button('reset');
+                clicked_submit_btn.button('reset');
+            },
+            complete: function() {
+                clicked_spri_btn.button('reset');
+                clicked_submit_btn.button('reset');
+            }
+        })
+    }
+
+    function postRujukan() {
+        var clicked_submit_btn = $("#addnorujukan")
+
+
+
+        var rujvisit = '<?= $visit['visit_id']; ?>'
+        var rujrujukanNosep = '<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>'
+        var rujnoRujukan = $("#arnorujukan").val()
+        var rujtglRujukan = '<?= $visit['visit_date']; ?>'
+        var rujtglRencanaKunjungan = $("#artgl_kontrol").val()
+        if (rujtglRencanaKunjungan == '' || rujtglRencanaKunjungan == null) {
+            alert('Tanggal Rencana Rujukan harus diisi')
+            return '';
+        }
+        var rujppkdirujuk = $("#ardirujukke").val()
+        if (rujppkdirujuk == '' || rujppkdirujuk == null) {
+            alert('kolom "Dirujuk Ke" tidak boleh kosong')
+            return '';
+        }
+        var rujppkname = $("#ardirujukke").find(":selected").data()
+        if (typeof rujppkname !== 'undefined') {
+            var rujppkdirujukName = rujppkname.data.text
+        }
+        var rujjnsPelayanan = '<?= is_null($visit['class_room_id']) ? '1' : '2'; ?>'
+        var rujcatatan = $("#arprocedure_05").val()
+        var rujdiagRujukan = $("#diag_id1").val()
+        if (rujdiagRujukan == '' || rujdiagRujukan == null) {
+            alert('Harus sudah mengisi diagnosa utama')
+            return '';
+        }
+        var rujdiagname = $("#diag_id1").find(":selected").data()
+        if (typeof rujdiagname !== 'undefined') {
+            var rujdiagRujukanName = rujdiagname.data.text
+        }
+        var rujtipeRujukan = $("#artiperujukan").val()
+        var rujpoliRujukan = $("#arkdpoli_kontrol").val()
+        if (rujpoliRujukan == '' || rujpoliRujukan == null) {
+            alert('Poli rujukan harus diisi')
+            return '';
+        }
+        var rujsex = '<?= $visit['gender']; ?>'
+        var rujnama = '<?= $visit['diantar_oleh']; ?>'
+        var rujnokartu = '<?= $visit['pasien_id']; ?>'
+        var rujnorm = '<?= $visit['no_registration']; ?>'
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/postRujukan',
+            type: "POST",
+            data: JSON.stringify({
+                'nosep': rujrujukanNosep,
+                'norujukan': rujnoRujukan,
+                'tglRujukan': rujtglRujukan,
+                'tglRencanaKunjungan': rujtglRencanaKunjungan,
+                'ppkdirujuk': rujppkdirujuk,
+                'jnsPelayanan': rujjnsPelayanan,
+                'catatan': rujcatatan,
+                'diagRujukan': rujdiagRujukan,
+                'tipeRujukan': rujtipeRujukan,
+                'poliRujukan': rujpoliRujukan,
+                'visit': rujvisit,
+                'ppkdirujukName': rujppkdirujukName,
+                'diagRujukanName': rujdiagRujukanName,
+                'sex': rujsex,
+                'nama': rujnama,
+                'nokartu': rujnokartu,
+                'nomr': rujnorm
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.metaData.code == '200') {
+                    var noRujukan = data.response.rujukan.noRujukan
+                    $("#arnorujukan").val(noRujukan);
+                    $("#arnorujukan").prop("disabled", true);
+                }
+
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_submit_btn.button('reset');
+            },
+            complete: function() {
+                clicked_submit_btn.button('reset');
+            }
+        });
+    }
+
+    function deleteRujukan() {
+        var clicked_submit_btn = $("#deleterujukan")
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/deleteRujukan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'noRujukan': $("#arnorujukan").val(),
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+            },
+            success: function(data) {
+                if (data.metaData.code == '200') {
+                    $("#arnorujukan").val("");
+                }
+
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_submit_btn.button('reset');
+            },
+            complete: function() {
+                clicked_submit_btn.button('reset');
+            }
+        })
     }
 
     function modalDiagnosa() {
@@ -378,6 +635,7 @@
         $("#arkdpoli_kontrol").prop("disabled", true);
         $("#arprocedure_05").prop("disabled", true);
         $("#arsuffer_type").prop("disabled", true);
+        $("#artiperujukan").prop("disabled", true);
     }
 
     function enableRM() {
@@ -399,11 +657,34 @@
         $("#arkdpoli_kontrol").prop("disabled", false);
         $("#arprocedure_05").prop("disabled", false);
         $("#arsuffer_type").prop("disabled", false);
+        $("#artiperujukan").prop("disabled", true);
     }
 
     function editRM() {
         $("#formaddrmbtn").toggle()
         $("#formeditrm").toggle()
         enableRM()
+    }
+
+    function getRujukan() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/getRujukan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit': '<?= $visit['visit_id']; ?>',
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                var result = data[0]
+                alert(result.nokunjungan)
+                $("#arnorujukan").val(result.nokunjungan)
+            },
+            error: function() {
+
+            }
+        });
     }
 </script>
