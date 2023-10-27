@@ -1458,6 +1458,16 @@ This Function is used to Add Patient
         echo json_encode($array);
     }
 
+    public function insertSep()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $klsRawat = $body['klsRawat'];
+
+        return json_encode($body['klsRawat']['klsRawatHak']);
+    }
+
 
     public function profile($id)
     {

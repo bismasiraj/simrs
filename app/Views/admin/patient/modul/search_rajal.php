@@ -456,9 +456,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="kddpjp">Perujuk</label>
+                                                    <div class="form-group"><label for="pvkddpjp">Perujuk</label>
                                                         <div>
-                                                            <select name='kddpjp' id="kddpjp" class="form-control select2 act" style="width:100%">
+                                                            <select name='kddpjp' id="pvkddpjp" class="form-control select2 act" style="width:100%">
                                                                 <?php foreach ($dpjp as $key => $value) { ?>
                                                                     <option value="<?= $key; ?>"><?= $value; ?></option>
                                                                 <?php } ?>
@@ -568,9 +568,9 @@ $permissions = user()->getPermissions();
                                                 </div>
 
                                                 <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="way_id">Cara Datang</label>
+                                                    <div class="form-group"><label for="pvway_id">Cara Datang</label>
                                                         <div>
-                                                            <select name='way_id' id="way_id" class="form-control select2 act" style="width:100%">
+                                                            <select name='way_id' id="pvway_id" class="form-control select2 act" style="width:100%">
                                                                 <?php foreach ($way as $key => $value) { ?>
                                                                     <option value="<?= $way[$key]['way_id']; ?>"><?= $way[$key]['way']; ?></option>
                                                                 <?php } ?>
@@ -579,9 +579,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="reason_id">Alasan/Lakalantas</label>
+                                                    <div class="form-group"><label for="pvreason_id">Alasan/Lakalantas</label>
                                                         <div>
-                                                            <select name='reason_id' id="reason_id" class="form-control select2 act" style="width:100%">
+                                                            <select name='reason_id' id="pvreason_id" class="form-control select2 act" style="width:100%">
                                                                 <?php foreach ($reason as $key => $value) { ?>
                                                                     <option value="<?= $reason[$key]['reason_id']; ?>"><?= $reason[$key]['reason']; ?></option>
                                                                 <?php } ?>
@@ -590,9 +590,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="isattended">Sudah Dilayani</label>
+                                                    <div class="form-group"><label for="pvisattended">Sudah Dilayani</label>
                                                         <div>
-                                                            <select name='isattended' id="isattended" class="form-control select2 act" style="width:100%">
+                                                            <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
                                                                 <?php foreach ($isattended as $key => $value) { ?>
                                                                     <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
                                                                 <?php } ?>
@@ -655,69 +655,6 @@ $permissions = user()->getPermissions();
                                                 </div>
 
 
-                                                <div class="col-sm-12 col-xs-12">
-                                                    <div>
-                                                        <h3>Parameter SEP</h3>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="tujuankunj">Tujuan Kunjungan</label>
-                                                        <div>
-                                                            <select name="tujuankunj" id="tujuankunj" class="form-control" style="width:100%">
-                                                                <option value="0">Normal</option>
-                                                                <option value="1">Prosedur</option>
-                                                                <option value="2">Konsul Dokter</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="flagprocedure">Procedure</label>
-                                                        <div>
-                                                            <select name="flagprocedure" id="flagprocedure" class="form-control" style="width:100%">
-                                                                <option value="0">Prosedur Tidak Berkelanjutan</option>
-                                                                <option value="1">Prosedur dan Terapi Berkelanjutan</option>
-                                                                <option value="99">-</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="kdpenunjang">Penunjang</label>
-                                                        <div>
-                                                            <select name="kdpenunjang" id="kdpenunjang" class="form-control" style="width:100%">
-                                                                <option value="1">Radioterapi</option>
-                                                                <option value="2">Kemoterapi</option>
-                                                                <option value="3">Rehab Medik</option>
-                                                                <option value="4">Rehab Psikososial</option>
-                                                                <option value="5">Transfusi Darah</option>
-                                                                <option value="6">Pelayanan Gigi</option>
-                                                                <option value="7">Laboratorium</option>
-                                                                <option value="8">USG</option>
-                                                                <option value="9">Farmasi</option>
-                                                                <option value="10">Lain-lain</option>
-                                                                <option value="11">MRI</option>
-                                                                <option value="12">Hemodialisa</option>
-                                                                <option value="99">-</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-2 col-xs-4">
-                                                    <div class="form-group"><label for="assesmenpel">Assesment Pelayanan</label>
-                                                        <div>
-                                                            <select name="assesmenpel" id="assesmenpel" class="form-control" style="width:100%">
-                                                                <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
-                                                                <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
-                                                                <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
-                                                                <option value="4">Atas Instruksi RS</option>
-                                                                <option value="5">Tujuan Kontrol</option>
-                                                                <option value="99">-</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
 
 
 
@@ -735,6 +672,11 @@ $permissions = user()->getPermissions();
                                         </div><!--./col-md-8-->
                                         <div class="col-lg-4 col-md-4 col-sm-4 col-eq ptt10">
                                             <div class="row">
+                                                <div class="col-sm-12 col-xs-12">
+                                                    <div>
+                                                        <h3>Parameter Rujukan</h3>
+                                                    </div>
+                                                </div>
                                                 <div class="col-sm-6 col-xs-12">
                                                     <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
                                                         <div>
@@ -806,9 +748,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="tujuankunj">Tujuan Kunjungan</label>
+                                                    <div class="form-group"><label for="pvtujuankunj">Tujuan Kunjungan</label>
                                                         <div>
-                                                            <select name='tujuankunj' id="tujuankunj" class="form-control select2 act" style="width:100%">
+                                                            <select name='tujuankunj' id="pvtujuankunj" class="form-control select2 act" style="width:100%">
                                                                 <option value="0">Normal</option>
                                                                 <option value="1">Prosedur</option>
                                                                 <option value="2">Konsul Dokter</option>
@@ -817,9 +759,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="kdpenunjang">Penunjang</label>
+                                                    <div class="form-group"><label for="pvkdpenunjang">Penunjang</label>
                                                         <div>
-                                                            <select name='kdpenunjang' id="kdpenunjang" class="form-control select2 act" style="width:100%">
+                                                            <select name='kdpenunjang' id="pvkdpenunjang" class="form-control select2 act" style="width:100%">
                                                                 <option value="1">Radioterapi</option>
                                                                 <option value="2">Kemoterapi</option>
                                                                 <option value="3">Rehab Medik</option>
@@ -838,9 +780,9 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="flagprocedure">Procedure</label>
+                                                    <div class="form-group"><label for="pvflagprocedure">Procedure</label>
                                                         <div>
-                                                            <select name='flagprocedure' id="flagprocedure" class="form-control select2 act" style="width:100%">
+                                                            <select name='flagprocedure' id="pvflagprocedure" class="form-control select2 act" style="width:100%">
                                                                 <option value="0">Prosedur Tidak Berkelanjutan</option>
                                                                 <option value="1">Prosedur dan Terapi Berkelanjutan</option>
                                                                 <option value="99">-</option>
@@ -848,10 +790,10 @@ $permissions = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-12 col-xs-12">
-                                                    <div class="form-group"><label for="assesmentpel">Assesment Pelayanan</label>
+                                                <div class="col-sm-6 col-xs-12">
+                                                    <div class="form-group"><label for="pvassesmentpel">Assesment Pelayanan</label>
                                                         <div>
-                                                            <select name='assesmentpel' id="assesmentpel" class="form-control select2 act" style="width:100%">
+                                                            <select name='assesmentpel' id="pvassesmentpel" class="form-control select2 act" style="width:100%">
                                                                 <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
                                                                 <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
                                                                 <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
@@ -863,23 +805,32 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="edit_sep">No. SKDP</label><input id="edit_sep" name="edit_sep" type="text" class="form-control" /></div>
-                                                    <a data-toggle="modal" id="add" onclick="insertSKDP()" class="modalbtnpatient"><i class="fa fa-search"></i> <span>SKDP</span></a>
+                                                    <label for="pvedit_sep">No. SKDP</label>
+                                                    <div class="input-group">
+                                                        <input id="pvedit_sep" name="edit_sep" type="text" class="form-control" />
+                                                        <span class="input-group-btn">
+                                                            <button class="form-control" onclick="insertSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="specimenno">No. SPRI</label><input id="specimenno" name=" specimenno" type="text" class="form-control" /></div>
-                                                    <a data-toggle="modal" id="add" onclick="insertSPRI()" class="modalbtnpatient"><i class="fa fa-search"></i> <span>SPRI</span></a>
+                                                    <label for="pvspecimenno">No. SPRI</label>
+                                                    <div class="input-group">
+                                                        <input id="pvspecimenno" name="specimenno" type="text" class="form-control" />
+                                                        <span class="input-group-btn">
+                                                            <button class="form-control" onclick="insertSPRI()" type="button"><i class="fa fa-search"></i></button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
-                                                    <div class="form-group"><label for="no_skpinap">SEP RI</label><input id="no_skpinap" name="no_skpinap" type="text" class="form-control" disabled /></div>
+                                                    <div class="form-group"><label for="no_skp">SEP RJ</label><input id="pvno_skp" name="no_skp" type="text" class="form-control" disabled /></div>
+                                                </div>
+                                                <div class="col-sm-6 col-xs-12">
+                                                    <div class="form-group"><label for="pvno_skpinap">SEP RI</label><input id="pvno_skpinap" name="no_skpinap" type="text" class="form-control" disabled /></div>
                                                 </div>
                                                 <div class="">
-                                                    <div class="col-md-12">
-                                                        <div class="dividerhr"></div>
-                                                        <h3>SEP</h3>
-                                                    </div>
                                                     <div class="col-sm-4 col-xs-12">
-                                                        <a data-toggle="modal" id="addSep" onclick="insertSep()" class="modalbtnpatient"><i class="fa fa-plus"></i> <span>Insert SEP</span></a>
+                                                        <a data-toggle="modal" id="c" onclick="insertSep()" class="modalbtnpatient"><i class="fa fa-plus"></i> <span>Insert SEP</span></a>
                                                     </div>
                                                     <div class="col-sm-4 col-xs-12">
                                                         <a data-toggle="modal" id="editSep" onclick="editSep()" class="modalbtnpatient"><i class="fa fa-edit"></i> <span>Edit SEP</span></a>
@@ -1225,16 +1176,16 @@ $permissions = user()->getPermissions();
     }
 
     function insertSep() {
-        var clicked_submit_btn = $("#deleterujukan")
+        var clicked_submit_btn = $("#addSep")
 
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/deleteRujukan',
+            url: '<?php echo base_url(); ?>admin/patient/insertSep',
             type: "POST",
             data: JSON.stringify({
                 'noKartu': $("#pvkk_no").text(),
                 "tglSep": "2021-07-30",
                 "ppkPelayanan": $("#pvorg_unit_code").val(),
-                "jnsPelayanan": $("#pvisrj").val(),
+                "jnsPelayanan": ($("#pvisrj").val() == 1 ? 2 : 1),
                 "klsRawat": {
                     "klsRawatHak": $("#pvclass_id_plafond").val(),
                     "klsRawatNaik": $("#pvclass_id").val(),
@@ -1261,14 +1212,14 @@ $permissions = user()->getPermissions();
                     "katarak": $("#pvbackcharge").val()
                 },
                 "jaminan": {
-                    "lakaLantas": "0",
-                    "noLP": "12345",
+                    "lakaLantas": ($("#pvreason_id") == 3 ? 1 : 0),
+                    "noLP": $("#pvtemptrans").val(),
                     "penjamin": {
-                        "tglKejadian": "",
-                        "keterangan": "",
+                        "tglKejadian": $("#pvvalid_rm_date").val(),
+                        "keterangan": $("#pvdelete_sep").val(),
                         "suplesi": {
-                            "suplesi": "0",
-                            "noSepSuplesi": "",
+                            "suplesi": $("#pvispertarif").val(),
+                            "noSepSuplesi": $("#pvno_skp").val(),
                             "lokasiLaka": {
                                 "kdPropinsi": "",
                                 "kdKabupaten": "",
@@ -1277,15 +1228,15 @@ $permissions = user()->getPermissions();
                         }
                     }
                 },
-                "tujuanKunj": "0",
-                "flagProcedure": "",
-                "kdPenunjang": "",
-                "assesmentPel": "",
+                "tujuanKunj": $("#pvtujuankunj").val(),
+                "flagProcedure": $("#pvflagprocedure").val(),
+                "kdPenunjang": $("#pvkdpenunjang").val(),
+                "assesmentPel": $("#pvassesmentpel").val(),
                 "skdp": {
-                    "noSurat": "0301R0110721K000021",
-                    "kodeDPJP": "31574"
+                    "noSurat": $("#pvedit_sep").val(),
+                    "kodeDPJP": $("#pvkddpjp").val()
                 },
-                "dpjpLayan": "",
+                "dpjpLayan": ($("#pvisrj").val() == 1 ? $("#pvkddpjp").val() : ""),
                 "noTelp": "081111111101",
                 "user": "Coba Ws"
             }),
