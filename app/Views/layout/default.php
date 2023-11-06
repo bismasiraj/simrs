@@ -340,14 +340,14 @@ $basecontroller->checkMenuActive('register');
                     </li>
                 </ul>
                 <ul class="sidebar-menu verttop">
-                    <li class="treeview <?=$basecontroller->checkMenuActive('dashboard'); ?> <?=$basecontroller->checkMenuActive(''); ?>">
+                    <li class="treeview <?= $basecontroller->checkMenuActive('dashboard'); ?> <?= $basecontroller->checkMenuActive(''); ?>">
                         <a href="<?php echo base_url(); ?>admin/admin/dashboard">
                             <i class="fas fa-television"></i> <span> Dashboard</span>
                         </a>
                     </li>
                     <?php //dd(user()->checkRoles(['superuser', 'admin','billingpasien']));
                     if (user()->checkRoles(['superuser', 'admin', 'billingpasien'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('bill'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('bill'); ?>">
                             <a href="<?php echo site_url('admin/patient/bill'); ?>">
                                 <i class="fas fa-file-invoice"></i> <span> <?php echo lang('Word.billing'); ?></span>
                             </a>
@@ -355,7 +355,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpendaftaran'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('search'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('search'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/search">
                                 <i class="fa fa-calendar-check-o"></i> <span><?php echo "Pendaftaran"; ?></span>
                             </a>
@@ -363,7 +363,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('rajal'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('rajal'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/rajal">
                                 <i class="fas fa-stethoscope"></i> <span> Pelayanan</span>
                             </a>
@@ -378,7 +378,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('farmasi'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('farmasi'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/farmasi">
                                 <i class="fas fa-mortar-pestle"></i> <span> <?php echo lang('Word.pharmacy'); ?></span>
                             </a>
@@ -386,7 +386,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('laboratorium'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('laboratorium'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/laboratorium">
                                 <i class="fas fa-flask"></i> <span><?php echo "Laboratorium"; ?></span>
                             </a>
@@ -394,7 +394,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('radiologi'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('radiologi'); ?>">
 
                             <a href="<?php echo base_url() ?>admin/patient/radiologi">
                                 <i class="fas fa-microscope"></i> <span><?php echo lang('Word.radiology'); ?></span>
@@ -403,7 +403,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'billingpasien'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('hemodialisa'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('hemodialisa'); ?>">
                             <a href="<?php echo base_url() ?>admin/patient/hemodialisa">
                                 <i class="fas fa-tint"></i> <span><?php echo "Haemodialisa"; ?></span>
                             </a>
@@ -411,7 +411,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
                                 <i class="fas fa-ambulance" aria-hidden="true"></i>
                                 <span> <?php echo "Unit Gawat Darurat"; ?></span>
@@ -420,7 +420,7 @@ $basecontroller->checkMenuActive('register');
 
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('kamaroperasi'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('kamaroperasi'); ?>">
                             <a href="<?php echo base_url(); ?>admin/patient/kamaroperasi">
                                 <i class="fas fa-dungeon"></i> <span><?php echo "Kamar Operasi"; ?></span>
                             </a>
@@ -434,116 +434,116 @@ $basecontroller->checkMenuActive('register');
                         <p><i class="fas fa-line-chart" style="margin-right: 12px;"></i><span>Laporan</span></p>
                     </div>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('fo'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('fo'); ?>">
                             <a href="#">
                                 <span>Front Office</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/foantrol"><i class="fas fa-angle-right"></i>Antrian Online</a>
+                                <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/foantrol"><i class="fas fa-angle-right"></i>Antrian Online</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
+                                <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('registerkeluar'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerkeluar"><i class="fas fa-angle-right"></i> Register Keluar Ranap</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('registerpindah'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpindah"><i class="fas fa-angle-right"></i> Register Pindah Ranap</li>
-                                <li class="<?=$basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="fas fa-angle-right"></i> Register Pasien Melahirkan</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('registerkeluar'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerkeluar"><i class="fas fa-angle-right"></i> Register Keluar Ranap</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('registerpindah'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpindah"><i class="fas fa-angle-right"></i> Register Pindah Ranap</li>
+                                <li class="<?= $basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="fas fa-angle-right"></i> Register Pasien Melahirkan</a></li>
                             </ul>
                         </li>
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('register'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('register'); ?>">
                             <a href="#">
                                 <span>Register</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('registerpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpoli"><i class="fas fa-angle-right"></i>Register Rawat Jalan</a>
+                                <li class="<?= $basecontroller->checkMenuActive('registerpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpoli"><i class="fas fa-angle-right"></i>Register Rawat Jalan</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
+                                <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('registerkeluar'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerkeluar"><i class="fas fa-angle-right"></i> Register Keluar Ranap</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('registerpindah'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpindah"><i class="fas fa-angle-right"></i> Register Pindah Ranap</li>
-                                <li class="<?=$basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="fas fa-angle-right"></i> Register Pasien Melahirkan</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('registerkeluar'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerkeluar"><i class="fas fa-angle-right"></i> Register Keluar Ranap</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('registerpindah'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpindah"><i class="fas fa-angle-right"></i> Register Pindah Ranap</li>
+                                <li class="<?= $basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="fas fa-angle-right"></i> Register Pasien Melahirkan</a></li>
                             </ul>
                         </li>
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('rm'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('rm'); ?>">
                             <a href="#">
                                 <span>Rekam Medis</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjungan'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjungan"><i class="fas fa-angle-right"></i>Kunjungan Rumah Sakit</a>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjungan'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjungan"><i class="fas fa-angle-right"></i>Kunjungan Rumah Sakit</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjunganranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganranap"><i class="fas fa-angle-right"></i> Kunjungan Rawat Inap</a>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjunganranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganranap"><i class="fas fa-angle-right"></i> Kunjungan Rawat Inap</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjunganranapstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganranapstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Inap <p>Per Jenis Pelayanan</p></a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjunganklinik'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganklinik"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Klinik</li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjunganstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmkunjunganugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganugd"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmtopxrajal'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxrajal"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Rawat Jalan</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmtopxranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxranap"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Rawat Inap</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmtopxugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxugd"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Unit Gawat Darurat</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmindexrajal'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmindexrajal"><i class="fas fa-angle-right"></i> Kartu Index Penyakit Rajal</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('rmindexranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmindexranap"><i class="fas fa-angle-right"></i> Kartu Index Penyakit Ranap</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjunganranapstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganranapstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Inap <p>Per Jenis Pelayanan</p></a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjunganklinik'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganklinik"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Klinik</li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjunganstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmkunjunganugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganugd"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmtopxrajal'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxrajal"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Rawat Jalan</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmtopxranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxranap"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Rawat Inap</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmtopxugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxugd"><i class="fas fa-angle-right"></i> Top X Diagnosa <br>Unit Gawat Darurat</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmindexrajal'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmindexrajal"><i class="fas fa-angle-right"></i> Kartu Index Penyakit Rajal</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('rmindexranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmindexranap"><i class="fas fa-angle-right"></i> Kartu Index Penyakit Ranap</a></li>
                             </ul>
                         </li>
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('fin'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('fin'); ?>">
                             <a href="#">
                                 <span>Keuangan</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('finharian'); ?>"><a href="<?php echo base_url(); ?>admin/report/finharian"><i class="fas fa-angle-right"></i>Keuangan Harian</a>
+                                <li class="<?= $basecontroller->checkMenuActive('finharian'); ?>"><a href="<?php echo base_url(); ?>admin/report/finharian"><i class="fas fa-angle-right"></i>Keuangan Harian</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('finbulanan'); ?>"><a href="<?php echo base_url(); ?>admin/report/finbulanan"><i class="fas fa-angle-right"></i> Keuangan Bulanan</a>
+                                <li class="<?= $basecontroller->checkMenuActive('finbulanan'); ?>"><a href="<?php echo base_url(); ?>admin/report/finbulanan"><i class="fas fa-angle-right"></i> Keuangan Bulanan</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('fintglpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/fintglpoli"><i class="fas fa-angle-right"></i> Keuangan Tanggal Poli</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpolitgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpolitgl"><i class="fas fa-angle-right"></i> Keuangan Poli Tanggal</li>
-                                <li class="<?=$basecontroller->checkMenuActive('finrajalstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/finrajalstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpoli"><i class="fas fa-angle-right"></i> Keuangan Poli Rinci</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finjenis'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenis"><i class="fas fa-angle-right"></i> Keuangan Per Jenis</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finjenistgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenistgl"><i class="fas fa-angle-right"></i> Keuangan Jenis Tanggal</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finjenisrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenisrinci"><i class="fas fa-angle-right"></i> Transaksi Keuangan Jenis Rinci</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayarantgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantgl"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/Tanggal</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayarantrx'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantrx"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/TRX</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayaranrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayaranrinci"><i class="fas fa-angle-right"></i> Transaksi Pembayaran Rinci</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finsetor'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetor"><i class="fas fa-angle-right"></i> Rekap Penerimaan dan <p>Setoran Kasir</p></a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finsetorrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetorrinci"><i class="fas fa-angle-right"></i> Penerimaan dan <p>Setoran Kasir Rinci</p></a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('fintglpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/fintglpoli"><i class="fas fa-angle-right"></i> Keuangan Tanggal Poli</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpolitgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpolitgl"><i class="fas fa-angle-right"></i> Keuangan Poli Tanggal</li>
+                                <li class="<?= $basecontroller->checkMenuActive('finrajalstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/finrajalstatus"><i class="fas fa-angle-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpoli'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpoli"><i class="fas fa-angle-right"></i> Keuangan Poli Rinci</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finjenis'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenis"><i class="fas fa-angle-right"></i> Keuangan Per Jenis</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finjenistgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenistgl"><i class="fas fa-angle-right"></i> Keuangan Jenis Tanggal</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finjenisrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenisrinci"><i class="fas fa-angle-right"></i> Transaksi Keuangan Jenis Rinci</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayarantgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantgl"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/Tanggal</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayarantrx'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantrx"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/TRX</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayaranrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayaranrinci"><i class="fas fa-angle-right"></i> Transaksi Pembayaran Rinci</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finsetor'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetor"><i class="fas fa-angle-right"></i> Rekap Penerimaan dan <p>Setoran Kasir</p></a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finsetorrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetorrinci"><i class="fas fa-angle-right"></i> Penerimaan dan <p>Setoran Kasir Rinci</p></a></li>
                             </ul>
                         </li>
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('apt'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('apt'); ?>">
                             <a href="#">
                                 <span>Apotek</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('aptrekapnota'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekapnota"><i class="fas fa-angle-right"></i>Rekap Nota Obat</a>
+                                <li class="<?= $basecontroller->checkMenuActive('aptrekapnota'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekapnota"><i class="fas fa-angle-right"></i>Rekap Nota Obat</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptrekapobat'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekapobat"><i class="fas fa-angle-right"></i> Rekap Pemakaian Obat</a>
+                                <li class="<?= $basecontroller->checkMenuActive('aptrekapobat'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekapobat"><i class="fas fa-angle-right"></i> Rekap Pemakaian Obat</a>
                                 </li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptrekappelayanan'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekappelayanan"><i class="fas fa-angle-right"></i> Rekap Pelayanan</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptobatalkes'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptobatalkes"><i class="fas fa-angle-right"></i> Pemakaian Obat / Alkes</li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptpsikotropika'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptpsikotropika"><i class="fas fa-angle-right"></i> Laporan Psikotropika</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptrekappsikotropika'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekappsikotropika"><i class="fas fa-angle-right"></i> Rekap Psikotropika</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptpembelian'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptpembelian"><i class="fas fa-angle-right"></i> Pembelian per Tanggal</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('aptkartubarang'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptkartubarang"><i class="fas fa-angle-right"></i> Kartu Barang</a></li>
-                                <!-- <li class="<?=$basecontroller->checkMenuActive('finjenisrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenisrinci"><i class="fas fa-angle-right"></i> Transaksi Keuangan Jenis Rinci</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayarantgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantgl"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/Tanggal</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayarantrx'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantrx"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/TRX</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finpembayaranrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayaranrinci"><i class="fas fa-angle-right"></i> Transaksi Pembayaran Rinci</a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finsetor'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetor"><i class="fas fa-angle-right"></i> Rekap Penerimaan dan <p>Setoran Kasir</p></a></li>
-                                <li class="<?=$basecontroller->checkMenuActive('finsetorrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetorrinci"><i class="fas fa-angle-right"></i> Penerimaan dan <p>Setoran Kasir Rinci</p></a></li> -->
+                                <li class="<?= $basecontroller->checkMenuActive('aptrekappelayanan'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekappelayanan"><i class="fas fa-angle-right"></i> Rekap Pelayanan</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('aptobatalkes'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptobatalkes"><i class="fas fa-angle-right"></i> Pemakaian Obat / Alkes</li>
+                                <li class="<?= $basecontroller->checkMenuActive('aptpsikotropika'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptpsikotropika"><i class="fas fa-angle-right"></i> Laporan Psikotropika</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('aptrekappsikotropika'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptrekappsikotropika"><i class="fas fa-angle-right"></i> Rekap Psikotropika</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('aptpembelian'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptpembelian"><i class="fas fa-angle-right"></i> Pembelian per Tanggal</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('aptkartubarang'); ?>"><a href="<?php echo base_url(); ?>admin/report/aptkartubarang"><i class="fas fa-angle-right"></i> Kartu Barang</a></li>
+                                <!-- <li class="<?= $basecontroller->checkMenuActive('finjenisrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finjenisrinci"><i class="fas fa-angle-right"></i> Transaksi Keuangan Jenis Rinci</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayarantgl'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantgl"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/Tanggal</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayarantrx'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayarantrx"><i class="fas fa-angle-right"></i> Transaksi Pembayaran/TRX</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finpembayaranrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finpembayaranrinci"><i class="fas fa-angle-right"></i> Transaksi Pembayaran Rinci</a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finsetor'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetor"><i class="fas fa-angle-right"></i> Rekap Penerimaan dan <p>Setoran Kasir</p></a></li>
+                                <li class="<?= $basecontroller->checkMenuActive('finsetorrinci'); ?>"><a href="<?php echo base_url(); ?>admin/report/finsetorrinci"><i class="fas fa-angle-right"></i> Penerimaan dan <p>Setoran Kasir Rinci</p></a></li> -->
                             </ul>
                         </li>
                     <?php } ?>
                     <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
-                        <li class="treeview <?=$basecontroller->checkMenuActive('admin'); ?>">
+                        <li class="treeview <?= $basecontroller->checkMenuActive('admin'); ?>">
                             <a href="#">
                                 <span>Log</span> <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li class="<?=$basecontroller->checkMenuActive('adminlog'); ?>"><a href="<?php echo base_url(); ?>admin/report/adminlog"><i class="fas fa-angle-right"></i>Log User</a>
+                                <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?>"><a href="<?php echo base_url(); ?>admin/report/adminlog"><i class="fas fa-angle-right"></i>Log User</a>
                                 </li>
                             </ul>
                         </li>

@@ -126,7 +126,8 @@ abstract class BaseController extends Controller
         // dd($selectedMenu);
         foreach ($selectedMenu as $value) {
             if ($menuname == $value) {
-                return 'active';
+                // return 'active';
+                return 'mm-active';
             }
         }
     }

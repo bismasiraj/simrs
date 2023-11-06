@@ -1,3 +1,3 @@
-<?php echo view('partials/topbar.php'); ?>
-<?php echo view('partials/sidebar.php'); ?>
+<?php echo view('layout/partials/topbar.php'); ?>
+<?php echo view('layout/partials/sidebar.php'); ?>
 <!-- @@include("horizontal.html") -->

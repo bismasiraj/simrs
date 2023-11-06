@@ -1,11 +1,4 @@
-/*
-Template Name: Lexa - Responsive Bootstrap 5 Admin Dashboard
-Author: Themesbrand
-Version: 3.1.0
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: Main Css File
-*/
+
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600");
 [data-theme-mode=default] {
   --bs-danger: #ef6767 !important;
@@ -4682,3 +4675,4 @@ body[data-layout=horizontal] .chat-conversation {
   border: 1px dashed var(--bs-border-color) !important;
   background-color: var(--bs-border-color) !important;
 }
+

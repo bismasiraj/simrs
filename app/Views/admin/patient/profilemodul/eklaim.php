@@ -19,14 +19,14 @@ $permission = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane" id="klaim">
+<div class="tab-pane" id="klaim" role="tabpanel">
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <div class="box-header border-b mb10 pl-0 pt0">
                 <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 ptt10">
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
 
                     <?php
 
@@ -37,54 +37,60 @@ $permission = user()->getPermissions();
                     }
 
                     ?>
-                    <img width="115" height="115" class="profile-user-img img-responsive img-rounded" src="<?php echo base_url(); ?><?php echo $file ?>">
+                    <img width="115" height="115" class="rounded-circle avatar-lg" src="<?php echo base_url(); ?><?php echo $file ?>">
 
                 </div><!--./col-lg-5-->
+                <hr>
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <table class="table tablecustom table-bordered mb0">
+                    <table class="table">
                         <tr>
                             <td class="bolds"><?php echo lang('Word.age'); ?></td>
-                            <td id="ekage"><?= $visit['age']; ?></td>
+                            <td id="age"><?= $visit['age']; ?></td>
                         </tr>
                         <tr>
                             <td class="bolds">Alamat</td>
-                            <td id="ekaddress"><?php echo $visit['visitor_address']; ?></td>
+                            <td id="address"><?php echo $visit['visitor_address']; ?></td>
                         </tr>
 
                         <tr>
                             <td class="bolds">Dokter</td>
-                            <td id="ekdokter"><?php echo $visit['fullname']; ?></td>
+                            <td id="dokter"><?php echo $visit['fullname']; ?></td>
                         </tr>
                         <?php if (!is_null($visit['class_room_id'])) { ?>
                             <tr>
                                 <td class="bolds">Tanggal Masuk</td>
-                                <td id="ekvisit_date"><?php echo $visit['visit_date']; ?></td>
+                                <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
                             </tr>
                             <tr>
                                 <td class="bolds">Tanggal Keluar</td>
-                                <td id="ekexit_date"><?php echo $visit['exit_date']; ?></td>
+                                <td id="exit_date"><?php echo $visit['exit_date']; ?></td>
                             </tr>
                         <?php } else { ?>
                             <tr>
                                 <td class="bolds">Tanggal</td>
-                                <td id="ekvisit_date"><?php echo $visit['visit_date']; ?></td>
+                                <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
                             </tr>
                         <?php } ?>
 
                         <tr>
                             <?php if (!is_null($visit['class_room_id'])) { ?>
                                 <td class="bolds">Bangsal</td>
-                                <td id="ekklinik"><?php echo ($visit['name_of_class']); ?></td>
+                                <td id="klinik"><?php echo ($visit['name_of_class']); ?></td>
                             <?php } else { ?>
                                 <td class="bolds">Poli</td>
-                                <td id="ekklinik"><?php echo $visit['name_of_clinic']; ?></td>
+                                <td id="klinik"><?php echo $visit['name_of_clinic']; ?></td>
                             <?php } ?>
+                        </tr>
+                        <tr>
+                            <td class="bolds">Alergi</td>
+                            <td class="alergi"> - </td>
                         </tr>
 
 
                     </table>
                 </div><!--./col-lg-7-->
             </div><!--./row-->
+
 
             <?php if (!empty($pasienDiagnosa)) {
             ?>

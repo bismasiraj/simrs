@@ -19,7 +19,7 @@ $permissions = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane tab-content-height" id="charges">
+<div class="tab-pane tab-content-height" id="charges" role="tabpanel">
     <div class="box-tab-header">
         <h3 class="box-tab-title">Tindakan</h3>
         <?php if (isset($permissions['tindakanpoli']['c'])) {
@@ -36,7 +36,7 @@ $permissions = user()->getPermissions();
                 <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 ptt10">
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
 
                     <?php
 
@@ -47,11 +47,12 @@ $permissions = user()->getPermissions();
                     }
 
                     ?>
-                    <img width="115" height="115" class="profile-user-img img-responsive img-rounded" src="<?php echo base_url(); ?><?php echo $file ?>">
+                    <img width="115" height="115" class="rounded-circle avatar-lg" src="<?php echo base_url(); ?><?php echo $file ?>">
 
                 </div><!--./col-lg-5-->
+                <hr>
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <table class="table tablecustom table-bordered mb0">
+                    <table class="table">
                         <tr>
                             <td class="bolds"><?php echo lang('Word.age'); ?></td>
                             <td id="age"><?= $visit['age']; ?></td>
@@ -90,11 +91,16 @@ $permissions = user()->getPermissions();
                                 <td id="klinik"><?php echo $visit['name_of_clinic']; ?></td>
                             <?php } ?>
                         </tr>
+                        <tr>
+                            <td class="bolds">Alergi</td>
+                            <td class="alergi"> - </td>
+                        </tr>
 
 
                     </table>
                 </div><!--./col-lg-7-->
             </div><!--./row-->
+
 
             <?php if (!empty($pasienDiagnosa)) {
             ?>

@@ -1,0 +1,7 @@
+.table-biodata>tbody>tr>td:nth-child(even) {
+    text-align: left;
+}
+
+.table-biodata>tbody>tr>td:nth-of-type(odd)>* {
+    text-align: right;
+}

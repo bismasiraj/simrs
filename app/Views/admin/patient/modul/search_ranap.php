@@ -2,7 +2,7 @@
 <?php if ($giTipe == 3) echo "active"; ?>
 " id="rawat_inap">
     <form id="form2" action="" method="post" class="">
-        <div class="box-body row">
+        <div class="box-body row mt-4 mb-4">
             <input type="hidden" name="ci_csrf_token" value="">
             <div class="col-sm-6 col-md-2">
                 <div class="form-group">
@@ -99,33 +99,33 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-2">
-                <div class="form-group">
+                <div class="mb-3">
                     <label>Tanggal Awal</label>
-                    <input id="imulai" name="mulai" placeholder="" type="text" class="form-control" value="<?= date('Y-m-d');; ?>" readonly>
-                    <span class="text-danger"></span>
+                    <div>
+                        <div class="input-group" id="imulai">
+                            <input name="mulai" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#imulai' value="<?= date('Y-m-d'); ?>">
+
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+
+                        </div>
+                        <!-- input-group -->
+                    </div>
                 </div>
-                <script type="text/javascript">
-                    $(function() {
-                        $('#mulai').datetimepicker({
-                            format: 'YYYY-MM-DD'
-                        });
-                    });
-                </script>
             </div>
 
             <div class="col-sm-6 col-md-2">
-                <div class="form-group">
+                <div class="mb-3">
                     <label>Tanggal Akhir</label>
-                    <input id="iakhir" name="akhir" placeholder="" type="text" class="form-control" value="<?= date('Y-m-d');; ?>">
-                    <span class="text-danger"></span>
+                    <div>
+                        <div class="input-group" id="iakhir">
+                            <input name="akhir" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#iakhir' value="<?= date('Y-m-d'); ?>">
+
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+
+                        </div>
+                        <!-- input-group -->
+                    </div>
                 </div>
-                <script type="text/javascript">
-                    $(function() {
-                        $('#iakhir').datetimepicker({
-                            format: 'YYYY-MM-DD'
-                        });
-                    });
-                </script>
             </div>
             <div class="col-sm-6 col-md-2">
                 <div class="form-group">
@@ -139,8 +139,8 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-sm-12">
+            <div class="col-sm-12">
+                <div class="mt-4">
                     <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> Cari</button>
                 </div>
             </div>
@@ -155,72 +155,27 @@
         </div> -->
     </form>
     <div class="box-body">
-        <div class="download_label"><?php
-                                    if ($title == 'old_patient') {
-                                        echo lang('Word.opd_old_patient');
-                                    ?>
-            <?php
-                                    } else {
-                                        echo lang('Word.opd_patient');
-            ?>
-
-            <?php } ?>
+        <div class="mt-4">
+            <table class="table table-hover table-centered" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
+                <thead>
+                    <style>
+                        thead tr th {
+                            text-align: center !important;
+                        }
+                    </style>
+                    <tr style="text-align: center">
+                        <th>No.</th>
+                        <th>No RM - Nama</th>
+                        <th>Status/JK</th>
+                        <th>Pelayanan/Dokter/HP/Phone</th>
+                        <th>Rujukan dari/Tgl Masuk s/d Tgl Keluar</th>
+                        <th>No Tgl Lahir - Umur</th>
+                        <th>Ditagihkan ke Kelas / Hak Kelas</th>
+                    </tr>
+                </thead>
+                <tbody id="bodydata2" class="table-group-divider">
+                </tbody>
+            </table>
         </div>
-        <table class="table table-striped-columns table-borderedcustom table-hover" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
-            <thead>
-                <style>
-                    thead tr th {
-                        text-align: center !important;
-                    }
-                </style>
-                <tr style="text-align: center">
-                    <th>No.</th>
-                    <th>No RM - Nama</th>
-                    <th>Status/JK</th>
-                    <th>Pelayanan/Dokter/HP/Phone</th>
-                    <th>Rujukan dari/Tgl Masuk s/d Tgl Keluar</th>
-                    <th>No Tgl Lahir - Umur</th>
-                    <th>Ditagihkan ke Kelas / Hak Kelas</th>
-                </tr>
-            </thead>
-            <tbody id="bodydata2">
-            </tbody>
-        </table>
     </div>
 </div>
-
-<script type="text/javascript">
-    $("#form2").on('submit', (function(e) {
-
-        e.preventDefault();
-        $("#form2btn").button('loading');
-        // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getipddatatable',
-            type: "POST",
-            data: new FormData(this),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                $("#bodydata2").html("");
-                var stringcolumn = '';
-                data.data.forEach((element, key) => {
-                    stringcolumn += '<tr class="table tablecustom-light">';
-                    element.forEach((element1, key1) => {
-                        stringcolumn += "<td>" + element1 + "</td>";
-                    });
-                    stringcolumn += '</tr>'
-
-                });
-                $("#bodydata2").html(stringcolumn);
-                $("#form2btn").button('reset');
-            },
-            error: function() {
-
-            }
-        });
-
-    }));
-</script>

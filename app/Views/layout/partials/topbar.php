@@ -1,3 +1,7 @@
+<?php
+$logo_image = base_url() . "assets/img/backgrounds/RSMY-HEADER.png";
+$mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
+?>
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
@@ -5,19 +9,19 @@
             <div class="navbar-brand-box">
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="assets/images/logo-sm.png" alt="" height="22">
+                        <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logo-dark.png" alt="" height="17">
+                        <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="17">
                     </span>
                 </a>
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="assets/images/logo-sm.png" alt="" height="22">
+                        <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="assets/images/logo-light.png" alt="" height="18">
+                        <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="30">
                     </span>
                 </a>
             </div>
@@ -29,8 +33,8 @@
             <div class="d-none d-sm-block">
                 <div class="dropdown dropdown-topbar pt-3 mt-1 d-inline-block">
                     <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Create <i class="mdi mdi-chevron-down"></i>
-                        </a>
+                        Create <i class="mdi mdi-chevron-down"></i>
+                    </a>
 
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="#">Action</a>
@@ -54,13 +58,11 @@
             </form>
 
             <div class="dropdown d-inline-block d-lg-none ms-2">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="mdi mdi-magnify"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
-                    aria-labelledby="page-header-search-dropdown">
-                    
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0" aria-labelledby="page-header-search-dropdown">
+
                     <form class="p-3">
                         <div class="form-group m-0">
                             <div class="input-group">
@@ -78,33 +80,33 @@
 
             <div class="dropdown d-none d-md-block ms-2">
                 <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="me-2" src="assets/images/flags/us_flag.jpg" alt="Header Language" height="16"> English <span class="mdi mdi-chevron-down"></span>
+                    <img class="me-2" src="<?php echo base_url(); ?>assets/images/flags/us_flag.jpg" alt="Header Language" height="16"> English <span class="mdi mdi-chevron-down"></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
 
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="assets/images/flags/germany_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> German </span>
+                        <img src="<?php echo base_url(); ?>assets/images/flags/germany_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> German </span>
                     </a>
 
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="assets/images/flags/italy_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Italian </span>
+                        <img src="<?php echo base_url(); ?>assets/images/flags/italy_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Italian </span>
                     </a>
 
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="assets/images/flags/french_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> French </span>
+                        <img src="<?php echo base_url(); ?>assets/images/flags/french_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> French </span>
                     </a>
 
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="assets/images/flags/spain_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Spanish </span>
+                        <img src="<?php echo base_url(); ?>assets/images/flags/spain_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Spanish </span>
                     </a>
 
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <img src="assets/images/flags/russia_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Russian </span>
+                        <img src="<?php echo base_url(); ?>assets/images/flags/russia_flag.jpg" alt="user-image" class="me-1" height="12"> <span class="align-middle"> Russian </span>
                     </a>
                 </div>
             </div>
@@ -116,13 +118,11 @@
             </div>
 
             <div class="dropdown d-inline-block ms-1">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="ti-bell"></i>
                     <span class="badge text-bg-danger rounded-pill">3</span>
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
-                    aria-labelledby="page-header-notifications-dropdown">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
@@ -135,10 +135,10 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
-                                    <span class="avatar-title border-success rounded-circle ">
-                                        <i class="mdi mdi-cart-outline"></i>
-                                    </span>
-                                </div>
+                                        <span class="avatar-title border-success rounded-circle ">
+                                            <i class="mdi mdi-cart-outline"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">Your order is placed</h6>
@@ -153,10 +153,10 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
-                                    <span class="avatar-title border-warning rounded-circle ">
-                                        <i class="mdi mdi-message"></i>
-                                    </span>
-                                </div>
+                                        <span class="avatar-title border-warning rounded-circle ">
+                                            <i class="mdi mdi-message"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">New Message received</h6>
@@ -171,10 +171,10 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
-                                    <span class="avatar-title border-info rounded-circle ">
-                                        <i class="mdi mdi-glass-cocktail"></i>
-                                    </span>
-                                </div>
+                                        <span class="avatar-title border-info rounded-circle ">
+                                            <i class="mdi mdi-glass-cocktail"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">Your item is shipped</h6>
@@ -189,10 +189,10 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
-                                    <span class="avatar-title border-primary rounded-circle ">
-                                        <i class="mdi mdi-cart-outline"></i>
-                                    </span>
-                                </div>
+                                        <span class="avatar-title border-primary rounded-circle ">
+                                            <i class="mdi mdi-cart-outline"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">Your order is placed</h6>
@@ -207,10 +207,10 @@
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
-                                    <span class="avatar-title border-warning rounded-circle ">
-                                        <i class="mdi mdi-message"></i>
-                                    </span>
-                                </div>
+                                        <span class="avatar-title border-warning rounded-circle ">
+                                            <i class="mdi mdi-message"></i>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">New Message received</h6>
@@ -228,13 +228,11 @@
                     </div>
                 </div>
             </div>
-            
+
 
             <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="assets/images/users/user-4.jpg"
-                        alt="Header Avatar">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user" src="assets/images/users/user-4.jpg" alt="Header Avatar">
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
@@ -246,7 +244,7 @@
                     <a class="dropdown-item text-danger" href="#"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
                 </div>
             </div>
-            
+
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
                     <i class="mdi mdi-spin mdi-cog"></i>

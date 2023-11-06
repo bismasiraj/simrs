@@ -113,7 +113,8 @@ class PasienVisitationModel extends Model
               else '1' end as ISRJ,
         STATUS_PASIEN_ID")
             ->join('clinic c', 'pasien_visitation.clinic_id = c.clinic_id', 'left')
-            ->where('visit_date > \'2022-12-01\'')
+            ->where('visit_date > \'2023-01-01\'')
+            ->where('visit_date < getdate()')
             ->groupBy([
                 'YEAR(VISIT_DATE)',
                 'MONTH(VISIT_DATE)',
@@ -329,7 +330,7 @@ class PasienVisitationModel extends Model
             ->join('cara_keluar ck', 'pasien_visitation.keluar_id = ck.keluar_id', 'left')
             ->where('no_registration', $id)
             ->orderBy("visit_date desc")
-            ->select('visit_id, trans_id, convert(varchar, visit_date, 105) as visit_date, ea.fullname, c.name_of_clinic, sp.name_of_status_pasien, no_skp, cl.name_of_class, exit_date, e.fullname as fullnameranap, cr.name_of_class as name_of_class_room, ck.cara_keluar, no_skpinap');
+            ->select('visit_id, trans_id, convert(varchar, visit_date, 105) as visit_date, ea.fullname, c.name_of_clinic, sp.name_of_status_pasien, no_skp, cl.name_of_class, exit_date, e.fullname as fullnameranap, cr.name_of_class as name_of_class_room, ck.cara_keluar, no_skpinap, in_date');
         return $builder->findAll();
     }
     public function generateId($selectPoli, $no_registration)

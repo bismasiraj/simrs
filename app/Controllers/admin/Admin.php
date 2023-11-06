@@ -142,7 +142,7 @@ class Admin extends \App\Controllers\BaseController
         $kunjungan = $pv->getKunjungan();
         $kunjNew = array();
         foreach ($kunjungan as $key => $value) {
-            $kunjNew[$kunjungan[$key]['NAME_OF_CLINIC']][$kunjungan[$key]['MONTH']] = $kunjungan[$key]['JML'];
+            $kunjNew[$kunjungan[$key]['MONTH']][$kunjungan[$key]['NAME_OF_CLINIC']] = $kunjungan[$key]['JML'];
         }
         // dd($kunjNew);
 
@@ -502,7 +502,7 @@ class Admin extends \App\Controllers\BaseController
                 $day = $diff->d;
 
 
-                $action = "<a href='#' onclick='getpatientData(\"" . $id . "\")' class='btn btn-default btn-xs pull-right'  data-toggle='modal' title='" . lang('show') . "'><i class='fa fa-reorder'></i></a>";
+                $action = '<button type="button" class="btn btn-primary waves-effect waves-light" onclick="addVisitPatient(\'' . $id . '\')">Tambah</button>';
 
                 // $action .= "<div class='btn-group' style='margin-left:2px;'>";
                 // if (!empty($result[$key]['info'])) {
@@ -515,7 +515,7 @@ class Admin extends \App\Controllers\BaseController
                 //     $action .= "</ul>";
                 // }
                 // $action .= "</div>";
-                $first_action = "<a href='#'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
+                $first_action = "<a href='#' onclick='getpatientData(\"" . $id . "\")'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
                 $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
 
                 //==============================
@@ -536,11 +536,11 @@ class Admin extends \App\Controllers\BaseController
                 $row[] = $dt_response[$key]['PHONE_NUMBER'] . " / " . $dt_response[$key]['MOBILE'];
                 $row[] = '';
                 $row[] = $dt_response[$key]['CONTACT_ADDRESS'];
-                if (false) { //if ($value->is_dead == 'yes') {
-                    $row[] = lang('yes');
-                } else {
-                    $row[] = lang('no');
-                }
+                // if (false) { //if ($value->is_dead == 'yes') {
+                //     $row[] = lang('yes');
+                // } else {
+                //     $row[] = lang('no');
+                // }
 
                 //====================
                 if (!empty($fields)) {

@@ -19,14 +19,14 @@ $permission = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane" id="cppt">
+<div class="tab-pane" id="cppt" role="tabpanel">
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <div class="box-header border-b mb10 pl-0 pt0">
                 <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 ptt10">
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
 
                     <?php
 
@@ -37,11 +37,12 @@ $permission = user()->getPermissions();
                     }
 
                     ?>
-                    <img width="115" height="115" class="profile-user-img img-responsive img-rounded" src="<?php echo base_url(); ?><?php echo $file ?>">
+                    <img width="115" height="115" class="rounded-circle avatar-lg" src="<?php echo base_url(); ?><?php echo $file ?>">
 
                 </div><!--./col-lg-5-->
+                <hr>
                 <div class="col-lg-12 col-md-12 col-sm-12">
-                    <table class="table tablecustom table-bordered mb0">
+                    <table class="table">
                         <tr>
                             <td class="bolds"><?php echo lang('Word.age'); ?></td>
                             <td id="age"><?= $visit['age']; ?></td>
@@ -80,11 +81,16 @@ $permission = user()->getPermissions();
                                 <td id="klinik"><?php echo $visit['name_of_clinic']; ?></td>
                             <?php } ?>
                         </tr>
+                        <tr>
+                            <td class="bolds">Alergi</td>
+                            <td class="alergi"> - </td>
+                        </tr>
 
 
                     </table>
                 </div><!--./col-lg-7-->
             </div><!--./row-->
+
 
             <?php if (!empty($pasienDiagnosa)) {
             ?>
