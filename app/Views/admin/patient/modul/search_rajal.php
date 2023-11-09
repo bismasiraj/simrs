@@ -172,22 +172,20 @@ $permissions = user()->getPermissions();
 
                     <div class="form-group">
                         <div class="col-sm-12">
-                            <div class="mt-4">
-                                <div class="mb-0">
-                                    <div>
-                                        <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
-                                            <i class="fa fa-search"></i>Cari
-                                        </button>
-                                        <?php if ($giTipe == 0) {
-                                            if (isset($permissions['pendaftaranrajal']['c'])) {
-                                                if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
-                                                    <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
-                                                        <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
-                                                    </button>
-                                        <?php }
-                                            }
-                                        } ?>
-                                    </div>
+                            <div class="mb-0">
+                                <div>
+                                    <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
+                                        <i class="fa fa-search"></i>Cari
+                                    </button>
+                                    <?php if ($giTipe == 0) {
+                                        if (isset($permissions['pendaftaranrajal']['c'])) {
+                                            if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
+                                                <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
+                                                    <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
+                                                </button>
+                                    <?php }
+                                        }
+                                    } ?>
                                 </div>
                             </div>
                         </div>

@@ -27,12 +27,7 @@
         <div class="page-content">
             <div class="container-fluid">
 
-                <?php echo view('layout/partials/page-title.php', [
-                    'title' => 'dashboard',
-                    'pagetitle' => 'dashboard',
-                    'subtitle' => 'dashboard',
-                ]);
-                ?>
+
 
                 <?php $this->renderSection('content'); ?>
 
