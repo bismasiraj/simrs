@@ -626,8 +626,6 @@ $currency_symbol = "Rp. ";
                 $("#headdata").html(data.header);
                 $("#footdata").html(footercolumn);
                 $("#registersubmit").button('reset');
-
-
                 $('#datatable').DataTable();
 
                 //Buttons examples
