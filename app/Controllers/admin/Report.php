@@ -6005,14 +6005,14 @@ class Report extends \App\Controllers\BaseController
                     $allocatedDate = date_create(strval($value1['allocated_date']));
                     $soDate = date_create(strval($value1['stockopnamedate']));
                     // if( distribution_type= 104,awal , if(distribution_type=100, stokopname ,0))
-                    $awalan = ($value1['distribution_type'] == 104) ? $value1['awal'] : ($value1['distribution_type'] == 100) ? $value1['stokopname'] : 0;
+                    $awalan = ($value1['distribution_type'] == 104) ? $value1['awal'] : (($value1['distribution_type'] == 100) ? $value1['stokopname'] : 0);
                     // if(allocated_date <  stockopnamedate , (awalan +( terimabapb + terima + terimaret + terima_trx )  - (keluar_dist + keluarretur+ keluartrx  ) +  if(distribution_type = 101,  (   (-1* dikoreksi ) +koreksimutasiinout),0)),0)
                     $beforeso = ($allocatedDate < $soDate) ? ($awalan + ($value1['terima_bapb'] + $value1['terima'] + $value1['terimatrx']) - ($value1['keluar_dist'] + $value1['keluarretur'] + $value1['keluartrx']) + ($value1['distribution_type'] == 101) ? ((-1 * $value1['dikoreksi']) + $value1['koreksimutasiinout']) : 0) : 0;
                     $beforesocum += $beforeso;
                     // if(allocated_date >= stockopnamedate, (awalan +( terimabapb + terima + terimaret + terima_trx )  - (keluar_dist + keluarretur+ keluartrx  ) +  if(distribution_type = 101,  (   (-1* dikoreksi ) +koreksimutasiinout),0)),0)
                     $afterso = ($allocatedDate >= $soDate) ? ($awalan + ($value1['terimabapb'] + $value1['terima'] + $value1['terimatrx']) - ($value1['keluar_dist'] + $value1['keluarretur'] + $value1['keluartrx']) + ($value1['distribution_type'] == 101) ? ((-1 * $value1['dikoreksi']) + $value1['koreksimutasiinout']) : 0) : 0;
                     $aftersocum += $afterso;
-                    $sisa = ($value1['distribution_type'] == 100 && !is_null($value1['stokopname']) ? $value1['stokopname'] : (is_null($so)) ? $sisacum : ($allocatedDate < $soDate) ? $beforeso : $afterso);
+                    $sisa = (($value1['distribution_type'] == 100 && !is_null($value1['stokopname'])) ? $value1['stokopname'] : ((is_null($so)) ? $sisacum : (($allocatedDate < $soDate) ? $beforeso : $afterso)));
                     $sisacum += $sisa;
                 }
 
@@ -6023,10 +6023,15 @@ class Report extends \App\Controllers\BaseController
                     $i++;
                     $row = [];
                     $row[] = substr($value1['allocated_date'], 2);
-                    $jenis = ($value1['distribution_type'] == 101 && $value['dikoreksi'] > 0) ? 'Semula : ' . $value1['dikoreksi'] . " Mutasi In/Out: " . $value1["koreksimutasiinout"] : ($value1['distribution_type'] == 100 && $value['dikoreksi'] > 0) ? 'Selisih :' . $value1['dikoreksi'] . " ket: " . $value1['koreksi'] : ($value1['distribution_type'] == 104 && $value1['dikoreksi'] > 0) ? "Selisih : " . $value1['dikoreksi'] . " Ket: " . $value1['koreksi'] : '';
+                    $jenis = ($value1['distribution_type'] == 101 && $value['dikoreksi'] > 0) ?
+                        ('Semula : ' . $value1['dikoreksi'] . " Mutasi In/Out: " . $value1["koreksimutasiinout"]) : (($value1['distribution_type'] == 100 && $value['dikoreksi'] > 0) ?
+                            ('Selisih :' . $value1['dikoreksi'] . " ket: " . $value1['koreksi'])
+                            : (($value1['distribution_type'] == 104 && $value1['dikoreksi'] > 0) ?
+                                "Selisih : " . $value1['dikoreksi'] . " Ket: " . $value1['koreksi']
+                                : ''));
                     // if( distribution_type =101 and dikoreksi>0,koreksi + ' Semula : '+ string(dikoreksi,'#,##0;[RED](#,##0)') + ' Mutasi In/Out: '+  string(koreksimutasiinout,'#,##0;[RED](#,##0)' ),if(distribution_type=100 and dikoreksi>0,'Selisih :'+  string(dikoreksi,'#,##0;[RED](#,##0)') + ' ket: '+  koreksi ,if(distribution_type=104 and dikoreksi>0,'Selisih :'+  string(dikoreksi,'#,##0;[RED](#,##0)') + ' ket: '+  koreksi,'')) )
                     $row[] = "<p>" . $value1['doc_no'] . "</p>" . "<p>" . $jenis . "</p>" . "<p>" . $value1['pbf'] . "</p>";
-                    $persediaan = ($value1['distribution_type'] == 104) ? $value1['awal'] : ($value1['distribution_type'] == 100) ? $value1['stokopname'] ?? 0 : 0;
+                    $persediaan = ($value1['distribution_type'] == 104) ? $value1['awal'] : (($value1['distribution_type'] == 100) ? ($value1['stokopname'] ?? 0) : 0);
                     // if( distribution_type= 104,awal , if(distribution_type=100, stokopname ,0))
                     $row[] = $persediaan;
                     $masuk = abs($value1['terimabapb'] + $value1['terimaret'] + $value1['terimatrx'] + ($value1['distribution_type'] == 101) ? ($value1['koreksimutasiinout']) : 0);
@@ -6038,7 +6043,7 @@ class Report extends \App\Controllers\BaseController
                     //  if(distribution_type =100 and (not isnull( stokopname )), stokopname , if(isnull(so),cumulativeSum( sisa for group 1 ),if(allocated_date < stockopnamedate,cumulativeSum(beforeso for group 1 ),cumulativeSum(afterso for group 1 ) ) ))
                     $allocatedDate = date_create(strval($value1['allocated_date']));
                     $soDate = date_create(strval($value1['stockopnamedate']));
-                    $sisa = ($value1['distribution_type'] == 100 && !is_null($value1['stokopname']) ? $value1['stokopname'] : (is_null($so)) ? $sisacum : ($allocatedDate < $soDate) ? $beforesocum : $aftersocum);
+                    $sisa = ($value1['distribution_type'] == 100 && !is_null($value1['stokopname'])) ? $value1['stokopname'] : ((is_null($so)) ? $sisacum : (($allocatedDate < $soDate) ? $beforesocum : $aftersocum));
                     $row[] = $sisa;
                     foreach ($dist as  $dkey => $dvalue) {
                         if ($dist[$dkey]['distribution_type'] == ($value1['distribution_type'])) {
