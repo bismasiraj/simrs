@@ -2,10 +2,6 @@
 <html lang="id">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#424242" />
     <?php
     // $titleresult = $this->customlib->getTitleName();
     if (!empty(lang('Auth.loginTitle'))) {
@@ -15,15 +11,8 @@
     }
     ?>
     <title><?php echo $title_name; ?></title>
-    <!--favican-->
-    <link href="<?php echo base_url(); ?>uploads/hospital_content/logo/rsudMYunus.ico" rel="shortcut icon" type="image/x-icon">
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/css/form-elements.css">
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo base_url(); ?>/assets/css/jquery.mCustomScrollbar.min.css">
+    <?php echo view('layout/partials/head-css.php');
+    ?>
     <style type="text/css">
         .col-md-offset-3 {
             margin-left: 29%;
@@ -111,89 +100,55 @@
                     }
                     ?>
                     <div class="col-lg-5 col-sm-5 form-box <?php echo $offset; ?>">
-                        <div class="loginbg">
+                        <div class="row">
+                            <div class="card loginbg">
+                                <div class="card-body pt-0">
+                                    <div class="p-3">
+                                        <!-- <h4 class="text-muted font-size-18 mb-1 text-center">Selamat Datang</h4>
+                                        <p class="text-muted text-center">Silahkan login untuk melanjutkan ke aplikasi SIMRS</p> -->
+                                        <form class="form-horizontal mt-4" action="index.html">
+                                            <div class="mb-3">
+                                                <label for="username">
+                                                    <h4>Username</h4>
+                                                </label>
+                                                <input type="text" name="login" placeholder="<?php echo lang('Auth.username'); ?>" value="" class="form-username form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" id="email">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="userpassword">
+                                                    <h4>Password</h4>
+                                                </label>
+                                                <input type="password" value="" name="password" placeholder="<?php echo lang('Auth.password'); ?>" class="form-password form-control <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>" id="password" autocomplete="off">
+                                            </div>
+                                            <div class="mb-3 row mt-4">
+                                                <?php if ($config->allowRemembering) : ?>
+                                                    <div class="col-6">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')) : ?> checked <?php endif ?>>
+                                                            <label class="form-check-label" for="customControlInline">
+                                                                <?= lang('Auth.rememberMe') ?>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
 
-                            <div class="form-bottom">
-                                <h3 class="font-white bolds"><?= lang('Auth.admin_login'); ?></h3>
-                                <?= view('Myth\Auth\Views\_message_block') ?>
-                                <form action="<?= url_to('login') ?>" method="post">
-                                    <?= csrf_field() ?>
-                                    <div class="form-group">
-                                        <input type="text" name="login" placeholder="<?php echo lang('Auth.username'); ?>" value="" class="form-username form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" id="email">
-                                        <div class="invalid-feedback">
-                                            <?= session('errors.login') ?>
-                                        </div>
+                                                <div class="col-6 text-end">
+                                                    <button class="btn btn-primary w-md waves-effect waves-light" type="submit"><?php echo lang('Auth.sign_in'); ?></button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="password" value="" name="password" placeholder="<?php echo lang('Auth.password'); ?>" class="form-password form-control <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>" id="password" autocomplete="off">
-                                        <div class="invalid-feedback">
-                                            <?= session('errors.password') ?>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn"><?php echo lang('Auth.sign_in'); ?></button>
-                                </form>
-                                <br>
-                                <?php if ($config->activeResetter) : ?>
-                                    <p><a href="<?php echo site_url('site/forgotpassword') ?>" class="forgot"><i class="fa fa-key"></i> <?php echo lang('Auth.forgot_password'); ?>?</a> </p>
-                                <?php endif; ?>
-                                <?php if ($config->allowRemembering) : ?>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')) : ?> checked <?php endif ?>>
-                                            <?= lang('Auth.rememberMe') ?>
-                                        </label>
-                                    </div>
-                                <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <?php
-                    if (!$empty_notice) {
-                    ?>
-                        <div class="col-lg-1 col-sm-1">
-                            <div class="separatline"></div>
-                        </div>
-                        <div class="col-lg-6 col-sm-6 col-sm-6">
-                            <div class="loginright form-box  mCustomScrollbar">
-                                <div class="messages">
-                                    <h3><?php echo lang('Auth.what_is_new_in'); ?> <?php echo $sch_name; ?></h3>
-                                    <?php
-                                    foreach ($notice as $notice_key => $notice_value) {
-                                    ?>
-                                        <h4><?php echo $notice_value['title']; ?></h4>
-                                        <?php
-                                        $string = ($notice_value['description']);
-                                        $string = strip_tags($string);
-                                        if (strlen($string) > 100) {
-                                            // truncate string
-                                            $stringCut = substr($string, 0, 100);
-                                            $endPoint = strrpos($stringCut, ' ');
-                                            //if the string doesn't contain any space then it will cut without word basis.
-                                            $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
-                                            $string .= '... <a class=more href="' . site_url('read/' . $notice_value['slug']) . '">Read More</a>';
-                                        }
-                                        echo '<p>' . $string . '</p>';
-                                        ?>
-                                        <div class="logdivider"></div>
-                                    <?php
-                                    }
-                                    ?>
-                                </div>
-                            </div>
-                        </div><!--./col-lg-6-->
-                    <?php
-                    }
-                    ?>
+
                 </div>
             </div>
         </div>
     </div>
     <!-- Javascript -->
-    <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery-1.11.1.min.js"></script>
-    <script src="<?php echo base_url(); ?>backend/usertemplate/assets/bootstrap/js/bootstrap.min.js"></script>
+    <?php echo view('layout/partials/vendor-scripts.php'); ?>
     <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.backstretch.min.js"></script>
-    <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.mCustomScrollbar.min.js"></script>
-    <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.mousewheel.min.js"></script>
 </body>
 
 </html>
