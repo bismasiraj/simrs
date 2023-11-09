@@ -158,7 +158,7 @@
             .append($('<tr id="diag' + diagIndex + '">')
                 // .append($('<td>').html(diagIndex + "."))
                 .append($('<td>')
-                    .append('<select id="diag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')" style="width: 100%"></select>')
+                    .append('<div class="p-2 select2-full-width"><select id="diag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')"></select></div>')
                     .append('<input id="diag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
                 )

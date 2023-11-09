@@ -58,20 +58,14 @@ $currency_symbol = 'Rp. ';
                                     </li>
                                 <?php } ?>
                                 <?php if (in_array($giTipe, $rajalTipe)  && $giTipe != 0) { ?>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope"></i>Rawat Jalan</button>
-                                    </li>
+                                    <li class="nav-item active" role="presentation"><a href=" #rawat_jalan" data-toggle="tab" aria-expanded="true"><i class="fa fa-stethoscope"></i> Rawat Jalan</a></li>
                                     <!-- <li><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li> -->
                                 <?php } ?>
                                 <?php if ($giTipe == 3) { ?>
-                                    <li class="nav-item active" role="presentation">
-                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures"></i>Rawat Inap</button>
-                                    </li>
+                                    <li class="nav-item active" role="presentation"><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li>
                                 <?php } ?>
                                 <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 3  && $giTipe != 0) { ?>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures"></i>Rawat Inap</button>
-                                    </li>
+                                    <li class="nav-item" role="presentation"><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li>
                                 <?php } ?>
 
                             </ul>

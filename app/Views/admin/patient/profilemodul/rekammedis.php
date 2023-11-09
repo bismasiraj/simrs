@@ -2,16 +2,9 @@
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
 ?>
-<div class="tab-pane" id="rekammedis" role="tabpanel">
+<div class="tab-pane active" id="rekammedis" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12">
-            <?php echo view('admin/patient/profilemodul/profilebiodata', [
-                'visit' => $visit,
-                'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                'pasienDiagnosa' => $pasienDiagnosa
-            ]); ?>
-        </div>
-        <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
+        <div class="col-lg-12 col-md-12 col-sm-12 mt-4">
             <form id="formaddrm" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                 <div class="">
                     <div class="modal-body pt0 pb0">
@@ -171,7 +164,7 @@ $permission = user()->getPermissions();
                                                 <hr>
                                             </div><!--./col-md-12-->
                                             <div class="row">
-                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
                                                     <div class="mb-4">
                                                         <h3>Diagnosa</h3>
                                                         <div class="staff-members">
@@ -179,9 +172,9 @@ $permission = user()->getPermissions();
                                                                 <table class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
                                                                     <?php if (true) { ?>
                                                                         <thead>
-                                                                            <th class="text-center" style="width: 40%">Diagnosa</th>
-                                                                            <th class="text-center" style="width: 20%">Jenis Kasus</th>
-                                                                            <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
+                                                                            <th>Diagnosa</th>
+                                                                            <th>Jenis Kasus</th>
+                                                                            <th colspan="2">Kategori Diagnosis</th>
                                                                         </thead>
                                                                         <tbody id="bodyDiag">
                                                                         </tbody>
@@ -189,13 +182,13 @@ $permission = user()->getPermissions();
                                                                 </table>
                                                             </div>
                                                             <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                 </div>
-                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
                                                     <div class="mb-4">
                                                         <h3>Prosedur</h3>
                                                         <div class="staff-members">
@@ -211,7 +204,7 @@ $permission = user()->getPermissions();
                                                                 </table>
                                                             </div>
                                                             <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="addprocedure" onclick="addRowProc()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Prosedur</span></button>
+                                                                <button type="button" id="addprocedure" onclick="addRowProc()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <span>Prosedur</span></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -247,7 +240,7 @@ $permission = user()->getPermissions();
                                                 <div id="ardirujukkegroup" class="col-sm-4 col-md-3">
                                                     <div class="mb-3">
                                                         <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
-                                                            <div class="select2-full-width">
+                                                            <div class="p-2 select2-full-width">
                                                                 <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke">
                                                                 </select>
                                                             </div>
@@ -258,13 +251,16 @@ $permission = user()->getPermissions();
                                                     <div class="mb-3">
                                                         <div class="form-group">
                                                             <label>Tanggal Kontrol</label>
-                                                            <div class="input-group" id="artglkontrol">
-                                                                <input id="artgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
-
-                                                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
-                                                            </div>
+                                                            <input id="artgl_kontrol" name="tgl_kontrol" placeholder="" type="text" class="form-control " value="<?= date('Y-m-d');; ?>">
+                                                            <span class="text-danger"></span>
                                                         </div>
+                                                        <script type="text/javascript">
+                                                            $(function() {
+                                                                $('#artgl_kontrol').datetimepicker({
+                                                                    format: 'YYYY-MM-DD'
+                                                                });
+                                                            });
+                                                        </script>
                                                     </div>
                                                 </div>
                                                 <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-3">
@@ -298,62 +294,59 @@ $permission = user()->getPermissions();
                                             </div>
                                             <div class="row mt-4 mb-4">
                                                 <div id="arskdpgroup" class="col-sm-12 col-md-6 col-lg-6">
-                                                    <div class="mb-4">
-                                                        <h3>Pembuatan SKDP</h3>
-                                                        <div class="staff-members">
-                                                            <div class="col-sm-12 col-md-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label>Nomor SKDP</label>
-                                                                        <input id="arskdp" name="skdp" placeholder="" type="text" class="form-control " value="" readonly>
-                                                                        <span class="text-danger"></span>
-                                                                    </div>
+                                                    <h3>Pembuatan SKDP</h3>
+
+                                                    <div class="staff-members">
+                                                        <div class="col-sm-12 col-md-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label>Nomor SKDP</label>
+                                                                    <input id="arskdp" name="skdp" placeholder="" type="text" class="form-control " value="" readonly>
+                                                                    <span class="text-danger"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="addskdp" onclick="postKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                                <button type="button" id="deleteskdp" onclick="deleteKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
-                                                            </div>
+                                                        </div>
+                                                        <div class="box-tab-tools" style="text-align: center;">
+                                                            <button type="button" id="addskdp" onclick="postKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <span>Simpan</span></button>
+                                                            <button type="button" id="deleteskdp" onclick="deleteKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn delete"><i class="fa fa-remove"></i> <span>Delete</span></button>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div id="arsprigroup" class="col-sm-12 col-md-6 col-lg-6">
-                                                    <div class="mb-4">
-                                                        <h3>Pembuatan SPRI</h3>
-                                                        <div class="staff-members">
-                                                            <div class="col-sm-12 col-md-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label>Nomor SPRI</label>
-                                                                        <input id="arspri" name="spri" placeholder="" type="text" class="form-control " value="" readonly>
-                                                                        <span class="text-danger"></span>
-                                                                    </div>
+                                                    <h3>Pembuatan SPRI</h3>
+
+                                                    <div class="staff-members">
+                                                        <div class="col-sm-12 col-md-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label>Nomor SPRI</label>
+                                                                    <input id="arspri" name="spri" placeholder="" type="text" class="form-control " value="" readonly>
+                                                                    <span class="text-danger"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="addspri" onclick="postKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                                <button type="button" id="deletespri" onclick="deleteKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
-                                                            </div>
                                                         </div>
+                                                        <div class="box-tab-tools" style="text-align: center;">
+                                                            <button type="button" id="addspri" onclick="postKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <span>Simpan</span></button>
+                                                            <button type="button" id="deletespri" onclick="deleteKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn delete"><i class="fa fa-remove"></i> <span>Delete</span></button>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                                 <div id="arrujukaneksternalgroup" class="col-sm-12 col-md-6 col-lg-6">
-                                                    <div class="mb-4">
-                                                        <h3>Pembuatan Rujukan Eksternal</h3>
-                                                        <div class="staff-members">
-                                                            <div class="col-sm-12 col-md-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label>Nomor Rujukan</label>
-                                                                        <input id="arnorujukan" name="norujukan" placeholder="" type="text" class="form-control " value="" readonly>
-                                                                        <span class="text-danger"></span>
-                                                                    </div>
+                                                    <h3>Pembuatan Rujukan Eksternal</h3>
+                                                    <div class="staff-members">
+                                                        <div class="col-sm-12 col-md-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label>Nomor Rujukan</label>
+                                                                    <input id="arnorujukan" name="norujukan" placeholder="" type="text" class="form-control " value="" readonly>
+                                                                    <span class="text-danger"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                                <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
-                                                            </div>
+                                                        </div>
+                                                        <div class="box-tab-tools" style="text-align: center;">
+                                                            <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-plus"></i> <span>Simpan</span></button>
+                                                            <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn delete"><i class="fa fa-remove"></i> <span>Delete</span></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -512,13 +505,16 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-4 col-md-3">
                                                 <div class="form-group">
                                                     <label>Tanggal Kontrol</label>
-                                                    <div class="input-group" id="arhtglkontrol">
-                                                        <input id="arhtgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#arhtglkontrol' value="<?= date('Y-m-d'); ?>">
-
-                                                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
-                                                    </div>
+                                                    <input id="arhtgl_kontrol" placeholder="" type="text" class="form-control " value="<?= date('Y-m-d');; ?>" disabled>
+                                                    <span class="text-danger"></span>
                                                 </div>
+                                                <script type="text/javascript">
+                                                    $(function() {
+                                                        $('#tgl_kontrol').datetimepicker({
+                                                            format: 'YYYY-MM-DD'
+                                                        });
+                                                    });
+                                                </script>
                                             </div>
                                             <div class="col-sm-4 col-md-3">
                                                 <div class="form-group">
@@ -547,9 +543,13 @@ $permission = user()->getPermissions();
 
                                         </div><!--./row-->
                                     </div><!--./row-->
-                                    <div class="panel-footer text-end mb-4">
-                                        <button type="submit" id="formaddrmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                        <button type="button" id="formeditrm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                    <div class="box-footer sticky-footer">
+                                        <div class="pull-right">
+                                            <button type="submit" id="formaddrmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="formeditrm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right" style="display:none;"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                        </div>
+                                        <div class="pull-right" style="margin-right: 10px; ">
+                                        </div>
                                     </div>
                                 </div><!--./col-md-4-->
                             </div><!--./row-->
@@ -562,3 +562,42 @@ $permission = user()->getPermissions();
 
 </div>
 <!-- -->
+
+
+
+<script type='text/javascript'>
+    var mrJson;
+    var tagihan = 0.0;
+    var subsidi = 0.0;
+    var potongan = 0.0;
+    var pembulatan = 0.0;
+    var pembayaran = 0.0;
+    var retur = 0.0;
+    var total = 0.0;
+    var lastOrder = 0;
+    $(document).ready(function(e) {
+        var nomor = '<?= $visit['no_registration']; ?>';
+        var ke = '%'
+        var mulai = '2023-08-01' //tidak terpakai
+        var akhir = '2023-08-31' //tidak terpakai
+        var lunas = '%'
+        // var klinik = '<?= $visit['clinic_id']; ?>'
+        var klinik = '%'
+        var rj = '%'
+        var status = '%'
+        var nota = '%'
+        var trans = '<?= $visit['trans_id']; ?>'
+        var visit = '<?= $visit['visit_id']; ?>'
+    })
+</script>
+<script type="text/javascript">
+    var historyJson = new Array();
+    var pasienDiagnosa = new Array();
+    var currentIndex;
+    var indexLength;
+    $(document).ready(function(e) {
+        getDiagnosas()
+        getProcedures()
+        modalAddRm()
+    })
+</script>
