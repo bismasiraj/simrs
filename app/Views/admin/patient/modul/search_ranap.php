@@ -156,8 +156,8 @@
     </form>
     <div class="box-body">
         <div class="mt-4">
-            <table class="table table-hover table-centered" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
-                <thead>
+            <table class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
+                <thead class="table-primary">
                     <style>
                         thead tr th {
                             text-align: center !important;

@@ -198,8 +198,8 @@ $permissions = user()->getPermissions();
     </div>
     <div class="box-body">
         <div class="mt-4">
-            <table class="table table-hover table-centered" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
-                <thead>
+            <table id="tableSearchRajal" class="table table-bordered table-hover table-centered" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
+                <thead class="table-primary">
                     <tr style="text-align: center">
                         <th>Antrian</th>
                         <th>Nama/No RM/<br>Cara Kunjung</th>

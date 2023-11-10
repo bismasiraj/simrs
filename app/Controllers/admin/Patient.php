@@ -907,11 +907,11 @@ This Function is used to Add Patient
                 // $action .= "</div'>";
                 $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
                 //==============================
-                $row[] = '<h3 style="margin: auto;
-                padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h3>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['way_id'] . "</a>";
+                $row[] = '<h4 style="margin: auto;
+                padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h4>";
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 $row[] = substr($kunjungan[$key]['visit_date'], 0, 10) . "<br>" . substr($kunjungan[$key]['date_of_birth'], 0, 10);
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'];
+                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'] . "<br>" . $kunjungan[$key]['way_id'];
                 $row[] = "<b>" . $kunjungan[$key]['clinic_id'] . "</b><br><b>" . $kunjungan[$key]['employee_id'] . "</b><br>" . $kunjungan[$key]['class_id'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
