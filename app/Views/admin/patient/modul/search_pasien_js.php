@@ -1,156 +1,151 @@
 <script type="text/javascript">
-    var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();
-    var skunj = new Array();
+    var tablePasien = $("#datatable").DataTable()
+    var dataPasien = Array();
+    $(document).ready(function() {
+        var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();
+        var skunj = new Array();
 
-    gender = [
-        <?php foreach ($gender as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $gender[$key][$key1]); ?>',
-                <?php } ?>],
+        gender = [
+            <?php foreach ($gender as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $gender[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        <?php foreach ($coverage as $key => $value) { ?>
+            coverage[<?= $coverage[$key]['coverage_id']; ?>] = '<?= $coverage[$key]['coveragetype']; ?>';
         <?php } ?>
-    ];
-    <?php foreach ($coverage as $key => $value) { ?>
-        coverage[<?= $coverage[$key]['coverage_id']; ?>] = '<?= $coverage[$key]['coveragetype']; ?>';
-    <?php } ?>
-    <?php foreach ($status as $key => $value) { ?>
-        status[<?= $status[$key]['status_peserta_kode']; ?>] = '<?= $status[$key]['status_peserta']; ?>';
-    <?php } ?>
-    <?php foreach ($jenis as $key => $value) { ?>
-        jenis[<?= $jenis[$key]['kdjnspeserta']; ?>] = '<?= $jenis[$key]['nmjnspeserta']; ?>';
-    <?php } ?>
-    kelas = [
-        <?php foreach ($kelas as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kelas[$key][$key1]); ?>',
-                <?php } ?>],
+        <?php foreach ($status as $key => $value) { ?>
+            status[<?= $status[$key]['status_peserta_kode']; ?>] = '<?= $status[$key]['status_peserta']; ?>';
         <?php } ?>
-    ];
-    kalurahan = [
-        <?php foreach ($kalurahan as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kalurahan[$key][$key1]); ?>',
-                <?php } ?>],
+        <?php foreach ($jenis as $key => $value) { ?>
+            jenis[<?= $jenis[$key]['kdjnspeserta']; ?>] = '<?= $jenis[$key]['nmjnspeserta']; ?>';
         <?php } ?>
-    ];
-    kecamatan = [
-        <?php foreach ($kecamatan as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kecamatan[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    kota = [
-        <?php foreach ($kota as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kota[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    prov = [
-        <?php foreach ($prov as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $prov[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
+        kelas = [
+            <?php foreach ($kelas as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kelas[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        kalurahan = [
+            <?php foreach ($kalurahan as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kalurahan[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        kecamatan = [
+            <?php foreach ($kecamatan as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kecamatan[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        kota = [
+            <?php foreach ($kota as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $kota[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        prov = [
+            <?php foreach ($prov as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $prov[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
 
-    statusPasien = [
-        <?php foreach ($statusPasien as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $statusPasien[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
+        statusPasien = [
+            <?php foreach ($statusPasien as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $statusPasien[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
 
-    payor = [
-        <?php foreach ($payor as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $payor[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
+        payor = [
+            <?php foreach ($payor as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $payor[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
 
-    agama = [
-        <?php foreach ($agama as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $agama[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    marital = [
-        <?php foreach ($marital as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $marital[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    blood = [
-        <?php foreach ($blood as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $blood[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    job = [
-        <?php foreach ($job as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $job[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
+        agama = [
+            <?php foreach ($agama as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $agama[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        marital = [
+            <?php foreach ($marital as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $marital[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        blood = [
+            <?php foreach ($blood as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $blood[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        job = [
+            <?php foreach ($job as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $job[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
 
-    education = [
-        <?php foreach ($education as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $education[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
-    family = [
-        <?php foreach ($family as $key => $value) { ?>[
-                <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $family[$key][$key1]); ?>',
-                <?php } ?>],
-        <?php } ?>
-    ];
+        education = [
+            <?php foreach ($education as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $education[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        family = [
+            <?php foreach ($family as $key => $value) { ?>[
+                    <?php foreach ($value as $key1 => $value1) { ?> '<?= str_replace("'", " ", $family[$key][$key1]); ?>',
+                    <?php } ?>],
+            <?php } ?>
+        ];
+        $("#formbiodata").on('submit', (function(e) {
+
+            e.preventDefault();
+            $("#formbiodatabtn").html('<i class="spinner-border spinner-border-sm"></i>')
+            // spinner-border spinner-border-sm
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/admin/getpatientdatatable',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    tablePasien.clear().draw()
+                    var stringcolumn = '';
+                    data.data.forEach((element, key) => {
+                        // stringcolumn += '<tr class="table tablecustom-light">';
+                        // element.forEach((element1, key1) => {
+                        //     stringcolumn += "<td>" + element1 + "</td>";
+                        // });
+                        // stringcolumn += '</tr>'
+                        tablePasien.row.add(element).draw()
+
+                    });
+                    // $(".ajaxlist").html(stringcolumn);
+                    $("#formbiodatabtn").button('reset');
+                    // tablePasien.draw()
+                    // dataPasien = data.data
+                    // $('#datatable').DataTable().ajax.reload();
+                    $("#formbiodatabtn").html('<i class="fa fa-search"></i>')
+
+
+                },
+                error: function() {
+                    $("#formbiodatabtn").html('<i class="fa fa-search"></i>')
+                }
+            });
+        }))
+    });
 </script>
 
 <!-- //========datatable start===== -->
 <script type="text/javascript">
-    // (function($) {
-    //     'use strict';
-    //     $(document).ready(function() {
-
-    //         var search_text = $('#search_text').val();
-    //         console.log(search_text)
-    //         initDatatable('ajaxlist', 'admin/admin/getpatientdatatable', {
-    //             'search_text': search_text
-    //         }, [], 100, [{
-    //             "bSortable": false,
-    //             "aTargets": [0, 8]
-    //         }]);
-    //     })
-    // }(jQuery))
-
-    $("#formbiodata").on('submit', (function(e) {
-
-        e.preventDefault();
-        // $("#formbiodatabtn").button('loading');
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/admin/getpatientdatatable',
-            type: "POST",
-            data: new FormData(this),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                $(".ajaxlist").html("");
-                var stringcolumn = '';
-                data.data.forEach((element, key) => {
-                    stringcolumn += '<tr class="table tablecustom-light">';
-                    element.forEach((element1, key1) => {
-                        stringcolumn += "<td>" + element1 + "</td>";
-                    });
-                    stringcolumn += '</tr>'
-
-                });
-                $(".ajaxlist").html(stringcolumn);
-                $("#formbiodatabtn").button('reset');
-
-            },
-            error: function() {
-
-            }
-        });
-    }))
-
     function getpatientdatatable() {
         alert('masuk')
 

@@ -47,17 +47,17 @@ $permissions = user()->getPermissions();
             text-align: center;
         }
     </style>
-    <table class="table table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
-        <thead>
+    <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+        <thead class="table-primary">
             <tr>
-                <th><input type="checkbox" name="checkAll"> #</th>
+                <th>No MR</th>
                 <th><?php echo lang('Word.patient_name'); ?></th>
                 <th><?php echo lang('Word.age'); ?></th>
                 <th><?php echo lang('Word.gender'); ?></th>
                 <th><?php echo lang('Word.phone'); ?></th>
                 <th><?php echo lang('Word.guardian_name'); ?></th>
                 <th><?php echo lang('Word.address'); ?></th>
-                <th></th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody class="ajaxlist" class="table-group-divider">
