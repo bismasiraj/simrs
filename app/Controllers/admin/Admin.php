@@ -519,8 +519,8 @@ class Admin extends \App\Controllers\BaseController
                 $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
 
                 //==============================
-                $row[] = $id;
-                $row[] = $first_action . $dt_response[$key]['NAME_OF_PASIEN'] . "</a>";
+                $row[] = $checkbox;
+                $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
                 $row[] = $this->getPatientAge($age, $month, $day);
                 if ($dt_response[$key]['GENDER'] == '1') {
                     $row[] = 'Laki-laki';
@@ -698,7 +698,9 @@ class Admin extends \App\Controllers\BaseController
             }
 
             unset($clinic);
-
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
                 $i++;
