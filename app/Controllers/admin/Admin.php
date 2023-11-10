@@ -697,7 +697,7 @@ class Admin extends \App\Controllers\BaseController
                 }
             }
 
-            unset($clinic);
+            // unset($clinic);
             foreach ($clinicPermission as $key => $value) {
                 unset($clinic);
             }
