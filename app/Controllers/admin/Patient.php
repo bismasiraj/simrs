@@ -1078,11 +1078,13 @@ This Function is used to Add Patient
                 $action .= "</div'>";
                 $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
                 //==============================
-                $row[] = '<p style="margin: auto;
-                width: 50%;
-                text-align: left;
-                padding: 10px;">' . ($key + 1) . ".</p>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['contact_address'] . "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'] . "</a>" . $action;
+                // $row[] = '<p style="margin: auto;
+                // width: 50%;
+                // text-align: left;
+                // padding: 10px;">' . ($key + 1) . ".</p>";
+                $row[] = $kunjungan[$key]['no_registration'];
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>" . $action;
+                $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
                 $row[] = $kunjungan[$key]['status_pasien_id'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
                 $row[] = $kunjungan[$key]['clinic_id'] .  "<br>" . $kunjungan[$key]['employee_id'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
                 $row[] = $kunjungan[$key]['clinic_id_from'] .  "<br>" . $kunjungan[$key]['keluar_id'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);

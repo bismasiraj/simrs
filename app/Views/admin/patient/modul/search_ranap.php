@@ -156,7 +156,7 @@
     </form>
     <div class="box-body">
         <div class="mt-4">
-            <table class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
+            <table id="tableSearchRanap" class="table table-bordered table-hover table-centered" data-export-title="<?php echo lang('Word.ipd_patient'); ?>" style="text-align: center">
                 <thead class="table-primary">
                     <style>
                         thead tr th {
@@ -164,8 +164,9 @@
                         }
                     </style>
                     <tr style="text-align: center">
-                        <th>No.</th>
-                        <th>No RM - Nama</th>
+                        <th>No.MR</th>
+                        <th>Nama</th>
+                        <th>Alamat/No.Jaminan/No.SEP</th>
                         <th>Status/JK</th>
                         <th>Pelayanan/Dokter/HP/Phone</th>
                         <th>Rujukan dari/Tgl Masuk s/d Tgl Keluar</th>
