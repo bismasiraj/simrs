@@ -79,8 +79,8 @@ $permissions = user()->getPermissions();
                         <div class="modalicon">
 
                             <div id='edit_delete'>
-                                <a href="#" data-placement="bottom" data-toggle="tooltip" title="<?php echo lang('Word.edit'); ?>"><i class="fa fa-pencil"></i></a>
-                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo lang('Word.delete'); ?>"><i class="fa fa-trash"></i></a>
+                                <a href="#" data-placement="bottom" data-toggle="tooltip" title="<?php echo lang('Word.edit'); ?>"><i class="fas fa-pencil-alt">Edit</i></a>
+                                <a href="#" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="<?php echo lang('Word.delete'); ?>"><i class="fas fa-trash">Delete</i></a>
                             </div>
                         </div>
                         <h4 class="modal-title" id="modal_head"></h4>
@@ -112,7 +112,7 @@ $permissions = user()->getPermissions();
                                                                 <table class="table table-hover">
                                                                     <tbody>
                                                                         <tr>
-                                                                            <td class="bolds">No. Peserta</td>
+                                                                            <td class="bolds">Noss. Peserta</td>
                                                                             <td id="kk_no"></td>
                                                                             <td class="bolds">Alamat</td>
                                                                             <td id="address"></td>
@@ -221,10 +221,10 @@ $permissions = user()->getPermissions();
     if ($permissions['biodatapasien']['u'] == '1') {  ?>
         <div class="modal fade" id="editPasienModal" role="dialog" aria-labelledby="editPasienModal">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content modal-media-content">
-                    <div class="modal-header modal-media-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"><?php echo lang('Word.patient_details'); ?></h4>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modal_head"><?php echo lang('Word.patient_details'); ?></h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div><!--./modal-header-->
                     <form id="formeditpa" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                         <div class="modal-body pt0 pb0">

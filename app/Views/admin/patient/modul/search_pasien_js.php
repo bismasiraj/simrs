@@ -168,6 +168,130 @@
         $('#' + modalId).modal("show");
     }
 
+    function getStrKunjungan(id) {
+        $.ajax({
+            url: baseurl + 'admin/patient/getpatientDetails',
+            type: "POST",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(data) {
+                skunj = data
+                var link = '';
+                <?php if (user()->checkPermission('biodatapasien', 'd')) { ?>
+                    if (data.ismeninggal == 0) {
+                        var link = "<a href='#' data-toggle='tooltip' title='<?php echo lang('Word.disable'); ?>' onclick='patient_deactive(" + id + ")' data-placement='bottom' data-original-title='<?php echo lang('Word.disable'); ?>'><i class='fa fa-thumbs-o-down'></i></a><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo lang('Word.delete'); ?>'><i class='fa fa-trash'></i></a>";
+                    } else {
+                        var link = "<a href='#' data-toggle='tooltip' title='<?php echo lang('Word.enable'); ?>' onclick='patient_active(" + id + ")' data-original-title='<?php echo lang('Word.enable'); ?>'><i class='fa fa-thumbs-o-up'></i></a> <a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo lang('Word.delete'); ?>'><i class='fa fa-trash'></i></a>";
+                    }
+                <?php } ?>
+
+
+                if (data.gender == '1') {
+                    $("#imagebiodata").html('<img class="profile-user-img img-responsive" src="<?php echo base_url() . 'uploads/images/profile_male.png' ?>" alt="User profile picture">')
+                } else {
+                    $("#imagebiodata").html('<img class="profile-user-img img-responsive" src="<?php echo base_url() . 'uploads/images/profile_female.png' ?>" alt="User profile picture">')
+                }
+
+                $("patientid").val(data.no_registration);
+                $("#patient_name").html(data.name_of_pasien + " (" + data.no_registration + ")");
+                $("#kk_no").html(data.KK_NO);
+                coverage.forEach((element, index) => {
+                    if (index == data.coverage_id) {
+                        $("#coverages").html(element);
+                    }
+                });
+                $("#pasien_id").html(data.pasien_id);
+                kelas.forEach(value => {
+                    if (value[0] == data.class_id) {
+                        $("#class_id").html(value[1]);
+                    }
+                });
+                $("#placebirth").html(data.place_of_birth);
+                $("#datebirth").html(data.date_of_birth.substring(0, 10));
+                $("#age").html(data.patient_age);
+                $("#description").html(data.description);
+                $("#address").html(data.contact_address);
+                $("#rtrw").html(data.rt + " / " + data.rw);
+                kalurahan.forEach(kalvalue => {
+                    if (skunj.kal_id == kalvalue[0]) {
+                        $("#kalurahan").html(kalvalue[1]);
+                        kecamatan.forEach(kecvalue => {
+                            if (kecvalue[0] == kalvalue[2]) {
+                                $("#kecamatan").html(kecvalue[1]);
+                                kota.forEach(kotavalue => {
+                                    if (kecvalue[2] == kotavalue[1]) {
+                                        $("#kota").html(kotavalue[2]);
+                                        prov.forEach(provvalue => {
+                                            if (provvalue[0] == kotavalue[0]) {
+                                                $("#prov").html(provvalue[2]);
+                                            }
+                                        })
+                                    }
+
+                                });
+                            }
+                        });
+                    }
+                })
+
+                $("#phone").html(data.phone_number + " / " + data.mobile);
+                statusPasien.forEach(value => {
+                    if (value[0] == data.status_pasien_id) {
+                        $("#status").html(value[1]);
+                    }
+                });
+                payor.forEach(payorvalue => {
+                    if (payorvalue[1] == data.payor_id) {
+                        $("#payor").html(payorvalue[3]);
+                    }
+                });
+
+                $("#ayah").html(data.father);
+                $("#ibu").html(data.mother);
+                $("#sutri").html(data.spouse);
+                education.forEach(value => {
+                    if (value[0] == data.education_type_code) {
+                        $("#edukasi").html(value[1]);
+                    }
+                });
+                job.forEach(jobvalue => {
+                    if (jobvalue[0] == data.job_id) {
+                        $("#pekerjaan").html(jobvalue[1]);
+                    }
+                });
+                blood.forEach(bloodvalue => {
+                    if (bloodvalue[1] == data.blood_type_id) {
+                        $("#goldar").html(bloodvalue[0]);
+                    }
+                });
+                agama.forEach(agamavalue => {
+                    if (agamavalue[0] == data.kode_agama) {
+                        $("#agama").html(agamavalue[1]);
+                    }
+                });
+                marital.forEach(maritalvalue => {
+                    if (maritalvalue[0] == data.maritalstatusid) {
+                        $("#perkawinan").html(maritalvalue[1]);
+                    }
+                });
+                gender.forEach(gendervalue => {
+                    if (gendervalue[0] == data.gender) {
+                        $("#gender").html(gendervalue[1]);
+                    }
+                });
+                family.forEach(value => {
+                    if (value[0] == data.family_status_id) {
+                        $("#family").html(value[1]);
+                    }
+                });
+                $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fas fa-pencil-alt'></i></a>" + link + "");
+
+            },
+        });
+    }
+
     function getpatientData(id) {
         $('#modal_head').html("<?php echo lang('Word.patient_details'); ?>");
         $.ajax({
@@ -287,9 +411,136 @@
                         $("#family").html(value[1]);
                     }
                 });
-                $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
+                $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fas fa-pencil-alt'></i></a>" + link + "");
+
                 holdModal('rincianPasienModel');
                 patientvisit(data.no_registration);
+            },
+        });
+
+    }
+
+    function editBiodataPasien(id) {
+        $.ajax({
+            url: baseurl + 'admin/patient/getpatientDetails',
+            type: "POST",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(data) {
+                skunj = data
+                var link = '';
+                <?php if (user()->checkPermission('biodatapasien', 'd')) { ?>
+                    if (data.ismeninggal == 0) {
+                        var link = "<a href='#' data-toggle='tooltip' title='<?php echo lang('Word.disable'); ?>' onclick='patient_deactive(" + id + ")' data-placement='bottom' data-original-title='<?php echo lang('Word.disable'); ?>'><i class='fa fa-thumbs-o-down'></i></a><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo lang('Word.delete'); ?>'><i class='fa fa-trash'></i></a>";
+                    } else {
+                        var link = "<a href='#' data-toggle='tooltip' title='<?php echo lang('Word.enable'); ?>' onclick='patient_active(" + id + ")' data-original-title='<?php echo lang('Word.enable'); ?>'><i class='fa fa-thumbs-o-up'></i></a> <a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo lang('Word.delete'); ?>'><i class='fa fa-trash'></i></a>";
+                    }
+                <?php } ?>
+
+
+                if (data.gender == '1') {
+                    $("#imagebiodata").html('<img class="profile-user-img img-responsive" src="<?php echo base_url() . 'uploads/images/profile_male.png' ?>" alt="User profile picture">')
+                } else {
+                    $("#imagebiodata").html('<img class="profile-user-img img-responsive" src="<?php echo base_url() . 'uploads/images/profile_female.png' ?>" alt="User profile picture">')
+                }
+
+                $("patientid").val(data.no_registration);
+                $("#patient_name").html(data.name_of_pasien + " (" + data.no_registration + ")");
+                $("#kk_no").html(data.KK_NO);
+                coverage.forEach((element, index) => {
+                    if (index == data.coverage_id) {
+                        $("#coverages").html(element);
+                    }
+                });
+                $("#pasien_id").html(data.pasien_id);
+                kelas.forEach(value => {
+                    if (value[0] == data.class_id) {
+                        $("#class_id").html(value[1]);
+                    }
+                });
+                $("#placebirth").html(data.place_of_birth);
+                $("#datebirth").html(data.date_of_birth.substring(0, 10));
+                $("#age").html(data.patient_age);
+                $("#description").html(data.description);
+                $("#address").html(data.contact_address);
+                $("#rtrw").html(data.rt + " / " + data.rw);
+                kalurahan.forEach(kalvalue => {
+                    if (skunj.kal_id == kalvalue[0]) {
+                        $("#kalurahan").html(kalvalue[1]);
+                        kecamatan.forEach(kecvalue => {
+                            if (kecvalue[0] == kalvalue[2]) {
+                                $("#kecamatan").html(kecvalue[1]);
+                                kota.forEach(kotavalue => {
+                                    if (kecvalue[2] == kotavalue[1]) {
+                                        $("#kota").html(kotavalue[2]);
+                                        prov.forEach(provvalue => {
+                                            if (provvalue[0] == kotavalue[0]) {
+                                                $("#prov").html(provvalue[2]);
+                                            }
+                                        })
+                                    }
+
+                                });
+                            }
+                        });
+                    }
+                })
+
+                $("#phone").html(data.phone_number + " / " + data.mobile);
+                statusPasien.forEach(value => {
+                    if (value[0] == data.status_pasien_id) {
+                        $("#status").html(value[1]);
+                    }
+                });
+                payor.forEach(payorvalue => {
+                    if (payorvalue[1] == data.payor_id) {
+                        $("#payor").html(payorvalue[3]);
+                    }
+                });
+
+                $("#ayah").html(data.father);
+                $("#ibu").html(data.mother);
+                $("#sutri").html(data.spouse);
+                education.forEach(value => {
+                    if (value[0] == data.education_type_code) {
+                        $("#edukasi").html(value[1]);
+                    }
+                });
+                job.forEach(jobvalue => {
+                    if (jobvalue[0] == data.job_id) {
+                        $("#pekerjaan").html(jobvalue[1]);
+                    }
+                });
+                blood.forEach(bloodvalue => {
+                    if (bloodvalue[1] == data.blood_type_id) {
+                        $("#goldar").html(bloodvalue[0]);
+                    }
+                });
+                agama.forEach(agamavalue => {
+                    if (agamavalue[0] == data.kode_agama) {
+                        $("#agama").html(agamavalue[1]);
+                    }
+                });
+                marital.forEach(maritalvalue => {
+                    if (maritalvalue[0] == data.maritalstatusid) {
+                        $("#perkawinan").html(maritalvalue[1]);
+                    }
+                });
+                gender.forEach(gendervalue => {
+                    if (gendervalue[0] == data.gender) {
+                        $("#gender").html(gendervalue[1]);
+                    }
+                });
+                family.forEach(value => {
+                    if (value[0] == data.family_status_id) {
+                        $("#family").html(value[1]);
+                    }
+                });
+                $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fas fa-pencil-alt'></i></a>" + link + "");
+
+                editRecord(id)
             },
         });
     }
@@ -339,8 +590,8 @@
         $("#episa").val(skunj.coverage_id);
         $("#efamily").val(skunj.family_status_id);
         $("#ekk_no").val(skunj.kk_no);
-        $("#etmt").val(skunj.tmt.substring(0, 10));
-        $("#etat").val(skunj.tat.substring(0, 10));
+        // $("#etmt").val(skunj.tmt.substring(0, 10));
+        // $("#etat").val(skunj.tat.substring(0, 10));
         $("#eperkawinan").val(skunj.maritalstatusid);
 
         var kalselect = '';
@@ -381,7 +632,7 @@
         })
 
         $("#rincianPasienModel").modal('hide');
-        holdModal('editModal');
+        holdModal('editPasienModal');
     }
 
     $(document).ready(function(e) {
