@@ -35,8 +35,12 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                 <i class="mdi mdi-menu color-white"></i>
             </button>
 
+            <div class="d-flex justify-content-center align-items-center text-white">
+                <h4><?= $title; ?></h4>
+            </div>
 
         </div>
+
 
         <div class="d-flex">
 

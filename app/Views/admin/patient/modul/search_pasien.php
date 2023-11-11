@@ -2,70 +2,73 @@
 
 $permissions = user()->getPermissions();
 ?>
-<div class="row">
-    <div class="col-md-12">
-        <div class="mt-4">
-            <?php if (isset($permissions['biodatapasien']['c'])) {
-                if ($permissions['biodatapasien']['c'] == '1') { ?>
-                    <a data-toggle="modal" onclick="holdModal('addPasienModal')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
-            <?php }
-            } ?>
+<div class="tab-pane tab-content-height 
+                            <?php if ($giTipe == 0) echo "active"; ?>
+                            " id="biodata">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mt-4">
+                <?php if (isset($permissions['biodatapasien']['c'])) {
+                    if ($permissions['biodatapasien']['c'] == '1') { ?>
+                        <a data-toggle="modal" onclick="holdModal('addPasienModal')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
+                <?php }
+                } ?>
+            </div>
         </div>
-    </div>
-    <div class="col-md-12">
-        <div class="mt-4">
-            <form id="formbiodata" action="" method="post" class="">
-                <div class="col-sm-3">
-                    <?php if (isset($permissions['biodatapasien']['r'])) {
-                        if ($permissions['biodatapasien']['r'] == '1') {  ?>
-                            <div class="mb-3">
-                                <label class="form-label" for="formrow-firstname-input">Nama Pasien / Nomor</label>
-                                <div class="input-group">
-                                    <!-- <label class="mb-3">Nama Pasien / No RM</label> -->
-                                    <input type="search" name="search_text" id="nama" class=" form-control" placeholder="input nama/nomor rekam medis pasien" aria-label="Nama Pasien / No RM" aria-describedby="formbiodatabtn">
-                                    <button id="formbiodatabtn" class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fa fa-search"></i></button>
+        <div class="col-md-12">
+            <div class="mt-4">
+                <form id="formbiodata" action="" method="post" class="">
+                    <div class="col-sm-3">
+                        <?php if (isset($permissions['biodatapasien']['r'])) {
+                            if ($permissions['biodatapasien']['r'] == '1') {  ?>
+                                <div class="mb-3">
+                                    <label class="form-label" for="formrow-firstname-input">Nama Pasien / Nomor</label>
+                                    <div class="input-group">
+                                        <!-- <label class="mb-3">Nama Pasien / No RM</label> -->
+                                        <input type="search" name="search_text" id="nama" class=" form-control" placeholder="input nama/nomor rekam medis pasien" aria-label="Nama Pasien / No RM" aria-describedby="formbiodatabtn">
+                                        <button id="formbiodatabtn" class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fa fa-search"></i></button>
+                                    </div>
                                 </div>
-                            </div>
-                    <?php
-                        }
-                    } ?>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-12">
+                        <?php
+                            }
+                        } ?>
                     </div>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
 
-    <!-- <div class="">
+        <!-- <div class="">
                             <button type="submit" class="btn btn-primary pull-right btn-sm mt10 delete_selected" id="load" data-loading-text="<i class='fa fa-spinner fa-spin '></i> "><i class="fa fa-trash"></i> <?php echo lang('Word.delete_selected'); ?></button>
                         </div> -->
-    <style>
-        .ajaxlist {
-            text-align: center;
-        }
-    </style>
-    <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
-        <thead class="table-primary">
-            <tr>
-                <th>No MR</th>
-                <th><?php echo lang('Word.patient_name'); ?></th>
-                <th><?php echo lang('Word.age'); ?></th>
-                <th><?php echo lang('Word.gender'); ?></th>
-                <th><?php echo lang('Word.phone'); ?></th>
-                <th><?php echo lang('Word.guardian_name'); ?></th>
-                <th><?php echo lang('Word.address'); ?></th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="ajaxlist" class="table-group-divider">
-        </tbody>
-    </table>
-    <!-- </form> -->
+        <style>
+            .ajaxlist {
+                text-align: center;
+            }
+        </style>
+        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+            <thead class="table-primary">
+                <tr>
+                    <th style="width: 5%">No MR</th>
+                    <th style="width: 20%"><?php echo lang('Word.patient_name'); ?></th>
+                    <th style="width: 10%"><?php echo lang('Word.age'); ?></th>
+                    <th style="width: 5%"><?php echo lang('Word.gender'); ?></th>
+                    <th style="width: 15%"><?php echo lang('Word.phone'); ?></th>
+                    <th style="width: 15%"><?php echo lang('Word.guardian_name'); ?></th>
+                    <th style="width: 20%"><?php echo lang('Word.address'); ?></th>
+                    <th style="width: 10%">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="ajaxlist" class="table-group-divider">
+            </tbody>
+        </table>
+        <!-- </form> -->
+    </div>
 </div>
-
 <?php if (isset($permissions['biodatapasien']['r'])) {
     if ($permissions['biodatapasien']['r'] == '1') {  ?>
         <div class="modal fade bs-example-modal-xl" id="rincianPasienModel" role="dialog" aria-labelledby="rincianPasienModelLabel">

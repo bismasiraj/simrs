@@ -86,15 +86,15 @@ abstract class BaseController extends Controller
         $age = "";
 
         if ($year != 0) {
-            $age .= $year . ' ' . lang('year') . ' ';
+            $age .= $year . ' th ';
         }
 
         if ($month != 0) {
-            $age .= $month . ' ' . lang('month') . ' ';
+            $age .= $month . ' bl ';
         }
 
         if ($day != 0) {
-            $age .= $day . ' ' . lang('days');
+            $age .= $day . ' hr';
         }
 
         return $age;

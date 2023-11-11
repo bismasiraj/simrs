@@ -516,11 +516,13 @@ class Admin extends \App\Controllers\BaseController
                 // }
                 // $action .= "</div>";
                 $first_action = "<a href='#' onclick='getpatientData(\"" . $id . "\")'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
-                $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
+                // $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
+                $checkbox = $id;
 
                 //==============================
                 $row[] = $checkbox;
-                $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
+                // $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
+                $row[] = $first_action . $dt_response[$key]['NAME_OF_PASIEN'] . "</a>";
                 $row[] = $this->getPatientAge($age, $month, $day);
                 if ($dt_response[$key]['GENDER'] == '1') {
                     $row[] = 'Laki-laki';

@@ -3,7 +3,8 @@
 
 <head>
 
-    <?php echo view('layout/partials/title-meta.php', [
+    <?php
+    echo view('layout/partials/title-meta.php', [
         'title' => $orgunit['NAME_OF_ORG_UNIT'],
     ]);
     ?>
@@ -19,7 +20,11 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php echo view('layout/partials/menu.php'); ?>
+        <?php echo view('layout/partials/menu.php', [
+            'title' => $title,
+            'pagetitle' => 'dashboard',
+            'subtitle' => 'dashboard',
+        ]); ?>
 
         <!-- ============================================================== -->
         <!-- Start right Content here -->
@@ -29,11 +34,7 @@
             <div class="page-content">
                 <div class="container-fluid">
 
-                    <?php echo view('layout/partials/page-title.php', [
-                        'title' => 'dashboard',
-                        'pagetitle' => 'dashboard',
-                        'subtitle' => 'dashboard',
-                    ]);
+                    <?php echo view('layout/partials/page-title.php');
                     ?>
 
                     <?php $this->renderSection('content'); ?>
@@ -43,7 +44,6 @@
             <!-- End Page-content -->
 
 
-            <?php echo view('layout/partials/footer.php'); ?>
         </div>
         <!-- end main content-->
 

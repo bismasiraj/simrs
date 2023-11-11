@@ -5181,7 +5181,7 @@ This Function is used to Add Patient
         $session->set($sessionData);
         $giTipe = 1;
 
-        $title = 'Rawat Jalan';
+        $title = 'Pelayanan';
 
         return $this->rajalTemplate($giTipe, $title);
     }
