@@ -4,4 +4,3 @@
     'subtitle' => 'dashboard',
 ]); ?>
 <?php echo view('layout/partials/sidebar.php'); ?>
-<!-- @@include("horizontal.html") -->

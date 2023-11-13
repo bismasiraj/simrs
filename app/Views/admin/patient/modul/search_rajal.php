@@ -870,6 +870,36 @@ $permissions = user()->getPermissions();
         </form>
     </div><!-- /.modal-dialog -->
 </div>
+<div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Pilih Kunjungan Rawat Jalan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Pilih kunjungan rawat jalan yang akan dirawat-inapkan</p>
+                <div id="loadingHistoryrajal"></div>
+                <table id="historyRajalTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                    <thead class="table-primary">
+                        <tr style="text-align: center">
+                            <th>No RM</th>
+                            <th>Nama</th>
+                            <th>Tanggal Kunjungan</th>
+                            <th>Asuransi</th>
+                            <th>Poli<br>Dokter</th>
+                            <th>No SEP / Rujukan</th>
+                            <th>Kelas / Hak Kelas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="ajaxlist" class="table-group-divider">
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <?php if (isset($permissions['pendaftaranrajal']['c'])) {
     if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
 

@@ -1,6 +1,7 @@
 <?php $this->extend('layout/default', [
     'orgunit' => $orgunit,
-    'img_time' => $img_time
+    'img_time' => $img_time,
+    'title' => $title,
 ]) ?>
 
 

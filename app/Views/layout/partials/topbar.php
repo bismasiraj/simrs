@@ -36,7 +36,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </button>
 
             <div class="d-flex justify-content-center align-items-center text-white">
-                <h4><?= $title; ?></h4>
+                <div style="font-size: 1.21875rem;"><?= $title; ?></div>
             </div>
 
         </div>

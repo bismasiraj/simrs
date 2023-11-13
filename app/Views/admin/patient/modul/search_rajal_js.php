@@ -6,6 +6,7 @@ $permissions = user()->getPermissions();
 ?>
 <script type="text/javascript">
     var tableRajal = $("#tableSearchRajal").DataTable()
+    var tableHistoryRajal = $("#historyRajalTable").DataTable()
     $(document).ready(function(e) {
         <?php if ($gsPoli != '') { ?>
             $("#klinikrajal").val('<?= $gsPoli; ?>')
@@ -411,5 +412,34 @@ $permissions = user()->getPermissions();
     function insertSPRI() {
         alert("Get Nomor SKDP Berhasil")
         $("#pvspecimenno").val("0701R0010422K002045")
+    }
+
+
+    function getHistoryRajalPasien(id) {
+        $("#loadingHistoryrajal").show()
+        $("#loadingHistoryrajal").html('<i class="spinner-border spinner-border-sm"></i>')
+        // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/gethistoryrajaldatatable',
+            type: "POST",
+            data: JSON.stringify({
+                'norm': id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                tableHistoryRajal.clear().draw()
+                data.data.forEach((element, key) => {
+                    tableHistoryRajal.row.add(element).draw()
+                });
+                $("#loadingHistoryrajal").html('')
+                $("#loadingHistoryrajal").hide()
+            },
+            error: function() {
+                $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
+            }
+        });
     }
 </script>

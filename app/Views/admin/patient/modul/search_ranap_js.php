@@ -32,4 +32,9 @@
         });
 
     }));
+
+    function addRanap(id) {
+        holdModal('historyRajalModal');
+        getHistoryRajalPasien(id)
+    }
 </script>

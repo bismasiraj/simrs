@@ -1,9 +1,6 @@
 <?php
-
 $this->extend('layout/basiclayout', [
-    'orgunit' => $orgunit,
-    'img_time' => $img_time,
-    'title' => $title,
+    'title' => $title
 ]) ?>
 <?php
 $rajalTipe = [1, 2, 0, 73, 50, 5];
@@ -11,7 +8,13 @@ $ranapTipe = [1, 3, 2, 0, 73, 50, 5];
 $permissions = user()->getPermissions();
 
 ?>
-
+<?php $this->section('topbar') ?>
+<?php echo view('layout/partials/topbar.php', [
+    'title' => $title,
+    'pagetitle' => 'dashboard',
+    'subtitle' => 'dashboard',
+]); ?>
+<?php $this->endSection() ?>
 <?php $this->section('content') ?>
 <?php
 $currency_symbol = 'Rp. ';

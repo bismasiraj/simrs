@@ -20,11 +20,9 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php echo view('layout/partials/menu.php', [
-            'title' => $title,
-            'pagetitle' => 'dashboard',
-            'subtitle' => 'dashboard',
-        ]); ?>
+
+        <?php $this->renderSection('topbar'); ?>
+        <?php echo view('layout/partials/sidebar.php'); ?>
 
         <!-- ============================================================== -->
         <!-- Start right Content here -->

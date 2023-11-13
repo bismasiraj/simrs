@@ -506,12 +506,13 @@ class Admin extends \App\Controllers\BaseController
 
                 $action = '<div class="btn-group" role="group">';
                 $action .= '<button id="btnGroupVerticalDrop' . $id . '" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Aksi <i class="mdi mdi-chevron-down"></i>
+                                                    Pilih <i class="mdi mdi-chevron-down"></i>
                                                 </button>';
 
                 $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
-                $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Kunjungan</a>';
-                $action .= '<a onclick=\'getpatientData("' . $id . '")\' class="dropdown-item" href="#">Detail Pasien</a>';
+                $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Jalan</a>';
+                $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Inap</a>';
+                $action .= '<a onclick=\'getpatientData("' . $id . '")\' class="dropdown-item" href="#">Histori Pasien</a>';
                 $action .= '<a onclick=\'editBiodataPasien("' . $id . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
                 $action .= "</div>";
                 $first_action = "<a href='#' onclick='getpatientData(\"" . $id . "\")'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
