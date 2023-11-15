@@ -5,8 +5,12 @@ $permissions = user()->getPermissions();
 // dd(isset($permissions['pendaftaranrajal']['c']));
 ?>
 <script type="text/javascript">
-    var tableRajal = $("#tableSearchRajal").DataTable()
-    var tableHistoryRajal = $("#historyRajalTable").DataTable()
+    var tableRajal = $("#tableSearchRajal").DataTable({
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
+    var tableHistoryRajal = $("#historyRajalTable").DataTable({
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
     $(document).ready(function(e) {
         <?php if ($gsPoli != '') { ?>
             $("#klinikrajal").val('<?= $gsPoli; ?>')

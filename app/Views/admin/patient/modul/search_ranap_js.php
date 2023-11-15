@@ -1,5 +1,7 @@
 <script type="text/javascript">
-    var tableRanap = $("#tableSearchRanap").DataTable()
+    var tableRanap = $("#tableSearchRanap").DataTable({
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
     $("#form2").on('submit', (function(e) {
 
         e.preventDefault();

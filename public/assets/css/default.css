@@ -21,3 +21,19 @@ body {
     padding: 2px 4px;
     font-weight: 500 !important;
 }
+.left-col-datatable {
+    float: left;
+    width: 25%;
+}
+
+.center-col-datatable {
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+
+.right-col-datatable {
+    float: left;
+    width: 25%;
+    text-align: right;
+}

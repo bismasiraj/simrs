@@ -2,6 +2,7 @@
 
 $permissions = user()->getPermissions();
 ?>
+
 <div class="tab-pane tab-content-height 
                             <?php if ($giTipe == 0) echo "active"; ?>
                             " id="biodata">

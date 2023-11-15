@@ -877,11 +877,10 @@ $permissions = user()->getPermissions();
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mt-0">Pilih Kunjungan Rawat Jalan</h5>
+                <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Pilih kunjungan rawat jalan yang akan dirawat-inapkan</p>
                 <div id="loadingHistoryrajal"></div>
                 <table id="historyRajalTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
                     <thead class="table-primary">
