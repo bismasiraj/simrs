@@ -11,7 +11,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
     <div class="navbar-header bg-primary">
         <div class="d-flex">
             <!-- LOGO -->
-            <div class="navbar-brand-box">
+            <!-- <div class="navbar-brand-box">
                 <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="22">
@@ -29,7 +29,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                         <img src="<?php echo $logo_image . "?" . $img_time; ?>" alt="" height="30">
                     </span>
                 </a>
-            </div>
+            </div> -->
 
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn">
                 <i class="mdi mdi-menu color-white"></i>

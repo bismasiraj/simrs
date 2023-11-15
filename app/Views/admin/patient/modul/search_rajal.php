@@ -169,35 +169,38 @@ $permissions = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <div class="mt-4">
-                                <div class="mb-0">
-                                    <div>
-                                        <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
-                                            <i class="fa fa-search"></i>Cari
-                                        </button>
-                                        <?php if ($giTipe == 0) {
-                                            if (isset($permissions['pendaftaranrajal']['c'])) {
-                                                if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
-                                                    <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
-                                                        <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
-                                                    </button>
-                                        <?php }
-                                            }
-                                        } ?>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="mt-4 text-end">
+                                    <div class="mb-0">
+                                        <div>
+                                            <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
+                                                <i class="fa fa-search"></i>Cari
+                                            </button>
+                                            <?php if ($giTipe == 0) {
+                                                if (isset($permissions['pendaftaranrajal']['c'])) {
+                                                    if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
+                                                        <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
+                                                            <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
+                                                        </button>
+                                            <?php }
+                                                }
+                                            } ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </form>
         </div>
     </div>
     <div class="box-body">
-        <div class="mt-4">
+        <div class="">
             <table id="tableSearchRajal" class="table table-bordered table-hover table-centered" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
                 <thead class="table-primary">
                     <tr style="text-align: center">

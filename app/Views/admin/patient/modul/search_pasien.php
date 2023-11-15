@@ -6,16 +6,10 @@ $permissions = user()->getPermissions();
                             <?php if ($giTipe == 0) echo "active"; ?>
                             " id="biodata">
     <div class="row">
-        <div class="col-md-12">
-            <div class="mt-4">
-                <?php if (isset($permissions['biodatapasien']['c'])) {
-                    if ($permissions['biodatapasien']['c'] == '1') { ?>
-                        <a data-toggle="modal" onclick="holdModal('addPasienModal')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
-                <?php }
-                } ?>
-            </div>
-        </div>
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
+            
+        </div> -->
+        <div class="col-md-10">
             <div class="mt-4">
                 <form id="formbiodata" action="" method="post" class="">
                     <div class="col-sm-3">
@@ -40,6 +34,15 @@ $permissions = user()->getPermissions();
                 </form>
             </div>
         </div>
+        <div class="col-md-2">
+            <div class="mt-4 text-end">
+                <?php if (isset($permissions['biodatapasien']['c'])) {
+                    if ($permissions['biodatapasien']['c'] == '1') { ?>
+                        <a data-toggle="modal" onclick="holdModal('addPasienModal')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
+                <?php }
+                } ?>
+            </div>
+        </div>
 
 
         <!-- <div class="">
@@ -50,7 +53,7 @@ $permissions = user()->getPermissions();
                 text-align: center;
             }
         </style>
-        <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+        <table id="datapasien" class="table table-bordered dt-responsive nowrap table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
             <thead class="table-primary">
                 <tr>
                     <th style="width: 5%">No MR</th>

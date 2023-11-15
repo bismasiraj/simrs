@@ -15,7 +15,7 @@
 
 </head>
 
-<body>
+<body class="vertical-collpsed">
 
     <!-- Begin page -->
     <div id="layout-wrapper">

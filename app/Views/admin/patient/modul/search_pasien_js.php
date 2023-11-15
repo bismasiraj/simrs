@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    var tablePasien = $("#datatable").DataTable()
+    var tablePasien = $("#datapasien").DataTable()
     var dataPasien = Array();
     $(document).ready(function() {
         var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();

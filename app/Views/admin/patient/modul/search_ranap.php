@@ -139,8 +139,8 @@
                     </select>
                 </div>
             </div>
-            <div class="col-sm-12">
-                <div class="mt-4">
+            <div class="col-sm-6 col-md-2">
+                <div class="mt-4 text-end">
                     <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> Cari</button>
                 </div>
             </div>
