@@ -77,7 +77,7 @@ $permissions = user()->getPermissions();
     if ($permissions['biodatapasien']['r'] == '1') {  ?>
         <div class="modal fade bs-example-modal-xl" id="rincianPasienModel" role="dialog" aria-labelledby="rincianPasienModelLabel">
             <div class="modal-dialog modal-fullscreen modal-dialog-scrollable" role="document">
-                <div class="modal-content">
+                <div class="modal-content rounded-4">
                     <div class="modal-header">
 
                         <div class="modalicon">
@@ -225,7 +225,7 @@ $permissions = user()->getPermissions();
     if ($permissions['biodatapasien']['u'] == '1') {  ?>
         <div class="modal fade" id="editPasienModal" role="dialog" aria-labelledby="editPasienModal">
             <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
+                <div class="modal-content rounded-4">
                     <div class="modal-header">
                         <h4 class="modal-title" id="modal_head"><?php echo lang('Word.patient_details'); ?></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -569,7 +569,7 @@ $permissions = user()->getPermissions();
     if ($permissions['biodatapasien']['c'] == '1') {  ?>
         <div class="modal fade" id="addPasienModal" role="dialog" aria-labelledby="rincianPasienModelLabel">
             <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
+                <div class="modal-content rounded-4">
                     <div class="modal-header">
                         <h4 class="modal-title mt-0"><?php echo lang('Word.add_patient'); ?></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

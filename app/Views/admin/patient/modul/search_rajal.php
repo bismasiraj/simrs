@@ -232,7 +232,7 @@ $permissions = user()->getPermissions();
 <div id="addKunjunganModal" class="modal fade" tabindex="-1" aria-labelledby="#addKunjunganModalLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <form id="formaddpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
-            <div class="modal-content">
+            <div class="modal-content rounded-4">
                 <div class="modal-header bg-light">
                     <h3 class="modal-title mt-0 identityPv">
                     </h3>
@@ -869,13 +869,13 @@ $permissions = user()->getPermissions();
                     <button id="formaddpvbtn_save_print" type="button" class="btn btn-primary waves-effect waves-light">Save
                         changes</button>
                 </div>
-            </div><!-- /.modal-content -->
+            </div><!-- /.modal-content rounded-4 -->
         </form>
     </div><!-- /.modal-dialog -->
 </div>
 <div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content rounded-4">
             <div class="modal-header">
                 <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -899,7 +899,7 @@ $permissions = user()->getPermissions();
                     </tbody>
                 </table>
             </div>
-        </div><!-- /.modal-content -->
+        </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <?php if (isset($permissions['pendaftaranrajal']['c'])) {

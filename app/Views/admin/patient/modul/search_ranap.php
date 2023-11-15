@@ -183,7 +183,7 @@
 <div id="addRanapModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addRanapModal" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <form id="formaddpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
-            <div class="modal-content">
+            <div class="modal-content rounded-4">
                 <div class="modal-header">
                     <h5 class="modal-title mt-0">Akomodasi Rawat Inap</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -221,7 +221,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div><!-- /.modal-content -->
+            </div><!-- /.modal-content rounded-4 -->
         </form>
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
