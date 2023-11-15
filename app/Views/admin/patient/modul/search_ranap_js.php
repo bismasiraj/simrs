@@ -34,7 +34,33 @@
     }));
 
     function addRanap(id) {
-        holdModal('historyRajalModal');
+        holdModal('historyRajalModal')
         getHistoryRajalPasien(id)
+    }
+
+    function nextFormRanap(visit) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pendaftaran/getSinglePV',
+            type: "POST",
+            data: JSON.stringify({
+                'visit': visit
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                if (data) {
+                    skunj = data
+                    holdModal('addRanapModal')
+                } else {
+                    $("#ajax_load").html("");
+                    $("#patientDetails").hide();
+                }
+            },
+            error: function() {
+                $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
+            }
+        });
     }
 </script>

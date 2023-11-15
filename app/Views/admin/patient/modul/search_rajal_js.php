@@ -107,7 +107,7 @@ $permissions = user()->getPermissions();
                         $("#ajax_load").html("");
                         $("#patientDetails").show();
                         resetModal();
-                        skunj = data
+                        sbio = data
                         if (data.ismeninggal == 0) {
                             var link = "<a href='#' data-toggle='tooltip' title='<?php echo lang('Word.disable'); ?>' onclick='patient_deactive(" + id + ")' data-placement='bottom' data-original-title='<?php echo lang('Word.disable'); ?>'><i class='fa fa-thumbs-o-down'></i></a><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo lang('Word.delete'); ?>'><i class='fa fa-trash'></i></a>";
                         } else {
@@ -135,7 +135,7 @@ $permissions = user()->getPermissions();
                         $("#biodatapvaddress").html(data.contact_address);
                         $("#biodatapvrtrw").html(data.rt + " / " + data.rw);
                         // kalurahan.forEach(kalvalue => {
-                        //     if (skunj.kal_id == kalvalue[0]) {
+                        //     if (sbio.kal_id == kalvalue[0]) {
                         //         $("#pvkalurahan").html(kalvalue[1]);
                         //         kecamatan.forEach(kecvalue => {
                         //             if (kecvalue[0] == kalvalue[2]) {
@@ -217,30 +217,30 @@ $permissions = user()->getPermissions();
                         })
 
 
-                        $("#pvdiantar_oleh").val(skunj.name_of_pasien);
-                        $("#pvno_registration").val(skunj.no_registration);
-                        $("#pvvisitor_address").val(skunj.visitor_address);
-                        $("#pvorg_unit_code").val(skunj.org_unit_code);
-                        $("#pvtgl_lahir").val(skunj.date_of_birth);
-                        $("#pvgender").val(skunj.gender);
-                        $("#pvpayor_id").val(skunj.payor_id);
+                        $("#pvdiantar_oleh").val(sbio.name_of_pasien);
+                        $("#pvno_registration").val(sbio.no_registration);
+                        $("#pvvisitor_address").val(sbio.visitor_address);
+                        $("#pvorg_unit_code").val(sbio.org_unit_code);
+                        $("#pvtgl_lahir").val(sbio.date_of_birth);
+                        $("#pvgender").val(sbio.gender);
+                        $("#pvpayor_id").val(sbio.payor_id);
                         $("#pvclinic_id_from").val("P000");
-                        $("#pvclass_id_plafond").val(skunj.class_id);
-                        $("#pvclass_id").val(skunj.class_id);
+                        $("#pvclass_id_plafond").val(sbio.class_id);
+                        $("#pvclass_id").val(sbio.class_id);
                         $("#pvbooked_date").val(get_date());
                         $("#pvvisit_date").val(get_date());
-                        $("#pvstatus_pasien_id").val(skunj.status_pasien_id);
+                        $("#pvstatus_pasien_id").val(sbio.status_pasien_id);
                         $("#pvclinic_id_from").val('P000');
                         $("#pvtanggal_rujukan").val(get_date());
-                        $("#pvpasien_id").val(skunj.status_pasien_id);
-                        var age = getAge(skunj.date_of_birth);
+                        $("#pvpasien_id").val(sbio.status_pasien_id);
+                        var age = getAge(sbio.date_of_birth);
                         $("#pvageyear").val(age.years)
                         $("#pvagemonth").val(age.month)
                         $("#pvageday").val(age.days)
-                        $("#pvcoverage_id").val(skunj.coverage_id)
-                        $("#pvagama").val(skunj.kode_agama)
-                        $("#pvaktif").val(skunj.aktif)
-                        $("#pvfamily_status_id").val(skunj.family_status_id)
+                        $("#pvcoverage_id").val(sbio.coverage_id)
+                        $("#pvagama").val(sbio.kode_agama)
+                        $("#pvaktif").val(sbio.aktif)
+                        $("#pvfamily_status_id").val(sbio.family_status_id)
 
                         $("#pvkdpoli_eks").val(0)
                         $("#pvisnew").val(0)
@@ -420,7 +420,7 @@ $permissions = user()->getPermissions();
         $("#loadingHistoryrajal").html('<i class="spinner-border spinner-border-sm"></i>')
         // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/gethistoryrajaldatatable',
+            url: '<?php echo base_url(); ?>admin/pendaftaran/gethistoryrajaldatatable',
             type: "POST",
             data: JSON.stringify({
                 'norm': id

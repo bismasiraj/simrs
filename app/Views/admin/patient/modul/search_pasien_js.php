@@ -3,6 +3,7 @@
     var dataPasien = Array();
     $(document).ready(function() {
         var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();
+        var sbio = new Array();
         var skunj = new Array();
 
         gender = [
@@ -177,7 +178,7 @@
             },
             dataType: 'json',
             success: function(data) {
-                skunj = data
+                sbio = data
                 var link = '';
                 <?php if (user()->checkPermission('biodatapasien', 'd')) { ?>
                     if (data.ismeninggal == 0) {
@@ -215,7 +216,7 @@
                 $("#address").html(data.contact_address);
                 $("#rtrw").html(data.rt + " / " + data.rw);
                 kalurahan.forEach(kalvalue => {
-                    if (skunj.kal_id == kalvalue[0]) {
+                    if (sbio.kal_id == kalvalue[0]) {
                         $("#kalurahan").html(kalvalue[1]);
                         kecamatan.forEach(kecvalue => {
                             if (kecvalue[0] == kalvalue[2]) {
@@ -302,7 +303,7 @@
             },
             dataType: 'json',
             success: function(data) {
-                skunj = data
+                sbio = data
                 var link = '';
                 <?php if (user()->checkPermission('biodatapasien', 'd')) { ?>
                     if (data.ismeninggal == 0) {
@@ -340,7 +341,7 @@
                 $("#address").html(data.contact_address);
                 $("#rtrw").html(data.rt + " / " + data.rw);
                 kalurahan.forEach(kalvalue => {
-                    if (skunj.kal_id == kalvalue[0]) {
+                    if (sbio.kal_id == kalvalue[0]) {
                         $("#kalurahan").html(kalvalue[1]);
                         kecamatan.forEach(kecvalue => {
                             if (kecvalue[0] == kalvalue[2]) {
@@ -429,7 +430,7 @@
             },
             dataType: 'json',
             success: function(data) {
-                skunj = data
+                sbio = data
                 var link = '';
                 <?php if (user()->checkPermission('biodatapasien', 'd')) { ?>
                     if (data.ismeninggal == 0) {
@@ -467,7 +468,7 @@
                 $("#address").html(data.contact_address);
                 $("#rtrw").html(data.rt + " / " + data.rw);
                 kalurahan.forEach(kalvalue => {
-                    if (skunj.kal_id == kalvalue[0]) {
+                    if (sbio.kal_id == kalvalue[0]) {
                         $("#kalurahan").html(kalvalue[1]);
                         kecamatan.forEach(kecvalue => {
                             if (kecvalue[0] == kalvalue[2]) {
@@ -565,34 +566,34 @@
     }
 
     function editRecord(id) {
-        $("#eno_registration").val(skunj.no_registration);
-        $("#enama").val(skunj.name_of_pasien);
-        $("#epasien_id").val(skunj.pasien_id);
-        $("#eclass_id").val(skunj.class_id);
-        $("#eplacebirth").val(skunj.place_of_birth);
-        $("#edatebirth").val(skunj.date_of_birth.substring(0, 10));
-        $("#edescription").val(skunj.description);
-        $("#eaddress").val(skunj.contact_address);
-        $("#ert").val(skunj.rt);
-        $("#erw").val(skunj.rw);
-        $("#eayah").val(skunj.father)
-        $("#eibu").val(skunj.mother)
-        $("#esutri").val(skunj.spouse)
-        $("#ephone").val(skunj.phone_number);
-        $("#emobile").val(skunj.mobile);
-        $("#estatus").val(skunj.status_pasien_id);
-        $("#epayor").val(skunj.payor_id);
-        $("#eedukasi").val(skunj.education_type_code);
-        $("#epekerjaan").val(skunj.job_id);
-        $("#egoldar").val(skunj.blood_type_id);
-        $("#eagama").val(skunj.kode_agama);
-        $("#egender").val(skunj.gender);
-        $("#episa").val(skunj.coverage_id);
-        $("#efamily").val(skunj.family_status_id);
-        $("#ekk_no").val(skunj.kk_no);
-        // $("#etmt").val(skunj.tmt.substring(0, 10));
-        // $("#etat").val(skunj.tat.substring(0, 10));
-        $("#eperkawinan").val(skunj.maritalstatusid);
+        $("#eno_registration").val(sbio.no_registration);
+        $("#enama").val(sbio.name_of_pasien);
+        $("#epasien_id").val(sbio.pasien_id);
+        $("#eclass_id").val(sbio.class_id);
+        $("#eplacebirth").val(sbio.place_of_birth);
+        $("#edatebirth").val(sbio.date_of_birth.substring(0, 10));
+        $("#edescription").val(sbio.description);
+        $("#eaddress").val(sbio.contact_address);
+        $("#ert").val(sbio.rt);
+        $("#erw").val(sbio.rw);
+        $("#eayah").val(sbio.father)
+        $("#eibu").val(sbio.mother)
+        $("#esutri").val(sbio.spouse)
+        $("#ephone").val(sbio.phone_number);
+        $("#emobile").val(sbio.mobile);
+        $("#estatus").val(sbio.status_pasien_id);
+        $("#epayor").val(sbio.payor_id);
+        $("#eedukasi").val(sbio.education_type_code);
+        $("#epekerjaan").val(sbio.job_id);
+        $("#egoldar").val(sbio.blood_type_id);
+        $("#eagama").val(sbio.kode_agama);
+        $("#egender").val(sbio.gender);
+        $("#episa").val(sbio.coverage_id);
+        $("#efamily").val(sbio.family_status_id);
+        $("#ekk_no").val(sbio.kk_no);
+        // $("#etmt").val(sbio.tmt.substring(0, 10));
+        // $("#etat").val(sbio.tat.substring(0, 10));
+        $("#eperkawinan").val(sbio.maritalstatusid);
 
         var kalselect = '';
         var kotaselect = '';
@@ -603,9 +604,9 @@
         $("#ekota").html()
 
         kalurahan.forEach(kalvalue => {
-            if (skunj.kal_id == kalvalue[0]) {
-                $("#ekalurahan").append(new Option(kalvalue[1], skunj.kal_id))
-                $('#ekalurahan').val(skunj.kal_id)
+            if (sbio.kal_id == kalvalue[0]) {
+                $("#ekalurahan").append(new Option(kalvalue[1], sbio.kal_id))
+                $('#ekalurahan').val(sbio.kal_id)
                 $('#ekalurahan').prop("disabled", false)
                 // $('select[id="ekalurahan"] option[value="' + kalvalue[0] + '"]').attr("selected", "selected");
                 kecamatan.forEach(kecvalue => {
@@ -714,7 +715,7 @@
                 url: '<?php echo base_url(); ?>admin/patient/deletePatient',
                 type: "POST",
                 data: {
-                    delid: skunj.no_registration
+                    delid: sbio.no_registration
                 },
                 dataType: 'json',
                 success: function(data) {

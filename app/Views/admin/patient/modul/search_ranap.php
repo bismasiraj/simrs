@@ -180,3 +180,48 @@
         </div>
     </div>
 </div>
+<div id="addRanapModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addRanapModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <form id="formaddpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0">Akomodasi Rawat Inap</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pilih kunjungan rawat jalan yang akan dirawat-inapkan</p>
+                    <div class="row">
+                        <div class="mb-3">
+                            <label class="form-label" for="formrow-firstname-input">Dokter</label>
+                            <div class="input-group">
+                                <label class="mb-3">Dokter DPJP</label>
+                                <input type="search" name="employee_id" id="nama" class=" form-control" placeholder="input nama/nomor rekam medis pasien" aria-label="Nama Pasien / No RM" aria-describedby="formbiodatabtn">
+                                <select name="employee_id" id="ariemployee_id" class="form-control" style="width: 50%;">
+                                    <option value="">-</option>
+                                </select></td>
+                                <input type="search" name="doctor_from" id="nama" class=" form-control" placeholder="input nama/nomor rekam medis pasien" aria-label="Nama Pasien / No RM" aria-describedby="formbiodatabtn">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="loadingHistoryrajal"></div>
+                    <table id="ketersediaanTT" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                        <thead class="table-primary">
+                            <tr style="text-align: center">
+                                <th>No</th>
+                                <th>Nama Ruang / Kode JK</th>
+                                <th>Kelas</th>
+                                <th>Kapasitas</th>
+                                <th>Terisi</th>
+                                <th>Sisa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ajaxlist" class="table-group-divider">
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

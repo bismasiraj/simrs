@@ -15,7 +15,7 @@
 
 </head>
 
-<body data-sidebar="dark">
+<body>
 
     <!-- Begin page -->
     <div id="layout-wrapper">
