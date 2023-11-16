@@ -20,7 +20,7 @@ $permissions = user()->getPermissions();
     }
 </style>
 <div class="tab-pane" id="charges" role="tabpanel">
-    <div class="box-tab-header">
+    <!-- <div class="box-tab-header">
         <h3 class="box-tab-title">Tindakan</h3>
         <?php if (isset($permissions['tindakanpoli']['c'])) {
             if ($permissions['tindakanpoli']['c'] == '1') { ?>
@@ -29,7 +29,7 @@ $permissions = user()->getPermissions();
                 </div>
         <?php }
         } ?>
-    </div>
+    </div> -->
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -42,7 +42,7 @@ $permissions = user()->getPermissions();
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-sm-12">
             <form id="form1" action="" method="post" class="">
-                <div class="box-body row">
+                <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
                     <div class="col-sm-6 col-md-3">
                         <div class="mb-4">
@@ -80,6 +80,15 @@ $permissions = user()->getPermissions();
                                 </select>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6 text-end">
+                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                <div class="box-tab-tools">
+                                    <a data-toggle="modal" onclick="holdModal('addBill')" class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                </div>
+                        <?php }
+                        } ?>
                     </div>
                 </div>
             </form>
@@ -175,7 +184,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-6"></div>
                                             <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -188,7 +197,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -201,7 +210,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -214,7 +223,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -227,7 +236,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -240,7 +249,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -255,7 +264,7 @@ $permissions = user()->getPermissions();
                                                 <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
                                             </label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control border border-primary border-3" id="totalnya" name="totalnya" placeholder="" disabled></input>
+                                                <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>
@@ -268,7 +277,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5"></div>
                                             <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
                                             <div class="col-sm-3">
-                                                <input type="text" class="form-control" id="inacbg" name="inacbg" placeholder="" disabled></input>
+                                                <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
                                             </div>
                                         </div>
                                     </td>

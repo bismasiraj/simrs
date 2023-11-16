@@ -2,6 +2,10 @@
     var tableRanap = $("#tableSearchRanap").DataTable({
         dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
     })
+    var tableKetersediaanTT = $("#ketersediaanTT").DataTable({
+        dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
+
     $("#form2").on('submit', (function(e) {
 
         e.preventDefault();
@@ -55,6 +59,33 @@
                 if (data) {
                     skunj = data
                     holdModal('addRanapModal')
+                    $("#historyRajalModal").modal('hide')
+                } else {
+                    $("#ajax_load").html("");
+                    $("#patientDetails").hide();
+                }
+            },
+            error: function() {
+                $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
+            }
+        });
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pendaftaran/getBedInfo',
+            type: "POST",
+            data: JSON.stringify({
+                'visit': visit
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                tableKetersediaanTT.clear()
+                if (data) {
+                    console.log(data)
+                    data.forEach((element, key) => {
+                        tableKetersediaanTT.row.add(element).draw()
+                    });
                 } else {
                     $("#ajax_load").html("");
                     $("#patientDetails").hide();

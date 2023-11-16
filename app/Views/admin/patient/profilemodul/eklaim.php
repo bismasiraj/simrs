@@ -60,7 +60,7 @@ $permission = user()->getPermissions();
         color: #75798B;
     }
 </style>
-<div class="tab-pane active" id="klaim" role="tabpanel">
+<div class="tab-pane" id="klaim" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -911,57 +911,60 @@ $permission = user()->getPermissions();
                                 <table class="table mb-0">
                                     <tbody>
                                         <tr>
-                                            <td colspan="6" style="text-align:center;border-top:0;"><span style="font-style:italic;color:#888;">Tarif Rumah Sakit :</span>&nbsp;<span style="font-size:1.11em;color:#888;">Rp</span>
-                                                <input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="billing_amount" id="ekbilling_amount" onkeydown="kp_chg_billing(this,event);">
-                                            </td>
+                                            <td style="text-align:right;"></td>
+                                            <td style="border-left:0;"></td>
+                                            <td style="text-align:right;">Tarif Rumah Sakit :</span>&nbsp;<span style="font-size:1.11em;color:#888;">Rp</td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="billing_amount" id="ekbilling_amount" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="text-align:right;"></td>
+                                            <td style="border-left:0;"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Prosedur Non Bedah</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="prosedur_non_bedah" id="ekprosedur_non_bedah" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="prosedur_non_bedah" id="ekprosedur_non_bedah" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Prosedur Non Bedah</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="prosedur_bedah" id="ekprosedur_bedah" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="prosedur_bedah" id="ekprosedur_bedah" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Konsultasi</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="konsultasi" id="ekkonsultasi" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="konsultasi" id="ekkonsultasi" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Tenaga Ahli</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="tenaga_ahli" id="ektenaga_ahli" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="tenaga_ahli" id="ektenaga_ahli" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Keperawatan</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="keperawatan" id="ekkeperawatan" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="keperawatan" id="ekkeperawatan" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Penunjang</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="penunjang" id="ekpenunjang" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="penunjang" id="ekpenunjang" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Radiologi</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="radiologi" id="ekradiologi" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="radiologi" id="ekradiologi" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Laboratorium</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="laboratorium" id="eklaboratorium" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="laboratorium" id="eklaboratorium" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Pelayanan Darah</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="pelayanan_darah" id="ekpelayanan_darah" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="pelayanan_darah" id="ekpelayanan_darah" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Rehabilitasi</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="rehabilitasi" id="ekrehabilitasi" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="rehabilitasi" id="ekrehabilitasi" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Kamar / Akomodasi</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="kamar" id="ekkamar" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="kamar" id="ekkamar" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">KamRawat Intensif</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="rawat_intensif" id="ekrawat_intensif" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="rawat_intensif" id="ekrawat_intensif" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Obat</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="obat" id="ekobat" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="obat" id="ekobat" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Obat Kronis</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="obat_kronis" id="ekobat_kronis" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="obat_kronis" id="ekobat_kronis" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Obat Kemoterapi</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="obat_kemoterapi" id="ekobat_kemoterapi" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="obat_kemoterapi" id="ekobat_kemoterapi" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align:right;">Alkes</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="alkes" id="ekalkes" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="alkes" id="ekalkes" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">BMHP</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="bmhp" id="ekbmhp" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="bmhp" id="ekbmhp" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Sewa Alat</td>
-                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:center;width:8em;" value="0" name="sewa_alat" id="eksewa_alat" onkeydown="kp_chg_billing(this,event);"></td>
+                                            <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="sewa_alat" id="eksewa_alat" onkeydown="kp_chg_billing(this,event);"></td>
                                         </tr>
                                     </tbody>
                                 </table>

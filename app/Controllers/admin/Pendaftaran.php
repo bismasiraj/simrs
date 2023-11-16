@@ -83,6 +83,57 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         return json_encode($result);
     }
+    public function getBedInfo()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $db = db_connect('default');
+        $builder = $db->query("  SELECT c.name_of_clinic,
+                    CLASS_ROOM.name_of_class as classroomname,
+                    cl.name_of_class,   
+                     (SELECT COUNT(BED_ID) FROM BEDS WHERE 
+         CLASS_ROOM_ID = CLASS_ROOM.CLASS_ROOM_ID AND ORG_UNIT_CODE = CLASS_ROOM.ORG_UNIT_CODE) capasity,
+                    ( SELECT COUNT(no_registration)  
+                        FROM TREATMENT_AKOMODASI pv
+                            WHERE  pv.CLASS_ROOM_ID = CLASS_ROOM.CLASS_ROOM_ID
+                                    AND pv.CLASS_ROOM_ID IS NOT NULL
+                                    AND ( pv.KELUAR_ID in ( 0))
+                                    AND pv.ORG_UNIT_CODE = CLASS_ROOM.ORG_UNIT_CODE  ) terisi,
+                     (SELECT COUNT(BED_ID) FROM BEDS WHERE 
+         CLASS_ROOM_ID = CLASS_ROOM.CLASS_ROOM_ID AND ORG_UNIT_CODE = CLASS_ROOM.ORG_UNIT_CODE) - ( SELECT COUNT(no_registration)  
+                        FROM TREATMENT_AKOMODASI pv
+                            WHERE  pv.CLASS_ROOM_ID = CLASS_ROOM.CLASS_ROOM_ID
+                                    AND pv.CLASS_ROOM_ID IS NOT NULL
+                                    AND ( pv.KELUAR_ID in ( 0))
+                                    AND pv.ORG_UNIT_CODE = CLASS_ROOM.ORG_UNIT_CODE  ) sisa
+
+      
+                FROM CLASS_ROOM ,CLINIC C  ,CLASS CL
+                WHERE CLASS_ROOM_ID <> '0' 
+                and CLASS_ROOM.isactive LIKE '1'
+                AND CL.CLASS_ID= CLASS_ROOM.CLASS_ID
+                AND CAST(CL.OTHER_ID AS VARCHAR(10)) LIKE '%'
+                AND ( CLASS_ROOM.CLINIC_ID LIKE '%' or  CLASS_ROOM.NAME_OF_CLASS like '%' or
+                    C.NAME_OF_CLINIC like '%')   AND C.CLINIC_ID = CLASS_ROOM.CLINIC_ID
+            ");
+        $bedInfo = $builder->getResultArray();
+
+        $data = [];
+        foreach ($bedInfo as $key => $value) {
+            $row = [];
+            $row[] = $value["name_of_clinic"];
+            $row[] = $value["classroomname"];
+            $row[] = $value["name_of_class"];
+            $row[] = $value["capasity"];
+            $row[] = $value["sisa"];
+            $row[] = '<button id="asd" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right">Pilih <i class="fas fa-angle-double-right"></i></button>';
+            $data[] = $row;
+        }
+
+        return json_encode($data);
+    }
     public function gethistoryrajaldatatable()
     {
         if (!$this->request->is('post')) {
@@ -183,7 +234,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
                 // $action = "<a href='#' onclick='getpatientData(\"" . $id . "\")' class='btn btn-default btn-xs pull-right'  data-toggle='modal' title='" . lang('show') . "'><i class='fa fa-reorder'></i></a>";
                 $pvJson = ($kunjungan[$key]);
-                $action = '<button type="button" class="btn btn-primary waves-effect waves-light" onclick="nextFormRanap(this,\'' . $pvJson["visit_id"] . '\')">Pilih</button>';
+                $action = '<button type="button" class="btn btn-primary waves-effect waves-light" onclick="nextFormRanap(\'' . $pvJson["visit_id"] . '\')">Pilih</button>';
 
                 $row = array();
                 $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
