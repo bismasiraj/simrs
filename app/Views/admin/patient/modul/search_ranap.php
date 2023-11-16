@@ -227,6 +227,9 @@
                             <select type="email" class="form-control" id="formrow-email-input" placeholder="Enter your email">
                             </select>
                         </div>
+                        <div class="mb-3 row text-end">
+                            <button id="asd" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right">Simpan <i class="fas fa-check-circle"></i></button>
+                        </div>
                     </div>
                 </div><!-- row -->
             </div>
