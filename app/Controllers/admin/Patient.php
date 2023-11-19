@@ -220,7 +220,9 @@ class Patient extends \App\Controllers\BaseController
                 }
             }
 
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -1680,8 +1682,10 @@ This Function is used to Add Patient
             }
 
             // dd($clinicPermission);
-
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
+            // unset($clinic);
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
