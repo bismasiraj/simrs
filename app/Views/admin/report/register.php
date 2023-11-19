@@ -643,7 +643,8 @@ $currency_symbol = "Rp. ";
                             title: fileTitle + ' - <?= $title; ?>'
                         }, {
                             extend: 'pdf',
-                            title: fileTitle + ' - <?= $title; ?>'
+                            title: fileTitle + ' - <?= $title; ?>',
+                            orientation: 'landscape',
                         }, {
                             extend: 'print',
                             title: fileTitle + ' - <?= $title; ?>'

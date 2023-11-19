@@ -10,6 +10,7 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicDoctorModel;
 use App\Models\ClinicModel;
+use App\Models\ClinicTypeModel;
 use App\Models\CoverageModel;
 use App\Models\DiagnosaCategoryModel;
 use App\Models\DiagnosaModel;
@@ -178,6 +179,11 @@ class Patient extends \App\Controllers\BaseController
 
         $cdModel = new ClinicDoctorModel();
         $clinicDoctor = $this->lowerKey($cdModel->where('employee_id', $userEmployee)->findAll());
+        $clinicInap = array();
+
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
 
@@ -191,6 +197,9 @@ class Patient extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         if (!is_null($userEmployee)) {
@@ -257,7 +266,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             'caraKeluar' => $caraKeluar,
             // 'diagnosa' => $diagnosa,
-            'dpjp' => $dpjp
+            'dpjp' => $dpjp,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     private function searchingTemplate($giTipe, $title)
@@ -353,6 +364,11 @@ class Patient extends \App\Controllers\BaseController
 
         $dokter = array();
         $dpjp = array();
+        $clinicInap = array();
+
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
         foreach ($clinic as $key => $value) {
@@ -365,6 +381,9 @@ class Patient extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         foreach ($schedule as $key => $value) {
@@ -373,7 +392,7 @@ class Patient extends \App\Controllers\BaseController
             }
         }
 
-
+        asort($clinicInap);
 
         // dd($schedule);
 
@@ -408,7 +427,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             // 'diagnosa' => $diagnosa,
             'dpjp' => $dpjp,
-            'caraKeluar' => $caraKeluar
+            'caraKeluar' => $caraKeluar,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     public function getpatientDetails()

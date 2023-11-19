@@ -182,6 +182,7 @@ $currency_symbol = 'Rp. ';
                                         // 'diagnosa' => $diagnosa,
                                         'dpjp' => $dpjp,
                                         'caraKeluar' => $caraKeluar,
+                                        'clinicInap' => $clinicInap
                                     ]);
                                 } ?>
                             </div>
