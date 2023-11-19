@@ -10,6 +10,7 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicDoctorModel;
 use App\Models\ClinicModel;
+use App\Models\ClinicTypeModel;
 use App\Models\CoverageModel;
 use App\Models\PasienVisitationModel;
 use App\Models\DoctorScheduleModel;
@@ -575,6 +576,7 @@ class Admin extends \App\Controllers\BaseController
         $img_timestamp = $img_time->getTimestamp();
 
         //parameter
+
         $coverageModel = new CoverageModel();
         $coverage = $this->lowerKey($coverageModel->findAll());
 
@@ -638,6 +640,9 @@ class Admin extends \App\Controllers\BaseController
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
 
+        $ckModel = new CaraKeluarModel();
+        $caraKeluar = $this->lowerKey($ckModel->findAll());
+
         // dd($reasonModel);
 
         $isattendedModel = new IsattendedsModel();
@@ -659,14 +664,16 @@ class Admin extends \App\Controllers\BaseController
         $clinicPermission = array();
 
         $userEmployee = user()->employee_id;
+        // dd($userEmployee);
 
         $cdModel = new ClinicDoctorModel();
         $clinicDoctor = $this->lowerKey($cdModel->where('employee_id', $userEmployee)->findAll());
+        $clinicInap = array();
 
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
-        $ckModel = new CaraKeluarModel();
-        $caraKeluar = $this->lowerKey($ckModel->findAll());
 
 
         foreach ($clinic as $key => $value) {
@@ -679,6 +686,9 @@ class Admin extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         if (!is_null($userEmployee)) {
@@ -699,10 +709,10 @@ class Admin extends \App\Controllers\BaseController
                 }
             }
 
-            // unset($clinic);
             foreach ($clinicPermission as $key => $value) {
                 unset($clinic);
             }
+
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
                 $i++;
@@ -745,9 +755,11 @@ class Admin extends \App\Controllers\BaseController
             'isattended' => $isattended,
             'inasisPoli' => $inasisPoli,
             'inasisFaskes' => $inasisFaskes,
+            'caraKeluar' => $caraKeluar,
             // 'diagnosa' => $diagnosa,
             'dpjp' => $dpjp,
-            'caraKeluar' => $caraKeluar
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     public function rajal()
