@@ -52,12 +52,12 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li>
                                         <?php } ?>
                                         <li class="nav-item"><a class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
+                                        <li class="nav-item"><a class="nav-link active" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li>
-                                        <li class="nav-item"><a class="nav-link active" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height" id="overview">
@@ -754,6 +754,32 @@ $currency_symbol = 'Rp. ';
             cache: true
         }
     });
+
+    function initializeSearchTarif(theid) {
+        $("#" + theid).select2({
+            placeholder: "Input Tarif",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getTarif',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term, // search term
+                        klinik: '<?= $visit['clinic_id']; ?>',
+                        kelas: '<?= $visit['isrj'] == '1' ? 0 : $visit['class_id']; ?>'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    }
 
     function initializeResepSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({

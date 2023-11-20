@@ -4761,22 +4761,47 @@ This Function is used to Add Patient
         $dt = '';
 
         foreach ($visitHistory as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="eresepTable" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-                <tr>
-                    <th class="text-center" style="width: 4%;">No.</th class="text-center">
-                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                    <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
-                </tr>
-            </thead>
-            <tbody id="body' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#historyPresc' . $key . '" aria-expanded="true" aria-controls="historyPresc' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="historyPresc' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table id="eresepTable" class="table table-bordered table-hover">
+            //     <thead class="table-primary" style="text-align: center;">
+            //         <tr>
+            //             <th class="text-center" style="width: 4%;">No.</th class="text-center">
+            //             <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+            //             <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+            //             <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+            //         </tr>
+            //     </thead>
+            //     <tbody id="body' . $key . '">
+
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
 
 

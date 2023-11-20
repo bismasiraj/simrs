@@ -633,7 +633,7 @@
 
 
         if (racikan == 0) {
-            $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
+            $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'non-racikan')
                 .append($('<td rowspan="2">')
                     .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 )
@@ -723,7 +723,7 @@
             $("#tdsigna4Div" + resepKe).remove()
             $("#tdsigna5Div" + resepKe).remove()
 
-            $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'komponen')
+            $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'komponen')
                 // .append($('<td>')
                 //     // .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 // )
@@ -1033,7 +1033,7 @@
 
 
                 if (racikan == 0) {
-                    $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
+                    $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'non-racikan')
                         .append($('<td rowspan="2">')
                             .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         )
@@ -1049,11 +1049,12 @@
                         .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
 
                         .append($('<td rowspan="2">')
-                            .append('<button type="button" onclick="addNR()" class="addbtn nonracikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">NR</i></button>')
-                            .append('<button type="button" onclick="addR()" class="addbtn racikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">R</i></button>')
+                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>'))
                         )
                         .append($('<td rowspan="2">')
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="closebtn delete_row" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>')
+                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
 
                     )
@@ -1065,7 +1066,7 @@
                         .append($("<td>").append(signa5Div))
                     )
                 } else if (racikan == 1 && theorder == 1) {
-                    $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'racikan')
+                    $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'racikan')
                         .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe + '' + resepNo)
                             .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         )
@@ -1083,12 +1084,14 @@
                         )
 
                         .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe + '' + resepNo)
-                            .append('<button type="button" onclick="addNR()" class="addbtn nonracikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">NR</i></button>')
-                            .append('<button type="button" onclick="addR()" class="addbtn racikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">R</i></button>')
-                            .append('<button type="button" onclick="addKomponen(\'' + resepNo + '\')" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
+                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                                .append('<button type="button" onclick="addKomponen(\'' + resepNo + '\')" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>')
+                            )
                         )
                         .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe + '' + resepNo)
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="closebtn delete_row" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>')
+                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
                     )
                     $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe + '' + resepNo)
@@ -1150,7 +1153,7 @@
                         //     // .append('<button type="button" onclick="addBlankLineKomponen()" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
                         // )
                         .append($('<td>')
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="closebtn delete_row" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>')
+                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
 
                     )
@@ -1299,5 +1302,11 @@
                 $("#eresepTable").show()
             }
         });
+    }
+
+    function removeRacik(brand) {
+        if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
+            $("#" + brand).remove()
+        }
     }
 </script>

@@ -209,11 +209,40 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                 </div>
             </div>
 
+
             <!-- <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
                     <i class="mdi mdi-spin mdi-cog"></i>
                 </button>
             </div> -->
+        </div>
+    </div>
+    <div class="toast-container " style="position: absolute; top: 10px; right: 10px;">
+        <div class="toast translate-middle bg-success text-white" id="successToast" style="position:fixed; top:50%; left:50%;">
+            <div class="alert alert-success alert-dismissible px-4 mb-0 text-center" role="alert">
+                <div class="swal2-icon swal2-success swal2-animate-success-icon" style="display: flex;">
+                    <div class="swal2-success-circular-line-left"></div>
+                    <span class="swal2-success-line-tip"></span>
+                    <span class="swal2-success-line-long"></span>
+                    <div class="swal2-success-ring"></div>
+                    <div class="swal2-success-fix"></div>
+                    <div class="swal2-success-circular-line-right"></div>
+                </div>
+
+
+                <!-- <div class="swal2-icon swal2-error swal2-animate-error-icon" style="display: flex;"><span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span class="swal2-x-mark-line-right"></span></span></div> -->
+                <h5 class="text-success" id="successToastHeader">Success</h5>
+                <p id="successToastBody"></p>
+            </div>
+        </div>
+        <div class="toast translate-middle bg-warning text-white" id="warningToast" style="position:fixed; top:50%; left:50%;">
+            <div class="alert alert-danger alert-dismissible px-4 mb-0 text-center" role="alert">
+
+
+                <div class="swal2-icon swal2-error swal2-animate-error-icon" style="display: flex;"><span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span class="swal2-x-mark-line-right"></span></span></div>
+                <h5 class="text-danger" id="warningToastHeader">Gagal</h5>
+                <p id="warningToastBody"></p>
+            </div>
         </div>
     </div>
 </header>

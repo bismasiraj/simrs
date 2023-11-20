@@ -19,7 +19,7 @@ $permissions = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane" id="eresep" role="tabpanel">
+<div class="tab-pane active" id="eresep" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -114,11 +114,17 @@ $permissions = user()->getPermissions();
                 </style>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div id="eresepAdd" class="box-tab-tools" style="text-align: center;">
-                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn"><i class="fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
-                        </div>
-                        <div id="eresepRAdd" class="box-tab-tools" style="text-align: center; margin: 20px;">
-                            <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addNrBtn"><i class="fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="eresepAdd" class="box-tab-tools text-end">
+                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="eresepRAdd" class="box-tab-tools text-start" style="">
+                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                                </div>
+                            </div>
                         </div>
                 <?php }
                 } ?>
@@ -145,7 +151,7 @@ $permissions = user()->getPermissions();
                         </table>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="holdModal('historyEresepModal')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
+                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
                         </div>
                     </form>
                 </div>

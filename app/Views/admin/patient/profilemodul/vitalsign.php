@@ -66,20 +66,20 @@ $permission = user()->getPermissions();
                                 <div class="row mb-4">
                                     <label class="col-sm-2 col-form-label">(O) Pemeriksaan Fisik</label>
                                     <div class="col-sm-10">
-                                        <div class="row mb-4">
-                                            <div class="col-sm-2">
+                                        <div class="row mb-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="aeweight" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="aeheight" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="aetemperature" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="aenadi" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
 
                                                 <div class="form-group"><label>T.Darah(mmHg)</label>
                                                     <div class="col-sm-12" style="display: flex;  align-items: center;">
@@ -89,27 +89,25 @@ $permission = user()->getPermissions();
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="aesaturasi" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
+                                            <div class="col-sm-2 mt-2">
                                                 <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="aenafas" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <div class="mb-4">
-                                                    <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="aearm_diameter" placeholder="" value="" class="form-control"></div>
-                                                </div>
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="aearm_diameter" placeholder="" value="" class="form-control"></div>
+
                                             </div>
-                                            <div class="col-sm-12">
-                                                <div class="mb-4">
-                                                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="aepemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                                </div>
+                                            <div class="col-sm-12 mt-2">
+                                                <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="aepemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+
                                             </div>
-                                            <div class="col-sm-12">
+                                            <!-- <div class="col-sm-12">
                                                 <div class="mb-4">
                                                     <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="aepemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +152,7 @@ $permission = user()->getPermissions();
                 <div class="modal-footer">
                     <div class="panel-footer text-end mb-4">
                         <button type="submit" id="formvitalsignsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
-                        <button type="button" id="formvitalsignedit" onclick="enableVitalSign()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info">Edit</button>
+                        <button type="button" id="formvitalsignedit" onclick="enableVitalSign()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
                     </div>
                 </div>
             </form>

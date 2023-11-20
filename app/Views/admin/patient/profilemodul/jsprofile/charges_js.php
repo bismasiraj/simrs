@@ -153,8 +153,9 @@
                         .append($("<td>").attr("id", "discount" + key).html(formatCurrency(billJson[key].discount)))
                         .append($("<td>").attr("id", "subsidisat" + key).html(formatCurrency(billJson[key].subsidisat)))
                         .append($("<td>").attr("id", "subsidisat" + key).html(formatCurrency(billJson[key].subsidi)))
-                        .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"><i class="fa fa-edit"></i></button>'))
-                        .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
+                        .append($("<td>").append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button type="button" onclick="addR()" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                        // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
+                        // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
 
 
                     )

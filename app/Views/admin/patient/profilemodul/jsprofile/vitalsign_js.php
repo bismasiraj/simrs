@@ -283,7 +283,10 @@
         examselect = vitalsign[key];
 
         if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
-            console.log(examselect)
+
+            disableVitalSign()
+            $("#formvitalsignsubmit").hide()
+            $("#formvitalsignedit").show()
 
             $("#aeclinic_id").val(examselect.clinic_id)
             $("#aeclass_room_id").val(examselect.class_room_id)
@@ -371,6 +374,7 @@
     $("#formvitalsign").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
+        clicked_submit_btn.html('<i class="spinner-border spinner-border-sm"></i>')
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/editExam',
             type: "POST",
@@ -395,14 +399,14 @@
                     $("#formvitalsignsubmit").toggle()
                     $("#formvitalsignedit").toggle()
                 }
-                clicked_submit_btn.button('reset');
+                clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
+                errorMsg("Error occured.please try again");
+                clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             complete: function() {
-                clicked_submit_btn.button('reset');
+                clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             }
         });
     }));

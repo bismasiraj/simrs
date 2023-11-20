@@ -181,9 +181,9 @@ $permissions = user()->getPermissions();
                                             <?php if ($giTipe == 0) {
                                                 if (isset($permissions['pendaftaranrajal']['c'])) {
                                                     if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
-                                                        <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
+                                                        <!-- <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
                                                             <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
-                                                        </button>
+                                                        </button> -->
                                             <?php }
                                                 }
                                             } ?>

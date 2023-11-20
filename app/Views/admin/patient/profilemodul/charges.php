@@ -44,7 +44,7 @@ $permissions = user()->getPermissions();
             <form id="form1" action="" method="post" class="">
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
-                    <div class="col-sm-6 col-md-3">
+                    <!-- <div class="col-sm-6 col-md-3">
                         <div class="mb-4">
                             <div class="form-group">
                                 <label>Poli/Bangsal</label><small class="req"> *</small>
@@ -80,12 +80,20 @@ $permissions = user()->getPermissions();
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6 col-md-6 text-end">
+                    </div> -->
+
+                    <div class="col-sm-12 col-md-12 mb-4">
                         <?php if (isset($permissions['tindakanpoli']['c'])) {
                             if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                <div class="box-tab-tools">
-                                    <a data-toggle="modal" onclick="holdModal('addBill')" class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                <div class="row">
+
+                                    <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
+
+                                    <div class="col-md-4">
+                                        <div class="box-tab-tools">
+                                            <a data-toggle="modal" onclick='addBill()' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
                                 </div>
                         <?php }
                         } ?>
@@ -123,7 +131,7 @@ $permissions = user()->getPermissions();
                                     <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Satuan</th class="text-center">
                                     <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Total</th class="text-center">
                                     <th class="text-center" rowspan="2"></th class="text-center">
-                                    <th class="text-center" rowspan="2"></th class="text-center">
+                                    <!-- <th class="text-center" rowspan="2"></th class="text-center"> -->
                                     <!-- <th class="text-center" rowspan="2">Jenis Pelayanan</th class="text-center">
                             <th class="text-center" rowspan="2">Pembulatan</th class="text-center">
                             <th class="text-center" colspan="15">Info Detil Billing</th class="text-center">

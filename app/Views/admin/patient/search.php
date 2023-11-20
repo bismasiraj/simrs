@@ -319,14 +319,6 @@ $currency_symbol = 'Rp. ';
     <?php } ?>
 </script>
 <script type="text/javascript">
-    function holdModal(modalId) {
-        $('#' + modalId).modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-    }
-
     function getAge(dateString) {
         var now = new Date();
         var today = new Date(now.getYear(), now.getMonth(), now.getDate());

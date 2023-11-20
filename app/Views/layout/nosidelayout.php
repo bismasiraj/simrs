@@ -15,7 +15,6 @@
 </head>
 
 <body data-sidebar="dark">
-
     <!-- Begin page -->
     <div id="layout-wrapper">
 
@@ -33,6 +32,7 @@
                     'subtitle' => 'dashboard',
                 ]);
                 ?>
+
 
                 <?php $this->renderSection('content'); ?>
 
@@ -58,6 +58,8 @@
 
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+
+    <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
     <script>
         var baseurl = "<?php echo base_url(); ?>";
     </script>

@@ -247,8 +247,8 @@ $permission = user()->getPermissions();
                                                 <div id="ardirujukkegroup" class="col-sm-4 col-md-3">
                                                     <div class="mb-3">
                                                         <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
-                                                            <div class="select2-full-width">
-                                                                <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke">
+                                                            <div class="select2-full-width" style="width:100%">
+                                                                <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke" style="width: 100%">
                                                                 </select>
                                                             </div>
                                                         </div>

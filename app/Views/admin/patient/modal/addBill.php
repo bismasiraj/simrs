@@ -1,19 +1,18 @@
 <div class="modal fade" id="addBill" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content modal-media-content">
-            <div class="modal-header modal-media-header">
-                <button type="button" class="close pupclose" data-dismiss="modal">&times;</button>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="p-2 select2-full-width">
-                            <select onchange="setTarif(this.value)" class="form-control patient_list_ajax" name='' id="searchTarif">
-                            </select>
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <form id="formaddbill" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                <div class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
+                <form id="formaddbill" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+
                     <input name="trans_id" id="atrans_id" type="hidden" class="form-control" />
                     <input name="no_registration" id="ano_registration" type="hidden" class="form-control" />
                     <input name="theorder" id="atheorder" type="hidden" class="form-control" />
@@ -56,103 +55,123 @@
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <div class="box-header border-b mb10 pl-0 pt0">
-                                <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tarif</h3>
-                            </div>
-                        </div>
-                        <hr class="hr-panel-heading hr-10">
-                        <div class="col-sm-6">
-                            <div class="form-group"><label for="employee_id">Dokter</label>
-                                <div>
-                                    <select name='employee_id' id="aemployee_id" class="form-control select2 act" style="width:100%">
-                                        <?php $dokterlist = array();
-                                        foreach ($schedule as $key => $value) {
-                                            $dokterlist[$schedule[$key]['employee_id']] = $schedule[$key]['fullname'];
-                                        }
-                                        asort($dokterlist);
-                                        ?>
-                                        <?php foreach ($dokterlist as $key => $value) { ?>
-                                            <option value="<?= $key; ?>"><?= $value; ?></option>
-                                        <?php } ?>
-                                    </select>
+                            <div class="box-header border-b mb-10 pl-0 pt0">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tarif</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group"><label>Jenis Tindakan</label><input type="text" name="treatment" id="atreatment" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Nilai</label><input type="text" name="sell_price" id="asell_price" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Jml</label><input type="text" name="quantity" id="aquantity" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group"><label>Total Tagihan</label><input type="text" name="amount_paid" id="aamount_paid" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <hr class="hr-panel-heading hr-10">
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Diskon</label><input type="text" name="discount" id="adiscount" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Subsidi Satuan</label><input type="text" name="subsidisat" id="asubsidisat" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Netto</label><input type="text" name="amount" id="aamount" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>tagihan</label><input type="text" name="tagihan" id="atagihan" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>subsidi</label><input type="text" name="subsidi" id="asubsidi" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Biaya Jasa</label><input type="text" name="profesi" id="aprofesi" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Jenis Tarif</label><input type="text" name="tarif_type" id="atarif_type" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group"><label>Kelas</label><input type="text" name="class_id" id="aclass_id" placeholder="" value="" class="form-control" readonly></div>
-                        </div>
-
-
-                        <hr class="hr-panel-heading hr-10">
-                        <div class="hakKelas">
-                            <div class="col-sm-12">
-                                <div class="box-header border-b mb10 pl-0 pt0">
-                                    <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tarif Sesuai Hak Kelas</h3>
+                        <hr>
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="employee_id">Dokter</label>
+                                    <div>
+                                        <select name='employee_id' id="aemployee_id" class="form-control select2 act" style="width:100%">
+                                            <?php $dokterlist = array();
+                                            foreach ($schedule as $key => $value) {
+                                                $dokterlist[$schedule[$key]['employee_id']] = $schedule[$key]['fullname'];
+                                            }
+                                            asort($dokterlist);
+                                            ?>
+                                            <?php foreach ($dokterlist as $key => $value) { ?>
+                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <hr class="hr-panel-heading hr-10">
-                            <div class="col-sm-3">
-                                <div class="form-group"><label>Tarif Satuan Kelas</label><input type="text" name="" id="aamount_plafond" placeholder="" value="" class="form-control" readonly></div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="form-group"><label>Total Tagihan</label><input type="text" name="" id="aamount_paid_plafond" placeholder="" value="" class="form-control" readonly></div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="form-group"><label>Hak Kelas</label><input type="text" name="" id="aclass_id_plafond" placeholder="" value="" class="form-control" readonly></div>
-                            </div>
-                            <input name="tarif_id_plafond" id="atarif_id_plafond" type="hidden" class="form-control" />
-                            <div class="col-sm-3">
-                                <div class="form-group"><label>Nama Tarif</label><input type="text" name="" id="atreatment_plafond" placeholder="" value="" class="form-control" readonly></div>
-                            </div>
 
+                            <div class="col-sm-6 mb-2">
+                                <div class="form-group"><label>Jenis Tindakan</label><input type="text" name="treatment" id="atreatment" placeholder="" value="" class="form-control" readonly></div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group mb-2"><label>Nilai</label><input type="text" name="sell_price" id="asell_price" placeholder="" value="" class="form-control" readonly></div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group mb-2"><label>Jml</label><input type="text" name="quantity" id="aquantity" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
+                            </div>
+                            <div class="col-sm-6 mb-4">
+                                <div class="form-group mb-2"><label>Total Tagihan</label><input type="text" name="amount_paid" id="aamount_paid" placeholder="" value="" class="form-control" readonly></div>
+                            </div>
+                            <div class="accordion m-4" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Rincian
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Diskon</label><input type="text" name="discount" id="adiscount" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Subsidi Satuan</label><input type="text" name="subsidisat" id="asubsidisat" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Netto</label><input type="text" name="amount" id="aamount" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>tagihan</label><input type="text" name="tagihan" id="atagihan" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>subsidi</label><input type="text" name="subsidi" id="asubsidi" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Biaya Jasa</label><input type="text" name="profesi" id="aprofesi" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Jenis Tarif</label><input type="text" name="tarif_type" id="atarif_type" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group mb-2"><label>Kelas</label><input type="text" name="class_id" id="aclass_id" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            Tarif Sesuai Hak Kelas
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group"><label>Tarif Satuan Kelas</label><input type="text" name="" id="aamount_plafond" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group"><label>Total Tagihan</label><input type="text" name="" id="aamount_paid_plafond" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group"><label>Hak Kelas</label><input type="text" name="" id="aclass_id_plafond" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                                <input name="tarif_id_plafond" id="atarif_id_plafond" type="hidden" class="form-control" />
+                                                <div class="col-sm-3">
+                                                    <div class="form-group"><label>Nama Tarif</label><input type="text" name="" id="atreatment_plafond" placeholder="" value="" class="form-control" readonly></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-
-
-
                     </div><!--./row-->
-                </div>
-                <div class="modal-footer">
                     <div class="pull-right">
-                        <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
+                        <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
                     </div>
+                </form>
+            </div>
+            <!-- <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
                 </div>
-            </form>
+            </div> -->
         </div>
     </div>
 </div>
@@ -179,34 +198,40 @@
 
 
     $(document).ready(function(e) {
-        $('#searchTarif').select2({
-            ajax: {
-                url: '<?= base_url(); ?>admin/patient/getTarif',
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        searchTerm: params.term, // search term
-                        klinik: '<?= $visit['clinic_id']; ?>',
-                        kelas: '<?= $visit['class_id']; ?>'
-                    };
-                },
-                processResults: function(response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-        });
+        initializeSearchTarif("searchTarif")
+        // $('#searchTarif').select2({
+        //     ajax: {
+        //         url: '<?= base_url(); ?>admin/patient/getTarif',
+        //         type: "post",
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function(params) {
+        //             return {
+        //                 searchTerm: params.term, // search term
+        //                 klinik: '<?= $visit['clinic_id']; ?>',
+        //                 kelas: '<?= $visit['class_id']; ?>'
+        //             };
+        //         },
+        //         processResults: function(response) {
+        //             return {
+        //                 results: response
+        //             };
+        //         },
+        //         cache: true
+        //     }
+        // });
     })
 
-    function setTarif(searchValue) {
+    function addBill() {
+        setTarif()
+        $("#addBill").modal("show")
+    }
+
+    function setTarif() {
         tarifDataJson = $("#searchTarif").val();
         tarifData = JSON.parse(tarifDataJson);
 
-        alert(tarifDataJson);
+        // alert(tarifDataJson);
 
         $("#atrans_id").val('<?= $visit['trans_id']; ?>');
         $("#ano_registration").val('<?= $visit['no_registration']; ?>');
