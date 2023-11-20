@@ -1622,6 +1622,9 @@ This Function is used to Add Patient
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
         }
+        if (!isset($visit['name_of_clinic'])) {
+            $visit['name_of_clinic'] = '';
+        }
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
                 $visit['gendername'] = $gender[$key]['name_of_gender'];
