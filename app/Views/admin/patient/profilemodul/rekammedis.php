@@ -75,7 +75,7 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="pwd">Ringkasan Diagnosis</label>
-                                                        <textarea id="ardescription" name="description" rows="2" class="form-control " autocomplete="off"><?= $pasienDiagnosa['description']; ?></textarea>
+                                                        <textarea id="ardescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
