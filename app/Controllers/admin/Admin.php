@@ -267,7 +267,39 @@ class Admin extends \App\Controllers\BaseController
         $total_month         = array();
         $start_session_month = strtotime($year_str_month);
 
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $db = db_connect('default');
+        $builder = $db->query('web_D01_1_PoliHarian');
+        $rKHarian = $builder->getResultArray();
+
+        $builder = $db->query('web_D01_2_PoliBulanan');
+        $rKBulanan = $builder->getResultArray();
+
+        $builder = $db->query('web_D12_Pasien_Perdaerah');
+        $rPasienDaerah = $builder->getResultArray();
+
+        $builder = $db->query('web_D13_Pasien_Perumur');
+        $rPasienUmur = $builder->getResultArray();
+
+        $builder = $db->query('web_D18_Rajal_Perstatus');
+        $rRajalBayar = $builder->getResultArray();
+
+        $builder = $db->query('web_D16_Grafik_Dokter');
+        $rGrafikDokter = $builder->getResultArray();
+
+        $builder = $db->query('web_D02_PelayananPoli');
+        $rTerlayani = $builder->getResultArray();
+
         return view('admin/dashboard', [
+            'rKHarian' => $rKHarian,
+            'rKBulanan' => $rKBulanan,
+            'rPasienDaerah' => $rPasienDaerah,
+            'rPasienUmur' => $rPasienUmur,
+            'rRajalBayar' => $rRajalBayar,
+            'rGrafikDokter' => $rGrafikDokter,
+            'rTerlayani' => $rTerlayani,
             'dokter' => $dokterNew,
             'kunjJalan' => $kunjJalan,
             'kunjInap' => $kunjInap,
