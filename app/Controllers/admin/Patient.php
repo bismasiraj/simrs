@@ -4661,7 +4661,7 @@ This Function is used to Add Patient
         $nomor = $body['nomor'];
         $visit = $body['visit'];
 
-        $nomor = '574969';
+        $nomor = '453284';
 
         $db = db_connect('sharelis');
         $builder = $db->table('HASIL_PEMERIKSAANV2 hp')->join('HLISV2 hl', ' hl.NO_NOTA = hp.NO_NOTA ', 'inner')
@@ -4688,24 +4688,48 @@ This Function is used to Add Patient
         $dt = '';
 
         foreach ($headerKey as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-            <tr>
-                <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
-            </tr>
-            </thead>
-            <tbody id="viewlab' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#labResult' . $key . '" aria-expanded="true" aria-controls="labResult' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="labResult' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="viewlab' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
+            //     <thead style="text-align: center;">
+            //     <tr>
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
+            //     </tr>
+            //     </thead>
+            //     <tbody id="viewlab' . $key . '">
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
         $data['result'] = $result;
         $data['headerKey'] = $dt;

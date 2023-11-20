@@ -1762,3 +1762,6 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-right {
     background-color: #e9ecef;
     opacity: 1;
 }
+.page-content {
+    min-height: 1100px;
+}
