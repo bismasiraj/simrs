@@ -1614,10 +1614,16 @@ This Function is used to Add Patient
                 $visit['fullname_inap'] = $employee[$key]['fullname'];
             }
         }
+        if (!isset($visit['fullname'])) {
+            $visit['fullname'] = '';
+        }
         foreach ($clinic as $key => $value) {
             if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
+        }
+        if (!isset($visit['name_of_clinic'])) {
+            $visit['name_of_clinic'] = '';
         }
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
