@@ -170,6 +170,10 @@ class AuthController extends Controller
         $allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
         $user              = new User($this->request->getPost($allowedPostFields));
 
+        $selector = $users->select("max(id)+1 as id")->findAll();
+        return json_encode($user);
+        $user->id = $selector[0]->id;
+
         $this->config->requireActivation === null ? $user->activate() : $user->generateActivateHash();
 
         // Ensure default group gets assigned if set

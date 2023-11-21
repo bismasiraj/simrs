@@ -191,9 +191,9 @@
 
 
     function selectedDiag(index) {
-        var diagname = $("#diag_id" + index).find(":selected").data()
+        var diagname = $("#diag_id" + index).text()
         if (typeof diagname !== 'undefined') {
-            $("#diag_name" + index).val(diagname.data.text)
+            $("#diag_name" + index).val(diagname)
         }
     }
 
@@ -215,10 +215,10 @@
     }
 
     function selectedProc(index) {
-        var diagname = $("#proc_id" + index).find(":selected").data()
+        var diagname = $("#proc_id" + index).text()
         console.log(diagname)
         if (typeof diagname !== 'undefined') {
-            $("#proc_name" + index).val(diagname.data.text)
+            $("#proc_name" + index).val(diagname)
         }
     }
 
