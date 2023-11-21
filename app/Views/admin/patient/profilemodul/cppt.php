@@ -53,175 +53,87 @@ $permission = user()->getPermissions();
                     <input id="cpptagemonth" name="agemonth" placeholder="" type="text" class="form-control block" value="" style="display: none" />
                     <input id="cpptageday" name="ageday" placeholder="" type="text" class="form-control block" value="" style="display: none" />
                     <input id="cpptbody_id" name="body_id" placeholder="" type="text" class="form-control block" value="" style="display: none" />
-                    <input id="cpptweight" name="weight" placeholder="" type="text" class="form-control block" value="" style="display: none" />
+                    <!-- <input id="cpptweight" name="weight" placeholder="" type="text" class="form-control block" value="" style="display: none" /> -->
                     <input id="cpptheight" name="height" placeholder="" type="text" class="form-control block" value="" style="display: none" />
 
                     <div class="row">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12">
-                                <table class="table tablecustom table-bordered mb0">
-                                    <!-- <tr>
-                                        <td>
-                                            <h4 class="bolds">
-                                                (S) Anamnesis
-                                            </h4>
-                                        </td>
-                                        <td id="address">
-                                            <div class="col-md-12"><textarea name="anamnase" id="cpptanamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
+                                <div class="row mt-4 mb-4">
+                                    <label for="aeanamnase" class="col-sm-2 col-form-label">(S) Anamnesis</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" class="form-control" id="cpptanamnase" name="anamnase" placeholder=""></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <label class="col-sm-2 col-form-label">(O) Pemeriksaan Fisik</label>
+                                    <div class="col-sm-10">
+                                        <div class="row mb-2">
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Suhu(°C)</label><input onchange="cpptInput(this)" type="text" name="temperature" id="cppttemperature" placeholder="" value="" class="form-control"></div>
+                                            </div>
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Nadi(/menit)</label><input onchange="cpptInput(this)" type="text" name="nadi" id="cpptnadi" placeholder="" value="" class="form-control"></div>
+                                            </div>
+                                            <div class="col-sm-2 mt-2">
 
-                                    <tr>
-                                        <td>
-                                            <h4 class="bolds">
-                                                (O) Pemeriksaan Fisik
-                                            </h4>
-                                        </td>
-                                        <td id="dokter">
-
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>BB(Kg)</label><input type="text" name="weight" id="cpptweight" placeholder="" value="" class="form-control"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Tinggi(cm)</label><input type="text" name="height" id="cpptheight" placeholder="" value="" class="form-control"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Suhu(°C)</label><input type="text" name="temperature" id="cppttemperature" placeholder="" value="" class="form-control"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Nadi(/menit)</label><input type="text" name="nadi" id="cpptnadi" placeholder="" value="" class="form-control"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-
-                                                <div class="form-group"><label>Tekanan Darah(mmHg)</label>
+                                                <div class="form-group"><label>T.Darah(mmHg)</label>
                                                     <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                        <input type="text" name="tension_upper" id="cppttension_upper" placeholder="" value="" class="form-control">
+                                                        <input onchange="cpptInput(this)" type="text" name="tension_upper" id="cppttension_upper" placeholder="" value="" class="form-control">
                                                         <h4>/</h4>
-                                                        <input type="text" name="tension_below" id="cppttension_below" placeholder="" value="" class="form-control">
+                                                        <input onchange="cpptInput(this)" type="text" name="tension_below" id="cppttension_below" placeholder="" value="" class="form-control">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Saturasi(SpO2%)</label><input type="text" name="saturasi" id="cpptsaturasi" placeholder="" value="" class="form-control"></div>
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="cpptInput(this)" type="text" name="saturasi" id="cpptsaturasi" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Nafas/RR(/menit)</label><input type="text" name="nafas" id="cpptnafas" placeholder="" value="" class="form-control"></div>
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="cpptInput(this)" type="text" name="nafas" id="cpptnafas" placeholder="" value="" class="form-control"></div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Diameter Lengan(cm)</label><input type="text" name="arm_diameter" id="cpptarm_diameter" placeholder="" value="" class="form-control"></div>
+                                            <div class="col-sm-2 mt-2">
+                                                <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="cpptInput(this)" type="text" name="arm_diameter" id="cpptarm_diameter" placeholder="" value="" class="form-control"></div>
+
                                             </div>
-                                            <div class="col-sm-12">
+                                            <div class="col-sm-12 mt-2">
                                                 <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="cpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4 class="bolds">
-                                                (A) Assesment
-                                            </h4>
-                                        </td>
-                                        <td id="visit_date">
-                                            <div class="col-md-12"><textarea name="description" id="cpptdescription" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4 class="bolds">
-                                                (P) Rencana Penatalaksanaan
-                                            </h4>
-                                        </td>
-                                        <td id="exit_date">
-                                            <div class="col-md-12"><textarea name="instruction" id="cpptinstruction" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h4 class="bolds">Tanggal Periksa
-                                            </h4>
-                                        </td>
-                                        <td id="klinik">
-                                            <div class="col-md-2"><input type='text' name="examination_date" class="form-control" id='examination_date' /></div>
-                                        </td>
-                                    </tr> -->
-                                    <tr>
-                                        <td class="bolds">
-                                            (S) Anamnesis
-                                        </td>
-                                        <td>
-                                            <div class="col-md-12"><textarea name="anamnase" id="cpptanamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
 
-                                    <tr>
-                                        <td class="bolds">
-                                            (O) Pemeriksaan Fisik
-                                        </td>
-                                        <td>
-
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Suhu(°C)</label><input type="text" name="temperature" id="cppttemperature" placeholder="" value="" class="form-control" onchange="cpptInput(this)"></div>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Nadi(/menit)</label><input type="text" name="nadi" id="cpptnadi" placeholder="" value="" class="form-control" onchange="cpptInput(this)"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-
-                                                <div class="form-group"><label>Tekanan Darah(mmHg)</label>
-                                                    <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                        <input type="text" name="tension_upper" id="cppttension_upper" placeholder="" value="" class="form-control" onchange="cpptInput(this)">
-                                                        <h4>/</h4>
-                                                        <input type="text" name="tension_below" id="cppttension_below" placeholder="" value="" class="form-control" onchange="cpptInput(this)">
-                                                    </div>
+                                            <!-- <div class="col-sm-12">
+                                                <div class="mb-4">
+                                                    <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="cpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                 </div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Saturasi(SpO2%)</label><input type="text" name="saturasi" id="cpptsaturasi" placeholder="" value="" class="form-control" onchange="cpptInput(this)"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Nafas/RR(/menit)</label><input type="text" name="nafas" id="cpptnafas" placeholder="" value="" class="form-control" onchange="cpptInput(this)"></div>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <div class="form-group"><label>Diameter Lengan(cm)</label><input type="text" name="arm_diameter" id="cpptarm_diameter" placeholder="" value="" class="form-control" onchange="cpptInput(this)"></div>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="cpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bolds">
-                                            (A) Assesment
-                                        </td>
-                                        <td>
-                                            <div class="col-md-12"><textarea name="description" id="cpptdescription" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bolds">
-                                            (P) Rencana Penatalaksanaan
-                                        </td>
-                                        <td>
-                                            <div class="col-md-12"><textarea name="instruction" id="cpptinstruction" placeholder="" value="" class="form-control"></textarea></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bolds">Tanggal Periksa</td>
-                                        <td>
-                                            <div class="col-md-2"><input type='text' name="examination_date" class="form-control" id='cpptexamination_date' /></div>
-                                        </td>
-                                    </tr>
-                                    <script type="text/javascript">
-                                        $(function() {
-                                            $('#examination_date').datetimepicker({
-                                                format: 'YYYY-MM-DD hh:mm:ss'
-                                            });
-                                        });
-                                    </script>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 mb-4">
+                                    <label for="aedescription" class="col-sm-2 col-form-label">(A) Assesment</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" class="form-control" id="cpptdescription" name="description" placeholder=""></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 mb-4">
+                                    <label for="aeinstruction" class="col-sm-2 col-form-label">(P) Rencana Penatalaksanaan</label>
+                                    <div class="col-sm-10">
+                                        <textarea type="text" class="form-control" id="cpptinstruction" name="instruction" placeholder=""></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 mb-4">
+                                    <label for="cpptexamination_date" class="col-sm-2 col-form-label">Tanggal Periksa</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group" id="cpptexaminationdate">
+                                            <input id="cpptexamination_date" name="examination_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#cpptexaminationdate' value="<?= date('Y-m-d'); ?>">
 
-                                </table>
+                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div><!--./col-lg-7-->
                         </div><!--./row-->
+
                         <!-- <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="examination_date">Tgl Periksa</label>
@@ -236,14 +148,14 @@ $permission = user()->getPermissions();
                 </div>
                 <div class="modal-footer">
                     <div class="pull-right">
-                        <button type="submit" id="formcpptsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
-                        <button type="button" id="formcpptedit" onclick="enablecpptjson()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info">Edit</button>
+                        <button type="submit" id="formcpptsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
+                        <button type="button" id="formcpptedit" onclick="enablecpptjson()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
                     </div>
                 </div>
             </form>
             <h3>Histori CPPT</h3>
-            <table class="table table-borderedcustom table-bordered table-hover">
-                <thead style="text-align: center;">
+            <table class="table table-striped table-hover">
+                <thead class="table-primary" style="text-align: center;">
                     <tr>
                         <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
                         <th class="text-center" style="width: 10%;">Petugas</th class="text-center">

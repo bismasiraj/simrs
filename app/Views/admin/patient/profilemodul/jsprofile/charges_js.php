@@ -167,9 +167,7 @@
                             .append($("<td>").html(billJson[key].treat_date))
                             .append($("<td>").html(billJson[key].doctor))
                             .append($("<td>").html(billJson[key].nota_no))
-                            .append($("<td>").append('<button type="button" onclick="getTreatResult(\'' + billJson[key].no_registration + '\',\'' + billJson[key].visit_id + '\',\'' + billJson[key].tarif_id + '\')" class="editbtn" data-row-id="1" autocomplete="off"><i class="fa fa-edit"></i></button>'))
-
-
+                            .append($("<td>").append('<button type="button" onclick="getTreatResult(\'' + billJson[key].no_registration + '\',\'' + billJson[key].visit_id + '\',\'' + billJson[key].tarif_id + '\')" class="btn btn-secondary" data-row-id="1" autocomplete="off"><i class="fa fa-edit"></i></button>'))
                         )
                     }
 

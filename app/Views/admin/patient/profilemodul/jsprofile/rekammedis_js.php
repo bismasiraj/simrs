@@ -105,7 +105,11 @@
         $("#arsuffer_type").val(pasienDiagnosa.suffer_type)
 
 
-
+        if (typeof pasienDiagnosa.description !== 'undefined') {
+            disableRM()
+            $("#formaddrmbtn").hide()
+            $("#formeditrm").show()
+        }
 
 
 

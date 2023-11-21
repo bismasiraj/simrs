@@ -59,13 +59,20 @@ $permission = user()->getPermissions();
                     <div class="row">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12">
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <tr>
                                         <td class="bolds">
                                             Tanggal-Jam Keberangkatan
                                         </td>
                                         <td>
-                                            <input type="text" name="examination_date" id="aigdexamination_date" placeholder="" value="" class="form-control">
+                                            <!-- <input type="text" name="examination_date" id="aigdexamination_date" placeholder="" value="" class="form-control"> -->
+                                            <!-- <label for="aeexamination_date" class="col-sm-2 col-form-label">Tanggal Periksa</label> -->
+                                            <div class="col-sm-10">
+                                                <div class="input-group" id="aigdexamination_dategroup">
+                                                    <input id="aigdexamination_date" name="examination_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#aigdexamination_dategroup' value="<?= date('Y-m-d'); ?>">
+                                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="bolds">
                                             Rujukan
@@ -138,7 +145,7 @@ $permission = user()->getPermissions();
                                 <h3>
                                     ANAMNESIS (Alasasan Masuk Rumah Sakit Serta Riwayat Penyakit Yang Positif)
                                 </h3>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <tr>
                                         <td class="bolds">
                                             Auto/Alloanamnesis dengan
@@ -182,7 +189,7 @@ $permission = user()->getPermissions();
                                 <h3>
                                     Pemeriksaan Fisik
                                 </h3>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <thead>
                                         <tr>
                                             <th colspan="3" style="width: 12.5%;">Tekanan Darah</th>
@@ -222,7 +229,7 @@ $permission = user()->getPermissions();
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
 
                                     <tr>
                                         <td class="bolds">
@@ -275,7 +282,7 @@ $permission = user()->getPermissions();
                                         </td>
                                     </tr>
                                 </table>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <thead>
                                         <tr>
                                             <th style="width: 50%;">Tekanan Darah</th>
@@ -314,7 +321,7 @@ $permission = user()->getPermissions();
                                     </tbody>
                                 </table>
                                 <h3>Tindak Lanjut</h3>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <tbody>
                                         <tr>
                                             <td class="bolds">
@@ -368,7 +375,7 @@ $permission = user()->getPermissions();
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <tr>
                                         <td class="bolds" colspan="2">
                                             Rencana Asuhan / Terapi / Instruksi di IGD (Berikan Keterangan waktu/Jam jika sudah dilaksanakan)
@@ -390,7 +397,7 @@ $permission = user()->getPermissions();
                                         </td>
                                     </tr>
                                 </table>
-                                <table class="table tablecustom table-bordered mb0">
+                                <table class="table table-borderless mt-4 mb-4">
                                     <tr>
                                         <td class="bolds">Tanggal Jam Edukasi</td>
                                         <td>
@@ -429,10 +436,10 @@ $permission = user()->getPermissions();
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer mb-4">
                     <div class="pull-right">
-                        <button type="submit" id="formassessmentigdsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
-                        <button type="button" id="formassessmentigdedit" onclick="enableAssessmentIgd()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info">Edit</button>
+                        <button type="submit" id="formassessmentigdsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
+                        <button type="button" id="formassessmentigdedit" onclick="enableAssessmentIgd()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
                     </div>
                 </div>
             </form>

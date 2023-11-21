@@ -129,8 +129,8 @@ $permissions = user()->getPermissions();
                 <?php }
                 } ?>
                 <div class="box-tab-tools">
-                    <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                        <table id="eresepTable" class="table table-hover table-prescription" style="display: none;">
+                    <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">
+                        <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
                             <thead class="table-primary" style="text-align: center;">
                                 <tr>
                                     <th class="text-center" style="width: 4%;">No.</th class="text-center">

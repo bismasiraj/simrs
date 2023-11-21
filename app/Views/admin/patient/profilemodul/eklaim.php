@@ -972,7 +972,7 @@ $permission = user()->getPermissions();
                             <div class="col-md-12">
                                 <div class="dividerhr"></div>
                             </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="col-sm-12 col-md-6 col-lg-6 mt-4">
                                 <h3>Coding UNU Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
@@ -1012,7 +1012,7 @@ $permission = user()->getPermissions();
 
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-md-6 col-lg-6">
+                            <div class="col-sm-12 col-md-6 col-lg-6 mt-4">
                                 <h3>Coding INA Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">

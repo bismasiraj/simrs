@@ -208,9 +208,9 @@
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="addbtn copybtn" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                    '<button type="button" onclick="editCppt(' + key + ')" class="editbtn edit-transparent-btn" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="closebtn delete_row" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
+                .append($("<td rowspan='7'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                    '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
             .append($("<tr>")
                 .append($("<td>").html(''))
