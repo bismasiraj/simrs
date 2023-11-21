@@ -44,7 +44,7 @@ $currency_symbol = 'Rp. ';
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                                         <li class="nav-item"><a class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#rekammedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Rekam Medis</a></li>
+                                        <li class="nav-item"><a class="nav-link active" href="#rekammedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Rekam Medis</a></li>
                                         <?php if ($visit['isrj'] == '0') { ?>
                                             <li class="nav-item"><a class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Awal</a></li>
                                             <li class="nav-item"><a class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li>
@@ -52,12 +52,12 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li>
                                         <?php } ?>
                                         <li class="nav-item"><a class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
-                                        <li class="nav-item"><a class="nav-link active" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
                                         <li class="nav-item"><a class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li>
+                                        <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height" id="overview">

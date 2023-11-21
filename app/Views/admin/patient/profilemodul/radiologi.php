@@ -40,7 +40,6 @@ $permission = user()->getPermissions();
                             <th class="text-center" rowspan="2" style="width: auto;">Nota</th class="text-center">
                             <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
                         </tr>
-
                     </thead>
                     <tbody id="radBody">
                         <?php

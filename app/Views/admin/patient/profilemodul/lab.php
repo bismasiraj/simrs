@@ -31,8 +31,9 @@ $permission = user()->getPermissions();
 
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-xs-12">
-            <div class="panel-group" id="labBody">
-
+            <div class="accordion mt-4">
+                <div class="panel-group" id="labBody">
+                </div>
             </div>
         </div>
     </div><!--./row-->

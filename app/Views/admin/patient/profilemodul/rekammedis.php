@@ -2,7 +2,7 @@
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
 ?>
-<div class="tab-pane" id="rekammedis" role="tabpanel">
+<div class="tab-pane active" id="rekammedis" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [

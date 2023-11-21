@@ -19,7 +19,7 @@ $permissions = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane active" id="eresep" role="tabpanel">
+<div class="tab-pane" id="eresep" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [

@@ -2,25 +2,32 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Hasil Radiologi</h4>
+                <div class="col-sm-8 col-md-8">
+                    <H3>Hasil Radiologi</H3>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
             </div><!--./modal-header-->
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-sm-12 col-xs-12">
-                        <div class="row ptt10" id="patientDetails" style="display:block">
+                        <div class="row">
                             <div class="col-lg-12">
                                 <div class="singlelist24bold pb10">
-                                    <span id="ardpatient_name"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</span>
+                                    <h4 id="ardpatient_name"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h4>
                                 </div>
                             </div>
-                            <div class="col-md-9 col-sm-9 col-xs-9" id="Myinfo">
+                        </div>
+                        <div class="row" id="patientDetails" style="display:block">
+
+                            <div class="col-md-9 col-sm-9 col-xs-9" id="Myinfo" style="float:left">
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <table class="table tablecustom table-bordered mb0">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <table class="table table-borderless table-hover mb0">
                                             <tbody>
                                                 <tr>
-                                                    <td class="bolds">Jenis Kelamin</td>
+                                                    <td class="bolds text-end">Jenis Kelamin</td>
                                                     <td id="radgender"><?= $visit['gendername']; ?></td>
                                                 </tr>
                                                 <tr>
@@ -34,8 +41,8 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <table class="table tablecustom table-bordered mb0">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <table class="table table-borderless table-hover mb0">
                                             <tbody>
                                                 <tr>
                                                     <td class="bolds">No. SEP</td>
@@ -59,7 +66,7 @@
                             }
 
                             ?>
-                            <div class="col-lg-3 col-md-3 col-sm-12">
+                            <div class="col-lg-3 col-md-3 col-sm-12" style="float:left">
                                 <img class="profile-user-img img-responsive" src="<?php echo base_url(); ?>uploads\images\hasilradiologi.jpg" id="image" alt="User profile picture" style="height: 200px; width: 100% !important">
                             </div><!-- ./col-md-3 -->
                         </div>
@@ -139,6 +146,7 @@
                     $("#radconclution").val(data[key].conclution)
 
                 });
+                $("#hasilRad").modal('show')
             },
             error: function() {
 

@@ -59,16 +59,13 @@
 
                 mrJson.forEach((element, key) => {
 
-                    $("#mrBody").append($("<tr>")
+                    $("#radBody").append($("<tr>")
                         .append($("<td>").append($("<p>").html(mrJson[key].date_of_diagnosa)))
                         .append($("<td>").html(mrJson[key].name_of_clinic))
                         .append($("<td>").append($("<p>").html(mrJson[key].anamnase)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)).append($("<p>").html(mrJson[key].diagnosa_id + '-' + mrJson[key].diagnosa_desc)))
                         .append($("<td>").append($("<p>").html(mrJson[key].teraphy_desc)).append($("<p>").html(mrJson[key].instruction)))
                         .append($("<td>").html(mrJson[key].fullname))
                     )
-
-
-
                 });
             },
             error: function() {
