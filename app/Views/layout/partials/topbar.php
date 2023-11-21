@@ -200,6 +200,8 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
+                    <h5><?= user()->username; ?></h5>
+                    <hr>
                     <a class="dropdown-item text-danger" href="<?php echo base_url(); ?>logout"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
                 </div>
             </div>
