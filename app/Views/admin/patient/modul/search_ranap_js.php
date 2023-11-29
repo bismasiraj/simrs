@@ -170,23 +170,24 @@
                                 sAkom.forEach((element, key) => {
                                     $("#akomodasiViewTableBody").append($("<tr id='" + element.bill_id + "'>")
                                         .append('<input name="bill_id[]" type="hidden" value="' + element.bill_id + '">')
+                                        .append('<input id="tatagihan' + key + '" name="tagihan[]" type="hidden" value="' + element.tagihan + '">')
                                         .append($("<td>").append(key + 1))
                                         .append($("<td>").append(element.name_of_class + "<br>" + element.fullname + "<br>" + element.bed_id))
                                         .append($('<td>')
                                             .append($("<div>")
-                                                .append('<input name="treat_date[]" class="form-control" type="datetime-local" value="' + element.treat_date + '" id="tatreat_date' + key + '" onchange="changeTreatDate(' + key + ')" readonly>')
+                                                .append('<input name="treat_date[]" class="form-control" type="datetime-local" value="' + element.treat_date + '" id="tatreat_date' + key + '" onchange="changeTreatDateTA(' + key + ')" readonly>')
                                             )
                                         )
                                         .append($('<td>')
                                             .append($("<div>")
-                                                .append('<input name="exit_date[]" class="form-control" type="datetime-local" value="' + element.exit_date + '" id="taexit_date' + key + '" onchange="changeExitDate(' + key + ')" readonly>')
+                                                .append('<input name="exit_date[]" class="form-control" type="datetime-local" value="' + element.exit_date + '" id="taexit_date' + key + '" onchange="changeExitDateTA(' + key + ')" readonly>')
                                             )
                                         )
-                                        .append($("<td>").append('<input id="taquantity' + key + '" name="quantity[]" class="form-control" type="text" value="' + parseFloat(element.quantity) + '" readonly/>'))
-                                        .append($("<td>").append('<select name="keluar_id[]" id="takeluar_id' + key + '" class="form-control" onchange="changeCaraKeluar(' + key + ')"></select>'))
+                                        .append($("<td>").append('<input id="taquantity' + key + '" name="quantity[]" class="form-control" type="text" value="' + parseFloat(element.quantity) + '" onchange="changeQuantityTA(' + key + ')" readonly/>'))
+                                        .append($("<td>").append('<select name="keluar_id[]" id="takeluar_id' + key + '" class="form-control" onchange="changeCaraKeluarTA(' + key + ')"></select>'))
                                         .append($("<td>").append(element.tarif_name))
-                                        .append($("<td>").append(parseFloat(element.sell_price)))
-                                        .append($("<td>").append(parseFloat(element.amount_paid)))
+                                        .append($("<td>").append('<input id="tasell_price' + key + '" name="sell_price[]" class="form-control" type="text" value="' + parseFloat(element.sell_price) + '" readonly/>'))
+                                        .append($("<td>").append('<input id="taamount_paid' + key + '" name="amount_paid[]" class="form-control" type="text" value="' + parseFloat(element.amount_paid) + '" readonly/>'))
                                     )
                                     if (key + 1 == sAkom.length) {
                                         $("#" + element.bill_id).append($("<td>").append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + key + ')">').append('<i class="fa fa-edit"></i>')))
@@ -277,7 +278,7 @@
                 bedArray = data
 
                 changeClinicInap($("#ariclinic_id").val())
-                changeClassRoom($("#ariclass_room_id").val())
+                changeClassRoomTA($("#ariclass_room_id").val())
             },
             error: function() {
                 $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
@@ -339,7 +340,7 @@
         });
     }
 
-    function changeClassRoom(id) {
+    function changeClassRoomTA(id) {
         $("#aribed_id").html("")
         console.log(id)
 
@@ -357,7 +358,7 @@
         });
     }
 
-    function changeCaraKeluar(id) {
+    function changeCaraKeluarTA(id) {
         var currentDate = new Date();
         var year = currentDate.getFullYear();
         var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
@@ -377,26 +378,53 @@
             daydiff = 1
         }
         $("#taquantity" + id).val(daydiff)
+        changeQuantityTA(id)
+
     }
 
-    function changeExitDate(id) {
+    function changeExitDateTA(id) {
         var start = new Date($("#tatreat_date" + id).val())
         var end = new Date($("#taexit_date" + id).val())
+        var now = new Date()
         var daydiff = datediff(start, end)
         if (daydiff < 0) {
             alert("Tanggal Keluar harus lebih besar dari tanggal masuk")
             $("#taexit_date" + id).val($("#tatreat_date" + id).val())
             daydiff = 1
+            $("#taquantity" + id).val(daydiff)
+            changeQuantityTA(id)
         } else {
-            if (daydiff = 0) {
+            if (daydiff == 0) {
                 daydiff = 1
             }
+            $("#taquantity" + id).val(daydiff)
+            changeQuantityTA(id)
         }
-        $("#taquantity" + id).val(daydiff)
+        var daydiffnow = datediff(end, now)
+        if (daydiffnow < 0) {
+            alert("Tanggal keluar harus lebih kecil dari hari, jam, dan menit sekarang")
+            var currentDate = new Date();
+            var year = currentDate.getFullYear();
+            var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+            var day = ('0' + currentDate.getDate()).slice(-2);
+            var hours = ('0' + currentDate.getHours()).slice(-2);
+            var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+            var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+            var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
 
+            var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            $("#taexit_date" + id).val(isoDatetime)
+            end = new Date($("#taexit_date" + id).val())
+            daydiff = datediff(start, end)
+            if (daydiff == 0) {
+                daydiff = 1
+            }
+            $("#taquantity" + id).val(daydiff)
+            changeQuantityTA(id)
+        }
     }
 
-    function changeTreatDate(id) {
+    function changeTreatDateTA(id) {
         if (id > 1) {
             var idEnd = id - 1
             var start = new Date($("#tatreat_date" + id).val())
@@ -404,11 +432,34 @@
             var daydiffBefore = datediff(start, end)
             if (daydiffBefore > 0) {
                 alert('Tanggal masuk RI harus lebih besar dari tanggal keluar pada kamar sebelumnya')
-                $("#treat_date" + id).val(end)
+                $("#tatreat_date" + id).val($("#taexit_date" + idEnd).val())
             } else {
                 var visitDate = new Date(skunj.visit_date)
                 var daydiffrajal = datediff(visitDate, start)
                 if (daydiffrajal >= 0) {
+                    var now = new Date()
+                    var daydiffnow = datediff(start, now)
+                    if (daydiffnow < 0) {
+                        alert("Tanggal masuk harus lebih kecil dari hari, jam, dan menit sekarang")
+                        var currentDate = new Date();
+                        var year = currentDate.getFullYear();
+                        var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+                        var day = ('0' + currentDate.getDate()).slice(-2);
+                        var hours = ('0' + currentDate.getHours()).slice(-2);
+                        var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+                        var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+                        var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+                        var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                        $("#tatreat_date" + id).val(isoDatetime)
+                        start = new Date($("#tatreat_date" + id).val())
+                        daydiff = datediff(start, end)
+                        if (daydiff == 0) {
+                            daydiff = 1
+                        }
+                        $("#taquantity" + id).val(daydiff)
+                        changeQuantityTA(id)
+                    }
                     var end = new Date($("#taexit_date" + id).val())
                     var daydiff = datediff(start, end)
                     if (daydiff >= 0) {
@@ -420,6 +471,7 @@
                         alert('Tanggal keluar rawat inap harus lebih besar dari tanggal masuk')
                         $("#taexit_date" + id).val($("#tatreat_date" + id).val())
                         $("#taquantity" + id).val(1)
+                        changeQuantityTA(id)
                     }
 
                 } else {
@@ -443,6 +495,16 @@
             daydiff = 1
         }
         $("#taquantity" + id).val(daydiff)
+        changeQuantityTA(id)
+    }
+
+    function changeQuantityTA(id) {
+        var quantity = $("#taquantity" + id).val()
+        var sell_price = $("#tasell_price" + id).val()
+
+        var tagihan = quantity * sell_price
+        $("#tatagihan" + id).val(tagihan)
+        $("#taamount_paid" + id).val(tagihan)
     }
 
     function changeAriTreatDate() {
@@ -462,6 +524,25 @@
 
             var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
             $("#aritreat_date").val(isoDatetime)
+        }
+        if (sAkom.length > 1) {
+            var idLast = sAkom.length - 1
+            var endLast = new Date($("#taexit_date" + idLast).val())
+            var daydiff = datediff(endLast, start)
+            if (daydiff < 0) {
+                alert('Tanggal awal rawat inap tidak boleh lebih kecil dari tanggal rawat bangsal terakhir')
+                var currentDate = new Date();
+                var year = currentDate.getFullYear();
+                var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+                var day = ('0' + currentDate.getDate()).slice(-2);
+                var hours = ('0' + currentDate.getHours()).slice(-2);
+                var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+                var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+                var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+                var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                $("#aritreat_date").val(isoDatetime)
+            }
         }
     }
 

@@ -165,6 +165,8 @@ class RawatInap extends \App\Controllers\BaseController
         $exit_date = $this->request->getPost('exit_date');
         $keluar_id = $this->request->getPost('keluar_id');
         $quantity = $this->request->getPost('quantity');
+        $amount_paid = $this->request->getPost('amount_paid');
+        $tagihan = $this->request->getPost('tagihan');
 
         $ta = new TreatmentAkomodasiModel();
         $lastKeluar = 0;
@@ -174,6 +176,8 @@ class RawatInap extends \App\Controllers\BaseController
                 'exit_date' => str_replace("T", " ", $exit_date[$key]),
                 'keluar_id' => $keluar_id[$key],
                 'quantity' => $quantity[$key],
+                'amount_paid' => $amount_paid[$key],
+                'tagihan' => $tagihan[$key]
             ];
             $ta->update($bill_id[$key], $data);
             $lastKeluar = $keluar_id[$key];

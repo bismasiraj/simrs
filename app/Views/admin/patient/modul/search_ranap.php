@@ -220,7 +220,7 @@
                         </div>
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Ruang</label>
-                            <select id="ariclass_room_id" class="form-control" name="class_room_id" onchange="changeClassRoom(this.value)">
+                            <select id="ariclass_room_id" class="form-control" name="class_room_id" onchange="changeClassRoomTA(this.value)">
                             </select>
                             <div id="ariclass_room_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
                                 <strong>Ruang</strong> tidak boleh kosong
@@ -469,15 +469,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="">
-                                                <div class="col-md-12">
-                                                    <div class="dividerhr"></div>
-                                                    <h3>Follow Up</h3>
-                                                </div>
-                                                <div class="col-sm-4 col-xs-12">
-                                                    <a data-toggle="modal" id="add" onclick="insertSPRI()" class="modalbtnpatient"><i class="fa fa-search"></i> <span>Rujukan</span></a>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
