@@ -197,10 +197,13 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user" src="<?php echo base_url(); ?>uploads/images/profile_male.png" alt="Header Avatar">
+                    <img class="rounded-circle header-profile-user" src="data:image/jpg;base64," alt="Header Avatar">
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <h5><?= user()->username; ?></h5>
+                    <div class="col-md-12 text-center text-primary">
+                        <h5><?= user()->username; ?></h5>
+                    </div>
                     <hr>
                     <a class="dropdown-item text-danger" href="<?php echo base_url(); ?>logout"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
                 </div>
@@ -214,7 +217,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </div> -->
         </div>
     </div>
-    <div class="toast-container " style="position: absolute; top: 10px; right: 10px;">
+    <div class="toast-container" style="position: absolute; top: 10px; right: 10px;">
         <div class="toast translate-middle bg-success text-white" id="successToast" style="position:fixed; top:50%; left:50%;">
             <div class="alert alert-success alert-dismissible px-4 mb-0 text-center" role="alert">
                 <div class="swal2-icon swal2-success swal2-animate-success-icon" style="display: flex;">

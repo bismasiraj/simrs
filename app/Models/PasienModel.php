@@ -47,6 +47,7 @@ class PasienModel extends Model
         'kk_no',
         'tmt',
         'tat',
+        'ttd'
     ];
 
     // Dates

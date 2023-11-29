@@ -494,7 +494,7 @@ class Admin extends \App\Controllers\BaseController
 
         $search_text = $this->request->getPost('search_text');
         $pasienmodel = new PasienModel();
-        $dt_response = $pasienmodel->getPasienList($search_text);
+        $dt_response = $this->lowerKey($pasienmodel->getPasienList($search_text));
         $dt_data     = array();
         $info        = array();
         $data        = array();
@@ -504,7 +504,7 @@ class Admin extends \App\Controllers\BaseController
         if (!empty($dt_response)) {
             foreach ($dt_response as $key => $value) {
                 $row = array();
-                $id = $dt_response[$key]['NO_REGISTRATION'];
+                $id = $dt_response[$key]['no_registration'];
                 if (false) { //if ($value->is_active == 'yes') {
 
 
@@ -522,7 +522,7 @@ class Admin extends \App\Controllers\BaseController
                     $result[$key]['url']  = $url;
                 }
 
-                $date1 = date_create(substr($dt_response[$key]['DATE_OF_BIRTH'], 0, 10));
+                $date1 = date_create(substr($dt_response[$key]['date_of_birth'], 0, 10));
                 $date2 = date_create(date('Y-m-d'));
 
                 $diff = date_diff($date1, $date2);
@@ -542,7 +542,7 @@ class Admin extends \App\Controllers\BaseController
                 $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Jalan</a>';
                 $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Inap</a>';
                 $action .= '<a onclick=\'getpatientData("' . $id . '")\' class="dropdown-item" href="#">Histori Pasien</a>';
-                $action .= '<a onclick=\'editBiodataPasien("' . $id . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
+                $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
                 $action .= "</div>";
                 $first_action = "<a href='#' onclick='getpatientData(\"" . $id . "\")'  class='btn btn-default btn-xs'  data-toggle='modal' title=''>";
                 // $checkbox     = "<input  class='chk2 enable_delete' type='checkbox' name='patient[]' value='" . $id . "'>";
@@ -551,22 +551,22 @@ class Admin extends \App\Controllers\BaseController
                 //==============================
                 $row[] = $checkbox;
                 // $row[] = $first_action . $this->composePatientName($dt_response[$key]['NAME_OF_PASIEN'], $id) . "</a>";
-                $row[] = $first_action . $dt_response[$key]['NAME_OF_PASIEN'] . "</a>";
+                $row[] = $first_action . $dt_response[$key]['name_of_pasien'] . "</a>";
                 $row[] = $this->getPatientAge($age, $month, $day);
-                if ($dt_response[$key]['GENDER'] == '1') {
-                    $row[] = 'Laki-laki';
+                if ($dt_response[$key]['gender'] == '1') {
+                    $row[] = 'laki-laki';
                 } else {
-                    $row[] = 'Perempuan';
+                    $row[] = 'perempuan';
                 }
-                if (empty($dt_response[$key]['PHONE_NUMBER'])) {
-                    $dt_response[$key]['PHONE_NUMBER'] = ' - ';
+                if (empty($dt_response[$key]['phone_number'])) {
+                    $dt_response[$key]['phone_number'] = ' - ';
                 }
-                if (empty($dt_response[$key]['MOBILE'])) {
-                    $dt_response[$key]['MOBILE'] = ' - ';
+                if (empty($dt_response[$key]['mobile'])) {
+                    $dt_response[$key]['mobile'] = ' - ';
                 }
-                $row[] = $dt_response[$key]['PHONE_NUMBER'] . " / " . $dt_response[$key]['MOBILE'];
+                $row[] = $dt_response[$key]['phone_number'] . " / " . $dt_response[$key]['mobile'];
                 $row[] = '';
-                $row[] = $dt_response[$key]['CONTACT_ADDRESS'];
+                $row[] = $dt_response[$key]['contact_address'];
                 // if (false) { //if ($value->is_dead == 'yes') {
                 //     $row[] = lang('yes');
                 // } else {
@@ -588,8 +588,8 @@ class Admin extends \App\Controllers\BaseController
             }
         }
         $json_data = array(
-
             "data"            => $dt_data,
+            "biodata" => $dt_response
         );
         echo json_encode($json_data);
     }

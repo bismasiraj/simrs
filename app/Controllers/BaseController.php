@@ -7,7 +7,9 @@ use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\I18n\Time;
 use Psr\Log\LoggerInterface;
+use LZCompressor\LZString;
 
 /**
  * Class BaseController
@@ -130,5 +132,159 @@ abstract class BaseController extends Controller
                 return 'mm-active';
             }
         }
+    }
+
+    private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
+    protected $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
+    protected function stringDecrypt($key, $string)
+    {
+
+
+        $encrypt_method = 'AES-256-CBC';
+
+        // hash
+        $key_hash = hex2bin(hash('sha256', $key));
+
+        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
+        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
+
+        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
+
+        return $output;
+    }
+    protected function decompress($string)
+    {
+        $return = LZString::decompressFromEncodedURIComponent($string);
+        $return = json_decode(($return), true);
+        return $return;
+    }
+    protected function AuthBridging()
+    {
+        $pdo = db_connect();
+
+
+        // //WATES
+        // $consId = '30659';
+        // $consSecret = 'rsud766wates38';
+        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
+
+        //BENGKULU
+        $consId = '4633';
+        $consSecret = 'rsud344myns618';
+        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
+
+
+
+        $current_timestamp = Time::now()->timestamp;
+        $this->keybridging = $consId . $consSecret . $current_timestamp;
+        $db = db_connect('default');
+        $builder = $db->query("DECLARE  @return_value int,
+        @h64 varchar(max)
+
+    EXEC    @return_value = [dbo].[SP_H002]
+            @CONS = N'$consId',
+            @TIMESTMP = N'$current_timestamp',
+            @MESSAGES = N'$consSecret',
+            @h64 = @h64 OUTPUT
+    SELECT  @h64 as N'h64'");
+        $signature = $builder->getResultArray();
+        // return json_encode($signature);
+        $signature = json_decode(json_encode($signature), true);
+        $headers = [
+            "X-cons-id: " . $consId,
+            "X-Timestamp: " . $current_timestamp,
+            "X-signature: " . $signature[0]['h64'],
+            "user-key: " . $userKey,
+            // "Content-type: Application/json",
+            "Accept: */*"
+        ];
+
+        return ($headers);
+    }
+    protected function SendBridging($url, $method, $postdata, $headers)
+    {
+        // Gunakan curl untuk mengakses/merequest alamat api
+        if (strpos($url, 'aplicaresws') == true) {
+            array_push($headers, "Content-type: Application/json");
+        }
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
+
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+        $results = curl_exec($curl);
+        curl_close($curl);
+
+        // return $results;
+        $results = json_decode(($results), true);
+        if (str_contains($url, 'SEP/2.0/inserts')) {
+            $results = '{
+           "metadata": {
+              "code": "200",
+              "message": "Sukses"
+           },
+           "response": {
+              "sep": {
+                 "catatan": "test",
+                 "diagnosa": "A00.1 - Cholera due to Vibrio cholerae 01, biovar eltor",
+                 "jnsPelayanan": "R.Inap",
+                 "kelasRawat": "1",
+                 "noSep": "0301R0011117V000008",
+                 "penjamin": "-",
+                 "peserta": {
+                    "asuransi": "-",
+                    "hakKelas": "Kelas 1",
+                    "jnsPeserta": "PNS PUSAT",
+                    "kelamin": "Laki-Laki",
+                    "nama": "ZIYADUL",
+                    "noKartu": "0001112230666",
+                    "noMr": "123456",
+                    "tglLahir": "2008-02-05"
+                 },
+                 "informasi:": {
+                    "Dinsos":null,
+                    "prolanisPRB":null,
+                    "noSKTM":null
+                 },
+                 "poli": "-",
+                 "poliEksekutif": "-",
+                 "tglSep": "2017-10-12"
+              }
+           }
+        }';
+            $results = json_decode($results, true);
+        } else if (isset($results['response'])) {
+            if (strpos($url, 'aplicaresws') == false) {
+                $result = $this->stringDecrypt($this->keybridging, $results['response']);
+                $result = $this->decompress($result);
+            } else {
+                $result = $results;
+            }
+            $results['response'] = $result;
+        }
+        return $results;
+    }
+    protected function sendVclaim($url, $method, $data)
+    {
+
+        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
+        // $method = 'POST';
+        $headers = $this->AuthBridging();
+
+        $postdata = ($data);
+        array_push($headers, 'Content-length' . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+
+        return ($result);
+        // ->json($result)
+        // ->header('Access-Control-Allow-Origin','*')
+        // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
     }
 }

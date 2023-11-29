@@ -59,6 +59,7 @@
 
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
     <script>
         var baseurl = "<?php echo base_url(); ?>";
     </script>

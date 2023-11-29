@@ -1765,3 +1765,9 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-right {
 .page-content {
     min-height: 1100px;
 }
+.req{
+    color: red;
+}
+.toast-container {
+    z-index: 7000;
+}

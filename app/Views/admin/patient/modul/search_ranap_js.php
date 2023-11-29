@@ -8,6 +8,8 @@
     var classRoomArray = [];
     var bedArray = [];
     var jsonBed;
+    var sAkom;
+    var caraKeluar;
 
     $("#form2").on('submit', (function(e) {
 
@@ -41,13 +43,63 @@
         });
 
     }));
+    $("#formAkomodasiView").on('submit', (function(e) {
+
+        e.preventDefault();
+        $("#formAkomodasiViewBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/saveAkomodasi',
+            type: "POST",
+            data: new FormData(this),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                if (data.metadata.code == 200) {
+                    successMsg(data.metadata.message)
+                    if (data.response.lastkeluar == 32) {
+                        nextFormRanap()
+                        $("#addRanapModal").css("z-index", 2000)
+                    }
+                } else {
+                    errorMsg(data.metadata.message)
+                }
+                $("#formAkomodasiViewBtn").html('<i class="fa fa-save"></i> Simpan')
+                $("#formAkomodasiViewBtn").hide()
+                disableElementTA()
+            },
+            error: function() {
+                $("#formAkomodasiViewBtn").html('<i class="fa fa-save"></i> Simpan')
+            }
+        });
+
+    }));
 
     function addRanap(id) {
         holdModal('historyRajalModal')
         getHistoryRajalPasien(id)
     }
 
-    function nextFormRanap(visit) {
+    function enableElementTA(key) {
+        $("#tatreat_date" + key).removeAttr("readonly")
+        $("#taexit_date" + key).removeAttr("readonly")
+        $("#taquantity" + key).removeAttr("readonly")
+        $("#takeluar_id" + key).off('mousedown')
+        $("#formAkomodasiViewBtn").show()
+    }
+
+    function disableElementTA(key) {
+        $('[id^="tatreat_date"]').prop("readonly", true)
+        $('[id^="taexit_date"]').prop("readonly", true)
+        $('[id^="taquantity"]').prop("readonly", true)
+        $('[id^="takeluar_id"]').on('mousedown', function() {
+            return false;
+        })
+    }
+
+    function getAkomodasi(visit) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pendaftaran/getSinglePV',
             type: "POST",
@@ -61,9 +113,108 @@
             success: function(data) {
                 if (data) {
                     skunj = data
-                    holdModal('addRanapModal')
-                    $("#historyRajalModal").modal('hide')
-                    $("#ariemployee_id").val(skunj.employee_id)
+                    $.ajax({
+                        url: '<?php echo base_url(); ?>admin/rawatinap/getAkomodasi',
+                        type: "POST",
+                        data: JSON.stringify({
+                            'visit': skunj.visit_id,
+                            'nomor': skunj.no_registration
+                        }),
+                        dataType: 'json',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function(data) {
+                            if (typeof data.cara_keluar !== 'undefined') {
+                                caraKeluar = data.cara_keluar
+                            }
+                            if (typeof data.data[0] !== 'undefined') {
+
+                                $("#iidentity").html(skunj.diantar_oleh + " (" + skunj.no_registration + ")")
+                                $("#biodatatapasien_id").html(skunj.pasien_id)
+                                coverage.forEach((element, index) => {
+                                    if (index == skunj.coverage_id) {
+                                        $("#biodatatacoverages").html(element);
+                                    }
+                                });
+                                $("#biodatataaddress").html(skunj.visitor_address)
+                                $("#biodatatagender").html(skunj.gender)
+                                kelas.forEach(value => {
+                                    if (value[0] == skunj.class_id_plafond) {
+                                        $("#biodatataclass_id_plafond").html(value[1]);
+                                    }
+                                });
+                                $("#biodatataage").val(skunj.ageyear + "th " + skunj.agemonth + "bl " + skunj.ageday + "hr")
+                                statusPasien.forEach(value => {
+                                    if (value[0] == skunj.status_pasien_id) {
+                                        $("#biodatatastatus").html(value[1]);
+                                    }
+                                });
+                                payor.forEach(payorvalue => {
+                                    if (payorvalue[1] == skunj.payor_id) {
+                                        $("#biodatatapayor").html(payorvalue[3]);
+                                    }
+                                });
+
+                                $("#taasalrujukan").val(skunj.asalrujukan)
+                                $("#tanorujukan").val(skunj.norujukan)
+                                $("#taspecimenno").val(skunj.specimenno)
+                                $("#tano_skp").val(skunj.no_skp)
+                                $("#tano_skpinap").val(skunj.no_skpinap)
+
+
+                                $("#akomodasiView").modal('show')
+                                console.log(data)
+                                sAkom = data.data
+                                $("#akomodasiViewTableBody").html("")
+                                sAkom.forEach((element, key) => {
+                                    $("#akomodasiViewTableBody").append($("<tr id='" + element.bill_id + "'>")
+                                        .append('<input name="bill_id[]" type="hidden" value="' + element.bill_id + '">')
+                                        .append($("<td>").append(key + 1))
+                                        .append($("<td>").append(element.name_of_class + "<br>" + element.fullname + "<br>" + element.bed_id))
+                                        .append($('<td>')
+                                            .append($("<div>")
+                                                .append('<input name="treat_date[]" class="form-control" type="datetime-local" value="' + element.treat_date + '" id="tatreat_date' + key + '" onchange="changeTreatDate(' + key + ')" readonly>')
+                                            )
+                                        )
+                                        .append($('<td>')
+                                            .append($("<div>")
+                                                .append('<input name="exit_date[]" class="form-control" type="datetime-local" value="' + element.exit_date + '" id="taexit_date' + key + '" onchange="changeExitDate(' + key + ')" readonly>')
+                                            )
+                                        )
+                                        .append($("<td>").append('<input id="taquantity' + key + '" name="quantity[]" class="form-control" type="text" value="' + parseFloat(element.quantity) + '" readonly/>'))
+                                        .append($("<td>").append('<select name="keluar_id[]" id="takeluar_id' + key + '" class="form-control" onchange="changeCaraKeluar(' + key + ')"></select>'))
+                                        .append($("<td>").append(element.tarif_name))
+                                        .append($("<td>").append(parseFloat(element.sell_price)))
+                                        .append($("<td>").append(parseFloat(element.amount_paid)))
+                                    )
+                                    if (key + 1 == sAkom.length) {
+                                        $("#" + element.bill_id).append($("<td>").append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + key + ')">').append('<i class="fa fa-edit"></i>')))
+                                    } else {
+                                        $("#" + element.bill_id).append($("<td>"))
+                                    }
+                                    caraKeluar.forEach((elementKel, keyKel) => {
+                                        $("#takeluar_id" + key).append('<option value="' + elementKel.keluar_id + '">' + elementKel.cara_keluar + '</option>')
+                                    })
+                                    $("#takeluar_id" + key).val(element.keluar_id)
+                                    $("#takeluar_id" + key).on('mousedown', function() {
+                                        return false;
+                                    })
+                                    $("#taquantity" + key).keydown(function(e) {
+                                        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+                                    });
+                                });
+                            } else {
+                                nextFormRanap()
+                            }
+                            $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                                .prop("disabled", false)
+                        },
+                        error: function() {
+                            $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                                .prop("disabled", false)
+                        }
+                    });
                 } else {
                     $("#ajax_load").html("");
                     $("#patientDetails").hide();
@@ -73,12 +224,27 @@
                 $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
             }
         });
+    }
+
+    function nextFormRanap() {
+        holdModal('addRanapModal')
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+        var day = ('0' + currentDate.getDate()).slice(-2);
+        var hours = ('0' + currentDate.getHours()).slice(-2);
+        var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+        var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+        var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+        var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        $("#aritreat_date").val(isoDatetime);
+        $("#historyRajalModal").modal('hide')
+        $("#ariemployee_id").val(skunj.employee_id)
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/pendaftaran/getBangsalInfo',
+            url: '<?php echo base_url(); ?>admin/rawatinap/getBangsalInfo',
             type: "POST",
-            data: JSON.stringify({
-                'visit': visit
-            }),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -101,11 +267,8 @@
             }
         });
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/pendaftaran/getBedInfo',
+            url: '<?php echo base_url(); ?>admin/rawatinap/getBedInfo',
             type: "POST",
-            data: JSON.stringify({
-                'visit': visit
-            }),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -194,6 +357,116 @@
         });
     }
 
+    function changeCaraKeluar(id) {
+        var currentDate = new Date();
+        var year = currentDate.getFullYear();
+        var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+        var day = ('0' + currentDate.getDate()).slice(-2);
+        var hours = ('0' + currentDate.getHours()).slice(-2);
+        var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+        var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+        var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+        var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        $("#taexit_date" + id).val(isoDatetime);
+        var start = new Date($("#tatreat_date" + id).val())
+        var end = new Date($("#taexit_date" + id).val())
+        var daydiff = datediff(start, end)
+        if (daydiff == 0) {
+            daydiff = 1
+        }
+        $("#taquantity" + id).val(daydiff)
+    }
+
+    function changeExitDate(id) {
+        var start = new Date($("#tatreat_date" + id).val())
+        var end = new Date($("#taexit_date" + id).val())
+        var daydiff = datediff(start, end)
+        if (daydiff < 0) {
+            alert("Tanggal Keluar harus lebih besar dari tanggal masuk")
+            $("#taexit_date" + id).val($("#tatreat_date" + id).val())
+            daydiff = 1
+        } else {
+            if (daydiff = 0) {
+                daydiff = 1
+            }
+        }
+        $("#taquantity" + id).val(daydiff)
+
+    }
+
+    function changeTreatDate(id) {
+        if (id > 1) {
+            var idEnd = id - 1
+            var start = new Date($("#tatreat_date" + id).val())
+            var end = new Date($("#taexit_date" + idEnd).val())
+            var daydiffBefore = datediff(start, end)
+            if (daydiffBefore > 0) {
+                alert('Tanggal masuk RI harus lebih besar dari tanggal keluar pada kamar sebelumnya')
+                $("#treat_date" + id).val(end)
+            } else {
+                var visitDate = new Date(skunj.visit_date)
+                var daydiffrajal = datediff(visitDate, start)
+                if (daydiffrajal >= 0) {
+                    var end = new Date($("#taexit_date" + id).val())
+                    var daydiff = datediff(start, end)
+                    if (daydiff >= 0) {
+                        if (daydiff == 0) {
+                            daydiff = 1;
+                        }
+                        $("#taquantity" + id).val(daydiff)
+                    } else {
+                        alert('Tanggal keluar rawat inap harus lebih besar dari tanggal masuk')
+                        $("#taexit_date" + id).val($("#tatreat_date" + id).val())
+                        $("#taquantity" + id).val(1)
+                    }
+
+                } else {
+                    alert('Tanggal dan jam masuk harus lebih besar dari tanggal dan jam kunjungan rawat jalannya.')
+                    var currentDate = new Date(visitDate);
+                    var year = currentDate.getFullYear();
+                    var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+                    var day = ('0' + currentDate.getDate()).slice(-2);
+                    var hours = ('0' + currentDate.getHours()).slice(-2);
+                    var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+                    var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+                    var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+                    var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    $("#tatreat_date" + id).val(isoDatetime)
+                }
+            }
+        }
+
+        if (daydiff <= 0) {
+            daydiff = 1
+        }
+        $("#taquantity" + id).val(daydiff)
+    }
+
+    function changeAriTreatDate() {
+        var start = new Date($("#aritreat_date").val())
+        var visitDate = new Date(skunj.visit_date)
+        var daydiffrajal = datediff(visitDate, start)
+        if (daydiffrajal < 0) {
+            alert('Tanggal dan jam masuk harus lebih besar dari tanggal dan jam kunjungan rawat jalannya.')
+            var currentDate = new Date(visitDate);
+            var year = currentDate.getFullYear();
+            var month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+            var day = ('0' + currentDate.getDate()).slice(-2);
+            var hours = ('0' + currentDate.getHours()).slice(-2);
+            var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+            var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+            var milliseconds = ('00' + currentDate.getMilliseconds()).slice(-3);
+
+            var isoDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            $("#aritreat_date").val(isoDatetime)
+        }
+    }
+
+
+    //form tambah akomodasi yang ada list bangsalnya
     function saveAddAkomodasi() {
         $("#saveAddAkomodasi").html('<i class="spinner-border spinner-border-sm"></i>')
         $("#saveAddAkomodasi").prop("disabled", true)
@@ -219,12 +492,12 @@
             $("#aribed_idalert").hide()
 
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/pendaftaran/postAddAkomodasi',
+                url: '<?php echo base_url(); ?>admin/rawatinap/postAddAkomodasi',
                 type: "POST",
                 data: JSON.stringify({
                     'class_room_id': $("#ariclass_room_id").val(),
                     'treat_date': $("#aritreat_date").val(),
-                    'exit_date': null,
+                    'exit_date': $("#aritreat_date").val(),
                     'quantity': 1,
                     'measure_id': null,
                     'amount': $("#ariamount_paid").val(),
@@ -307,6 +580,8 @@
                     console.log(data)
                     $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
                         .prop("disabled", false)
+                    getAkomodasi(skunj.visit_id)
+                    $("#addRanapModal").modal('hide')
                 },
                 error: function() {
                     $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
@@ -314,5 +589,147 @@
                 }
             });
         }
+    }
+
+    function insertSepInap() {
+        var nospri = $("#taspecimenno").val()
+        if (nospri == '' || nospri == null) {
+            alert('No SPRI masih kosong')
+        } else {
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rawatinap/insertSepInap',
+                type: "POST",
+                data: JSON.stringify({
+                    "visit": skunj.visit_id
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    console.log(data.metaData.code)
+                    if (data.metaData.code == 200) {
+                        alert(data.metaData.message)
+                        successMsg(data.metaData.message)
+                        $("#tano_skpinap").val(data.response.sep.noSep)
+                    } else {
+                        errorMsg(data.metaData.message)
+                    }
+                },
+                error: function() {
+                    $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                        .prop("disabled", false)
+                }
+            });
+        }
+    }
+
+    function updateSepInap() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/updateSepInap',
+            type: "PUT",
+            data: JSON.stringify({
+                "visit": skunj.visit_id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+                if (data.metaData.code == 200) {
+                    alert(data.metaData.message)
+                    successMsg(data.metaData.message)
+                    $("#tano_skpinap").val(data.response.sep.noSep)
+                } else {
+                    errorMsg(data.metaData.message)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function deleteSepInap() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/deleteSepInap',
+            type: "DELETE",
+            data: JSON.stringify({
+                "noSep": $("#tano_skpinap").val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+                if (data.metaData.code == 200) {
+                    successMsg(data.metaData.message)
+                    $("#tano_skpinap").val("")
+                } else {
+                    errorMsg(data.metaData.message)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function updatePulangSep() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/updatePulangSep',
+            type: "DELETE",
+            data: JSON.stringify({
+                "noSep": $("#tano_skpinap").val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+                if (data.metaData.code == 200) {
+                    successMsg(data.metaData.message)
+                    $("#tano_skpinap").val("")
+                } else {
+                    errorMsg(data.metaData.message)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function getSPRI() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/getSPRI',
+            type: "POST",
+            data: JSON.stringify({
+                'kddpjp': skunj.kddpjp,
+                'clinic_id': skunj.clinic_id,
+                'no_registration': skunj.no_registration
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                alert(data)
+                console.log(data)
+                if (data.metadata.code == '200') {
+                    $("#taspecimenno").val(data.response.nosuratkontrol)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
     }
 </script>

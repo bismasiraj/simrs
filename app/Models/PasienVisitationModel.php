@@ -389,4 +389,111 @@ class PasienVisitationModel extends Model
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }
+    public function selectSep($visit)
+    {
+        $sql = " select p.pasien_id as noKartu , 
+                cast(convert(varchar(10),visit_date,120)as datetime) as tglSep, 
+                p.org_unit_code as ppkPelayanan,  
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then '1' else '2' end  jnsPelayanan ,  
+
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then 
+                    cs.other_id
+                else
+                    '3' 
+                end    as klsRawat, 
+                cs.kdkelasv as klsRawatNaik,
+                
+                            
+                p.no_registration as noMr,  
+                case   when ( ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' ) and p.no_skp is not null then --saat RI, kalo ada SEP RJ, maka faskesnya  = unit iut sendiri
+                    2
+                else 
+                    asalrujukan 
+                end   as asalRujukan,
+                
+                cast(convert(varchar(10),tanggal_rujukan,120)as datetime) as tglRujukan,  
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then
+                    isnull(p.no_skp,noRujukan)
+                else 
+                    noRujukan 
+                end   as noRujukan,
+                
+
+                case   when ( ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' ) and p.no_skp is not null then --saat RI, kalo ada SEP RJ, maka dia jadi no rujukan, otherwise no rujukannya
+                        p.org_unit_code
+                else 
+                        ppkRujukan
+                end  as   ppkRujukan,
+                
+
+
+                case  when ( p.description is null )or (p.description = '') then '-' else p.description end  as catatan,  
+                diag_Awal as diagAwal,  
+                case when rujukan_id = 500  then
+                    p.kdpoli
+                when class_room_id is not null then ''
+                else
+                    ps.kdpoli  
+                end as tujuan,
+
+                isnull(kdpoli_eks,'0') as eksekutif,
+                isnull(cob,'0') as cob,
+                isnull(p.BACKCHARGE,'0') as katarak, 
+                case reason_id when 3 then '1' else '0' end as lakaLantas,
+                temptrans as noLP,
+                case penjamin when 0 then '' else isnull(penjamin,'') end as penjamin,  
+                cast(convert(varchar(10),valid_rm_date,120)as datetime) as tglKejadian,
+                isnull(delete_sep,'-') as keterangan,
+                
+                case when reason_id = 3 and (no_skp is not null or no_skpinap is null ) then
+                    isnull(ispertarif,'0')
+                else
+                    '0'
+                end as suplesi,  
+
+
+                case when no_skp is null and no_skpinap is null then
+                    ''
+                when no_skpinap is not null and isperTarif='1' and reason_id = 3  then
+                    no_skpinap
+                when no_skpinap is  null and no_skp is not null and isperTarif='1'  and reason_id = 3 then --hanya jika kecelakaan
+                    no_skp
+                else
+                    ''
+                end as noSepSuplesi, 
+                    
+                isnull( (select kdprov from inasis_get_kecamatan where kode = p.lokasiLaka),'')  as kdPropinsi,  
+                isnull( (select kdkab from inasis_get_kecamatan where kode = p.lokasiLaka),'')   as kdKabupaten, 
+                isnull(p.lokasiLaka,'') as kdKecamatan, 
+                case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then
+                    case when  p.specimenno is null or ltrim(p.specimenno) = '' then edit_sep else ltrim(p.specimenno)  end
+                else 
+                    edit_sep
+                end as noSurat,
+                CASE  when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then 
+                        (select dpjp from employee_all where employee_id = p.employee_inap)
+                        
+                else
+                    
+                    isnull(kdDPJP, (select dpjp from employee_all where employee_id =  p.employee_id)	)	
+                end   as kdDPJP,
+
+                isnull(pa.mobile,pa.phone_number) as noTelp,  
+                p.modified_by as user1,
+                tujuankunj as tujuanKunj,
+                replace(isnull(flagprocedure,''),'99','') flagProcedure,
+                replace(isnull(kdpenunjang,''),'99','') kdPenunjang,
+                replace(isnull(assesmentpel,''),'99','') assesmentPel,
+                KDDPJP as kodeDPJP,
+                case when (case   when ((len(class_room_id)> 0) and (in_date is not null )) or isrj='0' then '1' else '2' end ) <> '1' then kddpjp else '' end as dpjpLayan,
+                no_skp,
+                no_skpinap
+                from  pasien_visitation p, pasien pa, clinic ps, class cs
+                where p.no_registration = pa.no_registration  and p.org_unit_code = pa.org_unit_code   
+                and ps.clinic_id  = p.clinic_id  and cs.class_id= p.class_id
+                and visit_id ='$visit'";
+
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
 }

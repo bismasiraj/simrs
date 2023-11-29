@@ -125,3 +125,4 @@ nb-configuration.xml
 /.phpunit.*.cache
 
 .env
+.env

@@ -514,13 +514,7 @@ $permissions = user()->getPermissions();
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <div class="form-group"><label for="tanggal_rujukan">Tgl Rujukan</label><input type='text' name="tanggal_rujukan" class="form-control" id='pvtanggal_rujukan' /></div>
-                                                            <script type="text/javascript">
-                                                                $(function() {
-                                                                    $('#tanggal_rujukan').datetimepicker({
-                                                                        format: 'YYYY-MM-DD'
-                                                                    });
-                                                                });
-                                                            </script>
+
                                                         </div>
                                                         <div class="col-sm-3 col-xs-12">
                                                             <div class="form-group"><label for="ppkrujukan">PPK Rujukan</label>
@@ -710,13 +704,7 @@ $permissions = user()->getPermissions();
                                                             <div class="form-group"><label for="pvvalid_rm_date">Tanggal Kejadian</label>
                                                                 <input type='text' name="valid_rm_date" class="form-control" id='pvvalid_rm_date' />
                                                             </div>
-                                                            <script type="text/javascript">
-                                                                $(function() {
-                                                                    $('#pvvalid_rm_date').datetimepicker({
-                                                                        format: 'YYYY-MM-DD hh:mm:ss'
-                                                                    });
-                                                                });
-                                                            </script>
+
                                                         </div>
                                                         <div class="col-sm-2 col-xs-4">
                                                             <div class="form-group"><label for="pvpenjamin">Penjamin Lakalantas</label>
@@ -865,9 +853,9 @@ $permissions = user()->getPermissions();
                     </div><!--./col-md-12-->
                 </div>
                 <div class="modal-footer">
-                    <button id="formaddpvbtn" type=" button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal" data-loading-text="<?php echo lang('processing') ?>"><i class="fa fa-check-circle"></i><?php echo lang('save'); ?></button>
-                    <button id="formaddpvbtn_save_print" type="button" class="btn btn-primary waves-effect waves-light">Save
-                        changes</button>
+                    <button id="formaddpvbtn" type=" button" class="btn btn-primary waves-effect" data-bs-dismiss="modal" data-loading-text="<?php echo lang('processing') ?>"><i class="fa fa-check-circle"></i><?php echo lang('save'); ?></button>
+                    <!-- <button id="formaddpvbtn_save_print" type="button" class="btn btn-primary waves-effect waves-light">Save
+                        changes</button> -->
                 </div>
             </div><!-- /.modal-content rounded-4 -->
         </form>

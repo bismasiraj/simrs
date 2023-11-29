@@ -20,6 +20,8 @@ use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
+use App\Models\TreatDocsModel;
+use CodeIgniter\Files\File;
 use App\Models\GenerateIdModel;
 use App\Models\GoodsModel;
 use App\Models\GrouperModel;
@@ -611,7 +613,7 @@ This Function is used to Add Patient
     public function addpatient()
     {
         // return $this->request->getPost('nama');
-        // if (!$this->request->is('post')) {
+        // if (!$this->request->is('post') && $this->validate(['file' => 'uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'])) {
         //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         // }
 
@@ -625,21 +627,15 @@ This Function is used to Add Patient
             'placebirth' => 'required',
             'datebirth' => 'required|valid_date[Y-m-d]',
             'address' => 'required',
-            'rt' => 'required|integer',
-            'rw' => 'required|integer',
             'kalurahan' => 'required|integer',
-            'phone' => 'permit_empty|integer',
             'mobile' => 'required|integer',
             'status' => 'required',
-            'edukasi' => 'required',
-            'pekerjaan' => 'required',
             'goldar' => 'required',
-            'agama' => 'required',
-            'perkawinan' => 'required',
             'gender' => 'required',
             'kk_no' => 'permit_empty|integer',
             'tmt' => 'permit_empty|valid_date[Y-m-d]',
-            'tat' => 'permit_empty|valid_date[Y-m-d]'
+            'tat' => 'permit_empty|valid_date[Y-m-d]',
+            'file' => 'uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'
         ];
 
         if (!$this->validate($rules)) {
@@ -649,9 +645,12 @@ This Function is used to Add Patient
             return json_encode($array);
         }
 
-
-        $p = new PasienModel();
-        $no_registration = $p->getNorm();
+        $no_registration = $this->request->getPost('no_registration');
+        if (!isset($no_registration) || $no_registration == '') {
+            $p = new PasienModel();
+            $no_registration = $p->getNorm();
+        }
+        // return json_encode($no_registration);
 
         $nama = $this->request->getPost('nama');
         $pasien_id = $this->request->getPost('pasien_id');
@@ -684,12 +683,31 @@ This Function is used to Add Patient
         $father = $this->request->getPost('ayah');
         $mother = $this->request->getPost('ibu');
         $spouse = $this->request->getPost('sutri');
+        $file = $this->request->getFile('file');
 
         $orgunitcode = '1771014';
 
+        // return json_encode();
 
-        // return json_encode($kalurahan);
+        // return json_encode(base64_encode(file_get_contents($file->getTempName())));
 
+        // if (!$file->hasMoved()) {
+        //     $filepath = WRITEPATH . 'uploads/' . $file->store();
+
+        //     // $data = ['uploaded_fileinfo' => base64_encode(file_get_contents($filepath))];
+
+        //     // return json_encode($data);
+        // }
+
+        // $data = ['errors' => 'The file has already been moved.'];
+
+        // return json_encode($file);
+
+        // $db = db_connect('default');
+        // $db->simpleQuery("update pasien set ttd = " . file_get_contents($filepath) . " where no_registration = '846202'");
+
+
+        // return json_encode(base64_encode(file_get_contents($filepath)));
 
         $data = [
             'org_unit_code' => $orgunitcode,
@@ -721,22 +739,69 @@ This Function is used to Add Patient
             'family_status_id' => $family,
             'kk_no' => $kk_no,
             'tmt' => $tmt,
-            'tat' => $tat
+            'tat' => $tat,
         ];
-        // $data = json_encode($data);
 
-        // return $data;
+
 
 
         $pasienModel = new PasienModel();
 
-        $pasienModel->insert($data);
+        $pasienModel->save($data);
+
+        $uploadFolder = 'uploads/doc/P000' . $no_registration;
+
+        if (!is_dir($uploadFolder)) {
+            mkdir(
+                $uploadFolder,
+                0777,
+                true
+            );
+        }
+
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $no_registration . $file->getName();
+            $file->move($uploadFolder, $newName);
+
+            // You can store the file path in the database if needed
+            $filePath = $uploadFolder . '/' . $newName;
+            $docModel = new TreatDocsModel();
+            $docData = [
+                'org_unit_code' => $orgunitcode,
+                'doc_id' => $no_registration,
+                'doc_ke' => 1,
+                'docfiles' => $newName,
+                'upload_by' => user()->username,
+                'modified_by' => user()->username,
+                'doc_type' => 1,
+                'clinic_id' => 'P000'
+            ];
+            $docModel->save($docData);
+
+            // Additional logic based on your application's needs
+
+            return redirect()->to(base_url($filePath));
+        }
+
+
+
+
+        return json_encode('asd');
+
+
+
+        // header("Content-type: image/jpeg");
+        // echo file_get_contents($filepath);
+
+        // $pasienModel->save($data);
+
+        // return json_encode(base64_encode($data['ttd']));
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
         // of specified length
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil');
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'data' => $data);
         echo json_encode($array);
     }
     public function deletePatient()
@@ -6131,158 +6196,5 @@ This Function is used to Add Patient
         // of specified length
         $array   = array('status' => 'success', 'error' => '', 'message' => 'edit obat non racikan berhasil', 'data' => $returnData);
         echo json_encode($array);
-    }
-    private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
-    private $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
-    function stringDecrypt($key, $string)
-    {
-
-
-        $encrypt_method = 'AES-256-CBC';
-
-        // hash
-        $key_hash = hex2bin(hash('sha256', $key));
-
-        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
-
-        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-
-        return $output;
-    }
-    function decompress($string)
-    {
-        $return = LZString::decompressFromEncodedURIComponent($string);
-        $return = json_decode(($return), true);
-        return $return;
-    }
-    public function AuthBridging()
-    {
-        $pdo = db_connect();
-
-
-        // //WATES
-        // $consId = '30659';
-        // $consSecret = 'rsud766wates38';
-        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
-
-        //BENGKULU
-        $consId = '4633';
-        $consSecret = 'rsud344myns618';
-        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
-
-
-
-        $current_timestamp = Time::now()->timestamp;
-        $this->keybridging = $consId . $consSecret . $current_timestamp;
-        $db = db_connect('default');
-        $builder = $db->query("DECLARE  @return_value int,
-        @h64 varchar(max)
-
-    EXEC    @return_value = [dbo].[SP_H002]
-            @CONS = N'$consId',
-            @TIMESTMP = N'$current_timestamp',
-            @MESSAGES = N'$consSecret',
-            @h64 = @h64 OUTPUT
-    SELECT  @h64 as N'h64'");
-        $signature = $builder->getResultArray();
-        // return json_encode($signature);
-        $signature = json_decode(json_encode($signature), true);
-        $headers = [
-            "X-cons-id: " . $consId,
-            "X-Timestamp: " . $current_timestamp,
-            "X-signature: " . $signature[0]['h64'],
-            "user-key: " . $userKey,
-            // "Content-type: Application/json",
-            "Accept: */*"
-        ];
-
-        return ($headers);
-    }
-    private function SendBridging($url, $method, $postdata, $headers)
-    {
-        // Gunakan curl untuk mengakses/merequest alamat api
-        if (strpos($url, 'aplicaresws') == true) {
-            array_push($headers, "Content-type: Application/json");
-        }
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-        $results = curl_exec($curl);
-        curl_close($curl);
-
-        // return $results;
-        $results = json_decode(($results), true);
-        if (str_contains($url, 'SEP/2.0/inserts')) {
-            $results = '{
-           "metadata": {
-              "code": "200",
-              "message": "Sukses"
-           },
-           "response": {
-              "sep": {
-                 "catatan": "test",
-                 "diagnosa": "A00.1 - Cholera due to Vibrio cholerae 01, biovar eltor",
-                 "jnsPelayanan": "R.Inap",
-                 "kelasRawat": "1",
-                 "noSep": "0301R0011117V000008",
-                 "penjamin": "-",
-                 "peserta": {
-                    "asuransi": "-",
-                    "hakKelas": "Kelas 1",
-                    "jnsPeserta": "PNS PUSAT",
-                    "kelamin": "Laki-Laki",
-                    "nama": "ZIYADUL",
-                    "noKartu": "0001112230666",
-                    "noMr": "123456",
-                    "tglLahir": "2008-02-05"
-                 },
-                 "informasi:": {
-                    "Dinsos":null,
-                    "prolanisPRB":null,
-                    "noSKTM":null
-                 },
-                 "poli": "-",
-                 "poliEksekutif": "-",
-                 "tglSep": "2017-10-12"
-              }
-           }
-        }';
-            $results = json_decode($results, true);
-        } else if (isset($results['response'])) {
-            if (strpos($url, 'aplicaresws') == false) {
-                $result = $this->stringDecrypt($this->keybridging, $results['response']);
-                $result = $this->decompress($result);
-            } else {
-                $result = $results;
-            }
-            $results['response'] = $result;
-        }
-        return $results;
-    }
-    function sendVclaim($url, $method, $data)
-    {
-
-        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
-        // $method = 'POST';
-        $headers = $this->AuthBridging();
-
-        $postdata = ($data);
-        array_push($headers, 'Content-length' . strlen($postdata));
-        $result = $this->SendBridging($url, $method, $postdata, $headers);
-
-        return ($result);
-        // ->json($result)
-        // ->header('Access-Control-Allow-Origin','*')
-        // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
     }
 }

@@ -273,9 +273,9 @@
                         <div class="mb-3 row">
                             <label>Tanggal Awal</label>
                             <div class="input-group" id="arimulai" style="padding:0">
-                                <input id="aritreat_date" name="treat_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#arimulai" value="<?= date('Y-m-d'); ?>">
-
-                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                <input id="aritreat_date" name="treat_date" class="form-control" type="datetime-local" onchange="changeAriTreatDate()">
+                                <!-- 
+                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
 
                             </div>
                         </div>
@@ -288,34 +288,233 @@
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+<div id="akomodasiView" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-4">
             <div class="modal-header">
-                <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
+                <h5 class="modal-title mt-0">Rawat Inap</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="loadingHistoryrajal"></div>
-                <table id="historyRajalTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
-                    <thead class="table-primary">
-                        <tr style="text-align: center">
-                            <th>No</th>
-                            <th>Bangsal/Dokter/No TT</th>
-                            <th>Tgl Masuk</th>
-                            <th>Tgl Keluar</th>
-                            <th>Jml Hari</th>
-                            <th>Jml Hari s/d hari ini</th>
-                            <th>Cara Keluar</th>
-                            <th>Tarif</th>
-                            <th>Biaya/Hari</th>
-                            <th>Total</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody class="ajaxlist" class="table-group-divider">
-                    </tbody>
-                </table>
+                <div id="loadingAkomodasiView"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card bg-light border border-1 rounded m-4">
+                            <div class="card-body">
+                                <div class="row ptt10" style="display:block">
+                                    <!-- ./col-md-9 -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
+                                        <?php $file = "uploads/images/profile_male.png"; ?>
+                                        <img class="rounded-circle avatar-lg" src="<?php echo base_url() . 'uploads/images/profile_male.png' ?>" id="image" alt="User profile picture">
+                                        <div class="iidentity">SAIMAN 846202</div>
+                                    </div><!-- ./col-md-3 -->
+                                    <div class="col-md-12 col-sm-12 col-xs-12" id="taMyinfo">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <table class="table table-striped table-biodata">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="bolds">No. Peserta</td>
+                                                            <td id="biodatatapasien_id"></td>
+                                                            <!-- <td class="bolds">Ayah</td>
+                                                                        <td id="taayah"></td> -->
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">PISA</td>
+                                                            <td id="biodatatacoverages"></td>
+                                                            <!-- <td class="bolds">RT/RW</td>
+                                                                        <td id="tartrw"></td>
+                                                                        <td class="bolds">Ibu</td>
+                                                                        <td id="taibu"></td> -->
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Alamat</td>
+                                                            <td id="biodatataaddress"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Jenis Kelamin</td>
+                                                            <td id="biodatatagender"></td>
+                                                        </tr>
+                                                        <!-- <tr>
+                                                                        <td class="bolds">Gol Darah</td>
+                                                                        <td id="tagoldar"></td>
+                                                                    </tr> -->
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Hak Kelas</td>
+                                                            <td id="biodatataclass_id_plafond"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Umur</td>
+                                                            <td id="biodatataage"></td>
+                                                            <!-- <td class="bolds">Perkawinan</td>
+                                                                        <td id="taperkawinan"></td> -->
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Status</td>
+                                                            <td id="biodatatastatus"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bolds">Kelompok</td>
+                                                            <td id="biodatatapayor"></td>
+                                                        </tr>
+                                                        <!-- <tr>
+                                                                        <td class="bolds">Catatan</td>
+                                                                        <td id="tadescription"></td>
+                                                                    </tr> -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <form id="formAkomodasiView" action="" method="post" class="">
+                            <table id="akomoDasiViewTable" class="table table-bordered table-striped table-centered table-hover mb-4" data-export-title="<?= lang('Word.patient_list'); ?>">
+                                <thead class="table-primary">
+                                    <tr style="text-align: center">
+                                        <th>No</th>
+                                        <th>Bangsal/Dokter/No TT</th>
+                                        <th>Tgl Masuk</th>
+                                        <th>Tgl Keluar</th>
+                                        <th>Jml Hari</th>
+                                        <!-- <th>Jml Hari s/d hari ini</th> -->
+                                        <th>Cara Keluar</th>
+                                        <th>Tarif</th>
+                                        <th>Biaya/Hari</th>
+                                        <th>Total</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="akomodasiViewTableBody" class="table-group-divider">
+                                </tbody>
+                            </table>
+                            <div class="col-sm-12 col-xs-12 mb-4">
+                                <div class="button-items">
+                                    <div class="text-center">
+                                        <button id="formAkomodasiViewBtn" type="submit" class="btn btn-primary waves-effect waves-light" style="display: none;"><i class="fa fa-save"></i><span> Simpan</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
+                                        Pengaturan SEP Rawat Inap
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body text-muted">
+                                        <div id="ajax_load"></div>
+                                        <div class="row">
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
+                                                    <div>
+                                                        <select name='asalrujukan' id="taasalrujukan" class="form-control select2 act" style="width:100%" readonly>
+                                                            <option value="1">Faskes 1</option>
+                                                            <option value="2">Faskes 2 (RS)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="tanorujukan" name="norujukan" type="text" class="form-control" readonly /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12" style="display: none;">
+                                                <div class="form-group"><label for="kdpoli_from"></label><input id="takdpoli_from" name="kdpoli_from" type="text" class="form-control" readonly /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <label for="taspecimenno">No. SPRI</label>
+                                                <div class="input-group">
+                                                    <input id="taspecimenno" name="specimenno" type="text" class="form-control" readonly />
+                                                    <span class="input-group-btn">
+                                                        <button class="form-control" onclick="getSPRI()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="no_skp">SEP RJ</label><input id="tano_skp" name="no_skp" type="text" class="form-control" readonly /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="tano_skpinap">SEP RI</label><input id="tano_skpinap" name="no_skpinap" type="text" class="form-control" readonly /></div>
+                                            </div>
+                                            <div class="row mt-3 mb-3">
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="createSepInap" type="button" onclick="insertSepInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="editSepInap" type="button" onclick="updateSepInap()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Edit SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="deleteSepInap" type="button" onclick="deleteSepInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-remove"></i> <span>Delete SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="">
+                                                <div class="col-md-12">
+                                                    <div class="dividerhr"></div>
+                                                    <h3>Follow Up</h3>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <a data-toggle="modal" id="add" onclick="insertSPRI()" class="modalbtnpatient"><i class="fa fa-search"></i> <span>Rujukan</span></a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="dividerhr"></div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        Follow Up
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body text-muted">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                        Accordion Item #3
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body text-muted">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                    </div>
+                </div>
             </div>
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->

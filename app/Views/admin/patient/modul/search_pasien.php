@@ -39,7 +39,7 @@ $permissions = user()->getPermissions();
             <div class="mt-4 text-end">
                 <?php if (isset($permissions['biodatapasien']['c'])) {
                     if ($permissions['biodatapasien']['c'] == '1') { ?>
-                        <a data-toggle="modal" onclick="holdModal('addPasienModal')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
+                        <a data-toggle="modal" onclick="editBiodataPasien()" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i> Biodata Pasien</a>
                 <?php }
                 } ?>
             </div>
@@ -73,6 +73,31 @@ $permissions = user()->getPermissions();
         <!-- </form> -->
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ini modal yang dipake buat REVIEW HISTORY PASIEN termasuk BIODATA,RAJAL,RANAP -->
 <?php if (isset($permissions['biodatapasien']['r'])) {
     if ($permissions['biodatapasien']['r'] == '1') {  ?>
         <div class="modal fade bs-example-modal-xl" id="rincianPasienModel" role="dialog" aria-labelledby="rincianPasienModelLabel">
@@ -221,353 +246,16 @@ $permissions = user()->getPermissions();
         </div>
 <?php }
 } ?>
-<?php if (isset($permissions['biodatapasien']['u'])) {
-    if ($permissions['biodatapasien']['u'] == '1') {  ?>
-        <div class="modal fade" id="editPasienModal" role="dialog" aria-labelledby="editPasienModal">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content rounded-4">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="modal_head"><?php echo lang('Word.patient_details'); ?></h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div><!--./modal-header-->
-                    <form id="formeditpa" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                        <div class="modal-body pt0 pb0">
-                            <input id="eupdateid" name="updateid" placeholder="" type="hidden" class="form-control" value="" />
-                            <div class="row">
-                                <input id="eno_registration" name="no_registration" placeholder="" type="text" class="form-control block" value="" style="display: none" />
-                                <div class=" col-md-6">
-                                    <div class="form-group">
-                                        <label>Nama Pasien</label><small class="req"> *</small>
-                                        <input id="enama" name="nama" placeholder="" type="text" class="form-control" value="" />
-                                        <span class="text-danger"><?php //echo form_error('name'); 
-                                                                    ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>NIK</label>
-                                        <input type="text" name="pasien_id" id="epasien_id" placeholder="" value="" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label> <?php echo lang('Word.gender'); ?></label>
-                                                <select class="form-control" name="gender" id="egenders">
-                                                    <?php foreach ($gender as $key => $value) { ?>
-                                                        <option value="<?php echo $gender[$key]['gender']; ?>"><?php echo $gender[$key]['name_of_gender']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label for="edatebirth">Tanggal Lahir</label>
-                                                <input type='text' name="datebirth" class="form-control" id='edatebirth' />
-                                            </div>
-                                            <script type="text/javascript">
-                                                $(function() {
-                                                    $('#edatebirth').datetimepicker({
-                                                        format: 'YYYY-MM-DD'
-                                                    });
-                                                });
-                                            </script>
-                                        </div>
 
-                                        <div class="col-sm-5">
-                                            <div class="form-group">
-                                                <label>Tempat Lahir</label><small class="req"> *</small>
-                                                <input type="text" name="placebirth" id="eplacebirth" placeholder="" value="" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!--./col-md-6-->
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Darah</label>
-                                                <select class="form-control" id="egoldar" name="goldar">
-                                                    <?php foreach ($blood as $key => $value) { ?>
-                                                        <option value="<?php echo $blood[$key]['blood_type_id']; ?>"><?php echo $blood[$key]['name_of_type']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                            ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="pwd"><?php echo lang('Word.marital_status'); ?></label>
-                                                <select name="perkawinan" id="eperkawinan" class="form-control">
-                                                    <?php
-                                                    foreach ($marital as $key => $value) {
-                                                    ?>
-                                                        <option value="<?php echo $marital[$key]['maritalstatusid']; ?>"><?php echo $marital[$key]['name_of_maritalstatus']; ?></option>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="form-group">
-                                                <label for="exampleInputFile">
-                                                    <?php echo lang('Word.patient_photo'); ?>
-                                                </label>
-                                                <div>
-                                                    <input class="filestyle form-control-file" type='file' name='file' id="exampleInputFile" size='20' data-height="26" data-default-file="<?php echo base_url() ?>uploads/patient_images/no_image.png">
-                                                </div>
-                                                <span class="text-danger"><?php //echo form_error('file'); 
-                                                                            ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!--./col-md-6-->
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label for="pwd">No Telp</label>
-                                        <input id="ephone" autocomplete="off" name="phone" type="text" placeholder="" class="form-control" value="" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>HP</label>
-                                        <input type="text" placeholder="" id="emobile" value="" name="mobile" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="address">Alamat</label>
-                                        <input name="address" id="eaddress" placeholder="" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Provinsi</label>
-                                                <select class="form-control" id="eprov" name="prov">
-                                                    <option value=""><?php echo lang('Word.select'); ?></option>
-                                                    <?php foreach ($prov as $key => $value) { ?>
-                                                        <option value="<?php echo $prov[$key]['province_code']; ?>"><?php echo $prov[$key]['name_of_province']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                            ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="kota">Kota/Kabupaten</label>
-                                                <select name="kota" id="ekota" class="form-control" disabled>
-                                                    <option value=""><?php echo lang('Word.select') ?></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="kecamatan">Kecamatan</label>
-                                                <select name="kecamatan" id="ekecamatan" class="form-control" disabled>
-                                                    <option value=""><?php echo lang('Word.select') ?></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="kalurahan">Kelurahan</label>
-                                                <select name="kalurahan" id="ekalurahan" class="form-control" disabled>
-                                                    <option value=""><?php echo lang('Word.select') ?></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!--./col-md-6-->
-                                <div class="col-md-3 col-sm-12">
-                                    <div class="row">
-                                        <div id="calculate" class="col-sm-12">
-                                            <div class="form-group">
-                                                <label>RT / RW</label>
-                                                <div style="clear: both;overflow: hidden;">
-                                                    <input type="text" placeholder="RT" name="rt" id="ert" value="" class="form-control" style="width: 30%; float: left;">
-                                                    <input type="text" id="erw" placeholder="RW" name="rw" value="" class="form-control patient_age_month" autocomplete="off" style="width: 30%;float: left; margin-left: 4px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Ayah</label>
-                                        <input name="ayah" id="eayah" placeholder="" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Ibu</label>
-                                        <input name="ibu" id="eibu" placeholder="" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Suami/Istri</label>
-                                        <input name="sutri" id="esutri" placeholder="" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label for="pwd">Catatan</label>
-                                        <textarea name="description" id="edescription" class="form-control"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>No.Peserta</label>
-                                        <input name="kk_no" id="ekk_no" placeholder="" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Asuransi</label>
-                                        <select class="form-control" id="estatus" name="status">
-                                            <?php foreach ($statusPasien as $key => $value) { ?>
-                                                <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                        <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                    ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="form-group">
-                                        <label for="tmt">TMT</label>
-                                        <input type='text' name="tmt" class="form-control" id='etmt' />
-                                    </div>
-                                    <script type="text/javascript">
-                                        $(function() {
-                                            $('#etmt').datetimepicker({
-                                                format: 'YYYY-MM-DD'
-                                            });
-                                        });
-                                    </script>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="form-group">
-                                        <label for="tat">TAT</label>
-                                        <input type='text' name="tat" class="form-control" id='etat' />
-                                    </div>
-                                    <script type="text/javascript">
-                                        $(function() {
-                                            $('#etat').datetimepicker({
-                                                format: 'YYYY-MM-DD'
-                                            });
-                                        });
-                                    </script>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="form-group">
-                                        <label>Pisa</label>
-                                        <select class="form-control" id="episa" name="pisa">
-                                            <?php foreach ($coverage as $key => $value) { ?>
-                                                <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                        <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                    ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Kelompok</label>
-                                        <select class="form-control" id="epayor" name="payor">
-                                            <option value=""><?php echo lang('Word.select'); ?></option>
-                                            <?php foreach ($payor as $key => $value) { ?>
-                                                <option value="<?php echo $payor[$key]['payor_id']; ?>"><?php echo $payor[$key]['payor']; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                        <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                    ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label>Kelas</label>
-                                        <select class="form-control" id="eclass_id" name="class_id">
-                                            <?php foreach ($kelas as $key => $value) { ?>
-                                                <option value="<?php echo $kelas[$key]['class_id']; ?>"><?php echo $kelas[$key]['name_of_class']; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                        <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                    ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Status di Keluarga</label>
-                                                <select class="form-control" id="efamily" name="family">
-                                                    <?php foreach ($family as $key => $value) { ?>
-                                                        <option value="<?php echo $family[$key]['family_status_id']; ?>"><?php echo $family[$key]['family_status']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                            ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Agama</label>
-                                                <select class="form-control" id="eagama" name="agama">
-                                                    <?php foreach ($agama as $key => $value) { ?>
-                                                        <option value="<?php echo $agama[$key]['kode_agama']; ?>"><?php echo $agama[$key]['nama_agama']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                                <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                            ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="kota">Pendidikan</label>
-                                                <select class="form-control" id="eedukasi" name="edukasi">
-                                                    <?php foreach ($education as $key => $value) { ?>
-                                                        <option value="<?php echo $education[$key]['education_type_code']; ?>"><?php echo $education[$key]['name_of_edu_type']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="form-group">
-                                                <label for="kalurahan">Pekerjaan</label>
-                                                <select name="pekerjaan" id="epekerjaan" class="form-control">
-                                                    <?php foreach ($job as $key => $value) { ?>
-                                                        <option value="<?php echo $job[$key]['job_id']; ?>"><?php echo $job[$key]['name_of_job']; ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!--./col-md-6-->
-                                <div class="" id="customfield"></div>
-                            </div><!--./row-->
-                        </div>
-                        <div class="modal-footer">
-                            <div class="pull-right">
-                                <button type="submit" id="formeditpabtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-<?php }
-} ?>
+<!-- ini modal yang dipake buat REVIEW HISTORY PASIEN termasuk BIODATA,RAJAL,RANAP -->
+<!-- END -->
+
+
+<!-- ini modal yang dipake buat CRUD BIODATA PASIEN -->
+<!-- if (isset($permissions['biodatapasien']['u'])) -->
 <?php if (isset($permissions['biodatapasien']['c'])) {
     if ($permissions['biodatapasien']['c'] == '1') {  ?>
-        <div class="modal fade" id="addPasienModal" role="dialog" aria-labelledby="rincianPasienModelLabel">
+        <div class="modal fade" id="pasienModal" role="dialog" aria-labelledby="rincianPasienModelLabel">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
@@ -579,27 +267,30 @@ $permissions = user()->getPermissions();
                             <div class="modal-body">
                                 <input id="aupdateid" name="updateid" placeholder="" type="hidden" class="form-control" value="" />
                                 <div class="row">
-                                    <input id="ano_registration" name="no_registration" placeholder="" type="text" class="form-control block" value="" style="display: none" />
+
+                                </div>
+                                <div class="row">
+                                    <input id="ano_registration" type="text" name="no_registration" placeholder="" class="form-control block" value="" style="display: none" />
                                     <div class=" col-md-6">
                                         <div class="form-group">
                                             <label>Nama Pasien</label><small class="req"> *</small>
-                                            <input id="anama" name="nama" placeholder="" type="text" class="form-control" value="" />
+                                            <input id="anama" type="text" name="nama" autocomplete="off" placeholder="" class="form-control" value="" required />
                                             <span class="text-danger"><?php //echo form_error('name'); 
                                                                         ?></span>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>NIK</label>
-                                            <input type="text" name="pasien_id" id="apasien_id" placeholder="" value="" class="form-control">
+                                            <label>NIK</label><small class="req"> *</small>
+                                            <input id="apasien_id" type="text" name="pasien_id" autocomplete="off" placeholder="" value="" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label> <?php echo lang('Word.gender'); ?></label>
-                                                    <select class="form-control" name="gender" id="agenders">
+                                                    <label> <?php echo lang('Word.gender'); ?></label><small class="req"> *</small>
+                                                    <select class="form-control" name="gender" id="agenders" required>
                                                         <?php foreach ($gender as $key => $value) { ?>
                                                             <option value="<?php echo $gender[$key]['gender']; ?>"><?php echo $gender[$key]['name_of_gender']; ?></option>
                                                         <?php } ?>
@@ -613,13 +304,12 @@ $permissions = user()->getPermissions();
                                                     <input type='text' name="datebirth" class="form-control" id='adatebirth' />
                                                 </div> -->
                                                 <div class="mb-3">
-                                                    <label>Tanggal Lahir</label>
+                                                    <label>Tanggal Lahir</label><small class="req"> *</small>
                                                     <div>
-                                                        <div class="input-group" id="adatebirth">
-                                                            <input name="datebirth" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#adatebirth">
-
+                                                        <div class="input-group" id="adatebirthgroup">
                                                             <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
+                                                            <input id="adatebirth" name="datebirth" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#adatebirthgroup" required>
+                                                            </input>
                                                         </div>
                                                         <!-- input-group -->
                                                     </div>
@@ -629,7 +319,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-5">
                                                 <div class="form-group">
                                                     <label>Tempat Lahir</label><small class="req"> *</small>
-                                                    <input type="text" name="placebirth" id="aplacebirth" placeholder="" value="" class="form-control">
+                                                    <input type="text" name="placebirth" id="aplacebirth" placeholder="" value="" class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -638,8 +328,8 @@ $permissions = user()->getPermissions();
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label>Darah</label>
-                                                    <select class="form-control" id="agoldar" name="goldar">
+                                                    <label>Darah</label><small class="req"> *</small>
+                                                    <select class="form-control" id="agoldar" name="goldar" required>
                                                         <?php foreach ($blood as $key => $value) { ?>
                                                             <option value="<?php echo $blood[$key]['blood_type_id']; ?>"><?php echo $blood[$key]['name_of_type']; ?></option>
                                                         <?php } ?>
@@ -650,7 +340,7 @@ $permissions = user()->getPermissions();
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="pwd"><?php echo lang('Word.marital_status'); ?></label>
+                                                    <label for="pwd">Pernikahan</label>
                                                     <select name="perkawinan" id="aperkawinan" class="form-control">
                                                         <?php
                                                         foreach ($marital as $key => $value) {
@@ -667,7 +357,7 @@ $permissions = user()->getPermissions();
                                                     <label for="exampleInputFile">
                                                         <?php echo lang('Word.patient_photo'); ?>
                                                     </label>
-                                                    <div>
+                                                    <div id="imgprofilediv">
                                                         <input class="filestyle form-control-file" type='file' name='file' id="axampleInputFile" size='20' data-height="26" data-default-file="<?php echo base_url() ?>uploads/patient_images/no_image.png">
                                                     </div>
                                                     <span class="text-danger"><?php //echo form_error('file'); 
@@ -684,22 +374,22 @@ $permissions = user()->getPermissions();
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
-                                            <label>HP</label>
-                                            <input type="text" placeholder="" id="amobile" value="" name="mobile" class="form-control">
+                                            <label>HP</label><small class="req"> *</small>
+                                            <input type="text" placeholder="" id="amobile" value="" name="mobile" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="address">Alamat</label>
-                                            <input name="address" id="aaddress" placeholder="" class="form-control" />
+                                            <label for="address">Alamat</label><small class="req"> *</small>
+                                            <input name="address" id="aaddress" placeholder="" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-sm-12">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label>Provinsi</label>
-                                                    <select class="form-control" id="aprov" name="prov">
+                                                    <label>Provinsi</label><small class="req"> *</small>
+                                                    <select class="form-control" id="aprov" name="prov" required>
                                                         <option value=""><?php echo lang('Word.select'); ?></option>
                                                         <?php foreach ($prov as $key => $value) { ?>
                                                             <option value="<?php echo $prov[$key]['province_code']; ?>"><?php echo $prov[$key]['name_of_province']; ?></option>
@@ -711,24 +401,24 @@ $permissions = user()->getPermissions();
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="kota">Kota/Kabupaten</label>
-                                                    <select name="kota" id="akota" class="form-control" disabled>
+                                                    <label for="kota">Kota/Kabupaten</label><small class="req"> *</small>
+                                                    <select name="kota" id="akota" class="form-control" disabled required>
                                                         <option value=""><?php echo lang('Word.select') ?></option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="kecamatan">Kecamatan</label>
-                                                    <select name="kecamatan" id="akecamatan" class="form-control" disabled>
+                                                    <label for="kecamatan">Kecamatan</label><small class="req"> *</small>
+                                                    <select name="kecamatan" id="akecamatan" class="form-control" disabled required>
                                                         <option value=""><?php echo lang('Word.select') ?></option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
-                                                    <label for="kalurahan">Kelurahan</label>
-                                                    <select name="kalurahan" id="akalurahan" class="form-control" disabled>
+                                                    <label for="kalurahan">Kelurahan</label><small class="req"> *</small>
+                                                    <select name="kalurahan" id="akalurahan" class="form-control" disabled required>
                                                         <option value=""><?php echo lang('Word.select') ?></option>
                                                     </select>
                                                 </div>
@@ -741,8 +431,8 @@ $permissions = user()->getPermissions();
                                                 <div class="form-group">
                                                     <label>RT / RW</label>
                                                     <div style="clear: both;overflow: hidden;">
-                                                        <input type="text" placeholder="RT" name="rt" id="art" value="" class="form-control" style="width: 30%; float: left;">
-                                                        <input type="text" id="arw" placeholder="RW" name="rw" value="" class="form-control patient_age_month" autocomplete="off" style="width: 30%;float: left; margin-left: 4px;">
+                                                        <input type="text" id="art" name="rt" value="" class="form-control" style="width: 30%; float: left;">
+                                                        <input type="text" id="arw" name="rw" value="" class="form-control" autocomplete="off" style="width: 30%;float: left; margin-left: 4px;">
                                                     </div>
                                                 </div>
                                             </div>
@@ -751,106 +441,19 @@ $permissions = user()->getPermissions();
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Ayah</label>
-                                            <input name="ayah" id="aayah" placeholder="" class="form-control" />
+                                            <input name="ayah" id="aayah" placeholder="" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Ibu</label>
-                                            <input name="ibu" id="aibu" placeholder="" class="form-control" />
+                                            <input name="ibu" id="aibu" placeholder="" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Suami/Istri</label>
-                                            <input name="sutri" id="asutri" placeholder="" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="pwd">Catatan</label>
-                                            <textarea name="description" id="adescription" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>No.Peserta</label>
-                                            <input name="kk_no" id="akk_no" placeholder="" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Asuransi</label>
-                                            <select class="form-control" id="astatus" name="status">
-                                                <?php foreach ($statusPasien as $key => $value) { ?>
-                                                    <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label for="tmt">TMT</label>
-                                            <input type='text' name="tmt" class="form-control" id='atmt' />
-                                        </div>
-                                        <script type="text/javascript">
-                                            $(function() {
-                                                $('#atmt').datetimepicker({
-                                                    format: 'YYYY-MM-DD'
-                                                });
-                                            });
-                                        </script>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label for="tat">TAT</label>
-                                            <input type='text' name="tat" class="form-control" id='atat' />
-                                        </div>
-                                        <script type="text/javascript">
-                                            $(function() {
-                                                $('#atat').datetimepicker({
-                                                    format: 'YYYY-MM-DD'
-                                                });
-                                            });
-                                        </script>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Pisa</label>
-                                            <select class="form-control" id="apisa" name="pisa">
-                                                <?php foreach ($coverage as $key => $value) { ?>
-                                                    <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Kelompok</label>
-                                            <select class="form-control" id="apayor" name="payor">
-                                                <option value=""><?php echo lang('Word.select'); ?></option>
-                                                <?php foreach ($payor as $key => $value) { ?>
-                                                    <option value="<?php echo $payor[$key]['payor_id']; ?>"><?php echo $payor[$key]['payor']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Kelas</label>
-                                            <select class="form-control" id="aclass_id" name="class_id">
-                                                <?php foreach ($kelas as $key => $value) { ?>
-                                                    <option value="<?php echo $kelas[$key]['class_id']; ?>"><?php echo $kelas[$key]['name_of_class']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
+                                            <input name="sutri" id="asutri" placeholder="" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-12 col-sm-12">
@@ -901,13 +504,102 @@ $permissions = user()->getPermissions();
                                             </div>
                                         </div>
                                     </div><!--./col-md-6-->
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="pwd">Catatan</label>
+                                            <textarea name="description" id="adescription" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>No.Peserta</label>
+                                            <div class="input-group" id="akk_nogroup">
+                                                <span class="input-group-text"><a href="#"><i class="fa fa-search"></i></a></span>
+                                                <input name="kk_no" id="akk_no" placeholder="" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Asuransi</label><small class="req">*</small>
+                                            <select class="form-control" id="astatus" name="status">
+                                                <?php foreach ($statusPasien as $key => $value) { ?>
+                                                    <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
+                                                                        ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="mb-3">
+                                            <label>TMT</label>
+                                            <div>
+                                                <div class="input-group" id="atmtgroup">
+                                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                    <input id="atmt" name="tmt" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atmtgroup">
+                                                </div>
+                                                <!-- input-group -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="mb-3">
+                                            <label>TAT</label>
+                                            <div>
+                                                <div class="input-group" id="atatgroup">
+                                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                    <input id="atat" name="tat" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atatgroup">
+                                                </div>
+                                                <!-- input-group -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label>Pisa</label>
+                                            <select class="form-control" id="apisa" name="pisa">
+                                                <?php foreach ($coverage as $key => $value) { ?>
+                                                    <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
+                                                                        ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Kelompok</label>
+                                            <select class="form-control" id="apayor" name="payor">
+                                                <option value=""><?php echo lang('Word.select'); ?></option>
+                                                <?php foreach ($payor as $key => $value) { ?>
+                                                    <option value="<?php echo $payor[$key]['payor_id']; ?>"><?php echo $payor[$key]['payor']; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
+                                                                        ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>Kelas</label><small class="req">*</small>
+                                            <select class="form-control" id="aclass_id" name="class_id" required>
+                                                <?php foreach ($kelas as $key => $value) { ?>
+                                                    <option value="<?php echo $kelas[$key]['class_id']; ?>"><?php echo $kelas[$key]['name_of_class']; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
+                                                                        ?></span>
+                                        </div>
+                                    </div>
+
                                     <div class="" id="customfield"></div>
                                 </div><!--./row-->
                             </div>
                         </div>
                         <div class="modal-footer">
                             <div class="pull-right">
-                                <button type="submit" id="formaddpabtn" data-loading-text="<?php echo lang('Word.processing'); ?>" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <?php echo lang('Word.save'); ?></button>
+                                <button type="submit" id="formaddpabtn" data-loading-text="<?php echo lang('Word.processing'); ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <?php echo lang('Word.save'); ?></button>
                             </div>
                         </div>
                     </form>
@@ -916,3 +608,5 @@ $permissions = user()->getPermissions();
         </div>
 <?php }
 } ?>
+<!-- INI MODAL YANG DIPAKE BUAT CRUD BIODATA PASIEN -->
+<!--END-->

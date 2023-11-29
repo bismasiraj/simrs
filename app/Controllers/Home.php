@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\AssessmentModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
 use App\Models\GenerateIdModel;
@@ -13,8 +14,14 @@ class Home extends BaseController
 {
     public function index()
     {
+        $p = new AssessmentModel;
+        $pasien = ($p->find('202311201254360110BD9'));
 
-        return view('welcome_message');
+        // return json_encode(base64_encode($pasien['ttd']));
+
+        return view('welcome_message', [
+            'imgsource' => ($pasien['TTD'])
+        ]);
     }
     public function homebase()
     {
