@@ -8,7 +8,9 @@ use App\Models\ClassRoomModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
 use App\Models\InasisKontrolModel;
+use App\Models\InasisRujukanModel;
 use App\Models\OrganizationunitModel;
+use App\Models\PasienDiagnosasModel;
 use App\Models\PasienVisitationModel;
 use App\Models\StatusPasienModel;
 use App\Models\TreatmentAkomodasiModel;
@@ -369,6 +371,44 @@ class RawatInap extends \App\Controllers\BaseController
 
         return json_encode($data);
     }
+
+    public function deleteAkomodasi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $bill = $body['bill'];
+        $pastBill = $body['pastBill'];
+
+        $ta = new TreatmentAkomodasiModel();
+        $result = $ta->delete($bill);
+        if (!$result) {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+        $dataPast = [
+            'keluar_id' => 0,
+            'bill_id' => $pastBill
+        ];
+
+        $resultPast = $ta->save($dataPast);
+        if ($resultPast) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['message'] = 'sukses';
+            return json_encode($response);
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+
+
+        // SAMPAI SINI YA. NANTI BIKIN KODING NGAMBIL BILL ID DELETE, DAN BILL ID BEFORE, LALU YG DELETE YA DIDELETE, YG BEFORE DIUBAH JADI MASIH RAWAT INAP DAN EXIT DATE DLL DISESUAIKAN
+    }
     public function insertSepInap()
     {
         if (!$this->request->is('post')) {
@@ -646,5 +686,69 @@ class RawatInap extends \App\Controllers\BaseController
             $response['metadata']['message'] = 'gagal, data tidak ditemukan';
             return json_encode($response);
         }
+    }
+    public function getDiagRujukan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $d = new PasienDiagnosasModel();
+        $selectDiagnosa = $d->join('pasien_diagnosa pd', 'pd.pasien_diagnosa_id = pasien_diagnosas.pasien_diagnosa_id', 'inner')
+            ->select("top(1) pasien_diagnosas.diagnosa_id, diagnosa_name")
+            ->where('visit_id', $visit)
+            ->where('pasien_diagnosas.diag_cat', '1')
+            ->orderBy('pasien_diagnosas.modified_date desc')
+            ->findAll();
+        if (isset($selectDiagnosa[0])) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['message'] = 'sukses';
+            $response['response']['data'] = $selectDiagnosa[0];
+            return json_encode($response);
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+    }
+    public function getRujukanInap()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $ir = new InasisRujukanModel();
+        $select = $this->lowerKey($ir->join('clinic c', 'c.kdpoli = inasis_rujukan.polirujukan_kdpoli')
+            ->where('visit_id', $visit)
+            ->findAll());
+
+        if (isset($select[0])) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['message'] = 'sukses';
+            $response['response']['data'] = $select[0];
+            return json_encode($response);
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+    }
+    public function deleteRujukanInap()
+    {
+        if (!$this->request->is('delete')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
     }
 }

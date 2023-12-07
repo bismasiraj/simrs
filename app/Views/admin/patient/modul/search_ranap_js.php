@@ -190,7 +190,13 @@
                                         .append($("<td>").append('<input id="taamount_paid' + key + '" name="amount_paid[]" class="form-control" type="text" value="' + parseFloat(element.amount_paid) + '" readonly/>'))
                                     )
                                     if (key + 1 == sAkom.length) {
-                                        $("#" + element.bill_id).append($("<td>").append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + key + ')">').append('<i class="fa fa-edit"></i>')))
+                                        $("#" + element.bill_id).append($('<td id="btnTdAkom"' + key + '>')
+                                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                                .append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + key + ')">').append('<i class="fa fa-edit"></i>'))
+                                                .append($('<button id="delBtnAkomodasi' + key + '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' + element.bill_id + '\',' + key + ')">').append('<i class="fa fa-trash"></i>'))
+                                            )
+                                        )
+
                                     } else {
                                         $("#" + element.bill_id).append($("<td>"))
                                     }
@@ -216,6 +222,7 @@
                                 .prop("disabled", false)
                         }
                     });
+                    getRujukanInap()
                 } else {
                     $("#ajax_load").html("");
                     $("#patientDetails").hide();
@@ -464,7 +471,7 @@
                     var daydiff = datediff(start, end)
                     if (daydiff >= 0) {
                         if (daydiff == 0) {
-                            daydiff = 1;
+                            daydiff = 1
                         }
                         $("#taquantity" + id).val(daydiff)
                     } else {
@@ -672,6 +679,63 @@
         }
     }
 
+    function deleteAkomodasi(billId, key) {
+        if ((sAkom[key].sppbill == '' || sAkom[key].sppbill == null) && (sAkom[key].sppbill == '' || sAkom[key].sppbill == null)) {
+            var daysadded = new Date($("#tatreat_date" + key).val())
+            var daysadded = daysadded.setDate(daysadded.getDate() + 10)
+            var resultDate = new Date(daysadded)
+            var today = new Date()
+            if (resultDate > today) {
+                var lsSep = $("#tano_skpinap").val()
+                if (lsSep != '' && lsSep != null && sAkom.length != 0) {
+                    alert('No SEP telah diterbitkan. Hapus nomor SEP terlebih dahulu.')
+                } else {
+                    if (confirm('Apakah anda betul-betul akan menghapus data ini?')) {
+                        if (confirm('Menghapus data ini berarti akan menghapus semua transaksi yang pernah dilakukan di bangsal ini, Apakah anda betul-betul akan menghapus Data ini?')) {
+                            $("#delBtnAkomodasi" + key).html('<i class="spinner-border spinner-border-sm"></i>')
+                            $.ajax({
+                                url: '<?php echo base_url(); ?>admin/rawatinap/deleteAkomodasi',
+                                type: "POST",
+                                data: JSON.stringify({
+                                    "bill": sAkom[key].bill_id,
+                                    "pastBill": sAkom[key - 1].bill_id
+                                }),
+                                dataType: 'json',
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function(data) {
+                                    console.log(data.metadata.code)
+                                    if (data.metadata.code == 200) {
+                                        $("#" + sAkom[key].bill_id).remove()
+                                        sAkom.splice(key, 1)
+                                        sAkom[key - 1].keluar_id = 0
+                                        var keypast = key - 1
+                                        $("#takeluar_id" + keypast).val(0)
+                                        $("#btnTdAkom" + keypast).append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                            .append($('<button type="button" class="btn btn-primary" onclick="enableElementTA(' + keypast + ')">').append('<i class="fa fa-edit"></i>'))
+                                            .append($('<button id="delBtnAkomodasi' + keypast + '" type="button" class="btn btn-danger" onclick="deleteAkomodasi(\'' + sAkom[keypast].bill_id + '\',' + keypast + ')">').append('<i class="fa fa-trash"></i>'))
+                                        )
+                                    } else {
+                                        errorMsg(data.metadata.message)
+                                    }
+                                    $("#delBtnAkomodasi" + key).html('<i class="fa fa-trash"></i>')
+                                },
+                                error: function() {
+                                    $("#delBtnAkomodasi" + key).html('<i class="fa fa-trash"></i>')
+                                }
+                            });
+                        }
+                    }
+                }
+            } else {
+                alert("Anda tidak berhak menghapus transaksi ini karena durasi waktu telah terlampaui. Silahkan hubungi pihak administrator!")
+            }
+        } else {
+            alert('Kunjungan pasien ini telah dilakukan close billing. Silahkan menghubungi petugas kasir untuk membua transaksinya kembali.')
+        }
+    }
+
     function insertSepInap() {
         var nospri = $("#taspecimenno").val()
         if (nospri == '' || nospri == null) {
@@ -805,6 +869,168 @@
                 console.log(data)
                 if (data.metadata.code == '200') {
                     $("#taspecimenno").val(data.response.nosuratkontrol)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function getDiagRujukan() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/getDiagRujukan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit': skunj.visit_id,
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                alert(data.metadata.message)
+                console.log(data)
+                if (data.metadata.code == '200') {
+                    $("#diagRujukan").val(data.response.diagnosa_id)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function getRujukanInap() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rawatinap/getRujukanInap',
+            type: "POST",
+            data: JSON.stringify({
+                'visit': skunj.visit_id,
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                if (data.metadata.code == '200') {
+                    var rujukan = data.response.data
+                    $("#tglRencanaRujukanInap").val((String)(rujukan.tglrujukan).substr(0, 10))
+                    $("#ppkRujukanInap").val(rujukan.provrujukan_kdprovider)
+                    $("#diagRujukanInap").val(rujukan.kddiag)
+                    $("#nameDiagRujukanInap").val(rujukan.nmdiag)
+                    $("#poliRujukanInap").val(rujukan.clinic_id)
+                    $("#tipeRujukanInap").val(rujukan.tiperujukan)
+                    $("#catatanRujukanInap").val(rujukan.catatan)
+                    $("#noRujukanInap").val(rujukan.nokunjungan)
+                }
+            },
+            error: function() {
+                $("#saveAddAkomodasi").html('Simpan <i class=" fas fa-check-circle"></i>')
+                    .prop("disabled", false)
+            }
+        });
+    }
+
+    function insertRujukanInap() {
+        var rujvisit = skunj.visit_id
+        var rujrujukanNosep = $("#tano_skpinap").val()
+        var rujnoRujukan = $("#noRujukanInap").val()
+        var rujtglRujukan = sAkom[sAkom.length - 1].exit_date
+        var rujtglRencanaKunjungan = $("#tglRencanaRujukanInap").val()
+        if (rujtglRencanaKunjungan == '' || rujtglRencanaKunjungan == null) {
+            alert('Tanggal Rencana Rujukan harus diisi')
+            return '';
+        }
+        var rujppkdirujuk = $("#ppkRujukanInap").val()
+        if (rujppkdirujuk == '' || rujppkdirujuk == null) {
+            alert('kolom "Dirujuk Ke" tidak boleh kosong')
+            return '';
+        }
+        var rujppkname = $("#ppkRujukanInap").find(":selected").text()
+        if (typeof rujppkname !== 'undefined') {
+            var rujppkdirujukName = rujppkname
+        }
+        var rujjnsPelayanan = '2'
+        var rujcatatan = $("#noRujukanInap").val()
+        var rujdiagRujukan = $("#diagRujukanInap").val()
+        if (rujdiagRujukan == '' || rujdiagRujukan == null) {
+            alert('Harus sudah mengisi diagnosa utama')
+            return '';
+        }
+        var rujdiagRujukanName = $("#nameDiagRujukanInap").val()
+
+        var rujtipeRujukan = $("#tipeRujukanInap").val()
+        var rujpoliRujukan = $("#poliRujukanInap").val()
+        if (rujpoliRujukan == '' || rujpoliRujukan == null) {
+            alert('Poli rujukan harus diisi')
+            return '';
+        }
+        var rujsex = skunj.gender
+        var rujnama = skunj.diantar_oleh
+        var rujnokartu = skunj.pasien_id
+        var rujnorm = skunj.no_registration
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/postRujukan',
+            type: "POST",
+            data: JSON.stringify({
+                'nosep': rujrujukanNosep,
+                'norujukan': rujnoRujukan,
+                'tglRujukan': rujtglRujukan,
+                'tglRencanaKunjungan': rujtglRencanaKunjungan,
+                'ppkdirujuk': rujppkdirujuk,
+                'jnsPelayanan': rujjnsPelayanan,
+                'catatan': rujcatatan,
+                'diagRujukan': rujdiagRujukan,
+                'tipeRujukan': rujtipeRujukan,
+                'poliRujukan': rujpoliRujukan,
+                'visit': rujvisit,
+                'ppkdirujukName': rujppkdirujukName,
+                'diagRujukanName': rujdiagRujukanName,
+                'sex': rujsex,
+                'nama': rujnama,
+                'nokartu': rujnokartu,
+                'nomr': rujnorm
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {},
+            success: function(data) {
+                if (data.metaData.code == '200') {
+                    var noRujukan = data.response.rujukan.noRujukan
+                    $("#noRujukanInap").val(noRujukan)
+                }
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+            },
+            complete: function() {}
+        });
+    }
+
+    function deleteRujukanInap() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/deleteRujukan',
+            type: "DELETE",
+            data: JSON.stringify({
+                "noRujukan": $("#noRujukanInap").val(),
+                'visit': skunj.visit_id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                console.log(data)
+                if (data.metaData.code == 200) {
+                    successMsg(data.metaData.message)
+                    $("#noRujukanInap").val("")
+                } else {
+                    errorMsg(data.metaData.message)
                 }
             },
             error: function() {

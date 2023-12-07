@@ -471,11 +471,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <div class="dividerhr"></div>
-                                            </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -487,7 +482,104 @@
                                     </button>
                                 </h2>
                                 <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                    <div class="accordion-body text-muted">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="tglRencanaRujukanInap">Tanggal Rencana Rujukan</label>
+                                                    <input class="form-control" type="date" value="" id="tglRencanaRujukanInap">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="ppkRujukanInap">PPK Rujukan</label>
+                                                    <select name='ppkRujukanInap' id="ppkRujukanInap" class="form-control select2 act" style="width:100%">
+                                                        <?php foreach ($inasisFaskes as $key => $value) { ?>
+                                                            <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <label for="diagRujukan">Diagnosa Rujukan</label>
+                                                <div class="input-group">
+                                                    <input id="diagRujukanInap" name="diagRujukan" type="text" class="form-control" />
+                                                    <input id="nameDiagRujukanInap" name="nameDiagRujukan" type="hidden" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button class="form-control" onclick="getDiagRujukan()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="poliRujukanInap">Poli Rujukan</label>
+                                                    <select name="poliRujukan" id="poliRujukanInap" class="form-control ">
+                                                        <?php $cliniclist = array();
+                                                        foreach ($clinic as $key => $value) {
+                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                            }
+                                                        }
+                                                        asort($cliniclist);
+                                                        ?>
+                                                        <?php foreach ($cliniclist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="tipeRujukan">Tipe Rujukan</label>
+                                                    <select name="tipeRujukan" id="tipeRujukanInap" class="form-control ">
+                                                        <option value="0">Penuh</option>
+                                                        <option value="1">Partial</option>
+                                                        <option value="2">Balik PRB</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="noRujukan">Catatan</label>
+                                                    <textarea id="catatanRujukanInap" name="catatanRujukan" type="text" class="form-control">
+                                                    </textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="noRujukan">No. Rujukan</label>
+                                                    <input id="noRujukanInap" name="noRujukan" type="text" class="form-control" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-3">
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="createSepInap" type="button" onclick="insertRujukanInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Simpan Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="editSepInap" type="button" onclick="updateRujukanInap()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Edit Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="deleteSepInap" type="button" onclick="deleteRujukanInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-remove"></i> <span>Delete Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="accordion-item">

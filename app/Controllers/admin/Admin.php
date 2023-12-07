@@ -539,8 +539,12 @@ class Admin extends \App\Controllers\BaseController
                                                 </button>';
 
                 $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
-                $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Jalan</a>';
-                $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Tambah Rawat Inap</a>';
+                if ($dt_response[$key]['visit_id'] != null) {
+                    $action .= '<a onclick="getAkomodasi(\'' . $dt_response[$key]['visit_id'] . '\')" class="dropdown-item" href="#"><i style="color: red">PASIEN SEDANG RAWAT INAP</i></a>';
+                } else {
+                    $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
+                    $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Inap</a>';
+                }
                 $action .= '<a onclick=\'getpatientData("' . $id . '")\' class="dropdown-item" href="#">Histori Pasien</a>';
                 $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
                 $action .= "</div>";

@@ -2,6 +2,7 @@
     var sbioArray;
     var sbio = new Array();
     var skunj = new Array();
+    var skunjAll = new Array();
     var tablePasien = $("#datapasien").DataTable({
         dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
     })
@@ -445,6 +446,7 @@
 
     function addVisitPatient(id) {
         get_PatientDetailspv(id)
+        getHistoryPv(id)
         holdModal("addKunjunganModal")
     }
 

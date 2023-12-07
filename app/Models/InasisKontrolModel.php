@@ -29,7 +29,8 @@ extends Model
         'responpost',
         'responput',
         'respondel',
-        'isused'
+        'isused',
+        'no_registration'
     ];
 
     // Dates

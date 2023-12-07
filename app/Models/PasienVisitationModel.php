@@ -74,7 +74,8 @@ class PasienVisitationModel extends Model
         'aktif',
         'visit_id',
         'trans_id',
-        'ticket_no'
+        'ticket_no',
+        'isrj'
     ];
 
     // Dates

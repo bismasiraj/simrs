@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Models\ClassModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
+use App\Models\InasisKontrolModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienVisitationModel;
 use App\Models\StatusPasienModel;
@@ -161,5 +162,500 @@ class Pendaftaran extends \App\Controllers\BaseController
             "data"            => $dt_data,
         );
         return json_encode($json_data);
+    }
+
+    public function getHistoryPv()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $pv = new PasienVisitationModel();
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+
+        $kode = $body['norm'];
+
+
+        // return json_encode($nama);
+        $kunjungan = $this->lowerKey($pv->select('top(20) *')->where('no_registration', $kode)->where('visit_date > dateadd(month,-3,getdate())')->orderBy('visit_date asc')->findAll());
+
+        return json_encode($kunjungan);
+    }
+    public function getSKDP()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $ik = new InasisKontrolModel();
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $nomor = $body['norm'];
+        $clinic = $body['clinic_id'];
+        $kddpjp = $body['kddpjp'];
+        $visit = $body['visit_id'];
+
+        $select = $this->lowerKey(
+            $ik->select('top(1) nosuratkontrol')->join('clinic c', 'inasis_kontrol.polikontrol_kdpoli = c.kdpoli', 'inner')
+                ->where('surattype', 1)
+                ->where('clinic_id', $clinic)
+                ->where('kodedokter', $kddpjp)
+                ->where('no_registration', $nomor)
+                ->where('visit_id', $visit)
+                ->where('nosuratkontrol is not null')
+                ->findAll()
+        );
+
+        if (isset($select[0]['nosuratkontrol'])) {
+            $skdp = $select[0]['nosuratkontrol'];
+            $data = [
+                'isused' => 1
+            ];
+            $ik->update($skdp, $data);
+
+            $response['metadata']['code'] = 200;
+            $response['metdata']['message'] = 'sukses';
+            $response['skdp'] = $skdp;
+            return json_encode($response);
+        } else {
+            $response['metadata']['code'] = 201;
+            $response['metdata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+    }
+    public function getSPRI()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $ik = new InasisKontrolModel();
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $nomor = $body['norm'];
+        $clinic = $body['clinic_id'];
+        $kddpjp = $body['kddpjp'];
+        $visit = $body['visit_id'];
+
+        $select = $this->lowerKey(
+            $ik->select('top(1) nosuratkontrol')->join('clinic c', 'inasis_kontrol.polikontrol_kdpoli = c.kdpoli', 'inner')
+                ->where('surattype', 2)
+                // ->where('clinic_id', $clinic)
+                ->where('kodedokter', $kddpjp)
+                ->where('no_registration', $nomor)
+                ->where('nosuratkontrol is not null')
+                ->where('visit_id', $visit)
+                ->findAll()
+        );
+
+        if (isset($select[0]['nosuratkontrol'])) {
+            $skdp = $select[0]['nosuratkontrol'];
+            $data = [
+                'isused' => 1
+            ];
+            $ik->update($skdp, $data);
+
+            $response['metadata']['code'] = 200;
+            $response['metdata']['message'] = 'sukses';
+            $response['spri'] = $skdp;
+            return json_encode($response);
+        } else {
+            $response['metadata']['code'] = 201;
+            $response['metdata']['message'] = 'gagal';
+            return json_encode($response);
+        }
+    }
+
+    public function saveSkdp()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body['request'];
+        $noskdp = $body['noSuratKontrol'];
+        $visit = $body['visit_id'];
+        $nomr = $body['no_registration'];
+
+        $ws_data = [];
+        if ($noskdp != '') {
+            $method = 'PUT';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url .= 'Update';
+            $request['noSuratKontrol'] = $noskdp;
+        } else {
+            $method = 'POST';
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url .= 'insert';
+        }
+
+
+
+        $ws_data['request'] = $request;
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        // $posting = ' {
+        //     "metaData": {
+        //         "code": "200",
+        //         "message": "Ok"
+        //     },
+        //     "response": {
+        //         "noSuratKontrol": "0301R0110520K000013",
+        //         "tglRencanaKontrol": "2020-05-15",
+        //         "namaDokter": "Dr. John Wick",
+        //         "noKartu": "0001328186441",
+        //         "nama": "ARIS",
+        //         "kelamin": "Laki-laki",
+        //         "tglLahir": "1947-12-31"
+        //     }
+        // }';
+        // $response = json_decode($posting, true);
+        if ($response['metaData']['code'] == '200') {
+            $ik = new InasisKontrolModel();
+            $data = [
+                'visit_id' => $visit,
+                'nosep' => $request['noSEP'],
+                'surattype' => 1,
+                'nosuratkontrol' => $response['response']['noSuratKontrol'],
+                'tglrenckontrol' => $response['response']['tglRencanaKontrol'],
+                'polikontrol_kdpoli' => $request['poliKontrol'],
+                'kodedokter' => $request['kodeDokter'],
+                'modified_by' => user()->username,
+                'no_registration' => $nomr
+            ];
+            if ($method == 'POST') {
+                $data['responpost'] = json_encode($response);
+            } else {
+                $data['responput'] = json_encode($response);
+            }
+
+            // return json_encode($data);
+
+            $ik->save($data);
+        }
+
+        return json_encode($response);
+    }
+    public function deleteSkdp()
+    {
+        if (!$this->request->is('delete')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body;
+
+        $ws_data = [];
+        $method = 'DELETE';
+        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+        $url .= 'Delete';
+
+
+
+        $ws_data = $request;
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        if ($response['metaData']['code'] == '200') {
+            $ik = new InasisKontrolModel();
+            $ik->delete($request['request']['t_suratkontrol']['noSuratKontrol']);
+        }
+        return json_encode($response);
+    }
+
+    public function checkSkdp()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $ik = new InasisKontrolModel();
+        $select = $ik->where('visit_id', $visit)->where('surattype', 1)->findAll();
+        $select = $this->lowerKey($select);
+
+        if (isset($select[0])) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['mesasge'] = 'Data SKDP ditemukan';
+            $response['data'] = $select[0];
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['mesasge'] = 'Data SKDP tidak ditemukan';
+        }
+        return json_encode($response);
+    }
+    public function getRujukan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $norujukan = $body['norujukan'];
+        $nokartu = $body['nokartu'];
+        $asalrujukan = $body['asalrujukan'];
+
+
+        $ws_data = [];
+        $method = 'GET';
+        if ($norujukan != '' && $norujukan != null) {
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/';
+            if ($asalrujukan == '2') {
+                $url .= 'RS/';
+            }
+            $url .= $norujukan;
+        } else {
+            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/';
+            if ($asalrujukan == '2') {
+                $url .= 'RS/';
+            }
+            $url .= 'Peserta/' . $nokartu;
+        }
+
+        // return json_encode($url);
+
+        $ws_data = array();
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+
+        return json_encode($response);
+    }
+    public function insertSep()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        if ($body['jnsPelayanan'] == 2) {
+            $body['klsRawat']['klsRawatNaik'] = "";
+            $body['klsRawat']['pembiayaan'] = "";
+            $body['klsRawat']['penanggungJawab'] = "";
+        }
+        if ($body['flagProcedure'] == '99') {
+            $body['flagProcedure'] = '';
+        }
+        if ($body['kdPenunjang'] == '99') {
+            $body['kdPenunjang'] = '';
+        }
+
+        $ws_data = [];
+        $method = 'POST';
+        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/insert';
+
+        // return json_encode($url);
+
+        $ws_data['request']['t_sep'] = $body;
+        $postdata = json_encode($ws_data);
+        // return $postdata;
+        // $posting = $this->sendVclaim($url, $method, $postdata);
+        // $response = $posting;
+        $posting = '{
+                "metaData": {
+                    "code": "200",
+                    "message": "Sukses"
+                },
+                "response": {
+                    "sep": {
+                        "assestmenPel": "1",
+                        "catatan": "testinsert RJ",
+                        "diagnosa": "A15 - Respiratory tuberculosis, bacteriologically and histologically confirmed",
+                        "flagProcedure": "",
+                        "informasi": {
+                            "dinsos": null,
+                            "eSEP": "True",
+                            "noSKTM": null,
+                            "prolanisPRB": null
+                        },
+                        "jnsPelayanan": "R.Jalan",
+                        "kdPenunjang": "",
+                        "kdPoli": "INT",
+                        "kelasRawat": "-",
+                        "noRujukan": "0050B1070223P000004",
+                        "noSep": "0301R0010323V000039",
+                        "penjamin": "-",
+                        "peserta": {
+                            "asuransi": "-",
+                            "hakKelas": "Kelas 3",
+                            "jnsPeserta": "PBI (APBN)",
+                            "kelamin": "Perempuan",
+                            "nama": "ARSTNUU",
+                            "noKartu": "0002802875185",
+                            "noMr": "MR5185",
+                            "tglLahir": "1944-02-24"
+                        },
+                        "poli": "PENYAKIT DALAM",
+                        "poliEksekutif": "Tidak",
+                        "tglSep": "2023-03-30",
+                        "tujuanKunj": "2"
+                    }
+                }
+            }';
+        $response = json_decode($posting, true);
+
+
+        return json_encode($response);
+    }
+    public function editSep()
+    {
+        if (!$this->request->is('put')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        if ($body['jnsPelayanan'] == 2) {
+            $body['klsRawat']['klsRawatNaik'] = "";
+            $body['klsRawat']['pembiayaan'] = "";
+            $body['klsRawat']['penanggungJawab'] = "";
+        }
+
+        $ws_data = [];
+        $method = 'PUT';
+        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/update';
+
+        // return json_encode($url);
+
+        $ws_data['request']['t_sep'] = $body;
+        $postdata = json_encode($ws_data);
+        // return $postdata;
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        // $posting = '{
+        //         "metaData": {
+        //             "code": "200",
+        //             "message": "Sukses"
+        //         },
+        //         "response": {
+        //             "sep": {
+        //                 "assestmenPel": "1",
+        //                 "catatan": "testinsert RJ",
+        //                 "diagnosa": "A15 - Respiratory tuberculosis, bacteriologically and histologically confirmed",
+        //                 "flagProcedure": "",
+        //                 "informasi": {
+        //                     "dinsos": null,
+        //                     "eSEP": "True",
+        //                     "noSKTM": null,
+        //                     "prolanisPRB": null
+        //                 },
+        //                 "jnsPelayanan": "R.Jalan",
+        //                 "kdPenunjang": "",
+        //                 "kdPoli": "INT",
+        //                 "kelasRawat": "-",
+        //                 "noRujukan": "0050B1070223P000004",
+        //                 "noSep": "0301R0010323V000039",
+        //                 "penjamin": "-",
+        //                 "peserta": {
+        //                     "asuransi": "-",
+        //                     "hakKelas": "Kelas 3",
+        //                     "jnsPeserta": "PBI (APBN)",
+        //                     "kelamin": "Perempuan",
+        //                     "nama": "ARSTNUU",
+        //                     "noKartu": "0002802875185",
+        //                     "noMr": "MR5185",
+        //                     "tglLahir": "1944-02-24"
+        //                 },
+        //                 "poli": "PENYAKIT DALAM",
+        //                 "poliEksekutif": "Tidak",
+        //                 "tglSep": "2023-03-30",
+        //                 "tujuanKunj": "2"
+        //             }
+        //         }
+        //     }';
+        // $response = json_decode($posting, true);
+
+
+        return json_encode($response);
+    }
+    public function deleteSep()
+    {
+        if (!$this->request->is('delete')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+
+
+        $ws_data = [];
+        $method = 'DELETE';
+        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/delete';
+
+        // return json_encode($url);
+
+        $ws_data['request']['t_sep'] = $body;
+        $postdata = json_encode($ws_data);
+        // return $postdata;
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        // $posting = '{
+        //         "metaData": {
+        //             "code": "200",
+        //             "message": "Sukses"
+        //         },
+        //         "response": {
+        //             "sep": {
+        //                 "assestmenPel": "1",
+        //                 "catatan": "testinsert RJ",
+        //                 "diagnosa": "A15 - Respiratory tuberculosis, bacteriologically and histologically confirmed",
+        //                 "flagProcedure": "",
+        //                 "informasi": {
+        //                     "dinsos": null,
+        //                     "eSEP": "True",
+        //                     "noSKTM": null,
+        //                     "prolanisPRB": null
+        //                 },
+        //                 "jnsPelayanan": "R.Jalan",
+        //                 "kdPenunjang": "",
+        //                 "kdPoli": "INT",
+        //                 "kelasRawat": "-",
+        //                 "noRujukan": "0050B1070223P000004",
+        //                 "noSep": "0301R0010323V000039",
+        //                 "penjamin": "-",
+        //                 "peserta": {
+        //                     "asuransi": "-",
+        //                     "hakKelas": "Kelas 3",
+        //                     "jnsPeserta": "PBI (APBN)",
+        //                     "kelamin": "Perempuan",
+        //                     "nama": "ARSTNUU",
+        //                     "noKartu": "0002802875185",
+        //                     "noMr": "MR5185",
+        //                     "tglLahir": "1944-02-24"
+        //                 },
+        //                 "poli": "PENYAKIT DALAM",
+        //                 "poliEksekutif": "Tidak",
+        //                 "tglSep": "2023-03-30",
+        //                 "tujuanKunj": "2"
+        //             }
+        //         }
+        //     }';
+        // $response = json_decode($posting, true);
+
+
+        return json_encode($response);
     }
 }

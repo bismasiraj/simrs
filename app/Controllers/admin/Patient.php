@@ -1388,14 +1388,18 @@ This Function is used to Add Patient
         $p = new PasienModel();
         $no_registration = $p->getNorm();
 
+        $trans_id = $this->request->getPost('trans_id');
+        $visit_id = $this->request->getPost('visit_id');
+        $ticket_no = $this->request->getPost('ticket_no');
         $clinic_id = $this->request->getPost('clinic_id');
         $employee_id = $this->request->getPost('employee_id');
+        $isrj = $this->request->getPost('isrj');
         $kddpjp = $this->request->getPost('kddpjp');
         $class_id = $this->request->getPost('class_id');
         $class_id_plafond = $this->request->getPost('class_id_plafond');
         $status_pasien_id = $this->request->getPost('status_pasien_id');
-        $visit_date = $this->request->getPost('visit_date');
-        $boooked_date = $this->request->getPost('boooked_date');
+        $visit_date = str_replace("T", " ", $this->request->getPost('visit_date'));
+        $booked_date =  str_replace("T", " ", $this->request->getPost('booked_date'));
         $kdpoli_eks = $this->request->getPost('kdpoli_eks');
         $isnew = $this->request->getPost('isnew');
         $cob = $this->request->getPost('cob');
@@ -1408,7 +1412,7 @@ This Function is used to Add Patient
         $asalrujukan = $this->request->getPost('asalrujukan');
         $norujukan = $this->request->getPost('norujukan');
         $kdpoli = $this->request->getPost('kdpoli');
-        $tanggal_rujukan = $this->request->getPost('tanggal_rujukan');
+        $tanggal_rujukan =  str_replace("T", " ", $this->request->getPost('tanggal_rujukan'));
         $ppkrujukan = $this->request->getPost('ppkrujukan');
         $diag_awal = $this->request->getPost('diag_awal');
         $conclusion = $this->request->getPost('conclusion');
@@ -1448,8 +1452,8 @@ This Function is used to Add Patient
         $tujuankunj = $this->request->getPost('tujuankunj');
         $flagprocedure = $this->request->getPost('flagprocedure');
         $kdpenunjang = $this->request->getPost('kdpenunjang');
-        $assesmenpel = $this->request->getPost('assesmenpel');
-        $valid_rm_date = $this->request->getPost('assesmenpel');
+        $assesmentpel = $this->request->getPost('assesmentpel');
+        $valid_rm_date = $this->request->getPost('valid_rm_date');
         $penjamin = $this->request->getPost('penjamin');
         $lokasilaka = $this->request->getPost('lokasilaka');
         $ispertarif = $this->request->getPost('ispertarif');
@@ -1457,14 +1461,17 @@ This Function is used to Add Patient
         $delete_sep = $this->request->getPost('delete_sep');
 
 
-
         $pv = new PasienVisitationModel();
-        $genereatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
+        $flag = 'edit';
+        if (!isset($visit_id) || $visit_id == null) {
+            $genereatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
 
 
-        $visit_id = $genereatePv[0]['visit_id'];
-        $trans_id = $genereatePv[0]['trans_id'];
-        $ticket_no = $genereatePv[0]['ticket_no'];
+            $visit_id = $genereatePv[0]['visit_id'];
+            $trans_id = $genereatePv[0]['trans_id'];
+            $ticket_no = $genereatePv[0]['ticket_no'];
+            $flag = 'tambah';
+        }
         // dd($genereatePv);
 
 
@@ -1479,7 +1486,7 @@ This Function is used to Add Patient
             'class_id_plafond' => $class_id_plafond,
             'status_pasien_id' => $status_pasien_id,
             'visit_date' => $visit_date,
-            'boooked_date' => $boooked_date,
+            'booked_date' => $booked_date,
             'kdpoli_eks' => $kdpoli_eks,
             'isnew' => $isnew,
             'cob' => $cob,
@@ -1530,8 +1537,15 @@ This Function is used to Add Patient
             'aktif' => $aktif,
             'visit_id' => $visit_id,
             'trans_id' => $trans_id,
-            'ticket_no' => $ticket_no
-
+            'ticket_no' => $ticket_no,
+            'backcharge' => $backcharge,
+            'valid_rm_date' => $valid_rm_date,
+            'penjamin' => $penjamin,
+            'lokasilaka' => $lokasilaka,
+            'ispertarif' => $ispertarif,
+            'temptrans' => $temptrans,
+            'delete_sep' => $delete_sep,
+            'isrj' => $isrj
         ];
         // $data = json_encode($data);
 
@@ -1539,13 +1553,27 @@ This Function is used to Add Patient
 
 
 
-        $pv->insert($data);
+        $pv->save($data);
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
         // of specified length
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'visit_id' => $visit_id);
+        $array   = array('status' => 'success', 'error' => '', 'message' => $flag . ' kunjungan pasien berhasil', 'visit_id' => $visit_id, 'data' => $data);
+        echo json_encode($array);
+    }
+
+    public function deletevisit()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $visit_id = $this->request->getPost('visit_id');
+
+        $pv = new PasienVisitationModel();
+        $pv->delete($visit_id);
+
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'delete kunjungan pasien berhasil', 'visit_id' => $visit_id);
         echo json_encode($array);
     }
 

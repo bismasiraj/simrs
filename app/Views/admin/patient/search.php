@@ -391,6 +391,7 @@ $currency_symbol = 'Rp. ';
 <script type="text/javascript">
     var dokterdpjp = new Array();
     var skunj = new Array();
+    var klinikBpjs = new Array();
 
     <?php
     foreach ($dokter as $key => $value) {
@@ -399,6 +400,13 @@ $currency_symbol = 'Rp. ';
             dokterdpjp.push(['<?= $key; ?>', '<?= $key1; ?>', '<?= $value1; ?>']);
     <?php
         }
+    }
+    ?>
+    <?php
+    foreach ($clinic as $key => $value) {
+    ?>
+        klinikBpjs.push(['<?= $value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>']);
+    <?php
     }
     ?>
 
