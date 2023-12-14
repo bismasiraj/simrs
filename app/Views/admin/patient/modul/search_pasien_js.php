@@ -6,6 +6,12 @@
     var tablePasien = $("#datapasien").DataTable({
         dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
     })
+    var tableAddDiagnosa = $("#addDiagnosaTable").DataTable({
+        dom: 'frt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
+    var tableAddKalurahan = $("#addKalurahanTable").DataTable({
+        dom: 'frt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
+    })
     var dataPasien = Array();
     var validatorBiodata = $('#formaddpa').validate({ // initialize the plugin
         rules: {
@@ -177,6 +183,230 @@
 <script type="text/javascript">
     function holdModal(modalId) {
         $('#' + modalId).modal("show");
+    }
+
+    function showDiagnosaModal() {
+        holdModal('addDiagnosaModal')
+        $("#addDiagnosaModal").css("z-index", 2000)
+        $("#addDiagnosaModal").css("background-color", "rgba(239, 239, 240, 0.6)")
+    }
+
+    function showKalurahanModal() {
+        holdModal('addKalurahanModal')
+        $("#addKalurahanModal").css("z-index", 2000)
+        $("#addKalurahanModal").css("background-color", "rgba(239, 239, 240, 0.6)")
+    }
+
+    function showGetPesertaModal() {
+        $("#tglSepGetPeserta").val((String)(get_date()).slice(0, 10))
+        holdModal('getPesertaBpjsModal')
+        $("#getPesertaBpjsModal").css("z-index", 2000)
+        $("#getPesertaBpjsModal").css("background-color", "rgba(239, 239, 240, 0.6)")
+    }
+
+    $("#addDiagnosaForm").on('submit', (function(e) {
+        e.preventDefault();
+        $("#searchDiagnosaBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        // spinner-border spinner-border-sm
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pendaftaran/getDiagnosaAll',
+            type: "POST",
+            dataType: 'json',
+            data: JSON.stringify({
+                'text': $("#searchDiagnosaText").val(),
+            }),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                tableAddDiagnosa.clear()
+                if (data) {
+                    console.log(data)
+                    data.forEach((element, key) => {
+                        tableAddDiagnosa.row.add(element).draw()
+                    });
+                } else {
+
+                }
+                $("#searchDiagnosaBtn").html('<i class="fa fa-search"></i>')
+            },
+            error: function() {
+                $("#searchDiagnosaBtn").html('<i class="fa fa-search"></i>')
+            }
+        });
+    }))
+
+    $("#addKalurahanForm").on('submit', (function(e) {
+        e.preventDefault()
+        $("#searchKalurahanBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        // spinner-border spinner-border-sm
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pendaftaran/getKalurahanAll',
+            type: "POST",
+            dataType: 'json',
+            data: JSON.stringify({
+                'text': $("#searchKalurahanText").val(),
+            }),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                tableAddKalurahan.clear()
+                if (data) {
+                    console.log(data)
+                    data.forEach((element, key) => {
+                        tableAddKalurahan.row.add(element).draw()
+                    });
+                } else {
+
+                }
+                $("#searchKalurahanBtn").html('<i class="fa fa-search"></i>')
+            },
+            error: function() {
+                $("#searchKalurahanBtn").html('<i class="fa fa-search"></i>')
+            }
+        });
+    }))
+    $("#getPesertaBpjsForm").on('submit', (function(e) {
+        e.preventDefault()
+        $("#searchGetPesertaBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        // spinner-border spinner-border-sm
+        var tglSep = $("#tglSepGetPeserta").val()
+        var nomor = $("#searchNomorPeserta").val()
+        if (tglSep == '' || tglSep == null) {
+            alert('Mohon isi Tanggal SEP terlebih dahulu')
+        } else if (nomor == '' || nomor == null) {
+            alert('Mohon isi nomor NIK/No.Peserta BPJS')
+        } else {
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/pendaftaran/getPesertaBpjs',
+                type: "POST",
+                dataType: 'json',
+                data: new FormData(this),
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    if (data.metaData.code == '200') {
+                        var peserta = data.response.peserta
+                        console.log(peserta)
+                        $("#gpnoKartu").val(peserta.noKartu)
+                        $("#gpnik").val(peserta.nik)
+                        $("#gpstatusPeserta").append(new Option(peserta.statusPeserta.ketarangan, peserta.statusPeserta.kode))
+                        $("#gpnama").val(peserta.nama)
+                        $("#noMR").val(peserta.mr.noMR)
+                        $("#gpsex").val(peserta.sex)
+                        $("#gpdinsos").val(peserta.informasi.dinsos)
+                        $("#gpnoSKTM").val(peserta.informasi.noSKTM)
+                        $("#gpprolanisPRB").val(peserta.informasi.prolanisPRB)
+                        $("#gpjenisPeserta").append(new Option(peserta.jenisPeserta.keterangan, peserta.jenisPeserta.kode))
+                        $("#gphakKelas").append(new Option(peserta.hakKelas.keterangan, peserta.hakKelas.kode))
+                        $("#gppisa").val(peserta.pisa)
+                        $("#gp.noTelepon").val(peserta.mr.noTelepon)
+                        $("#gpprovUmum").append(new Option(peserta.provUmum.nmProvider, peserta.provUmum.kdProvider))
+                        $("#gptglCetakKartu").val(peserta.tglCetakKartu)
+                        $("#gpumur").val(peserta.umur.umurSekarang)
+                        $("#gptglLahir").val(peserta.tglLahir)
+                        $("#gptglTAT").val(peserta.tglTAT)
+                        $("#gptglTMT").val(peserta.tglTMT)
+                    } else {
+                        alert(data.metaData.message)
+                    }
+                    $("#searchGetPesertaBtn").html('<i class="fa fa-search"></i>')
+                },
+                error: function() {
+                    $("#searchGetPesertaBtn").html('<i class="fa fa-search"></i>')
+                }
+            });
+        }
+    }))
+
+    function terapkanGetPeserta() {
+        if ($("#gpnama").val() != '') {
+            if (confirm('Apakah anda akan menerapkan nama "' + $("#gpnama").val() + '" pada pasien ini?')) {
+                $("#anama").val($("#gpnama").val())
+            }
+        }
+        if ($("#gpnik").val() != '') {
+            if (confirm('Apakah anda akan menerapkan NIK dengan nomor "' + $("#gpnik").val() + '" pada pasien ini?')) {
+                $("#apasien_id").val($("#gpnik").val())
+            }
+        }
+        if ($("#gpnoKartu").val() != '') {
+            if (confirm('Apakah anda akan menerapkan Nomor Kartu BPJS dengan nomor "' + $("#gpnoKartu").val() + '" pada pasien ini?')) {
+                $("#akk_no").val($("#gpnoKartu").val())
+            }
+        }
+        if ($("#gpsex").val() != '') {
+            if (confirm('Apakah anda akan menerapkan gender "' + $("#gpsex").val() + '" pada pasien ini?')) {
+                if ($("#gpsex").val() == 'L') {
+                    $("#agenders").val('1')
+                } else {
+                    $("#agenders").val('2')
+                }
+            }
+        }
+        if ($("#gphakKelas").val() != '') {
+            if (confirm('Apakah anda akan menerapkan Hak Kelas pasien dengan "' + $("#gphakKelas option:selected").text() + '" pada pasien ini?')) {
+                $("#aclass_id").val($("#gphakKelas").val())
+                if ($("#gphakKelas").val() == '1') {
+                    $("#aclass_id").val('2')
+                } else if ($("#gphakKelas").val() == '2') {
+                    $("#aclass_id").val('3')
+                } else if ($("#gphakKelas").val() == '3') {
+                    $("#aclass_id").val('4')
+                }
+
+            }
+        }
+        if ($("#gppisa").val() != '') {
+            if (confirm('Apakah anda akan menerapkan Pisa pasien?')) {
+                $("#apisa").val($("#gppisa").val())
+            }
+        }
+        if ($("#gptglLahir").val() != '') {
+            if (confirm('Apakah anda akan menerapkan tanggal lahir pasien "' + $("#gptglLahir").val() + '" pasien?')) {
+                $("#adatebirth").val($("#gptglLahir").val())
+            }
+        }
+        if ($("#gptglTAT").val() != '') {
+            if (confirm('Apakah anda akan menerapkan tanggal TAT "' + $("#gptglTAT").val() + '" pada pasien?')) {
+                $("#atat").val($("#gptglTAT").val())
+            }
+        }
+        if ($("#gptglTMT").val() != '') {
+            if (confirm('Apakah anda akan menerapkan tanggal TMT "' + $("#gptglTMT").val() + '" pada pasien?')) {
+                $("#atmt").val($("#gptglTMT").val())
+            }
+        }
+        $("#astatus").val('18')
+        $("#getPesertaBpjsModal").modal('hide')
+        $(':input', '#resultGetPeserta')
+            .not(':button, :submit, :reset, :hidden')
+            .val('')
+            .prop('checked', false)
+            .prop('selected', false);
+    }
+
+    function selectKalId(id, text) {
+        $("#akalurahan").html("")
+        $("#akalurahan").append(new Option(text, id))
+        $("#addKalurahanModal").modal('hide')
+    }
+
+    function chooseDiagnosa(diagid, diagtext) {
+        $("#addDiagnosaModal").modal('hide')
+        $("#pvdiag_awal").html("")
+        $("#pvdiag_awal").append(new Option(diagtext, diagid))
+        $("#pvconclusion").val(diagtext)
+
+        $("#diagRujukanInap").html("")
+        $("#diagRujukanInap").append(new Option(diagtext, diagid))
+        $("#nameDiagRujukanInap").val(diagtext)
+    }
+
+    function searchDiagnosa() {
+
     }
 
     function getStrKunjungan(id) { //untuk view resume pasien
@@ -434,6 +664,8 @@
     // }
 
     function editBiodataPasien(id = null) {
+        $("#formaddpabtn").show()
+        $("#formeditpabtn").hide()
         if (id != null) {
             sbio = sbioArray[id]
             editBiodata()
@@ -442,6 +674,16 @@
             clearBiodata()
         }
         holdModal('pasienModal');
+    }
+
+    function formpaToggleBtn() {
+        $("#formaddpabtn").toggle()
+        $("#formeditpabtn").toggle()
+        $(':input', '#formaddpa')
+            .not(':button, :submit, :reset, :hidden')
+            .prop('disabled', false)
+            .prop('checked', false)
+            .prop('selected', false);
     }
 
     function addVisitPatient(id) {
@@ -465,6 +707,12 @@
     }
 
     function editBiodata() {
+        $(':input', '#formaddpa')
+            .not(':button, :submit, :reset, :hidden')
+            .prop('disabled', false)
+            .prop('checked', false)
+            .prop('selected', false);
+        $("#displayNoRegistration").html(sbio.no_registration)
         $("#ano_registration").val(sbio.no_registration);
         $("#anama").val(sbio.name_of_pasien);
         $("#apasien_id").val(sbio.pasien_id);
@@ -542,44 +790,17 @@
     }
 
     function clearBiodata() {
-        $("#ano_registration").val("");
-        $("#anama").val("");
-        $("#apasien_id").val("");
-        $("#aclass_id").val("");
-        $("#aplacebirth").val("");
-        $("#adatebirth").val("");
-        $("#adescription").val("");
-        $("#aaddress").val("");
-        $("#art").val("");
-        $("#arw").val("");
-        $("#aayah").val("")
-        $("#aibu").val("")
-        $("#asutri").val("")
-        $("#aphone").val("");
-        $("#amobile").val("");
-        $("#astatus").val("");
-        $("#apayor").val("");
-        $("#aedukasi").val("");
-        $("#apekerjaan").val("");
-        $("#agoldar").val("");
-        $("#aagama").val("");
-        $("#agender").val("");
-        $("#apisa").val("");
-        $("#afamily").val("");
-        $("#akk_no").val("");
-        // $("#etmt").val(sbio.tmt.substring(0, 10));
-        // $("#etat").val(sbio.tat.substring(0, 10));
-        $("#aperkawinan").val("");
 
-        var kalselect = '';
-        var kotaselect = '';
-        var provselect = '';
-
-        $("#akalurahan").val(kalselect)
-        $("#akecamatan").val(kotaselect)
-        $("#akota").val(provselect)
-
+        $("#displayNoRegistration").html('<?php echo lang('Word.add_patient'); ?>')
+        alert('bisma')
+        $(':input', '#formaddpa')
+            .not(':button, :submit, :reset, :hidden')
+            .val('')
+            // .prop('disabled', false)
+            .prop('checked', false)
+            .prop('selected', false);
         validatorBiodata.resetForm()
+
     }
 
     // $(document).ready(function(e) {
@@ -706,6 +927,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(e) {
+
         $('#aprov').on("click", function() {
             $("#akota").html("")
             $("#akecamatan").html("")
@@ -764,7 +986,7 @@
                 cache: false,
                 processData: false,
                 beforeSend: function() {
-                    clicked_submit_btn.button('loading');
+                    $("#formaddpabtn").html('<i class="spinner-border spinner-border-sm"></i>')
                 },
                 success: function(data) {
                     if (data.status == "fail") {
@@ -775,16 +997,22 @@
                         errorMsg(message);
                     } else {
                         successMsg(data.message);
-                        window.location.reload(true);
+                        $(':input', '#formaddpa')
+                            .not(':button, :submit, :reset, :hidden')
+                            .prop('disabled', true)
+                            .prop('checked', false)
+                            .prop('selected', false);
                     }
-                    clicked_submit_btn.button('reset');
+                    $("#formaddpabtn").hide()
+                    $("#formeditpabtn").show()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
+                    $("#formaddpabtn").html('<i class="fa fa-check-circle"></i> <?php echo lang('Word.save'); ?>')
                 },
                 complete: function() {
-                    clicked_submit_btn.button('reset');
+                    $("#formaddpabtn").html('<i class="fa fa-check-circle"></i> <?php echo lang('Word.save'); ?>')
+
                 }
             });
         }));

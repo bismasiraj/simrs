@@ -4,7 +4,7 @@ $permissions = user()->getPermissions();
 ?>
 
 <div class="tab-pane tab-content-height 
-                            <?php if ($giTipe == 0) echo "active"; ?>
+                            <?php if ($giTipe == 0 || $giTipe == 5) echo "active"; ?>
                             " id="biodata">
     <div class="row">
         <!-- <div class="col-md-12">
@@ -259,7 +259,7 @@ $permissions = user()->getPermissions();
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content rounded-4">
                     <div class="modal-header">
-                        <h4 class="modal-title mt-0"><?php echo lang('Word.add_patient'); ?></h4>
+                        <h4 id="displayNoRegistration" class="modal-title mt-0"><?php echo lang('Word.add_patient'); ?></h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form id="formaddpa" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
@@ -271,21 +271,25 @@ $permissions = user()->getPermissions();
                                 </div>
                                 <div class="row">
                                     <input id="ano_registration" type="text" name="no_registration" placeholder="" class="form-control block" value="" style="display: none" />
-                                    <div class=" col-md-6">
-                                        <div class="form-group">
-                                            <label>Nama Pasien</label><small class="req"> *</small>
-                                            <input id="anama" type="text" name="nama" autocomplete="off" placeholder="" class="form-control" value="" required />
-                                            <span class="text-danger"><?php //echo form_error('name'); 
-                                                                        ?></span>
+                                    <div class="col-sm-12 col-md-12 mb-3">
+                                        <div class="row">
+                                            <div class=" col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nama Pasien</label><small class="req"> *</small>
+                                                    <input id="anama" type="text" name="nama" autocomplete="off" placeholder="" class="form-control" value="" required />
+                                                    <span class="text-danger"><?php //echo form_error('name');
+                                                                                ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label>NIK</label><small class="req"> *</small>
+                                                    <input id="apasien_id" type="text" name="pasien_id" autocomplete="off" placeholder="" value="" class="form-control" required>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>NIK</label><small class="req"> *</small>
-                                            <input id="apasien_id" type="text" name="pasien_id" autocomplete="off" placeholder="" value="" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-12">
+                                    <div class="col-md-6 col-sm-12 mb-3">
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <div class="form-group">
@@ -324,7 +328,7 @@ $permissions = user()->getPermissions();
                                             </div>
                                         </div>
                                     </div><!--./col-md-6-->
-                                    <div class="col-md-6 col-sm-12">
+                                    <div class="col-md-6 col-sm-12 mb-3">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -366,98 +370,79 @@ $permissions = user()->getPermissions();
                                             </div>
                                         </div>
                                     </div><!--./col-md-6-->
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label for="pwd">No Telp</label>
-                                            <input id="aphone" autocomplete="off" name="phone" type="text" placeholder="" class="form-control" value="" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>HP</label><small class="req"> *</small>
-                                            <input type="text" placeholder="" id="amobile" value="" name="mobile" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="address">Alamat</label><small class="req"> *</small>
-                                            <input name="address" id="aaddress" placeholder="" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12">
+                                    <div class="col-md-12 col-sm-12 mb-3">
                                         <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Provinsi</label><small class="req"> *</small>
-                                                    <select class="form-control" id="aprov" name="prov" required>
-                                                        <option value=""><?php echo lang('Word.select'); ?></option>
-                                                        <?php foreach ($prov as $key => $value) { ?>
-                                                            <option value="<?php echo $prov[$key]['province_code']; ?>"><?php echo $prov[$key]['name_of_province']; ?></option>
-                                                        <?php } ?>
-                                                    </select>
-                                                    <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                                ?></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label for="kota">Kota/Kabupaten</label><small class="req"> *</small>
-                                                    <select name="kota" id="akota" class="form-control" disabled required>
-                                                        <option value=""><?php echo lang('Word.select') ?></option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label for="kecamatan">Kecamatan</label><small class="req"> *</small>
-                                                    <select name="kecamatan" id="akecamatan" class="form-control" disabled required>
-                                                        <option value=""><?php echo lang('Word.select') ?></option>
-                                                    </select>
+                                                    <label for="address">Alamat</label><small class="req"> *</small>
+                                                    <input name="address" id="aaddress" placeholder="" class="form-control" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="kalurahan">Kelurahan</label><small class="req"> *</small>
-                                                    <select name="kalurahan" id="akalurahan" class="form-control" disabled required>
-                                                        <option value=""><?php echo lang('Word.select') ?></option>
-                                                    </select>
+                                                    <div class="input-group">
+                                                        <select name="kalurahan" id="akalurahan" class="form-control" disabled required>
+                                                            <option value=""><?php echo lang('Word.select') ?></option>
+                                                        </select>
+                                                        <span class="input-group-btn">
+                                                            <button id="openSearchKalurahanBtn" class="form-control" onclick="showKalurahanModal()" type="button"><i class="fa fa-search"></i></button>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div><!--./col-md-6-->
-                                    <div class="col-md-3 col-sm-12">
-                                        <div class="row">
-                                            <div id="calculate" class="col-sm-12">
-                                                <div class="form-group">
-                                                    <label>RT / RW</label>
-                                                    <div style="clear: both;overflow: hidden;">
-                                                        <input type="text" id="art" name="rt" value="" class="form-control" style="width: 30%; float: left;">
-                                                        <input type="text" id="arw" name="rw" value="" class="form-control" autocomplete="off" style="width: 30%;float: left; margin-left: 4px;">
+                                            <div class="col-md-3 col-sm-12">
+                                                <div class="row">
+                                                    <div id="calculate" class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <label>RT / RW</label>
+                                                            <div style="clear: both;overflow: hidden;">
+                                                                <input type="text" id="art" name="rt" value="" class="form-control" style="width: 30%; float: left;">
+                                                                <input type="text" id="arw" name="rw" value="" class="form-control" autocomplete="off" style="width: 30%;float: left; margin-left: 4px;">
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Ayah</label>
-                                            <input name="ayah" id="aayah" placeholder="" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Ibu</label>
-                                            <input name="ibu" id="aibu" placeholder="" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Suami/Istri</label>
-                                            <input name="sutri" id="asutri" placeholder="" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 col-sm-12">
+                                    <div class="col-md-12 col-sm-12 mb-3">
                                         <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="pwd">No Telp</label>
+                                                    <input id="aphone" autocomplete="off" name="phone" type="text" placeholder="" class="form-control" value="" />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>HP</label><small class="req"> *</small>
+                                                    <input type="text" placeholder="" id="amobile" value="" name="mobile" class="form-control" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div><!--./col-md-6-->
+
+                                    <div class="col md-12 col-sm-12 mb-3">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Ayah</label>
+                                                    <input name="ayah" id="aayah" placeholder="" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Ibu</label>
+                                                    <input name="ibu" id="aibu" placeholder="" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Suami/Istri</label>
+                                                    <input name="sutri" id="asutri" placeholder="" class="form-control">
+                                                </div>
+                                            </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Status di Keluarga</label>
@@ -470,6 +455,10 @@ $permissions = user()->getPermissions();
                                                                                 ?></span>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 mb-3">
+                                        <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Agama</label>
@@ -504,67 +493,73 @@ $permissions = user()->getPermissions();
                                             </div>
                                         </div>
                                     </div><!--./col-md-6-->
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12 mb-3">
                                         <div class="form-group">
                                             <label for="pwd">Catatan</label>
                                             <textarea name="description" id="adescription" class="form-control"></textarea>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>No.Peserta</label>
-                                            <div class="input-group" id="akk_nogroup">
-                                                <span class="input-group-text"><a href="#"><i class="fa fa-search"></i></a></span>
-                                                <input name="kk_no" id="akk_no" placeholder="" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>Asuransi</label><small class="req">*</small>
-                                            <select class="form-control" id="astatus" name="status">
-                                                <?php foreach ($statusPasien as $key => $value) { ?>
-                                                    <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="mb-3">
-                                            <label>TMT</label>
-                                            <div>
-                                                <div class="input-group" id="atmtgroup">
-                                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                    <input id="atmt" name="tmt" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atmtgroup">
+                                    <div class="col-sm-12 col-md-12 mb-3">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>No.Peserta</label>
+                                                    <div class="input-group" id="akk_nogroup">
+                                                        <span class="input-group-btn">
+                                                            <button id="openSearchKalurahanBtn" class="form-control" onclick="showGetPesertaModal()" type="button"><i class="fa fa-search"></i></button>
+                                                        </span>
+                                                        <input name="kk_no" id="akk_no" placeholder="" class="form-control">
+                                                    </div>
                                                 </div>
-                                                <!-- input-group -->
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="mb-3">
-                                            <label>TAT</label>
-                                            <div>
-                                                <div class="input-group" id="atatgroup">
-                                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                    <input id="atat" name="tat" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atatgroup">
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Asuransi</label><small class="req">*</small>
+                                                    <select class="form-control" id="astatus" name="status">
+                                                        <?php foreach ($statusPasien as $key => $value) { ?>
+                                                            <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <span class="text-danger"><?php //echo form_error('blood_group');
+                                                                                ?></span>
                                                 </div>
-                                                <!-- input-group -->
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="form-group">
-                                            <label>Pisa</label>
-                                            <select class="form-control" id="apisa" name="pisa">
-                                                <?php foreach ($coverage as $key => $value) { ?>
-                                                    <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
-                                                <?php } ?>
-                                            </select>
-                                            <span class="text-danger"><?php //echo form_error('blood_group'); 
-                                                                        ?></span>
+                                            <div class="col-sm-2">
+                                                <div class="mb-3">
+                                                    <label>TMT</label>
+                                                    <div>
+                                                        <div class="input-group" id="atmtgroup">
+                                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                            <input id="atmt" name="tmt" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atmtgroup">
+                                                        </div>
+                                                        <!-- input-group -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="mb-3">
+                                                    <label>TAT</label>
+                                                    <div>
+                                                        <div class="input-group" id="atatgroup">
+                                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                                            <input id="atat" name="tat" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atatgroup">
+                                                        </div>
+                                                        <!-- input-group -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <label>Pisa</label>
+                                                    <select class="form-control" id="apisa" name="pisa">
+                                                        <?php foreach ($coverage as $key => $value) { ?>
+                                                            <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <span class="text-danger"><?php //echo form_error('blood_group');
+                                                                                ?></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-3">
@@ -600,6 +595,7 @@ $permissions = user()->getPermissions();
                         <div class="modal-footer">
                             <div class="pull-right">
                                 <button type="submit" id="formaddpabtn" data-loading-text="<?php echo lang('Word.processing'); ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <?php echo lang('Word.save'); ?></button>
+                                <button type="button" id="formeditpabtn" onclick="formpaToggleBtn()" data-loading-text="<?php echo lang('Word.processing'); ?>" class="btn btn-primary pull-right" style="display: none"><i class="fa fa-edit"></i> Edit</button>
                             </div>
                         </div>
                     </form>
@@ -610,3 +606,200 @@ $permissions = user()->getPermissions();
 } ?>
 <!-- INI MODAL YANG DIPAKE BUAT CRUD BIODATA PASIEN -->
 <!--END-->
+
+<div id="addDiagnosaModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDiagnosaModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addDiagnosaForm" action="" method="post" class="">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label" for="formrow-firstname-input">Diagnosa</label>
+                            <div class="input-group">
+                                <!-- <label class="mb-3">Nama Pasien / No RM</label> -->
+                                <input type="search" name="search_text" id="searchDiagnosaText" class=" form-control" placeholder="Kode diagnosa atau Nama diagnosa" aria-label="Kode diagnosa atau Nama diagnosa">
+                                <button class="btn btn-outline-secondary" type="submit" id="searchDiagnosaBtn"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-md-12">
+                    <div id="loadingHistoryrajal"></div>
+                    <table id="addDiagnosaTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="Diagnosa">
+                        <thead class="table-primary">
+                            <tr style="text-align: center">
+                                <th>Kode Diagnosa</th>
+                                <th>Nama Diagnosa</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ajaxlist" class="table-group-divider">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="addKalurahanModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDiagnosaModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addKalurahanForm" action="" method="post" class="">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label class="form-label" for="formrow-firstname-input">Kelurahan/Kecamatan/Kota/Provinsi</label>
+                            <div class="input-group">
+                                <input type="search" name="search_text" id="searchKalurahanText" class=" form-control" placeholder="Nama Kelurahan/Kecamatan/Kota/Provinsi" aria-label="Nama Kelurahan/Kecamatan/Kota/Provinsi">
+                                <button class="btn btn-outline-secondary" type="submit" id="searchKalurahanBtn"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-md-12">
+                    <div id="loadingHistoryrajal"></div>
+                    <table id="addKalurahanTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="Kalurahan">
+                        <thead class="table-primary">
+                            <tr style="text-align: center">
+                                <th>Kelurahan</th>
+                                <th>Kecamatan</th>
+                                <th>Kota</th>
+                                <th>Provinsi</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ajaxlist" class="table-group-divider">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<style>
+    #searchNomorPeserta {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    #getPesertaType {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+</style>
+<div id="getPesertaBpjsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="getPesertaBpjs" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">GET PESERTA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="getPesertaBpjsForm" action="" method="post" class="">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="tglSepGetPeserta">Tanggal SEP</label>
+                                <input class="form-control" type="date" name="tglSEP" id="tglSepGetPeserta">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="formrow-firstname-input">Identitas Peserta</label>
+                                <div class="input-group">
+                                    <div class="col-md-3">
+                                        <select name="getPesertaType" id="getPesertaType" class="form-control">
+                                            <option value="nik">NIK</option>
+                                            <option value="nokartu">No.BPJS</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="input-group">
+                                            <input type="search" name="search_text" id="searchNomorPeserta" class=" form-control" placeholder="Nama Kelurahan/Kecamatan/Kota/Provinsi" aria-label="Nama Kelurahan/Kecamatan/Kota/Provinsi">
+                                            <button class="btn btn-outline-secondary" type="submit" id="searchGetPesertaBtn"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="resultGetPeserta" class="col-md-12">
+                    <div class="row">
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="nokartu">No Kartu</label><input id="gpnoKartu" name="noKartu" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">No KTP/NIK</label><input id="gpnik" name="nik" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Status</label><select id="gpstatusPeserta" name="statusPeserta" class="form-control" disabled></select></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Nama</label><input id="gpnama" name="nama" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">No MR</label><input id="gpnoMR" name="noMR" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Jenis Kelamin</label><input id="gpsex" name="sex" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Informasi Dinsos</label><input id="gpdinsos" name="dinsos" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">No. SKTM</label><input id="gpnoSKTM" name="noSKTM" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Prolanis PRB</label><input id="gpprolanisPRB" name="prolanisPRB" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Jenis Peserta</label><select id="gpjenisPeserta" name="jenisPeserta" type="text" class="form-control" disabled></select></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Kelas Tanggungan</label><select id="gphakKelas" name="hakKelas" type="text" class="form-control" disabled></select></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Pisa</label><input id="gppisa" name="pisa" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">No. Telp</label><input id="gpnoTelepon" name="noTelepon" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Provider Umum</label><select id="gpprovUmum" name="provUmum" class="form-control" disabled></select></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Tgl Cetak Kartu</label><input id="gptglCetakKartu" name="tglCetakKartu" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Umur</label><input id="gpumurSekarang" name="umurSekarang" type="text" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Tanggal Lahir</label><input id="gptglLahir" name="gptglLahir" type="date" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Tanggal TAT</label><input id="gptglTAT" name="gptglTAT" type="date" class="form-control" disabled /></div>
+                        </div>
+                        <div class="col-sm-3 col-xs-12 mb-3">
+                            <div class="form-group"><label for="">Tanggal TMT</label><input id="gptglTMT" name="gptglTMT" type="date" class="form-control" disabled /></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="terapkanGetPeserta()" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right">Terapkan<i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

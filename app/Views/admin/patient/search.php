@@ -50,7 +50,7 @@ $currency_symbol = 'Rp. ';
                     <div class="card-body">
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs" role="tablist">
-                                <?php if ($giTipe == 0) { ?>
+                                <?php if ($giTipe == 0 || $giTipe == '5') { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#biodata" type="button" role="tab" aria-controls="biodata" aria-selected="true"><i class="fa fa-th text-primary"></i> Biodata Pasien</button>
                                     </li>
@@ -61,18 +61,18 @@ $currency_symbol = 'Rp. ';
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $rajalTipe)  && $giTipe != 0) { ?>
+                                <?php if (in_array($giTipe, $rajalTipe)  && $giTipe != 0 && $giTipe != 5) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope text-primary"></i> Rawat Jalan</button>
                                     </li>
                                     <!-- <li><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li> -->
                                 <?php } ?>
-                                <?php if ($giTipe == 3) { ?>
+                                <?php if ($giTipe == 3 && $giTipe != 5) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 3  && $giTipe != 0) { ?>
+                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 3  && $giTipe != 0 && $giTipe != 5) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
@@ -81,7 +81,7 @@ $currency_symbol = 'Rp. ';
                             </ul>
                             <div class="tab-content">
                                 <?php
-                                if ($giTipe == 0) {
+                                if ($giTipe == 0 || $giTipe == '5') {
                                     echo view('admin/patient/modul/search_pasien', [
                                         'giTipe' => $giTipe,
                                         // 'search_text' => $search_text,
@@ -188,9 +188,6 @@ $currency_symbol = 'Rp. ';
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
@@ -639,7 +636,7 @@ $currency_symbol = 'Rp. ';
 </script>
 
 <?php
-if ($giTipe == 0) {
+if ($giTipe == 0 || $giTipe == '5') {
     echo view('admin/patient/modul/search_pasien_js', [
         'giTipe' => $giTipe,
         // 'search_text' => $search_text,

@@ -68,13 +68,13 @@ class AuthController extends Controller
             'login'    => 'required',
             'password' => 'required',
         ];
-        if ($this->config->validFields === ['email']) {
-            $rules['login'] .= '|valid_email';
-        }
+        // if ($this->config->validFields === ['email']) {
+        //     $rules['login'] .= '|valid_email';
+        // }
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
+        // if (!$this->validate($rules)) {
+        //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        // }
 
         $login    = $this->request->getPost('login');
         $password = $this->request->getPost('password');
@@ -85,6 +85,8 @@ class AuthController extends Controller
 
         // Try to log them in...
         if (!$this->auth->attempt([$type => $login, 'password' => $password], $remember)) {
+            return json_encode($this->auth->error());
+            // return json_encode("asdf");
             return redirect()->back()->withInput()->with('error', $this->auth->error() ?? lang('Auth.badAttempt'));
         }
 
@@ -169,9 +171,10 @@ class AuthController extends Controller
         // Save the user
         $allowedPostFields = array_merge(['password'], $this->config->validFields, $this->config->personalFields);
         $user              = new User($this->request->getPost($allowedPostFields));
+        // return $allowedPostFields;
 
         $selector = $users->select("max(id)+1 as id")->findAll();
-        return json_encode($user);
+        // return json_encode($user);
         $user->id = $selector[0]->id;
 
         $this->config->requireActivation === null ? $user->activate() : $user->generateActivateHash();

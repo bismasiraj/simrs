@@ -75,7 +75,8 @@ class PasienVisitationModel extends Model
         'visit_id',
         'trans_id',
         'ticket_no',
-        'isrj'
+        'isrj',
+        'backcharge'
     ];
 
     // Dates
@@ -203,7 +204,7 @@ class PasienVisitationModel extends Model
                     MONTH(VISIT_DATE),
                     DAY(visit_date),
                     c.NAME_OF_CLINIC')
-                ->select('count(visit_id) as JML,
+                ->select('top(200) count(visit_id) as JML,
                     YEAR(VISIT_DATE) as YEAR,
                     RIGHT(MONTH(VISIT_DATE)+100, 2) MONTH,
                     RIGHT(DAY(VISIT_DATE)+100, 2) DAY,

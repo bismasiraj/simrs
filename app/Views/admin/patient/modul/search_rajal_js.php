@@ -133,7 +133,7 @@ $permissions = user()->getPermissions();
 
         var daydiff = datediff(start, end)
 
-        if (daydiff < 3) {
+        if (daydiff < 4) {
             enableFormPV()
         } else {
             alert("Kunjungan telah melebihi batas waktu pengeditan. Silahkan hubungi petugas administrator!")
@@ -327,7 +327,6 @@ $permissions = user()->getPermissions();
 <script type="text/javascript">
     $("#pvclinic_id").on("click", function() {
         $("#pvemployee_id").html("");
-        $("#pvkddpjp").html("");
         var clinicSelected = $("#pvclinic_id").val();
         dokterdpjp.forEach((value, key) => {
             if (value[0] == clinicSelected) {
@@ -339,9 +338,8 @@ $permissions = user()->getPermissions();
         Object.keys(dpjp).forEach(key => {
             if (key == employeeSelected) {
                 // console.log(key, dpjp[key]);
-                $("#pvkddpjp").append(new Option(dpjp[key], dpjp[key]));
-                $("#skdpkddpjp").html("")
-                $("#skdpkddpjp").append(new Option($("#pvemployee_id option:selected").text(), $("#pvkddpjp").val()))
+                $("#pvkddpjp").val(dpjp[key])
+                $("#skdpkddpjp").val($("#pvkddpjp").val())
             }
         });
 
@@ -354,65 +352,73 @@ $permissions = user()->getPermissions();
         })
     });
     $("#pvemployee_id").on("click", function() {
-        $("#pvkddpjp").html("");
         var dokterSelected = $("#pvemployee_id").val();
         Object.keys(dpjp).forEach(key => {
             if (key == dokterSelected) {
-                // console.log(key, dpjp[key]);
-                $("#pvkddpjp").append(new Option(dpjp[key], dpjp[key]));
-                $("#skdpkddpjp").html("")
-                $("#skdpkddpjp").append(new Option($("#pvemployee_id option:selected").text(), $("#pvkddpjp").val()))
+                $("#pvkddpjp").val(dpjp[key]);
+                $("#skdpkddpjp").val(dpjp[key]);
             }
         });
     });
 
     function getRujukan() {
-        var norujukan = $("#pvnorujukan").val()
-        var nokartu = $("#pvpasien_id").val()
-        var asalrujukan = $("#pvasalrujukan").val()
-        if (asalrujukan == '') {
-            alert("Pilih Asal Rujukan")
+        if ($("#pvclinic_id").val() == 'P012') {
+            $("#pvasalrujukan").val(2)
+            $("#pvnorujukan").val(skunj.visit_id)
+            $("#pvkdpoli").val("IGD")
+            $("#pvtanggal_rujukan").val((String)(get_date()).slice(0, 10))
+            $("#pvppkrujukan").val('<?= $orgunit['OTHER_CODE']; ?>')
+            $("#pvdiag_awal").html("")
         } else {
+            var norujukan = $("#pvnorujukan").val()
+            var nokartu = $("#pvpasien_id").val()
+            var asalrujukan = $("#pvasalrujukan").val()
+            if (asalrujukan == '') {
+                alert("Pilih Asal Rujukan")
+            } else {
 
+            }
+
+            $("#getRujukanBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/pendaftaran/getRujukan',
+                type: "POST",
+                data: JSON.stringify({
+                    'norujukan': norujukan,
+                    'nokartu': nokartu,
+                    'asalrujukan': asalrujukan
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    if (data.metaData.code == '200') {
+                        alert("Get Rujukan Berhasil")
+                        $("#pvnorujukan").val(data.response.rujukan.noKunjungan)
+                        $("#pvkdpoli").val(data.response.rujukan.poliRujukan.kode)
+                        $("#pvtanggal_rujukan").val(data.response.rujukan.tglKunjungan)
+                        $("#pvppkrujukan").val(data.response.rujukan.provPerujuk.kode)
+                        $("#pvdiag_awal").html("")
+                        $("#pvdiag_awal").append(new Option(data.response.rujukan.diagnosa.nama, data.response.rujukan.diagnosa.kode))
+                        $("#pvconclusion").val(data.response.rujukan.diagnosa.nama)
+                    } else {
+                        alert(data.metaData.message)
+                    }
+                    $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
+                },
+                complete: function() {
+                    $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
+                }
+            })
         }
 
-        $("#getRujukanBtn").html('<i class="spinner-border spinner-border-sm"></i>')
 
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/pendaftaran/getRujukan',
-            type: "POST",
-            data: JSON.stringify({
-                'norujukan': norujukan,
-                'nokartu': nokartu,
-                'asalrujukan': asalrujukan
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                if (data.metaData.code == '200') {
-                    alert("Get Rujukan Berhasil")
-                    $("#pvnorujukan").val(data.response.rujukan.noKunjungan)
-                    $("#pvkdpoli").val(data.response.rujukan.poliRujukan.kode)
-                    $("#pvtanggal_rujukan").val(data.response.rujukan.tglKunjungan)
-                    $("#pvppkrujukan").val(data.response.rujukan.provPerujuk.kode)
-                    $("#pvdiag_awal").html("")
-                    $("#pvdiag_awal").append(new Option(data.response.rujukan.diagnosa.nama, data.response.rujukan.diagnosa.kode))
-                    $("#pvconclusion").val(data.response.rujukan.diagnosa.nama)
-                } else {
-                    alert(data.metaData.message)
-                }
-                $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
-            },
-            complete: function() {
-                $("#getRujukanBtn").html('<i class="fa fa-plus"></i> <span>Get Rujukan</span>')
-            }
-        })
         // alert("Get Rujukan Berhasil")
         // $("#pvnorujukan").val('0097R0090520B000006')
         // $("#pvkdpoli").val('INT')
@@ -433,7 +439,7 @@ $permissions = user()->getPermissions();
             }
         })
 
-        if ($("#pvedit_sep").val() == '' || $("#pvedit_sep").val() == null) {
+        if (($("#pvedit_sep").val() == '' || $("#pvedit_sep").val() == null) && $("#pvclinic_id").val() != 'P012') {
             alert("Nomor SKDP tidak boleh kosong")
         } else {
             $.ajax({
@@ -470,7 +476,7 @@ $permissions = user()->getPermissions();
                         "katarak": $("#pvbackcharge").val()
                     },
                     "jaminan": {
-                        "lakaLantas": ($("#pvreason_id") == 3 ? 1 : 0),
+                        "lakaLantas": ($("#pvreason_id").val() == 3 ? 1 : 0),
                         "noLP": $("#pvtemptrans").val(),
                         "penjamin": {
                             "tglKejadian": $("#pvvalid_rm_date").val(),
@@ -545,7 +551,7 @@ $permissions = user()->getPermissions();
             url: '<?php echo base_url(); ?>admin/pendaftaran/editSep',
             type: "PUT",
             data: JSON.stringify({
-                'noSep': $("#pvno_skp").text(),
+                'noSep': $("#pvno_skp").val(),
                 "jnsPelayanan": ($("#pvisrj").val() == 1 ? 2 : 1),
                 "klsRawat": {
                     "klsRawatHak": $("#pvclass_id_plafond").val(),
@@ -568,13 +574,12 @@ $permissions = user()->getPermissions();
                 },
                 "jaminan": {
                     "lakaLantas": ($("#pvreason_id") == 3 ? 1 : 0),
-                    "noLP": $("#pvtemptrans").val(),
                     "penjamin": {
                         "tglKejadian": $("#pvvalid_rm_date").val(),
                         "keterangan": $("#pvdelete_sep").val(),
                         "suplesi": {
                             "suplesi": $("#pvispertarif").val(),
-                            "noSepSuplesi": $("#pvno_skp").val(),
+                            "noSepSuplesi": ($("#pvreason_id") == 3 ? $("#pvno_skp").val() : ""),
                             "lokasiLaka": {
                                 "kdPropinsi": "",
                                 "kdKabupaten": "",
@@ -621,7 +626,7 @@ $permissions = user()->getPermissions();
             url: '<?php echo base_url(); ?>admin/pendaftaran/deleteSep',
             type: "DELETE",
             data: JSON.stringify({
-                'noSep': $("#pvno_skp").text(),
+                'noSep': $("#pvno_skp").val(),
                 "user": '<?= user()->username; ?>'
             }),
             dataType: 'json',
@@ -693,15 +698,16 @@ $permissions = user()->getPermissions();
 
     function getSPRI() {
         $("#getSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
-        alert("Get Nomor SKDP Berhasil")
+        $("#getSpriSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        // alert("Get Nomor SKDP Berhasil")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pendaftaran/getSPRI',
             type: "POST",
             data: JSON.stringify({
-                'norm': id,
-                'kddpjp': $("#pvkddpjp").val(),
-                'clinic_id': $("#pvclinic_id").val(),
-                'visit_id': $("#pvvisit_id").val()
+                'norm': skunj.no_registration,
+                'kddpjp': skunj.kddpjp,
+                'clinic_id': skunj.clinic_id,
+                'visit_id': skunj.visit_id
             }),
             dataType: 'json',
             contentType: false,
@@ -711,13 +717,16 @@ $permissions = user()->getPermissions();
                 if (data.metadata.code == '200') {
                     alert('Berhasil mengambil data SPRI')
                     $("#pvspecimenno").val(data.spri)
+                    $("#taspecimenno").val(data.spri)
                 } else {
                     alert('tidak ada data SPRI')
                 }
                 $("#getSpriBtn").html('<i class="fa fa-search"></i>')
+                $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
             },
             error: function() {
                 $("#getSpriBtn").html('<i class="fa fa-search"></i>')
+                $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
             }
         });
     }
@@ -884,8 +893,6 @@ $permissions = user()->getPermissions();
                 }
             })
             $("#pvemployee_id").val(skunj.employee_id)
-            $("#pvkddpjp").html("")
-            $("#pvkddpjp").append(new Option(skunj.kddpjp, skunj.kddpjp))
             $("#pvkddpjp").val(skunj.kddpjp)
             $("#pvclass_id").val(skunj.class_id);
             $("#pvclass_id_plafond").val(skunj.class_id_plafond)
@@ -905,7 +912,7 @@ $permissions = user()->getPermissions();
             $("#pvkdpoli").val(skunj.kdpoli)
             $("#pvtanggal_rujukan").val((String)(skunj.tanggal_rujukan).slice(0, 10))
             $("#pvppkrujukan").val(skunj.ppkrujukan)
-            $("#pvdiag_awal").html("")
+            // $("#pvdiag_awal").html("")
             $("#pvdiag_awal").append(new Option(skunj.conclusion, skunj.diag_awal))
             $("#pvconclusion").val(skunj.conclusion)
             $("#pvdiagnosa_id").val(skunj.diagnosa_id)
@@ -929,6 +936,17 @@ $permissions = user()->getPermissions();
             $("#pvispertarif").val(skunj.ispertarif) //suplesi
             $("#pvtemptrans").val(skunj.temptrans) //No LP
             $("#pvdelete_sep").val(skunj.delete_sep) //keterangan laka
+
+            $("#skdpkddpjp").html("")
+            $("#skdpkdpoli").html("")
+            $("#skdptglkontrol").val(null)
+            $("#skdpnosurat").val(null)
+
+            $("#sprikddpjp").val("")
+            $("#sprikdpoli").val("")
+            $("#spritglkontrol").val(null)
+            $("#sprinosurat").val(null)
+
 
             var start = new Date(skunj.visit_date)
             var end = new Date()
@@ -1005,7 +1023,7 @@ $permissions = user()->getPermissions();
                 }
             })
             $("#pvemployee_id").val(null)
-            $("#pvkddpjp").html("")
+            $("#pvkddpjp").val("")
             $("#pvclass_id").val(sbio.class_id);
             $("#pvclass_id_plafond").val(sbio.class_id);
             $("#pvstatus_pasien_id").val(sbio.status_pasien_id);
@@ -1052,6 +1070,16 @@ $permissions = user()->getPermissions();
             $("#pvtemptrans").val(null) //No LP
             $("#pvdelete_sep").val(null) //keterangan laka
 
+            $("#skdpkddpjp").html("")
+            $("#skdpkdpoli").html("")
+            $("#skdptglkontrol").val(null)
+            $("#skdpnosurat").val(null)
+
+            $("#sprikddpjp").val("")
+            $("#sprikdpoli").val("")
+            $("#spritglkontrol").val(null)
+            $("#sprinosurat").val(null)
+
             enableFormPV()
             $("#formaddpvbtn").show()
             $("#formeditpvbtn").hide()
@@ -1065,8 +1093,6 @@ $permissions = user()->getPermissions();
     function enableFormPV() {
         $("#pvclinic_id").prop("disabled", false)
         $("#pvemployee_id").prop("disabled", false)
-        $("#pvkddpjp").prop("disabled", false)
-        $("#pvkddpjp").prop("disabled", false)
 
         $("#pvkddpjp").prop("disabled", false)
 
@@ -1107,6 +1133,7 @@ $permissions = user()->getPermissions();
         $("#pvppkrujukan").prop("disabled", false)
 
         $("#pvdiag_awal").prop("disabled", false)
+        $("#openSearchDiagnosaBtn").prop("disabled", false)
 
         $("#pvconclusion").prop("disabled", false)
 
@@ -1142,6 +1169,19 @@ $permissions = user()->getPermissions();
 
         $("#pvdelete_sep").prop("disabled", false)
 
+        $("#skdpnosep").prop("disabled", false)
+        $("#skdpkddpjp").prop("disabled", false)
+        $("#skdpkdpoli").prop("disabled", false)
+        $("#skdptglkontrol").prop("disabled", false)
+        $("#skdpnosurat").prop("disabled", false)
+
+        $("#sprikddpjp").prop("disabled", false)
+        $("#sprikdpoli").prop("disabled", false)
+        $("#spritglkontrol").prop("disabled", false)
+        $("#sprinosurat").prop("disabled", false)
+
+
+
 
         $("#getRujukanBtn").prop("disabled", false)
         $("#createSepBtn").prop("disabled", false)
@@ -1150,6 +1190,11 @@ $permissions = user()->getPermissions();
         $("#saveSkdpBtn").prop("disabled", false)
         $("#checkSkdpBtn").prop("disabled", false)
         $("#deleteSkdpBtn").prop("disabled", false)
+        $("#saveSpriBtn").prop("disabled", false)
+        $("#checkSpriBtn").prop("disabled", false)
+        $("#deleteSpriBtn").prop("disabled", false)
+        $("#getSkdpBtn").prop("disabled", false)
+        $("#getSpriBtn").prop("disabled", false)
 
 
 
@@ -1161,8 +1206,6 @@ $permissions = user()->getPermissions();
     function disableFormPv() {
         $("#pvclinic_id").prop("disabled", true)
         $("#pvemployee_id").prop("disabled", true)
-        $("#pvkddpjp").prop("disabled", true)
-        $("#pvkddpjp").prop("disabled", true)
 
         $("#pvkddpjp").prop("disabled", true)
 
@@ -1203,6 +1246,7 @@ $permissions = user()->getPermissions();
         $("#pvppkrujukan").prop("disabled", true)
 
         $("#pvdiag_awal").prop("disabled", true)
+        $("#openSearchDiagnosaBtn").prop("disabled", true)
 
         $("#pvconclusion").prop("disabled", true)
 
@@ -1238,6 +1282,21 @@ $permissions = user()->getPermissions();
 
         $("#pvdelete_sep").prop("disabled", true)
 
+
+        $("#skdpnosep").prop("disabled", true)
+        $("#skdpkddpjp").prop("disabled", true)
+        $("#skdpkdpoli").prop("disabled", true)
+        $("#skdptglkontrol").prop("disabled", true)
+        $("#skdpnosurat").prop("disabled", true)
+
+        $("#sprikddpjp").prop("disabled", true)
+        $("#sprikdpoli").prop("disabled", true)
+        $("#spritglkontrol").prop("disabled", true)
+        $("#sprinosurat").prop("disabled", true)
+
+
+
+
         $("#getRujukanBtn").prop("disabled", true)
         $("#createSepBtn").prop("disabled", true)
         $("#editSepBtn").prop("disabled", true)
@@ -1245,6 +1304,12 @@ $permissions = user()->getPermissions();
         $("#saveSkdpBtn").prop("disabled", true)
         $("#checkSkdpBtn").prop("disabled", true)
         $("#deleteSkdpBtn").prop("disabled", true)
+        $("#saveSpriBtn").prop("disabled", true)
+        $("#checkSpriBtn").prop("disabled", true)
+        $("#deleteSpriBtn").prop("disabled", true)
+        $("#getSkdpBtn").prop("disabled", true)
+        $("#getSpriBtn").prop("disabled", true)
+
 
         $("#formaddpvbtn").hide()
         $("#formeditpvbtn").show()
@@ -1397,6 +1462,162 @@ $permissions = user()->getPermissions();
             },
             error: function() {
                 $("#checkSkdpBtn").html('<i class="fa fa-edit"></i> <span>Check</span>')
+            }
+        });
+    }
+
+
+
+
+    function saveSpri() {
+        var spripasien_id = $("#pvpasien_id").val()
+        var sprikddpjp = $("#sprikddpjp").val()
+        var sprikdpoli = $("#sprikdpoli").val()
+        var spritglkontrol = $("#spritglkontrol").val()
+        var sprinosurat = $("#sprinosurat").val()
+
+        if (spripasien_id == '') {
+            alert('No Kartu BPJS harus diisi!')
+        } else if (sprikddpjp == '' || sprikddpjp == null) {
+            alert('Kolom Dokter tidak boleh kosong')
+        } else if (sprikdpoli == '' | sprikdpoli == null) {
+            alert('Kolom Poli tidak boleh kosong')
+        } else if (spritglkontrol == '' || spritglkontrol == null) {
+            alert('Kolom Tanggal Rencana Kontrol tidak boleh kosong')
+        } else {
+            $("#saveSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+
+            spritglkontrol == (String)(spritglkontrol).replace("T", " ")
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/pendaftaran/savespri ',
+                type: "POST",
+                data: JSON.stringify({
+                    "request": {
+                        "noKartu": spripasien_id,
+                        "kodeDokter": sprikddpjp,
+                        "poliKontrol": sprikdpoli,
+                        "tglRencanaKontrol": spritglkontrol,
+                        "user": '<?= user()->username; ?> '
+                    },
+                    "visit_id": $("#pvvisit_id").val(),
+                    "noSuratKontrol": sprinosurat,
+                    'no_registration': $("#pvno_registration").val()
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    if (data.metaData.code == '200') {
+                        alert("Berhasil posting spri!")
+                        $("#sprinosurat").val(data.response.noSPRI)
+                    } else {
+                        alert(data.metaData.message)
+                    }
+                    $("#saveSpriBtn").html('<i class="fa fa-plus"></i> <span>Simpan</span>')
+                },
+                error: function() {
+                    $("#saveSpriBtn").html('<i class="fa fa-plus"></i> <span>Simpan</span>')
+                }
+            });
+        }
+    }
+
+    function deleteSpri() {
+        var sprinosurat = $("#sprinosurat").val()
+        if (sprinosurat == '' || sprinosurat == null) {
+            alert('Kolom Nomor spri tidak boleh kosong saat menghapus')
+        } else {
+            $("#deletespriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+            spritglkontrol == (String)(spritglkontrol).replace("T", " ")
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/pendaftaran/deletespri ',
+                type: "DELETE",
+                data: JSON.stringify({
+                    "request": {
+                        "t_suratkontrol": {
+                            "noSuratKontrol": sprinosurat,
+                            "user": '<?= user()->username; ?> '
+                        }
+                    }
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    if (data.metaData.code == '200') {
+                        alert("Berhasil delete spri!")
+                        $("#sprinosurat").val("")
+                    } else {
+                        alert(data.metaData.message)
+                    }
+                    $("#deletespriBtn").html('<i class="fa fa-trash"></i> <span>Delete</span>')
+                },
+                error: function() {
+                    $("#deletespriBtn").html('<i class="fa fa-trash"></i> <span>Delete</span>')
+                }
+            });
+        }
+    }
+
+    function checkSpri() {
+        $("#checkspriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+        var sprinosurat = $("#sprinosurat").val()
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pendaftaran/checkSpri ',
+            type: "POST",
+            data: JSON.stringify({
+                "visit": $("#pvvisit_id").val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                if (data.metadata.code == '200') {
+                    alert(data.metadata.message)
+                    var spri = data.data
+                    // $("#sprikddpjp").append(new Option($("#pvemployee_id option:selected").text(), $("#pvkddpjp").val()))
+                    $("#sprikddpjp").val($("#pvkddpjp").val())
+                    $("#sprikdpoli").val("")
+                    klinikBpjs.forEach((value, key) => {
+                        if (value[1] == $("#pvclinic_id").val()) {
+                            // $("#sprikdpoli").append(new Option(value[2], value[0]))
+                            $("#sprikdpoli").val(value[0])
+                            // console.log(value[2])
+                        }
+                    })
+                    $("#spritglkontrol").val((String)(spri.tglrenckontrol).slice(0, 10))
+                    $("#sprinosurat").val(spri.nosuratkontrol)
+                    // Object.keys(dpjp).forEach(key => {
+                    // if (key == employeeSelected) {
+                    // // console.log(key, dpjp[key]);
+                    // $("#pvkddpjp").append(new Option(dpjp[key], dpjp[key]));
+                    // $("#sprikddpjp").val("")
+                    // $("#sprikddpjp").append(new Option($("#pvemployee_id option:selected").text(), $("#pvkddpjp").val()))
+                    // }
+                    // });
+                } else {
+                    alert(data.metadata.message)
+                    $("#sprikddpjp").val("")
+                    // $("#sprikddpjp").append(new Option($("#pvemployee_id option:selected").text(), $("#pvkddpjp").val()))
+                    $("#sprikddpjp").val($("#pvkddpjp").val())
+                    $("#sprikdpoli").val("")
+                    klinikBpjs.forEach((value, key) => {
+                        if (value[1] == $("#pvclinic_id").val()) {
+                            // $("#sprikdpoli").append(new Option(value[2], value[0]))
+                            $("#sprikdpoli").val(value[0])
+                            // console.log(value[2])
+                        }
+                    })
+                    $("#spritglkontrol").val(null)
+                    $("#sprinosurat").val("")
+                }
+                $("#checkspriBtn").html('<i class="fa fa-edit"></i> <span>Check</span>')
+            },
+            error: function() {
+                $("#checkspriBtn").html('<i class="fa fa-edit"></i> <span>Check</span>')
             }
         });
     }

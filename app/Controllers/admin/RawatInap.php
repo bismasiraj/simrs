@@ -390,127 +390,117 @@ class RawatInap extends \App\Controllers\BaseController
             $response['metadata']['message'] = 'gagal';
             return json_encode($response);
         }
-        $dataPast = [
-            'keluar_id' => 0,
-            'bill_id' => $pastBill
-        ];
+        if ($pastBill != '') {
+            $dataPast = [
+                'keluar_id' => 0,
+                'bill_id' => $pastBill
+            ];
 
-        $resultPast = $ta->save($dataPast);
-        if ($resultPast) {
-            $response['metadata']['code'] = '200';
-            $response['metadata']['message'] = 'sukses';
-            return json_encode($response);
-        } else {
-            $response['metadata']['code'] = '201';
-            $response['metadata']['message'] = 'gagal';
-            return json_encode($response);
+            $resultPast = $ta->save($dataPast);
+            if ($resultPast) {
+            } else {
+                $response['metadata']['code'] = '201';
+                $response['metadata']['message'] = 'gagal';
+                return json_encode($response);
+            }
         }
+        $response['metadata']['code'] = '200';
+        $response['metadata']['message'] = 'sukses';
+        return json_encode($response);
+
 
 
         // SAMPAI SINI YA. NANTI BIKIN KODING NGAMBIL BILL ID DELETE, DAN BILL ID BEFORE, LALU YG DELETE YA DIDELETE, YG BEFORE DIUBAH JADI MASIH RAWAT INAP DAN EXIT DATE DLL DISESUAIKAN
     }
-    public function insertSepInap()
+    public function insertSep()
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
         $body = $this->request->getBody();
         $body = json_decode($body, true);
+        $visit = $body['visit_id'];
 
-        $visit = $body['visit'];
-
-        $pv = new PasienVisitationModel();
-        $resultQuery = $pv->selectSep($visit);
-        $select = $resultQuery[0];
-
-        $sep['noKartu'] = $select['noKartu'];
-        $sep['tglSep'] = $select['tglSep'];
-        $sep['ppkPelayanan'] = $select['ppkPelayanan'];
-        $sep['jnsPelayanan'] = $select['jnsPelayanan'];
-        $sep['klsRawat']['klsRawatHak'] = $select['klsRawat'];
-        $sep['klsRawat']['klsRawatNaik'] = $select['klsRawatNaik'];
-        $sep['klsRawat']['pembiayaan'] = '1';
-        $sep['klsRawat']['penanggungJawab'] = 'Pribadi';
-        $sep['noMr'] = $select['noMr'];
-        $sep['rujukan']['asalRujukan'] = $select['asalRujukan'];
-        $sep['rujukan']['tglRujukan'] = $select['tglRujukan'];
-        $sep['rujukan']['noRujukan'] = $select['noRujukan'];
-        $sep['rujukan']['ppkRujukan'] = $select['ppkRujukan'];
-        $sep['catatan'] = $select['catatan'];
-        $sep['diagAwal'] = $select['diagAwal'];
-        $sep['poli']['tujuan'] = $select['tujuan'];
-        $sep['poli']['eksekutif'] = $select['eksekutif'];
-        $sep['cob']['cob'] = $select['cob'];
-        $sep['katarak']['katarak'] = $select['katarak'];
-        $sep['jaminan']['lakaLantas'] = $select['lakaLantas'];
-        $sep['jaminan']['noLP'] = $select['noLP'];
-        $sep['jaminan']['penjamin']['tglKejadian'] = ['tglKejadian'];
-        $sep['jaminan']['keterangan'] = $select['keterangan'];
-        $sep['suplesi']['suplesi'] = $select['suplesi'];
-        $sep['suplesi']['noSepSuplesi'] = $select['noSepSuplesi'];
-        $sep['suplesi']['lokasiLaka']['kdPropinsi'] = $select['kdPropinsi'];
-        $sep['suplesi']['lokasiLaka']['kdKabupaten'] = $select['kdKabupaten'];
-        $sep['suplesi']['lokasiLaka']['kdKecamatan'] = $select['kdKecamatan'];
-        $sep['tujuanKunj'] = $select['tujuanKunj'];
-        $sep['flagProcedure'] = $select['flagProcedure'];
-        $sep['kdPenunjang'] = $select['kdPenunjang'];
-        $sep['assesmentPel'] = $select['assesmentPel'];
-        $sep['skdp']['noSurat'] = $select['noSurat'];
-        $sep['skdp']['kodeDPJP'] = $select['kodeDPJP'];
-        $sep['dpjpLayan'] = $select['dpjpLayan'];
-        $sep['noTelp'] = $select['noTelp'];
-        $sep['user'] = user()->username;
+        if ($body['jnsPelayanan'] == 2) {
+            $body['klsRawat']['klsRawatNaik'] = "";
+            $body['klsRawat']['pembiayaan'] = "";
+            $body['klsRawat']['penanggungJawab'] = "";
+        } else {
+            $body['poli']['tujuan'] = '';
+            $body['poli']['eksekutif'] = '0';
+            $c = new ClassModel();
+            $select = $c->select('kdkelasv, other_id')->find($body['klsRawat']['klsRawatHak']);
+            $selectNaik = $c->select('kdkelasv')->find($body['klsRawat']['klsRawatNaik']);
+            // return json_encode($selectNaik);
+            if ($select['kdkelasv'] == $selectNaik['kdkelasv']) {
+                $body['klsRawat']['klsRawatNaik'] = "";
+                $body['klsRawat']['pembiayaan'] = "";
+                $body['klsRawat']['penanggungJawab'] = "";
+            } else {
+                $body['klsRawat']['klsRawatNaik'] = $select['kdkelasv'];
+            }
+            $body['klsRawat']['klsRawatHak'] = $select['other_id'];
+            $body['jaminan']['noLP'] = "";
+            $body['jaminan']['penjamin']['tglKejadian'] = "";
+            $body['jaminan']['penjamin']['keterangan'] = "";
+            $body['jaminan']['penjamin']['suplesi']['noSepSuplesi'] = "";
+        }
+        if ($body['flagProcedure'] == '99') {
+            $body['flagProcedure'] = '';
+        }
+        if ($body['assesmentPel'] == '99') {
+            $body['assesmentPel'] = '';
+        }
+        if ($body['kdPenunjang'] == '99') {
+            $body['kdPenunjang'] = '';
+        }
+        if ($body['diagAwal'] == null) {
+            $body['diagAwal'] = 'E10';
+        }
+        $body['noTelp'] = '081379131123';
 
 
+        // $headers = $this->AuthBridging();
+        // return json_encode($headers);
+
+
+
+        $ws_data = [];
+        $method = 'POST';
         $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/insert';
 
-        $data['request']['t_sep'] = $sep;
+        // return json_encode($url);
 
-        $response = $this->sendVclaim($url, 'POST', json_encode($data));
+        $ws_data['request']['t_sep'] = $body;
+        $postdata = json_encode($ws_data);
+        // return $postdata;
 
-        $response = '{
-                            "metaData": {
-                                "code": "200",
-                                "message": "Sukses"
-                            },
-                            "response": {
-                                "sep": {
-                                    "assestmenPel": "1",
-                                    "catatan": "testinsert RJ",
-                                    "diagnosa": "A15 - Respiratory tuberculosis, bacteriologically and histologically confirmed",
-                                    "flagProcedure": "",
-                                    "informasi": {
-                                        "dinsos": null,
-                                        "eSEP": "True",
-                                        "noSKTM": null,
-                                        "prolanisPRB": null
-                                    },
-                                    "jnsPelayanan": "R.Jalan",
-                                    "kdPenunjang": "",
-                                    "kdPoli": "INT",
-                                    "kelasRawat": "-",
-                                    "noRujukan": "0050B1070223P000004",
-                                    "noSep": "0301R0010323V000039",
-                                    "penjamin": "-",
-                                    "peserta": {
-                                        "asuransi": "-",
-                                        "hakKelas": "Kelas 3",
-                                        "jnsPeserta": "PBI (APBN)",
-                                        "kelamin": "Perempuan",
-                                        "nama": "ARSTNUU",
-                                        "noKartu": "0002802875185",
-                                        "noMr": "MR5185",
-                                        "tglLahir": "1944-02-24"
-                                    },
-                                    "poli": "PENYAKIT DALAM",
-                                    "poliEksekutif": "Tidak",
-                                    "tglSep": "2023-03-30",
-                                    "tujuanKunj": "2"
-                                }
-                            }
-                        }';
-        return json_encode(json_decode($response, true));
-        // return json_encode($response);
+
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+
+        if ($response['metaData']['code'] == '200') {
+            $pv = new PasienVisitationModel();
+            $nosep = $response['response']['sep']['noSep'];
+            $pv->update($visit, [
+                'no_skpinap' => $nosep,
+                'tujuankunj' => $body['tujuanKunj'],
+                'assesmentpel' => $body['assesmentPel'],
+                'flagprocedure' => $body['flagProcedure'],
+                'kdPenunjang' => $body['kdPenunjang'],
+                'diag_awal' => $body['diagAwal'],
+                'specimenno' => $body['skdp']['noSurat'],
+                'asalrujukan' => $body['rujukan']['asalRujukan'],
+                'tanggal_rujukan' => $body['rujukan']['tglRujukan'],
+                'norujukan' => $body['rujukan']['norujukan'],
+                'ppkrujukan' => $body['rujukan']['ppkRujukan'],
+
+            ]);
+        }
+
+
+        return json_encode($response);
     }
     public function updateSepInap()
     {
@@ -586,18 +576,22 @@ class RawatInap extends \App\Controllers\BaseController
         $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/delete';
 
         $data['request']['t_sep'] = $sep;
+        $method = 'DELETE';
+        $postdata = json_encode($data);
 
-        $response = '{
-            "metaData": 
-                {
-                "code": "200",
-                "message": "OK"
-                },
-            "response": "0301R0011017V000007"
-        }';
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        // $response = '{
+        //     "metaData": 
+        //         {
+        //         "code": "200",
+        //         "message": "OK"
+        //         },
+        //     "response": "0301R0011017V000007"
+        // }';
 
-        return json_encode(json_decode($response, true));
-        // return json_encode($response);
+        // return json_encode(json_decode($response, true));
+        return json_encode($response);
     }
 
     public function updatePulangSep()

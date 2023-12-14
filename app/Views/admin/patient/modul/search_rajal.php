@@ -6,7 +6,7 @@ $permissions = user()->getPermissions();
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 73 || $giTipe == 50 || $giTipe == 5) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -279,7 +279,7 @@ $permissions = user()->getPermissions();
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="headingKunjungan">
                                                 <button id="headingKunjunganBtn" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKunjungan" aria-expanded="false" aria-controls="collapseKunjungan">
-                                                    <b>Parameter Kunjungan</b>
+                                                    <b>Kunjungan</b>
                                                 </button>
                                             </h2>
                                             <div id="collapseKunjungan" class="accordion-collapse collapse show" aria-labelledby="headingKunjungan" data-bs-parent="#accordionPv">
@@ -296,7 +296,11 @@ $permissions = user()->getPermissions();
                                                                     <select name='clinic_id' id="pvclinic_id" class="form-control select2 act" style="width:100%">
                                                                         <?php $cliniclist = array();
                                                                         foreach ($clinic as $key => $value) {
-                                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                            if ($giTipe == 5) {
+                                                                                if ($clinic[$key]['stype_id'] == '5') {
+                                                                                    $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                                                }
+                                                                            } else if ($clinic[$key]['stype_id'] == '1') {
                                                                                 $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                                                             }
                                                                         }
@@ -334,9 +338,23 @@ $permissions = user()->getPermissions();
                                                             <div class="form-group"><label for="kddpjp">Perujuk</label>
                                                                 <div>
                                                                     <select name='kddpjp' id="pvkddpjp" class="form-control select2 act" style="width:100%">
-                                                                        <?php foreach ($dpjp as $key => $value) { ?>
+                                                                        <?php $dpjplist = array();
+                                                                        foreach ($dokter as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
+                                                                                foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                                    if ($key1 == $dpjpkey) {
+                                                                                        $dpjplist[$dpjpvalue] = $value1;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        asort($dpjplist);
+                                                                        ?>
+                                                                        <?php foreach ($dpjplist as $key => $value) {
+                                                                        ?>
                                                                             <option value="<?= $key; ?>"><?= $value; ?></option>
-                                                                        <?php } ?>
+                                                                        <?php
+                                                                        } ?>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -474,13 +492,16 @@ $permissions = user()->getPermissions();
                                                         </div>
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvisattended">Sudah Dilayani</label>
-                                                                <div>
-                                                                    <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
-                                                                        <?php foreach ($isattended as $key => $value) { ?>
-                                                                            <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
-                                                                        <?php } ?>
-                                                                    </select>
-                                                                </div>
+                                                                <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
+                                                                    <?php foreach ($isattended as $key => $value) { ?>
+                                                                        <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="pvisattended">No Urut</label>
+                                                                <input id="pvticket_no" name="ticket_no" class="form-control" type="text" readonly />
                                                             </div>
                                                         </div>
                                                     </div><!--./row-->
@@ -537,9 +558,20 @@ $permissions = user()->getPermissions();
                                                         </div>
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
-                                                                <select class="form-control" name='diag_awal' id="pvdiag_awal">
-                                                                </select>
+                                                                <div class="input-group">
+                                                                    <select class="form-control" name='diag_awal' id="pvdiag_awal">
+                                                                    </select>
+                                                                    <span class="input-group-btn">
+                                                                        <button id="openSearchDiagnosaBtn" class="form-control" onclick="s()" type="button"><i class="fa fa-search"></i></button>
+                                                                    </span>
+                                                                </div>
                                                             </div>
+                                                            <!-- <div class="input-group">
+                                                                <input id="pvedit_sep" name="edit_sep" type="text" class="form-control" />
+                                                                <span class="input-group-btn">
+                                                                    <button id="getSkdpBtn" class="form-control" onclick="getSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                                </span>
+                                                            </div> -->
                                                         </div>
                                                         <div class="col-sm-12 col-xs-12 mb-3">
                                                             <div class="button-items">
@@ -826,6 +858,113 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingSpri">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpri" aria-expanded="false" aria-controls="collapseSpri">
+                                                    <b>Rencana SPRI</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseSpri" class="accordion-collapse collapse" aria-labelledby="headingSpri" data-bs-parent="#accordionPv">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12 mt-4">
+                                                            <div>
+                                                                <h3>Rencana SPRI</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="sprikddpjp">Dokter</label>
+                                                                <div>
+                                                                    <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
+                                                                        <?php $dpjplist = array();
+                                                                        foreach ($dokter as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
+                                                                                foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                                    if ($key1 == $dpjpkey) {
+                                                                                        $dpjplist[$dpjpvalue] = $value1;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        asort($dpjplist);
+                                                                        ?>
+                                                                        <?php foreach ($dpjplist as $key => $value) {
+                                                                        ?>
+                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                        <?php
+                                                                        } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="sprikdpoli">Poli Kontrol</label>
+                                                                <div>
+                                                                    <select name="sprikdpoli" id="sprikdpoli" class="form-control" style="width:100%">
+                                                                        <?php
+                                                                        $clinicList = array();
+                                                                        foreach ($clinic as $key => $value) {
+                                                                            if ($value['stype_id'] == '1') {
+                                                                                $clinicList[$value['other_id']] = $value['name_of_clinic'];
+                                                                        ?>
+                                                                        <?php
+                                                                            }
+                                                                        }
+                                                                        asort($clinicList); ?>
+                                                                        <?php foreach ($clinicList as $key => $value) {
+                                                                        ?>
+                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                        <?php
+                                                                        } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 mb-3">
+                                                            <div class="form-group"><label for="spritglkontrol">Tgl Rencana Kontrol</label>
+                                                                <input type='date' name="spritglkontrol" class="form-control" id='spritglkontrol' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 mb-3">
+                                                            <div class="form-group"><label for="sprinosurat">No SPRI</label>
+                                                                <input type='text' name="sprinosurat" class="form-control" id='sprinosurat' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-3 mb-3">
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="saveSpriBtn" type="button" onclick="saveSpri()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
+                                                                                <span>Simpan</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="checkSpriBtn" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="deleteSpriBtn" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
 

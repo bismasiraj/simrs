@@ -398,7 +398,7 @@ class Patient extends \App\Controllers\BaseController
 
         asort($clinicInap);
 
-        // dd($schedule);
+        // dd($clinic);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -635,7 +635,7 @@ This Function is used to Add Patient
             'kk_no' => 'permit_empty|integer',
             'tmt' => 'permit_empty|valid_date[Y-m-d]',
             'tat' => 'permit_empty|valid_date[Y-m-d]',
-            'file' => 'uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'
+            // 'file' => 'permit_empty|uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'
         ];
 
         if (!$this->validate($rules)) {
@@ -780,13 +780,13 @@ This Function is used to Add Patient
 
             // Additional logic based on your application's needs
 
-            return redirect()->to(base_url($filePath));
+            // return redirect()->to(base_url($filePath));
         }
 
 
 
 
-        return json_encode('asd');
+        // return json_encode('asd');
 
 
 
@@ -1472,7 +1472,7 @@ This Function is used to Add Patient
             $ticket_no = $genereatePv[0]['ticket_no'];
             $flag = 'tambah';
         }
-        // dd($genereatePv);
+        // return json_encode($genereatePv);
 
 
         // return json_encode($kalurahan);

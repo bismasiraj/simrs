@@ -306,7 +306,7 @@
                                     <div class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
                                         <?php $file = "uploads/images/profile_male.png"; ?>
                                         <img class="rounded-circle avatar-lg" src="<?php echo base_url() . 'uploads/images/profile_male.png' ?>" id="image" alt="User profile picture">
-                                        <div class="iidentity">SAIMAN 846202</div>
+                                        <div id="taidentity">SAIMAN 846202</div>
                                     </div><!-- ./col-md-3 -->
                                     <div class="col-md-12 col-sm-12 col-xs-12" id="taMyinfo">
                                         <div class="row">
@@ -315,13 +315,13 @@
                                                     <tbody>
                                                         <tr>
                                                             <td class="bolds">No. Peserta</td>
-                                                            <td id="biodatatapasien_id"></td>
+                                                            <td id="tabiodatatapasien_id"></td>
                                                             <!-- <td class="bolds">Ayah</td>
                                                                         <td id="taayah"></td> -->
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">PISA</td>
-                                                            <td id="biodatatacoverages"></td>
+                                                            <td id="tabiodatatacoverages"></td>
                                                             <!-- <td class="bolds">RT/RW</td>
                                                                         <td id="tartrw"></td>
                                                                         <td class="bolds">Ibu</td>
@@ -329,11 +329,11 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Alamat</td>
-                                                            <td id="biodatataaddress"></td>
+                                                            <td id="tabiodatataaddress"></td>
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Jenis Kelamin</td>
-                                                            <td id="biodatatagender"></td>
+                                                            <td id="tabiodatatagender"></td>
                                                         </tr>
                                                         <!-- <tr>
                                                                         <td class="bolds">Gol Darah</td>
@@ -342,21 +342,21 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Hak Kelas</td>
-                                                            <td id="biodatataclass_id_plafond"></td>
+                                                            <td id="tabiodatataclass_id_plafond"></td>
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Umur</td>
-                                                            <td id="biodatataage"></td>
+                                                            <td id="tabiodatataage"></td>
                                                             <!-- <td class="bolds">Perkawinan</td>
                                                                         <td id="taperkawinan"></td> -->
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Status</td>
-                                                            <td id="biodatatastatus"></td>
+                                                            <td id="tabiodatatastatus"></td>
                                                         </tr>
                                                         <tr>
                                                             <td class="bolds">Kelompok</td>
-                                                            <td id="biodatatapayor"></td>
+                                                            <td id="tabiodatatapayor"></td>
                                                         </tr>
                                                         <!-- <tr>
                                                                         <td class="bolds">Catatan</td>
@@ -400,54 +400,166 @@
                                 </div>
                             </div>
                         </form>
-                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion accordion-flush" id="accordionRanap">
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="flush-headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="true" aria-controls="flush-collapseOne">
-                                        Pengaturan SEP Rawat Inap
+                                <h2 class="accordion-header" id="headingSepRanap">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSepRanap" aria-expanded="true" aria-controls="collapseSepRanap">
+                                        <b>Parameter SEP</b>
                                     </button>
                                 </h2>
-                                <div id="flush-collapseOne" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                <div id="collapseSepRanap" class="accordion-collapse collapse" aria-labelledby="headingSepRanap" data-bs-parent="#accordionRanap" style="">
                                     <div class="accordion-body text-muted">
                                         <div id="ajax_load"></div>
                                         <div class="row">
-                                            <div class="col-sm-3 col-xs-12">
+                                            <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
                                                     <div>
-                                                        <select name='asalrujukan' id="taasalrujukan" class="form-control select2 act" style="width:100%" readonly>
+                                                        <select name='asalrujukan' id="taasalrujukan" class="form-control select2 act" style="width:100%" disabled>
                                                             <option value="1">Faskes 1</option>
                                                             <option value="2">Faskes 2 (RS)</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3 col-xs-12">
-                                                <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="tanorujukan" name="norujukan" type="text" class="form-control" readonly /></div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="tanorujukan" name="norujukan" type="text" class="form-control" disabled /></div>
                                             </div>
-                                            <div class="col-sm-3 col-xs-12" style="display: none;">
-                                                <div class="form-group"><label for="kdpoli_from"></label><input id="takdpoli_from" name="kdpoli_from" type="text" class="form-control" readonly /></div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="kdpoli">Poli Rujukan</label>
+                                                    <div>
+                                                        <select name='kdpoli' id="takdpoli" class="form-control select2 act" style="width:100%" disabled>
+                                                            <?php foreach ($inasisPoli as $key => $value) { ?>
+                                                                <option value="<?= $inasisPoli[$key]['kdpoli']; ?>"><?= $inasisPoli[$key]['nmpoli']; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-3 col-xs-12">
+                                            <div class="col-sm-3">
+                                                <div class="form-group"><label for="tanggal_rujukan">Tgl Rujukan</label><input type='date' name="tanggal_rujukan" class="form-control" id='tatanggal_rujukan' /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="ppkrujukan">PPK Rujukan</label>
+                                                    <div>
+                                                        <select name='ppkrujukan' id="tappkrujukan" class="form-control select2 act" style="width:100%" disabled>
+                                                            <?php foreach ($inasisFaskes as $key => $value) { ?>
+                                                                <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
+                                                    <select class="form-control" name='diag_awal' id="tadiag_awal" disabled>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12 mb-3">
+                                                <div class="button-items">
+                                                    <div class="d-grid">
+                                                        <button id="getRujukanRanapBtn" type="button" onclick="getRujukanRanap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Get Rujukan</span></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
+                                                <div class="form-group"><label for="conclusion"></label><input id="taconclusion" name="conclusion" type="text" class="form-control" /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="diagnosa_id">Diagnosis RS</label><input id="tadiagnosa_id" name="diagnosa_id" type="text" class="form-control" disabled /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
+                                                <div class="form-group"><label for="kdpoli_from"></label><input id="takdpoli_from" name=" kdpoli_from" type="text" class="form-control" /></div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12">
+                                                <div>
+                                                    <h3>Parameter SEP</h3>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="tatujuankunj">Tujuan Kunjungan</label>
+                                                    <div>
+                                                        <select name='tujuankunj' id="tatujuankunj" class="form-control select2 act" style="width:100%">
+                                                            <option value="0">Normal</option>
+                                                            <option value="1">Prosedur</option>
+                                                            <option value="2">Konsul Dokter</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="takdpenunjang">Penunjang</label>
+                                                    <div>
+                                                        <select name='kdpenunjang' id="takdpenunjang" class="form-control select2 act" style="width:100%">
+                                                            <option value="1">Radioterapi</option>
+                                                            <option value="2">Kemoterapi</option>
+                                                            <option value="3">Rehab Medik</option>
+                                                            <option value="4">Rehab Psikososial</option>
+                                                            <option value="5">Transfusi Darah</option>
+                                                            <option value="6">Pelayanan Gigi</option>
+                                                            <option value="7">Laboratorium</option>
+                                                            <option value="8">USG</option>
+                                                            <option value="9">Farmasi</option>
+                                                            <option value="10">Lain-lain</option>
+                                                            <option value="11">MRI</option>
+                                                            <option value="12">Hemodialisa</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="taflagprocedure">Procedure</label>
+                                                    <div>
+                                                        <select name='flagprocedure' id="taflagprocedure" class="form-control select2 act" style="width:100%">
+                                                            <option value="0">Prosedur Tidak Berkelanjutan</option>
+                                                            <option value="1">Prosedur dan Terapi Berkelanjutan</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="taassesmentpelgroup">Assesment Pelayanan</label>
+                                                    <div>
+                                                        <select name='assesmentpel' id="taassesmentpel" class="form-control select2 act" style="width:100%">
+                                                            <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
+                                                            <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
+                                                            <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
+                                                            <option value="4">Atas Instruksi RS</option>
+                                                            <option value="5">Tujuan Kontrol</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-sm-3 col-xs-12 mb-3">
+                                                <label for="taedit_sep">No. SKDP</label>
+                                                <div class="input-group">
+                                                    <input id="taedit_sep" name="edit_sep" type="text" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button id="getSkdpRanapBtn" class="form-control" onclick="getSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div> -->
+                                            <div class="col-sm-3 col-xs-12 mb-3">
                                                 <label for="taspecimenno">No. SPRI</label>
                                                 <div class="input-group">
-                                                    <input id="taspecimenno" name="specimenno" type="text" class="form-control" readonly />
+                                                    <input id="taspecimenno" name="specimenno" type="text" class="form-control" />
                                                     <span class="input-group-btn">
-                                                        <button class="form-control" onclick="getSPRI()" type="button"><i class="fa fa-search"></i></button>
+                                                        <button id="getSpriRanapBtn" class="form-control" onclick="getSPRI()" type="button"><i class="fa fa-search"></i></button>
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3 col-xs-12">
-                                                <div class="form-group"><label for="no_skp">SEP RJ</label><input id="tano_skp" name="no_skp" type="text" class="form-control" readonly /></div>
-                                            </div>
-                                            <div class="col-sm-3 col-xs-12">
-                                                <div class="form-group"><label for="tano_skpinap">SEP RI</label><input id="tano_skpinap" name="no_skpinap" type="text" class="form-control" readonly /></div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="tano_skpinap">SEP RI</label><input id="tano_skpinap" name="no_skpinap" type="text" class="form-control" disabled /></div>
                                             </div>
                                             <div class="row mt-3 mb-3">
                                                 <div class="col-sm-4 col-xs-12">
                                                     <div class="col-sm-12 col-xs-12">
                                                         <div class="button-items">
                                                             <div class="d-grid">
-                                                                <button id="createSepInap" type="button" onclick="insertSepInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
+                                                                <button id="createSepInapBtn" type="button" onclick="insertSepInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -456,7 +568,7 @@
                                                     <div class="col-sm-12 col-xs-12">
                                                         <div class="button-items">
                                                             <div class="d-grid">
-                                                                <button id="editSepInap" type="button" onclick="updateSepInap()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Edit SEP</span></button>
+                                                                <button id="editSepInapBtn" type="button" onclick="editSep()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Update SEP</span></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -465,7 +577,7 @@
                                                     <div class="col-sm-12 col-xs-12">
                                                         <div class="button-items">
                                                             <div class="d-grid">
-                                                                <button id="deleteSepInap" type="button" onclick="deleteSepInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-remove"></i> <span>Delete SEP</span></button>
+                                                                <button id="deleteSepInapBtn" type="button" onclick="deleteSepInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SEP</span></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -478,10 +590,10 @@
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="flush-headingTwo">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                        Follow Up
+                                        <b>Follow Up</b>
                                     </button>
                                 </h2>
-                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionRanap">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-sm-3 col-xs-12">
@@ -583,14 +695,111 @@
                                 </div>
                             </div>
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="flush-headingThree">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                                        Accordion Item #3
+                                <h2 class="accordion-header" id="headingSpriRanap">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpriRanap" aria-expanded="false" aria-controls="collapseSpriRanap">
+                                        <b>Rencana SPRI</b>
                                     </button>
                                 </h2>
-                                <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-                                    <div class="accordion-body text-muted">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.</div>
+                                <div id="collapseSpriRanap" class="accordion-collapse collapse" aria-labelledby="headingSpriRanap" data-bs-parent="#accordionRanap">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-xs-12 mt-4">
+                                                <div>
+                                                    <h3>Rencana SPRI</h3>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-4 mb-3">
+                                                <div class="form-group"><label for="tasprikddpjp">Dokter</label>
+                                                    <div>
+                                                        <select name="tasprikddpjp" id="tasprikddpjp" class="form-control" style="width:100%">
+                                                            <?php $dpjplist = array();
+                                                            foreach ($dokter as $key => $value) {
+                                                                foreach ($value as $key1 => $value1) {
+                                                                    foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                        if ($key1 == $dpjpkey) {
+                                                                            $dpjplist[$dpjpvalue] = $value1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            asort($dpjplist);
+                                                            ?>
+                                                            <?php foreach ($dpjplist as $key => $value) {
+                                                            ?>
+                                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                            <?php
+                                                            } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 col-xs-4 mb-3">
+                                                <div class="form-group"><label for="tasprikdpoli">Poli Kontrol</label>
+                                                    <div>
+                                                        <select name="tasprikdpoli" id="tasprikdpoli" class="form-control" style="width:100%">
+                                                            <?php
+                                                            $clinicList = array();
+                                                            foreach ($clinic as $key => $value) {
+                                                                if ($value['stype_id'] == '1') {
+                                                                    $clinicList[$value['other_id']] = $value['name_of_clinic'];
+                                                            ?>
+                                                            <?php
+                                                                }
+                                                            }
+                                                            asort($clinicList); ?>
+                                                            <?php foreach ($clinicList as $key => $value) {
+                                                            ?>
+                                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                            <?php
+                                                            } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 mb-3">
+                                                <div class="form-group"><label for="taspritglkontrol">Tgl Rencana Kontrol</label>
+                                                    <input type='date' name="taspritglkontrol" class="form-control" id='taspritglkontrol' />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 mb-3">
+                                                <div class="form-group"><label for="tasprinosurat">No SPRI</label>
+                                                    <input type='text' name="tasprinosurat" class="form-control" id='tasprinosurat' />
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-3">
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="saveSpriRanapBtn" type="button" onclick="saveSpriRanap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
+                                                                    <span>Simpan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="checkSpriRanapBtn" type="button" onclick="checkSpriRanap()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="deleteSpriRanapBtn" type="button" onclick="deleteSpriRanap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

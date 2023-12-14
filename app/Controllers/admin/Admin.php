@@ -540,6 +540,7 @@ class Admin extends \App\Controllers\BaseController
 
                 $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
                 if ($dt_response[$key]['visit_id'] != null) {
+                    $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
                     $action .= '<a onclick="getAkomodasi(\'' . $dt_response[$key]['visit_id'] . '\')" class="dropdown-item" href="#"><i style="color: red">PASIEN SEDANG RAWAT INAP</i></a>';
                 } else {
                     $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
