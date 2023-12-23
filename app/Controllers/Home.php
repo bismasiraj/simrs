@@ -124,13 +124,14 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         $i = 0;
         foreach ($select as $key => $value) {
             $i++;
-            $user              = new User([
+            $user = new User([
                 'password' => $value['password'],
-                'email' => $value['username'] . '@exindo.com',
-                'username' => $value['username']
+                'email' => strtolower(str_replace(' ', '', $value['username'])) . '@exindo.com',
+                'username' => strtolower(str_replace(' ', '', $value['username']))
             ]);
             $selector = $users->select("max(id)+1 as id")->findAll();
             // return json_encode($user);
+
             $user->id = $selector[0]->id;
             // return json_encode($user);
 
