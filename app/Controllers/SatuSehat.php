@@ -256,57 +256,119 @@ class SatuSehat extends BaseController
         $token = json_decode($this->getToken(), true);
 
         $c = new ClinicModel();
-        $clinic = $this->lowerKey($c->select("*")->findAll());
-
+        // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
+        // FETCH NEXT 30 ROWS ONLY')->findAll());
+        $db = db_connect();
+        $clinic = $this->lowerKey($db->query("select * from  clinic
+        order by CLINIC_ID
+        OFFSET 0 ROWS
+        FETCH NEXT 100 ROWS ONLY;
+        ")->getResultArray());
+        // return json_encode($clinic);
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
 
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'POST',
+            //     CURLOPT_POSTFIELDS => '{
+            //                             "resourceType": "Location",
+            //                             "identifier": [
+            //                                 {
+            //                                     "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
+            //                                     "value": "' . $clinic[$key]['clinic_id'] . '"
+            //                                 }
+            //                             ],
+            //                             "status": "active",
+            //                             "name": "Poli Dalam",
+            //                             "description": "' . $clinic[$key]['name_of_clinic'] . '",
+            //                             "mode": "instance",
+
+
+            //                             "physicalType": {
+            //                                 "coding": [
+            //                                     {
+            //                                         "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+            //                                         "code": "ro",
+            //                                         "display": "Room"
+            //                                     }
+            //                                 ]
+            //                             },
+
+
+
+
+
+            //                             "managingOrganization": {
+            //                                 "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+            //                             }
+            //                         }',
+            //     CURLOPT_HTTPHEADER => array(
+            //         'Content-Type: application/json',
+            //         'Authorization: Bearer ' . $token
+            //     ),
+            // ));
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization='.$value['ssclinic_id'],
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'GET',
+            //     CURLOPT_HTTPHEADER => array(
+            //       'Authorization: Bearer '.$token
+            //     ),
+            //   ));
+
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
+                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location/' . $value['sslocation_id'],
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_CUSTOMREQUEST => 'PUT',
                 CURLOPT_POSTFIELDS => '{
-                                        "resourceType": "Location",
-                                        "identifier": [
-                                            {
-                                                "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
-                                                "value": "' . $clinic[$key]['clinic_id'] . '"
-                                            }
-                                        ],
-                                        "status": "active",
-                                        "name": "Poli Dalam",
-                                        "description": "' . $clinic[$key]['name_of_clinic'] . '",
-                                        "mode": "instance",
-                                        
-                                        
-                                        "physicalType": {
-                                            "coding": [
-                                                {
-                                                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-                                                    "code": "ro",
-                                                    "display": "Room"
-                                                }
-                                            ]
-                                        },
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        "managingOrganization": {
-                                            "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-                                        }
-                                    }',
+                  "resourceType": "Location",
+                  "id": "' . $value['sslocation_id'] . '",
+                  "identifier": [
+                      {
+                          "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
+                          "value": "' . $value['clinic_id'] . '"
+                      }
+                  ],
+                  "status": "active",
+                  "name": "' . $value['name_of_clinic'] . '",
+                  "description": "' . $value['name_of_clinic'] . '",
+                  "mode": "instance",
+                  "physicalType": {
+                      "coding": [
+                          {
+                              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                              "code": "ro",
+                              "display": "Room"
+                          }
+                      ]
+                  },
+                  "managingOrganization": {
+                      "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+                  }
+              }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
                     'Authorization: Bearer ' . $token
                 ),
             ));
+
 
             $response = curl_exec($curl);
             $response = json_decode($response, true);
@@ -315,9 +377,15 @@ class SatuSehat extends BaseController
 
             curl_close($curl);
             // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
-            if (isset($response['id'])) {
+            if (isset($response['entry'][0]['resource']['id'])) {
+                // if (isset($response['id'])) {
                 $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => $response['id']
+                    'sslocation_id' => $response['entry'][0]['resource']['id']
+                    // 'sslocation_id' => $response['id']
+                ]);
+            } else {
+                $c->update($clinic[$key]['clinic_id'], [
+                    'sslocation_id' => null
                 ]);
             }
         }
@@ -575,7 +643,7 @@ class SatuSehat extends BaseController
     public function postingBatch()
     {
         $ss = new SatuSehatModel();
-        $satusehat = $this->lowerKey($ss->where('status', null)->orderBy("trans_id, waktu")->where('trans_id', '846202202312235F6D')->findAll());
+        $satusehat = $this->lowerKey($ss->where('status', null)->where('parameter is not null')->orderBy("trans_id, waktu")->where('trans_id', '846202202312235F6D')->findAll());
         // return json_encode($satusehat);
 
         $ssToken = $this->request->getHeaderLine("ssToken");
