@@ -182,10 +182,13 @@ class SatuSehat extends BaseController
     }
     public function postOrganization()
     {
-        $token = $this->getToken();
+        $token = json_decode($this->getToken(), true);
+        // return json_encode($token);
 
         $c = new ClinicModel();
-        $clinic = $this->lowerKey($c->select("top(1) *")->findAll());
+        $clinic = $this->lowerKey($c->select("*")->findAll());
+
+        $return = [];
 
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
@@ -232,20 +235,28 @@ class SatuSehat extends BaseController
             ));
 
             $response = curl_exec($curl);
+            // return $response;
+
+            $response = json_decode($response, true);
+            $return[] = $response;
 
             curl_close($curl);
-
-            $c->set('ssclinic_id', $response['id'])->update($clinic[$key]['clinic_id']);
+            // return json_encode($response);
+            if (isset($response['id'])) {
+                $c->update($clinic[$key]['clinic_id'], [
+                    'ssclinic_id' => $response['id']
+                ]);
+            }
         }
 
-        echo $response;
+        return json_encode($return);
     }
     public function postLocation()
     {
-        $token = $this->getToken();
+        $token = json_decode($this->getToken(), true);
 
         $c = new ClinicModel();
-        $clinic = $this->lowerKey($c->select("top(1) *")->findAll());
+        $clinic = $this->lowerKey($c->select("*")->findAll());
 
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
@@ -298,11 +309,19 @@ class SatuSehat extends BaseController
             ));
 
             $response = curl_exec($curl);
+            $response = json_decode($response, true);
+
+            $return[] = $response;
 
             curl_close($curl);
-            $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
+            // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
+            if (isset($response['id'])) {
+                $c->update($clinic[$key]['clinic_id'], [
+                    'sslocation_id' => $response['id']
+                ]);
+            }
         }
-        echo $response;
+        return json_encode($return);
     }
     public function postEncounter()
     {
