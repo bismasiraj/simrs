@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\BatchingBridgingModel;
+use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
@@ -181,25 +182,31 @@ class SatuSehat extends BaseController
     }
     public function postOrganization()
     {
-        $curl = curl_init();
+        $token = $this->getToken();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Organization',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
+        $c = new ClinicModel();
+        $clinic = $this->lowerKey($c->select("top(1) *")->findAll());
+
+        foreach ($clinic as $key => $value) {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Organization',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
                                         "resourceType": "Organization",
                                         "active": true,
                                         "identifier": [
                                             {
                                                 "use": "official",
-                                                "system": "http://sys-ids.kemkes.go.id/organization/913e8e48-48d9-46de-b13f-c909d5f71690", //organizationID RS
-                                                "value": "PP001"
+                                                "system": "http://sys-ids.kemkes.go.id/organization/913e8e48-48d9-46de-b13f-c909d5f71690",
+                                                "value": "' . $clinic[$key]['clinic_id'] . '"
                                             }
                                         ],
                                         "type": [
@@ -213,160 +220,59 @@ class SatuSehat extends BaseController
                                                 ]
                                             }
                                         ],
-                                        "name": "Poli Dalam",
-                                        "telecom": [
-                                            {
-                                                "system": "phone",
-                                                "value": "+6221-783042654",
-                                                "use": "work"
-                                            },
-                                            {
-                                                "system": "email",
-                                                "value": "rs-satusehat@gmail.com",
-                                                "use": "work"
-                                            },
-                                            {
-                                                "system": "url",
-                                                "value": "www.rs-satusehat@gmail.com",
-                                                "use": "work"
-                                            }
-                                        ],
-                                        "address": [
-                                            {
-                                                "use": "work",
-                                                "type": "both",
-                                                "line": [
-                                                    "Jalan Jati Asih"
-                                                ],
-                                                "city": "Jakarta",
-                                                "postalCode": "55292",
-                                                "country": "ID",
-                                                "extension": [
-                                                    {
-                                                        "url": "https://fhir.kemkes.go.id/r4/StructureDefinition/administrativeCode",
-                                                        "extension": [
-                                                            {
-                                                                "url": "province",
-                                                                "valueCode": "31"
-                                                            },
-                                                            {
-                                                                "url": "city",
-                                                                "valueCode": "3171"
-                                                            },
-                                                            {
-                                                                "url": "district",
-                                                                "valueCode": "317101"
-                                                            },
-                                                            {
-                                                                "url": "village",
-                                                                "valueCode": "31710101"
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }
-                                        ],
+                                        "name": "' . $clinic[$key]['name_of_clinic'] . '",
                                         "partOf": {
-                                            "reference": "Organization/913e8e48-48d9-46de-b13f-c909d5f71690" // organizationid yang membawahi departemen ini
+                                            "reference": "Organization/913e8e48-48d9-46de-b13f-c909d5f71690"
                                         }
                                     }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Authorization: Bearer 4nNfNhJaTajjPnJwobaOOH4Oc5ZB'
-            ),
-        ));
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $token
+                ),
+            ));
 
-        $response = curl_exec($curl);
+            $response = curl_exec($curl);
 
-        curl_close($curl);
+            curl_close($curl);
+
+            $c->set('ssclinic_id', $response['id'])->update($clinic[$key]['clinic_id']);
+        }
+
         echo $response;
     }
     public function postLocation()
     {
-        $curl = curl_init();
+        $token = $this->getToken();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
+        $c = new ClinicModel();
+        $clinic = $this->lowerKey($c->select("top(1) *")->findAll());
+
+        foreach ($clinic as $key => $value) {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
                                         "resourceType": "Location",
                                         "identifier": [
                                             {
-                                                "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690", //organization_id dari satu sehata
-                                                "value": "P001"
+                                                "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
+                                                "value": "' . $clinic[$key]['clinic_id'] . '"
                                             }
                                         ],
                                         "status": "active",
                                         "name": "Poli Dalam",
-                                        "description": "Ruang Poliklinik Penyakit Dalam",
+                                        "description": "' . $clinic[$key]['name_of_clinic'] . '",
                                         "mode": "instance",
-                                        "telecom": [
-                                            {
-                                                "system": "phone",
-                                                "value": "2328",
-                                                "use": "work"
-                                            },
-                                            {
-                                                "system": "fax",
-                                                "value": "2329",
-                                                "use": "work"
-                                            },
-                                            {
-                                                "system": "email",
-                                                "value": "second wing admissions"
-                                            },
-                                            {
-                                                "system": "url",
-                                                "value": "http://sampleorg.com/southwing",
-                                                "use": "work"
-                                            }
-                                        ],
-                                        "address": {
-                                            "use": "work",
-                                            "line": [
-                                                "Gd. Prof. Dr. Sujudi Lt.5, Jl. H.R. Rasuna Said Blok X5 Kav. 4-9 Kuningan"
-                                            ],
-                                            "city": "Jakarta",
-                                            "postalCode": "12950",
-                                            "country": "ID",
-                                            "extension": [
-                                                {
-                                                    "url": "https://fhir.kemkes.go.id/r4/StructureDefinition/administrativeCode",
-                                                    "extension": [
-                                                        {
-                                                            "url": "province",
-                                                            "valueCode": "10"
-                                                        },
-                                                        {
-                                                            "url": "city",
-                                                            "valueCode": "1010"
-                                                        },
-                                                        {
-                                                            "url": "district",
-                                                            "valueCode": "1010101"
-                                                        },
-                                                        {
-                                                            "url": "village",
-                                                            "valueCode": "1010101101"
-                                                        },
-                                                        {
-                                                            "url": "rt",
-                                                            "valueCode": "1"
-                                                        },
-                                                        {
-                                                            "url": "rw",
-                                                            "valueCode": "2"
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        },
+                                        
+                                        
                                         "physicalType": {
                                             "coding": [
                                                 {
@@ -382,18 +288,20 @@ class SatuSehat extends BaseController
                                         
                                         
                                         "managingOrganization": {
-                                            "reference": "Organization/88df9317-d210-4049-a99c-3da68e02b8ed" // organizationid dari poli dalam yang didapat dari postorganization
+                                            "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
                                         }
                                     }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Authorization: Bearer 4nNfNhJaTajjPnJwobaOOH4Oc5ZB'
-            ),
-        ));
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $token
+                ),
+            ));
 
-        $response = curl_exec($curl);
+            $response = curl_exec($curl);
 
-        curl_close($curl);
+            curl_close($curl);
+            $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
+        }
         echo $response;
     }
     public function postEncounter()
