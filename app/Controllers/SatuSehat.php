@@ -186,7 +186,7 @@ class SatuSehat extends BaseController
         // return json_encode($token);
 
         $c = new ClinicModel();
-        $clinic = $this->lowerKey($c->select("*")->findAll());
+        $clinic = $this->lowerKey($c->select("*")->where("ssclinic_id is null")->findAll());
 
         $return = [];
 
