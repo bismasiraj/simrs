@@ -8,6 +8,8 @@ use App\Controllers\BaseController;
 $basecontroller = new Patient();
 $basecontroller->checkMenuActive('register');
 
+
+
 // dd(user()->checkRoles(['superuser']))
 
 ?>
@@ -578,6 +580,7 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/plugins/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
     <!--language js-->
     <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/bootstrap-select.min.js"></script>
     <script type="text/javascript">
@@ -632,6 +635,7 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/datepicker/js/bootstrap-datetimepicker.js"></script>
     <script src="<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/app.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
     <!-- nprogress -->
     <script src="<?php echo base_url(); ?>backend/dist/js/nprogress.js"></script>
     <!-- file dropify -->

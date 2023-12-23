@@ -39,30 +39,28 @@ $basecontroller->checkMenuActive('register');
                     </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat'])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('rajal'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('rajal'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/rajal">
                             <i class="mdi mdi-stethoscope"></i> <span> Pelayanan</span>
                         </a>
                     </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'customerservices', 'perawat', 'operatorbangsal', 'bangsal', 'dokter'])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('ranap'); ?> ">
+                    <li class="<?= $basecontroller->checkMenuActive('ranap'); ?> ">
                         <a href="<?php echo base_url() ?>admin/patient/ranap">
                             <i class="mdi mdi-bed" aria-hidden="true"></i> <span> <?php echo lang('Word.ipd_in_patient'); ?></span>
                         </a>
                     </li>
-
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('farmasi'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('farmasi'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/farmasi">
                             <i class="mdi mdi-pharmacy"></i> <span> <?php echo lang('Word.pharmacy'); ?></span>
                         </a>
                     </li>
-
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('laboratorium'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('laboratorium'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/laboratorium">
                             <i class="fas fa-flask"></i> <span><?php echo "Laboratorium"; ?></span>
                         </a>
@@ -70,7 +68,7 @@ $basecontroller->checkMenuActive('register');
 
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('radiologi'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('radiologi'); ?>">
                         <a href="<?php echo base_url() ?>admin/patient/radiologi">
                             <i class="fas fa-microscope"></i> <span><?php echo lang('Word.radiology'); ?></span>
                         </a>
@@ -78,7 +76,7 @@ $basecontroller->checkMenuActive('register');
 
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'billingpasien'])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('hemodialisa'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('hemodialisa'); ?>">
                         <a href="<?php echo base_url() ?>admin/patient/hemodialisa">
                             <i class="fas fa-tint"></i> <span><?php echo "Haemodialisa"; ?></span>
                         </a>
@@ -86,16 +84,15 @@ $basecontroller->checkMenuActive('register');
 
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd'])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
-                            <i class="fas fa-ambulance" aria-hidden="true"></i>
+                            <i class="fas fa-ambulance"></i>
                             <span> <?php echo "Unit Gawat Darurat"; ?></span>
                         </a>
                     </li>
-
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                    <li class="waves-effect <?= $basecontroller->checkMenuActive('kamaroperasi'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('kamaroperasi'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/kamaroperasi">
                             <i class="fas fa-dungeon"></i> <span><?php echo "Kamar Operasi"; ?></span>
                         </a>

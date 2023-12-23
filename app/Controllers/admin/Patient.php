@@ -10,6 +10,7 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicDoctorModel;
 use App\Models\ClinicModel;
+use App\Models\ClinicTypeModel;
 use App\Models\CoverageModel;
 use App\Models\DiagnosaCategoryModel;
 use App\Models\DiagnosaModel;
@@ -19,6 +20,8 @@ use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
+use App\Models\TreatDocsModel;
+use CodeIgniter\Files\File;
 use App\Models\GenerateIdModel;
 use App\Models\GoodsModel;
 use App\Models\GrouperModel;
@@ -60,6 +63,7 @@ use App\Models\TreatResultModel;
 use App\Models\TreatTarifModel;
 use App\Models\VisitReasonModel;
 use App\Models\VisitWayModel;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use LZCompressor\LZString;
 
@@ -178,6 +182,11 @@ class Patient extends \App\Controllers\BaseController
 
         $cdModel = new ClinicDoctorModel();
         $clinicDoctor = $this->lowerKey($cdModel->where('employee_id', $userEmployee)->findAll());
+        $clinicInap = array();
+
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
 
@@ -191,6 +200,9 @@ class Patient extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         if (!is_null($userEmployee)) {
@@ -211,7 +223,9 @@ class Patient extends \App\Controllers\BaseController
                 }
             }
 
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -257,7 +271,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             'caraKeluar' => $caraKeluar,
             // 'diagnosa' => $diagnosa,
-            'dpjp' => $dpjp
+            'dpjp' => $dpjp,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     private function searchingTemplate($giTipe, $title)
@@ -353,6 +369,11 @@ class Patient extends \App\Controllers\BaseController
 
         $dokter = array();
         $dpjp = array();
+        $clinicInap = array();
+
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
         foreach ($clinic as $key => $value) {
@@ -365,17 +386,20 @@ class Patient extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         foreach ($schedule as $key => $value) {
             if ($schedule[$key]['dpjp'] != '' && !is_null($schedule[$key]['dpjp'])) {
-                $dpjp[$schedule[$key]['employee_id']] = $schedule[$key]['dpjp'];
+                $dpjp[$schedule[$key]['employee_id']][$schedule[$key]['dpjp']] = $schedule[$key]['sspractitioner_id'];
             }
         }
 
+        asort($clinicInap);
 
-
-        // dd($schedule);
+        // dd($dpjp);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -408,7 +432,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             // 'diagnosa' => $diagnosa,
             'dpjp' => $dpjp,
-            'caraKeluar' => $caraKeluar
+            'caraKeluar' => $caraKeluar,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     public function getpatientDetails()
@@ -588,7 +614,7 @@ This Function is used to Add Patient
     public function addpatient()
     {
         // return $this->request->getPost('nama');
-        // if (!$this->request->is('post')) {
+        // if (!$this->request->is('post') && $this->validate(['file' => 'uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'])) {
         //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         // }
 
@@ -602,21 +628,15 @@ This Function is used to Add Patient
             'placebirth' => 'required',
             'datebirth' => 'required|valid_date[Y-m-d]',
             'address' => 'required',
-            'rt' => 'required|integer',
-            'rw' => 'required|integer',
             'kalurahan' => 'required|integer',
-            'phone' => 'permit_empty|integer',
             'mobile' => 'required|integer',
             'status' => 'required',
-            'edukasi' => 'required',
-            'pekerjaan' => 'required',
             'goldar' => 'required',
-            'agama' => 'required',
-            'perkawinan' => 'required',
             'gender' => 'required',
             'kk_no' => 'permit_empty|integer',
             'tmt' => 'permit_empty|valid_date[Y-m-d]',
-            'tat' => 'permit_empty|valid_date[Y-m-d]'
+            'tat' => 'permit_empty|valid_date[Y-m-d]',
+            // 'file' => 'permit_empty|uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'
         ];
 
         if (!$this->validate($rules)) {
@@ -626,9 +646,12 @@ This Function is used to Add Patient
             return json_encode($array);
         }
 
-
-        $p = new PasienModel();
-        $no_registration = $p->getNorm();
+        $no_registration = $this->request->getPost('no_registration');
+        if (!isset($no_registration) || $no_registration == '') {
+            $p = new PasienModel();
+            $no_registration = $p->getNorm();
+        }
+        // return json_encode($no_registration);
 
         $nama = $this->request->getPost('nama');
         $pasien_id = $this->request->getPost('pasien_id');
@@ -661,12 +684,33 @@ This Function is used to Add Patient
         $father = $this->request->getPost('ayah');
         $mother = $this->request->getPost('ibu');
         $spouse = $this->request->getPost('sutri');
+        $file = $this->request->getFile('file');
+        $sspasien_id = $this->request->getPost('sspasien_id');
+
 
         $orgunitcode = '1771014';
 
+        // return json_encode();
 
-        // return json_encode($kalurahan);
+        // return json_encode(base64_encode(file_get_contents($file->getTempName())));
 
+        // if (!$file->hasMoved()) {
+        //     $filepath = WRITEPATH . 'uploads/' . $file->store();
+
+        //     // $data = ['uploaded_fileinfo' => base64_encode(file_get_contents($filepath))];
+
+        //     // return json_encode($data);
+        // }
+
+        // $data = ['errors' => 'The file has already been moved.'];
+
+        // return json_encode($file);
+
+        // $db = db_connect('default');
+        // $db->simpleQuery("update pasien set ttd = " . file_get_contents($filepath) . " where no_registration = '846202'");
+
+
+        // return json_encode(base64_encode(file_get_contents($filepath)));
 
         $data = [
             'org_unit_code' => $orgunitcode,
@@ -698,22 +742,73 @@ This Function is used to Add Patient
             'family_status_id' => $family,
             'kk_no' => $kk_no,
             'tmt' => $tmt,
-            'tat' => $tat
+            'tat' => $tat,
+            'sspasien_id' => $sspasien_id,
+            'father' => $father,
+            'mother' => $mother,
+            'spouse' => $spouse
         ];
-        // $data = json_encode($data);
 
-        // return $data;
+
 
 
         $pasienModel = new PasienModel();
 
-        $pasienModel->insert($data);
+        $pasienModel->save($data);
+
+        $uploadFolder = 'uploads/doc/P000' . $no_registration;
+
+        if (!is_dir($uploadFolder)) {
+            mkdir(
+                $uploadFolder,
+                0777,
+                true
+            );
+        }
+
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $no_registration . $file->getName();
+            $file->move($uploadFolder, $newName);
+
+            // You can store the file path in the database if needed
+            $filePath = $uploadFolder . '/' . $newName;
+            $docModel = new TreatDocsModel();
+            $docData = [
+                'org_unit_code' => $orgunitcode,
+                'doc_id' => $no_registration,
+                'doc_ke' => 1,
+                'docfiles' => $newName,
+                'upload_by' => user()->username,
+                'modified_by' => user()->username,
+                'doc_type' => 1,
+                'clinic_id' => 'P000'
+            ];
+            $docModel->save($docData);
+
+            // Additional logic based on your application's needs
+
+            // return redirect()->to(base_url($filePath));
+        }
+
+
+
+
+        // return json_encode('asd');
+
+
+
+        // header("Content-type: image/jpeg");
+        // echo file_get_contents($filepath);
+
+        // $pasienModel->save($data);
+
+        // return json_encode(base64_encode($data['ttd']));
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
         // of specified length
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil');
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'data' => $data);
         echo json_encode($array);
     }
     public function deletePatient()
@@ -907,11 +1002,11 @@ This Function is used to Add Patient
                 // $action .= "</div'>";
                 $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
                 //==============================
-                $row[] = '<h3 style="margin: auto;
-                padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h3>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['way_id'] . "</a>";
+                $row[] = '<h4 style="margin: auto;
+                padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h4>";
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 $row[] = substr($kunjungan[$key]['visit_date'], 0, 10) . "<br>" . substr($kunjungan[$key]['date_of_birth'], 0, 10);
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'];
+                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'] . "<br>" . $kunjungan[$key]['way_id'];
                 $row[] = "<b>" . $kunjungan[$key]['clinic_id'] . "</b><br><b>" . $kunjungan[$key]['employee_id'] . "</b><br>" . $kunjungan[$key]['class_id'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
@@ -926,6 +1021,7 @@ This Function is used to Add Patient
         );
         return json_encode($json_data);
     }
+
     public function getipddatatable()
     {
         if (!$this->request->is('post')) {
@@ -1078,11 +1174,13 @@ This Function is used to Add Patient
                 $action .= "</div'>";
                 $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
                 //==============================
-                $row[] = '<p style="margin: auto;
-                width: 50%;
-                text-align: left;
-                padding: 10px;">' . ($key + 1) . ".</p>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['contact_address'] . "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'] . "</a>" . $action;
+                // $row[] = '<p style="margin: auto;
+                // width: 50%;
+                // text-align: left;
+                // padding: 10px;">' . ($key + 1) . ".</p>";
+                $row[] = $kunjungan[$key]['no_registration'];
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>" . $action;
+                $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
                 $row[] = $kunjungan[$key]['status_pasien_id'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
                 $row[] = $kunjungan[$key]['clinic_id'] .  "<br>" . $kunjungan[$key]['employee_id'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
                 $row[] = $kunjungan[$key]['clinic_id_from'] .  "<br>" . $kunjungan[$key]['keluar_id'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
@@ -1283,7 +1381,6 @@ This Function is used to Add Patient
             'ageyear' => 'required',
             'kode_agama' => 'required',
             'aktif' => 'required',
-
         ];
 
         // if (!$this->validate($rules)) {
@@ -1297,14 +1394,18 @@ This Function is used to Add Patient
         $p = new PasienModel();
         $no_registration = $p->getNorm();
 
+        $trans_id = $this->request->getPost('trans_id');
+        $visit_id = $this->request->getPost('visit_id');
+        $ticket_no = $this->request->getPost('ticket_no');
         $clinic_id = $this->request->getPost('clinic_id');
         $employee_id = $this->request->getPost('employee_id');
+        $isrj = $this->request->getPost('isrj');
         $kddpjp = $this->request->getPost('kddpjp');
         $class_id = $this->request->getPost('class_id');
         $class_id_plafond = $this->request->getPost('class_id_plafond');
         $status_pasien_id = $this->request->getPost('status_pasien_id');
-        $visit_date = $this->request->getPost('visit_date');
-        $boooked_date = $this->request->getPost('boooked_date');
+        $visit_date = str_replace("T", " ", $this->request->getPost('visit_date'));
+        $booked_date =  str_replace("T", " ", $this->request->getPost('booked_date'));
         $kdpoli_eks = $this->request->getPost('kdpoli_eks');
         $isnew = $this->request->getPost('isnew');
         $cob = $this->request->getPost('cob');
@@ -1317,7 +1418,7 @@ This Function is used to Add Patient
         $asalrujukan = $this->request->getPost('asalrujukan');
         $norujukan = $this->request->getPost('norujukan');
         $kdpoli = $this->request->getPost('kdpoli');
-        $tanggal_rujukan = $this->request->getPost('tanggal_rujukan');
+        $tanggal_rujukan =  str_replace("T", " ", $this->request->getPost('tanggal_rujukan'));
         $ppkrujukan = $this->request->getPost('ppkrujukan');
         $diag_awal = $this->request->getPost('diag_awal');
         $conclusion = $this->request->getPost('conclusion');
@@ -1357,24 +1458,30 @@ This Function is used to Add Patient
         $tujuankunj = $this->request->getPost('tujuankunj');
         $flagprocedure = $this->request->getPost('flagprocedure');
         $kdpenunjang = $this->request->getPost('kdpenunjang');
-        $assesmenpel = $this->request->getPost('assesmenpel');
-        $valid_rm_date = $this->request->getPost('assesmenpel');
+        $assesmentpel = $this->request->getPost('assesmentpel');
+        $valid_rm_date = $this->request->getPost('valid_rm_date');
         $penjamin = $this->request->getPost('penjamin');
         $lokasilaka = $this->request->getPost('lokasilaka');
         $ispertarif = $this->request->getPost('ispertarif');
         $temptrans = $this->request->getPost('temptrans');
         $delete_sep = $this->request->getPost('delete_sep');
-
+        $ssencounter_id = $this->request->getPost('ssencounter_id');
+        $statusantrean = $this->request->getPost('statusantrean');
 
 
         $pv = new PasienVisitationModel();
-        $genereatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
+        $flag = 'edit';
+        if (!isset($visit_id) || $visit_id == null) {
+            $generatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
 
 
-        $visit_id = $genereatePv[0]['visit_id'];
-        $trans_id = $genereatePv[0]['trans_id'];
-        $ticket_no = $genereatePv[0]['ticket_no'];
-        // dd($genereatePv);
+            $visit_id = $generatePv[0]['visit_id'];
+            $trans_id = $generatePv[0]['trans_id'];
+            $ticket_no = $generatePv[0]['ticket_no'];
+            $ssencounter_id = $generatePv[0]['ssencounter_id'];
+            $flag = 'tambah';
+        }
+        // return json_encode($generatePv);
 
 
         // return json_encode($kalurahan);
@@ -1388,7 +1495,7 @@ This Function is used to Add Patient
             'class_id_plafond' => $class_id_plafond,
             'status_pasien_id' => $status_pasien_id,
             'visit_date' => $visit_date,
-            'boooked_date' => $boooked_date,
+            'booked_date' => $booked_date,
             'kdpoli_eks' => $kdpoli_eks,
             'isnew' => $isnew,
             'cob' => $cob,
@@ -1439,8 +1546,17 @@ This Function is used to Add Patient
             'aktif' => $aktif,
             'visit_id' => $visit_id,
             'trans_id' => $trans_id,
-            'ticket_no' => $ticket_no
-
+            'ticket_no' => $ticket_no,
+            'backcharge' => $backcharge,
+            'valid_rm_date' => $valid_rm_date,
+            'penjamin' => $penjamin,
+            'lokasilaka' => $lokasilaka,
+            'ispertarif' => $ispertarif,
+            'temptrans' => $temptrans,
+            'delete_sep' => $delete_sep,
+            'isrj' => $isrj,
+            'ssencounter_id' => $ssencounter_id,
+            'statusantrean' => $statusantrean
         ];
         // $data = json_encode($data);
 
@@ -1448,13 +1564,27 @@ This Function is used to Add Patient
 
 
 
-        $pv->insert($data);
+        $pv->save($data);
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
         // of specified length
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'visit_id' => $visit_id);
+        $array   = array('status' => 'success', 'error' => '', 'message' => $flag . ' kunjungan pasien berhasil', 'visit_id' => $visit_id, 'data' => $data);
+        echo json_encode($array);
+    }
+
+    public function deletevisit()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $visit_id = $this->request->getPost('visit_id');
+
+        $pv = new PasienVisitationModel();
+        $pv->delete($visit_id);
+
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'delete kunjungan pasien berhasil', 'visit_id' => $visit_id);
         echo json_encode($array);
     }
 
@@ -1471,7 +1601,6 @@ This Function is used to Add Patient
 
     public function profile($id)
     {
-
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
@@ -1588,10 +1717,16 @@ This Function is used to Add Patient
                 $visit['fullname_inap'] = $employee[$key]['fullname'];
             }
         }
+        if (!isset($visit['fullname'])) {
+            $visit['fullname'] = '';
+        }
         foreach ($clinic as $key => $value) {
             if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
+        }
+        if (!isset($visit['name_of_clinic'])) {
+            $visit['name_of_clinic'] = '';
         }
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
@@ -1601,8 +1736,10 @@ This Function is used to Add Patient
         $visit['age'] = $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr';
 
         $visitDate = substr($visit['visit_date'], 0, 10);
+        $visit['visit_datetime'] = $visit['visit_date'];
         $visit['visit_date'] = $visitDate;
         $visitDate = substr($visit['exit_date'], 0, 10);
+        $visit['exit_datetime'] = $visit['exit_date'];
         $visit['exit_date'] = $visitDate;
 
         $examModel = new ExaminationModel();
@@ -1656,8 +1793,10 @@ This Function is used to Add Patient
             }
 
             // dd($clinicPermission);
-
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
+            // unset($clinic);
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -1665,8 +1804,14 @@ This Function is used to Add Patient
                 $clinic[$i] = $clinicPermission[$key];
             }
         }
-
-        // dd($visit);
+        // dd($employee);
+        foreach ($employee as $key => $value) {
+            if ($employee[$key]['employee_id'] == $visit['employee_id']) {
+                $visit['sspractitioner_id'] = $value['sspractitioner_id'];
+                $visit['sspractitioner_name'] = $value['fullname'];
+            }
+        }
+        // dd($practitioner_id);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -2861,10 +3006,21 @@ This Function is used to Add Patient
 
 
         // dd(json_encode($diag_id[0]));
+        $pv = new PasienVisitationModel();
+        $kunjungan = $this->lowerKeyOne($pv->find($visit_id));
+        $p = new PasienModel();
+        $pasien = $this->lowerKeyOne($p->find($no_registration));
+        $ea = new EmployeeAllModel();
+        $employee = $this->lowerKeyOne($ea->find($employee_id));
 
 
-
-
+        $ssjson = '{
+                        "resourceType": "Bundle",
+                        "type": "transaction",
+                        "entry": [
+                        ]
+                    }';
+        $ssjson = json_decode($ssjson, true);
 
         $pd = new PasienDiagnosaModel();
 
@@ -2966,8 +3122,7 @@ This Function is used to Add Patient
                 $dataDiag['diag_cat'] = $diag_cat[$key];
                 $dataDiag['suffer_type'] = $suffer_type[$key];
                 $dataDiag['modified_by'] = user_id();
-
-
+                $dataDiag['sscondition_id'] = new RawSql('newid()');
 
                 $pds->insert($dataDiag);
             }
@@ -3359,6 +3514,8 @@ This Function is used to Add Patient
 
         return json_encode($response);
     }
+
+
 
     public function getDiagnosas()
     {
@@ -4625,7 +4782,7 @@ This Function is used to Add Patient
         $nomor = $body['nomor'];
         $visit = $body['visit'];
 
-        $nomor = '574969';
+        $nomor = '453284';
 
         $db = db_connect('sharelis');
         $builder = $db->table('HASIL_PEMERIKSAANV2 hp')->join('HLISV2 hl', ' hl.NO_NOTA = hp.NO_NOTA ', 'inner')
@@ -4652,24 +4809,48 @@ This Function is used to Add Patient
         $dt = '';
 
         foreach ($headerKey as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-            <tr>
-                <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
-            </tr>
-            </thead>
-            <tbody id="viewlab' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#labResult' . $key . '" aria-expanded="true" aria-controls="labResult' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="labResult' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="viewlab' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
+            //     <thead style="text-align: center;">
+            //     <tr>
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
+            //     </tr>
+            //     </thead>
+            //     <tbody id="viewlab' . $key . '">
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
         $data['result'] = $result;
         $data['headerKey'] = $dt;
@@ -4731,22 +4912,47 @@ This Function is used to Add Patient
         $dt = '';
 
         foreach ($visitHistory as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="eresepTable" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-                <tr>
-                    <th class="text-center" style="width: 4%;">No.</th class="text-center">
-                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                    <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
-                </tr>
-            </thead>
-            <tbody id="body' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#historyPresc' . $key . '" aria-expanded="true" aria-controls="historyPresc' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="historyPresc' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table id="eresepTable" class="table table-bordered table-hover">
+            //     <thead class="table-primary" style="text-align: center;">
+            //         <tr>
+            //             <th class="text-center" style="width: 4%;">No.</th class="text-center">
+            //             <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+            //             <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+            //             <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+            //         </tr>
+            //     </thead>
+            //     <tbody id="body' . $key . '">
+
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
 
 
@@ -5179,7 +5385,7 @@ This Function is used to Add Patient
         $session->set($sessionData);
         $giTipe = 1;
 
-        $title = 'Rawat Jalan';
+        $title = 'Pelayanan';
 
         return $this->rajalTemplate($giTipe, $title);
     }
@@ -6046,158 +6252,5 @@ This Function is used to Add Patient
         // of specified length
         $array   = array('status' => 'success', 'error' => '', 'message' => 'edit obat non racikan berhasil', 'data' => $returnData);
         echo json_encode($array);
-    }
-    private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
-    private $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
-    function stringDecrypt($key, $string)
-    {
-
-
-        $encrypt_method = 'AES-256-CBC';
-
-        // hash
-        $key_hash = hex2bin(hash('sha256', $key));
-
-        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
-
-        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-
-        return $output;
-    }
-    function decompress($string)
-    {
-        $return = LZString::decompressFromEncodedURIComponent($string);
-        $return = json_decode(($return), true);
-        return $return;
-    }
-    public function AuthBridging()
-    {
-        $pdo = db_connect();
-
-
-        // //WATES
-        // $consId = '30659';
-        // $consSecret = 'rsud766wates38';
-        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
-
-        //BENGKULU
-        $consId = '4633';
-        $consSecret = 'rsud344myns618';
-        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
-
-
-
-        $current_timestamp = Time::now()->timestamp;
-        $this->keybridging = $consId . $consSecret . $current_timestamp;
-        $db = db_connect('default');
-        $builder = $db->query("DECLARE  @return_value int,
-        @h64 varchar(max)
-
-    EXEC    @return_value = [dbo].[SP_H002]
-            @CONS = N'$consId',
-            @TIMESTMP = N'$current_timestamp',
-            @MESSAGES = N'$consSecret',
-            @h64 = @h64 OUTPUT
-    SELECT  @h64 as N'h64'");
-        $signature = $builder->getResultArray();
-        // return json_encode($signature);
-        $signature = json_decode(json_encode($signature), true);
-        $headers = [
-            "X-cons-id: " . $consId,
-            "X-Timestamp: " . $current_timestamp,
-            "X-signature: " . $signature[0]['h64'],
-            "user-key: " . $userKey,
-            // "Content-type: Application/json",
-            "Accept: */*"
-        ];
-
-        return ($headers);
-    }
-    private function SendBridging($url, $method, $postdata, $headers)
-    {
-        // Gunakan curl untuk mengakses/merequest alamat api
-        if (strpos($url, 'aplicaresws') == true) {
-            array_push($headers, "Content-type: Application/json");
-        }
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-        $results = curl_exec($curl);
-        curl_close($curl);
-
-        // return $results;
-        $results = json_decode(($results), true);
-        if (str_contains($url, 'SEP/2.0/inserts')) {
-            $results = '{
-           "metadata": {
-              "code": "200",
-              "message": "Sukses"
-           },
-           "response": {
-              "sep": {
-                 "catatan": "test",
-                 "diagnosa": "A00.1 - Cholera due to Vibrio cholerae 01, biovar eltor",
-                 "jnsPelayanan": "R.Inap",
-                 "kelasRawat": "1",
-                 "noSep": "0301R0011117V000008",
-                 "penjamin": "-",
-                 "peserta": {
-                    "asuransi": "-",
-                    "hakKelas": "Kelas 1",
-                    "jnsPeserta": "PNS PUSAT",
-                    "kelamin": "Laki-Laki",
-                    "nama": "ZIYADUL",
-                    "noKartu": "0001112230666",
-                    "noMr": "123456",
-                    "tglLahir": "2008-02-05"
-                 },
-                 "informasi:": {
-                    "Dinsos":null,
-                    "prolanisPRB":null,
-                    "noSKTM":null
-                 },
-                 "poli": "-",
-                 "poliEksekutif": "-",
-                 "tglSep": "2017-10-12"
-              }
-           }
-        }';
-            $results = json_decode($results, true);
-        } else if (isset($results['response'])) {
-            if (strpos($url, 'aplicaresws') == false) {
-                $result = $this->stringDecrypt($this->keybridging, $results['response']);
-                $result = $this->decompress($result);
-            } else {
-                $result = $results;
-            }
-            $results['response'] = $result;
-        }
-        return $results;
-    }
-    function sendVclaim($url, $method, $data)
-    {
-
-        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
-        // $method = 'POST';
-        $headers = $this->AuthBridging();
-
-        $postdata = ($data);
-        array_push($headers, 'Content-length' . strlen($postdata));
-        $result = $this->SendBridging($url, $method, $postdata, $headers);
-
-        return ($result);
-        // ->json($result)
-        // ->header('Access-Control-Allow-Origin','*')
-        // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
     }
 }

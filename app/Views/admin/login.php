@@ -106,7 +106,11 @@
                                     <div class="p-3">
                                         <!-- <h4 class="text-muted font-size-18 mb-1 text-center">Selamat Datang</h4>
                                         <p class="text-muted text-center">Silahkan login untuk melanjutkan ke aplikasi SIMRS</p> -->
-                                        <form class="form-horizontal mt-4" action="index.html">
+                                        <form class="form-horizontal mt-4" action="<?= url_to('login') ?>" method="post">
+                                            <?= csrf_field() ?>
+                                            <?php if (session('errors.password')) { ?>
+                                                <?php dd(session('errors')) ?>
+                                            <?php } ?>
                                             <div class="mb-3">
                                                 <label for="username">
                                                     <h4>Username</h4>
@@ -156,7 +160,7 @@
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
         $.backstretch([
-            base_url + "/assets/img/backgrounds/RSUDWATES.png"
+            base_url + "/assets/img/backgrounds/RSMY-COVER-web.png"
         ], {
             duration: 3000,
             fade: 750

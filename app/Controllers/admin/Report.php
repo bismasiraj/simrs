@@ -184,26 +184,36 @@ class Report extends \App\Controllers\BaseController
         $statusPasien = new StatusPasienModel();
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
 
-        // $vs = new IsattendedsModel();
-        // $visitStatus = $this->lowerKey($vs->findAll());
-
-        // $scheduleModel = new DoctorScheduleModel();
-        // $schedule = $this->lowerKey($scheduleModel->getSchedule());
-
-        // $dokter = array();
-
-
-        // foreach ($clinic as $key => $value) {
-        //     $selectDokter = array();
-
-        //     foreach ($schedule as $key1 => $value1) {
-        //         if ($clinic[$key]['clinic_id'] == $schedule[$key1]['clinic_id']) {
-        //             $selectDokter[$schedule[$key1]['employee_id']] = $schedule[$key1]['fullname'];
-        //         }
-        //     }
-        //     $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
-        //     unset($selectDokter);
-        // }
+        $header = [];
+        $header = '<tr">
+        <th rowspan="2">No</th>
+        <th rowspan="2">Tanggal Kunjungan</th>
+        <th rowspan="2">Pelayanan</th>
+        <th colspan="2">No RM</th>
+        <th rowspan="2">Nama</th>
+        <th colspan="2">Umur</th>
+        <th rowspan="2">Alamat</th>
+        <th rowspan="2">Kelurahan</th>
+        <th rowspan="2">Status Bayar</th>
+        <th rowspan="2">No Kartu</th>
+        <th rowspan="2">No SEP</th>
+        <th rowspan="2">Dokter</th>
+        <th colspan="2">Diagnosa</th>
+        <th rowspan="2">Asal Rujukan</th>
+        <th rowspan="2">No. Rujukan</th>
+        <th rowspan="2">Tgl Rujukan</th>
+        <th rowspan="2">Diagnosa Awal</th>
+        <th rowspan="2">Kasus</th>
+        <th rowspan="2">Dirujuk Ke</th>
+        </tr>
+        <tr">
+            <th>Baru</th>
+            <th>Lama</th>
+            <th>Laki</th>
+            <th>Perempuan</th>
+            <th>ICD X</th>
+            <th>Nama</th>
+        </tr>';
 
 
         return view('admin\report\register', [
@@ -214,6 +224,7 @@ class Report extends \App\Controllers\BaseController
             'clinic' => $clinic,
             // 'dokter' => $dokter,
             'status' => $status,
+            'header' => $header
             // 'visitStatus' => $visitStatus
         ]);
     }
@@ -334,39 +345,9 @@ class Report extends \App\Controllers\BaseController
         }
         // return json_encode($kunjungan);
 
-        $header = [];
-        $header = '<tr">
-        <th rowspan="2">No</th>
-        <th rowspan="2">Tanggal Kunjungan</th>
-        <th rowspan="2">Pelayanan</th>
-        <th colspan="2">No RM</th>
-        <th rowspan="2">Nama</th>
-        <th colspan="2">Umur</th>
-        <th rowspan="2">Alamat</th>
-        <th rowspan="2">Kelurahan</th>
-        <th rowspan="2">Status Bayar</th>
-        <th rowspan="2">No Kartu</th>
-        <th rowspan="2">No SEP</th>
-        <th rowspan="2">Dokter</th>
-        <th colspan="2">Diagnosa</th>
-        <th rowspan="2">Asal Rujukan</th>
-        <th rowspan="2">No. Rujukan</th>
-        <th rowspan="2">Tgl Rujukan</th>
-        <th rowspan="2">Diagnosa Awal</th>
-        <th rowspan="2">Kasus</th>
-        <th rowspan="2">Dirujuk Ke</th>
-        </tr>
-        <tr">
-            <th>Baru</th>
-            <th>Lama</th>
-            <th>Laki</th>
-            <th>Perempuan</th>
-            <th>ICD X</th>
-            <th>Nama</th>
-        </tr>';
+
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header
+            "body"            => $dt_data
         );
         return json_encode($json_data);
     }
@@ -392,6 +373,27 @@ class Report extends \App\Controllers\BaseController
         $statusPasien = new StatusPasienModel();
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Nama</th>
+                        <th>No.CM</th>
+                        <th>Gender</th>
+                        <th>Umur</th>
+                        <th>Alamat</th>
+                        <th>Kecamatan</th>
+                        <th>Status Bayar</th>
+                        <th>No.Kartu</th>
+                        <th>No.SEP</th>
+                        <th>Bangsal</th>
+                        <th>Dokter</th>
+                        <th colspan="2">Diagnosa</th>
+                        <th>Asal Rujukan</th>
+                        <th>No.Rujukan</th>
+                        <th>Tgl Rujukan</th>
+                        <th>Diagnosa Awal</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -400,6 +402,7 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
             'status' => $status,
+            'header' => $header
         ]);
     }
 
@@ -516,30 +519,8 @@ class Report extends \App\Controllers\BaseController
         }
         // return json_encode($kunjungan);
 
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Nama</th>
-                        <th>No.CM</th>
-                        <th>Gender</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Kecamatan</th>
-                        <th>Status Bayar</th>
-                        <th>No.Kartu</th>
-                        <th>No.SEP</th>
-                        <th>Bangsal</th>
-                        <th>Dokter</th>
-                        <th colspan="2">Diagnosa</th>
-                        <th>Asal Rujukan</th>
-                        <th>No.Rujukan</th>
-                        <th>Tgl Rujukan</th>
-                        <th>Diagnosa Awal</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header
+            "body"            => $dt_data
         );
         return json_encode($json_data);
     }
@@ -566,6 +547,28 @@ class Report extends \App\Controllers\BaseController
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
 
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Nama</th>
+                        <th>No.CM</th>
+                        <th>Gender</th>
+                        <th>Umur</th>
+                        <th>Alamat</th>
+                        <th>Status Bayar</th>
+                        <th>No.Kartu</th>
+                        <th>No.SEP</th>
+                        <th>Bangsal</th>
+                        <th>Dokter</th>
+                        <th>Diagnosa</th>
+                        <th>Cara Keluar</th>
+                        <th>Asal Rujukan</th>
+                        <th>No.Rujukan</th>
+                        <th>Tgl Rujukan</th>
+                        <th>Diagnosa Awal</th>
+                    </tr>';
+
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -573,6 +576,7 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
             'status' => $status,
+            'heder' => $header
         ]);
     }
 
@@ -689,30 +693,8 @@ class Report extends \App\Controllers\BaseController
             }
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Nama</th>
-                        <th>No.CM</th>
-                        <th>Gender</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Status Bayar</th>
-                        <th>No.Kartu</th>
-                        <th>No.SEP</th>
-                        <th>Bangsal</th>
-                        <th>Dokter</th>
-                        <th>Diagnosa</th>
-                        <th>Cara Keluar</th>
-                        <th>Asal Rujukan</th>
-                        <th>No.Rujukan</th>
-                        <th>Tgl Rujukan</th>
-                        <th>Diagnosa Awal</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header
+            "body"            => $dt_data
         );
         echo json_encode($json_data);
     }
@@ -737,7 +719,28 @@ class Report extends \App\Controllers\BaseController
 
         $statusPasien = new StatusPasienModel();
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
-
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Nama</th>
+                        <th>No.CM</th>
+                        <th>Gender</th>
+                        <th>Umur</th>
+                        <th>Alamat</th>
+                        <th>Status Bayar</th>
+                        <th>No.Kartu</th>
+                        <th>No.SEP</th>
+                        <th>Dari Bangsal</th>
+                        <th>Ke Bangsal</th>
+                        <th>Dokter</th>
+                        <th>Diagnosa</th>
+                        <th>Cara Keluar</th>
+                        <th>Asal Rujukan</th>
+                        <th>No.Rujukan</th>
+                        <th>Tgl Rujukan</th>
+                        <th>Diagnosa Awal</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -746,6 +749,7 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
             'status' => $status,
+            'header' => $header
         ]);
     }
 
@@ -877,31 +881,9 @@ class Report extends \App\Controllers\BaseController
             }
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Nama</th>
-                        <th>No.CM</th>
-                        <th>Gender</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Status Bayar</th>
-                        <th>No.Kartu</th>
-                        <th>No.SEP</th>
-                        <th>Dari Bangsal</th>
-                        <th>Ke Bangsal</th>
-                        <th>Dokter</th>
-                        <th>Diagnosa</th>
-                        <th>Cara Keluar</th>
-                        <th>Asal Rujukan</th>
-                        <th>No.Rujukan</th>
-                        <th>Tgl Rujukan</th>
-                        <th>Diagnosa Awal</th>
-                    </tr>';
+
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header
         );
         echo json_encode($json_data);
     }
@@ -928,12 +910,21 @@ class Report extends \App\Controllers\BaseController
         $status = $this->lowerKey($statusPasien->where("name_of_status_pasien<>'' ")->findAll());
 
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Tanggal Melahirkan</th>
+                        <th>No.CM</th>
+                        <th>Keterangan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function registermelahirkanpost()
@@ -980,17 +971,8 @@ class Report extends \App\Controllers\BaseController
             }
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Tanggal Melahirkan</th>
-                        <th>No.CM</th>
-                        <th>Keterangan</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header
+            "body"            => $dt_data
         );
         echo json_encode($json_data);
     }
@@ -1030,6 +1012,24 @@ class Report extends \App\Controllers\BaseController
         $kota = $this->lowerKey($kotaModel->where('province_code', '17')->findAll());
 
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2" style="width: 300px;">Aktivitas</th>
+                        <th colspan="3">Pria</th>
+                        <th colspan="3">Wanita</th>
+                        <th colspan="2">Total</th>
+                        <th rowspan="2"  style="width: 100px;">Total</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                        <th style="width: 100px;">Total</th>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                        <th style="width: 100px;">Total</th>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -1039,7 +1039,8 @@ class Report extends \App\Controllers\BaseController
             'clinic' => $clinic,
             'sex' => $sex,
             'isnew' => $isnew,
-            'kota' => $kota
+            'kota' => $kota,
+            'header' => $header
         ]);
     }
     public function rmkunjunganpost()
@@ -1151,27 +1152,8 @@ class Report extends \App\Controllers\BaseController
             $dt_data[] = $row;
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2" style="width: 300px;">Aktivitas</th>
-                        <th colspan="3">Pria</th>
-                        <th colspan="3">Wanita</th>
-                        <th colspan="2">Total</th>
-                        <th rowspan="2"  style="width: 100px;">Total</th>
-                    </tr>
-                    <tr>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                        <th style="width: 100px;">Total</th>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                        <th style="width: 100px;">Total</th>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header
+            "body"            => $dt_data
         );
         echo json_encode($json_data);
     }
@@ -1190,12 +1172,36 @@ class Report extends \App\Controllers\BaseController
         $img_timestamp = $this->getImgTime();
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th style="padding: 20px" rowspan="2">Bangsal</th>
+                        <th style="padding: 20px" rowspan="2">Kapasitas sesuai SK</th>
+                        <th style="padding: 20px" rowspan="2">Pasien Awal</th>
+                        <th style="padding: 20px" rowspan="2">Paisen Masuk</th>
+                        <th style="padding: 20px" colspan="4">Keluar</th>
+                        <th style="padding: 20px" rowspan="2">Lama Dirawat</th>
+                        <th style="padding: 20px" rowspan="2">Pasien Akhir</th>
+                        <th style="padding: 20px" rowspan="2">Hari Perawatan</th>
+                        <th style="padding: 20px" rowspan="2">BOR</th>
+                        <th style="padding: 20px" rowspan="2">LOS</th>
+                        <th style="padding: 20px" rowspan="2">TOI</th>
+                        <th style="padding: 20px" rowspan="2">BTO</th>
+                        <th style="padding: 20px" rowspan="2">NDR</th>
+                        <th style="padding: 20px" rowspan="2">GDR</th>
+                    </tr>
+                    <tr>
+                        <th style="padding: 20px">Hidup</th>
+                        <th style="padding: 20px">Mati < 48</th>
+                        <th style="padding: 20px">Mati > 48</th>
+                        <th style="padding: 20px">Total Keluar</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'status' => $status,
+            'header' => $header
         ]);
     }
     public function rmkunjunganranappost()
@@ -1335,34 +1341,10 @@ class Report extends \App\Controllers\BaseController
             $footer[] = $row;
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th style="padding: 20px" rowspan="2">Bangsal</th>
-                        <th style="padding: 20px" rowspan="2">Kapasitas sesuai SK</th>
-                        <th style="padding: 20px" rowspan="2">Pasien Awal</th>
-                        <th style="padding: 20px" rowspan="2">Paisen Masuk</th>
-                        <th style="padding: 20px" colspan="4">Keluar</th>
-                        <th style="padding: 20px" rowspan="2">Lama Dirawat</th>
-                        <th style="padding: 20px" rowspan="2">Pasien Akhir</th>
-                        <th style="padding: 20px" rowspan="2">Hari Perawatan</th>
-                        <th style="padding: 20px" rowspan="2">BOR</th>
-                        <th style="padding: 20px" rowspan="2">LOS</th>
-                        <th style="padding: 20px" rowspan="2">TOI</th>
-                        <th style="padding: 20px" rowspan="2">BTO</th>
-                        <th style="padding: 20px" rowspan="2">NDR</th>
-                        <th style="padding: 20px" rowspan="2">GDR</th>
-                    </tr>
-                    <tr>
-                        <th style="padding: 20px">Hidup</th>
-                        <th style="padding: 20px">Mati < 48</th>
-                        <th style="padding: 20px">Mati > 48</th>
-                        <th style="padding: 20px">Total Keluar</th>
-                    </tr>';
 
 
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             'footer' => $footer
         );
         echo json_encode($json_data);
@@ -1382,12 +1364,30 @@ class Report extends \App\Controllers\BaseController
         $img_timestamp = $this->getImgTime();
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th style="padding: 20px" rowspan="2">Bangsal</th>
+                        <th style="padding: 20px" rowspan="2">Kapasitas sesuai SK</th>
+                        <th style="padding: 20px" rowspan="2">Pasien Awal</th>
+                        <th style="padding: 20px" rowspan="2">Paisen Masuk</th>
+                        <th style="padding: 20px" colspan="4">Keluar</th>
+                        <th style="padding: 20px" rowspan="2">Lama Dirawat</th>
+                        <th style="padding: 20px" rowspan="2">Pasien Akhir</th>
+                        <th style="padding: 20px" rowspan="2">Hari Perawatan</th>
+                    </tr>
+                    <tr>
+                        <th style="padding: 20px">Hidup</th>
+                        <th style="padding: 20px">Mati < 48</th>
+                        <th style="padding: 20px">Mati > 48</th>
+                        <th style="padding: 20px">Total Keluar</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'status' => $status,
+            'header' => $header
         ]);
     }
     public function rmkunjunganranapstatuspost()
@@ -1529,28 +1529,10 @@ class Report extends \App\Controllers\BaseController
             $footer[] = $row;
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th style="padding: 20px" rowspan="2">Bangsal</th>
-                        <th style="padding: 20px" rowspan="2">Kapasitas sesuai SK</th>
-                        <th style="padding: 20px" rowspan="2">Pasien Awal</th>
-                        <th style="padding: 20px" rowspan="2">Paisen Masuk</th>
-                        <th style="padding: 20px" colspan="4">Keluar</th>
-                        <th style="padding: 20px" rowspan="2">Lama Dirawat</th>
-                        <th style="padding: 20px" rowspan="2">Pasien Akhir</th>
-                        <th style="padding: 20px" rowspan="2">Hari Perawatan</th>
-                    </tr>
-                    <tr>
-                        <th style="padding: 20px">Hidup</th>
-                        <th style="padding: 20px">Mati < 48</th>
-                        <th style="padding: 20px">Mati > 48</th>
-                        <th style="padding: 20px">Total Keluar</th>
-                    </tr>';
 
 
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             'footer' => $footer
         );
         echo json_encode($json_data);
@@ -1570,13 +1552,33 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
         $clinic = $this->getClinic([1]);
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2" style="width: 300px;">Pelayanan</th>
+                        <th colspan="3">Pria</th>
+                        <th colspan="3">Wanita</th>
+                        <th colspan="2">Total</th>
+                        <th rowspan="2"  style="width: 100px;">Total</th>
+                        <th rowspan="2"  style="width: 100px;">Belum Dilayani</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                        <th style="width: 100px;">Total</th>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                        <th style="width: 100px;">Total</th>
+                        <th style="width: 100px;">Baru</th>
+                        <th style="width: 100px;">Ulang</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'status' => $status,
-            'clinic' => $clinic
+            'clinic' => $clinic,
+            'header' => $header
         ]);
     }
     public function rmkunjunganklinikpost()
@@ -1708,28 +1710,8 @@ class Report extends \App\Controllers\BaseController
             $dt_data[] = $row;
         }
 
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2" style="width: 300px;">Pelayanan</th>
-                        <th colspan="3">Pria</th>
-                        <th colspan="3">Wanita</th>
-                        <th colspan="2">Total</th>
-                        <th rowspan="2"  style="width: 100px;">Total</th>
-                        <th rowspan="2"  style="width: 100px;">Belum Dilayani</th>
-                    </tr>
-                    <tr>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                        <th style="width: 100px;">Total</th>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                        <th style="width: 100px;">Total</th>
-                        <th style="width: 100px;">Baru</th>
-                        <th style="width: 100px;">Ulang</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             'footer' => []
         );
         echo json_encode($json_data);
@@ -1749,13 +1731,27 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
         $clinic = $this->getClinic([1]);
 
+        $header = [];
+        $header = '<tr>
+                        <th>CLINIC</th>
+                        <th>Umum</th>
+                        <th>BPJS</th>
+                        <th>BPJS Naker</th>
+                        <th>Inhealth</th>
+                        <th>Kerjasama</th>
+                        <th>PLN</th>
+                        <th>Gratis</th>
+                        <th>Lain-lain</th>
+                        <th>Jumlah</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'status' => $status,
-            'clinic' => $clinic
+            'clinic' => $clinic,
+            'header' => $header
         ]);
     }
     public function rmkunjunganstatuspost()
@@ -1893,22 +1889,8 @@ class Report extends \App\Controllers\BaseController
 
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>CLINIC</th>
-                        <th>Umum</th>
-                        <th>BPJS</th>
-                        <th>BPJS Naker</th>
-                        <th>Inhealth</th>
-                        <th>Kerjasama</th>
-                        <th>PLN</th>
-                        <th>Gratis</th>
-                        <th>Lain-lain</th>
-                        <th>Jumlah</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             'footer' => []
         );
         echo json_encode($json_data);
@@ -1928,12 +1910,27 @@ class Report extends \App\Controllers\BaseController
         $img_timestamp = $this->getImgTime();
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">Kasus</th>
+                        <th colspan="2">Total Pasien</th>
+                        <th colspan="3">Tindak Lanjut</th>
+                        <th rowspan="2">Mati Sebelum Dirawat</th>
+                    </tr>
+                    <tr>
+                        <th>Rujukan</th>
+                        <th>Non Rujukan</th>
+                        <th>Dirawat</th>
+                        <th>Dirujuk</th>
+                        <th>Dipulangkan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'status' => $status,
+            'header' => $header
         ]);
     }
     public function rmkunjunganugdpost()
@@ -1980,23 +1977,8 @@ class Report extends \App\Controllers\BaseController
             }
         }
         sort($dt_data);
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">Kasus</th>
-                        <th colspan="2">Total Pasien</th>
-                        <th colspan="3">Tindak Lanjut</th>
-                        <th rowspan="2">Mati Sebelum Dirawat</th>
-                    </tr>
-                    <tr>
-                        <th>Rujukan</th>
-                        <th>Non Rujukan</th>
-                        <th>Dirawat</th>
-                        <th>Dirujuk</th>
-                        <th>Dipulangkan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header
         );
         echo json_encode($json_data);
     }
@@ -2015,6 +1997,14 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
         $clinic = $this->getClinic([1]);
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Jenis Penyakit</th>
+                        <th rowspan="2">Kode ICD X</th>
+                        <th rowspan="2">Jumlah Kasus</th>
+                        <th rowspan="2">%</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -2022,7 +2012,8 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'status' => $status,
             'clinic' => $clinic,
-            'x' => 10
+            'x' => 10,
+            'header' => $header,
         ]);
     }
     public function rmtopxrajalpost()
@@ -2072,17 +2063,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format(floatval(($kunjungan[$key]['total'] - $total) / $kunjungan[$key]['total']) * 100, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">Jenis Penyakit</th>
-                        <th rowspan="2">Kode ICD X</th>
-                        <th rowspan="2">Jumlah Kasus</th>
-                        <th rowspan="2">%</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2102,6 +2084,14 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
         $clinic = $this->getClinic([3]);
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Jenis Penyakit</th>
+                        <th rowspan="2">Kode ICD X</th>
+                        <th rowspan="2">Jumlah Kasus</th>
+                        <th rowspan="2">%</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -2109,7 +2099,8 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'status' => $status,
             'clinic' => $clinic,
-            'x' => 10
+            'x' => 10,
+            'header' => $header,
         ]);
     }
     public function rmtopxranappost()
@@ -2159,17 +2150,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format(floatval(($kunjungan[$key]['total'] - $total) / $kunjungan[$key]['total']) * 100, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">Jenis Penyakit</th>
-                        <th rowspan="2">Kode ICD X</th>
-                        <th rowspan="2">Jumlah Kasus</th>
-                        <th rowspan="2">%</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header,
+            "body"            => $dt_data
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2189,6 +2171,14 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
         // $clinic = $this->getClinic([3]);
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Jenis Penyakit</th>
+                        <th rowspan="2">Kode ICD X</th>
+                        <th rowspan="2">Jumlah Kasus</th>
+                        <th rowspan="2">%</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -2196,7 +2186,8 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'status' => $status,
             // 'clinic' => $clinic,
-            'x' => 10
+            'x' => 10,
+            'header' => $header
         ]);
     }
     public function rmtopxugdpost()
@@ -2246,17 +2237,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format(floatval(($kunjungan[$key]['total'] - $total) / $kunjungan[$key]['total']) * 100, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">Jenis Penyakit</th>
-                        <th rowspan="2">Kode ICD X</th>
-                        <th rowspan="2">Jumlah Kasus</th>
-                        <th rowspan="2">%</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2274,12 +2256,37 @@ class Report extends \App\Controllers\BaseController
 
         $img_timestamp = $this->getImgTime();
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">No. CM</th>
+                        <th rowspan="2">Nama</th>
+                        <th colspan="2">Jender</th>
+                        <th colspan="8">Kelompok Umur</th>
+                        <th rowspan="2">Tanggal Perawatan</th>
+                        <th rowspan="2">Dokter</th>
+                        <th rowspan="2">Kota / Kab</th>
+                    </tr>
+                    <tr>
+                        <th>Laki</th>
+                        <th>Perempuan</th>
+                        <th>0 - 28 Hr</th>
+                        <th>
+                            < 1 Th</th>
+                        <th>1 - 4 Th</th>
+                        <th>5 - 14 Th</th>
+                        <th>15 - 24 Th</th>
+                        <th>25 - 44 Th</th>
+                        <th>45 - 64 Th</th>
+                        <th>>= 65 Th</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'diagnosa' => '1',
+            'header' => $header
         ]);
     }
     public function rmindexrajalpost()
@@ -2378,33 +2385,8 @@ class Report extends \App\Controllers\BaseController
                 $dt_data[] = $row;
             }
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">No. CM</th>
-                        <th rowspan="2">Nama</th>
-                        <th colspan="2">Jender</th>
-                        <th colspan="8">Kelompok Umur</th>
-                        <th rowspan="2">Tanggal Perawatan</th>
-                        <th rowspan="2">Dokter</th>
-                        <th rowspan="2">Kota / Kab</th>
-                    </tr>
-                    <tr>
-                        <th>Laki</th>
-                        <th>Perempuan</th>
-                        <th>0 - 28 Hr</th>
-                        <th>
-                            < 1 Th</th>
-                        <th>1 - 4 Th</th>
-                        <th>5 - 14 Th</th>
-                        <th>15 - 24 Th</th>
-                        <th>25 - 44 Th</th>
-                        <th>45 - 64 Th</th>
-                        <th>>= 65 Th</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2423,12 +2405,40 @@ class Report extends \App\Controllers\BaseController
 
         $img_timestamp = $this->getImgTime();
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">No. CM</th>
+                        <th rowspan="2">Nama</th>
+                        <th colspan="2">Jender</th>
+                        <th colspan="8">Kelompok Umur</th>
+                        <th rowspan="2">Tanggal Masuk</th>
+                        <th rowspan="2">Tanggal Keluar</th>
+                        <th rowspan="2">Lama</th>
+                        <th rowspan="2">Keadaan Keluar</th>
+                        <th rowspan="2">Dokter</th>
+                        <th rowspan="2">Kota / Kab</th>
+                    </tr>
+                    <tr>
+                        <th>Laki</th>
+                        <th>Perempuan</th>
+                        <th>0 - 28 Hr</th>
+                        <th>
+                            < 1 Th</th>
+                        <th>1 - 4 Th</th>
+                        <th>5 - 14 Th</th>
+                        <th>15 - 24 Th</th>
+                        <th>25 - 44 Th</th>
+                        <th>45 - 64 Th</th>
+                        <th>>= 65 Th</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'diagnosa' => '1',
+            'header' => $header
         ]);
     }
     public function rmindexranappost()
@@ -2538,36 +2548,8 @@ class Report extends \App\Controllers\BaseController
                 $dt_data[] = $row;
             }
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">No. CM</th>
-                        <th rowspan="2">Nama</th>
-                        <th colspan="2">Jender</th>
-                        <th colspan="8">Kelompok Umur</th>
-                        <th rowspan="2">Tanggal Masuk</th>
-                        <th rowspan="2">Tanggal Keluar</th>
-                        <th rowspan="2">Lama</th>
-                        <th rowspan="2">Keadaan Keluar</th>
-                        <th rowspan="2">Dokter</th>
-                        <th rowspan="2">Kota / Kab</th>
-                    </tr>
-                    <tr>
-                        <th>Laki</th>
-                        <th>Perempuan</th>
-                        <th>0 - 28 Hr</th>
-                        <th>
-                            < 1 Th</th>
-                        <th>1 - 4 Th</th>
-                        <th>5 - 14 Th</th>
-                        <th>15 - 24 Th</th>
-                        <th>25 - 44 Th</th>
-                        <th>45 - 64 Th</th>
-                        <th>>= 65 Th</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2588,6 +2570,17 @@ class Report extends \App\Controllers\BaseController
 
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -2595,7 +2588,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function finharianpost()
@@ -2657,20 +2651,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($total, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2691,6 +2673,17 @@ class Report extends \App\Controllers\BaseController
 
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Bulan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -2698,7 +2691,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function finbulananpost()
@@ -2793,20 +2787,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($sumtotal, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Bulan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2828,13 +2810,25 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
 
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function finjenispost()
@@ -2899,20 +2893,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($total, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -2935,13 +2917,24 @@ class Report extends \App\Controllers\BaseController
         $clinic = $this->getClinic([0, 1, 2, 3, 4, 5, 6, 72, 73, 50]);
 
 
+        $header = [];
+        $header = '<tr>
+                        <th colspan="2">Pelayanan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'clinic' => $clinic
+            'clinic' => $clinic,
+            'header' => $header,
         ]);
     }
     public function fintglpolipost()
@@ -3052,19 +3045,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = '<h4 style="color: red">' . number_format($sumtotal, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th colspan="2">Pelayanan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -3086,13 +3068,24 @@ class Report extends \App\Controllers\BaseController
         $clinic = $this->getClinic([0, 1, 2, 3, 4, 5, 6, 72, 73, 50]);
 
 
+        $header = [];
+        $header = '<tr>
+                        <th colspan="2">Pelayanan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'clinic' => $clinic
+            'clinic' => $clinic,
+            'header' => $header,
         ]);
     }
     public function finpolitglpost()
@@ -3203,19 +3196,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($sumtotal, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th colspan="2">Pelayanan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -3236,6 +3218,23 @@ class Report extends \App\Controllers\BaseController
 
         $clinic = $this->getClinic([0, 1, 2, 3, 4, 5, 6, 72, 73, 50]);
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>No CM</th>
+                        <th>Nama</th>
+                        <th>No. Jaminan</th>
+                        <th>Umur</th>
+                        <th>Alamat</th>
+                        <th>Tindakan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi</th>
+                        <th>Potongan</th>
+                        <th>Retur</th>
+                        <th>Pembayaran</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -3243,7 +3242,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'clinic' => $clinic
+            'clinic' => $clinic,
+            'header' => $header,
         ]);
     }
     public function finpolipost()
@@ -3364,26 +3364,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($sumtotal, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>No CM</th>
-                        <th>Nama</th>
-                        <th>No. Jaminan</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Tindakan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi</th>
-                        <th>Potongan</th>
-                        <th>Retur</th>
-                        <th>Pembayaran</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -3406,13 +3388,26 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
 
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jml Pasien</th>
+                        <th>Jml Tindakan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi/Diskon/Pot</th>
+                        <th>Pelunasan/Angs/Deposit</th>
+                        <th>Retur Bayar</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function finjenistglpost()
@@ -3531,21 +3526,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($sumtotal, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Jml Pasien</th>
-                        <th>Jml Tindakan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi/Diskon/Pot</th>
-                        <th>Pelunasan/Angs/Deposit</th>
-                        <th>Retur Bayar</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -3567,6 +3549,18 @@ class Report extends \App\Controllers\BaseController
 
         $status = $this->getStatusPasien();
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jml Pasien</th>
+                        <th>Jml Tindakan</th>
+                        <th>Tagihan</th>
+                        <th>Subsidi/Diskon/Pot</th>
+                        <th>Pelunasan/Angs/Deposit</th>
+                        <th>Retur Bayar</th>
+                        <th>Total Tagihan</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -3574,7 +3568,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function finjenisrincipost()
@@ -3722,21 +3717,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = number_format($sumtotal, 2);
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Jml Pasien</th>
-                        <th>Jml Tindakan</th>
-                        <th>Tagihan</th>
-                        <th>Subsidi/Diskon/Pot</th>
-                        <th>Pelunasan/Angs/Deposit</th>
-                        <th>Retur Bayar</th>
-                        <th>Total Tagihan</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
             // 'footer' => $footer
         );
         echo json_encode($json_data);
@@ -3758,6 +3740,11 @@ class Report extends \App\Controllers\BaseController
 
         $treatTarif = $this->getPembayaran();
 
+        $header = [];
+        $header = '<tr>
+                        <th style="width: 500px;">Nama Transaksi</th>
+                        <th>Jumlah</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -3765,7 +3752,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'treatTarif' => $treatTarif
+            'treatTarif' => $treatTarif,
+            'header' => $header,
         ]);
     }
 
@@ -3821,14 +3809,8 @@ class Report extends \App\Controllers\BaseController
                 }
             }
         }
-        $header = [];
-        $header = '<tr>
-                        <th style="width: 500px;">Nama Transaksi</th>
-                        <th>Jumlah</th>
-                    </tr>';
         $json_data = array(
-            "body"            => $dt_data,
-            'header' => $header,
+            "body"            => $dt_data
         );
         echo json_encode($json_data);
     }
@@ -3848,6 +3830,11 @@ class Report extends \App\Controllers\BaseController
 
         $treatTarif = $this->getPembayaran();
 
+        $header = [];
+        $header = '<tr>
+                        <th style="width: 500px;">Nama Transaksi</th>
+                        <th>Jumlah</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -3855,7 +3842,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'treatTarif' => $treatTarif
+            'treatTarif' => $treatTarif,
+            'header' => $header
         ]);
     }
 
@@ -3926,14 +3914,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($total, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th style="width: 500px;">Nama Transaksi</th>
-                        <th>Jumlah</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -3953,6 +3935,20 @@ class Report extends \App\Controllers\BaseController
 
         $treatTarif = $this->getPembayaran();
 
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>No CM</th>
+                        <th>Nama</th>
+                        <th>No.Jaminan</th>
+                        <th>Umur</th>
+                        <th>Alamat</th>
+                        <th>Jumlah</th>
+                        <th>No. Setoran</th>
+                        <th>Kasir</th>
+                        <th>Poli</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -3960,7 +3956,8 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
-            'treatTarif' => $treatTarif
+            'treatTarif' => $treatTarif,
+            'header' => $header,
         ]);
     }
 
@@ -4057,23 +4054,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($total, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>No CM</th>
-                        <th>Nama</th>
-                        <th>No.Jaminan</th>
-                        <th>Umur</th>
-                        <th>Alamat</th>
-                        <th>Jumlah</th>
-                        <th>No. Setoran</th>
-                        <th>Kasir</th>
-                        <th>Poli</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -4094,6 +4076,30 @@ class Report extends \App\Controllers\BaseController
 
         $kasir = $this->getKasir();
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Kasir</th>
+                        <th rowspan="2">Tgl Transaksi</th>
+                        <th rowspan="2">Nama Tindakan</th>
+                        <th colspan="2">Subsidi</th>
+                        <th colspan="2">Potongan</th>
+                        <th colspan="2">Retur</th>
+                        <th colspan="2">Pembayaran</th>
+                        <th colspan="2">Bukti Pengakuan/Setoran</th>
+                    </tr>
+                    <tr>
+                        <th>Ditransaksikan</th>
+                        <th>Sudah Diakui</th>
+                        <th>Ditransaksikan</th>
+                        <th>Sudah Diakui</th>
+                        <th>Ditransaksikan</th>
+                        <th>Sudah Diakui</th>
+                        <th>Ditransaksikan</th>
+                        <th>Sudah Diakui</th>
+                        <th>Nomer</th>
+                        <th>Tanggal</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -4102,7 +4108,8 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
             'shift' => '1',
-            'kasir' => $kasir
+            'kasir' => $kasir,
+            'header' => $header,
         ]);
     }
     public function finsetorpost()
@@ -4276,33 +4283,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($sumspbayar, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">Kasir</th>
-                        <th rowspan="2">Tgl Transaksi</th>
-                        <th rowspan="2">Nama Tindakan</th>
-                        <th colspan="2">Subsidi</th>
-                        <th colspan="2">Potongan</th>
-                        <th colspan="2">Retur</th>
-                        <th colspan="2">Pembayaran</th>
-                        <th colspan="2">Bukti Pengakuan/Setoran</th>
-                    </tr>
-                    <tr>
-                        <th>Ditransaksikan</th>
-                        <th>Sudah Diakui</th>
-                        <th>Ditransaksikan</th>
-                        <th>Sudah Diakui</th>
-                        <th>Ditransaksikan</th>
-                        <th>Sudah Diakui</th>
-                        <th>Ditransaksikan</th>
-                        <th>Sudah Diakui</th>
-                        <th>Nomer</th>
-                        <th>Tanggal</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -4322,6 +4304,27 @@ class Report extends \App\Controllers\BaseController
 
         $kasir = $this->getKasir();
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">Kasir</th>
+                        <th rowspan="2">Tgl Transaksi</th>
+                        <th rowspan="2">No CM/MR</th>
+                        <th rowspan="2">Nama</th>
+                        <th rowspan="2">No. Jaminan</th>
+                        <th rowspan="2">Umur</th>
+                        <th rowspan="2">Alamat</th>
+                        <th rowspan="2">Nama Tindakan</th>
+                        <th rowspan="2">Subsidi</th>
+                        <th rowspan="2">Potongan</th>
+                        <th rowspan="2">Retur</th>
+                        <th rowspan="2">Pembayaran</th>
+                        <th colspan="2">Bukti Pengakuan/Setoran</th>
+                    </tr>
+                    <tr>
+                        <th>Nomer</th>
+                        <th>Tanggal</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -4330,7 +4333,8 @@ class Report extends \App\Controllers\BaseController
             'img_time' => $img_timestamp,
             'isrj' => $isrj,
             'shift' => '1',
-            'kasir' => $kasir
+            'kasir' => $kasir,
+            'header' => $header,
         ]);
     }
     public function finsetorrincipost()
@@ -4483,30 +4487,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($sumbayar, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">Kasir</th>
-                        <th rowspan="2">Tgl Transaksi</th>
-                        <th rowspan="2">No CM/MR</th>
-                        <th rowspan="2">Nama</th>
-                        <th rowspan="2">No. Jaminan</th>
-                        <th rowspan="2">Umur</th>
-                        <th rowspan="2">Alamat</th>
-                        <th rowspan="2">Nama Tindakan</th>
-                        <th rowspan="2">Subsidi</th>
-                        <th rowspan="2">Potongan</th>
-                        <th rowspan="2">Retur</th>
-                        <th rowspan="2">Pembayaran</th>
-                        <th colspan="2">Bukti Pengakuan/Setoran</th>
-                    </tr>
-                    <tr>
-                        <th>Nomer</th>
-                        <th>Tanggal</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -4523,6 +4505,25 @@ class Report extends \App\Controllers\BaseController
         $this->session->set($sessionData);
 
         $img_timestamp = $this->getImgTime();
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th style="padding-right: 20px;">Tanggal Kunjung</th>
+                        <th style="padding-right: 20px;">Waktu Datang</th>
+                        <th style="padding-right: 20px;">Waktu Keluar</th>
+                        <th style="padding-right: 20px;">Nama</th>
+                        <th style="padding-right: 20px;">Poli</th>
+                        <th style="padding-right: 20px;">No MR</th>
+                        <th style="padding-right: 20px;">Status Pasien</th>
+                        <th style="padding-right: 20px;">DPJP</th>
+                        <th style="padding-right: 20px;">Tipe Akhir</th>
+                        <th style="padding-right: 20px;">Waktu Tunggu Admisi</th>
+                        <th style="padding-right: 20px;">Waktu Layan Admisi</th>
+                        <th style="padding-right: 20px;">Waktu Tunggu Poli</th>
+                        <th style="padding-right: 20px;">Waktu Layan Poli</th>
+                        <th style="padding-right: 20px;">Waktu Tunggu Farmasi</th>
+                        <th style="padding-right: 20px;">Waktu Layan Farmasi</th>
+                    </tr>';
 
 
         return view('admin\report\register', [
@@ -4531,6 +4532,7 @@ class Report extends \App\Controllers\BaseController
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'tipeantrol' => '1',
+            'header' => $header,
         ]);
     }
     public function foantrolpost()
@@ -4803,28 +4805,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = '';
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th>No</th>
-                        <th style="padding-right: 20px;">Tanggal Kunjung</th>
-                        <th style="padding-right: 20px;">Waktu Datang</th>
-                        <th style="padding-right: 20px;">Waktu Keluar</th>
-                        <th style="padding-right: 20px;">Nama</th>
-                        <th style="padding-right: 20px;">Poli</th>
-                        <th style="padding-right: 20px;">No MR</th>
-                        <th style="padding-right: 20px;">Status Pasien</th>
-                        <th style="padding-right: 20px;">DPJP</th>
-                        <th style="padding-right: 20px;">Tipe Akhir</th>
-                        <th style="padding-right: 20px;">Waktu Tunggu Admisi</th>
-                        <th style="padding-right: 20px;">Waktu Layan Admisi</th>
-                        <th style="padding-right: 20px;">Waktu Tunggu Poli</th>
-                        <th style="padding-right: 20px;">Waktu Layan Poli</th>
-                        <th style="padding-right: 20px;">Waktu Tunggu Farmasi</th>
-                        <th style="padding-right: 20px;">Waktu Layan Farmasi</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -4846,6 +4828,25 @@ class Report extends \App\Controllers\BaseController
 
         $clinic = $this->getClinic([71, 73]);
         $status = $this->getStatusPasien();
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">No CM/MR</th>
+                        <th rowspan="2">Nama</th>
+                        <th rowspan="2">No. Resep</th>
+                        <th rowspan="2">Asal Resep</th>
+                        <th rowspan="2">Status Pasien</th>
+                        <th colspan="3">Tagihan</th>
+                        <th rowspan="2">Retur</th>
+                        <th rowspan="2">Subsidi</th>
+                        <th rowspan="2">Total Akhir</th>
+                        <th rowspan="2">shift</th>
+                    </tr>
+                    <tr>
+                        <th>Umum</th>
+                        <th>Bpjs</th>
+                        <th>Kerjasama</th>
+                    </tr>';
 
 
         return view('admin\report\register', [
@@ -4856,7 +4857,8 @@ class Report extends \App\Controllers\BaseController
             'isrj' => $isrj,
             'shiftdays' => $shift,
             'clinic' => $clinic,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function aptrekapnotapost()
@@ -4942,28 +4944,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($total, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">No</th>
-                        <th rowspan="2">No CM/MR</th>
-                        <th rowspan="2">Nama</th>
-                        <th rowspan="2">No. Resep</th>
-                        <th rowspan="2">Asal Resep</th>
-                        <th rowspan="2">Status Pasien</th>
-                        <th colspan="3">Tagihan</th>
-                        <th rowspan="2">Retur</th>
-                        <th rowspan="2">Subsidi</th>
-                        <th rowspan="2">Total Akhir</th>
-                        <th rowspan="2">shift</th>
-                    </tr>
-                    <tr>
-                        <th>Umum</th>
-                        <th>Bpjs</th>
-                        <th>Kerjasama</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -4987,6 +4969,17 @@ class Report extends \App\Controllers\BaseController
         $status = $this->getStatusPasien();
 
 
+        $header = [];
+        $header = '<tr>
+                        <th rowspan="2">Nama Obat</th>
+                        <th rowspan="2">Jumlah</th>
+                        <th rowspan="2">Satuan</th>
+                        <th rowspan="2">Harga Satuan</th>
+                        <th rowspan="2">Subsidi</th>
+                        <th rowspan="2">Total Akhir</th>
+                        <th rowspan="2">Shift</th>
+                    </tr>';
+
         return view('admin\report\register', [
             'giTipe' => $giTipe,
             'title' => $title,
@@ -4995,7 +4988,8 @@ class Report extends \App\Controllers\BaseController
             'isrj' => $isrj,
             // 'shiftdays' => $shift,
             'clinic' => $clinic,
-            'status' => $status
+            'status' => $status,
+            'header' => $header
         ]);
     }
     public function aptrekapobatpost()
@@ -5066,19 +5060,8 @@ class Report extends \App\Controllers\BaseController
             $row[] = "<h4 style='color: red'>" . number_format($totalall, 2) . "</h4>";
             $dt_data[] = $row;
         }
-        $header = [];
-        $header = '<tr>
-                        <th rowspan="2">Nama Obat</th>
-                        <th rowspan="2">Jumlah</th>
-                        <th rowspan="2">Satuan</th>
-                        <th rowspan="2">Harga Satuan</th>
-                        <th rowspan="2">Subsidi</th>
-                        <th rowspan="2">Total Akhir</th>
-                        <th rowspan="2">Shift</th>
-                    </tr>';
         $json_data = array(
             "body"            => $dt_data,
-            'header' => $header,
         );
         echo json_encode($json_data);
     }
@@ -5104,6 +5087,17 @@ class Report extends \App\Controllers\BaseController
         $custom = ['Ringkas', 'Detil'];
         $customTitle = 'Laporan';
 
+        $header = '<tr>
+            <th style="padding: 20px">Status Pasien</th>
+            <th style="padding: 20px">Jumlah Lembar R/</th>
+            <th style="padding: 20px">Total R/</th>
+            <th style="padding: 20px">Alkes</th>
+            <th style="padding: 20px">Total Generik</th>
+            <th style="padding: 20px">Total Non Gen</th>
+            <th style="padding: 20px">Total Form</th>
+            <th style="padding: 20px">Total Non Form</th>
+            <th style="padding: 20px">Total Non Racik</th>
+            <th style="padding: 20px">Total Racikan</th>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -5114,7 +5108,8 @@ class Report extends \App\Controllers\BaseController
             'custom' => $custom,
             'clinic' => $clinic,
             'status' => $status,
-            'customTitle' => $customTitle
+            'customTitle' => $customTitle,
+            'header' => $header,
         ]);
     }
 
@@ -5357,43 +5352,43 @@ class Report extends \App\Controllers\BaseController
         $header = [];
         if ($custom == 1) {
             $header = '<tr>
-                        <th style="padding: 20px" rowspan="2">Status Pasien</th>
-                        <th style="padding: 20px" rowspan="2">Jumlah Lembar R/</th>
-                        <th style="padding: 20px" rowspan="2">Total R/ Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Total R/ TT</th>
-                        <th style="padding: 20px" rowspan="2">Total R/</th>
-                        <th style="padding: 20px" rowspan="2">Generik Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Generik TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Generik</th>
-                        <th style="padding: 20px" rowspan="2">Non Gen Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Non Gen TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Non Gen</th>
-                        <th style="padding: 20px" rowspan="2">Alkes</th>
-                        <th style="padding: 20px" rowspan="2">Non Form Telrayani</th>
-                        <th style="padding: 20px" rowspan="2">Non Form TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Non Form</th>
-                        <th style="padding: 20px" rowspan="2">Form Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Form TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Form</th>
-                        <th style="padding: 20px" rowspan="2">Non Racik Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Non Racik TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Non Racik</th>
-                        <th style="padding: 20px" rowspan="2">Racikan Terlayani</th>
-                        <th style="padding: 20px" rowspan="2">Racikan TT</th>
-                        <th style="padding: 20px" rowspan="2">Total Racikan</th>
+                        <th style="padding: 20px">Status Pasien</th>
+                        <th style="padding: 20px">Jumlah Lembar R/</th>
+                        <th style="padding: 20px">Total R/ Terlayani</th>
+                        <th style="padding: 20px">Total R/ TT</th>
+                        <th style="padding: 20px">Total R/</th>
+                        <th style="padding: 20px">Generik Terlayani</th>
+                        <th style="padding: 20px">Generik TT</th>
+                        <th style="padding: 20px">Total Generik</th>
+                        <th style="padding: 20px">Non Gen Terlayani</th>
+                        <th style="padding: 20px">Non Gen TT</th>
+                        <th style="padding: 20px">Total Non Gen</th>
+                        <th style="padding: 20px">Alkes</th>
+                        <th style="padding: 20px">Non Form Telrayani</th>
+                        <th style="padding: 20px">Non Form TT</th>
+                        <th style="padding: 20px">Total Non Form</th>
+                        <th style="padding: 20px">Form Terlayani</th>
+                        <th style="padding: 20px">Form TT</th>
+                        <th style="padding: 20px">Total Form</th>
+                        <th style="padding: 20px">Non Racik Terlayani</th>
+                        <th style="padding: 20px">Non Racik TT</th>
+                        <th style="padding: 20px">Total Non Racik</th>
+                        <th style="padding: 20px">Racikan Terlayani</th>
+                        <th style="padding: 20px">Racikan TT</th>
+                        <th style="padding: 20px">Total Racikan</th>
                     </tr>';
         } else {
             $header = '<tr>
-            <th style="padding: 20px" rowspan="2">Status Pasien</th>
-            <th style="padding: 20px" rowspan="2">Jumlah Lembar R/</th>
-            <th style="padding: 20px" rowspan="2">Total R/</th>
-            <th style="padding: 20px" rowspan="2">Alkes</th>
-            <th style="padding: 20px" rowspan="2">Total Generik</th>
-            <th style="padding: 20px" rowspan="2">Total Non Gen</th>
-            <th style="padding: 20px" rowspan="2">Total Form</th>
-            <th style="padding: 20px" rowspan="2">Total Non Form</th>
-            <th style="padding: 20px" rowspan="2">Total Non Racik</th>
-            <th style="padding: 20px" rowspan="2">Total Racikan</th>';
+            <th style="padding: 20px">Status Pasien</th>
+            <th style="padding: 20px">Jumlah Lembar R/</th>
+            <th style="padding: 20px">Total R/</th>
+            <th style="padding: 20px">Alkes</th>
+            <th style="padding: 20px">Total Generik</th>
+            <th style="padding: 20px">Total Non Gen</th>
+            <th style="padding: 20px">Total Form</th>
+            <th style="padding: 20px">Total Non Form</th>
+            <th style="padding: 20px">Total Non Racik</th>
+            <th style="padding: 20px">Total Racikan</th>';
         }
         $json_data = array(
             "body"            => $dt_data,
@@ -5420,7 +5415,14 @@ class Report extends \App\Controllers\BaseController
 
         $clinic = $this->getClinic([71, 73]);
         $status = $this->getStatusPasien();
-
+        $header = [];
+        $header = '<tr>
+                        <th>Tanggal</th>
+                        <th>Kode</th>
+                        <th>Nama Obat/Alkes</th>
+                        <th>Jumlah</th>
+                        <th>Satuan</th>
+                    </tr>';
 
         return view('admin\report\register', [
             'giTipe' => $giTipe,
@@ -5430,7 +5432,8 @@ class Report extends \App\Controllers\BaseController
             'isrj' => $isrj,
             'itemName' => '1',
             'clinic' => $clinic,
-            'status' => $status
+            'status' => $status,
+            'header' => $header,
         ]);
     }
     public function aptobatalkespost()
@@ -5484,11 +5487,11 @@ class Report extends \App\Controllers\BaseController
         }
         $header = [];
         $header = '<tr>
-                        <th style="padding: 20px" rowspan="2">Tanggal</th>
-                        <th style="padding: 20px" rowspan="2">Kode</th>
-                        <th style="padding: 20px" rowspan="2">Nama Obat/Alkes</th>
-                        <th style="padding: 20px" rowspan="2">Jumlah</th>
-                        <th style="padding: 20px" rowspan="2">Satuan</th>
+                        <th style="padding: 20px">Tanggal</th>
+                        <th style="padding: 20px">Kode</th>
+                        <th style="padding: 20px">Nama Obat/Alkes</th>
+                        <th style="padding: 20px">Jumlah</th>
+                        <th style="padding: 20px">Satuan</th>
                     </tr>';
         $json_data = array(
             "body"            => $dt_data,

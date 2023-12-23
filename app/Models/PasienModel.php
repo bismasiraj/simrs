@@ -47,6 +47,11 @@ class PasienModel extends Model
         'kk_no',
         'tmt',
         'tat',
+        'ttd',
+        'sspasien_id',
+        'father',
+        'mother',
+        'spouse'
     ];
 
     // Dates
@@ -74,7 +79,7 @@ class PasienModel extends Model
 
     public function getPasienList($searchText = null)
     {
-        return $this->select("top(20) * ")
+        return $this->select("top(20) *, (SELECT visit_id FROM TREATMENT_AKOMODASI WHERE TREATMENT_AKOMODASI.NO_REGISTRATION = pasien.NO_REGISTRATION AND KELUAR_ID = 0) as visit_id ")
             ->like('no_registration', $searchText)
             ->orLike('name_of_pasien', $searchText)->findAll();
     }

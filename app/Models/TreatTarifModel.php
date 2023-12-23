@@ -45,6 +45,7 @@ class TreatTarifModel extends Model
             ->like("cast(isnull(TREAT_TARIF.PERDA_ID,1) as varchar(10))", '1')
             ->like("TREAT_TARIF.TARIF_NAME", $search)
             ->whereNotIn('tarif_type', $tarif_type)
+            ->like('cast(class_id as varchar(10))', $kelas)
             ->orderBy('tarif_name');
 
         return $this->findAll();

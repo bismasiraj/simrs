@@ -3,7 +3,8 @@
 
 <head>
 
-    <?php echo view('layout/partials/title-meta.php', [
+    <?php
+    echo view('layout/partials/title-meta.php', [
         'title' => $orgunit['NAME_OF_ORG_UNIT'],
     ]);
     ?>
@@ -14,12 +15,14 @@
 
 </head>
 
-<body data-sidebar="dark">
+<body class="vertical-collpsed">
 
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php echo view('layout/partials/menu.php'); ?>
+
+        <?php $this->renderSection('topbar'); ?>
+        <?php echo view('layout/partials/sidebar.php'); ?>
 
         <!-- ============================================================== -->
         <!-- Start right Content here -->
@@ -29,11 +32,7 @@
             <div class="page-content">
                 <div class="container-fluid">
 
-                    <?php echo view('layout/partials/page-title.php', [
-                        'title' => 'dashboard',
-                        'pagetitle' => 'dashboard',
-                        'subtitle' => 'dashboard',
-                    ]);
+                    <?php echo view('layout/partials/page-title.php');
                     ?>
 
                     <?php $this->renderSection('content'); ?>
@@ -43,7 +42,6 @@
             <!-- End Page-content -->
 
 
-            <?php echo view('layout/partials/footer.php'); ?>
         </div>
         <!-- end main content-->
 
@@ -61,6 +59,7 @@
 
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
     <script>
         var baseurl = "<?php echo base_url(); ?>";
     </script>

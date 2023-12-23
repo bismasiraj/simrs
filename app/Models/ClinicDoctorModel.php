@@ -23,8 +23,8 @@ class ClinicDoctorModel extends Model
     {
         $builder = $this->join('employee_all ea', 'clinic_doctor.employee_id = ea.employee_id')
             ->join('clinic c', 'c.clinic_id = clinic_doctor.clinic_id')
-            ->select("replace(ea.fullname,'''','') as FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, ea.dpjp, ea.specialist_type_id")
-            ->groupBy('ea.FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, ea.dpjp, ea.specialist_type_id')
+            ->select("replace(ea.fullname,'''','') as FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, ea.dpjp, ea.specialist_type_id, ea.sspractitioner_id")
+            ->groupBy('ea.FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, ea.dpjp, ea.specialist_type_id, ea.sspractitioner_id')
             ->orderBy('ea.fullname');
         return $builder->findAll();
     }

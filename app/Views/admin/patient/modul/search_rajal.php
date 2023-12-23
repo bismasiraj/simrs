@@ -6,7 +6,7 @@ $permissions = user()->getPermissions();
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 73 || $giTipe == 50 || $giTipe == 5) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -169,37 +169,40 @@ $permissions = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-12">
-                            <div class="mt-4">
-                                <div class="mb-0">
-                                    <div>
-                                        <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
-                                            <i class="fa fa-search"></i>Cari
-                                        </button>
-                                        <?php if ($giTipe == 0) {
-                                            if (isset($permissions['pendaftaranrajal']['c'])) {
-                                                if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
-                                                    <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
-                                                        <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
-                                                    </button>
-                                        <?php }
-                                            }
-                                        } ?>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="mt-4 text-end">
+                                    <div class="mb-0">
+                                        <div>
+                                            <button id="form1btn" type=" submit" name="search" class="btn btn-primary waves-effect waves-light me-1">
+                                                <i class="fa fa-search"></i>Cari
+                                            </button>
+                                            <?php if ($giTipe == 0) {
+                                                if (isset($permissions['pendaftaranrajal']['c'])) {
+                                                    if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
+                                                        <!-- <button type="button" onclick="holdModal('addKunjunganModal')" class="btn btn-secondary waves-effect">
+                                                            <i class="fa fa-plus"></i><?php echo lang('Word.add_patient'); ?>
+                                                        </button> -->
+                                            <?php }
+                                                }
+                                            } ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </form>
         </div>
     </div>
     <div class="box-body">
-        <div class="mt-4">
-            <table class="table table-hover table-centered" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
-                <thead>
+        <div class="">
+            <table id="tableSearchRajal" class="table table-bordered table-hover table-centered" data-export-title="<?php echo lang('Word.opd_patient'); ?>" style="text-align: center">
+                <thead class="table-primary">
                     <tr style="text-align: center">
                         <th>Antrian</th>
                         <th>Nama/No RM/<br>Cara Kunjung</th>
@@ -228,8 +231,8 @@ $permissions = user()->getPermissions();
 </style>
 <div id="addKunjunganModal" class="modal fade" tabindex="-1" aria-labelledby="#addKunjunganModalLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
-        <form id="formaddpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
-            <div class="modal-content">
+        <form id="formpv" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
+            <div class="modal-content rounded-4">
                 <div class="modal-header bg-light">
                     <h3 class="modal-title mt-0 identityPv">
                     </h3>
@@ -239,6 +242,9 @@ $permissions = user()->getPermissions();
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
 
+                            <input id="pvcurrentkey" type="hidden" class="form-control" />
+                            <input name="visit_id" id="pvvisit_id" type="hidden" class="form-control" />
+                            <input name="trans_id" id="pvtrans_id" type="hidden" class="form-control" />
                             <input name="no_registration" id="pvno_registration" type="hidden" class="form-control" />
                             <input name="diantar_oleh" id="pvdiantar_oleh" type="hidden" class="form-control" />
                             <input name="visitor_address" id="pvvisitor_address" type="hidden" class="form-control" />
@@ -258,17 +264,27 @@ $permissions = user()->getPermissions();
                             <input name="kode_agama" id="pvagama" type="hidden" class="form-control" />
                             <input name="aktif" id="pvaktif" type="hidden" class="form-control" />
                             <input name="isrj" id="pvisrj" type="hidden" class="form-control" />
+                            <input name="responpost_vklaim" id="pvresponpost_vklaim" type="hidden" class="form-control" />
+                            <input name="responput_vklaim" id="pvresponput_vklaim" type="hidden" class="form-control" />
+                            <input name="respondel_vklaim" id="pvrespondel_vklaim" type="hidden" class="form-control" />
+                            <input name="statusantrean" id="pvstatusantrean" type="hidden" class="form-control" />
+
 
                             <div class="row row-eq">
                                 <div class="col-lg-8 col-md-8 col-sm-8">
-                                    <div class="accordion m-4" id="accordionExample">
+                                    <div class="btn-group">
+                                        <button id="paginationRajalPrev" type="button" class="fc-prev-button btn btn-primary" aria-label="prev" onclick='viewKunjunganOnModal(1)'><span class="fa fa-chevron-left"></span></button>
+                                        <span id="paginationRajalText" class="bg-primary p-2 text-white">1 out of 54</span>
+                                        <button id="paginationRajalNext" type="button" class="fc-next-button btn btn-primary" aria-label="next" onclick='viewKunjunganOnModal(-1)'><span class="fa fa-chevron-right"></span></button>
+                                    </div>
+                                    <div class="accordion m-4" id="accordionPv">
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingTwo">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                    Parameter Kunjungan
+                                            <h2 class="accordion-header" id="headingKunjungan">
+                                                <button id="headingKunjunganBtn" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKunjungan" aria-expanded="false" aria-controls="collapseKunjungan">
+                                                    <b>Kunjungan</b>
                                                 </button>
                                             </h2>
-                                            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div id="collapseKunjungan" class="accordion-collapse collapse show" aria-labelledby="headingKunjungan" data-bs-parent="#accordionPv">
                                                 <div class="accordion-body text-muted">
 
                                                     <div class="row">
@@ -276,13 +292,17 @@ $permissions = user()->getPermissions();
                                                             <div class="dividerhr"></div>
                                                         </div><!--./col-md-12-->
 
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="clinic_id">Tujuan</label>
                                                                 <div>
                                                                     <select name='clinic_id' id="pvclinic_id" class="form-control select2 act" style="width:100%">
                                                                         <?php $cliniclist = array();
                                                                         foreach ($clinic as $key => $value) {
-                                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                            if ($giTipe == 5) {
+                                                                                if ($clinic[$key]['stype_id'] == '5') {
+                                                                                    $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                                                }
+                                                                            } else if ($clinic[$key]['stype_id'] == '1') {
                                                                                 $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
                                                                             }
                                                                         }
@@ -295,7 +315,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="employee_id">Dokter</label>
                                                                 <div>
                                                                     <select name='employee_id' id="pvemployee_id" class="form-control select2 act" style="width:100%">
@@ -316,19 +336,35 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="kddpjp">Perujuk</label>
                                                                 <div>
                                                                     <select name='kddpjp' id="pvkddpjp" class="form-control select2 act" style="width:100%">
-                                                                        <?php foreach ($dpjp as $key => $value) { ?>
+                                                                        <?php $dpjplist = array();
+                                                                        foreach ($dokter as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
+                                                                                foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                        if ($key1 == $dpjpkey) {
+                                                                                            $dpjplist[$dpjpkey1] = $value1;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        asort($dpjplist);
+                                                                        ?>
+                                                                        <?php foreach ($dpjplist as $key => $value) {
+                                                                        ?>
                                                                             <option value="<?= $key; ?>"><?= $value; ?></option>
-                                                                        <?php } ?>
+                                                                        <?php
+                                                                        } ?>
                                                                     </select>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="class_id">Kelas</label>
                                                                 <div>
                                                                     <select name='class_id' id="pvclass_id" class="form-control select2 act" style="width:100%">
@@ -339,7 +375,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="class_id_plafond">Hak Kelas</label>
                                                                 <div>
                                                                     <select name='class_id_plafond' id="pvclass_id_plafond" class="form-control select2 act" style="width:100%">
@@ -350,7 +386,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="status_pasien_id">Status Bayar</label>
                                                                 <div>
                                                                     <select name='status_pasien_id' id="pvstatus_pasien_id" class="form-control select2 act" style="width:100%">
@@ -365,11 +401,9 @@ $permissions = user()->getPermissions();
                                                             <div class="mb-3">
                                                                 <label>Tgl Kunj/SEP</label>
                                                                 <div>
-                                                                    <div class="input-group" id="pvvisit_date">
-                                                                        <input name="visit_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#visit_date' value="<?= date('Y-m-d'); ?>">
-
+                                                                    <div class="input-group" id="pvvisit_dategroup">
+                                                                        <input name="visit_date" class="form-control" type="datetime-local" id="pvvisit_date">
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
                                                                     </div>
                                                                     <!-- input-group -->
                                                                 </div>
@@ -380,8 +414,8 @@ $permissions = user()->getPermissions();
                                                             <div class="mb-3">
                                                                 <label>Booking</label>
                                                                 <div>
-                                                                    <div class="input-group" id="pvbooked_date">
-                                                                        <input name="booked_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#booked_date' value="<?= date('Y-m-d'); ?>">
+                                                                    <div class="input-group" id="pvbooked_dategroup">
+                                                                        <input name="booked_date" class="form-control" type="datetime-local" id="pvbooked_date">
 
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 
@@ -390,7 +424,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <label for="kdpoli_eks">Eksekutif</label>
                                                             <div class="form-group">
                                                                 <div>
@@ -401,7 +435,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="isnew">Baru</label>
                                                                 <div>
                                                                     <select name='isnew' id="pvisnew" class="form-control select2 act" style="width:100%">
@@ -411,7 +445,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="cob">COB</label>
                                                                 <div>
                                                                     <select name='cob' id="pvcob" class="form-control select2 act" style="width:100%">
@@ -421,13 +455,13 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-6 col-xs-12">
+                                                        <div class="col-sm-6 col-xs-12 mb-3">
                                                             <div class="form-group">
                                                                 <label for="description">Catatan</label>
                                                                 <textarea id="pvdescription" name="description" rows="4" class="form-control" autocomplete="off"></textarea>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvbackcharge">Katarak</label>
                                                                 <div>
                                                                     <select name='backcharge' id="pvbackcharge" class="form-control select2 act" style="width:100%">
@@ -438,7 +472,7 @@ $permissions = user()->getPermissions();
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvway_id">Cara Datang</label>
                                                                 <div>
                                                                     <select name='way_id' id="pvway_id" class="form-control select2 act" style="width:100%">
@@ -449,7 +483,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvreason_id">Alasan/Lakalantas</label>
                                                                 <div>
                                                                     <select name='reason_id' id="pvreason_id" class="form-control select2 act" style="width:100%">
@@ -460,15 +494,18 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvisattended">Sudah Dilayani</label>
-                                                                <div>
-                                                                    <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
-                                                                        <?php foreach ($isattended as $key => $value) { ?>
-                                                                            <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
-                                                                        <?php } ?>
-                                                                    </select>
-                                                                </div>
+                                                                <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
+                                                                    <?php foreach ($isattended as $key => $value) { ?>
+                                                                        <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
+                                                                    <?php } ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="pvisattended">No Urut</label>
+                                                                <input id="pvticket_no" name="ticket_no" class="form-control" type="text" readonly />
                                                             </div>
                                                         </div>
                                                     </div><!--./row-->
@@ -476,16 +513,16 @@ $permissions = user()->getPermissions();
                                             </div>
                                         </div>
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingOne">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                    Parameter Rujukan
+                                            <h2 class="accordion-header" id="headingSep">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSep" aria-expanded="true" aria-controls="collapseSep">
+                                                    <b>Parameter SEP</b>
                                                 </button>
                                             </h2>
-                                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+                                            <div id="collapseSep" class="accordion-collapse collapse" aria-labelledby="headingSep" data-bs-parent="#accordionPv" style="">
                                                 <div class="accordion-body text-muted">
                                                     <div id="ajax_load"></div>
                                                     <div class="row">
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
                                                                 <div>
                                                                     <select name='asalrujukan' id="pvasalrujukan" class="form-control select2 act" style="width:100%">
@@ -495,10 +532,10 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="norujukan" name="norujukan" type="text" class="form-control" /></div>
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
+                                                            <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="pvnorujukan" name="norujukan" type="text" class="form-control" /></div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="kdpoli">Poli Rujukan</label>
                                                                 <div>
                                                                     <select name='kdpoli' id="pvkdpoli" class="form-control select2 act" style="width:100%">
@@ -510,16 +547,9 @@ $permissions = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <div class="form-group"><label for="tanggal_rujukan">Tgl Rujukan</label><input type='text' name="tanggal_rujukan" class="form-control" id='pvtanggal_rujukan' /></div>
-                                                            <script type="text/javascript">
-                                                                $(function() {
-                                                                    $('#tanggal_rujukan').datetimepicker({
-                                                                        format: 'YYYY-MM-DD'
-                                                                    });
-                                                                });
-                                                            </script>
+                                                            <div class="form-group"><label for="tanggal_rujukan">Tgl Rujukan</label><input type='date' name="tanggal_rujukan" class="form-control" id='pvtanggal_rujukan' /></div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="ppkrujukan">PPK Rujukan</label>
                                                                 <div>
                                                                     <select name='ppkrujukan' id="pvppkrujukan" class="form-control select2 act" style="width:100%">
@@ -530,28 +560,37 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
-                                                                <div class="p-2 select2-full-width">
-                                                                    <select class="form-control patient_list_ajax" name='diag_awal' id="pvdiag_awal">
+                                                                <div class="input-group">
+                                                                    <select class="form-control" name='diag_awal' id="pvdiag_awal">
                                                                     </select>
+                                                                    <span class="input-group-btn">
+                                                                        <button id="openSearchDiagnosaBtn" class="form-control" onclick="s()" type="button"><i class="fa fa-search"></i></button>
+                                                                    </span>
                                                                 </div>
                                                             </div>
+                                                            <!-- <div class="input-group">
+                                                                <input id="pvedit_sep" name="edit_sep" type="text" class="form-control" />
+                                                                <span class="input-group-btn">
+                                                                    <button id="getSkdpBtn" class="form-control" onclick="getSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                                </span>
+                                                            </div> -->
                                                         </div>
-                                                        <div class="col-sm-12 col-xs-12">
+                                                        <div class="col-sm-12 col-xs-12 mb-3">
                                                             <div class="button-items">
                                                                 <div class="d-grid">
-                                                                    <button type="button" onclick="getRujukan()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Get Rujukan</span></button>
+                                                                    <button id="getRujukanBtn" type="button" onclick="getRujukan()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Get Rujukan</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12" style="display: none;">
-                                                            <div class="form-group"><label for="conclusion"></label><input id="pvconclution" name="conclusion" type="text" class="form-control" /></div>
+                                                        <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
+                                                            <div class="form-group"><label for="conclusion"></label><input id="pvconclusion" name="conclusion" type="text" class="form-control" /></div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="diagnosa_id">Diagnosis RS</label><input id="pvdiagnosa_id" name="diagnosa_id" type="text" class="form-control" /></div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12" style="display: none;">
+                                                        <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
                                                             <div class="form-group"><label for="kdpoli_from"></label><input id="pvkdpoli_from" name=" kdpoli_from" type="text" class="form-control" /></div>
                                                         </div>
                                                         <div class="col-sm-12 col-xs-12">
@@ -559,7 +598,7 @@ $permissions = user()->getPermissions();
                                                                 <h3>Parameter SEP</h3>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvtujuankunj">Tujuan Kunjungan</label>
                                                                 <div>
                                                                     <select name='tujuankunj' id="pvtujuankunj" class="form-control select2 act" style="width:100%">
@@ -570,7 +609,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvkdpenunjang">Penunjang</label>
                                                                 <div>
                                                                     <select name='kdpenunjang' id="pvkdpenunjang" class="form-control select2 act" style="width:100%">
@@ -591,7 +630,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvflagprocedure">Procedure</label>
                                                                 <div>
                                                                     <select name='flagprocedure' id="pvflagprocedure" class="form-control select2 act" style="width:100%">
@@ -602,8 +641,8 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
-                                                            <div class="form-group"><label for="pvassesmentpel">Assesment Pelayanan</label>
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
+                                                            <div class="form-group"><label for="pvassesmentpelgroup">Assesment Pelayanan</label>
                                                                 <div>
                                                                     <select name='assesmentpel' id="pvassesmentpel" class="form-control select2 act" style="width:100%">
                                                                         <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
@@ -616,28 +655,28 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <label for="pvedit_sep">No. SKDP</label>
                                                             <div class="input-group">
                                                                 <input id="pvedit_sep" name="edit_sep" type="text" class="form-control" />
                                                                 <span class="input-group-btn">
-                                                                    <button class="form-control" onclick="insertSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                                    <button id="getSkdpBtn" class="form-control" onclick="getSKDP()" type="button"><i class="fa fa-search"></i></button>
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <label for="pvspecimenno">No. SPRI</label>
                                                             <div class="input-group">
                                                                 <input id="pvspecimenno" name="specimenno" type="text" class="form-control" />
                                                                 <span class="input-group-btn">
-                                                                    <button class="form-control" onclick="insertSPRI()" type="button"><i class="fa fa-search"></i></button>
+                                                                    <button id="getSpriBtn" class="form-control" onclick="getSPRI()" type="button"><i class="fa fa-search"></i></button>
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="no_skp">SEP RJ</label><input id="pvno_skp" name="no_skp" type="text" class="form-control" disabled /></div>
                                                         </div>
-                                                        <div class="col-sm-3 col-xs-12">
+                                                        <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvno_skpinap">SEP RI</label><input id="pvno_skpinap" name="no_skpinap" type="text" class="form-control" disabled /></div>
                                                         </div>
                                                         <div class="row mt-3 mb-3">
@@ -645,7 +684,7 @@ $permissions = user()->getPermissions();
                                                                 <div class="col-sm-12 col-xs-12">
                                                                     <div class="button-items">
                                                                         <div class="d-grid">
-                                                                            <button id="createSep" type="button" onclick="insertSep()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
+                                                                            <button id="createSepBtn" type="button" onclick="insertSep()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -654,7 +693,7 @@ $permissions = user()->getPermissions();
                                                                 <div class="col-sm-12 col-xs-12">
                                                                     <div class="button-items">
                                                                         <div class="d-grid">
-                                                                            <button id="editSep" type="button" onclick="editSep()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Edit SEP</span></button>
+                                                                            <button id="editSepBtn" type="button" onclick="editSep()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Update SEP</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -663,37 +702,23 @@ $permissions = user()->getPermissions();
                                                                 <div class="col-sm-12 col-xs-12">
                                                                     <div class="button-items">
                                                                         <div class="d-grid">
-                                                                            <button id="deleteSep" type="button" onclick="deleteSep()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-remove"></i> <span>Delete SEP</span></button>
+                                                                            <button id="deleteSepBtn" type="button" onclick="deleteSep()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SEP</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="">
-                                                            <div class="col-md-12">
-                                                                <div class="dividerhr"></div>
-                                                                <h3>Follow Up</h3>
-                                                            </div>
-                                                            <div class="col-sm-4 col-xs-12">
-                                                                <a data-toggle="modal" id="add" onclick="insertSPRI()" class="modalbtnpatient"><i class="fa fa-search"></i> <span>Rujukan</span></a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <div class="dividerhr"></div>
-                                                        </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingThree">
+                                            <h2 class="accordion-header" id="headingLaka">
                                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                    Parameter Lakalantas
+                                                    <b>Parameter Lakalantas</b>
                                                 </button>
                                             </h2>
-                                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingLaka" data-bs-parent="#accordionPv">
                                                 <div class="accordion-body text-muted">
                                                     <div class="row">
 
@@ -703,19 +728,13 @@ $permissions = user()->getPermissions();
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm-3 mb-3">
                                                             <div class="form-group"><label for="pvvalid_rm_date">Tanggal Kejadian</label>
                                                                 <input type='text' name="valid_rm_date" class="form-control" id='pvvalid_rm_date' />
                                                             </div>
-                                                            <script type="text/javascript">
-                                                                $(function() {
-                                                                    $('#pvvalid_rm_date').datetimepicker({
-                                                                        format: 'YYYY-MM-DD hh:mm:ss'
-                                                                    });
-                                                                });
-                                                            </script>
+
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvpenjamin">Penjamin Lakalantas</label>
                                                                 <div>
                                                                     <select name="penjamin" id="pvpenjamin" class="form-control" style="width:100%" multiple>
@@ -728,7 +747,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="lokasilaka">Lokasi Laka</label>
                                                                 <div class="p-2 select2-full-width">
                                                                     <select class="form-control patient_list_ajax" name='pvlokasilaka' id="lokasilaka">
@@ -736,7 +755,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvispertarif">Suplesi</label>
                                                                 <div>
                                                                     <select name='ispertarif' id="pvispertarif" class="form-control select2 act" style="width:100%">
@@ -746,7 +765,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4">
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvtemptrans">No LP</label><input id="pvtemptrans" name="temptrans" type="text" class="form-control" /></div>
                                                         </div>
                                                         <div class="col-sm-6 col-xs-12">
@@ -763,6 +782,244 @@ $permissions = user()->getPermissions();
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingSkdp">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSkdp" aria-expanded="false" aria-controls="collapseSkdp">
+                                                    <b>Rencana SKDP</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseSkdp" class="accordion-collapse collapse" aria-labelledby="headingSkdp" data-bs-parent="#accordionPv">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+
+                                                        <div class="col-sm-12 col-xs-12 mt-4">
+                                                            <div>
+                                                                <h3>Rencana SKDP</h3>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-3 col-lg-12 mb-3">
+                                                            <div class="form-group"><label for="skdpnosep">No SEP</label>
+                                                                <input type='text' name="skdpnosep" class="form-control" id='skdpnosep' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="skdpkddpjp">Dokter</label>
+                                                                <div>
+                                                                    <select name="skdpkddpjp" id="skdpkddpjp" class="form-control" style="width:100%">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="skdpkdpoli">Poli Kontrol</label>
+                                                                <div>
+                                                                    <select name="skdpkdpoli" id="skdpkdpoli" class="form-control" style="width:100%">
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 mb-3">
+                                                            <div class="form-group"><label for="skdptglkontrol">Tgl Rencana Kontrol</label>
+                                                                <input type='date' name="skdptglkontrol" class="form-control" id='skdptglkontrol' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 mb-3">
+                                                            <div class="form-group"><label for="skdpnosurat">No SKDP</label>
+                                                                <input type='text' name="skdpnosurat" class="form-control" id='skdpnosurat' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-3 mb-3">
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="saveSkdpBtn" type="button" onclick="saveSkdp()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Simpan</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="checkSkdpBtn" type="button" onclick="checkSkdp()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SKDP</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="deleteSkdpBtn" type="button" onclick="deleteSkdp()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SKDP</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingSpri">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpri" aria-expanded="false" aria-controls="collapseSpri">
+                                                    <b>Rencana SPRI</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseSpri" class="accordion-collapse collapse" aria-labelledby="headingSpri" data-bs-parent="#accordionPv">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12 mt-4">
+                                                            <div>
+                                                                <h3>Rencana SPRI</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="sprikddpjp">Dokter</label>
+                                                                <div>
+                                                                    <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
+                                                                        <?php $dpjplist = array();
+                                                                        foreach ($dokter as $key => $value) {
+                                                                            foreach ($value as $key1 => $value1) {
+                                                                                foreach ($dpjp as $dpjpkey => $dpjpvalue) {
+                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                        if ($key1 == $dpjpkey) {
+                                                                                            $dpjplist[$dpjpkey1] = $value1;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        asort($dpjplist);
+                                                                        ?>
+                                                                        <?php foreach ($dpjplist as $key => $value) {
+                                                                        ?>
+                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                        <?php
+                                                                        } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="sprikdpoli">Poli Kontrol</label>
+                                                                <div>
+                                                                    <select name="sprikdpoli" id="sprikdpoli" class="form-control" style="width:100%">
+                                                                        <?php
+                                                                        $clinicList = array();
+                                                                        foreach ($clinic as $key => $value) {
+                                                                            if ($value['stype_id'] == '1') {
+                                                                                $clinicList[$value['other_id']] = $value['name_of_clinic'];
+                                                                        ?>
+                                                                        <?php
+                                                                            }
+                                                                        }
+                                                                        asort($clinicList); ?>
+                                                                        <?php foreach ($clinicList as $key => $value) {
+                                                                        ?>
+                                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                        <?php
+                                                                        } ?>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 mb-3">
+                                                            <div class="form-group"><label for="spritglkontrol">Tgl Rencana Kontrol</label>
+                                                                <input type='date' name="spritglkontrol" class="form-control" id='spritglkontrol' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-3 mb-3">
+                                                            <div class="form-group"><label for="sprinosurat">No SPRI</label>
+                                                                <input type='text' name="sprinosurat" class="form-control" id='sprinosurat' />
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mt-3 mb-3">
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="saveSpriBtn" type="button" onclick="saveSpri()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
+                                                                                <span>Simpan</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="checkSpriBtn" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="deleteSpriBtn" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingEncounter">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEncounter" aria-expanded="false" aria-controls="collapseEncounter">
+                                                    <b>Satu Sehat</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseEncounter" class="accordion-collapse collapse" aria-labelledby="headingEncounter" data-bs-parent="#accordionPv">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-3 mb-3">
+                                                            <div class="form-group"><label for="sprinosurat">No Kunjungan Satu Sehat</label>
+                                                                <input type='text' name="ssencounter_id" class="form-control" id='pvssencounter_id' />
+                                                            </div>
+                                                        </div>
+                                                        <!-- <div class="row mt-3 mb-3">
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="saveEncounterBtn" type="button" onclick="saveEncounterSS()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
+                                                                                <span>Simpan</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
 
@@ -862,14 +1119,45 @@ $permissions = user()->getPermissions();
                     </div><!--./col-md-12-->
                 </div>
                 <div class="modal-footer">
-                    <button id="formaddpvbtn" type=" button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal" data-loading-text="<?php echo lang('processing') ?>"><i class="fa fa-check-circle"></i><?php echo lang('save'); ?></button>
-                    <button id="formaddpvbtn_save_print" type="button" class="btn btn-primary waves-effect waves-light">Save
-                        changes</button>
+                    <button id="formaddpvbtn" class="btn btn-primary waves-effect" data-loading-text="<?php echo lang('processing') ?>"><i class="fa fa-check-circle"></i><?php echo lang('save'); ?></button>
+                    <button type="button" class="btn btn-secondary" id="formeditpvbtn" onclick="editFormPV()">Edit</button>
+                    <button type="button" class="btn btn-danger" id="formdelpvbtn" onclick="deleteFormPV()"><i class="fa fa-trash"></i>Delete</button>
+                    <!-- <button id="formaddpvbtn_save_print" type="button" class="btn btn-primary waves-effect waves-light">Save
+                        changes</button> -->
                 </div>
-            </div><!-- /.modal-content -->
+            </div><!-- /.modal-content rounded-4 -->
         </form>
     </div><!-- /.modal-dialog -->
 </div>
+<div id="historyRajalModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Pilih kunjungan rawat jalan yang akan dirawat-inapkan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loadingHistoryrajal"></div>
+                <table id="historyRajalTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                    <thead class="table-primary">
+                        <tr style="text-align: center">
+                            <th>No RM</th>
+                            <th>Nama</th>
+                            <th>Tanggal Kunjungan</th>
+                            <th>Asuransi</th>
+                            <th>Poli<br>Dokter</th>
+                            <th>No SEP / Rujukan</th>
+                            <th>Kelas / Hak Kelas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="ajaxlist" class="table-group-divider">
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <?php if (isset($permissions['pendaftaranrajal']['c'])) {
     if ($permissions['pendaftaranrajal']['c'] == '1') { ?>
 

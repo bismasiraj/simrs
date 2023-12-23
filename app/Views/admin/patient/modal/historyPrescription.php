@@ -1,14 +1,18 @@
 <div class="modal fade" id="historyEresepModal" aria-hidden="true" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content modal-media-content">
 
             <div class="modal-header modal-media-header">
-                <button type="button" class="close pupclose" data-dismiss="modal">&times;</button>
-                <div class="row">
-                    <div class="col-sm-4 col-md-4">
-                        <h4>History Obat Pasien</h4>
-                    </div>
-                </div><!--./row-->
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-sm-8 col-md-8">
+                            <h4>History Obat Pasien</h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div><!--./row-->
+                </div>
             </div><!--./modal-header-->
             <form id="s" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
 
@@ -17,8 +21,9 @@
                     <div class="modal-body pb0 ptt10">
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12">
-                                <div class="panel-group" id="historyEresep">
-
+                                <div class="accordion">
+                                    <div class="panel-group" id="historyEresep">
+                                    </div>
                                 </div>
                             </div><!--./box-footer-->
                         </div>
@@ -196,8 +201,8 @@
                     .append('<input type="text" name="description2[]" id="aordescription2' + resepKe + '" placeholder="" class="form-control" readonly>')
                 )
 
-                .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe + '' + resepNo))
-                .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe + '' + resepNo))
+                // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe + '' + resepNo))
+                // .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe + '' + resepNo))
             )
             $("#body" + keyvisit).append($("<tr>").attr("id", "traturanminumresep" + resepKe + '' + resepNo)
                 .attr("class", billId).attr('class', 'racikan')
@@ -257,7 +262,7 @@
                 //     // .append('<button type="button" onclick="addBlankLine()" class="addbtn racikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">R</i></button>')
                 //     // .append('<button type="button" onclick="addBlankLineKomponen()" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
                 // )
-                .append($('<td>'))
+                // .append($('<td>'))
 
             )
         }
