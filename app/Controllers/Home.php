@@ -9,12 +9,50 @@ use App\Models\GenerateIdModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
 use App\Models\UserLoginModel;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
 
 class Home extends BaseController
 {
+    public function coba()
+    {
+        $sql = " SELECT PASIEN_VISITATION.NO_REGISTRATION,   
+         PASIEN_VISITATION.VISIT_ID,   
+         PASIEN_VISITATION.STATUS_PASIEN_ID,   
+         PASIEN_VISITATION.VISIT_DATE,   
+         PASIEN_VISITATION.CLINIC_ID,   
+         PASIEN_VISITATION.EMPLOYEE_ID,
+			pasien_visitation.visit_date,
+pasien.name_of_pasien  , 
+pasien.contact_address,
+pasien.date_of_birth,
+pasien.gender,
+pasien_visitation.rujukan_id,
+pasien_visitation.no_skp,
+pasien.pasien_id,
+pasien.kk_no,
+pasien_visitation.class_id,
+address_of_rujukan,
+PASIEN_VISITATION.RUJUKAN_ID,
+pasien_visitation.keluar_id,
+pasien_visitation.description,
+pasien_visitation.account_id,
+pasien.coverage_id,
+in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visitation.COB
+, pasien_visitation.asalrujukan
+, pasien_visitation.ppkrujukan
+,ROOMS_ID +'-'+ RIGHT(1000 +TICKET_NO,3) AS URUTAN
+    FROM PASIEN_VISITATION   left outer join rooms on clinic_id = buildings_id  , pasien 
+    WHERE PASIEN_VISITATION.NO_REGISTRATION='869740' AND
+          PASIEN_VISITATION.VISIT_ID='202310020930560230506' and 
+			 pasien.no_registration = pasien_visitation.no_registration	
+";
+        $db = db_connect();
+        $result = $db->query(new RawSql($sql));
+        return json_encode($this->lowerKey($result->getResultArray()));
+    }
     public function index()
     {
         $userLogin = new UserLoginModel();

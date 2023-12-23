@@ -35,6 +35,7 @@ class ComposerStaticInit1ebd2e1ecd1aa6608b24abf0102fadf0
         ),
         'F' => 
         array (
+            'Firebase\\JWT\\' => 13,
             'Faker\\' => 6,
         ),
         'D' => 
@@ -80,6 +81,10 @@ class ComposerStaticInit1ebd2e1ecd1aa6608b24abf0102fadf0
         'LZCompressor\\' => 
         array (
             0 => __DIR__ . '/..' . '/nullpunkt/lz-string-php/src/LZCompressor',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Faker\\' => 
         array (
@@ -1003,6 +1008,14 @@ class ComposerStaticInit1ebd2e1ecd1aa6608b24abf0102fadf0
         'Faker\\Provider\\zh_TW\\Text' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/Provider/zh_TW/Text.php',
         'Faker\\UniqueGenerator' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/UniqueGenerator.php',
         'Faker\\ValidGenerator' => __DIR__ . '/..' . '/fakerphp/faker/src/Faker/ValidGenerator.php',
+        'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
+        'Firebase\\JWT\\CachedKeySet' => __DIR__ . '/..' . '/firebase/php-jwt/src/CachedKeySet.php',
+        'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
+        'Firebase\\JWT\\JWK' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWK.php',
+        'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
+        'Firebase\\JWT\\JWTExceptionWithPayloadInterface' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWTExceptionWithPayloadInterface.php',
+        'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
+        'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'LZCompressor\\LZContext' => __DIR__ . '/..' . '/nullpunkt/lz-string-php/src/LZCompressor/LZContext.php',
         'LZCompressor\\LZData' => __DIR__ . '/..' . '/nullpunkt/lz-string-php/src/LZCompressor/LZData.php',
         'LZCompressor\\LZReverseDictionary' => __DIR__ . '/..' . '/nullpunkt/lz-string-php/src/LZCompressor/LZReverseDictionary.php',

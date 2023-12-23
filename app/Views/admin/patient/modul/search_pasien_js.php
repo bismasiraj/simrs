@@ -684,6 +684,9 @@
             .prop('disabled', false)
             .prop('checked', false)
             .prop('selected', false);
+        $("#openSearchKalurahanBtn").toggle()
+        $("#openGetPesertaBtn").toggle()
+        $("#asspasien_idsearch").toggle()
     }
 
     function addVisitPatient(id) {
@@ -741,6 +744,7 @@
         // $("#etmt").val(sbio.tmt.substring(0, 10));
         // $("#etat").val(sbio.tat.substring(0, 10));
         $("#aperkawinan").val(sbio.maritalstatusid);
+        $("#asspasien_id").val(sbio.sspasien_id)
 
         var kalselect = '';
         var kotaselect = '';
@@ -1017,4 +1021,54 @@
             });
         }));
     });
+
+
+
+    function getPasienSatuSehat() {
+        var jwtauth = localStorage.getItem('jwtauth')
+        console.log(jwtauth)
+        if (jwtauth == '' || jwtauth == null || typeof jwtauth === 'undefined' || jwtauth == 'undefined') {
+            satuSehatLogin()
+        }
+        var ssToken = localStorage.getItem('ssToken')
+        if (ssToken == '' || ssToken == null || typeof ssToken === 'undefined' || ssToken == 'undefined') {
+            getSatuSehatToken()
+        }
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/getPasienID',
+            type: "GET",
+            headers: {
+                Authorization: 'Bearer ' + jwtauth,
+                ssToken: (String)(ssToken),
+                norm: sbio.no_registration,
+                nik: $("#apasien_id").val()
+            },
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data)
+                $("#asspasien_id").val(data)
+                alert("Berhasil mengambil data pasien Satu Sehat!")
+            },
+            error: function(xhr) { // if error occured
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert(xhr.statusText)
+                }
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+
+    }
 </script>

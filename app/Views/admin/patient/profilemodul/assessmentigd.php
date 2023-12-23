@@ -69,7 +69,7 @@ $permission = user()->getPermissions();
                                             <!-- <label for="aeexamination_date" class="col-sm-2 col-form-label">Tanggal Periksa</label> -->
                                             <div class="col-sm-10">
                                                 <div class="input-group" id="aigdexamination_dategroup">
-                                                    <input id="aigdexamination_date" name="examination_date" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#aigdexamination_dategroup' value="<?= date('Y-m-d'); ?>">
+                                                    <input id="aigdexamination_date" name="examination_date" type="date" class="form-control" placeholder="yyyy-mm-dd" value="<?= date('Y-m-d'); ?>">
                                                     <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                                 </div>
                                             </div>
@@ -365,13 +365,13 @@ $permission = user()->getPermissions();
                                             <td>
                                                 <div class="col-md-2"><input type='text' name="v_31" class="form-control" id='aigdv_31' /></div>
                                             </td>
-                                            <script type="text/javascript">
+                                            <!-- <script type="text/javascript">
                                                 $(function() {
                                                     $('#aigdexamination_date').datetimepicker({
                                                         format: 'YYYY-MM-DD hh:mm:ss'
                                                     });
                                                 });
-                                            </script>
+                                            </script> -->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -401,15 +401,8 @@ $permission = user()->getPermissions();
                                     <tr>
                                         <td class="bolds">Tanggal Jam Edukasi</td>
                                         <td>
-                                            <div class="col-md-2"><input type='text' name="education_date" class="form-control" id='aigdeducation_date' /></div>
+                                            <div class="col-md-2"><input type='date' name="education_date" class="form-control" id='aigdeducation_date' /></div>
                                         </td>
-                                        <script type="text/javascript">
-                                            $(function() {
-                                                $('#aigdeducation_date').datetimepicker({
-                                                    format: 'YYYY-MM-DD hh:mm:ss'
-                                                });
-                                            });
-                                        </script>
                                     </tr>
                                     <tr>
                                         <td class="bolds">Penerima Edukasi</td>

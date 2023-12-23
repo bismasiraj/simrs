@@ -214,6 +214,7 @@ $currency_symbol = 'Rp. ';
     var coverage = status = jenis = kelas = kalurahan = kecamatan = kota = prov = statusPasien = payor = education = marital = agama = job = blood = gender = family = new Array();
     var skunj = new Array();
     var dpjp = new Array();
+    var ssdpjp = new Array();
 
     gender = [
         <?php foreach ($gender as $key => $value) { ?>[
@@ -312,9 +313,12 @@ $currency_symbol = 'Rp. ';
                 <?php } ?>],
         <?php } ?>
     ];
-    <?php foreach ($dpjp as $key => $value) { ?>
-        dpjp['<?= $key; ?>'] = '<?= $value; ?>';
-    <?php } ?>
+    <?php foreach ($dpjp as $key => $value) {
+        foreach ($value as $key1 => $value1) { ?>
+            dpjp['<?= $key; ?>'] = '<?= $key1; ?>';
+            ssdpjp['<?= $key; ?>'] = '<?= $value1; ?>'
+    <?php }
+    } ?>
 </script>
 <script type="text/javascript">
     function getAge(dateString) {
@@ -402,7 +406,7 @@ $currency_symbol = 'Rp. ';
     <?php
     foreach ($clinic as $key => $value) {
     ?>
-        klinikBpjs.push(['<?= $value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>']);
+        klinikBpjs.push(['<?= $value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>', '<?= $value['sslocation_id']; ?>']);
     <?php
     }
     ?>

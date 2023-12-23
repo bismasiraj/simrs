@@ -570,7 +570,7 @@ class Admin extends \App\Controllers\BaseController
                     $dt_response[$key]['mobile'] = ' - ';
                 }
                 $row[] = $dt_response[$key]['phone_number'] . " / " . $dt_response[$key]['mobile'];
-                $row[] = '';
+                $row[] = $dt_response[$key]['pasien_id'];
                 $row[] = $dt_response[$key]['contact_address'];
                 // if (false) { //if ($value->is_dead == 'yes') {
                 //     $row[] = lang('yes');

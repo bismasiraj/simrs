@@ -115,6 +115,14 @@ abstract class BaseController extends Controller
         }
         return $result;
     }
+    function lowerKeyOne($array)
+    {
+        $result = array();
+        foreach ($array as $key => $value) {
+            $result[strtolower($key)] = $value;
+        }
+        return $result;
+    }
 
 
     function checkMenuActive($menuname)

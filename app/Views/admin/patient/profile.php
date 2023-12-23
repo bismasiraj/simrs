@@ -1020,7 +1020,8 @@ $currency_symbol = 'Rp. ';
     'diagCat' => $diagCat,
     'employee' => $employee,
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa
+    'pasienDiagnosa' => $pasienDiagnosa,
+    'clinic' => $clinic
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/cppt_js', [
     'title' => '',

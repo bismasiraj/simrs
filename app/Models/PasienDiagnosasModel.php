@@ -21,6 +21,7 @@ class PasienDiagnosasModel extends Model
         'diag_cat',
         'suffer_type',
         'modified_by',
+        'sscondition_id'
     ];
 
     // Dates

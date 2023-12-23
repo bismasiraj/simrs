@@ -33,6 +33,22 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Admin\Admin::index');
 $routes->get('lang/{locale}', 'Language::index');
 
+$routes->group("api/satusehat", ['filter' => 'satuSehatFilter'], function ($routes) {
+    $routes->post("login", "SatuSehat::login");
+    $routes->get("getToken", "SatuSehat::getToken");
+    $routes->get("getPasienID", "SatuSehat::getPasienID");
+    $routes->post("postEncounter", "SatuSehat::postEncounter");
+    $routes->post("postBundleEncounter", "SatuSehat::postBundleEncounter");
+    $routes->get("postingBatch", "SatuSehat::postingBatch");
+});
+$routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
+    $routes->post("tambahAntrean", "AntrianBpjs::tambahAntrean");
+    $routes->post("updateWaktu", "AntrianBpjs::updateWaktu");
+    $routes->post("updateStatusAntraenPV", "AntrianBpjs::updateStatusAntraenPV");
+});
+$routes->post("satusehat/loginInternal", "SatuSehat::loginInternal", ['filter' => 'login']);
+$routes->post("api/satusehat/getPasienID", "SatuSehat::getPasienID", ['filter' => 'satuSehatFilter']);
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

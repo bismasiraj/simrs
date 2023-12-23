@@ -127,4 +127,135 @@
         tindakLanjut()
 
     }
+
+
+    function saveBundleEncounterSS() {
+        var jwtauth = localStorage.getItem('jwtauth')
+        var ssToken = localStorage.getItem('ssToken')
+        var clinicss = '';
+
+        <?php
+        $locationId = '';
+        $namelocation = '';
+        foreach ($clinic as $key => $value) {
+            if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
+                $locationId = $clinic[$key]['sslocation_id'];
+                $namelocation = $clinic[$key]['name_of_clinic'];
+                break;
+            }
+        }
+        // $practitioner_id = '';
+        // $practitioner_name = '';
+        // foreach ($employee as $key => $value) {
+        //     if ($employee[$key]['sspractitioner_id'] == $visit['employee_id']) {
+        //         $practitioner_id = $employee['sspractitioner_id'];
+        //         $practitioner_name = $employee['fullname'];
+        //     }
+        // }
+        ?>
+        var sslocation_id = '<?= $locationId; ?>'
+        var sslocation_name = '<?= $namelocation; ?>'
+        var sspractitioner_id = '<?= $visit['sspractitioner_id']; ?>'
+        var sspractitioner_name = '<?= $visit['sspractitioner_name']; ?>'
+        var ssencounter_id = '<?= $visit['ssencounter_id']; ?>'
+        var ssorganizationid = '<?= $orgunit['SSORGANIZATIONID']; ?>'
+
+        // klinikBpjs.forEach((value, key) => {
+        //     if (value[1] == $("#pvclinic_id").val()) {
+        //         clinicss = value[3]
+        //     }
+        // })
+
+        // var dpjpss = '';
+        // Object.keys(ssdpjp).forEach(key => {
+        //     if (key == $("#pvemployee_id").val()) {
+        //         dpjpss = ssdpjp[key]
+        //     }
+        // });
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/postBundleEncounter',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                ssToken: (String)(localStorage.getItem('ssToken')),
+                norm: <?= $visit['no_registration']; ?>,
+                nik: $("#apasien_id").val()
+            },
+            data: JSON.stringify({
+                'sslocation_id': sslocation_id,
+                'sslocation_name': sslocation_name,
+                'sspractitioner_id': sspractitioner_id,
+                'sspractitioner_name': sspractitioner_name,
+                'ssencounter_id': ssencounter_id,
+                'ssorganizationid': ssorganizationid,
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'trans_id': '<?= $visit['trans_id']; ?>',
+                'no_registration': '<?= $visit['no_registration']; ?>',
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#postingSS").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data.ids)
+                // $("#pvssencounter_id").val(data.id)
+
+                if (typeof data.id !== 'undefined') {
+                    $("#pvssencounter_id").val(data.id)
+                    $("#formaddpvbtn").click()
+                }
+                // $("#postingSS").html('<i class="fa fa-plus"></i> <span > Simpan < /span>')
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert(xhr.statusText)
+                }
+                $("#postingSS").html('<i class="fa fa-plus"></i> <span> Satu Sehat </span>')
+            },
+            complete: function() {
+                $("#postingSS").html('<i class="fa fa-plus"></i> <span> Satu Sehat </span>')
+            }
+
+        });
+    }
+
+    function generateBundle() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/postingBatch',
+            type: "GET",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                ssToken: (String)(localStorage.getItem('ssToken')),
+                norm: <?= $visit['no_registration']; ?>,
+                nik: $("#apasien_id").val()
+            },
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#postingSS").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data)
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert(xhr.statusText)
+                }
+                $("#postingSS").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+            },
+            complete: function() {
+                $("#postingSS").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+            }
+
+        });
+    }
 </script>

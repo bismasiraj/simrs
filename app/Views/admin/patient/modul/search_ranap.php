@@ -716,8 +716,10 @@
                                                             foreach ($dokter as $key => $value) {
                                                                 foreach ($value as $key1 => $value1) {
                                                                     foreach ($dpjp as $dpjpkey => $dpjpvalue) {
-                                                                        if ($key1 == $dpjpkey) {
-                                                                            $dpjplist[$dpjpvalue] = $value1;
+                                                                        foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                            if ($key1 == $dpjpkey) {
+                                                                                $dpjplist[$dpjpkey1] = $value1;
+                                                                            }
                                                                         }
                                                                     }
                                                                 }

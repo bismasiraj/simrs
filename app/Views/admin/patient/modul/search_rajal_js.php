@@ -81,6 +81,11 @@ $permissions = user()->getPermissions();
                     var currentKey = (Number)($("#pvcurrentkey").val())
                     skunjAll[currentKey] = skunj
                     viewKunjunganOnModal(0, currentKey)
+                    if ($("#pvstatusantrean").val() == '') {
+                        tambahAntrean()
+                    } else {
+                        executeWaktuUpdate()
+                    }
                 }
                 $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i><?php echo lang('save'); ?>')
             },
@@ -800,20 +805,23 @@ $permissions = user()->getPermissions();
             cache: false,
             processData: false,
             success: function(data) {
-                skunjAll = data
-                var now = new Date()
-                var lastkunj = new Date(skunjAll[skunjAll.length - 1].visit_date)
+                if (skunjAll.length == 0) {
+                    skunjAll = data
+                    var now = new Date()
+                    var lastkunj = new Date(skunjAll[skunjAll.length - 1].visit_date)
 
-                var daydiff = datediff(lastkunj, now)
+                    var daydiff = datediff(lastkunj, now)
 
-                console.log(daydiff)
+                    console.log(daydiff)
 
-                if (daydiff != 0) {
+                    if ((daydiff != 0 && skunjAll[skunjAll.length - 1].keluar_id != '0')) {
+                        skunjAll.push([])
+                    }
+                } else {
                     skunjAll.push([])
                 }
 
                 viewKunjunganOnModal(0, skunjAll.length - 1)
-
             },
             error: function() {
                 $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
@@ -946,6 +954,8 @@ $permissions = user()->getPermissions();
             $("#sprikdpoli").val("")
             $("#spritglkontrol").val(null)
             $("#sprinosurat").val(null)
+            $("#pvssencounter_id").val(skunj.ssencounter_id)
+            $("#pvstatusantrean").val(skunj.statusantrean)
 
 
             var start = new Date(skunj.visit_date)
@@ -1045,10 +1055,10 @@ $permissions = user()->getPermissions();
             $("#pvway_id").val(17)
             $("#pvreason_id").val(0)
             $("#pvisattended").val(0)
-            $("#pvasalrujukan").val(null)
+            $("#pvasalrujukan").val('2')
             $("#pvnorujukan").val(null)
             $("#pvkdpoli").val(null)
-            $("#pvtanggal_rujukan").val(null)
+            $("#pvtanggal_rujukan").val((String)(get_date()).slice(0, 10))
             $("#pvppkrujukan").val(null)
             $("#pvdiag_awal").html("")
             $("#pvconclusion").val(null)
@@ -1079,6 +1089,9 @@ $permissions = user()->getPermissions();
             $("#sprikdpoli").val("")
             $("#spritglkontrol").val(null)
             $("#sprinosurat").val(null)
+            $("#pvssencounter_id").val(null)
+            $("#pvstatusantrean").val(null)
+
 
             enableFormPV()
             $("#formaddpvbtn").show()
@@ -1091,6 +1104,9 @@ $permissions = user()->getPermissions();
     }
 
     function enableFormPV() {
+        // $(':input', '#formpv')
+        //     .not(':button, submit, :reset, :hidden')
+        //     .prop('disabled', false);
         $("#pvclinic_id").prop("disabled", false)
         $("#pvemployee_id").prop("disabled", false)
 
@@ -1180,6 +1196,7 @@ $permissions = user()->getPermissions();
         $("#spritglkontrol").prop("disabled", false)
         $("#sprinosurat").prop("disabled", false)
 
+        $("#pvssencounter_id").prop('disabled', false)
 
 
 
@@ -1195,6 +1212,9 @@ $permissions = user()->getPermissions();
         $("#deleteSpriBtn").prop("disabled", false)
         $("#getSkdpBtn").prop("disabled", false)
         $("#getSpriBtn").prop("disabled", false)
+        $("#saveEncounterBtn").prop("disabled", false)
+        // $("#getSpriBtn").prop("disabled", false)
+        // $("#getSpriBtn").prop("disabled", false)
 
 
 
@@ -1294,6 +1314,8 @@ $permissions = user()->getPermissions();
         $("#spritglkontrol").prop("disabled", true)
         $("#sprinosurat").prop("disabled", true)
 
+        $("#pvssencounter_id").prop('disabled', true)
+
 
 
 
@@ -1309,6 +1331,8 @@ $permissions = user()->getPermissions();
         $("#deleteSpriBtn").prop("disabled", true)
         $("#getSkdpBtn").prop("disabled", true)
         $("#getSpriBtn").prop("disabled", true)
+        $("#saveEncounterBtn").prop("disabled", true)
+
 
 
         $("#formaddpvbtn").hide()
@@ -1619,6 +1643,362 @@ $permissions = user()->getPermissions();
             error: function() {
                 $("#checkspriBtn").html('<i class="fa fa-edit"></i> <span>Check</span>')
             }
+        });
+    }
+
+    function satuSehatLogin() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>satusehat/loginInternal',
+            type: "POST",
+            data: JSON.stringify({
+                'username': 'usi'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                localStorage.setItem('jwtauth', data.token)
+                getSatuSehatToken()
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function getSatuSehatToken() {
+        var jwtauth = localStorage.getItem('jwtauth')
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/getToken',
+            type: "GET",
+            headers: {
+                Authorization: 'Bearer ' + jwtauth
+            },
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data)
+                // var aksestoken = data.access_token
+                // console.log(aksestoken)
+                localStorage.setItem('ssToken', data)
+                alert("Get Token Satu Sehat Berhasil, silahkan ulangi proses bridging satu sehat kembali")
+            },
+            error: function(xhr) {
+                alert(xhr);
+                satuSehatLogin()
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function saveEncounterSS() {
+        var jwtauth = localStorage.getItem('jwtauth')
+        var ssToken = localStorage.getItem('ssToken')
+        var clinicss = '';
+        klinikBpjs.forEach((value, key) => {
+            if (value[1] == $("#pvclinic_id").val()) {
+                clinicss = value[3]
+            }
+        })
+
+        var dpjpss = '';
+        Object.keys(ssdpjp).forEach(key => {
+            if (key == $("#pvemployee_id").val()) {
+                dpjpss = ssdpjp[key]
+            }
+        });
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/postEncounter',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                ssToken: (String)(localStorage.getItem('ssToken')),
+                norm: sbio.no_registration,
+                nik: $("#apasien_id").val()
+            },
+            data: JSON.stringify({
+                "resourceType": "Encounter",
+                "status": "arrived",
+                "class": {
+                    "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                    "code": "AMB",
+                    "display": "ambulatory"
+                },
+                "subject": {
+                    "reference": "Patient/" + sbio.sspasien_id,
+                    "display": sbio.name_of_pasien
+                },
+                "participant": [{
+                    "type": [{
+                        "coding": [{
+                            "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                            "code": "ATND",
+                            "display": "attender"
+                        }]
+                    }],
+                    "individual": {
+                        "reference": "Practitioner/" + dpjpss,
+                        "display": $("#pvemployee_id option:selected").text()
+                    }
+                }],
+                "period": {
+                    "start": $("#pvvisit_date").val() + ':00+07:00'
+                },
+                "location": [{
+                    "location": {
+                        "reference": "Location/" + clinicss,
+                        "display": $("#pvclinic_id option:selected").text()
+                    }
+                }],
+                "statusHistory": [{
+                    "status": "arrived",
+                    "period": {
+                        "start": $("#pvvisit_date").val() + ':00+07:00'
+                    }
+                }],
+                "serviceProvider": {
+                    "reference": "Organization/<?= $orgunit['SSORGANIZATIONID']; ?>"
+                },
+                "identifier": [{
+                    "system": "http://sys-ids.kemkes.go.id/encounter/<?= $orgunit['SSORGANIZATIONID']; ?>",
+                    "value": $("#pvvisit_id").val()
+                }]
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#saveEncounterBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data.ids)
+                // $("#pvssencounter_id").val(data.id)
+
+                if (typeof data.id !== 'undefined') {
+                    $("#pvssencounter_id").val(data.id)
+                    $("#formaddpvbtn").click()
+                }
+                // $("#saveEncounterBtn").html('<i class="fa fa-plus"></i> <span > Simpan < /span>')
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert(xhr.statusText)
+                }
+                $("#saveEncounterBtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+            },
+            complete: function() {
+                $("#saveEncounterBtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+            }
+
+        });
+    }
+
+    function tambahAntrean() {
+        var statusantrean = $("#pvstatusantrean").val()
+        var kdpoli = ''
+        var clinicSelected = $("#pvclinic_id").val()
+        klinikBpjs.forEach((value, key) => {
+            if (value[1] == clinicSelected) {
+                kdpoli = value[0]
+            }
+        })
+        if (statusantrean == '') {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/tambahAntrean',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    'employee_id': skunj.employee_id,
+                    'clinic_id': skunj.clinic_id,
+                    "kodebooking": skunj.trans_id,
+                    "jenispasien": skunj.status_pasien_id == '18' ? 'JKN' : 'NON JKN',
+                    "nomorkartu": skunj.pasien_id,
+                    "nik": sbio.pasien_id,
+                    "nohp": sbio.mobile,
+                    "kodepoli": kdpoli,
+                    "namapoli": $("#pvclinic_id option:selected").text(),
+                    "pasienbaru": $("#pvisnew").val(),
+                    "norm": $("#pvno_registration").val(),
+                    "tanggalperiksa": (String)($("#pvvisit_date").val()).slice(0, 10),
+                    "kodedokter": $("#pvkddpjp").val(),
+                    "namadokter": $("#pvemployee_id option:selected").text(),
+                    "jampraktek": "08:00-16:00",
+                    "jeniskunjungan": $("#pvtujuankunj").val() == '3' ? 3 : (Number)($("#pvasalrujukan").val()),
+                    "nomorreferensi": $("#pvedit_sep").val() ?? $("#pvnorujukan").val(),
+                    "nomorantrean": $("#pvticket_no").val(),
+                    "angkaantrean": $("#pvticket_no").val(),
+                    "estimasidilayani": 0,
+                    "sisakuotajkn": 0,
+                    "kuotajkn": 0,
+                    "sisakuotanonjkn": 0,
+                    "kuotanonjkn": 0,
+                    "keterangan": "Peserta harap 30 menit lebih awal guna pencatatan administrasi."
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i>Posting Tambah Antrean ...')
+                },
+                success: function(data) {
+                    console.log("Tambah Antrean " + data.metadata.message)
+                    if (data.metadata.code == 200) {
+                        $("#pvstatusantrean").val('11')
+                        executeWaktuUpdate()
+                    } else {
+                        alert("Posting Tambah Antrean BPJS Gagal:" + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert(xhr.statusText)
+                    }
+                    $("#formaddpvbtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+                },
+                complete: function() {
+                    $("#formaddpvbtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+                }
+
+            });
+        }
+
+    }
+
+    function updateWaktu(task) {
+        var statusantrean = $("#pvstatusantrean").val()
+        var checktask = task - 1
+        console.log(statusantrean)
+        console.log('2' + (String)(checktask))
+        // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {
+        if (true) {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/updateWaktu',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    "norm": $("#pvno_registration").val(),
+                    "kodebooking": $("#pvtrans_id").val(),
+                    "taskid": task,
+                    "waktu": Date.now()
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
+                },
+                success: function(data) {
+                    console.log("Tambah Antrean " + data.metadata.message)
+
+                    if (data.metadata.code == 200) {
+                        $("#pvstatusantrean").val('2' + (String)(task))
+                        executeWaktuUpdate()
+                    } else {
+                        alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                    }
+                    $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+                },
+                complete: function() {
+                    $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+                }
+
+            });
+        }
+
+    }
+
+    function executeWaktuUpdate() {
+        var statusantrean = $("#pvstatusantrean").val()
+        var task = '';
+        if (statusantrean == '11') {
+            task = '1'
+        } else if (statusantrean == '21') {
+            task = '2'
+        } else if (statusantrean == '22') {
+            task = '3'
+        }
+        if (task != '') {
+            updateWaktu(task)
+            return '';
+        }
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/antrianbpjs/updateStatusAntraenPV',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+            },
+            data: JSON.stringify({
+                "norm": $("#pvno_registration").val(),
+                "kodebooking": $("#pvtrans_id").val(),
+                "taskid": $("#pvstatusantrean").val(),
+                "waktu": Date.now()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
+            },
+            success: function(data) {
+                console.log("Update Waktu Selesai")
+
+                // if (data.metadata.code == 200) {
+                //     $("#pvstatusantrean").val('2' + (String)(task))
+                //     executeWaktuUpdate()
+                // } else {
+                //     alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                // }
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                }
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            },
+            complete: function() {
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            }
+
         });
     }
 </script>

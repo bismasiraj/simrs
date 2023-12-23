@@ -506,7 +506,7 @@ $permissions = user()->getPermissions();
                                                     <label>No.Peserta</label>
                                                     <div class="input-group" id="akk_nogroup">
                                                         <span class="input-group-btn">
-                                                            <button id="openSearchKalurahanBtn" class="form-control" onclick="showGetPesertaModal()" type="button"><i class="fa fa-search"></i></button>
+                                                            <button id="openGetPesertaBtn" class="form-control" onclick="showGetPesertaModal()" type="button"><i class="fa fa-search"></i></button>
                                                         </span>
                                                         <input name="kk_no" id="akk_no" placeholder="" class="form-control">
                                                     </div>
@@ -587,6 +587,17 @@ $permissions = user()->getPermissions();
                                                                         ?></span>
                                         </div>
                                     </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>No. Satu Sehat</label>
+                                            <div class="input-group" id="asspasien_idgroup">
+                                                <span class="input-group-btn">
+                                                    <button id="asspasien_idsearch" class="form-control" onclick="getPasienSatuSehat()" type="button"><i class="fa fa-search"></i></button>
+                                                </span>
+                                                <input name="sspasien_id" id="asspasien_id" placeholder="" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="" id="customfield"></div>
                                 </div><!--./row-->
@@ -646,6 +657,9 @@ $permissions = user()->getPermissions();
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+<!-- Pilih kunjungan rawat jalan yang akan dirawat-inapkan -->
 <div id="addKalurahanModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addDiagnosaModal" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content rounded-4">
@@ -686,6 +700,9 @@ $permissions = user()->getPermissions();
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+<!-- INI MODAL UNTUK GE PESERTA -->
 <style>
     #searchNomorPeserta {
         border-top-left-radius: 0;

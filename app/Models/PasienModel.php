@@ -47,7 +47,11 @@ class PasienModel extends Model
         'kk_no',
         'tmt',
         'tat',
-        'ttd'
+        'ttd',
+        'sspasien_id',
+        'father',
+        'mother',
+        'spouse'
     ];
 
     // Dates

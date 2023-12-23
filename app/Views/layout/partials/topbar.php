@@ -84,7 +84,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             <div class="dropdown d-inline-block ms-1">
                 <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="ti-bell color-white"></i>
-                    <span class="badge text-bg-danger rounded-pill">3</span>
+                    <!-- <span class="badge text-bg-danger rounded-pill">3</span> -->
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
@@ -197,7 +197,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img class="rounded-circle header-profile-user" src="<?php echo base_url(); ?>uploads/images/profile_male.png" alt="Header Avatar">
-                    <img class="rounded-circle header-profile-user" src="data:image/jpg;base64," alt="Header Avatar">
+                    <!-- <img class="rounded-circle header-profile-user" src="data:image/jpg;base64," alt="Header Avatar"> -->
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->

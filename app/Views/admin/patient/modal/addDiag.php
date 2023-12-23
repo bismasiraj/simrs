@@ -160,6 +160,7 @@
                 .append($('<td>')
                     .append('<select id="diag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')" style="width: 100%"></select>')
                     .append('<input id="diag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
+                    .append('<input id="sscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
                 )
                 // .append($('<td>')
@@ -183,10 +184,12 @@
                         .val(diag_cat)
                     )
                 )
-                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-remove'></i></a></td>")
+                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
             );
 
         initializeDiagSelect2("diag_id" + diagIndex, diag_id, diag_name)
+        $("#suffer_type" + diagIndex).val(0)
+        $("#diag_cat" + diagIndex).val(diagIndex)
     }
 
 

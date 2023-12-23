@@ -63,6 +63,7 @@ use App\Models\TreatResultModel;
 use App\Models\TreatTarifModel;
 use App\Models\VisitReasonModel;
 use App\Models\VisitWayModel;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use LZCompressor\LZString;
 
@@ -392,13 +393,13 @@ class Patient extends \App\Controllers\BaseController
 
         foreach ($schedule as $key => $value) {
             if ($schedule[$key]['dpjp'] != '' && !is_null($schedule[$key]['dpjp'])) {
-                $dpjp[$schedule[$key]['employee_id']] = $schedule[$key]['dpjp'];
+                $dpjp[$schedule[$key]['employee_id']][$schedule[$key]['dpjp']] = $schedule[$key]['sspractitioner_id'];
             }
         }
 
         asort($clinicInap);
 
-        // dd($clinic);
+        // dd($dpjp);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -684,6 +685,8 @@ This Function is used to Add Patient
         $mother = $this->request->getPost('ibu');
         $spouse = $this->request->getPost('sutri');
         $file = $this->request->getFile('file');
+        $sspasien_id = $this->request->getPost('sspasien_id');
+
 
         $orgunitcode = '1771014';
 
@@ -740,6 +743,10 @@ This Function is used to Add Patient
             'kk_no' => $kk_no,
             'tmt' => $tmt,
             'tat' => $tat,
+            'sspasien_id' => $sspasien_id,
+            'father' => $father,
+            'mother' => $mother,
+            'spouse' => $spouse
         ];
 
 
@@ -1374,7 +1381,6 @@ This Function is used to Add Patient
             'ageyear' => 'required',
             'kode_agama' => 'required',
             'aktif' => 'required',
-
         ];
 
         // if (!$this->validate($rules)) {
@@ -1459,20 +1465,23 @@ This Function is used to Add Patient
         $ispertarif = $this->request->getPost('ispertarif');
         $temptrans = $this->request->getPost('temptrans');
         $delete_sep = $this->request->getPost('delete_sep');
+        $ssencounter_id = $this->request->getPost('ssencounter_id');
+        $statusantrean = $this->request->getPost('statusantrean');
 
 
         $pv = new PasienVisitationModel();
         $flag = 'edit';
         if (!isset($visit_id) || $visit_id == null) {
-            $genereatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
+            $generatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
 
 
-            $visit_id = $genereatePv[0]['visit_id'];
-            $trans_id = $genereatePv[0]['trans_id'];
-            $ticket_no = $genereatePv[0]['ticket_no'];
+            $visit_id = $generatePv[0]['visit_id'];
+            $trans_id = $generatePv[0]['trans_id'];
+            $ticket_no = $generatePv[0]['ticket_no'];
+            $ssencounter_id = $generatePv[0]['ssencounter_id'];
             $flag = 'tambah';
         }
-        // return json_encode($genereatePv);
+        // return json_encode($generatePv);
 
 
         // return json_encode($kalurahan);
@@ -1545,7 +1554,9 @@ This Function is used to Add Patient
             'ispertarif' => $ispertarif,
             'temptrans' => $temptrans,
             'delete_sep' => $delete_sep,
-            'isrj' => $isrj
+            'isrj' => $isrj,
+            'ssencounter_id' => $ssencounter_id,
+            'statusantrean' => $statusantrean
         ];
         // $data = json_encode($data);
 
@@ -1590,7 +1601,6 @@ This Function is used to Add Patient
 
     public function profile($id)
     {
-
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
@@ -1726,8 +1736,10 @@ This Function is used to Add Patient
         $visit['age'] = $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr';
 
         $visitDate = substr($visit['visit_date'], 0, 10);
+        $visit['visit_datetime'] = $visit['visit_date'];
         $visit['visit_date'] = $visitDate;
         $visitDate = substr($visit['exit_date'], 0, 10);
+        $visit['exit_datetime'] = $visit['exit_date'];
         $visit['exit_date'] = $visitDate;
 
         $examModel = new ExaminationModel();
@@ -1792,8 +1804,14 @@ This Function is used to Add Patient
                 $clinic[$i] = $clinicPermission[$key];
             }
         }
-
-        // dd($visit);
+        // dd($employee);
+        foreach ($employee as $key => $value) {
+            if ($employee[$key]['employee_id'] == $visit['employee_id']) {
+                $visit['sspractitioner_id'] = $value['sspractitioner_id'];
+                $visit['sspractitioner_name'] = $value['fullname'];
+            }
+        }
+        // dd($practitioner_id);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -2988,10 +3006,21 @@ This Function is used to Add Patient
 
 
         // dd(json_encode($diag_id[0]));
+        $pv = new PasienVisitationModel();
+        $kunjungan = $this->lowerKeyOne($pv->find($visit_id));
+        $p = new PasienModel();
+        $pasien = $this->lowerKeyOne($p->find($no_registration));
+        $ea = new EmployeeAllModel();
+        $employee = $this->lowerKeyOne($ea->find($employee_id));
 
 
-
-
+        $ssjson = '{
+                        "resourceType": "Bundle",
+                        "type": "transaction",
+                        "entry": [
+                        ]
+                    }';
+        $ssjson = json_decode($ssjson, true);
 
         $pd = new PasienDiagnosaModel();
 
@@ -3093,8 +3122,7 @@ This Function is used to Add Patient
                 $dataDiag['diag_cat'] = $diag_cat[$key];
                 $dataDiag['suffer_type'] = $suffer_type[$key];
                 $dataDiag['modified_by'] = user_id();
-
-
+                $dataDiag['sscondition_id'] = new RawSql('newid()');
 
                 $pds->insert($dataDiag);
             }

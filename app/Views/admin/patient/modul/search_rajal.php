@@ -267,6 +267,8 @@ $permissions = user()->getPermissions();
                             <input name="responpost_vklaim" id="pvresponpost_vklaim" type="hidden" class="form-control" />
                             <input name="responput_vklaim" id="pvresponput_vklaim" type="hidden" class="form-control" />
                             <input name="respondel_vklaim" id="pvrespondel_vklaim" type="hidden" class="form-control" />
+                            <input name="statusantrean" id="pvstatusantrean" type="hidden" class="form-control" />
+
 
                             <div class="row row-eq">
                                 <div class="col-lg-8 col-md-8 col-sm-8">
@@ -342,8 +344,10 @@ $permissions = user()->getPermissions();
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
                                                                                 foreach ($dpjp as $dpjpkey => $dpjpvalue) {
-                                                                                    if ($key1 == $dpjpkey) {
-                                                                                        $dpjplist[$dpjpvalue] = $value1;
+                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                        if ($key1 == $dpjpkey) {
+                                                                                            $dpjplist[$dpjpkey1] = $value1;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }
@@ -881,8 +885,10 @@ $permissions = user()->getPermissions();
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
                                                                                 foreach ($dpjp as $dpjpkey => $dpjpvalue) {
-                                                                                    if ($key1 == $dpjpkey) {
-                                                                                        $dpjplist[$dpjpvalue] = $value1;
+                                                                                    foreach ($dpjpvalue as $dpjpkey1 => $dpjpvalue1) {
+                                                                                        if ($key1 == $dpjpkey) {
+                                                                                            $dpjplist[$dpjpkey1] = $value1;
+                                                                                        }
                                                                                     }
                                                                                 }
                                                                             }
@@ -961,6 +967,55 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingEncounter">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEncounter" aria-expanded="false" aria-controls="collapseEncounter">
+                                                    <b>Satu Sehat</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseEncounter" class="accordion-collapse collapse" aria-labelledby="headingEncounter" data-bs-parent="#accordionPv">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <div class="col-sm-3 mb-3">
+                                                            <div class="form-group"><label for="sprinosurat">No Kunjungan Satu Sehat</label>
+                                                                <input type='text' name="ssencounter_id" class="form-control" id='pvssencounter_id' />
+                                                            </div>
+                                                        </div>
+                                                        <!-- <div class="row mt-3 mb-3">
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="saveEncounterBtn" type="button" onclick="saveEncounterSS()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
+                                                                                <span>Simpan</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-4 col-xs-12">
+                                                                <div class="col-sm-12 col-xs-12">
+                                                                    <div class="button-items">
+                                                                        <div class="d-grid">
+                                                                            <button id="" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                             </div>

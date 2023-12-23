@@ -49,6 +49,7 @@ $permission = user()->getPermissions();
                                 <input name="nosep" id="arnosep" type="hidden" class="form-control " />
                                 <input name="tglsep" id="artglsep" type="hidden" class="form-control " />
                                 <input name="kddpjp" id="artglsep" type="hidden" class="form-control " />
+                                <input name="statusantrean" id="arstatusantrean" type="hidden" class="form-control " value="<?= $visit['statusantrean']; ?>" />
 
 
 
@@ -176,7 +177,7 @@ $permission = user()->getPermissions();
                                                         <h3>Diagnosa</h3>
                                                         <div class="staff-members">
                                                             <div class="table tablecustom-responsive">
-                                                                <table class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                <table id="tablediagnosa" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
                                                                     <?php if (true) { ?>
                                                                         <thead>
                                                                             <th class="text-center" style="width: 40%">Diagnosa</th>
@@ -200,7 +201,7 @@ $permission = user()->getPermissions();
                                                         <h3>Prosedur</h3>
                                                         <div class="staff-members">
                                                             <div class="table tablecustom-responsive">
-                                                                <table class="table table-borderedcustom table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                <table id="tableprocedure" class="table table-borderedcustom table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
                                                                     <?php if (true) { ?>
                                                                         <thead>
                                                                             <th colspan="2">Prosedur (ICD IX)</th>
@@ -550,6 +551,7 @@ $permission = user()->getPermissions();
                                     <div class="panel-footer text-end mb-4">
                                         <button type="submit" id="formaddrmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                         <button type="button" id="formeditrm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                        <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button>
                                     </div>
                                 </div><!--./col-md-4-->
                             </div><!--./row-->
