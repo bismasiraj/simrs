@@ -14,7 +14,7 @@ class ClinicModel extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    // protected $allowedFields = ['name', 'email'];
+    protected $allowedFields = ['ssclinic_id', 'sslocation_id'];
 
     // Dates
     protected $useTimestamps = false;
