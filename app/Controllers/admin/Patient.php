@@ -1709,7 +1709,7 @@ This Function is used to Add Patient
 
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
                 $visit['fullname'] = $employee[$key]['fullname'];
-                $visit['sspractitioner_id'] = $value['sspractitioner_id']
+                $visit['sspractitioner_id'] = $value['sspractitioner_id'];
             }
             if ($employee[$key]['employee_id'] == $visit['employee_id_from']) {
                 $visit['fullname_from'] = $employee[$key]['fullname'];
