@@ -223,6 +223,7 @@
     })
 
     function addBill() {
+        // if($("#"))
         setTarif()
         $("#addBill").modal("show")
     }

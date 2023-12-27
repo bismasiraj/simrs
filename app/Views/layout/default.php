@@ -442,6 +442,7 @@ $basecontroller->checkMenuActive('register');
                             </a>
                             <ul class="treeview-menu">
                                 <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/foantrol"><i class="fas fa-angle-right"></i>Antrian Online</a>
+                                <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/satusehat"><i class="fas fa-angle-right"></i>Satu Sehat</a>
                                 </li>
                                 <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
                                 </li>
