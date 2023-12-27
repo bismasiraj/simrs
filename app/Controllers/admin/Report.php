@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Controllers\SatuSehat;
 use App\Models\CaraKeluarModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicModel;
@@ -20,6 +21,7 @@ use App\Models\OrganizationunitModel;
 use App\Models\PasienVisitationModel;
 use App\Models\RegulationTypeModel;
 use App\Models\RujukanModel;
+use App\Models\SatuSehatModel;
 use App\Models\SexModel;
 use App\Models\ShiftDaysModel;
 use App\Models\StatusPasienModel;
@@ -7089,6 +7091,85 @@ class Report extends \App\Controllers\BaseController
         $json_data = array(
             "body"            => $dt_data,
             'header' => $header,
+        );
+        echo json_encode($json_data);
+    }
+    public function satuSehat()
+    {
+        $giTipe = 7;
+        $title = 'Status Posting Satu Sehat';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['office'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+
+
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th style="padding-right: 20px;">Tanggal Kunjung</th>
+                        <th style="padding-right: 20px;">No RM</th>
+                        <th style="padding-right: 20px;">Result</th>
+                        <th style="padding-right: 20px;">Status</th>
+                        <th style="padding-right: 20px;">Tipe</th>
+                    </tr>';
+
+
+        return view('admin\report\register', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            // 'tipeantrol' => '1',
+            'header' => $header,
+        ]);
+    }
+
+    public function satuSehatPost()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $ss = new SatuSehatModel();
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+
+
+        $kunjungan = $this->lowerKey($ss->where("created_date between '$mulai' and dateadd(day,1,'$akhir')")->findAll());
+
+
+
+        $dt_data     = array();
+        if (!empty($kunjungan)) {
+            foreach ($kunjungan as $key => $value) {
+
+
+
+
+                $row = array();
+                $row[] = $key + 1;
+                $row[] = $value['waktu'];
+                $row[] = $kunjungan[$key]['no_registration'];
+
+                $row[] = $kunjungan[$key]['result'];
+                $row[] = $kunjungan[$key]['status'];
+                $row[] = $kunjungan[$key]['tipe'];
+
+
+                $dt_data[] = $row;
+            }
+        }
+
+        $json_data = array(
+            "body"            => $dt_data
         );
         echo json_encode($json_data);
     }

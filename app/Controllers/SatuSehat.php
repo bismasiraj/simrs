@@ -643,10 +643,10 @@ class SatuSehat extends BaseController
     public function postingBatch()
     {
         $ss = new SatuSehatModel();
-        $satusehat = $this->lowerKey($ss->where('status', null)->where('parameter is not null')->orderBy("trans_id, waktu")->where('trans_id', '846202202312235F6D')->findAll());
-        // return json_encode($satusehat);
+        $satusehat = $this->lowerKey($ss->where('status', null)->where('parameter is not null')->orderBy("trans_id, waktu")->findAll());        // return json_encode($satusehat);
 
-        $ssToken = $this->request->getHeaderLine("ssToken");
+        // $ssToken = $this->request->getHeaderLine("ssToken");
+        $ssToken = json_decode($this->getToken(), true);
         $db = db_connect();
         // return json_encode(str_replace('\\', '', $satusehat[0]['parameter']));
 
