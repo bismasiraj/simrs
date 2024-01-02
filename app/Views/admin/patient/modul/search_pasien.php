@@ -62,7 +62,7 @@ $permissions = user()->getPermissions();
                     <th style="width: 10%"><?php echo lang('Word.age'); ?></th>
                     <th style="width: 5%"><?php echo lang('Word.gender'); ?></th>
                     <th style="width: 15%"><?php echo lang('Word.phone'); ?></th>
-                    <th style="width: 15%"><?php echo lang('Word.guardian_name'); ?></th>
+                    <th style="width: 15%">NIK/Satu Sehat</th>
                     <th style="width: 20%"><?php echo lang('Word.address'); ?></th>
                     <th style="width: 10%">Aksi</th>
                 </tr>
@@ -311,9 +311,9 @@ $permissions = user()->getPermissions();
                                                     <label>Tanggal Lahir</label><small class="req"> *</small>
                                                     <div>
                                                         <div class="input-group" id="adatebirthgroup">
-                                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                            <input id="adatebirth" name="datebirth" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#adatebirthgroup" required>
-                                                            </input>
+                                                            <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
+                                                            <input id="adatebirth" name="datebirth" type="date" class="form-control" placeholder="yyyy-mm-dd" required></input>
+                                                            <!-- <input id="adatebirth" name="datebirth" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#adatebirthgroup" required></input> -->
                                                         </div>
                                                         <!-- input-group -->
                                                     </div>
@@ -529,8 +529,9 @@ $permissions = user()->getPermissions();
                                                     <label>TMT</label>
                                                     <div>
                                                         <div class="input-group" id="atmtgroup">
-                                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                            <input id="atmt" name="tmt" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atmtgroup">
+                                                            <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
+                                                            <input id="atmt" name="tmt" type="date" class="form-control" placeholder="dd-mm-yyyy">
+                                                            <!-- <input id="atmt" name="tmt" type="text" class="form-control" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atmtgroup"> -->
                                                         </div>
                                                         <!-- input-group -->
                                                     </div>
@@ -541,8 +542,9 @@ $permissions = user()->getPermissions();
                                                     <label>TAT</label>
                                                     <div>
                                                         <div class="input-group" id="atatgroup">
-                                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                                            <input id="atat" name="tat" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atatgroup">
+                                                            <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
+                                                            <input id="atat" name="tat" type="date" class="form-control" placeholder="dd-mm-yyyy">
+                                                            <!-- <input id="atat" name="tat" type="text" class="form-control" placeholder="dd-mm-yyyy" data-date-format="dd-mm-yyyy" data-provide="datepicker" data-date-autoclose="true" data-date-container="#atatgroup"> -->
                                                         </div>
                                                         <!-- input-group -->
                                                     </div>

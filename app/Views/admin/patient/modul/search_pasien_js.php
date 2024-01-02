@@ -796,7 +796,7 @@
     function clearBiodata() {
 
         $("#displayNoRegistration").html('<?php echo lang('Word.add_patient'); ?>')
-        alert('bisma')
+        // alert('bisma')
         $(':input', '#formaddpa')
             .not(':button, :submit, :reset, :hidden')
             .val('')

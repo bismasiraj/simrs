@@ -155,7 +155,7 @@ class Pendaftaran extends \App\Controllers\BaseController
                 $row[] = $kunjungan[$key]['status_pasien_id'];
                 $row[] = "<b>" . $kunjungan[$key]['clinic_id'] . "</b><br><b>" . $kunjungan[$key]['employee_id'] . "</b>";
                 $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
-                $row[] = $kunjungan[$key]['clinic_id_from'] . "<br>" . $kunjungan[$key]['class_id_plafond'] . "<br>" . $kunjungan[$key]['locked'];
+                $row[] = $kunjungan[$key]['class_id'] . "<br>" . $kunjungan[$key]['class_id_plafond'];
                 $row[] = $action;
                 $dt_data[] = $row;
             }

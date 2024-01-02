@@ -805,7 +805,8 @@ $permissions = user()->getPermissions();
             cache: false,
             processData: false,
             success: function(data) {
-                if (skunjAll.length == 0) {
+                skunjAll = Array()
+                if (data.length > 0) {
                     skunjAll = data
                     var now = new Date()
                     var lastkunj = new Date(skunjAll[skunjAll.length - 1].visit_date)
@@ -1185,11 +1186,11 @@ $permissions = user()->getPermissions();
 
         $("#pvdelete_sep").prop("disabled", false)
 
-        $("#skdpnosep").prop("disabled", false)
-        $("#skdpkddpjp").prop("disabled", false)
-        $("#skdpkdpoli").prop("disabled", false)
-        $("#skdptglkontrol").prop("disabled", false)
-        $("#skdpnosurat").prop("disabled", false)
+        // $("#skdpnosep").prop("disabled", false)
+        // $("#skdpkddpjp").prop("disabled", false)
+        // $("#skdpkdpoli").prop("disabled", false)
+        // $("#skdptglkontrol").prop("disabled", false)
+        // $("#skdpnosurat").prop("disabled", false)
 
         $("#sprikddpjp").prop("disabled", false)
         $("#sprikdpoli").prop("disabled", false)
@@ -1303,11 +1304,11 @@ $permissions = user()->getPermissions();
         $("#pvdelete_sep").prop("disabled", true)
 
 
-        $("#skdpnosep").prop("disabled", true)
-        $("#skdpkddpjp").prop("disabled", true)
-        $("#skdpkdpoli").prop("disabled", true)
-        $("#skdptglkontrol").prop("disabled", true)
-        $("#skdpnosurat").prop("disabled", true)
+        // $("#skdpnosep").prop("disabled", true)
+        // $("#skdpkddpjp").prop("disabled", true)
+        // $("#skdpkdpoli").prop("disabled", true)
+        // $("#skdptglkontrol").prop("disabled", true)
+        // $("#skdpnosurat").prop("disabled", true)
 
         $("#sprikddpjp").prop("disabled", true)
         $("#sprikdpoli").prop("disabled", true)
@@ -2000,5 +2001,23 @@ $permissions = user()->getPermissions();
             }
 
         });
+    }
+
+    function cetak(type) {
+        var url = ''
+        if (type == 1) {
+            url = "<?= base_url(); ?>/admin/cetak/cetakAntrian/" + btoa(JSON.stringify(skunj))
+        } else if (type == 2) {
+            url = "<?= base_url(); ?>/admin/cetak/formRekamMedis/" + skunj.no_registration + '/' + skunj.family_status_id
+        } else if (type == 3) {
+            url = "<?= base_url(); ?>/admin/cetak/tagihanPendaftaran/" + skunj.no_registration + '/' + skunj.clinic_id + '/' + skunj.visit_id
+        } else if (type == 4) {
+            url = "<?= base_url(); ?>/admin/cetak/cetakGelang/" + btoa(JSON.stringify(skunj)) + "/" + btoa(JSON.stringify(sbio))
+        } else if (type == 5) {
+            url = "<?= base_url(); ?>/admin/cetak/cetakLabelPasien/" + btoa(JSON.stringify(sbio))
+        } else if (type == 6) {
+            url = "<?= base_url(); ?>/admin/cetak/cetakSep/" + btoa(JSON.stringify(skunj)) + "/" + btoa(JSON.stringify(sbio))
+        }
+        window.open(url, "_blank")
     }
 </script>

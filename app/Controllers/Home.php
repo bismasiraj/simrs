@@ -109,6 +109,7 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         $users = new UserModel();
 
         $select = $users->select('password_hash')->where('username', 'heny')->findAll();
+        return json_encode(password_verify(base64_encode(hash('sha384', "Heny3008", false)), $select[0]->password_hash));
         return json_encode(password_verify(base64_encode(hash('sha384', "Heny3008", true)), $select[0]->password_hash));
         return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
     }

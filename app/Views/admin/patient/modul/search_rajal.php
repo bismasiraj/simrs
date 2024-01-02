@@ -292,7 +292,7 @@ $permissions = user()->getPermissions();
                                                             <div class="dividerhr"></div>
                                                         </div><!--./col-md-12-->
 
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="clinic_id">Tujuan</label>
                                                                 <div>
                                                                     <select name='clinic_id' id="pvclinic_id" class="form-control select2 act" style="width:100%">
@@ -315,7 +315,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="employee_id">Dokter</label>
                                                                 <div>
                                                                     <select name='employee_id' id="pvemployee_id" class="form-control select2 act" style="width:100%">
@@ -336,8 +336,8 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
-                                                            <div class="form-group"><label for="kddpjp">Perujuk</label>
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
+                                                            <div class="form-group"><label for="kddpjp">DPJP</label>
                                                                 <div>
                                                                     <select name='kddpjp' id="pvkddpjp" class="form-control select2 act" style="width:100%">
                                                                         <?php $dpjplist = array();
@@ -424,7 +424,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-1 col-xs-4 mb-3">
                                                             <label for="kdpoli_eks">Eksekutif</label>
                                                             <div class="form-group">
                                                                 <div>
@@ -435,7 +435,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="isnew">Baru</label>
                                                                 <div>
                                                                     <select name='isnew' id="pvisnew" class="form-control select2 act" style="width:100%">
@@ -445,7 +445,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="cob">COB</label>
                                                                 <div>
                                                                     <select name='cob' id="pvcob" class="form-control select2 act" style="width:100%">
@@ -455,13 +455,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-6 col-xs-12 mb-3">
-                                                            <div class="form-group">
-                                                                <label for="description">Catatan</label>
-                                                                <textarea id="pvdescription" name="description" rows="4" class="form-control" autocomplete="off"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvbackcharge">Katarak</label>
                                                                 <div>
                                                                     <select name='backcharge' id="pvbackcharge" class="form-control select2 act" style="width:100%">
@@ -472,7 +466,7 @@ $permissions = user()->getPermissions();
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvway_id">Cara Datang</label>
                                                                 <div>
                                                                     <select name='way_id' id="pvway_id" class="form-control select2 act" style="width:100%">
@@ -483,7 +477,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvreason_id">Alasan/Lakalantas</label>
                                                                 <div>
                                                                     <select name='reason_id' id="pvreason_id" class="form-control select2 act" style="width:100%">
@@ -494,7 +488,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvisattended">Sudah Dilayani</label>
                                                                 <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
                                                                     <?php foreach ($isattended as $key => $value) { ?>
@@ -506,6 +500,12 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvisattended">No Urut</label>
                                                                 <input id="pvticket_no" name="ticket_no" class="form-control" type="text" readonly />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 col-xs-12 mb-3">
+                                                            <div class="form-group">
+                                                                <label for="description">Catatan</label>
+                                                                <textarea id="pvdescription" name="description" rows="4" class="form-control" autocomplete="off"></textarea>
                                                             </div>
                                                         </div>
                                                     </div><!--./row-->
@@ -1107,6 +1107,38 @@ $permissions = user()->getPermissions();
                                                                     </tr> -->
                                                                 </tbody>
                                                             </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card bg-light border border-1 rounded m-4">
+                                        <div class="card-body">
+                                            <div class="row ptt10">
+                                                <!-- ./col-md-9 -->
+                                                <div class="col-lg-12 col-md-12 col-sm-12 mb-3" style="text-align:center">
+                                                    <h4>Cetak</h4>
+                                                </div><!-- ./col-md-3 -->
+                                                <div class="col-md-12 col-sm-12 col-xs-12" id="pvMyinfo">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="cetakAntrianBtn" onclick="cetak(1)">Antrian</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(2)">Form RM</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(3)">Tagihan</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(4)">Gelang</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(5)">Label Pasien</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 mb-3">
+                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(6)">SEP</button>
                                                         </div>
                                                     </div>
                                                 </div>
