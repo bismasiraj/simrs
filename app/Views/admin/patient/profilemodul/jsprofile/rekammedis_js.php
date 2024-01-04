@@ -155,8 +155,8 @@
         ?>
         var sslocation_id = '<?= $locationId; ?>'
         var sslocation_name = '<?= $namelocation; ?>'
-        var sspractitioner_id = '<?= $visit['sspractitioner_id']; ?>'
-        var sspractitioner_name = '<?= $visit['sspractitioner_name']; ?>'
+        var sspractitioner_id = '<?= $visit['sspractitioner_id'] ?? ''; ?>'
+        var sspractitioner_name = '<?= $visit['sspractitioner_name'] ?? $visit['fullname']; ?>'
         var ssencounter_id = '<?= $visit['ssencounter_id']; ?>'
         var ssorganizationid = '<?= $orgunit['SSORGANIZATIONID']; ?>'
 

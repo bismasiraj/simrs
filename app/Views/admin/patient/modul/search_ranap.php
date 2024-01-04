@@ -4,6 +4,18 @@
     <form id="form2" action="" method="post" class="">
         <div class="box-body row mt-4 mb-4">
             <input type="hidden" name="ci_csrf_token" value="">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>Nama Pasien</label>
+                    <input type="text" name="nama" id="inama" placeholder="" value="" class="form-control">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label>No RM</label>
+                    <input type="text" name="norm" id="inorm" placeholder="" value="" class="form-control">
+                </div>
+            </div>
             <div class="col-sm-6 col-md-2">
                 <div class="form-group">
                     <label>Bangsal</label><small class="req"> *</small>
@@ -47,7 +59,7 @@
             </div>
 
 
-            <div class="col-sm-6 col-md-2">
+            <div class="col-sm-6 col-md-2" style="display: none">
                 <div class="form-group">
                     <label>Rujukan Dari</label>
 
@@ -60,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-2">
+            <div class="col-sm-6 col-md-2" style="display: none">
                 <div class="form-group">
                     <label>Relasi</label>
                     <select name="statuspasien" id="istatuspasien" class="form-control">
@@ -74,31 +86,19 @@
                     </select>
                 </div>
             </div>
-            <div class="col-sm-2">
-                <div class="form-group">
-                    <label>Nama Pasien</label>
-                    <input type="text" name="nama" id="inama" placeholder="" value="" class="form-control">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="form-group">
-                    <label>No RM</label>
-                    <input type="text" name="norm" id="inorm" placeholder="" value="" class="form-control">
-                </div>
-            </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2" style="display: none">
                 <div class="form-group">
                     <label>No Kartu/ SEP</label>
                     <input type="text" name="nokartu" id="inokartu" placeholder="" value="" class="form-control">
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2" style="display: none">
                 <div class="form-group">
                     <label>Alamat</label>
                     <input type="text" name="address" id="iaddress" placeholder="" value="" class="form-control">
                 </div>
             </div>
-            <div class="col-sm-6 col-md-2">
+            <div class="col-sm-6 col-md-2" style="display: none">
                 <div class="mb-3">
                     <label>Tanggal Awal</label>
                     <div>
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-2">
+            <div class="col-sm-6 col-md-2" style="display: none">
                 <div class="mb-3">
                     <label>Tanggal Akhir</label>
                     <div>
@@ -298,7 +298,7 @@
             <div class="modal-body">
                 <div id="loadingAkomodasiView"></div>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card bg-light border border-1 rounded m-4">
                             <div class="card-body">
                                 <div class="row ptt10" style="display:block">
@@ -371,7 +371,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <form id="formAkomodasiView" action="" method="post" class="">
                             <table id="akomoDasiViewTable" class="table table-bordered table-striped table-centered table-hover mb-4" data-export-title="<?= lang('Word.patient_list'); ?>">
                                 <thead class="table-primary">
@@ -400,7 +400,7 @@
                                 </div>
                             </div>
                         </form>
-                        <div class="accordion accordion-flush" id="accordionRanap">
+                        <div class="accordion" id="accordionRanap">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingSepRanap">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSepRanap" aria-expanded="true" aria-controls="collapseSepRanap">

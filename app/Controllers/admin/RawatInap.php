@@ -63,16 +63,18 @@ class RawatInap extends \App\Controllers\BaseController
         $data = [];
         $i = 0;
         foreach ($bedInfo as $key => $value) {
-            $bedJson = json_encode($value);
-            $row = [];
-            $row[] = $value["name_of_clinic"];
-            $row[] = $value["classroomname"];
-            $row[] = $value["name_of_class"];
-            $row[] = $value["capasity"];
-            $row[] = $value["sisa"];
-            $row[] = '<button id="asd" onclick="pilihBed(\'bed' . $i . '\')" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"> <i class="fas fa-angle-double-right"></i></button><div style="display: none;" id="bed' . $i . '">' . $bedJson . '</div>';
-            $data[] = $row;
-            $i++;
+            if ($value['sisa'] > 0) {
+                $bedJson = json_encode($value);
+                $row = [];
+                $row[] = $value["name_of_clinic"];
+                $row[] = $value["classroomname"];
+                $row[] = $value["name_of_class"];
+                $row[] = $value["capasity"];
+                $row[] = $value["sisa"];
+                $row[] = '<button id="asd" onclick="pilihBed(\'bed' . $i . '\')" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"> <i class="fas fa-angle-double-right"></i></button><div style="display: none;" id="bed' . $i . '">' . $bedJson . '</div>';
+                $data[] = $row;
+                $i++;
+            }
         }
         $result = [];
         $result['data'] = $data;
