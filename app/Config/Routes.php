@@ -48,6 +48,7 @@ $routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
 });
 $routes->post("satusehat/loginInternal", "SatuSehat::loginInternal", ['filter' => 'login']);
 $routes->post("satusehat/postOrganization", "SatuSehat::postOrganization", ['filter' => 'login']);
+$routes->post("satusehat/generateBundleEncounter", "SatuSehat::postLocation", ['filter' => 'login']);
 $routes->post("satusehat/postLocation", "SatuSehat::postLocation", ['filter' => 'login']);
 $routes->post("api/satusehat/getPasienID", "SatuSehat::getPasienID", ['filter' => 'satuSehatFilter']);
 

@@ -640,6 +640,221 @@ class SatuSehat extends BaseController
 
         return json_encode("selesai");
     }
+    public function generateBundleEncounter()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $ssToken = $this->request->getHeaderLine("ssToken");
+        $db = db_connect();
+
+        $select = $db->query("select ssencounter_id, sslocation_id, name_of_clinic as sslocation_name,sspractitioner_id,fullname as sspractitioner_name, ssencounter_id, ssorganizationid, visit_id, trans_id, no_registration from pasien_visitation pv
+                                inner join clinic c on c.clinic_id = pv.clinic_id
+                                inner join employee_all ea on ea.employee_id = pv.employee_id
+                                inner join ORGANIZATIONUNIT o on o.ORG_UNIT_CODE = pv.ORG_UNIT_CODE
+                                where visit_date between dateadd(day,-4,getdate()) and getdate() and pv.trans_id not in (select trans_id from satu_sehat)
+                                and stype_id = '1'")->getResultArray();;
+        // return json_encode($select);
+
+        foreach ($select as $key => $value) {
+            $body = $value;
+            $sslocation_id = $body['sslocation_id'];
+            $sslocation_name = $body['sslocation_name'];
+            $sspractitioner_id = $body['sspractitioner_id'];
+            $sspractitioner_name = $body['sspractitioner_name'];
+            $ssencounter_id = $body['ssencounter_id'];
+            $ssorganizationid = $body['ssorganizationid'];
+            $visit_id = $body['visit_id'];
+            $trans_id = $body['trans_id'];
+            $no_registration = $body['no_registration'];
+
+            $ss = new SatuSehat();
+
+            $p = new PasienModel();
+            $pasien = $this->lowerKeyOne($p->find($no_registration));
+
+            $select = $db->query('select pds.diagnosa_id, pds.diagnosa_name, pds.sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
+            where visit_id = \'' . $visit_id . '\'')->getResultArray();
+
+            $bb = new BatchingBridgingModel();
+
+            $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("replace(convert(varchar,waktu,20),' ','T')+'+07:00' as waktu, tipe")->orderBy('waktu')->findAll();
+
+
+            $jsonencounter = '{
+                                "fullUrl": "urn:uuid:' . $ssencounter_id . '",
+                                "resource": {
+                                    "resourceType": "Encounter",
+                                    "status": "finished",
+                                    "class": {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                        "code": "AMB",
+                                        "display": "ambulatory"
+                                    },
+                                    "subject": {
+                                        "reference": "Patient/' . $pasien['sspasien_id'] . '",
+                                        "display": "' . $pasien['name_of_pasien'] . '"
+                                    },
+                                    "participant": [
+                                        {
+                                            "type": [
+                                                {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                                                            "code": "ATND",
+                                                            "display": "attender"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "individual": {
+                                                "reference": "Practitioner/' . $sspractitioner_id . '",
+                                                "display": "' . $sspractitioner_name . '"
+                                            }
+                                        }
+                                    ],
+                                    "location": [
+                                        {
+                                            "location": {
+                                                "reference": "Location/' . $sslocation_id . '",
+                                                "display": "' . $sslocation_name . '"
+                                            }
+                                        }
+                                    ],
+                                    "diagnosis": [
+                                    ],
+                                    "statusHistory": [
+                                        
+                                    ],
+                                    "serviceProvider": {
+                                        "reference": "Organization/' . $ssorganizationid . '"
+                                    },
+                                    "identifier": [
+                                        {
+                                            "system": "http://sys-ids.kemkes.go.id/encounter/' . $ssorganizationid . '",
+                                            "value": "' . $trans_id . '"
+                                        }
+                                    ]
+                                },
+                                "request": {
+                                    "method": "POST",
+                                    "url": "Encounter"
+                                }
+                            }';
+            $jsonencounter = json_decode($jsonencounter, true);
+            // return json_encode(in_array($batching[4]['tipe'], ['25', '27']));
+            $iscontinue = true;
+            foreach ($batching as $key => $value) {
+                if ($value['tipe'] == '21') {
+                    $jsonencounter['resource']['period']['start'] = $value['waktu'];
+                } else if ($key == count($batching) - 1 && ($value['tipe'] == '25' || $value['tipe'] == '27')) {
+                    $jsonencounter['resource']['period']['end'] = $value['waktu'];
+                } else if ($key == count($batching) - 1 && !in_array($value['tipe'], ['25', '27'])) {
+                    // return response()->setStatusCode(401, 'Kunjungan belum selesai, silahkan selesaikan kunjungan terlebih dahulu.');
+                    $iscontinue = false;
+                    break;
+                }
+                if ($value['tipe'] == '21') {
+                    $jsonencounter['resource']['statusHistory'][0]['status'] = 'arrived';
+                    $jsonencounter['resource']['statusHistory'][0]['period']['start'] = $value['waktu'];
+                } else if ($value['tipe'] == '23') {
+                    $jsonencounter['resource']['statusHistory'][0]['period']['end'] = $value['waktu'];
+                    $jsonencounter['resource']['statusHistory'][1]['status'] = 'in_progress';
+                    $jsonencounter['resource']['statusHistory'][1]['period']['start'] = $value['waktu'];
+                } else if ($value['tipe'] == '25') {
+                    $jsonencounter['resource']['statusHistory'][1]['period']['end'] = $value['waktu'];
+                    $jsonencounter['resource']['statusHistory'][2]['status'] = 'finished';
+                    $jsonencounter['resource']['statusHistory'][2]['period']['start'] = $value['waktu'];
+                }
+                if ($key == count($batching) - 1 && in_array($value['tipe'], ['25', '27'])) {
+                    $jsonencounter['resource']['statusHistory'][2]['period']['end'] = $value['waktu'];
+                }
+            }
+            if ($iscontinue == true) {
+                $ssjson[] = $jsonencounter;
+
+                $sscondition = array();
+                foreach ($select as $key => $value) {
+                    $jsonencounter['resource']['diagnosis'][] = json_decode('{
+                                            "condition": {
+                                                "reference": "urn:uuid:' . $value['sscondition_id'] . '",
+                                                "display": "' . $value['diagnosa_name'] . '"
+                                            },
+                                            "use": {
+                                                "coding": [
+                                                    {
+                                                        "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+                                                        "code": "DD",
+                                                        "display": "Discharge diagnosis"
+                                                    }
+                                                ]
+                                            },
+                                            "rank": ' . (string)($key + 1) . '
+                                        }', true);
+
+                    $sscondition = '{
+                                "fullUrl": "urn:uuid:' . $value['sscondition_id'] . '",
+                                "resource": {
+                                    "resourceType": "Condition",
+                                    "clinicalStatus": {
+                                        "coding": [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                                                "code": "active",
+                                                "display": "Active"
+                                            }
+                                        ]
+                                    },
+                                    "category": [
+                                        {
+                                            "coding": [
+                                                {
+                                                    "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                                                    "code": "encounter-diagnosis",
+                                                    "display": "Encounter Diagnosis"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/sid/icd-10",
+                                                "code": "' . $value['diagnosa_id'] . '",
+                                                "display": "' . $value['diagnosa_name'] . '"
+                                            }
+                                        ]
+                                    },
+                                    "subject": {
+                                        "reference": "Patient/' . $pasien['sspasien_id'] . '",
+                                        "display": "Budi Santoso"
+                                    },
+                                    "encounter": {
+                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                        "display": "Kunjungan ' . $pasien['name_of_pasien'] . '"
+                                    }
+                                },
+                                "request": {
+                                    "method": "POST",
+                                    "url": "Condition"
+                                }
+                            }';
+                    $sscondition = json_decode($sscondition, true);
+                    $ssjson[] = $sscondition;
+                }
+                $ssfulljson['resourceType'] = 'Bundle';
+                $ssfulljson['type'] = 'transaction';
+                $ssfulljson['entry'] = $ssjson;
+
+
+                $db = db_connect();
+                $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
+                values('$no_registration','$trans_id','https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+            }
+        }
+
+        return json_encode("selesai");
+    }
     public function postingBatch()
     {
         $ss = new SatuSehatModel();
