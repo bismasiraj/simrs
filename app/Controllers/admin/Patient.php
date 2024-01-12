@@ -1391,8 +1391,8 @@ This Function is used to Add Patient
         // }
 
 
-        $p = new PasienModel();
-        $no_registration = $p->getNorm();
+        // $p = new PasienModel();
+        // $no_registration = $p->getNorm();
 
         $trans_id = $this->request->getPost('trans_id');
         $visit_id = $this->request->getPost('visit_id');
@@ -1468,6 +1468,8 @@ This Function is used to Add Patient
         $ssencounter_id = $this->request->getPost('ssencounter_id');
         $statusantrean = $this->request->getPost('statusantrean');
 
+        // return json_encode($no_registration);
+
 
         $pv = new PasienVisitationModel();
         $flag = 'edit';
@@ -1476,7 +1478,8 @@ This Function is used to Add Patient
 
 
             $visit_id = $generatePv[0]['visit_id'];
-            $trans_id = $generatePv[0]['trans_id'];
+            if (!isset($trans_id) || $trans_id == null)
+                $trans_id = $generatePv[0]['trans_id'];
             $ticket_no = $generatePv[0]['ticket_no'];
             $ssencounter_id = $generatePv[0]['ssencounter_id'];
             $flag = 'tambah';

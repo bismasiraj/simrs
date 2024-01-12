@@ -647,11 +647,11 @@ class SatuSehat extends BaseController
         $ssToken = $this->request->getHeaderLine("ssToken");
         $db = db_connect();
 
-        $select = $db->query("select ssencounter_id, sslocation_id, name_of_clinic as sslocation_name,sspractitioner_id,fullname as sspractitioner_name, ssencounter_id, ssorganizationid, visit_id, trans_id, no_registration from pasien_visitation pv
+        $select = $db->query("select ssencounter_id, sslocation_id, name_of_clinic as sslocation_name,sspractitioner_id,replace(fullname,'''','') as sspractitioner_name, ssencounter_id, ssorganizationid, visit_id, trans_id, no_registration from pasien_visitation pv
                                 inner join clinic c on c.clinic_id = pv.clinic_id
                                 inner join employee_all ea on ea.employee_id = pv.employee_id
                                 inner join ORGANIZATIONUNIT o on o.ORG_UNIT_CODE = pv.ORG_UNIT_CODE
-                                where visit_date between dateadd(day,-4,getdate()) and getdate() and pv.trans_id not in (select trans_id from satu_sehat)
+                                where visit_date between dateadd(day,-1,getdate()) and getdate() and pv.trans_id not in (select trans_id from satu_sehat)
                                 and stype_id = '1'")->getResultArray();;
         // return json_encode($select);
 
@@ -672,14 +672,12 @@ class SatuSehat extends BaseController
             $p = new PasienModel();
             $pasien = $this->lowerKeyOne($p->find($no_registration));
 
-            $select = $db->query('select pds.diagnosa_id, pds.diagnosa_name, pds.sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
-            where visit_id = \'' . $visit_id . '\'')->getResultArray();
 
             $bb = new BatchingBridgingModel();
 
             $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("replace(convert(varchar,waktu,20),' ','T')+'+07:00' as waktu, tipe")->orderBy('waktu')->findAll();
 
-
+            $jsonencounter = '';
             $jsonencounter = '{
                                 "fullUrl": "urn:uuid:' . $ssencounter_id . '",
                                 "resource": {
@@ -771,14 +769,18 @@ class SatuSehat extends BaseController
                 }
             }
             if ($iscontinue == true) {
+                $ssjson = array();
                 $ssjson[] = $jsonencounter;
 
                 $sscondition = array();
-                foreach ($select as $key => $value) {
+                $condition = $db->query('select pds.diagnosa_id, pds.diagnosa_name, pds.sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
+                where visit_id = \'' . $visit_id . '\'')->getResultArray();
+
+                foreach ($condition as $key1 => $value1) {
                     $jsonencounter['resource']['diagnosis'][] = json_decode('{
                                             "condition": {
-                                                "reference": "urn:uuid:' . $value['sscondition_id'] . '",
-                                                "display": "' . $value['diagnosa_name'] . '"
+                                                "reference": "urn:uuid:' . $value1['sscondition_id'] . '",
+                                                "display": "' . $value1['diagnosa_name'] . '"
                                             },
                                             "use": {
                                                 "coding": [
@@ -793,7 +795,7 @@ class SatuSehat extends BaseController
                                         }', true);
 
                     $sscondition = '{
-                                "fullUrl": "urn:uuid:' . $value['sscondition_id'] . '",
+                                "fullUrl": "urn:uuid:' . $value1['sscondition_id'] . '",
                                 "resource": {
                                     "resourceType": "Condition",
                                     "clinicalStatus": {
@@ -820,8 +822,8 @@ class SatuSehat extends BaseController
                                         "coding": [
                                             {
                                                 "system": "http://hl7.org/fhir/sid/icd-10",
-                                                "code": "' . $value['diagnosa_id'] . '",
-                                                "display": "' . $value['diagnosa_name'] . '"
+                                                "code": "' . $value1['diagnosa_id'] . '",
+                                                "display": "' . $value1['diagnosa_name'] . '"
                                             }
                                         ]
                                     },
@@ -848,8 +850,12 @@ class SatuSehat extends BaseController
 
 
                 $db = db_connect();
-                $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
-                values('$no_registration','$trans_id','https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                try {
+                    $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
+                    values('$no_registration','$trans_id','https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                } catch (\Exception $e) {
+                    // exit($e->getMessage());
+                }
             }
         }
 

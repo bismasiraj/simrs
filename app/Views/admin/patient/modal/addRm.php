@@ -212,6 +212,7 @@
             $("#arsprigroup").hide()
             $("#arrujukaneksternalgroup").hide()
             $("#artiperujukan_group").hide()
+            $("#arrujukaninternalgroup").hide()
         } else if (tindakLanjutType == '2') {
             $("#ardirujukkegroup").hide()
             $("#artgl_kontrolgroup").hide()
@@ -221,6 +222,7 @@
             $("#arsprigroup").hide()
             $("#arrujukaneksternalgroup").hide()
             $("#artiperujukan_group").hide()
+            $("#arrujukaninternalgroup").hide()
         } else if (tindakLanjutType == '3') {
             $("#ardirujukkegroup").show()
             $("#artgl_kontrolgroup").show()
@@ -231,6 +233,7 @@
             $("#arrujukaneksternalgroup").show()
             $("#artiperujukan_group").show()
             getRujukan()
+            $("#arrujukaninternalgroup").hide()
         } else if (tindakLanjutType == '4') {
             $("#ardirujukkegroup").hide()
             $("#artgl_kontrolgroup").show()
@@ -240,6 +243,7 @@
             $("#arsprigroup").hide()
             $("#arrujukaneksternalgroup").hide()
             $("#artiperujukan_group").hide()
+            $("#arrujukaninternalgroup").hide()
         } else if (tindakLanjutType == '5') {
             $("#ardirujukkegroup").hide()
             $("#artgl_kontrolgroup").show()
@@ -249,8 +253,17 @@
             $("#arsprigroup").show()
             $("#arrujukaneksternalgroup").hide()
             $("#artiperujukan_group").hide()
-        } else {
-
+            $("#arrujukaninternalgroup").hide()
+        } else if (tindakLanjutType == '6') {
+            $("#ardirujukkegroup").hide()
+            $("#artgl_kontrolgroup").hide()
+            $("#arkdpoli_kontrolgroup").hide()
+            $("#ardescriptiongroup").hide()
+            $("#arskdpgroup").hide()
+            $("#arsprigroup").hide()
+            $("#arrujukaneksternalgroup").hide()
+            $("#artiperujukan_group").hide()
+            $("#arrujukaninternalgroup").show()
         }
     }
 

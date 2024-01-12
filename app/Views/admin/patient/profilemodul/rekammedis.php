@@ -229,6 +229,7 @@ $permission = user()->getPermissions();
                                                                 <option value="3">Dirujuk ke</option>
                                                                 <option value="4">Kontrol Kembali</option>
                                                                 <option value="5">Rawat Inap</option>
+                                                                <option value="6">Rujuk Internal Antar Poli</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -354,6 +355,68 @@ $permission = user()->getPermissions();
                                                             <div class="box-tab-tools" style="text-align: center;">
                                                                 <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                                                 <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="arrujukaninternalgroup" class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="mb-4">
+                                                        <h3>Pembuatan Rujukan Internal</h3>
+                                                        <div class="staff-members">
+                                                            <div class="col-sm-6 col-md-6">
+                                                                <div class="mb-3">
+                                                                    <div class="form-group">
+                                                                        <label>Tanggal Rencana</label>
+                                                                        <input id="rujintvisitdate" name=" rujintvisitdate" type="date" class="form-control" placeholder="yyyy-mm-dd" value="<?= date('Y-m-d'); ?>">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-md-6">
+                                                                <div class="mb-3">
+                                                                    <div class="form-group">
+                                                                        <label>Poli Tujuan</label>
+                                                                        <select name='rujintclinicid' id="rujintclinicid" class="form-control select2 act" style="width:100%">
+                                                                            <?php $cliniclist = array();
+                                                                            foreach ($clinic as $key => $value) {
+                                                                                if ($clinic[$key]['stype_id'] == '1') {
+                                                                                    $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                                                }
+                                                                            }
+                                                                            asort($cliniclist);
+                                                                            ?>
+                                                                            <?php foreach ($cliniclist as $key => $value) { ?>
+                                                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                            <?php } ?>
+                                                                        </select> <span class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6 col-md-6">
+                                                                <div class="mb-3">
+                                                                    <div class="form-group">
+                                                                        <label>Dokter Tujuan</label>
+                                                                        <select name='rujintemployeeid' id="rujintemployeeid" class="form-control select2 act" style="width:100%">
+                                                                            <?php $dokterlist = array();
+                                                                            foreach ($dokter as $key => $value) {
+                                                                                if ($key == 'P003') {
+                                                                                    foreach ($value as $key1 => $value1) {
+                                                                                        $dokterlist[$key1] = $value1;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            asort($dokterlist);
+                                                                            ?>
+                                                                            <?php foreach ($dokterlist as $key => $value) { ?>
+                                                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                        <span class="text-danger"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="box-tab-tools" style="text-align: center;">
+                                                                <button type="button" id="addnorujukan" onclick="postRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                                                <button type="button" id="deleterujukan" onclick="deleteRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
                                                             </div>
                                                         </div>
                                                     </div>

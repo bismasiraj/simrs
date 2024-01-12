@@ -170,6 +170,24 @@
                             .append($("<td>").append('<button type="button" onclick="getTreatResult(\'' + billJson[key].no_registration + '\',\'' + billJson[key].visit_id + '\',\'' + billJson[key].tarif_id + '\')" class="btn btn-secondary" data-row-id="1" autocomplete="off"><i class="fa fa-edit"></i></button>'))
                         )
                     }
+                    if (billJson[key].clinic_id == 'P013') {
+                        $("#labChargesBody").append($("<tr>")
+                            .append($("<td>").html(String(key + 1) + "."))
+                            .append($("<td>").attr("id", "labtreatment" + key).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
+                            .append($("<td>").attr("id", "labtreat_date" + key).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
+                            // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
+                            .append($("<td>").attr("id", "labsell_price" + key).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
+                            .append($("<td>").attr("id", "labquantity" + key).html(formatCurrency(billJson[key].quantity)).append($("<p>").html(billJson[key].name_of_status_pasien)))
+                            .append($("<td>").attr("id", "labamount_paid" + key).html(formatCurrency(billJson[key].tagihan)))
+                            .append($("<td>").attr("id", "labamount_plafond" + key).html((billJson[key].amount_plafond)))
+                            .append($("<td>").attr("id", "labamount_paid_plafond" + key).html(formatCurrency(billJson[key].amount_paid_plafond)))
+                            .append($("<td>").attr("id", "labdiscount" + key).html(formatCurrency(billJson[key].discount)))
+                            .append($("<td>").attr("id", "labsubsidisat" + key).html(formatCurrency(billJson[key].subsidisat)))
+                            .append($("<td>").attr("id", "labsubsidisat" + key).html(formatCurrency(billJson[key].subsidi)))
+                            // .append($("<td>").append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button type="button" onclick="addR()" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                        )
+                    }
+
 
 
 

@@ -27,12 +27,219 @@ $permission = user()->getPermissions();
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                 'pasienDiagnosa' => $pasienDiagnosa
             ]); ?>
-
-
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-xs-12">
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div id="eresepAdd" class="box-tab-tools text-center">
+                        <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6">
+                    <div id="eresepRAdd" class="box-tab-tools text-start" style="">
+                        <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                    </div>
+                </div> -->
+            </div>
             <div class="accordion mt-4">
                 <div class="panel-group" id="labBody">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <style>
+                    th {
+                        width: 200px;
+                    }
+
+                    #chargesBody td {
+                        text-align: center;
+                    }
+
+                    #chargesBody p {
+                        color: cadetblue;
+                    }
+                </style>
+                <div class="table-rep-plugin">
+                    <div class="table-responsive mb-0">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-primary" style="text-align: center;">
+                                <tr>
+                                    <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
+                                    <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 2%;">Jml</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
+                                    <th class="text-center" colspan="2" style="width: 20%;">Tanggungan pihak ke-3</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: auto;">Diskon</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Satuan</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Total</th class="text-center">
+                                    <th class="text-center" rowspan="2"></th class="text-center">
+                                    <!-- <th class="text-center" rowspan="2"></th class="text-center"> -->
+                                    <!-- <th class="text-center" rowspan="2">Jenis Pelayanan</th class="text-center">
+                            <th class="text-center" rowspan="2">Pembulatan</th class="text-center">
+                            <th class="text-center" colspan="15">Info Detil Billing</th class="text-center">
+                            <th class="text-center" rowspan="2">Jenis Transaksi</th class="text-center">
+                            <th class="text-center" rowspan="2">Tgl Keluar</th class="text-center">
+                            <th class="text-center" rowspan="2">Keterangan</th class="text-center">
+                            <th class="text-center" colspan="2">Rujukan Dari</th class="text-center">
+                            <th class="text-center" rowspan="2">Ruang Rawat Inap</th class="text-center">
+                            <th class="text-center" rowspan="2">Cara Keluar</th class="text-center">
+                            <th class="text-center" rowspan="2">Tgl Cetak</th class="text-center">
+                            <th class="text-center" rowspan="2">No Card</th class="text-center">
+                            <th class="text-center" rowspan="2">Jenis Tenaga Medik</th class="text-center">
+                            <th class="text-center" rowspan="2">Kasir</th class="text-center">
+                            <th class="text-center" colspan="3">Modifikasi</th class="text-center">
+                            <th class="text-center" colspan="3">Info Cetak</th class="text-center">
+                            <th class="text-center" rowspan="2">ID Transaksi</th class="text-center">
+                            <th class="text-center" rowspan="2">Closed Poli ID</th class="text-center">
+                            <th class="text-center" rowspan="2">Locked Billing ID</th class="text-center">
+                            <th class="text-center" rowspan="2">Setoran</th class="text-center"> -->
+                                </tr>
+                                <tr>
+                                    <th class="text-center">Nilai satuan</th class="text-center">
+                                    <th class="text-center">Total</th class="text-center">
+                                    <!-- <th class="text-center">Netto</th class="text-center">
+                            <th class="text-center">tagihan</th class="text-center">
+                            <th class="text-center">Diskon</th class="text-center">
+                            <th class="text-center">potongan</th class="text-center">
+                            <th class="text-center">subsidi</th class="text-center">
+                            <th class="text-center">pembayaran</th class="text-center">
+                            <th class="text-center">retur</th class="text-center">
+                            <th class="text-center">Nilai PPN</th class="text-center">
+                            <th class="text-center">Koreksi</th class="text-center">
+                            <th class="text-center">Embalace</th class="text-center">
+                            <th class="text-center">Biaya Jasa</th class="text-center">
+                            <th class="text-center">Jenis Tarif</th class="text-center">
+                            <th class="text-center">PPN</th class="text-center">
+                            <th class="text-center">Pokok jual</th class="text-center">
+                            <th class="text-center">Margin</th class="text-center">
+                            <th class="text-center">Pelayanan</th class="text-center">
+                            <th class="text-center">Dokter</th class="text-center">
+                            <th class="text-center">oleh</th class="text-center">
+                            <th class="text-center">Tanggal</th class="text-center">
+                            <th class="text-center">Dari</th class="text-center">
+                            <th class="text-center">Oleh</th class="text-center">
+                            <th class="text-center">tanggal</th class="text-center">
+                            <th class="text-center">Ke</th class="text-center"> -->
+                                </tr>
+                            </thead>
+                            <tbody id="labChargesBody" class="table-group-divider">
+                                <?php
+                                $total = 0;
+                                ?>
+                            </tbody>
+                            <tfoot class="table-group-divider">
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-6"></div>
+                                            <label for="labtagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labtagihan_total" name="labtagihan_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labsubsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labsubsidi_total" name="labsubsidi_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labpotongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labpotongan_total" name="labpotongan_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labpembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labpembulatan_total" name="labpembulatan_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labpelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labpelunasan_total" name="labpelunasan_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labpembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="labpembayaran_total" name="labpembayaran_total" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="labtotalnya" class="col-sm-4 col-form-label text-end">
+                                                <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
+                                            </label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control border border-primary border-3 text-end" id="labtotalnya" name="labtotalnya" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan='11' class="align_right">
+                                        <div class="row">
+                                            <div class="col-sm-5"></div>
+                                            <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
+                                            <div class="col-sm-3">
+                                                <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

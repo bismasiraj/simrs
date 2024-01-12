@@ -73,4 +73,10 @@
             }
         });
     }
+
+    function requestRad() {
+        url = '<?php echo base_url(); ?>admin/rekammedis/radOnlineRequest/' + btoa('<?= json_encode($visit); ?>')
+
+        window.open(url, "_blank")
+    }
 </script>

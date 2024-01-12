@@ -8,6 +8,7 @@
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
+
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';
         var ke = '%'
@@ -257,5 +258,55 @@
             }
 
         });
+    }
+
+    $("#rujintclinicid").on("click", function() {
+        $("#rujintemployeeid").html("");
+        console.log($("#rujintclinicid").val())
+        var clinicSelected = $("#rujintclinicid").val();
+        // dokterdpjp.forEach((value, key) => {
+        //     if (value[0] == clinicSelected) {
+        //         $("#rujintemployeeid").append(new Option(value[2], value[1]));
+        //     }
+        // })
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getdokterrujukan',
+            type: "POST",
+            data: {
+                clinicSelected: clinicSelected,
+                rujintvisitdate: $("#rujintvisitdate").val(),
+            },
+            dataType: 'json',
+            success: function(data) {
+                $("#rujintemployeeid").html("")
+                data.forEach((element, key) => {
+                    $("#rujintemployeeid").append(new Option(element.fullname, element.employee_id));
+                })
+            }
+        })
+    });
+
+    function postRujukInternal() {
+        var visitJson = JSON.parse('<?= json_encode($visit); ?>');
+        visitJson.visit_id = null
+        visitJson.clinic_id = $("#rujintclinicid").val()
+        visitJson.visit_date = $("#rujintvisitdate").val()
+        visitJson.booked_date = $("#rujintvisitdate").val()
+        visitJson.employee_id = $("#rujintemployeeid").val()
+        visitJson.clinic_id_from = '<?= $visit['clinic_id']; ?>'
+        visitJson.employee_id_from = '<?= $visit['clinic_id']; ?>'
+        visitJson.way_id = '19'
+        visitJson.isnew = '0'
+        visitJson.class_room_id = null
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/addvisit',
+            type: "POST",
+            data: visitJson,
+            dataType: 'json',
+            success: function(data) {
+                console.log(data)
+                alert("berhasil")
+            }
+        })
     }
 </script>
