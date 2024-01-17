@@ -31,6 +31,11 @@ $permission = user()->getPermissions();
         <div class="col-lg-9 col-md-9 col-sm-12">
             <div class="row mt-4">
                 <div class="col-md-12">
+                    <div id="listRequestRad" class="row">
+
+                    </div>
+                </div>
+                <div class="col-md-12">
                     <div id="eresepAdd" class="box-tab-tools text-center">
                         <a data-toggle="modal" onclick="requestRad()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Radiologi Online</a>
                     </div>

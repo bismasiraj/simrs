@@ -26,7 +26,6 @@
         getBillPoli(nomor, ke, mulai, akhir, lunas, klinik, rj, status, nota, trans)
         getResep(visit, nomor)
         getInacbg(visit)
-        getHasilLab(nomor, visit)
     })
 </script>
 <script type='text/javascript'>

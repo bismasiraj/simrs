@@ -21,6 +21,8 @@
         var nota = '%'
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
+        getListRequestLab(nomor, visit)
+        getHasilLab(nomor, visit)
 
     })
 </script>
@@ -70,6 +72,39 @@
                         .append($("<td>").html(hasilLabJson[key].nilai_rujukan))
                         .append($("<td>").html(hasilLabJson[key].description))
                     )
+                });
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    function getListRequestLab(nomor, visit) {
+
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestLab',
+            type: "POST",
+            data: JSON.stringify({
+                'nomor': nomor,
+                'visit': visit
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+
+
+                hasilLabJson = data
+
+                $("#labBody").html("")
+
+
+                hasilLabJson.forEach((element, key) => {
+                    console.log(element)
+                    $("#listRequestLab").append('<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Lab </h3> <p> Tanggal ' + element.vactination_date + ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getLabOnlineRequest/' + btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id + '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
                 });
             },
             error: function() {

@@ -21,7 +21,7 @@
         var nota = '%'
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
-
+        getListRequestRad(nomor, visit)
     })
 </script>
 <script type='text/javascript'>
@@ -66,6 +66,39 @@
                         .append($("<td>").append($("<p>").html(mrJson[key].teraphy_desc)).append($("<p>").html(mrJson[key].instruction)))
                         .append($("<td>").html(mrJson[key].fullname))
                     )
+                });
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    function getListRequestRad(nomor, visit) {
+
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestRad',
+            type: "POST",
+            data: JSON.stringify({
+                'nomor': nomor,
+                'visit': visit
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+
+
+                hasilLabJson = data
+
+                $("#labBody").html("")
+
+
+                hasilLabJson.forEach((element, key) => {
+                    console.log(element)
+                    $("#listRequestRad").append('<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Radiologi </h3> <p> Tanggal ' + element.vactination_date + ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getRadOnlineRequest/' + btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id + '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
                 });
             },
             error: function() {

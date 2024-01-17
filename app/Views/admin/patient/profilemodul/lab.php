@@ -31,7 +31,12 @@ $permission = user()->getPermissions();
         <div class="col-lg-9 col-md-9 col-xs-12">
             <div class="row mt-4">
                 <div class="col-md-12">
-                    <div id="eresepAdd" class="box-tab-tools text-center">
+                    <div id="listRequestLab" class="row">
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div id="" class="box-tab-tools text-center">
                         <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
                     </div>
                 </div>
