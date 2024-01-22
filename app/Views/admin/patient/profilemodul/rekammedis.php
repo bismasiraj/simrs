@@ -236,7 +236,7 @@ $permission = user()->getPermissions();
                                                 </div>
                                                 <div class="col-sm-4 col-md-3">
                                                     <div class="mb-3">
-                                                        <div id="artiperujukan_group" class="form-group">
+                                                        <div id="artiperujukan_group" class="form-group" style="display: none">
                                                             <label>Tipe Rujukan</label>
                                                             <select name="tiperujukan" id="artiperujukan" onchange="tindakLanjut()" class="form-control ">
                                                                 <option value="1">Penuh</option>
@@ -246,7 +246,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="ardirujukkegroup" class="col-sm-4 col-md-3">
+                                                <div id="ardirujukkegroup" class="col-sm-4 col-md-3" style="display: none">
                                                     <div class="mb-3">
                                                         <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
                                                             <div class="select2-full-width" style="width:100%">
@@ -256,7 +256,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="artgl_kontrolgroup" class="col-sm-4 col-md-3">
+                                                <div id="artgl_kontrolgroup" class="col-sm-4 col-md-3" style="display: none">
                                                     <div class="mb-3">
                                                         <div class="form-group">
                                                             <label>Tanggal Kontrol</label>
@@ -269,7 +269,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-3">
+                                                <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-3" style="display: none">
                                                     <div class="mb-3">
                                                         <div class="form-group">
                                                             <label>Ke Poli</label>
@@ -289,7 +289,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="ardescriptiongroup" class="col-sm-8 col-md-3">
+                                                <div id="ardescriptiongroup" class="col-sm-8 col-md-3" style="display: none">
                                                     <div class="mb-3">
                                                         <div class="form-group">
                                                             <label for="pwd">Alasan/Ket</label>
@@ -299,7 +299,7 @@ $permission = user()->getPermissions();
                                                 </div>
                                             </div>
                                             <div class="row mt-4 mb-4">
-                                                <div id="arskdpgroup" class="col-sm-12 col-md-6 col-lg-6">
+                                                <div id="arskdpgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
                                                     <div class="mb-4">
                                                         <h3>Pembuatan SKDP</h3>
                                                         <div class="staff-members">
@@ -319,7 +319,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="arsprigroup" class="col-sm-12 col-md-6 col-lg-6">
+                                                <div id="arsprigroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
                                                     <div class="mb-4">
                                                         <h3>Pembuatan SPRI</h3>
                                                         <div class="staff-members">
@@ -339,7 +339,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="arrujukaneksternalgroup" class="col-sm-12 col-md-6 col-lg-6">
+                                                <div id="arrujukaneksternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
                                                     <div class="mb-4">
                                                         <h3>Pembuatan Rujukan Eksternal</h3>
                                                         <div class="staff-members">
@@ -359,7 +359,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="arrujukaninternalgroup" class="col-sm-12 col-md-6 col-lg-6">
+                                                <div id="arrujukaninternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
                                                     <div class="mb-4">
                                                         <h3>Pembuatan Rujukan Internal</h3>
                                                         <div class="staff-members">

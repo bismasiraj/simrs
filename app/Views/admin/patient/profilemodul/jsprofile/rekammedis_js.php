@@ -294,7 +294,7 @@
         visitJson.booked_date = $("#rujintvisitdate").val()
         visitJson.employee_id = $("#rujintemployeeid").val()
         visitJson.clinic_id_from = '<?= $visit['clinic_id']; ?>'
-        visitJson.employee_id_from = '<?= $visit['clinic_id']; ?>'
+        visitJson.employee_id_from = '<?= $visit['employee_id']; ?>'
         visitJson.way_id = '19'
         visitJson.isnew = '0'
         visitJson.class_room_id = null

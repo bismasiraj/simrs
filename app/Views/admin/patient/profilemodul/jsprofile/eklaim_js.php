@@ -175,6 +175,9 @@
     var ekalkes = 0.0;
     var ekbmhp = 0.0;
     var ektotalBillEklaim = 0.0;
+    $("#eklaimTab").on("click", function() {
+        getEklaimData(eknomor_sep)
+    })
 </script>
 
 <script type="text/javascript">

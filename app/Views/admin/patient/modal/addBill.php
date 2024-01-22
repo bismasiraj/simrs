@@ -198,7 +198,7 @@
 
 
     $(document).ready(function(e) {
-        initializeSearchTarif("searchTarif")
+        initializeSearchTarif("searchTarif", '<?= $visit['clinic_id']; ?>')
         // $('#searchTarif').select2({
         //     ajax: {
         //         url: '<?= base_url(); ?>admin/patient/getTarif',
@@ -223,16 +223,15 @@
     })
 
     function addBill() {
-        // if($("#"))
-        setTarif()
+        setTarif('<?php $visit['clinic_id'] ?>', "searchTarif")
         $("#addBill").modal("show")
     }
 
-    function setTarif() {
-        tarifDataJson = $("#searchTarif").val();
+    function setTarif(clinicIdTarif, container) {
+        tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
 
-        // alert(tarifDataJson);
+        alert(tarifDataJson);
 
         $("#atrans_id").val('<?= $visit['trans_id']; ?>');
         $("#ano_registration").val('<?= $visit['no_registration']; ?>');
@@ -278,7 +277,7 @@
             ?>
         }
 
-        $("#aclinic_id").val('<?= $visit['clinic_id']; ?>');
+        $("#aclinic_id").val(clinicIdTarif);
         $("#aclinic_id_from").val('<?= $visit['clinic_id_from']; ?>');
         $("#atreat_date").val(get_date());
         $("#aexit_date").val(get_date());

@@ -1,6 +1,6 @@
 <?php
 $currency_symbol = "Rp. ";
-$permission = user()->getPermissions();
+$permissions = user()->getPermissions();
 ?>
 
 <style>
@@ -64,6 +64,28 @@ $permission = user()->getPermissions();
 
                 </table>
             </div>
+            <form id="form1" action="" method="post" class="">
+                <div class="box-body row mt-4">
+                    <input type="hidden" name="ci_csrf_token" value="">
+
+                    <div class="col-sm-12 col-md-12 mb-4">
+                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                <div class="row">
+
+                                    <div class="col-md-8"><select id="searchTarifRad" class="form-control" style="width: 100%"></select></div>
+
+                                    <div class="col-md-4">
+                                        <div class="box-tab-tools">
+                                            <a data-toggle="modal" onclick='addBillRad()' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php }
+                        } ?>
+                    </div>
+                </div>
+            </form>
             <div class="table-rep-plugin">
                 <div class="table-responsive mb-0">
                     <table class="table table-sm table-hover">

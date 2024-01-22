@@ -37,9 +37,6 @@ class TreatTarifModel extends Model
         TREAT_TARIF.perda_id,
         TREAT_TARIF.CASEMIX_ID")
             ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
-            //     ->where("tarif_id in (select tarif_id from clinic_tarif where clinic_id like '$klinik' and 
-            // org_unit_code=treat_tarif.org_unit_code and tarif_id =treat_tarif.tarif_id)")
-            // ->where('org_unit_code', $this->org_unit_code)
             ->like('treat_tarif.implemented', '1')
             ->notLike('treat_tarif.treat_id', '010001')
             ->like("cast(isnull(TREAT_TARIF.PERDA_ID,1) as varchar(10))", '1')

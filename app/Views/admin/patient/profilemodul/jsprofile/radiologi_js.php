@@ -8,19 +8,24 @@
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
+
+    var nomor = '<?= $visit['no_registration']; ?>';
+    var ke = '%'
+    var mulai = '2023-08-01' //tidak terpakai
+    var akhir = '2023-08-31' //tidak terpakai
+    var lunas = '%'
+    // var klinik = '<?= $visit['clinic_id']; ?>'
+    var klinik = '%'
+    var rj = '%'
+    var status = '%'
+    var nota = '%'
+    var trans = '<?= $visit['trans_id']; ?>'
+    var visit = '<?= $visit['visit_id']; ?>'
     $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
+        // getListRequestRad(nomor, visit)
+        initializeSearchTarif("searchTarifRad", 'P016');
+    })
+    $("#radTab").on("click", function() {
         getListRequestRad(nomor, visit)
     })
 </script>
@@ -93,7 +98,7 @@
 
                 hasilLabJson = data
 
-                $("#labBody").html("")
+                $("#listRequestRad").html("")
 
 
                 hasilLabJson.forEach((element, key) => {
@@ -111,5 +116,10 @@
         url = '<?php echo base_url(); ?>admin/rekammedis/radOnlineRequest/' + btoa('<?= json_encode($visit); ?>')
 
         window.open(url, "_blank")
+    }
+
+    function addBillRad() {
+        setTarif('P016', "searchTarifRad")
+        $("#addBill").modal("show")
     }
 </script>

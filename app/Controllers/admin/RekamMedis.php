@@ -376,7 +376,7 @@ class RekamMedis extends \App\Controllers\BaseController
         $pasien = json_decode((string)$pasien, true);
 
         // return json_encode($data['vactination_id']);
-
+        $isNewKunj = false;
         if ($data['vactination_id'] == null) {
             $db = db_connect();
             $select = $db->query("select cast(year(getdate()) as varchar(4)) +
@@ -388,6 +388,7 @@ class RekamMedis extends \App\Controllers\BaseController
                 right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) as id")->getResultArray();
             // $vactination_id = $select[0]['id'];
             $data['vactination_id'] = $select[0]['id'];
+            $isNewKunj = true;
         }
 
 
@@ -398,7 +399,30 @@ class RekamMedis extends \App\Controllers\BaseController
         $pl = new PasienLaboratModel();
 
         $pl->save($data);
-        // return json_encode($vactination_id);
+
+        if ($isNewKunj) {
+            $visitSave = $visit;
+            $visitSave['clinic_id'] = 'P013';
+            $select = $db->query("select cast(year(getdate()) as varchar(4)) +
+                right(cast((month(getdate()) + 100) as varchar(3)),2)+
+                right(cast((day(getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(hour,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(minute,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(second,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) as id")->getResultArray();
+            // $vactination_id = $select[0]['id'];
+            $visitSave['visit_id'] = $select[0]['id'];
+            $visitSave['visit_date'] = new RawSql("getdate()");
+            $visitSave['booked_date'] = new RawSql("getdate()");
+            $visitSave['clinic_id_from'] = $visitSave['clinic_id'];
+            $visitSave['employee_id_from'] = $visit['employee_id'];
+            $visitSave['way_id'] = '19';
+            $visitSave['isnew'] = '0';
+            $visitSave['class_room_id'] = null;
+
+            $pv = new PasienVisitationModel();
+            $pv->insert($visitSave);
+        }
 
         return view('admin\patient\profilemodul\subprofilemodul\labonline', ['visit' => $visit, 'pasien' => $pasien, 'lab' => $data]);
 
@@ -808,5 +832,128 @@ class RekamMedis extends \App\Controllers\BaseController
         $p = new PasienModel();
         $pasien = $this->lowerKey($p->find($visit['no_registration']));
         return view('admin\patient\profilemodul\subprofilemodul\labonline', ['visit' => $visit, 'pasien' => $pasien, 'lab' => $data]);
+    }
+
+    public function rmj2($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_1($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_2($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-2.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_3($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-3.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_4($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-4.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+
+    public function rmj2_5($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-5.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_6($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_7($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_8($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-8.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_9($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-8.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_11($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-11.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_12($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-12.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+    public function rmj2_13($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-13.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
+
+
+
+
+
+
+
+
+
+    public function rm3_2_1($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-3-2-1.php", [
+                "visit" => $visit
+            ]);
+        }
     }
 }

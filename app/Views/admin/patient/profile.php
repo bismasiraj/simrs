@@ -43,20 +43,21 @@ $currency_symbol = 'Rp. ';
                             <div class="card-body">
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                        <li class="nav-item"><a class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li>
-                                        <li class="nav-item"><a class="nav-link active" href="#rekammedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Rekam Medis</a></li>
+                                        <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li>
+                                        <li class="nav-item"><a id="rekammedisTab" class="nav-link active" href="#rekammedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Rekam Medis</a></li>
+                                        <li class="nav-item"><a id="rmTab" class="nav-link" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Form RM</a></li>
                                         <?php if ($visit['isrj'] == '0') { ?>
-                                            <li class="nav-item"><a class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Awal</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li>
+                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Awal</a></li>
+                                            <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li>
                                         <?php } else { ?>
-                                            <li class="nav-item"><a class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li>
+                                            <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li>
                                         <?php } ?>
-                                        <li class="nav-item"><a class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li>
+                                        <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
+                                        <li class="nav-item"><a id="eresepTab" class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
+                                        <li class="nav-item"><a id="mrpasienTab" class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li>
+                                        <li class="nav-item"><a id="labTab" class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
+                                        <li class="nav-item"><a id="radTab" class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
+                                        <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li>
                                         <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
                                     </ul>
                                     <div class="tab-content">
@@ -434,6 +435,25 @@ $currency_symbol = 'Rp. ';
                                             'clinic' => $clinic,
                                             'dokter' => $employee
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/formrm', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+                                            'clinic' => $clinic,
+                                            'dokter' => $employee
+                                        ]); ?>
                                         <?php echo view('admin/patient/profilemodul/cppt', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -757,7 +777,7 @@ $currency_symbol = 'Rp. ';
         }
     });
 
-    function initializeSearchTarif(theid) {
+    function initializeSearchTarif(theid, clinicIdTarif) {
         $("#" + theid).select2({
             placeholder: "Input Tarif",
             ajax: {
@@ -768,7 +788,7 @@ $currency_symbol = 'Rp. ';
                 data: function(params) {
                     return {
                         searchTerm: params.term, // search term
-                        klinik: '<?= $visit['clinic_id']; ?>',
+                        klinik: clinicIdTarif,
                         kelas: '<?= $visit['isrj'] == '1' ? 0 : $visit['class_id']; ?>'
                     };
                 },

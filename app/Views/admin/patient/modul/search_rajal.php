@@ -210,7 +210,7 @@ $permissions = user()->getPermissions();
                         <th>Asuransi/Gender/<br>Agama</th>
                         <th>Poli/Asal Poli/<br>Dokter</th>
                         <th>No SEP / Rujukan</th>
-                        <th>Kelas / Hak Kelas</th>
+                        <th>Poli Asal / Kelas</th>
                         <th></th>
                     </tr>
                 </thead>

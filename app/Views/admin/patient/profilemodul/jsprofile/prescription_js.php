@@ -45,6 +45,11 @@
     var option = <?= json_encode($option); ?>;
     var optionJml = <?= json_encode($optionJml); ?>;
     var visitHistory;
+    // getResep(visit, nomor)
+
+    $("#eresepTab").on("click", function() {
+        getResep(visit, nomor)
+    })
 </script>
 
 

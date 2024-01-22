@@ -3657,48 +3657,48 @@ This Function is used to Add Patient
 
         $ws_query = [];
 
-        $norm = $query[0]["no_registration"];
-        $ws_query["prosedur_non_bedah"] = $query[0]["prosedur_non_bedah"];
-        $ws_query["prosedur_bedah"] = $query[0]["prosedur_bedah"];
-        $ws_query["konsultasi"] = $query[0]["konsultasi"];
-        $ws_query["tenaga_ahli"] = $query[0]["tenaga_ahli"];
-        $ws_query["keperawatan"] = $query[0]["keperawatan"];
-        $ws_query["penunjang"] = $query[0]["penunjang"];
-        $ws_query["radiologi"] = $query[0]["radiologi"];
-        $ws_query["laboratorium"] = $query[0]["laboratorium"];
-        $ws_query["pelayanan_darah"] = $query[0]["pelayanan_darah"];
-        $ws_query["rehabilitasi"] = $query[0]["rehabilitasi"];
-        $ws_query["kamar"] = $query[0]["kamar"];
-        $ws_query["rawat_intensif"] = $query[0]["rawat_intensif"];
-        $ws_query["sewa_alat"] = $query[0]["sewa_alat"];
+        if (isset($query[0]["no_registration"])) {
+            $norm = $query[0]["no_registration"];
+            $ws_query["prosedur_non_bedah"] = $query[0]["prosedur_non_bedah"];
+            $ws_query["prosedur_bedah"] = $query[0]["prosedur_bedah"];
+            $ws_query["konsultasi"] = $query[0]["konsultasi"];
+            $ws_query["tenaga_ahli"] = $query[0]["tenaga_ahli"];
+            $ws_query["keperawatan"] = $query[0]["keperawatan"];
+            $ws_query["penunjang"] = $query[0]["penunjang"];
+            $ws_query["radiologi"] = $query[0]["radiologi"];
+            $ws_query["laboratorium"] = $query[0]["laboratorium"];
+            $ws_query["pelayanan_darah"] = $query[0]["pelayanan_darah"];
+            $ws_query["rehabilitasi"] = $query[0]["rehabilitasi"];
+            $ws_query["kamar"] = $query[0]["kamar"];
+            $ws_query["rawat_intensif"] = $query[0]["rawat_intensif"];
+            $ws_query["sewa_alat"] = $query[0]["sewa_alat"];
 
 
-        $builder = $tb->select("isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
+            $builder = $tb->select("isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 4 then sell_price*(DOSE_PRESC - quantity) else 0 end),0) as obat_kronis,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '21' or tt.CASEMIX_ID = '15') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as bmhp,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '1' or tt.CASEMIX_ID = '14') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as alkes,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) <> 10 and tt.casemix_id = '13' and (isnull(ISALKES,0) not in ('1','21')) then tagihan*(1-discount) else 0 end),0) +
         sum(case when racikan in (1,4) or treatment_bill.brand_id is null or (treatment_bill.resep_no) is null then 0 else 1000 end) as obat")
-            ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
-            ->join("goods g", "treatment_bill.brand_id = g.brand_id", "left")
-            ->where("trans_id", $trans)
-            ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or treatment_bill.tarif_type = 803)");
+                ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
+                ->join("goods g", "treatment_bill.brand_id = g.brand_id", "left")
+                ->where("trans_id", $trans)
+                ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or treatment_bill.tarif_type = 803)");
 
 
 
-        $query = $this->lowerKey($builder->findAll());
+            $query = $this->lowerKey($builder->findAll());
 
-        $ws_query["obat"] = $query[0]["obat"];
-        $ws_query["obat_kronis"] = $query[0]["obat_kronis"];
-        $ws_query["obat_kemoterapi"] = $query[0]["obat_kemoterapi"];
-        $ws_query["alkes"] = $query[0]["alkes"];
-        $ws_query["bmhp"] = $query[0]["bmhp"];
+            $ws_query["obat"] = $query[0]["obat"];
+            $ws_query["obat_kronis"] = $query[0]["obat_kronis"];
+            $ws_query["obat_kemoterapi"] = $query[0]["obat_kemoterapi"];
+            $ws_query["alkes"] = $query[0]["alkes"];
+            $ws_query["bmhp"] = $query[0]["bmhp"];
 
-        $p = new PasienModel();
-        $query = $p->select('date_of_birth')->find($norm);
-        $ws_query["date_of_birth"] = $query['date_of_birth'];
-
-
+            $p = new PasienModel();
+            $query = $p->select('date_of_birth')->find($norm);
+            $ws_query["date_of_birth"] = $query['date_of_birth'];
+        }
 
         return json_encode($ws_query);
     }

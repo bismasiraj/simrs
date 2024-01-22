@@ -1,6 +1,6 @@
 <?php
 $currency_symbol = "Rp. ";
-$permission = user()->getPermissions();
+$permissions = user()->getPermissions();
 ?>
 
 <style>
@@ -40,16 +40,34 @@ $permission = user()->getPermissions();
                         <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
                     </div>
                 </div>
-                <!-- <div class="col-md-6">
-                    <div id="eresepRAdd" class="box-tab-tools text-start" style="">
-                        <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
-                    </div>
-                </div> -->
             </div>
             <div class="accordion mt-4">
                 <div class="panel-group" id="labBody">
                 </div>
             </div>
+
+            <form id="form1" action="" method="post" class="">
+                <div class="box-body row mt-4">
+                    <input type="hidden" name="ci_csrf_token" value="">
+
+                    <div class="col-sm-12 col-md-12 mb-4">
+                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                <div class="row">
+
+                                    <div class="col-md-8"><select id="searchTarifLab" class="form-control" style="width: 100%"></select></div>
+
+                                    <div class="col-md-4">
+                                        <div class="box-tab-tools">
+                                            <a data-toggle="modal" onclick='addBillLab()' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php }
+                        } ?>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
                 <style>
                     th {

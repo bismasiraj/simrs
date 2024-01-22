@@ -8,22 +8,25 @@
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
+    var nomor = '<?= $visit['no_registration']; ?>';
+    var ke = '%'
+    var mulai = '2023-08-01' //tidak terpakai
+    var akhir = '2023-08-31' //tidak terpakai
+    var lunas = '%'
+    // var klinik = '<?= $visit['clinic_id']; ?>'
+    var klinik = '%'
+    var rj = '%'
+    var status = '%'
+    var nota = '%'
+    var trans = '<?= $visit['trans_id']; ?>'
+    var visit = '<?= $visit['visit_id']; ?>'
     $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-        getListRequestLab(nomor, visit)
+        // getListRequestLab(nomor, visit)
         getHasilLab(nomor, visit)
-
+        initializeSearchTarif("searchTarifLab", 'P013');
+    })
+    $("#labTab").on("click", function() {
+        getListRequestLab(nomor, visit)
     })
 </script>
 <script type='text/javascript'>
@@ -36,6 +39,10 @@
         return components.join(",");
     }
 
+    function addBillLab() {
+        setTarif('P013', "searchTarifLab")
+        $("#addBill").modal("show")
+    }
 
     function isnullcheck(parameter) {
         return parameter == null ? 0 : (parameter)
@@ -99,7 +106,7 @@
 
                 hasilLabJson = data
 
-                $("#labBody").html("")
+                $("#listRequestLab").html("")
 
 
                 hasilLabJson.forEach((element, key) => {
