@@ -3,7 +3,10 @@
 namespace App\Controllers;
 
 use App\Models\EmployeeAllModel;
+use App\Models\PasienModel;
+use App\Models\TreatmentBillModel;
 use CodeIgniter\Controller;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
@@ -305,6 +308,20 @@ abstract class BaseController extends Controller
         newid() as ssencounter_id");
         return $builder->getResultArray();
     }
+    public function generateIdTgl()
+    {
+        $db = db_connect();
+        $builder = $db->query("select cast(year(getdate()) as varchar(4)) +
+                                right(cast((month(getdate()) + 100) as varchar(3)),2)+
+                                right(cast((day(getdate()) + 100) as varchar(3)),2)+
+                                right(cast((datepart(hour,getdate()) + 100) as varchar(3)),2)+
+                                right(cast((datepart(minute,getdate()) + 100) as varchar(3)),2)+
+                                right(cast((datepart(second,getdate()) + 100) as varchar(3)),2)+
+                                right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) theid
+                                ");
+        $id = $builder[0]['theid'];
+        return $id;
+    }
 
     public function cekTindakanTarif($tipe)
     {
@@ -343,14 +360,270 @@ abstract class BaseController extends Controller
         // if litipe=15   then lsTarif='020015'   //umum-gigi	
         // return lsTarif
     }
-    public function saveTarifDaftar($employeeId, $nama, $ageyear, $agemonth, $ageday)
+    public function saveTarifDaftar($data, $tindakan, $nota)
     {
         // if isnull(sKunj.cost_center) or sKunj.cost_center="" then
         //     select account_id into :lsCC from pasien where no_registration=:sKunj.nomor;
         // else	
         // lsCC = sKunj.cost_center
         // end if
+        $employeeId = $data['employee_id'];
         $db = db_connect();
-        $select = $db->query("select ea.fullname from employee_all ea where ea.employee_id ='$employeeId'");
+        $select = $db->query("select ea.fullname from employee_all ea where ea.employee_id ='$employeeId'")->getResultArray();
+        $dokter = $select[0]['fullname'];
+
+        $select = $db->query("select  tt.tarif_id,tt.tarif_name,
+                                (select sum(amount) from tarif_comp where
+                                tarif_id = tt.tarif_id) as jml,  class_id, tt.iscito, tt.tarif_type
+                                from treat_tarif tt
+                                where tt.treat_id='$tindakan'");
+        $tarif_id = $select[0]['tarif_id'];
+        $tarif_name = $select[0]['tarif_name'];
+        $jml = $select[0]['jml'];
+        $class_id = $select[0]['class_id'];
+        $iscito = $select[0]['iscito'];
+        $tarif_type = $select[0]['tarif_type'];
+
+        // select  tt.tarif_id,tt.tarif_name, &
+        // (select sum(amount) from tarif_comp where &
+        // tarif_id = tt.tarif_id) as jml,  class_id, tt.iscito, tt.tarif_type
+        // into :lsTarif, :lsNama, :ldcAmount, :liKelas, :lsCito, :lsTipe
+        // from treat_tarif tt
+        // where tt.treat_id=:tindakan
+
+        if (is_null($data['class_id_plafond'])) {
+            $kelas = $data['class_id'];
+        } else {
+            $kelas = $data['class_id_plafond'];
+        }
+
+        // if isnull(sKunj.class_id_plafond) then
+        //     liKelasP = sKunj.class_id
+        // else
+        //     liKelasP = sKunj.class_id_plafond
+        // end if
+
+        if (!is_null($jml) && $jml > 0) {
+            $ldcSubsidi = $this->hitung_subsidi($data['status_pasien_id'], $tarif_id, $jml);
+
+            $lsBill = $this->max_bill($data['visit_date']);
+
+            $dataBill['org_unit_code'] = $data['org_unit_code'];
+            $dataBill['no_registration'] = $data['no_registration'];
+            $dataBill['thename'] = $data['diantar_oleh'];
+            $dataBill['theaddress'] = $data['visitor_address'];
+            $dataBill['theid'] = $data['pasien_id'];
+            $dataBill['visit_id'] = $data['visit_id'];
+            $dataBill['bill_id'] = $lsBill;
+            $dataBill['tarif_id'] = $tarif_id;
+            $dataBill['treatment'] = $tarif_name;
+            $dataBill['amount'] = $jml;
+            $dataBill['sell_price'] = $jml;
+            $dataBill['diskon'] = 0;
+            $dataBill['amount_paid'] = $jml;
+            $dataBill['quantity'] = 1;
+            $dataBill['subsidi'] = $ldcSubsidi;
+            $dataBill['iscetak'] = '1';
+            $dataBill['islunas'] = '0';
+            $dataBill['clinic_id'] = $data['clinic_id'];
+            $dataBill['clinic_id_from'] = $data['clinic_id_from'];
+            $dataBill['employee_id'] = $data['employee_id'];
+            $dataBill['doctor'] = $dokter;
+            $dataBill['treat_date'] = $data['visit_date'];
+            $dataBill['exit_date'] = $data['visit_date'];
+            $dataBill['modified_date'] = new RawSql("getdate()");
+            $dataBill['modified_by'] = user()->username;
+            $dataBill['modified_from'] = $data['clinic_id'];
+            $dataBill['nota_no'] = $nota;
+            $dataBill['class_id'] = $data['class_id'];
+            $dataBill['isrj'] = $data['isrj'];
+            $dataBill['status_pasien_id'] = $data['status_pasien_id'];
+            $dataBill['payor_id'] = $data['payor_id'];
+            $dataBill['class_id_plafond'] = $data['class_id_plafond'];
+            $dataBill['amount_plafond'] = 0;
+            $dataBill['amount_paid_plafond'] = 0;
+            $dataBill['ageyear'] = $data['ageyear'];
+            $dataBill['agemonth'] = $data['agemonth'];
+            $dataBill['ageday'] = $data['ageday'];
+            $dataBill['gender'] = $data['gender'];
+            $dataBill['kal_id'] = $data['kal_id'];
+            $dataBill['racikan'] = 102;
+            $dataBill['account_id'] = null;
+            $dataBill['tagihan'] = $jml;
+            $dataBill['subsidisat'] = $ldcSubsidi;
+            $dataBill['tarif_type'] = $tarif_type;
+            $dataBill['theorder'] = 2;
+            $dataBill['trans_id'] = $data['trans_id'];
+
+            $tb = new TreatmentBillModel();
+
+            $tb->insert($dataBill);
+        }
+
+        //         IF (not isnull(ldcAmount)) and ldcAmount > 0 then 
+        // 					//do while sqlca.sqlcode = 0
+
+
+
+        // 							ldcSubsidi = hitung_subsidi(sKunj.status_pasien,lsTarif,ldcAmount) 
+        // //							if sKunj.payor <> '0' and sKunj.class_id_plafond<> 99 then //99 paket
+        // //								  lrUang = get_plafond(sKunj.class_id_plafond,lsNama,lsCito)//hitung plafond 
+        // //							else
+        // //								  lrUang = 0
+        // //							end if
+        // 							lsBill=max_bill(datetime(sKunj.tgl_kunjung))
+
+        // 							//jika belum ada biaya pendaftaran, insertkan
+        // 							insert into treatment_bill
+        // 								(org_unit_code, no_registration, thename,theaddress,theid,
+        // 								visit_id, bill_id,  
+        // 								tarif_id, treatment, 
+        // 								amount, sell_price, diskon,amount_Paid, quantity, subsidi,  iscetak,
+        // 								islunas,clinic_id, clinic_id_from, 
+        // 								employee_id,doctor,treat_date,exit_date,  
+        // 								modified_date, modified_by,
+        // 								modified_from,nota_no, class_id, isRJ, 
+        // 								status_pasien_id, payor_id,class_id_plafond,
+        // 								amount_plafond, amount_Paid_plafond,
+        // 								ageyear,agemonth,ageday,gender, kal_id,racikan,account_id, tagihan,subsidisat,tarif_type,theorder, trans_id ) //==> new TRANS_ID
+        // 							values
+        // 								(:gsOrg, :sKunj.nomor, :lsNamaUmur,:sKunj.alamat,:sKunj.npk,
+        // 								:sKunj.kunjungan,:lsBill,
+        // 								:lsTarif,:lsNama,
+        // 								:ldcAmount,:ldcAmount,0,:ldcAmount,1,:ldcSubsidi,'1',
+        // 								'0',:skunj.poli,:gsPoli,
+        // 								:sKunj.dokter,:lsdoctor,:sKunj.tgl_kunjung, :sKunj.tgl_kunjung,
+        // 								getdate(),:gsUser,
+        // 								:gsPoli,:nota, :liKelas,'1',:sKunj.status_pasien,
+        // 								:sKunj.payor,:liKelasP,:lrUang,:lrUang,
+        // 								:liTh,:liBln,:liHr,:sKunj.sex, :sKunj.kal_id,102,:lsCC,:ldcAmount,:ldcSubsidi,:lsTipe,2,:sKunj.trans_id);
+        // 							if sqlca.sqlcode = -1 then 
+        // 								  MessageBox("SQL error", SQLCA.SQLErrText);
+        // 								  rollback;	
+        // 							elseif sqlca.sqlcode = 100 then 
+        // 								  MessageBox("TARIF PENDAFTARAN", "Tarif Pendaftaran Belum ada, silakan dimasukkan secara manual!!!") ;
+        // 						   elseif sqlca.sqlcode = 0 then 
+        // 								  commit using sqlca;
+        // 							end if
+
+        // 						//	end if
+        // //						fetch cTarif into :lsTarif, :ldcAmount,:lsNama, :liKelas;
+        // //						setnull(lsBill)
+
+        // 					//loop
+        // end if
+
+    }
+
+    public function hitung_subsidi($status, $tarif, $biaya)
+    {
+        $ldcDiskon = $this->set_diskon($status, $tarif);
+
+        if ($ldcDiskon > 1) {
+            $ldcDiskon = $ldcDiskon;
+        } else if ($ldcDiskon <= 1 && $ldcDiskon > 0) {
+            $ldcDiskon = $ldcDiskon * $biaya;
+        } else {
+            $ldcDiskon = 0;
+        }
+        // 	set subsidi otomatis
+        // decimal ldbdiskon,ldbHarga 
+
+        // ldbDiskon = set_diskon(status,tarif);
+
+        // if ldbDiskon > 1 then	
+
+        //     ldbDiskon = set_diskon(status,tarif);//ldbDiskon/biaya;
+
+
+        // elseif ldbDiskon <=1 and ldbDiskon >0 then
+
+        //     ldbDiskon = set_diskon(status,tarif) * biaya;
+        // else
+
+        //     ldbDiskon=0;
+        // end if
+
+
+        // return ldbDiskon
+    }
+    public function set_diskon($status, $tarif)
+    {
+
+        $db = db_connect();
+        $select = $db->query("select sum(percentage) as percentage, sum(subsidi) as subsidi from subsidi where status_pasien_id = '$status' and tarif_id = '$tarif' group by status_pasien_id, tarif_id")->getResultArray();
+        $percentage = $select[0]['percentage'];
+        $subsidi = $select[0]['subsidi'];
+
+        if (is_null($subsidi))
+            $subsidi = 0;
+        if (is_null($percentage))
+            $percentage = 0;
+
+        if ($subsidi == 0) {
+            return $percentage;
+        } else {
+            return $subsidi;
+        }
+
+        // decimal ldcPersen, ldcSubsidi
+
+
+        // declare cDisc cursor for select sum(percentage), sum(subsidi)
+        // from subsidi where
+        // status_pasien_id =: status and
+        // tarif_id=:tarif
+        // group by status_pasien_id, tarif_id;
+
+        // open cDisc;
+        // fetch cDisc into :ldcPersen,:ldcSubsidi;
+        // close cDisc;
+
+        // if isnull(ldcSubsidi) then ldcSubsidi = 0
+        // if isnull(ldcPersen) then ldcPersen = 0
+
+        // if ldcSubsidi= 0 then 
+        //         return ldcPersen;
+        // else
+        //         return ldcSubsidi
+        // end if
+    }
+
+    public function max_bill($tglKunj)
+    {
+        return $this->generateIdTgl();
+    }
+    public function cek_baru_lama_rs($no_registration, $visit_date)
+    {
+        $p = new PasienModel();
+        $select = $p->select("case when registration_date < '$visit_date and registration_date <> '$visit_date then '0' else '1' end as isnew")->find($no_registration);
+
+        return $select['isnew'];
+        // datetime ldtPertama
+        // ldtPertama = dw_1.getItemDateTime(dw_1.getrow(),'registration_Date')
+
+        // if date(ldtPertama) < date(Visit)  and (date(ldtPertama) <> date(visit))  then
+
+        //     return '0' //pasien lama
+        // else
+        //     return '1' //pasien baru
+        // end if
+
+
+        // string lsid
+        // int likunj
+
+
+        //         return '1' 																			
+
+    }
+    public function cek_tindakan_tarif_baru($lsbaru)
+    {
+        $tarif = '';
+        if ($lsbaru == '1') {
+            $tarif = '020005';
+        }
+
+        return $tarif;
     }
 }
