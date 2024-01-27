@@ -107,7 +107,7 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="mb-3">
                                                     <div class="form-group">
-                                                        <label for="pwd">Periksa Fisik</label>
+                                                        <label for="pwd">Periksa Fisik <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>
                                                         <textarea id="arpemeriksaan" name="pemeriksaan" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>
@@ -115,7 +115,7 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="mb-3">
                                                     <div class="form-group">
-                                                        <label for="pwd">Periksa Lab</label>
+                                                        <label for="pwd">Periksa Lab <a id="copyPeriksaLabBtn" href="#" onclick="copyPeriksaLab()">(Copy)</a></label>
                                                         <textarea id="arpemeriksaan_02" name="pemeriksaan_02" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>
@@ -123,7 +123,7 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="mb-3">
                                                     <div class="form-group">
-                                                        <label for="pwd">Periksa RO</label>
+                                                        <label for="pwd">Periksa RO <a id="copyPeriksaRadBtn" href="#" onclick="copyPeriksaRad()">(Copy)</a></label>
                                                         <textarea id="arpemeriksaan_03" name="pemeriksaan_03" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>
@@ -139,7 +139,7 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="mb-3">
                                                     <div class="form-group">
-                                                        <label for="pwd">Terapi</label>
+                                                        <label for="pwd">Terapi <a id="copyTerapiBtn" href="#" onclick="copyTerapi()">(Copy)</a></label>
                                                         <textarea id="arteraphy_desc" name="teraphy_desc" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>

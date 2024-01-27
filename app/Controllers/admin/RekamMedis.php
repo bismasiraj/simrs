@@ -22,6 +22,73 @@ use CodeIgniter\Database\RawSql;
 
 class RekamMedis extends \App\Controllers\BaseController
 {
+    public function getPeriksaFisik($visit_id)
+    {
+        $db = db_connect();
+        $query = "select top 1
+                'BB : ' + isnull(cast(WEIGHT as varchar(10)),'')  + 'Kg , ' +'TB : ' + isnull(cast(height as varchar(10)),'') + ' cm , ' +
+                'IMT : ' +  isnull(cast( cast ( weight / ( (height /100) *(height /100)) as decimal(8,2)) as varchar(10)),'') + ' , ' +
+                'Suhu : ' + isnull(cast(temperature as varchar(10)),'') + ' C , ' +
+                'Tek.Darah : '+ isnull(cast(CAST(TENSION_UPPER AS DECIMAL(6,0)) as varchar(10)),'') + ' / ' + 
+                isnull(cast(CAST(TENSION_BELOW AS DECIMAL(6,0) ) as varchar(10)),'') + ' mmHg , ' + 
+                'Nadi : ' + isnull( cast(CAST(nadi AS DECIMAL(6,0) )as varchar(10)) , '') + ' /mnt , ' + 'Napas : ' + isnull(cast(CAST(NAFAS AS DECIMAL(4,0)) as varchar(10)),'') + ' /mnt , ' + ' SpO2 : ' + 
+                isnull(cast(saturasi as varchar(10)),'') + ' % ' as periksafisik
+                ,anamnase 
+                from EXAMINATION_INFO where visit_id = '$visit_id'
+                order by EXAMINATION_DATE desc";
+        $select = $db->query($query)->getResultArray();
+
+        return json_encode($select);
+    }
+    public function getPeriksaLab($trans_id)
+    {
+        $db = db_connect();
+        $query = "select  STUFF(
+             (SELECT ',' +  hl.tarif_name + ' : ' + cast(hasil as varchar(250))
+			 from sharelis.dbo.hasilLIS hl inner join  treatment_bill tb on 
+              hl.KODE_TARIF COLLATE DATABASE_DEFAULT = tb.TARIF_ID  COLLATE DATABASE_DEFAULT
+			  and hl.nolab_rs COLLATE DATABASE_DEFAULT = tb.NOTA_NO COLLATE DATABASE_DEFAULT and
+			  tb.trans_id = '$trans_id'
+			  order by hl.reg_date
+              FOR XML PATH (''))
+             , 1, 1, '') periksalab
+             from ORGANIZATIONUNIT;";
+        $select = $db->query($query)->getResultArray();
+
+        return json_encode($select);
+    }
+    public function getPeriksaRad($trans_id)
+    {
+        $db = db_connect();
+        $query = " select REPLACE(replace( STUFF(
+             (SELECT ';' +  ' Pemeriksaan : ' + tr.tarif_name + '  '
+			 + ' - '  + ' Kesimpulan : ' + CONCLUSION
+			 from TREAT_RESULTS tr where
+			  tr.visit_trans = '$trans_id'  and
+              tr.CLINIC_ID = 'P016' 	 
+			  order by tr.PICKUP_DATE
+              FOR XML PATH (''))
+             , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksarad
+			 from ORGANIZATIONUNIT";
+        $select = $db->query($query)->getResultArray();
+
+        return json_encode($select);
+    }
+    public function getTerapi($visit_id)
+    {
+        $db = db_connect();
+        $query = "select  STUFF(
+             (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
+			  treatment_obat.visit_id  = '$visit_id' 
+			  and DESCRIPTION <> '%jasa%' 
+                group by description ,isnull(description2,'')
+              FOR XML PATH (''))
+             ,1, 2, '') terapi
+			 from ORGANIZATIONUNIT ;";
+        $select = $db->query($query)->getResultArray();
+
+        return json_encode($select);
+    }
     public function getdokterrujukan()
     {
         if (!$this->request->is('post')) {

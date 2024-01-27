@@ -298,6 +298,18 @@
                     $("#postingSS").show()
                     $(".rmdescription").val(pasienDiagnosa.description)
                     executeWaktuUpdate()
+
+                    $(".rmdescription").html($("#ardescription").val())
+                    $(".rmdiagnosa_desc_05").html($("#ardiagnosa_desc_05").val())
+                    $(".rmdiagnosa_desc_06").html($("#ardiagnosa_desc_06").val())
+                    $(".rmanamnase").html($("#aranamnase").val())
+                    $(".rmpemeriksaan").html($("#arpemeriksaan").val())
+                    $(".rmpemeriksaan_02").html($("#arpemeriksaan_02").val())
+                    $(".rmpemeriksaan_03").html($("#arpemeriksaan_03").val())
+                    $(".rmpemeriksaan_05").html($("#arpemeriksaan_05").val())
+                    $(".rmteraphy_desc").html($("#arteraphy_desc").val())
+                    $(".rminstruction").html($("#arinstruction").val())
+                    $(".profileRM").show()
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -494,7 +506,6 @@
                     $("#arnorujukan").val(noRujukan);
                     $("#arnorujukan").prop("disabled", true);
                 }
-
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");

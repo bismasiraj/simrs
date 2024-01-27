@@ -36,8 +36,8 @@ $permissions = user()->getPermissions();
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div id="" class="box-tab-tools text-center">
-                        <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
+                    <div id="laboratoriumAdd" class="box-tab-tools text-center">
+                        <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addLabBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
                     </div>
                 </div>
             </div>

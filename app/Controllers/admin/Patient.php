@@ -1468,7 +1468,9 @@ This Function is used to Add Patient
         $ssencounter_id = $this->request->getPost('ssencounter_id');
         $statusantrean = $this->request->getPost('statusantrean');
 
-        // return json_encode($no_registration);
+
+
+        // return json_encode($generateId);
 
 
         $pv = new PasienVisitationModel();
@@ -1568,11 +1570,27 @@ This Function is used to Add Patient
 
 
         $pv->save($data);
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
+
+        $generateId = $this->generateId($clinic_id, $no_registration);
+
+
+        // IF LSKLINIK =  'P041'  or LSKLINIK = 'P061' THEN 
+        // 																					save_tarif_daftar(cek_tindakan_tarif(14),lsNota)
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)
+        // 																				ELSEif LSKLINIK = 'P012' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(13),lsNota)
+        // 																				ELSEif LSKLINIK = 'P011' OR LSKLINIK = 'P017' OR LSKLINIK = 'P029' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)
+        // 																				ELSEif LSKLINIK = 'MCU01' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(15),lsNota)												
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)	
+        // 																				elseif litipe = 2 then 
+        // 																						save_tarif_daftar(cek_tindakan_tarif(2),lsNota)	
+        // 																				else
+        // 																					save_tarif_daftar(cek_tindakan_tarif(11),lsNota) 
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota) 
+        // 																				end if
+
         $array   = array('status' => 'success', 'error' => '', 'message' => $flag . ' kunjungan pasien berhasil', 'visit_id' => $visit_id, 'data' => $data);
         echo json_encode($array);
     }
@@ -4771,6 +4789,46 @@ This Function is used to Add Patient
 
         return json_encode($tbselect);
     }
+    public function getTreatResultList()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body);
+
+        $nomor = $body['nomor'];
+        $visit = $body['visit'];
+
+
+
+        $model = new ResultTypeModel();
+        $resultType = $this->lowerKey($model->findAll());
+
+
+
+
+        $tb = new TreatResultModel();
+        $tbselect = $this->lowerKey($tb->getTreatResultList($nomor, $visit));
+
+        foreach ($tbselect as $key => $value) {
+            foreach ($resultType as $key1 => $value) {
+                if ($resultType[$key1]['result_type'] == $tbselect[$key]['result_type']) {
+                    $tbselect[$key]['result_name'] = $resultType[$key1]['results'];
+                }
+            }
+            foreach ($resultType as $key1 => $value) {
+                if ($resultType[$key1]['result_type'] == $tbselect[$key]['result_type']) {
+                    $tbselect[$key]['result_symbol'] = $resultType[$key1]['symbol'];
+                }
+            }
+        }
+
+        return json_encode($tbselect);
+    }
 
     public function getHasilLab()
     {
@@ -4821,7 +4879,7 @@ This Function is used to Add Patient
                             </h2>
                             <div id="labResult' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body text-muted">
-                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                    <table id="labTable" class="table table-bordered table-hover">
                                         <thead class="table-primary" style="text-align: center;">
                                             <tr>
                                                 <th class="text-center" style="width: 4%;">No.</th class="text-center">
@@ -5160,40 +5218,10 @@ This Function is used to Add Patient
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // return $this->request->is('put');
-
-
-        // return json_encode($norm);
-        // $rules = [
-        //     'bed_id' => 'permit_empty|integer',
-        //     'keluar_id' => 'permit_empty|integer',
-        //     'status_pasien_id' => 'permit_empty|integer',
-        //     'ageyear' => 'permit_empty|integer',
-        //     'agemonth' => 'permit_empty|integer',
-        //     'ageday' => 'permit_empty|integer',
-        //     'saturasi' => 'permit_empty|integer',
-        //     'kesadaran' => 'permit_empty|integer',
-        //     'isvalid' => 'permit_empty|integer',
-        //     'temperature' => 'permit_empty|integer',
-        //     'tension_upper' => 'permit_empty|integer',
-        //     'tension_below' => 'permit_empty|integer',
-        //     'nadi' => 'permit_empty|integer',
-        //     'nafas' => 'permit_empty|integer',
-        //     'weight' => 'permit_empty|integer',
-        //     'height' => 'permit_empty|integer',
-        //     'arm_diameter' => 'permit_empty|integer',
-        // ];
 
 
 
-        // if (!$this->validate($rules)) {
-        //     $validation = \Config\Services::validation();
-        //     $errors = $validation->getErrors();
-        //     $array   = array('status' => 'fail', 'error' => $errors, 'message' => 'update gagal');
-        //     return json_encode($array);
-        // }
-
-
+        $bill_id = $this->request->getPost('bill_id');
         $trans_id = $this->request->getPost('trans_id');
         $no_registration = $this->request->getPost('no_registration');
         $theorder = $this->request->getPost('theorder');
@@ -5298,7 +5326,15 @@ This Function is used to Add Patient
 
 
         $orgModel = new OrganizationunitModel();
-        $id = $orgModel->generateId();
+
+        $isnew = true;
+        if ($bill_id == null || $bill_id == '') {
+            $id = $orgModel->generateId();
+            $isnew = false;
+        } else {
+            $id = $bill_id;
+            $isnew = true;
+        }
 
         if (is_null($nota_no)) {
             $nota_no = $orgModel->generateId();
@@ -5365,8 +5401,7 @@ This Function is used to Add Patient
         ];
 
         // return json_encode($data);
-
-        $tbModel->insert($data);
+        $tbModel->save($data);
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
@@ -5376,11 +5411,19 @@ This Function is used to Add Patient
         echo json_encode($array);
     }
 
-    public function editBill()
+
+    public function delBill($bill_id)
     {
-    }
-    public function delBill()
-    {
+        $tb = new TreatmentBillModel();
+        $result = $tb->delete($bill_id);
+
+        if ($result) {
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'delete berhasil');
+            echo json_encode($array);
+        } else {
+            $array   = array('status' => 'failure', 'error' => '', 'message' => 'delete gagal');
+            echo json_encode($array);
+        }
     }
     public function rajal()
     {

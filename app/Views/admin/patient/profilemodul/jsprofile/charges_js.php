@@ -144,7 +144,7 @@
                         lunas = 'OPEN!';
                     }
 
-                    $("#chargesBody").append($("<tr>")
+                    $("#chargesBody").append($("<tr id=\"" + billJson[key].bill_id + "\">")
                         .append($("<td>").html(String(key + 1) + "."))
                         .append($("<td>").attr("id", "treatment" + key).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
                         .append($("<td>").attr("id", "treat_date" + key).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
@@ -157,7 +157,7 @@
                         .append($("<td>").attr("id", "discount" + key).html(formatCurrency(billJson[key].discount)))
                         .append($("<td>").attr("id", "subsidisat" + key).html(formatCurrency(billJson[key].subsidisat)))
                         .append($("<td>").attr("id", "subsidisat" + key).html(formatCurrency(billJson[key].subsidi)))
-                        .append($("<td>").append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button type="button" onclick="addR()" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                        .append($("<td>").append('<div  class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + billJson[key].bill_id + '" type="button" onclick="editBill(\'' + billJson[key].bill_id + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + billJson[key].bill_id + '" type="button" onclick="delBill(\'' + billJson[key].bill_id + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
                         // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
                         // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
 
@@ -230,12 +230,12 @@
             cache: false,
             processData: false,
             success: function(data) {
-                billJson = data
+                var billInaJson = data
 
 
-                billJson.forEach((element, key) => {
+                billInaJson.forEach((element, key) => {
 
-                    inacbg = parseFloat(billJson[key].cbg_tarif)
+                    inacbg = parseFloat(billInaJson[key].cbg_tarif)
                     $("#inacbg").val(formatCurrency(inacbg));
 
                 });

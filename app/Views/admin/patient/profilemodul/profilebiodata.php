@@ -62,8 +62,78 @@
 
 
             </table>
-            <?php if (!empty($pasienDiagnosa)) {
+            <?php if (empty($pasienDiagnosa)) {
             ?>
+                <div class="profileRM" style="display: block">
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Ringkasan Diagnosis:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmdescription"></div>
+                        </li>
+                        <li>
+                            <div class="rmdiagnosa_desc_05"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Riwayat Alergi:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmdiagnosa_desc_06"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Anamnesis:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmanamnase"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Periksa Fisik:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmpemeriksaan"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Periksa Lab:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmpemeriksaan_02"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Periksa RO:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmpemeriksaan_03"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Pemeriksaan Lain:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmpemeriksaan_05"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Terapi:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rmteraphy_desc"></div>
+                        </li>
+                    </ul>
+                    <hr class="hr-panel-heading hr-10">
+                    <p><b><i class="fa fa-tag"></i> Instruksi:</b></p>
+                    <ul>
+                        <li>
+                            <div class="rminstruction"></div>
+                        </li>
+                    </ul>
+                </div>
+            <?php
+            } else { ?>
                 <hr class="hr-panel-heading hr-10">
                 <p><b><i class="fa fa-tag"></i> Ringkasan Diagnosis:</b></p>
                 <ul>
@@ -71,7 +141,7 @@
                         <div class="rmdescription"><?= $pasienDiagnosa['description']; ?></div>
                     </li>
                     <li>
-                        <div><?= $pasienDiagnosa['diagnosa_desc_05']; ?></div>
+                        <div class="rmdiagnosa_desc_05"><?= $pasienDiagnosa['diagnosa_desc_05']; ?></div>
                     </li>
                 </ul>
                 <hr class="hr-panel-heading hr-10">
@@ -130,8 +200,7 @@
                         <div class="rminstruction"><?= $pasienDiagnosa['instruction']; ?></div>
                     </li>
                 </ul>
-            <?php
-            } ?>
+            <?php } ?>
         </div><!--./col-lg-7-->
     </div>
 </div>

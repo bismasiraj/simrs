@@ -309,4 +309,53 @@
             }
         })
     }
+
+    function copyPeriksaFisik() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaFisik/<?= $visit['visit_id']; ?>',
+            type: "GET",
+            dataType: 'json',
+            success: function(data) {
+                alert("berhasil ambil periksa fisik")
+                $("#arpemeriksaan").val(data.periksafisik)
+                $("#aranamnase").val(data.anamnase)
+            }
+        })
+    }
+
+    function copyPeriksaLab() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaLab/<?= $visit['trans_id']; ?>',
+            type: "GET",
+            dataType: 'json',
+            success: function(data) {
+                alert("berhasil ambil periksa lab")
+                $("#arpemeriksaan_05").val(data.periksalab)
+            }
+        })
+    }
+
+    function copyPeriksaRad() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getPeriksaRad/<?= $visit['trans_id']; ?>',
+            type: "GET",
+            dataType: 'json',
+            success: function(data) {
+                alert("berhasil ambil periksa radiologi")
+                $("#arpemeriksaan_03").val(data.periksarad)
+            }
+        })
+    }
+
+    function copyTerapi() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rekammedis/getTerapi/<?= $visit['visit_id']; ?>',
+            type: "GET",
+            dataType: 'json',
+            success: function(data) {
+                alert("berhasil ambil data terapi obat")
+                $("#arteraphy_desc").val(data.terapi)
+            }
+        })
+    }
 </script>

@@ -1060,7 +1060,7 @@
                 if (xhr.status == '401') {
                     getSatuSehatToken()
                 } else {
-                    alert(xhr.statusText)
+                    // alert(xhr.statusText)
                 }
                 $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
             },

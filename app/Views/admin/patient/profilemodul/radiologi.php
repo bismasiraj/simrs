@@ -36,8 +36,8 @@ $permissions = user()->getPermissions();
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div id="eresepAdd" class="box-tab-tools text-center">
-                        <a data-toggle="modal" onclick="requestRad()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Radiologi Online</a>
+                    <div id="radiologiAdd" class="box-tab-tools text-center">
+                        <a data-toggle="modal" onclick="requestRad()" class="btn btn-primary btn-lg" id="addRadBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Radiologi Online</a>
                     </div>
                 </div>
             </div>

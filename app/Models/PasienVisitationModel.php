@@ -339,11 +339,12 @@ class PasienVisitationModel extends Model
     }
     public function generateId($selectPoli, $no_registration)
     {
-        $builder = $this->select(" top (1) convert(varchar, getdate(), 112)+'$selectPoli'+'$no_registration' as visit_id,
+        $db = db_connect();
+        $builder = $db->query("select top (1) convert(varchar, getdate(), 112)+'$selectPoli'+'$no_registration' as visit_id,
         '$no_registration' + convert(varchar, getdate(), 112) +right(newid(),4) as trans_id,
         ISNULL((SELECT MAX(TICKET_NO) FROM PASIEN_VISITATION WHERE CLINIC_ID = '$selectPoli' AND  convert(varchar, visit_date, 23) = convert(varchar, getdate(), 23)  ),0)+1 as ticket_no,
         newid() as ssencounter_id");
-        return $builder->findAll();
+        return $builder->getResultArray();
     }
 
     public function getregisterpoli($mulai, $akhir, $status, $rj, $poli, $kal)

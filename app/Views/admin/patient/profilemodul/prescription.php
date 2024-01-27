@@ -122,7 +122,7 @@ $permissions = user()->getPermissions();
                             </div>
                             <div class="col-md-6">
                                 <div id="eresepRAdd" class="box-tab-tools text-start" style="">
-                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +147,6 @@ $permissions = user()->getPermissions();
 
                                 ?>
                             </tbody>
-
                         </table>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>

@@ -145,9 +145,9 @@ $permissions = user()->getPermissions();
                             <label>Tanggal Awal</label>
                             <div>
                                 <div class="input-group" id="mulai">
-                                    <input name="mulai" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai' value="<?= date('Y-m-d'); ?>">
+                                    <input name="mulai" type="date" class="form-control" value="<?= date('Y-m-d'); ?>">
 
-                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                    <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
 
                                 </div>
                                 <!-- input-group -->
@@ -160,9 +160,10 @@ $permissions = user()->getPermissions();
                             <label>Tanggal Akhir</label>
                             <div>
                                 <div class="input-group" id="akhir">
-                                    <input name="akhir" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir' value="<?= date('Y-m-d'); ?>">
+                                    <input name="akhir" type="date" class="form-control" value="<?= date('Y-m-d'); ?>">
 
-                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+
+                                    <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
 
                                 </div>
                                 <!-- input-group -->

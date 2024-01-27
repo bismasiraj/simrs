@@ -26,6 +26,7 @@
         initializeSearchTarif("searchTarifRad", 'P016');
     })
     $("#radTab").on("click", function() {
+        getTreatResultList(nomor, visit)
         getListRequestRad(nomor, visit)
     })
 </script>

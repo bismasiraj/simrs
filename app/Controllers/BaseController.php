@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\EmployeeAllModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -294,5 +295,62 @@ abstract class BaseController extends Controller
         // ->json($result)
         // ->header('Access-Control-Allow-Origin','*')
         // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
+    }
+    public function generateId($selectPoli, $no_registration)
+    {
+        $db = db_connect();
+        $builder = $db->query("select top (1) convert(varchar, getdate(), 112)+'$selectPoli'+'$no_registration' as visit_id,
+        '$no_registration' + convert(varchar, getdate(), 112) +right(newid(),4) as trans_id,
+        ISNULL((SELECT MAX(TICKET_NO) FROM PASIEN_VISITATION WHERE CLINIC_ID = '$selectPoli' AND  convert(varchar, visit_date, 23) = convert(varchar, getdate(), 23)  ),0)+1 as ticket_no,
+        newid() as ssencounter_id");
+        return $builder->getResultArray();
+    }
+
+    public function cekTindakanTarif($tipe)
+    {
+        if ($tipe == 1)
+            $tarif = '02001';
+        if ($tipe == 5)
+            $tarif = '020003';
+        if ($tipe == 3)
+            $tarif = '020006';
+        if ($tipe == 7)
+            $tarif = '020007';
+        if ($tipe == 2)
+            $tarif = '020009';
+        if ($tipe == 11)
+            $tarif = '020011';
+        if ($tipe == 12)
+            $tarif = '020012';
+        if ($tipe == 13)
+            $tarif = '020013';
+        if ($tipe == 14)
+            $tarif = '020014';
+        if ($tipe == 15)
+            $tarif = '020015';
+
+        return $tarif;
+
+        // if liTipe=1 then lsTarif='020001'	//karcis
+        // if liTipe=5 then lsTarif='020003'  //karcis UGD
+        // if litipe=3 then lsTarif='020006'   //rawat inap												
+        // if litipe=7   then lsTarif='020007'   //rawat inap		
+        // if litipe=2   then lsTarif='020009'   //penunjang
+        // if litipe=11   then lsTarif='020011'   //spesialis	
+        // if litipe=12   then lsTarif='020012'   //mcu
+        // if litipe=13   then lsTarif='020013'   //igd
+        // if litipe=14   then lsTarif='020014'   //subspesialis
+        // if litipe=15   then lsTarif='020015'   //umum-gigi	
+        // return lsTarif
+    }
+    public function saveTarifDaftar($employeeId, $nama, $ageyear, $agemonth, $ageday)
+    {
+        // if isnull(sKunj.cost_center) or sKunj.cost_center="" then
+        //     select account_id into :lsCC from pasien where no_registration=:sKunj.nomor;
+        // else	
+        // lsCC = sKunj.cost_center
+        // end if
+        $db = db_connect();
+        $select = $db->query("select ea.fullname from employee_all ea where ea.employee_id ='$employeeId'");
     }
 }

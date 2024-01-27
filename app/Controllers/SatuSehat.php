@@ -15,6 +15,9 @@ use Myth\Auth\Models\UserModel;
 class SatuSehat extends BaseController
 {
 
+    protected $baseurloath = 'https://api-satusehat.kemkes.go.id/oauth2/v1';
+    protected $baseurlfhir = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1';
+    protected $baseurlconsent = 'https://api-satusehat.dto.kemkes.go.id/consent/v1';
     public function login()
     {
         $username = $this->request->getVar('username');
@@ -113,7 +116,7 @@ class SatuSehat extends BaseController
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/oauth2/v1/accesstoken?grant_type=client_credentials',
+            CURLOPT_URL => $this->baseurloath . '/accesstoken?grant_type=client_credentials',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -121,7 +124,7 @@ class SatuSehat extends BaseController
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'client_id=BkpwobIdxkl80VHGH1fnlAJANpmPONwGdWGVKMYkF8OV94Ov&client_secret=YPGGSATBSbqjec8MuDIGZEy03gYGZGsYa0EGAnkWAMsj5fnTaAs0Z9dXaQUFHui3',
+            CURLOPT_POSTFIELDS => 'client_id=fUcn9oKZiLM8nXWOUmxqlJOaMo80QQF6fJkQBZZhdbkZNzSF&client_secret=pxifAfWAFv13byLQ3BwOVAGpBkwEAWCXFgeGr2uYi7Gz2ACA1cMERfqmeJqXn9T6',
             CURLOPT_HTTPHEADER => array(
                 // 'Authorization: Bearer LA6Fj2oGDjACsnNuBoOCQHItAlIK',
                 'Content-Type: application/x-www-form-urlencoded'
@@ -134,26 +137,18 @@ class SatuSehat extends BaseController
         $result = json_decode(($response), true);
         $token = $result['access_token'];
         return json_encode($token);
-        // DB::update(
-        //     "Update ss_organization
-        // set token = '$token'
-        // where client_id  = 'aFGn978X1u07Gep2g945rS8zjawAsKH1hz7536kcCalgeaug'"
-        // );
-        // return response()
-        //     ->json($result)
-        //     ->header('Access-Control-Allow-Origin', '*')
-        //     ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     }
 
     public function getPasienID()
     {
         $ssToken = $this->request->getHeaderLine("ssToken");
+        $nik = $this->request->getHeaderLine('nik');
         $curl = curl_init();
 
         // return json_encode(trim($ssToken));
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C9271060312000001',
+            CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $nik,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -163,7 +158,7 @@ class SatuSehat extends BaseController
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                "Authorization: Bearer $ssToken"
+                'Authorization: Bearer e2RjCW5x2zDBLGIIyr8zAT3DNC3Y'
             ),
         ));
 
@@ -171,7 +166,7 @@ class SatuSehat extends BaseController
         $response = json_decode($response, true);
 
         curl_close($curl);
-        // echo $response;
+        // return json_encode($response);
 
 
         if (!isset($response['entry']['0']['resource']['id'])) {
@@ -194,7 +189,7 @@ class SatuSehat extends BaseController
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Organization',
+                CURLOPT_URL => $this->baseurlfhir . '/Organization',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -329,7 +324,7 @@ class SatuSehat extends BaseController
             //   ));
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location/' . $value['sslocation_id'],
+                CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -419,7 +414,7 @@ class SatuSehat extends BaseController
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Encounter',
+            CURLOPT_URL => $this->baseurlfhir . '/Encounter',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -636,7 +631,7 @@ class SatuSehat extends BaseController
 
         $db = db_connect();
         $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
-        values('$no_registration','$trans_id','https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+        values('$no_registration','$trans_id','$this->baseurlfhir','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
 
         return json_encode("selesai");
     }
@@ -852,7 +847,7 @@ class SatuSehat extends BaseController
                 $db = db_connect();
                 try {
                     $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
-                    values('$no_registration','$trans_id','https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                    values('$no_registration','$trans_id','$this->baseurlfhir','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
                 } catch (\Exception $e) {
                     // exit($e->getMessage());
                 }

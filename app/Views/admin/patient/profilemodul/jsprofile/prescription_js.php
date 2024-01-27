@@ -759,7 +759,7 @@
                 //     // .append('<button type="button" onclick="addBlankLineKomponen()" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
                 // )
                 .append($('<td>')
-                    .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                    .append('<button type="button" onclick="removeKomopnen(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                 )
 
             )
@@ -1160,7 +1160,6 @@
                         .append($('<td>')
                             .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
-
                     )
                 }
 
@@ -1312,6 +1311,25 @@
     function removeRacik(brand) {
         if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
             $("#" + brand).remove()
+        }
+    }
+
+    function removeKomponen(brand, resepKe, resepNo) {
+        if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
+            $("#" + brand).remove()
+            $("#tdresep_keresep" + resepKe + '' + resepNo).attr('rowspan', theorder)
+            $("#tddescriptionresep" + resepKe + '' + resepNo).attr('rowspan', 1)
+            $("#tdjml_bks" + resepKe + '' + resepNo).attr('rowspan', 1)
+            $("#tdmeasure_idnameresep" + resepKe + '' + resepNo).attr('rowspan', 1)
+            $("#tddescription2resep" + resepKe + '' + resepNo).attr('rowspan', theorder - 1)
+            $("#tdbtnracikresep" + resepKe + '' + resepNo).attr('rowspan', theorder)
+            $("#tdbtnremoveracikresep" + resepKe + '' + resepNo).attr('rowspan', 1)
+            $("#traturanminumresep" + resepKe + '' + resepNo).remove()
+            $("#tddosisDiv" + resepKe + '' + resepNo).remove()
+            $("#tddosis2Div" + resepKe + '' + resepNo).remove()
+            $("#tdsigna2Div" + resepKe + '' + resepNo).remove()
+            $("#tdsigna4Div" + resepKe + '' + resepNo).remove()
+            $("#tdsigna5Div" + resepKe + '' + resepNo).remove()
         }
     }
 </script>
