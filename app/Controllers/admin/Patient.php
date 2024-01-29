@@ -1576,6 +1576,7 @@ This Function is used to Add Patient
         $c = new ClinicModel();
         $clinicSelect = $c->select("stype_id")->find($data['clinic_id']);
         $liTipe = $clinicSelect['stype_id'];
+        // return json_encode($liTipe);
 
         if ($clinic_id == 'P041' || $clinic_id == 'P061') {
             $ttarif = $this->cekTindakanTarif(14);
@@ -1598,6 +1599,7 @@ This Function is used to Add Patient
             $this->saveTarifDaftar($data, $ttarif, $generateId);
         } else {
             $ttarif = $this->cekTindakanTarif(11);
+            // return json_encode($ttarif);
             $this->saveTarifDaftar($data, $ttarif, $generateId);
             $ttarif = $this->cekTindakanTarif(1);
             $this->saveTarifDaftar($data, $ttarif, $generateId);

@@ -376,88 +376,90 @@ abstract class BaseController extends Controller
                                 (select sum(amount) from tarif_comp where
                                 tarif_id = tt.tarif_id) as jml,  class_id, tt.iscito, tt.tarif_type
                                 from treat_tarif tt
-                                where tt.treat_id='$tindakan'");
-        $tarif_id = $select[0]['tarif_id'];
-        $tarif_name = $select[0]['tarif_name'];
-        $jml = $select[0]['jml'];
-        $class_id = $select[0]['class_id'];
-        $iscito = $select[0]['iscito'];
-        $tarif_type = $select[0]['tarif_type'];
+                                where tt.treat_id='$tindakan'")->getResultArray();
+        if (isset($select[0])) {
+            $tarif_id = $select[0]['tarif_id'];
+            $tarif_name = $select[0]['tarif_name'];
+            $jml = $select[0]['jml'];
+            $class_id = $select[0]['class_id'];
+            $iscito = $select[0]['iscito'];
+            $tarif_type = $select[0]['tarif_type'];
 
-        // select  tt.tarif_id,tt.tarif_name, &
-        // (select sum(amount) from tarif_comp where &
-        // tarif_id = tt.tarif_id) as jml,  class_id, tt.iscito, tt.tarif_type
-        // into :lsTarif, :lsNama, :ldcAmount, :liKelas, :lsCito, :lsTipe
-        // from treat_tarif tt
-        // where tt.treat_id=:tindakan
+            // select  tt.tarif_id,tt.tarif_name, &
+            // (select sum(amount) from tarif_comp where &
+            // tarif_id = tt.tarif_id) as jml,  class_id, tt.iscito, tt.tarif_type
+            // into :lsTarif, :lsNama, :ldcAmount, :liKelas, :lsCito, :lsTipe
+            // from treat_tarif tt
+            // where tt.treat_id=:tindakan
 
-        if (is_null($data['class_id_plafond'])) {
-            $kelas = $data['class_id'];
-        } else {
-            $kelas = $data['class_id_plafond'];
-        }
+            if (is_null($data['class_id_plafond'])) {
+                $kelas = $data['class_id'];
+            } else {
+                $kelas = $data['class_id_plafond'];
+            }
 
-        // if isnull(sKunj.class_id_plafond) then
-        //     liKelasP = sKunj.class_id
-        // else
-        //     liKelasP = sKunj.class_id_plafond
-        // end if
+            // if isnull(sKunj.class_id_plafond) then
+            //     liKelasP = sKunj.class_id
+            // else
+            //     liKelasP = sKunj.class_id_plafond
+            // end if
 
-        if (!is_null($jml) && $jml > 0) {
-            $ldcSubsidi = $this->hitung_subsidi($data['status_pasien_id'], $tarif_id, $jml);
+            if (!is_null($jml) && $jml > 0) {
+                $ldcSubsidi = $this->hitung_subsidi($data['status_pasien_id'], $tarif_id, $jml);
 
-            $lsBill = $this->max_bill($data['visit_date']);
+                $lsBill = $this->max_bill($data['visit_date']);
 
-            $dataBill['org_unit_code'] = $data['org_unit_code'];
-            $dataBill['no_registration'] = $data['no_registration'];
-            $dataBill['thename'] = $data['diantar_oleh'];
-            $dataBill['theaddress'] = $data['visitor_address'];
-            $dataBill['theid'] = $data['pasien_id'];
-            $dataBill['visit_id'] = $data['visit_id'];
-            $dataBill['bill_id'] = $lsBill;
-            $dataBill['tarif_id'] = $tarif_id;
-            $dataBill['treatment'] = $tarif_name;
-            $dataBill['amount'] = $jml;
-            $dataBill['sell_price'] = $jml;
-            $dataBill['diskon'] = 0;
-            $dataBill['amount_paid'] = $jml;
-            $dataBill['quantity'] = 1;
-            $dataBill['subsidi'] = $ldcSubsidi;
-            $dataBill['iscetak'] = '1';
-            $dataBill['islunas'] = '0';
-            $dataBill['clinic_id'] = $data['clinic_id'];
-            $dataBill['clinic_id_from'] = $data['clinic_id_from'];
-            $dataBill['employee_id'] = $data['employee_id'];
-            $dataBill['doctor'] = $dokter;
-            $dataBill['treat_date'] = $data['visit_date'];
-            $dataBill['exit_date'] = $data['visit_date'];
-            $dataBill['modified_date'] = new RawSql("getdate()");
-            $dataBill['modified_by'] = user()->username;
-            $dataBill['modified_from'] = $data['clinic_id'];
-            $dataBill['nota_no'] = $nota;
-            $dataBill['class_id'] = $data['class_id'];
-            $dataBill['isrj'] = $data['isrj'];
-            $dataBill['status_pasien_id'] = $data['status_pasien_id'];
-            $dataBill['payor_id'] = $data['payor_id'];
-            $dataBill['class_id_plafond'] = $data['class_id_plafond'];
-            $dataBill['amount_plafond'] = 0;
-            $dataBill['amount_paid_plafond'] = 0;
-            $dataBill['ageyear'] = $data['ageyear'];
-            $dataBill['agemonth'] = $data['agemonth'];
-            $dataBill['ageday'] = $data['ageday'];
-            $dataBill['gender'] = $data['gender'];
-            $dataBill['kal_id'] = $data['kal_id'];
-            $dataBill['racikan'] = 102;
-            $dataBill['account_id'] = null;
-            $dataBill['tagihan'] = $jml;
-            $dataBill['subsidisat'] = $ldcSubsidi;
-            $dataBill['tarif_type'] = $tarif_type;
-            $dataBill['theorder'] = 2;
-            $dataBill['trans_id'] = $data['trans_id'];
+                $dataBill['org_unit_code'] = $data['org_unit_code'];
+                $dataBill['no_registration'] = $data['no_registration'];
+                $dataBill['thename'] = $data['diantar_oleh'];
+                $dataBill['theaddress'] = $data['visitor_address'];
+                $dataBill['theid'] = $data['pasien_id'];
+                $dataBill['visit_id'] = $data['visit_id'];
+                $dataBill['bill_id'] = $lsBill;
+                $dataBill['tarif_id'] = $tarif_id;
+                $dataBill['treatment'] = $tarif_name;
+                $dataBill['amount'] = $jml;
+                $dataBill['sell_price'] = $jml;
+                $dataBill['diskon'] = 0;
+                $dataBill['amount_paid'] = $jml;
+                $dataBill['quantity'] = 1;
+                $dataBill['subsidi'] = $ldcSubsidi;
+                $dataBill['iscetak'] = '1';
+                $dataBill['islunas'] = '0';
+                $dataBill['clinic_id'] = $data['clinic_id'];
+                $dataBill['clinic_id_from'] = $data['clinic_id_from'];
+                $dataBill['employee_id'] = $data['employee_id'];
+                $dataBill['doctor'] = $dokter;
+                $dataBill['treat_date'] = $data['visit_date'];
+                $dataBill['exit_date'] = $data['visit_date'];
+                $dataBill['modified_date'] = new RawSql("getdate()");
+                $dataBill['modified_by'] = user()->username;
+                $dataBill['modified_from'] = $data['clinic_id'];
+                $dataBill['nota_no'] = $nota;
+                $dataBill['class_id'] = $data['class_id'];
+                $dataBill['isrj'] = $data['isrj'];
+                $dataBill['status_pasien_id'] = $data['status_pasien_id'];
+                $dataBill['payor_id'] = $data['payor_id'];
+                $dataBill['class_id_plafond'] = $data['class_id_plafond'];
+                $dataBill['amount_plafond'] = 0;
+                $dataBill['amount_paid_plafond'] = 0;
+                $dataBill['ageyear'] = $data['ageyear'];
+                $dataBill['agemonth'] = $data['agemonth'];
+                $dataBill['ageday'] = $data['ageday'];
+                $dataBill['gender'] = $data['gender'];
+                $dataBill['kal_id'] = $data['kal_id'];
+                $dataBill['racikan'] = 102;
+                $dataBill['account_id'] = null;
+                $dataBill['tagihan'] = $jml;
+                $dataBill['subsidisat'] = $ldcSubsidi;
+                $dataBill['tarif_type'] = $tarif_type;
+                $dataBill['theorder'] = 2;
+                $dataBill['trans_id'] = $data['trans_id'];
 
-            $tb = new TreatmentBillModel();
+                $tb = new TreatmentBillModel();
 
-            $tb->insert($dataBill);
+                $tb->insert($dataBill);
+            }
         }
 
         //         IF (not isnull(ldcAmount)) and ldcAmount > 0 then 
@@ -596,7 +598,7 @@ abstract class BaseController extends Controller
     public function cek_baru_lama_rs($no_registration, $visit_date)
     {
         $p = new PasienModel();
-        $select = $p->select("case when registration_date < '$visit_date and registration_date <> '$visit_date then '0' else '1' end as isnew")->find($no_registration);
+        $select = $p->select("case when registration_date < '$visit_date' and registration_date <> '$visit_date' then '0' else '1' end as isnew")->find($no_registration);
 
         return $select['isnew'];
         // datetime ldtPertama

@@ -145,8 +145,6 @@ class SatuSehat extends BaseController
         $nik = $this->request->getHeaderLine('nik');
         $curl = curl_init();
 
-        // return json_encode(trim($ssToken));
-
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $nik,
             CURLOPT_RETURNTRANSFER => true,
@@ -158,7 +156,7 @@ class SatuSehat extends BaseController
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Bearer e2RjCW5x2zDBLGIIyr8zAT3DNC3Y'
+                'Authorization: Bearer ' . $ssToken
             ),
         ));
 
