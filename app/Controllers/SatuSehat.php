@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\BatchingBridgingModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
+use App\Models\OrganizationunitModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
 use App\Models\SatuSehatModel;
@@ -181,6 +182,10 @@ class SatuSehat extends BaseController
         $c = new ClinicModel();
         $clinic = $this->lowerKey($c->select("*")->where("ssclinic_id is null")->findAll());
 
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $ssorgid = $select['ssorganizationid'];
+
         $return = [];
 
         foreach ($clinic as $key => $value) {
@@ -201,7 +206,7 @@ class SatuSehat extends BaseController
                                         "identifier": [
                                             {
                                                 "use": "official",
-                                                "system": "http://sys-ids.kemkes.go.id/organization/913e8e48-48d9-46de-b13f-c909d5f71690",
+                                                "system": "http://sys-ids.kemkes.go.id/organization/100026655",
                                                 "value": "' . $clinic[$key]['clinic_id'] . '"
                                             }
                                         ],
@@ -218,7 +223,7 @@ class SatuSehat extends BaseController
                                         ],
                                         "name": "' . $clinic[$key]['name_of_clinic'] . '",
                                         "partOf": {
-                                            "reference": "Organization/913e8e48-48d9-46de-b13f-c909d5f71690"
+                                            "reference": "Organization/' . $ssorgid . '"
                                         }
                                     }',
                 CURLOPT_HTTPHEADER => array(
@@ -258,55 +263,58 @@ class SatuSehat extends BaseController
         FETCH NEXT 100 ROWS ONLY;
         ")->getResultArray());
         // return json_encode($clinic);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $ssorgid = $select['ssorganizationid'];
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
 
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'POST',
-            //     CURLOPT_POSTFIELDS => '{
-            //                             "resourceType": "Location",
-            //                             "identifier": [
-            //                                 {
-            //                                     "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
-            //                                     "value": "' . $clinic[$key]['clinic_id'] . '"
-            //                                 }
-            //                             ],
-            //                             "status": "active",
-            //                             "name": "Poli Dalam",
-            //                             "description": "' . $clinic[$key]['name_of_clinic'] . '",
-            //                             "mode": "instance",
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Location',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+                                        "resourceType": "Location",
+                                        "identifier": [
+                                            {
+                                                "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
+                                                "value": "' . $clinic[$key]['clinic_id'] . '"
+                                            }
+                                        ],
+                                        "status": "active",
+                                        "name": "Poli Dalam",
+                                        "description": "' . $clinic[$key]['name_of_clinic'] . '",
+                                        "mode": "instance",
 
 
-            //                             "physicalType": {
-            //                                 "coding": [
-            //                                     {
-            //                                         "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-            //                                         "code": "ro",
-            //                                         "display": "Room"
-            //                                     }
-            //                                 ]
-            //                             },
+                                        "physicalType": {
+                                            "coding": [
+                                                {
+                                                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                                                    "code": "ro",
+                                                    "display": "Room"
+                                                }
+                                            ]
+                                        },
 
 
 
 
 
-            //                             "managingOrganization": {
-            //                                 "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-            //                             }
-            //                         }',
-            //     CURLOPT_HTTPHEADER => array(
-            //         'Content-Type: application/json',
-            //         'Authorization: Bearer ' . $token
-            //     ),
-            // ));
+                                        "managingOrganization": {
+                                            "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+                                        }
+                                    }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $token
+                ),
+            ));
             // curl_setopt_array($curl, array(
             //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization='.$value['ssclinic_id'],
             //     CURLOPT_RETURNTRANSFER => true,
@@ -321,46 +329,189 @@ class SatuSehat extends BaseController
             //     ),
             //   ));
 
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'PUT',
+            //     CURLOPT_POSTFIELDS => '{
+            //       "resourceType": "Location",
+            //       "id": "' . $value['sslocation_id'] . '",
+            //       "identifier": [
+            //           {
+            //               "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
+            //               "value": "' . $value['clinic_id'] . '"
+            //           }
+            //       ],
+            //       "status": "active",
+            //       "name": "' . $value['name_of_clinic'] . '",
+            //       "description": "' . $value['name_of_clinic'] . '",
+            //       "mode": "instance",
+            //       "physicalType": {
+            //           "coding": [
+            //               {
+            //                   "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+            //                   "code": "ro",
+            //                   "display": "Room"
+            //               }
+            //           ]
+            //       },
+            //       "managingOrganization": {
+            //           "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+            //       }
+            //   }',
+            //     CURLOPT_HTTPHEADER => array(
+            //         'Content-Type: application/json',
+            //         'Authorization: Bearer ' . $token
+            //     ),
+            // ));
+
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+
+            $return[] = $response;
+
+            curl_close($curl);
+            // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
+            if (isset($response['entry'][0]['resource']['id'])) {
+                // if (isset($response['id'])) {
+                $c->update($clinic[$key]['clinic_id'], [
+                    'sslocation_id' => $response['entry'][0]['resource']['id']
+                    // 'sslocation_id' => $response['id']
+                ]);
+            } else {
+                $c->update($clinic[$key]['clinic_id'], [
+                    'sslocation_id' => null
+                ]);
+            }
+        }
+        return json_encode($return);
+    }
+    public function postPractitioner()
+    {
+        $token = json_decode($this->getToken(), true);
+
+        $c = new ClinicModel();
+        // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
+        // FETCH NEXT 30 ROWS ONLY')->findAll());
+        $db = db_connect();
+        $clinic = $this->lowerKey($db->query("select * from  clinic
+        order by CLINIC_ID
+        OFFSET 0 ROWS
+        FETCH NEXT 100 ROWS ONLY;
+        ")->getResultArray());
+        // return json_encode($clinic);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $ssorgid = $select['ssorganizationid'];
+        foreach ($clinic as $key => $value) {
+            $curl = curl_init();
+
             curl_setopt_array($curl, array(
-                CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
+                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
-                  "resourceType": "Location",
-                  "id": "' . $value['sslocation_id'] . '",
-                  "identifier": [
-                      {
-                          "system": "http://sys-ids.kemkes.go.id/location/913e8e48-48d9-46de-b13f-c909d5f71690",
-                          "value": "' . $value['clinic_id'] . '"
-                      }
-                  ],
-                  "status": "active",
-                  "name": "' . $value['name_of_clinic'] . '",
-                  "description": "' . $value['name_of_clinic'] . '",
-                  "mode": "instance",
-                  "physicalType": {
-                      "coding": [
-                          {
-                              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-                              "code": "ro",
-                              "display": "Room"
-                          }
-                      ]
-                  },
-                  "managingOrganization": {
-                      "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-                  }
-              }',
+                                        "resourceType": "Location",
+                                        "identifier": [
+                                            {
+                                                "system": "http://sys-ids.kemkes.go.id/location/100026655",
+                                                "value": "' . $clinic[$key]['clinic_id'] . '"
+                                            }
+                                        ],
+                                        "status": "active",
+                                        "name": "Poli Dalam",
+                                        "description": "' . $clinic[$key]['name_of_clinic'] . '",
+                                        "mode": "instance",
+
+
+                                        "physicalType": {
+                                            "coding": [
+                                                {
+                                                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                                                    "code": "ro",
+                                                    "display": "Room"
+                                                }
+                                            ]
+                                        },
+
+
+
+
+
+                                        "managingOrganization": {
+                                            "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+                                        }
+                                    }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
                     'Authorization: Bearer ' . $token
                 ),
             ));
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization='.$value['ssclinic_id'],
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'GET',
+            //     CURLOPT_HTTPHEADER => array(
+            //       'Authorization: Bearer '.$token
+            //     ),
+            //   ));
+
+            // curl_setopt_array($curl, array(
+            //     CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'PUT',
+            //     CURLOPT_POSTFIELDS => '{
+            //       "resourceType": "Location",
+            //       "id": "' . $value['sslocation_id'] . '",
+            //       "identifier": [
+            //           {
+            //               "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
+            //               "value": "' . $value['clinic_id'] . '"
+            //           }
+            //       ],
+            //       "status": "active",
+            //       "name": "' . $value['name_of_clinic'] . '",
+            //       "description": "' . $value['name_of_clinic'] . '",
+            //       "mode": "instance",
+            //       "physicalType": {
+            //           "coding": [
+            //               {
+            //                   "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+            //                   "code": "ro",
+            //                   "display": "Room"
+            //               }
+            //           ]
+            //       },
+            //       "managingOrganization": {
+            //           "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
+            //       }
+            //   }',
+            //     CURLOPT_HTTPHEADER => array(
+            //         'Content-Type: application/json',
+            //         'Authorization: Bearer ' . $token
+            //     ),
+            // ));
 
 
             $response = curl_exec($curl);
@@ -391,7 +542,7 @@ class SatuSehat extends BaseController
         $body = json_decode($body, true);
         $ssToken = $this->request->getHeaderLine("ssToken");
 
-        // $response = '"{\"class\":{\"code\":\"AMB\",\"display\":\"ambulatory\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ActCode\"},\"id\":\"3a53a4e3-ef73-463f-b5f0-2d8dfcb76f83\",\"identifier\":[{\"system\":\"http:\/\/sys-ids.kemkes.go.id\/encounter\/913e8e48-48d9-46de-b13f-c909d5f71690\",\"value\":\"20231220P001846202\"}],\"location\":[{\"location\":{\"display\":\"DALAM\",\"reference\":\"Location\/f316828e-065b-41a2-8dc0-837a630379be\"}}],\"meta\":{\"lastUpdated\":\"2023-12-20T03:07:41.903805+00:00\",\"versionId\":\"MTcwMzA0MTY2MTkwMzgwNTAwMA\"},\"participant\":[{\"individual\":{\"display\":\"YANDI KURNIAWAN, dr, Sp.PD\",\"reference\":\"Practitioner\/10009880728\"},\"type\":[{\"coding\":[{\"code\":\"ATND\",\"display\":\"attender\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ParticipationType\"}]}]}],\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"resourceType\":\"Encounter\",\"serviceProvider\":{\"reference\":\"Organization\/913e8e48-48d9-46de-b13f-c909d5f71690\"},\"status\":\"arrived\",\"statusHistory\":[{\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"status\":\"arrived\"}],\"subject\":{\"display\":\"SAIMAN\",\"reference\":\"Patient\/P02478375538\"}}"';
+        // $response = '"{\"class\":{\"code\":\"AMB\",\"display\":\"ambulatory\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ActCode\"},\"id\":\"3a53a4e3-ef73-463f-b5f0-2d8dfcb76f83\",\"identifier\":[{\"system\":\"http:\/\/sys-ids.kemkes.go.id\/encounter\/100026655\",\"value\":\"20231220P001846202\"}],\"location\":[{\"location\":{\"display\":\"DALAM\",\"reference\":\"Location\/f316828e-065b-41a2-8dc0-837a630379be\"}}],\"meta\":{\"lastUpdated\":\"2023-12-20T03:07:41.903805+00:00\",\"versionId\":\"MTcwMzA0MTY2MTkwMzgwNTAwMA\"},\"participant\":[{\"individual\":{\"display\":\"YANDI KURNIAWAN, dr, Sp.PD\",\"reference\":\"Practitioner\/10009880728\"},\"type\":[{\"coding\":[{\"code\":\"ATND\",\"display\":\"attender\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ParticipationType\"}]}]}],\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"resourceType\":\"Encounter\",\"serviceProvider\":{\"reference\":\"Organization\/100026655\"},\"status\":\"arrived\",\"statusHistory\":[{\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"status\":\"arrived\"}],\"subject\":{\"display\":\"SAIMAN\",\"reference\":\"Patient\/P02478375538\"}}"';
         // $response = json_decode($response, true);
         // $response = json_decode($response, true);
         // return json_encode($response);
@@ -644,7 +795,7 @@ class SatuSehat extends BaseController
                                 inner join clinic c on c.clinic_id = pv.clinic_id
                                 inner join employee_all ea on ea.employee_id = pv.employee_id
                                 inner join ORGANIZATIONUNIT o on o.ORG_UNIT_CODE = pv.ORG_UNIT_CODE
-                                where visit_date between dateadd(day,-1,getdate()) and getdate() and pv.trans_id not in (select trans_id from satu_sehat)
+                                where visit_date between dateadd(day,-4,getdate()) and dateadd(day,-3,getdate()) and pv.trans_id not in (select trans_id from satu_sehat)
                                 and stype_id = '1'")->getResultArray();;
         // return json_encode($select);
 

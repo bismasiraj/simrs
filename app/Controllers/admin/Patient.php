@@ -1664,6 +1664,7 @@ This Function is used to Add Patient
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
+        // return json_encode($orgunit);
 
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
