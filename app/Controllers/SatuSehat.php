@@ -187,13 +187,13 @@ class SatuSehat extends BaseController
         // $pasien = $this->lowerKey($pv->join("pasien", "pasien.no_registration = pasien_visitation.no_registration", "inner")->where("pasien.sspasien_id is null")->where("visit_date between dateadd(day,-1,getdate()) and getdate()")->select("top(100) pasien.pasien_id")->findAll());
         $db = db_connect();
         $pasien = $db->query("select top(100) sspasien_id, p.no_registration, p.pasien_id from pasien p inner join pasien_visitation pv on p.no_registration = pv.no_registration where visit_date between dateadd(day,-1,getdate()) and getdate() and (sspasien_id is null or SSPASIEN_ID = '')")->getResultArray();
-        return json_encode($pasien);
+        // return json_encode($pasien);
 
 
 
         $org = new OrganizationunitModel();
         $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
-        $token = $select['sstoken'];
+        $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
 
         $return = [];
@@ -215,13 +215,14 @@ class SatuSehat extends BaseController
                     CURLOPT_CUSTOMREQUEST => 'GET',
                     CURLOPT_HTTPHEADER => array(
                         'Content-Type: application/json',
-                        'Authorization: Bearer ' . $token
+                        'Authorization: Bearer ' . $ssToken
                     ),
                 ));
 
                 $response = curl_exec($curl);
                 $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
                 $response = json_decode($response, true);
+                $return[] = $response;
 
                 curl_close($curl);
                 // return json_encode($httpcode);
@@ -266,7 +267,9 @@ class SatuSehat extends BaseController
     }
     public function getOrganization()
     {
-        $token = json_decode($this->getToken(), true);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
         // return json_encode($token);
 
         $c = new ClinicModel();
@@ -291,26 +294,31 @@ class SatuSehat extends BaseController
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . $token
+                    'Authorization: Bearer ' . $ssToken
                 ),
             ));
 
             $response = curl_exec($curl);
-
             $response = json_decode($response, true);
             $return[] = $response;
             // return json_encode($response);
-
-            foreach ($response["entry"] as $key1 => $value1) {
-                $id = ($value1['resource']['id']);
-                if (isset($id)) {
-                    // return json_encode($id);
-                    $c->update($value1['resource']['identifier'][0]['value'], [
-                        'ssclinic_id' => $id
-                    ]);
-                }
-            }
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
+
+            if ($httpcode != 401) {
+                foreach ($response["entry"] as $key1 => $value1) {
+                    $id = ($value1['resource']['id']);
+                    if (isset($id)) {
+                        // return json_encode($id);
+                        $c->update($value1['resource']['identifier'][0]['value'], [
+                            'ssclinic_id' => $id
+                        ]);
+                    }
+                }
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
         }
 
 
@@ -318,7 +326,9 @@ class SatuSehat extends BaseController
     }
     public function postOrganization()
     {
-        $token = json_decode($this->getToken(), true);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
         // return json_encode($token);
 
         $c = new ClinicModel();
@@ -371,22 +381,27 @@ class SatuSehat extends BaseController
                                     }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
-                    'Authorization: Bearer ' . $token
+                    'Authorization: Bearer ' . $ssToken
                 ),
             ));
 
             $response = curl_exec($curl);
-            return json_encode($value);
+            // return json_encode($value);
 
             $response = json_decode($response, true);
             $return[] = $response;
-
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
-            // return json_encode($response);
-            if (isset($response['id'])) {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'ssclinic_id' => $response['id']
-                ]);
+
+            if ($httpcode != 401) {
+                if (isset($response['id'])) {
+                    $c->update($clinic[$key]['clinic_id'], [
+                        'ssclinic_id' => $response['id']
+                    ]);
+                }
+            } else {
+                $token = $this->getToken();
+                return $token;
             }
         }
 
@@ -395,7 +410,9 @@ class SatuSehat extends BaseController
 
     public function getLocation()
     {
-        $token = json_decode($this->getToken(), true);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
 
         $c = new ClinicModel();
         // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
@@ -423,7 +440,7 @@ class SatuSehat extends BaseController
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . $token
+                    'Authorization: Bearer ' . $ssToken
                 ),
             ));
 
@@ -433,25 +450,33 @@ class SatuSehat extends BaseController
 
             $return[] = $response;
 
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
-            // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
-            if (isset($response['entry'][0]['resource']['id'])) {
-                // if (isset($response['id'])) {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => $response['entry'][0]['resource']['id']
-                    // 'sslocation_id' => $response['id']
-                ]);
+
+            if ($httpcode != 401) {
+                if (isset($response['entry'][0]['resource']['id'])) {
+                    // if (isset($response['id'])) {
+                    $c->update($clinic[$key]['clinic_id'], [
+                        'sslocation_id' => $response['entry'][0]['resource']['id']
+                        // 'sslocation_id' => $response['id']
+                    ]);
+                } else {
+                    $c->update($clinic[$key]['clinic_id'], [
+                        'sslocation_id' => null
+                    ]);
+                }
             } else {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => null
-                ]);
+                $token = $this->getToken();
+                return $token;
             }
         }
         return json_encode($return);
     }
     public function postLocation()
     {
-        $token = json_decode($this->getToken(), true);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
 
         $c = new ClinicModel();
         // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
@@ -460,151 +485,6 @@ class SatuSehat extends BaseController
         $clinic = $this->lowerKey($db->query("select * from  clinic
         where sslocation_id is null
         order by CLINIC_ID
-        OFFSET 0 ROWS
-        FETCH NEXT 100 ROWS ONLY;
-        ")->getResultArray());
-        // return json_encode($clinic);
-        $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
-        $ssorgid = $select['ssorganizationid'];
-        foreach ($clinic as $key => $value) {
-            $curl = curl_init();
-
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => $this->baseurlfhir . '/Location',
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'POST',
-            //     CURLOPT_POSTFIELDS => '{
-            //                             "resourceType": "Location",
-            //                             "identifier": [
-            //                                 {
-            //                                     "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
-            //                                     "value": "' . $clinic[$key]['clinic_id'] . '"
-            //                                 }
-            //                             ],
-            //                             "status": "active",
-            //                             "name": "Poli Dalam",
-            //                             "description": "' . $clinic[$key]['name_of_clinic'] . '",
-            //                             "mode": "instance",
-
-
-            //                             "physicalType": {
-            //                                 "coding": [
-            //                                     {
-            //                                         "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-            //                                         "code": "ro",
-            //                                         "display": "Room"
-            //                                     }
-            //                                 ]
-            //                             },
-
-
-
-
-
-            //                             "managingOrganization": {
-            //                                 "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-            //                             }
-            //                         }',
-            //     CURLOPT_HTTPHEADER => array(
-            //         'Content-Type: application/json',
-            //         'Authorization: Bearer ' . $token
-            //     ),
-            // ));
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => $this->baseurlfhir . '/Location?organization=' . $value['ssclinic_id'],
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Bearer ' . $token
-                ),
-            ));
-
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'PUT',
-            //     CURLOPT_POSTFIELDS => '{
-            //       "resourceType": "Location",
-            //       "id": "' . $value['sslocation_id'] . '",
-            //       "identifier": [
-            //           {
-            //               "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
-            //               "value": "' . $value['clinic_id'] . '"
-            //           }
-            //       ],
-            //       "status": "active",
-            //       "name": "' . $value['name_of_clinic'] . '",
-            //       "description": "' . $value['name_of_clinic'] . '",
-            //       "mode": "instance",
-            //       "physicalType": {
-            //           "coding": [
-            //               {
-            //                   "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-            //                   "code": "ro",
-            //                   "display": "Room"
-            //               }
-            //           ]
-            //       },
-            //       "managingOrganization": {
-            //           "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-            //       }
-            //   }',
-            //     CURLOPT_HTTPHEADER => array(
-            //         'Content-Type: application/json',
-            //         'Authorization: Bearer ' . $token
-            //     ),
-            // ));
-
-
-            $response = curl_exec($curl);
-            $response = json_decode($response, true);
-
-            $return[] = $response;
-
-            curl_close($curl);
-            // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
-            if (isset($response['entry'][0]['resource']['id'])) {
-                // if (isset($response['id'])) {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => $response['entry'][0]['resource']['id']
-                    // 'sslocation_id' => $response['id']
-                ]);
-            } else {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => null
-                ]);
-            }
-        }
-        return json_encode($return);
-    }
-    public function postPractitioner()
-    {
-        $token = json_decode($this->getToken(), true);
-
-        $c = new ClinicModel();
-        // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
-        // FETCH NEXT 30 ROWS ONLY')->findAll());
-        $db = db_connect();
-        $clinic = $this->lowerKey($db->query("select * from  clinic
-        order by CLINIC_ID
-        OFFSET 0 ROWS
-        FETCH NEXT 100 ROWS ONLY;
         ")->getResultArray());
         // return json_encode($clinic);
         $org = new OrganizationunitModel();
@@ -614,7 +494,7 @@ class SatuSehat extends BaseController
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location',
+                CURLOPT_URL => $this->baseurlfhir . '/Location',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -626,7 +506,7 @@ class SatuSehat extends BaseController
                                         "resourceType": "Location",
                                         "identifier": [
                                             {
-                                                "system": "http://sys-ids.kemkes.go.id/location/100026655",
+                                                "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
                                                 "value": "' . $clinic[$key]['clinic_id'] . '"
                                             }
                                         ],
@@ -656,82 +536,97 @@ class SatuSehat extends BaseController
                                     }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
-                    'Authorization: Bearer ' . $token
+                    'Authorization: Bearer ' . $ssToken
                 ),
             ));
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => 'https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization='.$value['ssclinic_id'],
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'GET',
-            //     CURLOPT_HTTPHEADER => array(
-            //       'Authorization: Bearer '.$token
-            //     ),
-            //   ));
-
-            // curl_setopt_array($curl, array(
-            //     CURLOPT_URL => $this->baseurlfhir . '/Location/' . $value['sslocation_id'],
-            //     CURLOPT_RETURNTRANSFER => true,
-            //     CURLOPT_ENCODING => '',
-            //     CURLOPT_MAXREDIRS => 10,
-            //     CURLOPT_TIMEOUT => 0,
-            //     CURLOPT_FOLLOWLOCATION => true,
-            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //     CURLOPT_CUSTOMREQUEST => 'PUT',
-            //     CURLOPT_POSTFIELDS => '{
-            //       "resourceType": "Location",
-            //       "id": "' . $value['sslocation_id'] . '",
-            //       "identifier": [
-            //           {
-            //               "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
-            //               "value": "' . $value['clinic_id'] . '"
-            //           }
-            //       ],
-            //       "status": "active",
-            //       "name": "' . $value['name_of_clinic'] . '",
-            //       "description": "' . $value['name_of_clinic'] . '",
-            //       "mode": "instance",
-            //       "physicalType": {
-            //           "coding": [
-            //               {
-            //                   "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
-            //                   "code": "ro",
-            //                   "display": "Room"
-            //               }
-            //           ]
-            //       },
-            //       "managingOrganization": {
-            //           "reference": "Organization/' . $clinic[$key]['ssclinic_id'] . '"
-            //       }
-            //   }',
-            //     CURLOPT_HTTPHEADER => array(
-            //         'Content-Type: application/json',
-            //         'Authorization: Bearer ' . $token
-            //     ),
-            // ));
-
 
             $response = curl_exec($curl);
             $response = json_decode($response, true);
 
             $return[] = $response;
-
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
-            // $c->set('sslocation_id', $response['id'])->update($clinic[$key]['clinic_id']);
-            if (isset($response['entry'][0]['resource']['id'])) {
-                // if (isset($response['id'])) {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => $response['entry'][0]['resource']['id']
-                    // 'sslocation_id' => $response['id']
-                ]);
+
+            if ($httpcode != 401) {
+                if (isset($response['id'])) {
+                    // if (isset($response['id'])) {
+                    $c->update($clinic[$key]['clinic_id'], [
+                        'sslocation_id' => $response['id']
+                        // 'sslocation_id' => $response['id']
+                    ]);
+                } else {
+                    $c->update($clinic[$key]['clinic_id'], [
+                        'sslocation_id' => null
+                    ]);
+                }
             } else {
-                $c->update($clinic[$key]['clinic_id'], [
-                    'sslocation_id' => null
-                ]);
+                $token = $this->getToken();
+                return $token;
+            }
+        }
+        return json_encode($return);
+    }
+    public function getPractitioner()
+    {
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+
+        $c = new EmployeeAllModel();
+        // $clinic = $this->lowerKey($c->select("*")->orderBy('clinic_id OFFSET 20 ROWS
+        // FETCH NEXT 30 ROWS ONLY')->findAll());
+        $db = db_connect();
+        $employee = $this->lowerKey($db->query("select employee_id, npk from  employee_all
+        where SPECIALIST_TYPE_ID is not null
+        order by npk
+        ")->getResultArray());
+        // return json_encode($clinic);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $ssorgid = $select['ssorganizationid'];
+        foreach ($employee as $key => $value) {
+            if ($value['npk']) {
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/Practitioner?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $value['npk'],
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => array(
+                        'Content-Type: application/json',
+                        'Authorization: Bearer ' . $ssToken
+                    ),
+                ));
+
+
+                $response = curl_exec($curl);
+                $response = json_decode($response, true);
+
+                $return[] = $response;
+                $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                curl_close($curl);
+
+                if ($httpcode != 401) {
+                    if (isset($response['entry'][0]['resource']['id'])) {
+                        // if (isset($response['id'])) {
+                        $c->update($employee[$key]['employee_id'], [
+                            'sspractitioner_id' => $response['entry'][0]['resource']['id']
+                            // 'sslocation_id' => $response['id']
+                        ]);
+                    } else {
+                        $c->update($employee[$key]['employee_id'], [
+                            'sspractitioner_id' => null
+                        ]);
+                    }
+                } else {
+                    $token = $this->getToken();
+                    return $token;
+                }
             }
         }
         return json_encode($return);
@@ -741,25 +636,9 @@ class SatuSehat extends BaseController
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
-        $ssToken = $this->request->getHeaderLine("ssToken");
-
-        // $response = '"{\"class\":{\"code\":\"AMB\",\"display\":\"ambulatory\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ActCode\"},\"id\":\"3a53a4e3-ef73-463f-b5f0-2d8dfcb76f83\",\"identifier\":[{\"system\":\"http:\/\/sys-ids.kemkes.go.id\/encounter\/100026655\",\"value\":\"20231220P001846202\"}],\"location\":[{\"location\":{\"display\":\"DALAM\",\"reference\":\"Location\/f316828e-065b-41a2-8dc0-837a630379be\"}}],\"meta\":{\"lastUpdated\":\"2023-12-20T03:07:41.903805+00:00\",\"versionId\":\"MTcwMzA0MTY2MTkwMzgwNTAwMA\"},\"participant\":[{\"individual\":{\"display\":\"YANDI KURNIAWAN, dr, Sp.PD\",\"reference\":\"Practitioner\/10009880728\"},\"type\":[{\"coding\":[{\"code\":\"ATND\",\"display\":\"attender\",\"system\":\"http:\/\/terminology.hl7.org\/CodeSystem\/v3-ParticipationType\"}]}]}],\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"resourceType\":\"Encounter\",\"serviceProvider\":{\"reference\":\"Organization\/100026655\"},\"status\":\"arrived\",\"statusHistory\":[{\"period\":{\"start\":\"2023-12-20T09:54:00+07:00\"},\"status\":\"arrived\"}],\"subject\":{\"display\":\"SAIMAN\",\"reference\":\"Patient\/P02478375538\"}}"';
-        // $response = json_decode($response, true);
-        // $response = json_decode($response, true);
-        // return json_encode($response);
-
-        // $select = DB::select("select ss_patient_id, name_of_pasien from pasien where no_registration = '$noRegistration'");
-        // $select = json_decode(json_encode($select), true);
-
-        // $selectToken = DB::select("select token from ss_organization");
-        // $selectToken = json_decode(json_encode($selectToken), true);
-        // $token = $selectToken[0]['token'];
-
-        // $pasienId = $select[0]['ss_patient_id'];
-        // $pasienName = $select[0]['name_of_pasien'];
-        // $visitId = $body['visit_id'];
-
-
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
 
         $curl = curl_init();
 
@@ -989,7 +868,11 @@ class SatuSehat extends BaseController
     {
         $body = $this->request->getBody();
         $body = json_decode($body, true);
-        $ssToken = $this->request->getHeaderLine("ssToken");
+
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $sstoken = $select['sstoken'];
+        // $ssToken = $this->request->getHeaderLine("ssToken");
         $db = db_connect();
 
         $select = $db->query("select ssencounter_id, sslocation_id, name_of_clinic as sslocation_name,sspractitioner_id,replace(fullname,'''','') as sspractitioner_name, ssencounter_id, ssorganizationid, visit_id, trans_id, no_registration from pasien_visitation pv
@@ -1212,7 +1095,9 @@ class SatuSehat extends BaseController
         $satusehat = $this->lowerKey($ss->where('status', null)->where('parameter is not null')->orderBy("trans_id, waktu")->findAll());        // return json_encode($satusehat);
 
         // $ssToken = $this->request->getHeaderLine("ssToken");
-        $ssToken = json_decode($this->getToken(), true);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
         $db = db_connect();
         // return json_encode(str_replace('\\', '', $satusehat[0]['parameter']));
 
@@ -1235,9 +1120,17 @@ class SatuSehat extends BaseController
                 ),
             ));
 
-
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             $response = curl_exec($curl);
-            $db->query("update satu_sehat set status = '200', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
+            curl_close($curl);
+
+            if ($httpcode != 401) {
+                $db->query("update satu_sehat set status = '200', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
+
 
             curl_close($curl);
         }
