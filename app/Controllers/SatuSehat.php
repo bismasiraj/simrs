@@ -229,27 +229,6 @@ class SatuSehat extends BaseController
 
                 if ($httpcode == 401) {
                     $token = $this->getToken();
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $nik,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => '',
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => 'GET',
-                        CURLOPT_HTTPHEADER => array(
-                            'Content-Type: application/json',
-                            'Authorization: Bearer ' . $token
-                        ),
-                    ));
-
-                    $response = curl_exec($curl);
-                    $response = json_decode($response, true);
-
-                    $return[] = $response;
-
-                    curl_close($curl);
                 } else {
                     if (!isset($response['entry']['0']['resource']['id'])) {
                         // return response()->setStatusCode(401);
@@ -665,7 +644,7 @@ class SatuSehat extends BaseController
 
         return $response;
     }
-    public function postBundleEncounter()
+    public function generateBatchingBundleSingle()
     {
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -864,7 +843,7 @@ class SatuSehat extends BaseController
 
         return json_encode("selesai");
     }
-    public function generateBundleEncounter()
+    public function generateBatchingBundleGroup()
     {
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -879,7 +858,8 @@ class SatuSehat extends BaseController
                                 inner join clinic c on c.clinic_id = pv.clinic_id
                                 inner join employee_all ea on ea.employee_id = pv.employee_id
                                 inner join ORGANIZATIONUNIT o on o.ORG_UNIT_CODE = pv.ORG_UNIT_CODE
-                                where visit_date between dateadd(day,-4,getdate()) and dateadd(day,-3,getdate()) and pv.trans_id not in (select trans_id from satu_sehat)
+                                where visit_date between dateadd(day,-7,getdate()) and dateadd(day,-6,getdate()) and pv.trans_id not in (select trans_id from satu_sehat)
+                                and sspractitioner_id is not null
                                 and stype_id = '1'")->getResultArray();;
         // return json_encode($select);
 
@@ -1080,16 +1060,16 @@ class SatuSehat extends BaseController
                 $db = db_connect();
                 try {
                     $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
-                    values('$no_registration','$trans_id','$this->baseurlfhir','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                    values('$no_registration','$trans_id','" . $this->baseurlfhir . "','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
                 } catch (\Exception $e) {
-                    // exit($e->getMessage());
+                    exit($e->getMessage());
                 }
             }
         }
 
         return json_encode("selesai");
     }
-    public function postingBatch()
+    public function postingAllBatch()
     {
         $ss = new SatuSehatModel();
         $satusehat = $this->lowerKey($ss->where('status', null)->where('parameter is not null')->orderBy("trans_id, waktu")->findAll());        // return json_encode($satusehat);
@@ -1125,13 +1105,15 @@ class SatuSehat extends BaseController
             curl_close($curl);
 
             if ($httpcode != 401) {
-                $db->query("update satu_sehat set status = '200', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
+                $statuscode = null;
+                if (isset($response['entry'])) {
+                    $statuscode = "200";
+                }
+                $db->query("update satu_sehat set status = '$statuscode', result = '" . $response . "' where trans_id = '" . $value['trans_id'] . "' and tipe = '" . $value['tipe'] . "'");
             } else {
                 $token = $this->getToken();
                 return $token;
             }
-
-
             curl_close($curl);
         }
     }

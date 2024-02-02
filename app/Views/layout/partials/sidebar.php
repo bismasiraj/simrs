@@ -199,13 +199,27 @@ $basecontroller->checkMenuActive('register');
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
                         <a href="#" class="has-arrow waves-effect">
                             <i class="fas fa-dot-circle"></i><span>Log</span>
                         </a>
                         <ul class="-menu">
                             <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?>"><a href="<?php echo base_url(); ?>admin/report/adminlog"><i class="mdi mdi-chevron-right"></i>Log User</a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
+
+                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
+                        <a href="#" class="has-arrow waves-effect">
+                            <i class="fas fa-dot-circle"></i><span>Satu Sehat</span>
+                        </a>
+                        <ul class="-menu">
+                            <li class="<?= $basecontroller->checkMenuActive('getAllPasienId'); ?>"><a href="<?php echo base_url(); ?>satusehat/getAllPasienId" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Pasien ID Hari Ini</a>
+                            <li class="<?= $basecontroller->checkMenuActive('generateBatchingBundleGroup'); ?>"><a href="<?php echo base_url(); ?>satusehat/generateBatchingBundleGroup" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Batching</a>
+                            <li class="<?= $basecontroller->checkMenuActive('postingAllBatch'); ?>"><a href="<?php echo base_url(); ?>satusehat/postingAllBatch" target="_blank"><i class="mdi mdi-chevron-right"></i>Posting Batching</a>
                             </li>
                         </ul>
                     </li>
