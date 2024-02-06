@@ -217,13 +217,14 @@ $basecontroller->checkMenuActive('register');
                             <i class="fas fa-dot-circle"></i><span>Satu Sehat</span>
                         </a>
                         <ul class="-menu">
-                            <li class="<?= $basecontroller->checkMenuActive('getAllPasienId'); ?>"><a href="<?php echo base_url(); ?>satusehat/getAllPasienId" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Pasien ID Hari Ini</a>
-                            <li class="<?= $basecontroller->checkMenuActive('generateBatchingBundleGroup'); ?>"><a href="<?php echo base_url(); ?>satusehat/generateBatchingBundleGroup" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Batching</a>
-                            <li class="<?= $basecontroller->checkMenuActive('postingAllBatch'); ?>"><a href="<?php echo base_url(); ?>satusehat/postingAllBatch" target="_blank"><i class="mdi mdi-chevron-right"></i>Posting Batching</a>
-                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewPasienId'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPasienId" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Pasien ID Hari Ini</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewOrganization'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewOrganization" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Klinik Organisasi</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocation" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Klinik</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewPractitioner'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPractitioner" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Kode Dokter</a></li>
                         </ul>
                     </li>
                 <?php } ?>
+                <li style="height: 300px"></li>
                 <!-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="mdi mdi-email-outline"></i>

@@ -4,17 +4,26 @@ namespace App\Controllers;
 
 use App\Models\BatchingBridgingModel;
 use App\Models\ClinicModel;
+use App\Models\DoctorScheduleModel;
 use App\Models\EmployeeAllModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
 use App\Models\SatuSehatModel;
+use App\Models\StatusPasienModel;
+use CodeIgniter\I18n\Time;
 use Firebase\JWT\JWT;
 use Myth\Auth\Models\UserModel;
 
 
 class SatuSehat extends BaseController
 {
+    protected $session;
+    public function __construct()
+    {
+        $this->session = session();
+        $this->session->set(['selectedMenu' => '']);
+    }
 
     protected $baseurloath = 'https://api-satusehat.kemkes.go.id/oauth2/v1';
     protected $baseurlfhir = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1';
@@ -177,6 +186,7 @@ class SatuSehat extends BaseController
             return json_encode($response['entry']['0']['resource']['id']);
         }
     }
+
     public function getAllPasienId()
     {
         // $token = json_decode($this->getToken(), true);
@@ -285,14 +295,11 @@ class SatuSehat extends BaseController
             curl_close($curl);
 
             if ($httpcode != 401) {
-                foreach ($response["entry"] as $key1 => $value1) {
-                    $id = ($value1['resource']['id']);
-                    if (isset($id)) {
-                        // return json_encode($id);
-                        $c->update($value1['resource']['identifier'][0]['value'], [
-                            'ssclinic_id' => $id
-                        ]);
-                    }
+                if (isset($response["entry"][0]["resource"]["id"])) {
+                    $c->update($response["entry"]['resource']['identifier'][0]['value'], [
+                        'ssclinic_id' => $response["entry"][0]["resource"]["id"]
+                    ]);
+                } else {
                 }
             } else {
                 $token = $this->getToken();
@@ -1115,6 +1122,723 @@ class SatuSehat extends BaseController
                 return $token;
             }
             curl_close($curl);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function viewPasienId()
+    {
+        $giTipe = 7;
+        $title = 'Generate Pasien ID';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>ID Satu Sehat</th>
+                        <th>Nama</th>
+                        <th>No.CM</th>
+                        <th>NIK</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            // 'clinic' => $clinic,
+            // 'status' => $status,
+            'header' => $header
+        ]);
+    }
+    public function viewPasienIdpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+
+        $pv = new PasienVisitationModel();
+
+        $kunjungan = $pv->join("pasien p", "p.no_registration = pasien_visitation.no_registration", "inner")
+            ->join("clinic c", "c.clinic_id = pasien_visitation.clinic_id", "inner")
+            ->join("employee_all ea", "ea.employee_id = pasien_visitation.employee_id", "inner")
+            ->join("status_pasien sp", "sp.status_pasien_id = pasien_visitation.status_pasien_id", "inner")
+            ->where("visit_date between dateadd(day,0,'$mulai') and dateadd(day,1,'$akhir')")
+            ->where("pasien_visitation.no_registration != '000000'")
+            ->groupBy("p.sspasien_id, pasien_visitation.diantar_oleh, p.no_registration, p.pasien_id")
+            ->orderBy("p.no_registration")->select("p.sspasien_id, pasien_visitation.diantar_oleh, p.no_registration, p.pasien_id")->findAll();
+        $dt_data     = array();
+
+        if (!empty($kunjungan)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($kunjungan as $key => $value) {
+                $row = [];
+                $row[] = $i + 1;
+                $row[] = '<div id="pasienid_' . $value['pasien_id'] . '">' . $value['sspasien_id'];
+                // $row[] = $value['visit_date'];
+                $row[] = $value['diantar_oleh'];
+                $row[] = $value['no_registration'];
+                $row[] = $value['pasien_id'];
+                // $row[] = $value['sspasien_id'];
+                // $row[] = $value['name_of_status_pasien'];
+                // $row[] = $value['sspasien_id'];
+
+                $dt_data[] = $row;
+                $i++;
+            }
+        }
+
+        $json_data = array(
+            "body"            => $dt_data,
+            "jsonData" => $kunjungan
+            // 'footer' => $footer
+        );
+        echo json_encode($json_data);
+    }
+    public function viewPasienIdbridging()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);        // $body = json_decode($body);
+        $pasien_id = $body['pasien_id'];
+        // return json_encode($body);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+        $ssorgid = $select['ssorganizationid'];
+        $p = new PasienModel();
+        if (!is_null($body["pasien_id"]) && $body["pasien_id"] != '') {
+            $nik = $body["pasien_id"];
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Patient?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $nik,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $response = json_decode($response, true);
+            $return[] = $response;
+
+            curl_close($curl);
+            // return json_encode($httpcode);
+
+            if ($httpcode == 401) {
+                $token = $this->getToken();
+            } else {
+                if (!isset($response['entry']['0']['resource']['id'])) {
+                    return json_encode("-");
+                } else {
+                    $p->update($body['no_registration'], [
+                        "sspasien_id" => $response['entry']['0']['resource']['id']
+                    ]);
+                    return json_encode($response['entry']['0']['resource']['id']);
+                }
+            }
+        }
+    }
+
+
+
+
+    public function viewOrganization()
+    {
+        $giTipe = 7;
+        $title = 'Organisasi Poli';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+        // $clinic = $this->lowerKey($clinicModel->where('stype_id', '3')->findAll());
+
+
+        $header = [];
+        $header = '<tr>
+                        <th>No</th>
+                        <th>Kode Organisasi Satu Sehat</th>
+                        <th>Nama</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'clinic' => $clinic,
+            'header' => $header
+        ]);
+    }
+    public function viewOrganizationpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $clinic_id = $this->request->getPost('clinic_id');
+
+        $c = new ClinicModel();
+        $select = $this->lowerKey($c->where("clinic_id like '%$clinic_id%'")->orderBy("name_of_clinic")->findAll());
+        $dt_data = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $row[] = $i + 1;
+                $row[] = '<div id="clinic_id_' . $value['clinic_id'] . '">' . $value['ssclinic_id'];
+                // $row[] = $value['visit_date'];
+                $row[] = $value['name_of_clinic'];
+
+                $dt_data[] = $row;
+                $i++;
+            }
+        }
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $select
+        );
+        echo json_encode($json_data);
+    }
+    public function viewOrganizationbridging()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);        // $body = json_decode($body);
+        $clinic_id = $body['clinic_id'];
+        $name_of_clinic = $body['clinic_id'];
+        // return json_encode($body);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+        $ssorgid = $select['ssorganizationid'];
+        $c = new ClinicModel();
+        if (!is_null($body["clinic_id"]) && $body["clinic_id"] != '') {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/Organization?partof=' . $ssorgid . '&name=' . $name_of_clinic,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+            $return[] = $response;
+            // return json_encode($response);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($httpcode != 401) {
+                if (isset($response["entry"][0]["resource"]["id"])) {
+                    $c->update($clinic_id, [
+                        'ssclinic_id' => $response["entry"][0]["resource"]["id"]
+                    ]);
+                    return json_encode($response["entry"][0]["resource"]["id"]);
+                } else {
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => $this->baseurlfhir . '/Organization',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS => '{
+                                        "resourceType": "Organization",
+                                        "active": true,
+                                        "identifier": [
+                                            {
+                                                "use": "official",
+                                                "system": "http://sys-ids.kemkes.go.id/organization/' . $ssorgid . '",
+                                                "value": "' . $clinic_id . '"
+                                            }
+                                        ],
+                                        "type": [
+                                            {
+                                                "coding": [
+                                                    {
+                                                        "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                                                        "code": "dept",
+                                                        "display": "Hospital Department"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "name": "' . $name_of_clinic . '",
+                                        "partOf": {
+                                            "reference": "Organization/' . $ssorgid . '"
+                                        }
+                                    }',
+                        CURLOPT_HTTPHEADER => array(
+                            'Content-Type: application/json',
+                            'Authorization: Bearer ' . $ssToken
+                        ),
+                    ));
+
+                    $response = curl_exec($curl);
+                    // return json_encode($value);
+
+                    $response = json_decode($response, true);
+                    $return[] = $response;
+                    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                    curl_close($curl);
+
+                    if ($httpcode != 401) {
+                        if (isset($response['id'])) {
+                            $c->update($clinic_id, [
+                                'ssclinic_id' => $response['id']
+                            ]);
+                            return json_encode($response['id']);
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        $token = $this->getToken();
+                        return $token;
+                    }
+                }
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function viewLocation()
+    {
+        $giTipe = 7;
+        $title = 'Organisasi Poli';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+        // $clinic = $this->lowerKey($clinicModel->where('stype_id', '3')->findAll());
+
+
+        $header = [];
+        $header =
+            '<tr>
+                        <th>No</th>
+                        <th>Kode Lokasi Satu Sehat</th>
+                        <th>Nama</th>
+                        <th>Kode Organisasi Satu Sehat</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'clinic' => $clinic,
+            'header' => $header
+        ]);
+    }
+    public function viewLocationpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $clinic_id = $this->request->getPost('clinic_id');
+
+        $c = new ClinicModel();
+        $select = $this->lowerKey($c->where("clinic_id like '%$clinic_id%'")->orderBy("name_of_clinic")->findAll());
+        $dt_data = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $row[] = $i + 1;
+                $row[] = '<div id="clinic_id_' . $value['clinic_id'] . '">' . $value['sslocation_id'];
+                // $row[] = $value['visit_date'];
+                $row[] = $value['name_of_clinic'];
+                $row[] = $value['ssclinic_id'];
+
+                $dt_data[] = $row;
+                $i++;
+            }
+        }
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $select
+        );
+        echo json_encode($json_data);
+    }
+    public function viewLocationbridging()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);        // $body = json_decode($body);
+        $ssclinic_id = $body['ssclinic_id'];
+        $name_of_clinic = $body['clinic_id'];
+        // return json_encode($body);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+        $ssorgid = $select['ssorganizationid'];
+        $c = new ClinicModel();
+        if (!is_null($body["ssclinic_id"]) && $body["ssclinic_id"] != '') {
+            $curl = curl_init();
+
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir . '/Location?organization=' . $body['ssclinic_id'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+
+            $return[] = $response;
+
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($httpcode != 401) {
+                if (isset($response['entry'][0]['resource']['id'])) {
+                    // if (isset($response['id'])) {
+                    $c->update($body['clinic_id'], [
+                        'sslocation_id' => $response['entry'][0]['resource']['id']
+                        // 'sslocation_id' => $response['id']
+                    ]);
+                    return json_encode($response['entry'][0]['resource']['id']);
+                } else {
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => $this->baseurlfhir . '/Location',
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        CURLOPT_POSTFIELDS => '{
+                                        "resourceType": "Location",
+                                        "identifier": [
+                                            {
+                                                "system": "http://sys-ids.kemkes.go.id/location/' . $ssorgid . '",
+                                                "value": "' . $body['clinic_id'] . '"
+                                            }
+                                        ],
+                                        "status": "active",
+                                        "name": "' . $body['name_of_clinic'] . '",
+                                        "description": "' . $body['name_of_clinic'] . '",
+                                        "mode": "instance",
+
+
+                                        "physicalType": {
+                                            "coding": [
+                                                {
+                                                    "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+                                                    "code": "ro",
+                                                    "display": "Room"
+                                                }
+                                            ]
+                                        },
+                                        "managingOrganization": {
+                                            "reference": "Organization/' . $body['ssclinic_id'] . '"
+                                        }
+                                    }',
+                        CURLOPT_HTTPHEADER => array(
+                            'Content-Type: application/json',
+                            'Authorization: Bearer ' . $ssToken
+                        ),
+                    ));
+
+                    $response = curl_exec($curl);
+                    $response = json_decode($response, true);
+
+                    $return[] = $response;
+                    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                    curl_close($curl);
+
+                    if ($httpcode != 401) {
+                        if (isset($response['id'])) {
+                            // if (isset($response['id'])) {
+                            $c->update($body['clinic_id'], [
+                                'sslocation_id' => $response['id']
+                                // 'sslocation_id' => $response['id']
+                            ]);
+                            return json_encode($response['id']);
+                        } else {
+                            $c->update($body['clinic_id'], [
+                                'sslocation_id' => null
+                            ]);
+                            return json_encode($response);
+                        }
+                    } else {
+                        $token = $this->getToken();
+                        return $token;
+                    }
+                }
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function viewPractitioner()
+    {
+        $giTipe = 7;
+        $title = 'Kode Satu Sehat Dokter';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        // $clinicModel = new ClinicModel();
+        // $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+
+        $ea = new EmployeeAllModel();
+        $dokter = $this->lowerKey($ea->where("specialist_type_id is not null")->findAll());
+
+        // $ds = new DoctorScheduleModel();
+        // $dokter = $this->lowerKey($ds->getSchedule());
+
+        // return json_encode($dokter);
+        $header = [];
+        $header =
+            '<tr>
+                        <th>No</th>
+                        <th>Kode Satu Sehat Dokter</th>
+                        <th>Nama Dokter</th>
+                        <th>NIK Dokter</th>
+                        <th>Spesialis</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            // 'schedule' => $dokter,
+            'dokterfill' => $dokter,
+            'header' => $header
+        ]);
+    }
+
+    public function viewPractitionerpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $dokter = $this->request->getPost('dokter');
+
+        $dokter = $dokter ?? '%';
+        // return json_encode($dokter);
+        // $ea = new EmployeeAllModel();
+        // $select = $this->lowerKey($ea->where("employee_id like '%$dokter%'")->orderBy("fullname")->findAll());
+
+        $db = db_connect();
+        $select = $db->query("select ea.fullname, ea.employee_id, ea.sspractitioner_id,st.specialist_type, ea.npk from EMPLOYEE_ALL ea
+        inner join SPECIALIST_TYPE st on ea.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        where employee_id like '%$dokter$' or fullname like '%$dokter%'
+        order by fullname")->getResultArray();
+        // return json_encode($select);
+        $dt_data = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $row[] = $i + 1;
+                $row[] = '<div id="employee_id_' . $value['employee_id'] . '">' . $value['sspractitioner_id'];
+                // $row[] = $value['visit_date'];
+                $row[] = $value['fullname'];
+                $row[] = $value['npk'];
+                $row[] = $value['specialist_type'];
+
+                $dt_data[] = $row;
+                $i++;
+            }
+        }
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $select
+        );
+        echo json_encode($json_data);
+    }
+    public function viewPractitionerbridging()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);        // $body = json_decode($body);
+        $employee_id = $body['employee_id'];
+        $fullname = $body['fullname'];
+        $npk = $body['npk'];
+        // return json_encode($body);
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+        $ssorgid = $select['ssorganizationid'];
+        $c = new ClinicModel();
+        if (!is_null($body["sspractitioner_id"]) && $body["sspractitioner_id"] != '') {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/fhir-r4/v1/Practitioner?identifier=https%3A%2F%2Ffhir.kemkes.go.id%2Fid%2Fnik%7C' . $body['npk'],
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer ' . $ssToken
+                ),
+            ));
+
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true);
+
+            $return[] = $response;
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($httpcode != 401) {
+                if (isset($response['entry'][0]['resource']['id'])) {
+                    // if (isset($response['id'])) {
+                    $c->update($body['employee_id'], [
+                        'sspractitioner_id' => $response['entry'][0]['resource']['id']
+                        // 'sslocation_id' => $response['id']
+                    ]);
+                    return json_encode($response['entry'][0]['resource']['id']);
+                } else {
+                    $c->update($body['employee_id'], [
+                        'sspractitioner_id' => null
+                    ]);
+                }
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
         }
     }
 }
