@@ -1841,4 +1841,881 @@ class SatuSehat extends BaseController
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function viewEncounterCondition()
+    {
+        $giTipe = 7;
+        $title = 'Kunjungan dan Diagnosa';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        // $clinicModel = new ClinicModel();
+        // $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+
+        $ea = new EmployeeAllModel();
+        $dokter = $this->lowerKey($ea->where("specialist_type_id is not null")->findAll());
+
+        $sp = new StatusPasienModel();
+        $status = $this->lowerKey($sp->where("name_of_status_pasien <> ''")->findAll());
+
+        $c = new ClinicModel();
+        $clinic = $this->lowerKey($c->where("stype_id in ('1','2')")->findAll());
+
+        // $ds = new DoctorScheduleModel();
+        // $dokter = $this->lowerKey($ds->getSchedule());
+
+        // return json_encode($dokter);
+        $header = [];
+        $header =
+            '<tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Dokter</th>
+                        <th>Poli</th>
+                        <th>Kode Kunjungan RS</th>
+                        <th>Kode Kunjungan Satu Sehat</th>
+                        <th>Diagnosa</th>
+                        <th>Prosedur</th>
+                        <th>Observasi</th>
+                        <th>Status Bridging</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'status' => $status,
+            'clinic' => $clinic,
+            // 'schedule' => $dokter,
+            'dokterfill' => $dokter,
+            'header' => $header
+        ]);
+    }
+    public function viewEncounterConditionpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $dokter = $this->request->getPost('dokter');
+        $clinic_id = $this->request->getPost('clinic_id');
+        $status = $this->request->getPost('status_pasien_id');
+
+        $dokter = $dokter ?? '%';
+        // return json_encode($dokter);
+        // $ea = new EmployeeAllModel();
+        // $select = $this->lowerKey($ea->where("employee_id like '%$dokter%'")->orderBy("fullname")->findAll());
+
+        $db = db_connect();
+        $select = $db->query("select replace(pv.diantar_oleh,'''','') diantar_oleh, min(pv.visit_date) visit_date, ssencounter_id, sslocation_id, 
+                                name_of_clinic,sspractitioner_id,replace(fullname,'''','') as fullname, ssencounter_id, 
+                                ssorganizationid, pv.trans_id, pv.visit_id, 
+                                pv.no_registration, ss.status, ss.parameter, ss.url, ss.method, ss.result,
+                                replace(p.name_of_pasien,'''','') name_of_pasien, p.sspasien_id
+                                from pasien_visitation pv
+                                inner join pasien p on p.no_registration = pv.no_registration
+                                inner join clinic c on c.clinic_id = pv.clinic_id
+                                inner join employee_all ea on ea.employee_id = pv.employee_id
+                                inner join ORGANIZATIONUNIT o on o.ORG_UNIT_CODE = pv.ORG_UNIT_CODE
+                                left outer join satu_sehat ss on ss.trans_id = pv.trans_id
+                                where visit_date between dateadd(day,0,'$mulai') and dateadd(day,1,'$akhir')
+                                and pv.clinic_id like '%$clinic_id%'
+                                and pv.status_pasien_id like '%$status%'
+                                and sspractitioner_id is not null
+                                and stype_id = '1'
+                                and pv.clinic_id_from = 'P000'
+                                group by pv.diantar_oleh,ssencounter_id, sslocation_id, name_of_clinic,sspractitioner_id,replace(fullname,'''',''), ssencounter_id, ssorganizationid, pv.trans_id,pv.visit_id, pv.no_registration, ss.status, ss.parameter, ss.url, ss.method, ss.result, p.name_of_pasien, p.sspasien_id")->getResultArray();;
+        // return json_encode($select);
+        $dt_data = array();
+        $kunjungan = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $ssfulljson = json_decode($value['parameter'], true);
+                if ($value['status'] != '200') {
+                    $db->query("delete from satu_sehat where trans_id = '" . $value['trans_id'] . "' and tipe = 4");
+                    $body = $value;
+                    $sspasien_id = $value['sspasien_id'];
+                    $namapasien = $value['name_of_pasien'];
+                    $sslocation_id = $value['sslocation_id'];
+                    $sslocation_name = $value['name_of_clinic'];
+                    $sspractitioner_id = $value['sspractitioner_id'];
+                    $sspractitioner_name = $value['fullname'];
+                    $ssencounter_id = $value['ssencounter_id'];
+                    $ssorganizationid = $value['ssorganizationid'];
+                    $visit_id = $value['visit_id'];
+                    $trans_id = $value['trans_id'];
+                    $no_registration = $value['no_registration'];
+
+                    $ss = new SatuSehat();
+
+                    $bb = new BatchingBridgingModel();
+
+                    $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("replace(convert(varchar,waktu,20),' ','T')+'+07:00' as waktu, tipe")->orderBy('waktu')->findAll();
+
+                    $jsonencounter = '';
+                    $jsonencounter = '{
+                                "fullUrl": "urn:uuid:' . $ssencounter_id . '",
+                                "resource": {
+                                    "resourceType": "Encounter",
+                                    "status": "finished",
+                                    "class": {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                        "code": "AMB",
+                                        "display": "ambulatory"
+                                    },
+                                    "subject": {
+                                        "reference": "Patient/' . $value['sspasien_id'] . '",
+                                        "display": "' . $value['name_of_pasien'] . '"
+                                    },
+                                    "participant": [
+                                        {
+                                            "type": [
+                                                {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                                                            "code": "ATND",
+                                                            "display": "attender"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "individual": {
+                                                "reference": "Practitioner/' . $sspractitioner_id . '",
+                                                "display": "' . $sspractitioner_name . '"
+                                            }
+                                        }
+                                    ],
+                                    "location": [
+                                        {
+                                            "location": {
+                                                "reference": "Location/' . $sslocation_id . '",
+                                                "display": "' . $sslocation_name . '"
+                                            }
+                                        }
+                                    ],
+                                    "diagnosis": [
+                                    ],
+                                    "statusHistory": [
+                                        
+                                    ],
+                                    "serviceProvider": {
+                                        "reference": "Organization/' . $ssorganizationid . '"
+                                    },
+                                    "identifier": [
+                                        {
+                                            "system": "http://sys-ids.kemkes.go.id/encounter/' . $ssorganizationid . '",
+                                            "value": "' . $trans_id . '"
+                                        }
+                                    ]
+                                },
+                                "request": {
+                                    "method": "POST",
+                                    "url": "Encounter"
+                                }
+                            }';
+                    $jsonencounter = json_decode($jsonencounter, true);
+                    // return json_encode(in_array($batching[4]['tipe'], ['25', '27']));
+                    $iscontinue = false;
+                    foreach ($batching as $keyb => $valueb) {
+                        if ($valueb['tipe'] == '21') {
+                            $jsonencounter['resource']['period']['start'] = $valueb['waktu'];
+                        } else if ($keyb == count($batching) - 1 && ($valueb['tipe'] == '25' || $valueb['tipe'] == '27')) {
+                            $jsonencounter['resource']['period']['end'] = $valueb['waktu'];
+                        } else if ($keyb == count($batching) - 1 && !in_array($valueb['tipe'], ['25', '27'])) {
+                            // return response()->setStatusCode(401, 'Kunjungan belum selesai, silahkan selesaikan kunjungan terlebih dahulu.');
+                            $iscontinue = false;
+                            break;
+                        }
+                        if ($valueb['tipe'] == '21') {
+                            $jsonencounter['resource']['statusHistory'][0]['status'] = 'arrived';
+                            $jsonencounter['resource']['statusHistory'][0]['period']['start'] = $valueb['waktu'];
+                        } else if ($valueb['tipe'] == '23') {
+                            $jsonencounter['resource']['statusHistory'][0]['period']['end'] = $valueb['waktu'];
+                            $jsonencounter['resource']['statusHistory'][1]['status'] = 'in_progress';
+                            $jsonencounter['resource']['statusHistory'][1]['period']['start'] = $valueb['waktu'];
+                        } else if ($valueb['tipe'] == '25') {
+                            $jsonencounter['resource']['statusHistory'][1]['period']['end'] = $valueb['waktu'];
+                            $jsonencounter['resource']['statusHistory'][2]['status'] = 'finished';
+                            $jsonencounter['resource']['statusHistory'][2]['period']['start'] = $valueb['waktu'];
+                        }
+                        if ($keyb == count($batching) - 1 && in_array($valueb['tipe'], ['25', '27'])) {
+                            $jsonencounter['resource']['statusHistory'][2]['period']['end'] = $valueb['waktu'];
+                            $iscontinue = true;
+                            $lastwaktu = $valueb['tipe'];
+                        }
+                    }
+                    // $select[$key]['lastwaktu'] = $lastwaktu;
+                    if ($iscontinue == true) {
+                        $ssjson = array();
+
+                        $sscondition = array();
+                        $condition = $db->query('select pds.diagnosa_id, pds.diagnosa_name, pds.sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
+                        where visit_id = \'' . $visit_id . '\'')->getResultArray();
+
+                        foreach ($condition as $key1 => $value1) {
+                            $jsonencounter['resource']['diagnosis'][] = json_decode('{
+                                            "condition": {
+                                                "reference": "urn:uuid:' . $value1['sscondition_id'] . '",
+                                                "display": "' . $value1['diagnosa_name'] . '"
+                                            },
+                                            "use": {
+                                                "coding": [
+                                                    {
+                                                        "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+                                                        "code": "DD",
+                                                        "display": "Discharge diagnosis"
+                                                    }
+                                                ]
+                                            },
+                                            "rank": ' . (string)($key + 1) . '
+                                        }', true);
+                        }
+                        $ssjson[] = $jsonencounter;
+                        foreach ($condition as $key1 => $value1) {
+                            $sscondition = '{
+                                "fullUrl": "urn:uuid:' . $value1['sscondition_id'] . '",
+                                "resource": {
+                                    "resourceType": "Condition",
+                                    "clinicalStatus": {
+                                        "coding": [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                                                "code": "active",
+                                                "display": "Active"
+                                            }
+                                        ]
+                                    },
+                                    "category": [
+                                        {
+                                            "coding": [
+                                                {
+                                                    "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                                                    "code": "encounter-diagnosis",
+                                                    "display": "Encounter Diagnosis"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "system": "http://hl7.org/fhir/sid/icd-10",
+                                                "code": "' . $value1['diagnosa_id'] . '",
+                                                "display": "' . $value1['diagnosa_name'] . '"
+                                            }
+                                        ]
+                                    },
+                                    "subject": {
+                                        "reference": "Patient/' . $value['sspasien_id'] . '",
+                                        "display": "Budi Santoso"
+                                    },
+                                    "encounter": {
+                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                        "display": "Kunjungan ' . $value['name_of_pasien'] . '"
+                                    }
+                                },
+                                "request": {
+                                    "method": "POST",
+                                    "url": "Condition"
+                                }
+                            }';
+                            $sscondition = json_decode($sscondition, true);
+                            $ssjson[] = $sscondition;
+                        }
+
+                        $isprocedure = '';
+
+                        if (isset($condition[0])) {
+                            $procedures = $db->query("select pds.diagnosa_id, pds.diagnosa_name, pds.ssprocedure_id from pasien_diagnosa pd inner join pasien_procedures pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id where visit_id = '$visit_id'")->getResultArray();
+                            foreach ($procedures as $pkey => $pvalue) {
+                                $ssprocedure = '{
+                                                    "fullUrl": "urn:uuid:' . $value1['ssprocedure_id'] . '",
+                                                    "resourceType": "Procedure",
+                                                    "status": "completed",
+                                                    "category": {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://snomed.info/sct",
+                                                                "code": "103693007",
+                                                                "display": "Diagnostic procedure"
+                                                            }
+                                                        ],
+                                                        "text": "Diagnostic procedure"
+                                                    },
+                                                    "code": {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://hl7.org/fhir/sid/icd-9-cm",
+                                                                "code": "' . $pvalue['diagnosa_id'] . '",
+                                                                "display": "' . $pvalue['diagnosa_name'] . '"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/' . $sspasien_id . '",
+                                                        "display": "Budi Santoso"
+                                                    },
+                                                    "encounter": {
+                                                        "reference": "Encounter/' . $ssencounter_id . '",
+                                                        "display": "Tindakan ' . $pvalue['diagnosa_name'] . '"
+                                                    },
+                                                    "performedPeriod": {
+                                                                            "start": "' . $jsonencounter['resource']['statusHistory'][1]['period']['start'] . '",
+                                                                            "end": "' . $jsonencounter['resource']['statusHistory'][1]['period']['end'] . '"
+                                                                        },
+                                                    "performer": [
+                                                        {
+                                                            "actor": {
+                                                                "reference": "Practitioner/' . $sspractitioner_id . '",
+                                                                "display": "' . $sspractitioner_name . '"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "reasonCode": [
+                                                        {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://hl7.org/fhir/sid/icd-10",
+                                                                    "code": "' . $value1['diagnosa_id'] . '",
+                                                                    "display": "' . $value1['diagnosa_name'] . '"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }';
+                                $ssprocedure = json_decode($ssprocedure, true);
+                                $ssjson[] = $ssprocedure;
+                                $isprocedure = 'terisi';
+                            }
+                        }
+
+
+                        $exam = $this->lowerKey($db->query("select replace(convert(varchar,examination_date,20),' ','T')+'+07:00' as examination_date, nadi, newid() as nadi_id, nafas,  newid() as nafas_id, temperature, newid() as temperature_id, tension_upper, newid() as tension_upper_id, tension_below, newid() as tension_below_id, weight, newid() as weight_id, height, newid() as height_id from examination_info
+                        where visit_id = '" . $visit_id . "'")->getResultArray());
+                        $isexam = '';
+
+                        if (isset($exam[0])) {
+                            $examvalue = $exam[0];
+                            if ($examvalue['nadi'] != null && $examvalue['nadi'] != '') {
+                                $ssexam = '{
+                                                "fullUrl": "urn:uuid:' . $examvalue['nadi_id'] . '",
+                                                "resourceType": "Observation",
+                                                "status": "final",
+                                                "category": [
+                                                    {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                "code": "vital-signs",
+                                                                "display": "Vital Signs"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "code": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://loinc.org",
+                                                            "code": "8867-4",
+                                                            "display": "Heart rate"
+                                                        }
+                                                    ]
+                                                },
+                                                "subject": {
+                                                    "reference": "Patient/' . $sspasien_id . '"
+                                                },
+                                                "performer": [
+                                                    {
+                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    }
+                                                ],
+                                                "encounter": {
+                                                    "reference": "Encounter/' . $ssencounter_id . '",
+                                                    "display": "Pemeriksaan Nadi' . $namapasien . '"
+                                                },
+                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                "issued": "' . $examvalue['examination_date'] . '",
+                                                "valueQuantity": {
+                                                    "value": ' . $examvalue['nadi'] . ',
+                                                    "unit": "beats/minute",
+                                                    "system": "http://unitsofmeasure.org",
+                                                    "code": "/min"
+                                                }
+                                            }';
+                                $ssjson[] = $ssexam;
+                            }
+                            if ($examvalue['nafas'] != null && $examvalue['nafas'] != '') {
+                                $ssexam = '{
+                                                "fullUrl": "urn:uuid:' . $examvalue['nafas_id'] . '",
+                                                "resourceType": "Observation",
+                                                "status": "final",
+                                                "category": [
+                                                    {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                "code": "vital-signs",
+                                                                "display": "Vital Signs"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "code": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://loinc.org",
+                                                            "code": "9279-1",
+                                                            "display": "Respiratory rate"
+                                                        }
+                                                    ]
+                                                },
+                                                "subject": {
+                                                    "reference": "Patient/' . $sspasien_id . '"
+                                                },
+                                                "performer": [
+                                                    {
+                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    }
+                                                ],
+                                                "encounter": {
+                                                    "reference": "Encounter/' . $ssencounter_id . '",
+                                                    "display": "Pemeriksaan Nafas' . $namapasien . '"
+                                                },
+                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                "issued": "' . $examvalue['examination_date'] . '",
+                                                "valueQuantity": {
+                                                    "value": ' . $examvalue['nafas'] . ',
+                                                    "unit": "breaths/minute",
+                                                    "system": "http://unitsofmeasure.org",
+                                                    "code": "/min"
+                                                }
+                                            }';
+                                $ssjson[] = $ssexam;
+                            }
+                            if ($examvalue['tension_upper'] != null && $examvalue['tension_upper'] != '') {
+                                $ssexam = '{
+                                                "fullUrl": "urn:uuid:' . $examvalue['tension_upper_id'] . '",
+                                                "resourceType": "Observation",
+                                                "status": "final",
+                                                "category": [
+                                                    {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                "code": "vital-signs",
+                                                                "display": "Vital Signs"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "code": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://loinc.org",
+                                                            "code": "8480-6",
+                                                            "display": "Systolic blood pressure"
+                                                        }
+                                                    ]
+                                                },
+                                                "subject": {
+                                                    "reference": "Patient/' . $sspasien_id . '"
+                                                },
+                                                "performer": [
+                                                    {
+                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    }
+                                                ],
+                                                "encounter": {
+                                                    "reference": "Encounter/' . $ssencounter_id . '",
+                                                    "display": "Pemeriksaan Sistol' . $namapasien . '"
+                                                },
+                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                "issued": "' . $examvalue['examination_date'] . '",
+                                                "bodySite": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://snomed.info/sct",
+                                                            "code": "368209003",
+                                                            "display": "Right arm"
+                                                        }
+                                                    ]
+                                                },
+                                                "valueQuantity": {
+                                                    "value": ' . $examvalue['tension_upper'] . ',
+                                                    "unit": "mm[Hg]",
+                                                    "system": "http://unitsofmeasure.org",
+                                                    "code": "mm[Hg]"
+                                                }
+                                            }';
+                                $ssjson[] = $ssexam;
+                            }
+                            if ($examvalue['tension_below'] != null && $examvalue['tension_below'] != '') {
+                                $ssexam = '{
+                                                "fullUrl": "urn:uuid:' . $examvalue['tension_below_id'] . '",
+                                                "resourceType": "Observation",
+                                                "status": "final",
+                                                "category": [
+                                                    {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                "code": "vital-signs",
+                                                                "display": "Vital Signs"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "code": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://loinc.org",
+                                                            "code": "8462-4",
+                                                            "display": "Diastolic blood pressure"
+                                                        }
+                                                    ]
+                                                },
+                                                "subject": {
+                                                    "reference": "Patient/' . $sspasien_id . '"
+                                                },
+                                                "performer": [
+                                                    {
+                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    }
+                                                ],
+                                                "encounter": {
+                                                    "reference": "Encounter/' . $ssencounter_id . '",
+                                                    "display": "Pemeriksaan Diastol' . $namapasien . '"
+                                                },
+                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                "issued": "' . $examvalue['examination_date'] . '",
+                                                "bodySite": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://snomed.info/sct",
+                                                            "code": "368209003",
+                                                            "display": "Right arm"
+                                                        }
+                                                    ]
+                                                },
+                                                "valueQuantity": {
+                                                    "value": ' . $examvalue['tension_below'] . ',
+                                                    "unit": "mm[Hg]",
+                                                    "system": "http://unitsofmeasure.org",
+                                                    "code": "mm[Hg]"
+                                                }
+                                            }';
+                                $ssjson[] = $ssexam;
+                            }
+                            if ($examvalue['temperature'] != null && $examvalue['temperature'] != '') {
+                                $ssexam = '{
+                                                "fullUrl": "urn:uuid:' . $examvalue['temperature_id'] . '",
+                                                "resourceType": "Observation",
+                                                "status": "final",
+                                                "category": [
+                                                    {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                "code": "vital-signs",
+                                                                "display": "Vital Signs"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "code": {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://loinc.org",
+                                                            "code": "8310-5",
+                                                            "display": "Body temperature"
+                                                        }
+                                                    ]
+                                                },
+                                                "subject": {
+                                                    "reference": "Patient/' . $sspasien_id . '"
+                                                },
+                                                "performer": [
+                                                    {
+                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    }
+                                                ],
+                                                "encounter": {
+                                                    "reference": "Encounter/' . $ssencounter_id . '",
+                                                    "display": "Pemeriksaan Suhu' . $namapasien . '"
+                                                },
+                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                "issued": "' . $examvalue['examination_date'] . '",
+                                                "valueQuantity": {
+                                                    "value": ' . $examvalue['temperature'] . ',
+                                                    "unit": "C",
+                                                    "system": "http://unitsofmeasure.org",
+                                                    "code": "Cel"
+                                                },
+                                            }';
+                                $ssjson[] = $ssexam;
+                            }
+                            $isexam = 'terisi';
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        $ssfulljson['resourceType'] = 'Bundle';
+                        $ssfulljson['type'] = 'transaction';
+                        $ssfulljson['entry'] = $ssjson;
+
+
+                        $db = db_connect();
+                        try {
+                            $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
+                            values('$no_registration','$trans_id','" . $this->baseurlfhir . "','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                        } catch (\Exception $e) {
+                            exit($e->getMessage());
+                        }
+
+                        $select[$key]['parameter'] = json_encode($ssfulljson);
+                        $select[$key]['isdiagnosa'] = null;
+                        $select[$key]['url'] = $this->baseurlfhir;
+                        $isdiagnosa = '';
+                        if (isset($ssfulljson['entry'])) {
+                            foreach ($ssfulljson['entry'] as $key2 => $value2) {
+                                // return json_encode($value2);
+                                if (isset($value2['resource']['resourceType'])) {
+                                    if ($value2['resource']['resourceType'] == 'Condition') {
+                                        $isdiagnosa = "terisi";
+                                        $select[$key]['isdiagnosa'] = $isdiagnosa;
+                                    }
+                                }
+                            }
+                        }
+                        $select[$key]['isdiagnosa'] = $isdiagnosa;
+                        $select[$key]['isprocedure'] = $isprocedure;
+                        $select[$key]['isexam'] = $isexam;
+                        // return json_encode($value);
+                        $row[] = $i + 1;
+                        $row[] = $value['diantar_oleh'] . "/" . $value['sspasien_id'];
+                        $row[] = $value['fullname'];
+                        $row[] = $value['name_of_clinic'];
+                        $row[] = $value['trans_id'];
+                        $row[] = $value['ssencounter_id'];
+                        $row[] = $isdiagnosa;
+                        $row[] = $isprocedure;
+                        $row[] = $isexam;
+                        $row[] = '<div id="status_' . $value['sspasien_id'] . '">' . $value['status'] . '</div>';
+                        $dt_data[] = $row;
+                        $i++;
+                        $kunjungan[] = $select[$key];
+                    }
+                }
+            }
+        }
+
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $kunjungan
+        );
+        echo json_encode($json_data);
+    }
+
+    public function viewEncounterConditionbridging()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $parameter = json_decode($body['parameter'], true);
+        // return json_encode($body);
+
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $ssToken = $select['sstoken'];
+        $db = db_connect();
+        $ispass = false;
+        $conditionCount = 0;
+        $statusHistoryCount = 0;
+        foreach ($parameter['entry'] as $key => $value) {
+            if ($value['resource']['resourceType'] == 'Encounter') {
+                if (count($value['resource']['statusHistory']) > 0) {
+                    $statusHistoryCount++;
+                };
+            }
+            if ($value['resource']['resourceType'] == 'Condition') {
+                $conditionCount++;
+            }
+        }
+        if ($conditionCount > 0 && $statusHistoryCount > 0)
+            $ispass = true;
+        // return json_encode(str_replace('\\', '', $satusehat[0]['parameter']));
+        if ($ispass) {
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $this->baseurlfhir,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => str_replace('\\', '', $body['parameter']),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer ' . $ssToken,
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            // curl_close($curl);
+            // return json_encode($response);
+
+            if ($httpcode != 401) {
+                $statuscode = null;
+                if (isset($response['entry'])) {
+                    $statuscode = "200";
+                }
+                $db->query("update satu_sehat set status = '$statuscode', result = '" . $response . "' where trans_id = '" . $body['trans_id'] . "' and tipe = '4'");
+                return json_encode($httpcode . " ===== " . $response);
+            } else {
+                $token = $this->getToken();
+                return $token;
+            }
+            curl_close($curl);
+        } else {
+            return json_encode(0);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function viewMedication()
+    {
+        $giTipe = 7;
+        $title = 'Kunjungan dan Diagnosa';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        // $clinicModel = new ClinicModel();
+        // $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+
+        $ea = new EmployeeAllModel();
+        $dokter = $this->lowerKey($ea->where("specialist_type_id is not null")->findAll());
+
+        $sp = new StatusPasienModel();
+        $status = $this->lowerKey($sp->where("name_of_status_pasien <> ''")->findAll());
+
+        $c = new ClinicModel();
+        $clinic = $this->lowerKey($c->where("stype_id in ('1','2')")->findAll());
+
+        // $ds = new DoctorScheduleModel();
+        // $dokter = $this->lowerKey($ds->getSchedule());
+
+        // return json_encode($dokter);
+        $header = [];
+        $header =
+            '<tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Dokter</th>
+                        <th>Poli</th>
+                        <th>Kode Kunjungan RS</th>
+                        <th>Kode Kunjungan Satu Sehat</th>
+                        <th>Diagnosa</th>
+                        <th>Status Bridging</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'status' => $status,
+            'clinic' => $clinic,
+            // 'schedule' => $dokter,
+            'dokterfill' => $dokter,
+            'header' => $header
+        ]);
+    }
 }

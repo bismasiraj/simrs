@@ -713,6 +713,12 @@ $currency_symbol = "Rp. ";
                 console.log(type)
                 getLocation(0)
             }
+        } else if (type == 'viewEncounterCondition') {
+            console.log(type)
+            if ((ssjson.length) >= 0) {
+                console.log(type)
+                postEncounterCondition(0)
+            }
         }
     }
 
@@ -730,6 +736,7 @@ $currency_symbol = "Rp. ";
                 processData: false,
                 success: function(data) {
                     $("#pasienid_" + element.pasien_id).html(data)
+                    ssjson[key].sspasien_id = data
                     if (key < ssjson.length) {
                         getPasienId(key + 1)
                     }
@@ -827,6 +834,45 @@ $currency_symbol = "Rp. ";
             }
         }
 
+    }
+
+    function postEncounterCondition(key) {
+        var element = ssjson[key]
+        if (typeof element.isdiagnosa !== 'undefined') {
+            if (element.isdiagnosa == 'terisi' && element.status != '200') {
+                console.log(element.sslocation_id)
+                $.ajax({
+                    url: '<?php echo base_url(); ?>satusehat/<?= basename($actual_link); ?>bridging',
+                    type: "POST",
+                    data: JSON.stringify(element),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(data) {
+                        // $("#pasienid_" + ssjson[key].pasien_id).html(ssjson[key].pasien_id)
+                        $("#status_" + element.sspasien_id).html(data)
+                        if (key < ssjson.length) {
+                            postEncounterCondition(key + 1)
+                        }
+                    },
+                    error: function() {
+                        // $("#sslocation_id_1771025808550001").html("asdf")
+                        if (key < (ssjson.length)) {
+                            postEncounterCondition(key + 1)
+                        }
+                    }
+                });
+            } else {
+                if (key < (ssjson.length)) {
+                    postEncounterCondition(key + 1)
+                }
+            }
+        } else {
+            if (key < (ssjson.length)) {
+                postEncounterCondition(key + 1)
+            }
+        }
     }
 </script>
 <?php if (!empty($diagnosa)) { ?>

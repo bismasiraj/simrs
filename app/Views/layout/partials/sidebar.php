@@ -221,6 +221,8 @@ $basecontroller->checkMenuActive('register');
                             <li class="<?= $basecontroller->checkMenuActive('viewOrganization'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewOrganization" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Klinik Organisasi</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocation" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Klinik</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('viewPractitioner'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPractitioner" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Kode Dokter</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewEncounterCondition'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewEncounterCondition" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Encounter & Condition</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewMedication'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewMedication" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Medication</a></li>
                         </ul>
                     </li>
                 <?php } ?>
