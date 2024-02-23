@@ -713,6 +713,12 @@ $currency_symbol = "Rp. ";
                 console.log(type)
                 getLocation(0)
             }
+        } else if (type == 'viewLocationInap') {
+            console.log(type)
+            if ((ssjson.length) >= 0) {
+                console.log(type)
+                getLocationInap(0)
+            }
         } else if (type == 'viewEncounterCondition') {
             console.log(type)
             if ((ssjson.length) >= 0) {
@@ -743,13 +749,13 @@ $currency_symbol = "Rp. ";
                 },
                 error: function() {
                     // $("#pasienid_1771025808550001").html("asdf")
-                    if (key < (ssjson.length)) {
+                    if (key + 1 < (ssjson.length)) {
                         getPasienId(key + 1)
                     }
                 }
             });
         } else {
-            if (key < (ssjson.length)) {
+            if (key + 1 < (ssjson.length)) {
                 getPasienId(key + 1)
             }
         }
@@ -772,24 +778,24 @@ $currency_symbol = "Rp. ";
                     success: function(data) {
                         // $("#pasienid_" + ssjson[key].pasien_id).html(ssjson[key].pasien_id)
                         $("#clinic_id_" + element.clinic_id).html(data)
-                        if (key < ssjson.length) {
+                        if (key + 1 < ssjson.length) {
                             getOrganization(key + 1)
                         }
                     },
                     error: function() {
                         // $("#ssclinic_id_1771025808550001").html("asdf")
-                        if (key < (ssjson.length)) {
+                        if (key + 1 < (ssjson.length)) {
                             getOrganization(key + 1)
                         }
                     }
                 });
             } else {
-                if (key < (ssjson.length)) {
+                if (key + 1 < (ssjson.length)) {
                     getOrganization(key + 1)
                 }
             }
         } else {
-            if (key < (ssjson.length)) {
+            if (key + 1 < (ssjson.length)) {
                 getOrganization(key + 1)
             }
         }
@@ -812,25 +818,67 @@ $currency_symbol = "Rp. ";
                     success: function(data) {
                         // $("#pasienid_" + ssjson[key].pasien_id).html(ssjson[key].pasien_id)
                         $("#clinic_id_" + element.clinic_id).html(data)
-                        if (key < ssjson.length) {
+                        if (key + 1 < ssjson.length) {
                             getLocation(key + 1)
                         }
                     },
                     error: function() {
                         // $("#sslocation_id_1771025808550001").html("asdf")
-                        if (key < (ssjson.length)) {
+                        if (key + 1 < (ssjson.length)) {
                             getLocation(key + 1)
                         }
                     }
                 });
             } else {
-                if (key < (ssjson.length)) {
+                if (key + 1 < (ssjson.length)) {
                     getLocation(key + 1)
                 }
             }
         } else {
-            if (key < (ssjson.length)) {
+            if (key + 1 < (ssjson.length)) {
                 getLocation(key + 1)
+            }
+        }
+
+    }
+
+    function getLocationInap(key) {
+        var element = ssjson[key]
+        console.log(element.bed_id)
+        if (typeof element.sslocationbed_id !== 'undefined') {
+            if (element.sslocationbed_id == '' || element.sslocationbed_id == null) {
+                $.ajax({
+                    url: '<?php echo base_url(); ?>satusehat/<?= basename($actual_link); ?>bridging',
+                    type: "POST",
+                    data: JSON.stringify(element),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function(data) {
+                        $("#clinic_id_" + String(element.class_room_id).replace(".", "") + "-" + element.bed_id).html(data)
+                        if (key + 1 < ssjson.length) {
+                            getLocationInap(key + 1)
+                        }
+                    },
+                    error: function() {
+                        if (key + 1 < (ssjson.length)) {
+                            getLocationInap(key + 1)
+                        }
+                    }
+                });
+            } else {
+                console.log("sini")
+
+                if (key + 1 < (ssjson.length)) {
+                    getLocationInap(key + 1)
+                }
+            }
+        } else {
+            console.log("sono")
+
+            if (key + 1 < (ssjson.length)) {
+                getLocationInap(key + 1)
             }
         }
 
