@@ -31,7 +31,7 @@
             <table class="table table-bordered mb-2" style="border: 2px solid black">
                 <tr>
                     <td width="20%" align="center">
-                        <img src="<?= base_url('img/logo.png') ?>" alt="logo" width="100px">
+                        <img src="<?= base_url('assets/img/logo.png') ?>" alt="logo" width="100px">
 
                         <p class="mt-3">Sehat-Amanah <br> Tanggung Jawab-Islami</p>
                     </td>

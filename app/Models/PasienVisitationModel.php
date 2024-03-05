@@ -117,7 +117,7 @@ class PasienVisitationModel extends Model
               else '1' end as ISRJ,
         STATUS_PASIEN_ID")
             ->join('clinic c', 'pasien_visitation.clinic_id = c.clinic_id', 'left')
-            ->where('visit_date > \'2023-01-01\'')
+            ->where('visit_date > \'2024-01-01\'')
             ->where('visit_date < getdate()')
             ->groupBy([
                 'YEAR(VISIT_DATE)',

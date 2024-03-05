@@ -7,6 +7,8 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
+use App\Models\erm\RMJ21Model;
+use App\Models\erm\RMJ26Model;
 use App\Models\InasisKontrolModel;
 use App\Models\InasisRujukanModel;
 use App\Models\OrganizationunitModel;
@@ -912,6 +914,631 @@ class RekamMedis extends \App\Controllers\BaseController
     public function rmj2_1($visit, $vactination_id = null)
     {
         if ($this->request->is('get')) {
+
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            // return $visit;
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_asmed_anak where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            // return json_encode($select[0]['doctor']);
+            if (isset($select[0])) {
+                // Define the path to the signature image
+                $signaturePathDokter = $select[0]['clinical_indication'];
+
+                // Check if the signature image file exists
+                if (file_exists($signaturePathDokter)) {
+                    // Read the signature image
+                    $signatureData = file_get_contents($signaturePathDokter);
+
+                    // Convert the image data to base64 format
+                    $signatureBase64 = base64_encode($signatureData);
+                    $select[0]['clinical_indication'] = $signatureBase64;
+
+                    // Load the display signature view with the signature data
+                } else {
+                    // If the signature image file doesn't exist, show an error message
+                    // return "<p>Signature not found!</p>";
+                }
+                $signaturePathPasien = $select[0]['target_of_therapy'];
+
+                // Check if the signature image file exists
+                if (file_exists($signaturePathDokter)) {
+                    // Read the signature image
+                    $signatureData = file_get_contents($signaturePathDokter);
+
+                    // Convert the image data to base64 format
+                    $signatureBase64 = base64_encode($signatureData);
+                    $select[0]['target_of_therapy'] = $signatureBase64;
+
+                    // Load the display signature view with the signature data
+                } else {
+                    // If the signature image file doesn't exist, show an error message
+                    // return "<p>Signature not found!</p>";
+                }
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
+                    "visit" => $visit,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
+                    "visit" => $visit
+                ]);
+            }
+        }
+        if ($this->request->is('post')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $body = $this->request->getPost();
+
+
+            $signatureDokter = $this->request->getPost("ttd");
+            $data = explode(',', (string)$signatureDokter);
+            $encodedDataDokter = $data[1];
+            $decodedDataDokter = base64_decode($encodedDataDokter);
+            $signaturePathDokter = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($signaturePathDokter)) {
+                mkdir($signaturePathDokter, 0777, true);
+            }
+            $filenameDokter = uniqid('signature_') . '.png';
+            $fullPathDokter = $signaturePathDokter . $filenameDokter;
+            if (file_put_contents($fullPathDokter, $decodedDataDokter)) {
+                // Signature saved successfully
+                // You can return any response as needed, for example, a success message
+                // return $this->response->setJSON(['success' => true, 'filename' => $filename]);
+            } else {
+                // Failed to save the signature image
+                // You can return any response as needed, for example, an error message
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }
+
+            $signaturePasien = $this->request->getPost("ttd_1");
+            $data = explode(',', (string)$signaturePasien);
+            $encodedDataPasien = $data[1];
+            $decodedDataPasien = base64_decode($encodedDataPasien);
+            $signaturePathPasien = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($signaturePathPasien)) {
+                mkdir($signaturePathPasien, 0777, true);
+            }
+            $filenamePasien = uniqid('signature_') . '.png';
+            $fullPathPasien = $signaturePathPasien . $filenamePasien;
+            if (file_put_contents($fullPathPasien, $decodedDataPasien)) {
+                // Signature saved successfully
+                // You can return any response as needed, for example, a success message
+                // return $this->response->setJSON(['success' => true, 'filename' => $filename]);
+            } else {
+                // Failed to save the signature image
+                // You can return any response as needed, for example, an error message
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }
+            // return json_encode($encodedData);
+            $body_id = $this->request->getPost("body_id");
+            $org_unit_code = $this->request->getPost("org_unit_code");
+            $pasien_diagnosa_id = $this->request->getPost("pasien_diagnosa_id");
+            $diagnosa_id = $this->request->getPost("diagnosa_id");
+            $no_registration = $this->request->getPost("no_registration");
+            $visit_id = $this->request->getPost("visit_id");
+            $bill_id = $this->request->getPost("bill_id");
+            $clinic_id = $this->request->getPost("clinic_id");
+            $class_room_id = $this->request->getPost("class_room_id");
+            $in_date = $this->request->getPost("in_date");
+            $exit_date = $this->request->getPost("exit_date");
+            $keluar_id = $this->request->getPost("keluar_id");
+            $examination_date = $this->request->getPost("examination_date");
+            $employee_id = $this->request->getPost("employee_id");
+            $description = $this->request->getPost("description");
+            $modified_date = $this->request->getPost("modified_date");
+            $modified_by = $this->request->getPost("modified_by");
+            $modified_from = $this->request->getPost("modified_from");
+            $status_pasien_id = $this->request->getPost("status_pasien_id");
+            $ageyear = $this->request->getPost("ageyear");
+            $agemonth = $this->request->getPost("agemonth");
+            $ageday = $this->request->getPost("ageday");
+            $thename = $this->request->getPost("thename");
+            $theaddress = $this->request->getPost("theaddress");
+            $theid = $this->request->getPost("theid");
+            $isrj = $this->request->getPost("isrj");
+            $gender = $this->request->getPost("gender");
+            $doctor = $this->request->getPost("doctor");
+            $kal_id = $this->request->getPost("kal_id");
+            $petugas_id = $this->request->getPost("petugas_id");
+            $petugas = $this->request->getPost("petugas");
+            $account_id = $this->request->getPost("account_id");
+            $cpoe_emr_rel_id = $this->request->getPost("cpoe_emr_rel_id");
+            $cpoe_id = $this->request->getPost("cpoe_id");
+            $episode_categ = $this->request->getPost("episode_categ");
+            $date_order = $this->request->getPost("date_order");
+            $patient_id = $this->request->getPost("patient_id");
+            $patient_code = $this->request->getPost("patient_code");
+            $patient_age = $this->request->getPost("patient_age");
+            $patient_gender = $this->request->getPost("patient_gender");
+            $colorbar = $this->request->getPost("colorbar");
+            $physician_id = $this->request->getPost("physician_id");
+            $physician_speciality = $this->request->getPost("physician_speciality");
+            $payment_method = $this->request->getPost("payment_method");
+            $pricelist_id = $this->request->getPost("pricelist_id");
+            $currency_id = $this->request->getPost("currency_id");
+            $assessment_type = $this->request->getPost("assessment_type");
+            $is_out_cppt = $this->request->getPost("is_out_cppt");
+            $soap_subjective = $this->request->getPost("soap_subjective");
+            $soap_objective = $this->request->getPost("soap_objective");
+            $ana_main_complaint = $this->request->getPost("ana_main_complaint");
+            $ana_auto_current_disease_history = $this->request->getPost("ana_auto_current_disease_history");
+            $ana_past_disease_history = $this->request->getPost("ana_past_disease_history");
+            $ana_family_disease_history = $this->request->getPost("ana_family_disease_history");
+            $ana_allergy_history_non_drugs = $this->request->getPost("ana_allergy_history_non_drugs");
+            $ana_allergy_history_drugs = $this->request->getPost("ana_allergy_history_drugs");
+            $ana_pregnancy_childbirth_history = $this->request->getPost("ana_pregnancy_childbirth_history");
+            $ana_diet_history = $this->request->getPost("ana_diet_history");
+            $ana_imun_history = $this->request->getPost("ana_imun_history");
+            $ana_drugs_consumed = $this->request->getPost("ana_drugs_consumed");
+            $pf_vital_sign_bp = $this->request->getPost("pf_vital_sign_bp");
+            $pf_vital_sign_n = $this->request->getPost("pf_vital_sign_n");
+            $pf_vital_sign_s = $this->request->getPost("pf_vital_sign_s");
+            $pf_vital_sign_rr = $this->request->getPost("pf_vital_sign_rr");
+            $pf_vital_sign_weight = $this->request->getPost("pf_vital_sign_weight");
+            $pf_vital_sign_height = $this->request->getPost("pf_vital_sign_height");
+            $pf_vital_sign_spo2 = $this->request->getPost("pf_vital_sign_spo2");
+            $pf_vital_sign_bmi = $this->request->getPost("pf_vital_sign_bmi");
+            $pf_vital_sign_hc = $this->request->getPost("pf_vital_sign_hc");
+            $pf_gcs_type = $this->request->getPost("pf_gcs_type");
+            $pf_gcs_e = $this->request->getPost("pf_gcs_e");
+            $pf_gcs_v = $this->request->getPost("pf_gcs_v");
+            $pf_gcs_m = $this->request->getPost("pf_gcs_m");
+            $pf_pgcs_e = $this->request->getPost("pf_pgcs_e");
+            $pf_pgcs_v_type = $this->request->getPost("pf_pgcs_v_type");
+            $pf_pgcs_v = $this->request->getPost("pf_pgcs_v");
+            $pf_pgcs_v_non = $this->request->getPost("pf_pgcs_v_non");
+            $pf_pgcs_m = $this->request->getPost("pf_pgcs_m");
+            $pf_general_condition = $this->request->getPost("pf_general_condition");
+            $pf_cranium = $this->request->getPost("pf_cranium");
+            $pf_eyes = $this->request->getPost("pf_eyes");
+            $pf_nose = $this->request->getPost("pf_nose");
+            $pf_mouth = $this->request->getPost("pf_mouth");
+            $pf_tooth = $this->request->getPost("pf_tooth");
+            $pf_neck = $this->request->getPost("pf_neck");
+            $pf_thorax = $this->request->getPost("pf_thorax");
+            $pf_thorax_image = $this->request->getPost("pf_thorax_image");
+            $pf_heart = $this->request->getPost("pf_heart");
+            $pf_heart_image = $this->request->getPost("pf_heart_image");
+            $pf_lungs = $this->request->getPost("pf_lungs");
+            $pf_abdomen = $this->request->getPost("pf_abdomen");
+            $pf_abdomen_image = $this->request->getPost("pf_abdomen_image");
+            $pf_hepar = $this->request->getPost("pf_hepar");
+            $pf_lien = $this->request->getPost("pf_lien");
+            $pf_kidney = $this->request->getPost("pf_kidney");
+            $pf_genitalia = $this->request->getPost("pf_genitalia");
+            $pf_upper_extremity = $this->request->getPost("pf_upper_extremity");
+            $pf_lower_extremity = $this->request->getPost("pf_lower_extremity");
+            $additional_physical_exam = $this->request->getPost("additional_physical_exam");
+            $cause_of_injury_poisoning = $this->request->getPost("cause_of_injury_poisoning");
+            $nursing_problem = $this->request->getPost("nursing_problem");
+            $medical_problem = $this->request->getPost("medical_problem");
+            $care_and_therapy_plan = $this->request->getPost("care_and_therapy_plan");
+            $follow_up_plan = $this->request->getPost("follow_up_plan");
+            $rtj_control = $this->request->getPost("rtj_control");
+            $rtj_time_of_death_emergency = $this->request->getPost("rtj_time_of_death_emergency");
+            $rtj_inpatient_indication = $this->request->getPost("rtj_inpatient_indication");
+            $rtj_inpatient_dpjp = $this->request->getPost("rtj_inpatient_dpjp");
+            $rtj_inpatient_classes = $this->request->getPost("rtj_inpatient_classes");
+            $rtj_inpatient_ward = $this->request->getPost("rtj_inpatient_ward");
+            $rtj_inpatient_room = $this->request->getPost("rtj_inpatient_room");
+            $rtj_inpatient_bed = $this->request->getPost("rtj_inpatient_bed");
+            $rtj_referenced = $this->request->getPost("rtj_referenced");
+            $rtj_referenced_to = $this->request->getPost("rtj_referenced_to");
+            $rtj_referenced_phys = $this->request->getPost("rtj_referenced_phys");
+            $rtj_referenced_based_on = $this->request->getPost("rtj_referenced_based_on");
+            $rtj_referenced_deliver_by = $this->request->getPost("rtj_referenced_deliver_by");
+            $patient_education = $this->request->getPost("patient_education");
+            $if_patient_family = $this->request->getPost("if_patient_family");
+            $if_can_not_give_edu = $this->request->getPost("if_can_not_give_edu");
+            $explanation_receipient_name = $this->request->getPost("explanation_receipient_name");
+            $doctor_name = $this->request->getPost("doctor_name");
+            $paraf_doctor = $this->request->getPost("paraf_doctor");
+            $episode_id = $this->request->getPost("episode_id");
+            $app_nmbr = $this->request->getPost("app_nmbr");
+            $code = $this->request->getPost("code");
+            $proc_order_id = $this->request->getPost("proc_order_id");
+            $open_header_flag = $this->request->getPost("open_header_flag");
+            $hide_action_button = $this->request->getPost("hide_action_button");
+            $lab_order_id = $this->request->getPost("lab_order_id");
+            $physio_order_id = $this->request->getPost("physio_order_id");
+            $radio_order_id = $this->request->getPost("radio_order_id");
+            $is_cppt_leads = $this->request->getPost("is_cppt_leads");
+            $refphysician_id = $this->request->getPost("refphysician_id");
+            $inpatient_physician_speciality = $this->request->getPost("inpatient_physician_speciality");
+            $is_fast_track = $this->request->getPost("is_fast_track");
+            $is_cito = $this->request->getPost("is_cito");
+            $is_rad_pending = $this->request->getPost("is_rad_pending");
+            $rad_pending_order = $this->request->getPost("rad_pending_order");
+            $is_lab_pending = $this->request->getPost("is_lab_pending");
+            $lab_pending_order = $this->request->getPost("lab_pending_order");
+            $is_phy_pending = $this->request->getPost("is_phy_pending");
+            $phy_pending_order = $this->request->getPost("phy_pending_order");
+            $has_drug_allergy = $this->request->getPost("has_drug_allergy");
+            $state = $this->request->getPost("state");
+            $is_signed = $this->request->getPost("is_signed");
+            $standing_order = $this->request->getPost("standing_order");
+            $is_locked = $this->request->getPost("is_locked");
+            $text_diagnosis = $this->request->getPost("text_diagnosis");
+            $last_notebook = $this->request->getPost("last_notebook");
+            $inv_vendor_lab_id = $this->request->getPost("inv_vendor_lab_id");
+            $lab_medical_checkup = $this->request->getPost("lab_medical_checkup");
+            $inv_vendor_radio_id = $this->request->getPost("inv_vendor_radio_id");
+            $inv_vendor_phy_id = $this->request->getPost("inv_vendor_phy_id");
+            $inv_vendor_id = $this->request->getPost("inv_vendor_id");
+            $inv_vendor_nurse_id = $this->request->getPost("inv_vendor_nurse_id");
+            $inv_vendor_midwife_id = $this->request->getPost("inv_vendor_midwife_id");
+            $has_pain_scale = $this->request->getPost("has_pain_scale");
+            $pain_scale_type = $this->request->getPost("pain_scale_type");
+            $numeric_scale = $this->request->getPost("numeric_scale");
+            $wong_baker_scale = $this->request->getPost("wong_baker_scale");
+            $cpot_ekspresi_wajah = $this->request->getPost("cpot_ekspresi_wajah");
+            $cpot_gerakan_tubuh = $this->request->getPost("cpot_gerakan_tubuh");
+            $cpot_options = $this->request->getPost("cpot_options");
+            $cpot_aktivasi_ventilator = $this->request->getPost("cpot_aktivasi_ventilator");
+            $cpot_berbicara = $this->request->getPost("cpot_berbicara");
+            $cpot_ketegangan_otot = $this->request->getPost("cpot_ketegangan_otot");
+            $nips_ekspresi_wajah = $this->request->getPost("nips_ekspresi_wajah");
+            $nips_tangisan = $this->request->getPost("nips_tangisan");
+            $nips_pola_nafas = $this->request->getPost("nips_pola_nafas");
+            $nips_tungkai = $this->request->getPost("nips_tungkai");
+            $nips_tingkat_kesadaran = $this->request->getPost("nips_tingkat_kesadaran");
+            $painad_pernafasan = $this->request->getPost("painad_pernafasan");
+            $painad_vokalisasi_negatif = $this->request->getPost("painad_vokalisasi_negatif");
+            $painad_ekspresi_wajah = $this->request->getPost("painad_ekspresi_wajah");
+            $painad_bahasa_tubuh = $this->request->getPost("painad_bahasa_tubuh");
+            $painad_konsabilitas = $this->request->getPost("painad_konsabilitas");
+            $flacc_wajah = $this->request->getPost("flacc_wajah");
+            $flacc_kaki = $this->request->getPost("flacc_kaki");
+            $flacc_aktivitas = $this->request->getPost("flacc_aktivitas");
+            $flacc_menangis = $this->request->getPost("flacc_menangis");
+            $flacc_konsabilitas = $this->request->getPost("flacc_konsabilitas");
+            $has_fall_risk = $this->request->getPost("has_fall_risk");
+            $fall_risk_desc = $this->request->getPost("fall_risk_desc");
+            $fall_risk_type = $this->request->getPost("fall_risk_type");
+            $hd_usia = $this->request->getPost("hd_usia");
+            $hd_jenis_kelamin = $this->request->getPost("hd_jenis_kelamin");
+            $hd_diagnosa = $this->request->getPost("hd_diagnosa");
+            $hd_gangguan_kognitif = $this->request->getPost("hd_gangguan_kognitif");
+            $hd_faktor_lingkungan = $this->request->getPost("hd_faktor_lingkungan");
+            $hd_respon_pembedahan_sedasi_anestesi = $this->request->getPost("hd_respon_pembedahan_sedasi_anestesi");
+            $hd_respon_penggunaan_medikamentosa = $this->request->getPost("hd_respon_penggunaan_medikamentosa");
+            $fm_riwayat_jatuh = $this->request->getPost("fm_riwayat_jatuh");
+            $fm_diagnosis_sekunder = $this->request->getPost("fm_diagnosis_sekunder");
+            $fm_menggunakan_alat_bantu = $this->request->getPost("fm_menggunakan_alat_bantu");
+            $fm_menggunakan_infuse_heparine = $this->request->getPost("fm_menggunakan_infuse_heparine");
+            $fm_gaya_berjalan = $this->request->getPost("fm_gaya_berjalan");
+            $fm_status_mental = $this->request->getPost("fm_status_mental");
+            $fm_medikasi = $this->request->getPost("fm_medikasi");
+            $note_subjective = $this->request->getPost("note_subjective");
+            $note_objective = $this->request->getPost("note_objective");
+            $note_obat_confirmed = $this->request->getPost("note_obat_confirmed");
+            $note_lab_confirmed = $this->request->getPost("note_lab_confirmed");
+            $note_rad_confirmed = $this->request->getPost("note_rad_confirmed");
+            $note_phy_confirmed = $this->request->getPost("note_phy_confirmed");
+            $note_proc_confirmed = $this->request->getPost("note_proc_confirmed");
+            $additional_note = $this->request->getPost("additional_note");
+            $final_note = $this->request->getPost("final_note");
+            $create_uid = $this->request->getPost("create_uid");
+            $create_date = $this->request->getPost("create_date");
+            $write_uid = $this->request->getPost("write_uid");
+            $write_date = $this->request->getPost("write_date");
+            $patient_family_name = $this->request->getPost("patient_family_name");
+            $is_applicant_signed = $this->request->getPost("is_applicant_signed");
+            $applicant_sign = $this->request->getPost("applicant_sign");
+            $rtj_inpatient_location = $this->request->getPost("rtj_inpatient_location");
+            $rtj_referenced_dept = $this->request->getPost("rtj_referenced_dept");
+            $rtj_inpatient_standing_order = $this->request->getPost("rtj_inpatient_standing_order");
+            $rtj_is_control = $this->request->getPost("rtj_is_control");
+            $rtj_control_date = $this->request->getPost("rtj_control_date");
+            $rtj_control_reason = $this->request->getPost("rtj_control_reason");
+            $age_category = $this->request->getPost("age_category");
+            $month_count = $this->request->getPost("month_count");
+            $rtj_outpatient_type = $this->request->getPost("rtj_outpatient_type");
+            $rtj_referenced_based_other = $this->request->getPost("rtj_referenced_based_other");
+            $rtj_rujuk_type = $this->request->getPost("rtj_rujuk_type");
+            $pf_ears = $this->request->getPost("pf_ears");
+            $coass_residence_sign = $this->request->getPost("coass_residence_sign");
+            $is_coas_signed = $this->request->getPost("is_coas_signed");
+            $coas_signed_datetime = $this->request->getPost("coas_signed_datetime");
+            $rtj_internal_ref_pysician_id = $this->request->getPost("rtj_internal_ref_pysician_id");
+            $rtj_internal_ref_notes = $this->request->getPost("rtj_internal_ref_notes");
+            $soap_planning = $this->request->getPost("soap_planning");
+            $is_consul_discount = $this->request->getPost("is_consul_discount");
+            $sign_datetime = $this->request->getPost("sign_datetime");
+            $clinical_indication = $this->request->getPost("clinical_indication");
+            $target_of_therapy = $this->request->getPost("target_of_therapy");
+            $rtj_out_instruction = $this->request->getPost("rtj_out_instruction");
+            $set_all_dbn = $this->request->getPost("set_all_dbn");
+            $education_material = $this->request->getPost("education_material");
+            $message_main_attachment_id = $this->request->getPost("message_main_attachment_id");
+            $rtj_inpatient_service_needs = $this->request->getPost("rtj_inpatient_service_needs");
+            $trial437 = $this->request->getPost("trial437");
+
+
+            $isNewKunj = false;
+            if ($body['body_id'] == null || $body['body_id'] == '') {
+                $db = db_connect();
+                $select = $db->query("select cast(year(getdate()) as varchar(4)) +
+                right(cast((month(getdate()) + 100) as varchar(3)),2)+
+                right(cast((day(getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(hour,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(minute,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(second,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) as id")->getResultArray();
+                // $vactination_id = $select[0]['id'];
+                $body_id = $select[0]['id'];
+                $isNewKunj = true;
+            }
+            // return json_encode($body_id);
+
+            $db = new RMJ21Model();
+            $data = [
+                "body_id" => $body_id,
+                "org_unit_code" => $org_unit_code,
+                "pasien_diagnosa_id" => $pasien_diagnosa_id,
+                "diagnosa_id" => $diagnosa_id,
+                "no_registration" => $no_registration,
+                "visit_id" => $visit_id,
+                "bill_id" => $bill_id,
+                "clinic_id" => $clinic_id,
+                "class_room_id" => $class_room_id,
+                "in_date" => $in_date,
+                "exit_date" => $exit_date,
+                "keluar_id" => $keluar_id,
+                "examination_date" => $examination_date,
+                "employee_id" => $employee_id,
+                "description" => $description,
+                "modified_date" => $modified_date,
+                "modified_by" => $modified_by,
+                "modified_from" => $modified_from,
+                "status_pasien_id" => $status_pasien_id,
+                "ageyear" => $ageyear,
+                "agemonth" => $agemonth,
+                "ageday" => $ageday,
+                "thename" => $thename,
+                "theaddress" => $theaddress,
+                "theid" => $theid,
+                "isrj" => $isrj,
+                "gender" => $gender,
+                "doctor" => $doctor,
+                "kal_id" => $kal_id,
+                "petugas_id" => $petugas_id,
+                "petugas" => $petugas,
+                "account_id" => $account_id,
+                "cpoe_emr_rel_id" => $cpoe_emr_rel_id,
+                "cpoe_id" => $cpoe_id,
+                "episode_categ" => $episode_categ,
+                "date_order" => $date_order,
+                "patient_id" => $patient_id,
+                "patient_code" => $patient_code,
+                "patient_age" => $patient_age,
+                "patient_gender" => $patient_gender,
+                "colorbar" => $colorbar,
+                "physician_id" => $physician_id,
+                "physician_speciality" => $physician_speciality,
+                "payment_method" => $payment_method,
+                "pricelist_id" => $pricelist_id,
+                "currency_id" => $currency_id,
+                "assessment_type" => $assessment_type,
+                "is_out_cppt" => $is_out_cppt,
+                "soap_subjective" => $soap_subjective,
+                "soap_objective" => $soap_objective,
+                "ana_main_complaint" => $ana_main_complaint,
+                "ana_auto_current_disease_history" => $ana_auto_current_disease_history,
+                "ana_past_disease_history" => $ana_past_disease_history,
+                "ana_family_disease_history" => $ana_family_disease_history,
+                "ana_allergy_history_non_drugs" => $ana_allergy_history_non_drugs,
+                "ana_allergy_history_drugs" => $ana_allergy_history_drugs,
+                "ana_pregnancy_childbirth_history" => $ana_pregnancy_childbirth_history,
+                "ana_diet_history" => $ana_diet_history,
+                "ana_imun_history" => $ana_imun_history,
+                "ana_drugs_consumed" => $ana_drugs_consumed,
+                "pf_vital_sign_bp" => $pf_vital_sign_bp,
+                "pf_vital_sign_n" => $pf_vital_sign_n,
+                "pf_vital_sign_s" => $pf_vital_sign_s,
+                "pf_vital_sign_rr" => $pf_vital_sign_rr,
+                "pf_vital_sign_weight" => $pf_vital_sign_weight,
+                "pf_vital_sign_height" => $pf_vital_sign_height,
+                "pf_vital_sign_spo2" => $pf_vital_sign_spo2,
+                "pf_vital_sign_bmi" => $pf_vital_sign_bmi,
+                "pf_vital_sign_hc" => $pf_vital_sign_hc,
+                "pf_gcs_type" => $pf_gcs_type,
+                "pf_gcs_e" => $pf_gcs_e,
+                "pf_gcs_v" => $pf_gcs_v,
+                "pf_gcs_m" => $pf_gcs_m,
+                "pf_pgcs_e" => $pf_pgcs_e,
+                "pf_pgcs_v_type" => $pf_pgcs_v_type,
+                "pf_pgcs_v" => $pf_pgcs_v,
+                "pf_pgcs_v_non" => $pf_pgcs_v_non,
+                "pf_pgcs_m" => $pf_pgcs_m,
+                "pf_general_condition" => $pf_general_condition,
+                "pf_cranium" => $pf_cranium,
+                "pf_eyes" => $pf_eyes,
+                "pf_nose" => $pf_nose,
+                "pf_mouth" => $pf_mouth,
+                "pf_tooth" => $pf_tooth,
+                "pf_neck" => $pf_neck,
+                "pf_thorax" => $pf_thorax,
+                "pf_thorax_image" => $pf_thorax_image,
+                "pf_heart" => $pf_heart,
+                "pf_heart_image" => $pf_heart_image,
+                "pf_lungs" => $pf_lungs,
+                "pf_abdomen" => $pf_abdomen,
+                "pf_abdomen_image" => $pf_abdomen_image,
+                "pf_hepar" => $pf_hepar,
+                "pf_lien" => $pf_lien,
+                "pf_kidney" => $pf_kidney,
+                "pf_genitalia" => $pf_genitalia,
+                "pf_upper_extremity" => $pf_upper_extremity,
+                "pf_lower_extremity" => $pf_lower_extremity,
+                "additional_physical_exam" => $additional_physical_exam,
+                "cause_of_injury_poisoning" => $cause_of_injury_poisoning,
+                "nursing_problem" => $nursing_problem,
+                "medical_problem" => $medical_problem,
+                "care_and_therapy_plan" => $care_and_therapy_plan,
+                "follow_up_plan" => $follow_up_plan,
+                "rtj_control" => $rtj_control,
+                "rtj_time_of_death_emergency" => $rtj_time_of_death_emergency,
+                "rtj_inpatient_indication" => $rtj_inpatient_indication,
+                "rtj_inpatient_dpjp" => $rtj_inpatient_dpjp,
+                "rtj_inpatient_classes" => $rtj_inpatient_classes,
+                "rtj_inpatient_ward" => $rtj_inpatient_ward,
+                "rtj_inpatient_room" => $rtj_inpatient_room,
+                "rtj_inpatient_bed" => $rtj_inpatient_bed,
+                "rtj_referenced" => $rtj_referenced,
+                "rtj_referenced_to" => $rtj_referenced_to,
+                "rtj_referenced_phys" => $rtj_referenced_phys,
+                "rtj_referenced_based_on" => $rtj_referenced_based_on,
+                "rtj_referenced_deliver_by" => $rtj_referenced_deliver_by,
+                "patient_education" => $patient_education,
+                "if_patient_family" => $if_patient_family,
+                "if_can_not_give_edu" => $if_can_not_give_edu,
+                "explanation_receipient_name" => $explanation_receipient_name,
+                "doctor_name" => $doctor_name,
+                "paraf_doctor" => $paraf_doctor,
+                "episode_id" => $episode_id,
+                "app_nmbr" => $app_nmbr,
+                "code" => $code,
+                "proc_order_id" => $proc_order_id,
+                "open_header_flag" => $open_header_flag,
+                "hide_action_button" => $hide_action_button,
+                "lab_order_id" => $lab_order_id,
+                "physio_order_id" => $physio_order_id,
+                "radio_order_id" => $radio_order_id,
+                "is_cppt_leads" => $is_cppt_leads,
+                "refphysician_id" => $refphysician_id,
+                "inpatient_physician_speciality" => $inpatient_physician_speciality,
+                "is_fast_track" => $is_fast_track,
+                "is_cito" => $is_cito,
+                "is_rad_pending" => $is_rad_pending,
+                "rad_pending_order" => $rad_pending_order,
+                "is_lab_pending" => $is_lab_pending,
+                "lab_pending_order" => $lab_pending_order,
+                "is_phy_pending" => $is_phy_pending,
+                "phy_pending_order" => $phy_pending_order,
+                "has_drug_allergy" => $has_drug_allergy,
+                "state" => $state,
+                "is_signed" => $is_signed,
+                "standing_order" => $standing_order,
+                "is_locked" => $is_locked,
+                "text_diagnosis" => $text_diagnosis,
+                "last_notebook" => $last_notebook,
+                "inv_vendor_lab_id" => $inv_vendor_lab_id,
+                "lab_medical_checkup" => $lab_medical_checkup,
+                "inv_vendor_radio_id" => $inv_vendor_radio_id,
+                "inv_vendor_phy_id" => $inv_vendor_phy_id,
+                "inv_vendor_id" => $inv_vendor_id,
+                "inv_vendor_nurse_id" => $inv_vendor_nurse_id,
+                "inv_vendor_midwife_id" => $inv_vendor_midwife_id,
+                "has_pain_scale" => $has_pain_scale,
+                "pain_scale_type" => $pain_scale_type,
+                "numeric_scale" => $numeric_scale,
+                "wong_baker_scale" => $wong_baker_scale,
+                "cpot_ekspresi_wajah" => $cpot_ekspresi_wajah,
+                "cpot_gerakan_tubuh" => $cpot_gerakan_tubuh,
+                "cpot_options" => $cpot_options,
+                "cpot_aktivasi_ventilator" => $cpot_aktivasi_ventilator,
+                "cpot_berbicara" => $cpot_berbicara,
+                "cpot_ketegangan_otot" => $cpot_ketegangan_otot,
+                "nips_ekspresi_wajah" => $nips_ekspresi_wajah,
+                "nips_tangisan" => $nips_tangisan,
+                "nips_pola_nafas" => $nips_pola_nafas,
+                "nips_tungkai" => $nips_tungkai,
+                "nips_tingkat_kesadaran" => $nips_tingkat_kesadaran,
+                "painad_pernafasan" => $painad_pernafasan,
+                "painad_vokalisasi_negatif" => $painad_vokalisasi_negatif,
+                "painad_ekspresi_wajah" => $painad_ekspresi_wajah,
+                "painad_bahasa_tubuh" => $painad_bahasa_tubuh,
+                "painad_konsabilitas" => $painad_konsabilitas,
+                "flacc_wajah" => $flacc_wajah,
+                "flacc_kaki" => $flacc_kaki,
+                "flacc_aktivitas" => $flacc_aktivitas,
+                "flacc_menangis" => $flacc_menangis,
+                "flacc_konsabilitas" => $flacc_konsabilitas,
+                "has_fall_risk" => $has_fall_risk,
+                "fall_risk_desc" => $fall_risk_desc,
+                "fall_risk_type" => $fall_risk_type,
+                "hd_usia" => $hd_usia,
+                "hd_jenis_kelamin" => $hd_jenis_kelamin,
+                "hd_diagnosa" => $hd_diagnosa,
+                "hd_gangguan_kognitif" => $hd_gangguan_kognitif,
+                "hd_faktor_lingkungan" => $hd_faktor_lingkungan,
+                "hd_respon_pembedahan_sedasi_anestesi" => $hd_respon_pembedahan_sedasi_anestesi,
+                "hd_respon_penggunaan_medikamentosa" => $hd_respon_penggunaan_medikamentosa,
+                "fm_riwayat_jatuh" => $fm_riwayat_jatuh,
+                "fm_diagnosis_sekunder" => $fm_diagnosis_sekunder,
+                "fm_menggunakan_alat_bantu" => $fm_menggunakan_alat_bantu,
+                "fm_menggunakan_infuse_heparine" => $fm_menggunakan_infuse_heparine,
+                "fm_gaya_berjalan" => $fm_gaya_berjalan,
+                "fm_status_mental" => $fm_status_mental,
+                "fm_medikasi" => $fm_medikasi,
+                "note_subjective" => $note_subjective,
+                "note_objective" => $note_objective,
+                "note_obat_confirmed" => $note_obat_confirmed,
+                "note_lab_confirmed" => $note_lab_confirmed,
+                "note_rad_confirmed" => $note_rad_confirmed,
+                "note_phy_confirmed" => $note_phy_confirmed,
+                "note_proc_confirmed" => $note_proc_confirmed,
+                "additional_note" => $additional_note,
+                "final_note" => $final_note,
+                "create_uid" => $create_uid,
+                "create_date" => $create_date,
+                "write_uid" => $write_uid,
+                "write_date" => $write_date,
+                "patient_family_name" => $patient_family_name,
+                "is_applicant_signed" => $is_applicant_signed,
+                "applicant_sign" => $applicant_sign,
+                "rtj_inpatient_location" => $rtj_inpatient_location,
+                "rtj_referenced_dept" => $rtj_referenced_dept,
+                "rtj_inpatient_standing_order" => $rtj_inpatient_standing_order,
+                "rtj_is_control" => $rtj_is_control,
+                "rtj_control_date" => $rtj_control_date,
+                "rtj_control_reason" => $rtj_control_reason,
+                "age_category" => $age_category,
+                "month_count" => $month_count,
+                "rtj_outpatient_type" => $rtj_outpatient_type,
+                "rtj_referenced_based_other" => $rtj_referenced_based_other,
+                "rtj_rujuk_type" => $rtj_rujuk_type,
+                "pf_ears" => $pf_ears,
+                "coass_residence_sign" => $coass_residence_sign,
+                "is_coas_signed" => $is_coas_signed,
+                "coas_signed_datetime" => $coas_signed_datetime,
+                "rtj_internal_ref_pysician_id" => $rtj_internal_ref_pysician_id,
+                "rtj_internal_ref_notes" => $rtj_internal_ref_notes,
+                "soap_planning" => $soap_planning,
+                "is_consul_discount" => $is_consul_discount,
+                "sign_datetime" => $sign_datetime,
+                "clinical_indication" => $fullPathDokter,
+                "target_of_therapy" => $fullPathPasien,
+                "rtj_out_instruction" => $rtj_out_instruction,
+                "set_all_dbn" => $set_all_dbn,
+                "education_material" => $education_material,
+                "message_main_attachment_id" => $message_main_attachment_id,
+                "rtj_inpatient_service_needs" => $rtj_inpatient_service_needs,
+                "trial437" => $trial437,
+            ];
+            if ($isNewKunj) {
+                $coba = $db->insert($data);
+            } else {
+                $coba = $db->save($data);
+            }
+
+
+
+            $select = $this->lowerKey($db->where("body_id = '" . $body_id . "'")->findAll());
+            // return json_encode($select);
+
+            $select[0]['clinical_indication'] =  $encodedDataDokter;
+            $select[0]['target_of_therapy'] =  $encodedDataPasien;
+
+
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
+                "visit" => $visit,
+                "val" => $select[0]
+            ]);
+        }
+        if ($this->request->is('get')) {
             return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
                 "visit" => $visit
             ]);
@@ -953,8 +1580,692 @@ class RekamMedis extends \App\Controllers\BaseController
     public function rmj2_6($visit, $vactination_id = null)
     {
         if ($this->request->is('get')) {
+
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            // return $visit;
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_asmed_saraf where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            // return json_encode($select[0]['doctor']);
+            if (isset($select[0])) {
+                // Define the path to the signature image
+                $signaturePathDokter = $select[0]['clinical_indication'];
+
+                // Check if the signature image file exists
+                if (file_exists($signaturePathDokter)) {
+                    // Read the signature image
+                    $signatureData = file_get_contents($signaturePathDokter);
+
+                    // Convert the image data to base64 format
+                    $signatureBase64 = base64_encode($signatureData);
+                    $select[0]['clinical_indication'] = $signatureBase64;
+
+                    // Load the display signature view with the signature data
+                } else {
+                    // If the signature image file doesn't exist, show an error message
+                    // return "<p>Signature not found!</p>";
+                }
+                $signaturePathPasien = $select[0]['target_of_therapy'];
+
+                // Check if the signature image file exists
+                if (file_exists($signaturePathDokter)) {
+                    // Read the signature image
+                    $signatureData = file_get_contents($signaturePathDokter);
+
+                    // Convert the image data to base64 format
+                    $signatureBase64 = base64_encode($signatureData);
+                    $select[0]['target_of_therapy'] = $signatureBase64;
+
+                    // Load the display signature view with the signature data
+                } else {
+                    // If the signature image file doesn't exist, show an error message
+                    // return "<p>Signature not found!</p>";
+                }
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
+                    "visit" => $visit,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
+                    "visit" => $visit,
+                ]);
+            }
+        }
+        if ($this->request->is('post')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $body = $this->request->getPost();
+
+
+            $signatureDokter = $this->request->getPost("ttd");
+            $data = explode(',', (string)$signatureDokter);
+            $encodedDataDokter = $data[1];
+            $decodedDataDokter = base64_decode($encodedDataDokter);
+            $signaturePathDokter = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($signaturePathDokter)) {
+                mkdir($signaturePathDokter, 0777, true);
+            }
+            $filenameDokter = uniqid('signature_') . '.png';
+            $fullPathDokter = $signaturePathDokter . $filenameDokter;
+            if (file_put_contents($fullPathDokter, $decodedDataDokter)) {
+                // Signature saved successfully
+                // You can return any response as needed, for example, a success message
+                // return $this->response->setJSON(['success' => true, 'filename' => $filename]);
+            } else {
+                // Failed to save the signature image
+                // You can return any response as needed, for example, an error message
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }
+
+            $signaturePasien = $this->request->getPost("ttd_1");
+            $data = explode(',', (string)$signaturePasien);
+            $encodedDataPasien = $data[1];
+            $decodedDataPasien = base64_decode($encodedDataPasien);
+            $signaturePathPasien = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($signaturePathPasien)) {
+                mkdir($signaturePathPasien, 0777, true);
+            }
+            $filenamePasien = uniqid('signature_') . '.png';
+            $fullPathPasien = $signaturePathPasien . $filenamePasien;
+            if (file_put_contents($fullPathPasien, $decodedDataPasien)) {
+                // Signature saved successfully
+                // You can return any response as needed, for example, a success message
+                // return $this->response->setJSON(['success' => true, 'filename' => $filename]);
+            } else {
+                // Failed to save the signature image
+                // You can return any response as needed, for example, an error message
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }
+            // return json_encode($encodedData);
+            $body_id = $this->request->getPost('body_id');
+            $org_unit_code = $this->request->getPost('org_unit_code');
+            $pasien_diagnosa_id = $this->request->getPost('pasien_diagnosa_id');
+            $diagnosa_id = $this->request->getPost('diagnosa_id');
+            $no_registration = $this->request->getPost('no_registration');
+            $visit_id = $this->request->getPost('visit_id');
+            $bill_id = $this->request->getPost('bill_id');
+            $clinic_id = $this->request->getPost('clinic_id');
+            $class_room_id = $this->request->getPost('class_room_id');
+            $in_date = $this->request->getPost('in_date');
+            $exit_date = $this->request->getPost('exit_date');
+            $keluar_id = $this->request->getPost('keluar_id');
+            $examination_date = $this->request->getPost('examination_date');
+            $employee_id = $this->request->getPost('employee_id');
+            $description = $this->request->getPost('description');
+            $modified_date = $this->request->getPost('modified_date');
+            $modified_by = $this->request->getPost('modified_by');
+            $modified_from = $this->request->getPost('modified_from');
+            $status_pasien_id = $this->request->getPost('status_pasien_id');
+            $ageyear = $this->request->getPost('ageyear');
+            $agemonth = $this->request->getPost('agemonth');
+            $ageday = $this->request->getPost('ageday');
+            $thename = $this->request->getPost('thename');
+            $theaddress = $this->request->getPost('theaddress');
+            $theid = $this->request->getPost('theid');
+            $isrj = $this->request->getPost('isrj');
+            $gender = $this->request->getPost('gender');
+            $doctor = $this->request->getPost('doctor');
+            $kal_id = $this->request->getPost('kal_id');
+            $petugas_id = $this->request->getPost('petugas_id');
+            $petugas = $this->request->getPost('petugas');
+            $account_id = $this->request->getPost('account_id');
+            $cpoe_emr_rel_id = $this->request->getPost('cpoe_emr_rel_id');
+            $cpoe_id = $this->request->getPost('cpoe_id');
+            $episode_categ = $this->request->getPost('episode_categ');
+            $date_order = $this->request->getPost('date_order');
+            $patient_id = $this->request->getPost('patient_id');
+            $patient_code = $this->request->getPost('patient_code');
+            $patient_age = $this->request->getPost('patient_age');
+            $patient_gender = $this->request->getPost('patient_gender');
+            $colorbar = $this->request->getPost('colorbar');
+            $physician_id = $this->request->getPost('physician_id');
+            $physician_speciality = $this->request->getPost('physician_speciality');
+            $payment_method = $this->request->getPost('payment_method');
+            $pricelist_id = $this->request->getPost('pricelist_id');
+            $currency_id = $this->request->getPost('currency_id');
+            $is_out_cppt = $this->request->getPost('is_out_cppt');
+            $soap_subjective = $this->request->getPost('soap_subjective');
+            $soap_objective = $this->request->getPost('soap_objective');
+            $ana_main_complaint = $this->request->getPost('ana_main_complaint');
+            $ana_auto_current_disease_history = $this->request->getPost('ana_auto_current_disease_history');
+            $ana_past_disease_history = $this->request->getPost('ana_past_disease_history');
+            $ana_family_disease_history = $this->request->getPost('ana_family_disease_history');
+            $ana_allergy_history_non_drugs = $this->request->getPost('ana_allergy_history_non_drugs');
+            $ana_allergy_history_drugs = $this->request->getPost('ana_allergy_history_drugs');
+            $ana_pregnancy_childbirth_history = $this->request->getPost('ana_pregnancy_childbirth_history');
+            $ana_diet_history = $this->request->getPost('ana_diet_history');
+            $ana_imun_history = $this->request->getPost('ana_imun_history');
+            $ana_drugs_consumed = $this->request->getPost('ana_drugs_consumed');
+            $pf_vital_sign_bp = $this->request->getPost('pf_vital_sign_bp');
+            $pf_vital_sign_n = $this->request->getPost('pf_vital_sign_n');
+            $pf_vital_sign_s = $this->request->getPost('pf_vital_sign_s');
+            $pf_vital_sign_rr = $this->request->getPost('pf_vital_sign_rr');
+            $pf_vital_sign_weight = $this->request->getPost('pf_vital_sign_weight');
+            $pf_vital_sign_height = $this->request->getPost('pf_vital_sign_height');
+            $pf_vital_sign_spo2 = $this->request->getPost('pf_vital_sign_spo2');
+            $pf_vital_sign_bmi = $this->request->getPost('pf_vital_sign_bmi');
+            $pf_gcs_type = $this->request->getPost('pf_gcs_type');
+            $pf_gcs_e = $this->request->getPost('pf_gcs_e');
+            $pf_gcs_v = $this->request->getPost('pf_gcs_v');
+            $pf_gcs_m = $this->request->getPost('pf_gcs_m');
+            $pf_pgcs_e = $this->request->getPost('pf_pgcs_e');
+            $pf_pgcs_v_type = $this->request->getPost('pf_pgcs_v_type');
+            $pf_pgcs_v = $this->request->getPost('pf_pgcs_v');
+            $pf_pgcs_v_non = $this->request->getPost('pf_pgcs_v_non');
+            $pf_pgcs_m = $this->request->getPost('pf_pgcs_m');
+            $pf_general_condition = $this->request->getPost('pf_general_condition');
+            $pf_cranium = $this->request->getPost('pf_cranium');
+            $pf_eyes = $this->request->getPost('pf_eyes');
+            $pf_nose = $this->request->getPost('pf_nose');
+            $pf_mouth = $this->request->getPost('pf_mouth');
+            $pf_tooth = $this->request->getPost('pf_tooth');
+            $pf_neck = $this->request->getPost('pf_neck');
+            $pf_thorax = $this->request->getPost('pf_thorax');
+            $pf_thorax_image = $this->request->getPost('pf_thorax_image');
+            $pf_heart = $this->request->getPost('pf_heart');
+            $pf_heart_image = $this->request->getPost('pf_heart_image');
+            $pf_lungs = $this->request->getPost('pf_lungs');
+            $pf_abdomen = $this->request->getPost('pf_abdomen');
+            $pf_abdomen_image = $this->request->getPost('pf_abdomen_image');
+            $pf_hepar = $this->request->getPost('pf_hepar');
+            $pf_lien = $this->request->getPost('pf_lien');
+            $pf_kidney = $this->request->getPost('pf_kidney');
+            $pf_genitalia = $this->request->getPost('pf_genitalia');
+            $pf_upper_extremity = $this->request->getPost('pf_upper_extremity');
+            $pf_lower_extremity = $this->request->getPost('pf_lower_extremity');
+            $general_condition = $this->request->getPost('general_condition');
+            $gcs = $this->request->getPost('gcs');
+            $vas_nrs = $this->request->getPost('vas_nrs');
+            $left_diameter = $this->request->getPost('left_diameter');
+            $left_light_reflex = $this->request->getPost('left_light_reflex');
+            $left_cornea = $this->request->getPost('left_cornea');
+            $left_isokor_anisokor = $this->request->getPost('left_isokor_anisokor');
+            $right_diameter = $this->request->getPost('right_diameter');
+            $right_light_reflex = $this->request->getPost('right_light_reflex');
+            $right_cornea = $this->request->getPost('right_cornea');
+            $right_isokor_anisokor = $this->request->getPost('right_isokor_anisokor');
+            $stiff_neck = $this->request->getPost('stiff_neck');
+            $meningeal_sign = $this->request->getPost('meningeal_sign');
+            $brudzinki_i_iv = $this->request->getPost('brudzinki_i_iv');
+            $kernig_sign = $this->request->getPost('kernig_sign');
+            $dolls_eye_phenomenon = $this->request->getPost('dolls_eye_phenomenon');
+            $vertebra = $this->request->getPost('vertebra');
+            $extremity = $this->request->getPost('extremity');
+            $motion_upper_left = $this->request->getPost('motion_upper_left');
+            $motion_upper_right = $this->request->getPost('motion_upper_right');
+            $motion_lower_left = $this->request->getPost('motion_lower_left');
+            $motion_lower_right = $this->request->getPost('motion_lower_right');
+            $strength_upper_left = $this->request->getPost('strength_upper_left');
+            $strength_upper_right = $this->request->getPost('strength_upper_right');
+            $strength_lower_left = $this->request->getPost('strength_lower_left');
+            $strength_lower_right = $this->request->getPost('strength_lower_right');
+            $physiological_reflex_upper_left = $this->request->getPost('physiological_reflex_upper_left');
+            $physiological_reflex_upper_right = $this->request->getPost('physiological_reflex_upper_right');
+            $physiological_reflex_lower_left = $this->request->getPost('physiological_reflex_lower_left');
+            $physiological_reflex_lower_right = $this->request->getPost('physiological_reflex_lower_right');
+            $pathologycal_reflex_upper_left = $this->request->getPost('pathologycal_reflex_upper_left');
+            $pathologycal_reflex_upper_right = $this->request->getPost('pathologycal_reflex_upper_right');
+            $pathologycal_reflex_lower_left = $this->request->getPost('pathologycal_reflex_lower_left');
+            $pathologycal_reflex_lower_right = $this->request->getPost('pathologycal_reflex_lower_right');
+            $clonus = $this->request->getPost('clonus');
+            $sensibility = $this->request->getPost('sensibility');
+            $cause_of_injury_poisoning = $this->request->getPost('cause_of_injury_poisoning');
+            $nursing_problem = $this->request->getPost('nursing_problem');
+            $medical_problem = $this->request->getPost('medical_problem');
+            $care_and_therapy_plan = $this->request->getPost('care_and_therapy_plan');
+            $follow_up_plan = $this->request->getPost('follow_up_plan');
+            $rtj_control = $this->request->getPost('rtj_control');
+            $rtj_time_of_death_emergency = $this->request->getPost('rtj_time_of_death_emergency');
+            $rtj_inpatient_indication = $this->request->getPost('rtj_inpatient_indication');
+            $rtj_inpatient_dpjp = $this->request->getPost('rtj_inpatient_dpjp');
+            $rtj_inpatient_classes = $this->request->getPost('rtj_inpatient_classes');
+            $rtj_inpatient_ward = $this->request->getPost('rtj_inpatient_ward');
+            $rtj_inpatient_room = $this->request->getPost('rtj_inpatient_room');
+            $rtj_inpatient_bed = $this->request->getPost('rtj_inpatient_bed');
+            $rtj_referenced = $this->request->getPost('rtj_referenced');
+            $rtj_referenced_to = $this->request->getPost('rtj_referenced_to');
+            $rtj_referenced_phys = $this->request->getPost('rtj_referenced_phys');
+            $rtj_referenced_based_on = $this->request->getPost('rtj_referenced_based_on');
+            $rtj_referenced_deliver_by = $this->request->getPost('rtj_referenced_deliver_by');
+            $patient_education = $this->request->getPost('patient_education');
+            $if_patient_family = $this->request->getPost('if_patient_family');
+            $if_can_not_give_edu = $this->request->getPost('if_can_not_give_edu');
+            $explanation_receipient_name = $this->request->getPost('explanation_receipient_name');
+            $doctor_name = $this->request->getPost('doctor_name');
+            $paraf_doctor = $this->request->getPost('paraf_doctor');
+            $episode_id = $this->request->getPost('episode_id');
+            $app_nmbr = $this->request->getPost('app_nmbr');
+            $code = $this->request->getPost('code');
+            $proc_order_id = $this->request->getPost('proc_order_id');
+            $open_header_flag = $this->request->getPost('open_header_flag');
+            $hide_action_button = $this->request->getPost('hide_action_button');
+            $lab_order_id = $this->request->getPost('lab_order_id');
+            $physio_order_id = $this->request->getPost('physio_order_id');
+            $radio_order_id = $this->request->getPost('radio_order_id');
+            $is_cppt_leads = $this->request->getPost('is_cppt_leads');
+            $refphysician_id = $this->request->getPost('refphysician_id');
+            $inpatient_physician_speciality = $this->request->getPost('inpatient_physician_speciality');
+            $is_fast_track = $this->request->getPost('is_fast_track');
+            $is_cito = $this->request->getPost('is_cito');
+            $is_rad_pending = $this->request->getPost('is_rad_pending');
+            $rad_pending_order = $this->request->getPost('rad_pending_order');
+            $is_lab_pending = $this->request->getPost('is_lab_pending');
+            $lab_pending_order = $this->request->getPost('lab_pending_order');
+            $is_phy_pending = $this->request->getPost('is_phy_pending');
+            $phy_pending_order = $this->request->getPost('phy_pending_order');
+            $has_drug_allergy = $this->request->getPost('has_drug_allergy');
+            $state = $this->request->getPost('state');
+            $standing_order = $this->request->getPost('standing_order');
+            $is_locked = $this->request->getPost('is_locked');
+            $text_diagnosis = $this->request->getPost('text_diagnosis');
+            $is_signed = $this->request->getPost('is_signed');
+            $last_notebook = $this->request->getPost('last_notebook');
+            $inv_vendor_lab_id = $this->request->getPost('inv_vendor_lab_id');
+            $lab_medical_checkup = $this->request->getPost('lab_medical_checkup');
+            $inv_vendor_radio_id = $this->request->getPost('inv_vendor_radio_id');
+            $inv_vendor_phy_id = $this->request->getPost('inv_vendor_phy_id');
+            $inv_vendor_id = $this->request->getPost('inv_vendor_id');
+            $inv_vendor_nurse_id = $this->request->getPost('inv_vendor_nurse_id');
+            $inv_vendor_midwife_id = $this->request->getPost('inv_vendor_midwife_id');
+            $has_pain_scale = $this->request->getPost('has_pain_scale');
+            $pain_scale_type = $this->request->getPost('pain_scale_type');
+            $numeric_scale = $this->request->getPost('numeric_scale');
+            $wong_baker_scale = $this->request->getPost('wong_baker_scale');
+            $cpot_ekspresi_wajah = $this->request->getPost('cpot_ekspresi_wajah');
+            $cpot_gerakan_tubuh = $this->request->getPost('cpot_gerakan_tubuh');
+            $cpot_options = $this->request->getPost('cpot_options');
+            $cpot_aktivasi_ventilator = $this->request->getPost('cpot_aktivasi_ventilator');
+            $cpot_berbicara = $this->request->getPost('cpot_berbicara');
+            $cpot_ketegangan_otot = $this->request->getPost('cpot_ketegangan_otot');
+            $nips_ekspresi_wajah = $this->request->getPost('nips_ekspresi_wajah');
+            $nips_tangisan = $this->request->getPost('nips_tangisan');
+            $nips_pola_nafas = $this->request->getPost('nips_pola_nafas');
+            $nips_tungkai = $this->request->getPost('nips_tungkai');
+            $nips_tingkat_kesadaran = $this->request->getPost('nips_tingkat_kesadaran');
+            $painad_pernafasan = $this->request->getPost('painad_pernafasan');
+            $painad_vokalisasi_negatif = $this->request->getPost('painad_vokalisasi_negatif');
+            $painad_ekspresi_wajah = $this->request->getPost('painad_ekspresi_wajah');
+            $painad_bahasa_tubuh = $this->request->getPost('painad_bahasa_tubuh');
+            $painad_konsabilitas = $this->request->getPost('painad_konsabilitas');
+            $flacc_wajah = $this->request->getPost('flacc_wajah');
+            $flacc_kaki = $this->request->getPost('flacc_kaki');
+            $flacc_aktivitas = $this->request->getPost('flacc_aktivitas');
+            $flacc_menangis = $this->request->getPost('flacc_menangis');
+            $flacc_konsabilitas = $this->request->getPost('flacc_konsabilitas');
+            $has_fall_risk = $this->request->getPost('has_fall_risk');
+            $fall_risk_desc = $this->request->getPost('fall_risk_desc');
+            $fall_risk_type = $this->request->getPost('fall_risk_type');
+            $hd_usia = $this->request->getPost('hd_usia');
+            $hd_jenis_kelamin = $this->request->getPost('hd_jenis_kelamin');
+            $hd_diagnosa = $this->request->getPost('hd_diagnosa');
+            $hd_gangguan_kognitif = $this->request->getPost('hd_gangguan_kognitif');
+            $hd_faktor_lingkungan = $this->request->getPost('hd_faktor_lingkungan');
+            $hd_respon_pembedahan_sedasi_anestesi = $this->request->getPost('hd_respon_pembedahan_sedasi_anestesi');
+            $hd_respon_penggunaan_medikamentosa = $this->request->getPost('hd_respon_penggunaan_medikamentosa');
+            $fm_riwayat_jatuh = $this->request->getPost('fm_riwayat_jatuh');
+            $fm_diagnosis_sekunder = $this->request->getPost('fm_diagnosis_sekunder');
+            $fm_menggunakan_alat_bantu = $this->request->getPost('fm_menggunakan_alat_bantu');
+            $fm_menggunakan_infuse_heparine = $this->request->getPost('fm_menggunakan_infuse_heparine');
+            $fm_gaya_berjalan = $this->request->getPost('fm_gaya_berjalan');
+            $fm_status_mental = $this->request->getPost('fm_status_mental');
+            $fm_medikasi = $this->request->getPost('fm_medikasi');
+            $note_subjective = $this->request->getPost('note_subjective');
+            $note_objective = $this->request->getPost('note_objective');
+            $note_obat_confirmed = $this->request->getPost('note_obat_confirmed');
+            $note_lab_confirmed = $this->request->getPost('note_lab_confirmed');
+            $note_rad_confirmed = $this->request->getPost('note_rad_confirmed');
+            $note_phy_confirmed = $this->request->getPost('note_phy_confirmed');
+            $note_proc_confirmed = $this->request->getPost('note_proc_confirmed');
+            $additional_note = $this->request->getPost('additional_note');
+            $final_note = $this->request->getPost('final_note');
+            $create_uid = $this->request->getPost('create_uid');
+            $create_date = $this->request->getPost('create_date');
+            $write_uid = $this->request->getPost('write_uid');
+            $write_date = $this->request->getPost('write_date');
+            $patient_family_name = $this->request->getPost('patient_family_name');
+            $is_applicant_signed = $this->request->getPost('is_applicant_signed');
+            $applicant_sign = $this->request->getPost('applicant_sign');
+            $rtj_inpatient_location = $this->request->getPost('rtj_inpatient_location');
+            $rtj_referenced_dept = $this->request->getPost('rtj_referenced_dept');
+            $rtj_inpatient_standing_order = $this->request->getPost('rtj_inpatient_standing_order');
+            $rtj_is_control = $this->request->getPost('rtj_is_control');
+            $rtj_control_date = $this->request->getPost('rtj_control_date');
+            $rtj_control_reason = $this->request->getPost('rtj_control_reason');
+            $rtj_outpatient_type = $this->request->getPost('rtj_outpatient_type');
+            $rtj_referenced_based_other = $this->request->getPost('rtj_referenced_based_other');
+            $rtj_rujuk_type = $this->request->getPost('rtj_rujuk_type');
+            $pf_ears = $this->request->getPost('pf_ears');
+            $coass_residence_sign = $this->request->getPost('coass_residence_sign');
+            $is_coas_signed = $this->request->getPost('is_coas_signed');
+            $coas_signed_datetime = $this->request->getPost('coas_signed_datetime');
+            $month_count = $this->request->getPost('month_count');
+            $rtj_internal_ref_pysician_id = $this->request->getPost('rtj_internal_ref_pysician_id');
+            $rtj_internal_ref_notes = $this->request->getPost('rtj_internal_ref_notes');
+            $soap_planning = $this->request->getPost('soap_planning');
+            $is_consul_discount = $this->request->getPost('is_consul_discount');
+            $sign_datetime = $this->request->getPost('sign_datetime');
+            $clinical_indication = $fullPathDokter;
+            $target_of_therapy = $fullPathPasien;
+            $rtj_out_instruction = $this->request->getPost('rtj_out_instruction');
+            $set_all_dbn = $this->request->getPost('set_all_dbn');
+            $education_material = $this->request->getPost('education_material');
+            $message_main_attachment_id = $this->request->getPost('message_main_attachment_id');
+            $rtj_inpatient_service_needs = $this->request->getPost('rtj_inpatient_service_needs');
+            $trial194 = $this->request->getPost('trial194');
+
+
+            $isNewKunj = false;
+            if ($body['body_id'] == null || $body['body_id'] == '') {
+                $db = db_connect();
+                $select = $db->query("select cast(year(getdate()) as varchar(4)) +
+                right(cast((month(getdate()) + 100) as varchar(3)),2)+
+                right(cast((day(getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(hour,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(minute,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(second,getdate()) + 100) as varchar(3)),2)+
+                right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) as id")->getResultArray();
+                // $vactination_id = $select[0]['id'];
+                $body_id = $select[0]['id'];
+                $isNewKunj = true;
+            }
+            // return json_encode($body_id);
+
+            $db = new RMJ26Model();
+            $data = [
+                "body_id" => $body_id,
+                "org_unit_code" => $org_unit_code,
+                "pasien_diagnosa_id" => $pasien_diagnosa_id,
+                "diagnosa_id" => $diagnosa_id,
+                "no_registration" => $no_registration,
+                "visit_id" => $visit_id,
+                "bill_id" => $bill_id,
+                "clinic_id" => $clinic_id,
+                "class_room_id" => $class_room_id,
+                "in_date" => $in_date,
+                "exit_date" => $exit_date,
+                "keluar_id" => $keluar_id,
+                "examination_date" => $examination_date,
+                "employee_id" => $employee_id,
+                "description" => $description,
+                "modified_date" => $modified_date,
+                "modified_by" => $modified_by,
+                "modified_from" => $modified_from,
+                "status_pasien_id" => $status_pasien_id,
+                "ageyear" => $ageyear,
+                "agemonth" => $agemonth,
+                "ageday" => $ageday,
+                "thename" => $thename,
+                "theaddress" => $theaddress,
+                "theid" => $theid,
+                "isrj" => $isrj,
+                "gender" => $gender,
+                "doctor" => $doctor,
+                "kal_id" => $kal_id,
+                "petugas_id" => $petugas_id,
+                "petugas" => $petugas,
+                "account_id" => $account_id,
+                "cpoe_emr_rel_id" => $cpoe_emr_rel_id,
+                "cpoe_id" => $cpoe_id,
+                "episode_categ" => $episode_categ,
+                "date_order" => $date_order,
+                "patient_id" => $patient_id,
+                "patient_code" => $patient_code,
+                "patient_age" => $patient_age,
+                "patient_gender" => $patient_gender,
+                "colorbar" => $colorbar,
+                "physician_id" => $physician_id,
+                "physician_speciality" => $physician_speciality,
+                "payment_method" => $payment_method,
+                "pricelist_id" => $pricelist_id,
+                "currency_id" => $currency_id,
+                "is_out_cppt" => $is_out_cppt,
+                "soap_subjective" => $soap_subjective,
+                "soap_objective" => $soap_objective,
+                "ana_main_complaint" => $ana_main_complaint,
+                "ana_auto_current_disease_history" => $ana_auto_current_disease_history,
+                "ana_past_disease_history" => $ana_past_disease_history,
+                "ana_family_disease_history" => $ana_family_disease_history,
+                "ana_allergy_history_non_drugs" => $ana_allergy_history_non_drugs,
+                "ana_allergy_history_drugs" => $ana_allergy_history_drugs,
+                "ana_pregnancy_childbirth_history" => $ana_pregnancy_childbirth_history,
+                "ana_diet_history" => $ana_diet_history,
+                "ana_imun_history" => $ana_imun_history,
+                "ana_drugs_consumed" => $ana_drugs_consumed,
+                "pf_vital_sign_bp" => $pf_vital_sign_bp,
+                "pf_vital_sign_n" => $pf_vital_sign_n,
+                "pf_vital_sign_s" => $pf_vital_sign_s,
+                "pf_vital_sign_rr" => $pf_vital_sign_rr,
+                "pf_vital_sign_weight" => $pf_vital_sign_weight,
+                "pf_vital_sign_height" => $pf_vital_sign_height,
+                "pf_vital_sign_spo2" => $pf_vital_sign_spo2,
+                "pf_vital_sign_bmi" => $pf_vital_sign_bmi,
+                "pf_gcs_type" => $pf_gcs_type,
+                "pf_gcs_e" => $pf_gcs_e,
+                "pf_gcs_v" => $pf_gcs_v,
+                "pf_gcs_m" => $pf_gcs_m,
+                "pf_pgcs_e" => $pf_pgcs_e,
+                "pf_pgcs_v_type" => $pf_pgcs_v_type,
+                "pf_pgcs_v" => $pf_pgcs_v,
+                "pf_pgcs_v_non" => $pf_pgcs_v_non,
+                "pf_pgcs_m" => $pf_pgcs_m,
+                "pf_general_condition" => $pf_general_condition,
+                "pf_cranium" => $pf_cranium,
+                "pf_eyes" => $pf_eyes,
+                "pf_nose" => $pf_nose,
+                "pf_mouth" => $pf_mouth,
+                "pf_tooth" => $pf_tooth,
+                "pf_neck" => $pf_neck,
+                "pf_thorax" => $pf_thorax,
+                "pf_thorax_image" => $pf_thorax_image,
+                "pf_heart" => $pf_heart,
+                "pf_heart_image" => $pf_heart_image,
+                "pf_lungs" => $pf_lungs,
+                "pf_abdomen" => $pf_abdomen,
+                "pf_abdomen_image" => $pf_abdomen_image,
+                "pf_hepar" => $pf_hepar,
+                "pf_lien" => $pf_lien,
+                "pf_kidney" => $pf_kidney,
+                "pf_genitalia" => $pf_genitalia,
+                "pf_upper_extremity" => $pf_upper_extremity,
+                "pf_lower_extremity" => $pf_lower_extremity,
+                "general_condition" => $general_condition,
+                "gcs" => $gcs,
+                "vas_nrs" => $vas_nrs,
+                "left_diameter" => $left_diameter,
+                "left_light_reflex" => $left_light_reflex,
+                "left_cornea" => $left_cornea,
+                "left_isokor_anisokor" => $left_isokor_anisokor,
+                "right_diameter" => $right_diameter,
+                "right_light_reflex" => $right_light_reflex,
+                "right_cornea" => $right_cornea,
+                "right_isokor_anisokor" => $right_isokor_anisokor,
+                "stiff_neck" => $stiff_neck,
+                "meningeal_sign" => $meningeal_sign,
+                "brudzinki_i_iv" => $brudzinki_i_iv,
+                "kernig_sign" => $kernig_sign,
+                "dolls_eye_phenomenon" => $dolls_eye_phenomenon,
+                "vertebra" => $vertebra,
+                "extremity" => $extremity,
+                "motion_upper_left" => $motion_upper_left,
+                "motion_upper_right" => $motion_upper_right,
+                "motion_lower_left" => $motion_lower_left,
+                "motion_lower_right" => $motion_lower_right,
+                "strength_upper_left" => $strength_upper_left,
+                "strength_upper_right" => $strength_upper_right,
+                "strength_lower_left" => $strength_lower_left,
+                "strength_lower_right" => $strength_lower_right,
+                "physiological_reflex_upper_left" => $physiological_reflex_upper_left,
+                "physiological_reflex_upper_right" => $physiological_reflex_upper_right,
+                "physiological_reflex_lower_left" => $physiological_reflex_lower_left,
+                "physiological_reflex_lower_right" => $physiological_reflex_lower_right,
+                "pathologycal_reflex_upper_left" => $pathologycal_reflex_upper_left,
+                "pathologycal_reflex_upper_right" => $pathologycal_reflex_upper_right,
+                "pathologycal_reflex_lower_left" => $pathologycal_reflex_lower_left,
+                "pathologycal_reflex_lower_right" => $pathologycal_reflex_lower_right,
+                "clonus" => $clonus,
+                "sensibility" => $sensibility,
+                "cause_of_injury_poisoning" => $cause_of_injury_poisoning,
+                "nursing_problem" => $nursing_problem,
+                "medical_problem" => $medical_problem,
+                "care_and_therapy_plan" => $care_and_therapy_plan,
+                "follow_up_plan" => $follow_up_plan,
+                "rtj_control" => $rtj_control,
+                "rtj_time_of_death_emergency" => $rtj_time_of_death_emergency,
+                "rtj_inpatient_indication" => $rtj_inpatient_indication,
+                "rtj_inpatient_dpjp" => $rtj_inpatient_dpjp,
+                "rtj_inpatient_classes" => $rtj_inpatient_classes,
+                "rtj_inpatient_ward" => $rtj_inpatient_ward,
+                "rtj_inpatient_room" => $rtj_inpatient_room,
+                "rtj_inpatient_bed" => $rtj_inpatient_bed,
+                "rtj_referenced" => $rtj_referenced,
+                "rtj_referenced_to" => $rtj_referenced_to,
+                "rtj_referenced_phys" => $rtj_referenced_phys,
+                "rtj_referenced_based_on" => $rtj_referenced_based_on,
+                "rtj_referenced_deliver_by" => $rtj_referenced_deliver_by,
+                "patient_education" => $patient_education,
+                "if_patient_family" => $if_patient_family,
+                "if_can_not_give_edu" => $if_can_not_give_edu,
+                "explanation_receipient_name" => $explanation_receipient_name,
+                "doctor_name" => $doctor_name,
+                "paraf_doctor" => $paraf_doctor,
+                "episode_id" => $episode_id,
+                "app_nmbr" => $app_nmbr,
+                "code" => $code,
+                "proc_order_id" => $proc_order_id,
+                "open_header_flag" => $open_header_flag,
+                "hide_action_button" => $hide_action_button,
+                "lab_order_id" => $lab_order_id,
+                "physio_order_id" => $physio_order_id,
+                "radio_order_id" => $radio_order_id,
+                "is_cppt_leads" => $is_cppt_leads,
+                "refphysician_id" => $refphysician_id,
+                "inpatient_physician_speciality" => $inpatient_physician_speciality,
+                "is_fast_track" => $is_fast_track,
+                "is_cito" => $is_cito,
+                "is_rad_pending" => $is_rad_pending,
+                "rad_pending_order" => $rad_pending_order,
+                "is_lab_pending" => $is_lab_pending,
+                "lab_pending_order" => $lab_pending_order,
+                "is_phy_pending" => $is_phy_pending,
+                "phy_pending_order" => $phy_pending_order,
+                "has_drug_allergy" => $has_drug_allergy,
+                "state" => $state,
+                "standing_order" => $standing_order,
+                "is_locked" => $is_locked,
+                "text_diagnosis" => $text_diagnosis,
+                "is_signed" => $is_signed,
+                "last_notebook" => $last_notebook,
+                "inv_vendor_lab_id" => $inv_vendor_lab_id,
+                "lab_medical_checkup" => $lab_medical_checkup,
+                "inv_vendor_radio_id" => $inv_vendor_radio_id,
+                "inv_vendor_phy_id" => $inv_vendor_phy_id,
+                "inv_vendor_id" => $inv_vendor_id,
+                "inv_vendor_nurse_id" => $inv_vendor_nurse_id,
+                "inv_vendor_midwife_id" => $inv_vendor_midwife_id,
+                "has_pain_scale" => $has_pain_scale,
+                "pain_scale_type" => $pain_scale_type,
+                "numeric_scale" => $numeric_scale,
+                "wong_baker_scale" => $wong_baker_scale,
+                "cpot_ekspresi_wajah" => $cpot_ekspresi_wajah,
+                "cpot_gerakan_tubuh" => $cpot_gerakan_tubuh,
+                "cpot_options" => $cpot_options,
+                "cpot_aktivasi_ventilator" => $cpot_aktivasi_ventilator,
+                "cpot_berbicara" => $cpot_berbicara,
+                "cpot_ketegangan_otot" => $cpot_ketegangan_otot,
+                "nips_ekspresi_wajah" => $nips_ekspresi_wajah,
+                "nips_tangisan" => $nips_tangisan,
+                "nips_pola_nafas" => $nips_pola_nafas,
+                "nips_tungkai" => $nips_tungkai,
+                "nips_tingkat_kesadaran" => $nips_tingkat_kesadaran,
+                "painad_pernafasan" => $painad_pernafasan,
+                "painad_vokalisasi_negatif" => $painad_vokalisasi_negatif,
+                "painad_ekspresi_wajah" => $painad_ekspresi_wajah,
+                "painad_bahasa_tubuh" => $painad_bahasa_tubuh,
+                "painad_konsabilitas" => $painad_konsabilitas,
+                "flacc_wajah" => $flacc_wajah,
+                "flacc_kaki" => $flacc_kaki,
+                "flacc_aktivitas" => $flacc_aktivitas,
+                "flacc_menangis" => $flacc_menangis,
+                "flacc_konsabilitas" => $flacc_konsabilitas,
+                "has_fall_risk" => $has_fall_risk,
+                "fall_risk_desc" => $fall_risk_desc,
+                "fall_risk_type" => $fall_risk_type,
+                "hd_usia" => $hd_usia,
+                "hd_jenis_kelamin" => $hd_jenis_kelamin,
+                "hd_diagnosa" => $hd_diagnosa,
+                "hd_gangguan_kognitif" => $hd_gangguan_kognitif,
+                "hd_faktor_lingkungan" => $hd_faktor_lingkungan,
+                "hd_respon_pembedahan_sedasi_anestesi" => $hd_respon_pembedahan_sedasi_anestesi,
+                "hd_respon_penggunaan_medikamentosa" => $hd_respon_penggunaan_medikamentosa,
+                "fm_riwayat_jatuh" => $fm_riwayat_jatuh,
+                "fm_diagnosis_sekunder" => $fm_diagnosis_sekunder,
+                "fm_menggunakan_alat_bantu" => $fm_menggunakan_alat_bantu,
+                "fm_menggunakan_infuse_heparine" => $fm_menggunakan_infuse_heparine,
+                "fm_gaya_berjalan" => $fm_gaya_berjalan,
+                "fm_status_mental" => $fm_status_mental,
+                "fm_medikasi" => $fm_medikasi,
+                "note_subjective" => $note_subjective,
+                "note_objective" => $note_objective,
+                "note_obat_confirmed" => $note_obat_confirmed,
+                "note_lab_confirmed" => $note_lab_confirmed,
+                "note_rad_confirmed" => $note_rad_confirmed,
+                "note_phy_confirmed" => $note_phy_confirmed,
+                "note_proc_confirmed" => $note_proc_confirmed,
+                "additional_note" => $additional_note,
+                "final_note" => $final_note,
+                "create_uid" => $create_uid,
+                "create_date" => $create_date,
+                "write_uid" => $write_uid,
+                "write_date" => $write_date,
+                "patient_family_name" => $patient_family_name,
+                "is_applicant_signed" => $is_applicant_signed,
+                "applicant_sign" => $applicant_sign,
+                "rtj_inpatient_location" => $rtj_inpatient_location,
+                "rtj_referenced_dept" => $rtj_referenced_dept,
+                "rtj_inpatient_standing_order" => $rtj_inpatient_standing_order,
+                "rtj_is_control" => $rtj_is_control,
+                "rtj_control_date" => $rtj_control_date,
+                "rtj_control_reason" => $rtj_control_reason,
+                "rtj_outpatient_type" => $rtj_outpatient_type,
+                "rtj_referenced_based_other" => $rtj_referenced_based_other,
+                "rtj_rujuk_type" => $rtj_rujuk_type,
+                "pf_ears" => $pf_ears,
+                "coass_residence_sign" => $coass_residence_sign,
+                "is_coas_signed" => $is_coas_signed,
+                "coas_signed_datetime" => $coas_signed_datetime,
+                "month_count" => $month_count,
+                "rtj_internal_ref_pysician_id" => $rtj_internal_ref_pysician_id,
+                "rtj_internal_ref_notes" => $rtj_internal_ref_notes,
+                "soap_planning" => $soap_planning,
+                "is_consul_discount" => $is_consul_discount,
+                "sign_datetime" => $sign_datetime,
+                "clinical_indication" => $fullPathDokter,
+                "target_of_therapy" => $fullPathPasien,
+                "rtj_out_instruction" => $rtj_out_instruction,
+                "set_all_dbn" => $set_all_dbn,
+                "education_material" => $education_material,
+                "message_main_attachment_id" => $message_main_attachment_id,
+                "rtj_inpatient_service_needs" => $rtj_inpatient_service_needs,
+                "trial194" => $trial194,
+            ];
+            if ($isNewKunj) {
+                $coba = $db->insert($data);
+            } else {
+                $coba = $db->save($data);
+            }
+
+
+
+            $select = $this->lowerKey($db->where("body_id = '" . $body_id . "'")->findAll());
+            // return json_encode($select);
+
+            $select[0]['clinical_indication'] =  $encodedDataDokter;
+            $select[0]['target_of_therapy'] =  $encodedDataPasien;
+
+
             return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
-                "visit" => $visit
+                "visit" => $visit,
+                "val" => $select[0]
             ]);
         }
     }

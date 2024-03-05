@@ -28,7 +28,7 @@
         <table class="table table-bordered mb-0" style="border: 1px solid black;">
             <tbody>
                 <tr>
-                    <td style="text-align: center;"><img src="<?= base_url('img/logo.png') ?>" alt="logo" width="100px"></td>
+                    <td style="text-align: center;"><img src="<?= base_url('assets/img/logo.png') ?>" alt="logo" width="100px"></td>
                     <td>
                         <h3><b>RS PKU MUHAMMADIYAH SAMPANGAN<br>SURAKARTA<br></b></h3>
                         <h5><b>Semanggi RT 002 / RW 020 Pasar Kliwon <br>Telp 0271-633894 Fax. : 0271-630229Surakarta</b></h5>

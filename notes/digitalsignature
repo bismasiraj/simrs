@@ -1,0 +1,88 @@
+<div style="position: relative; height: 100%">
+                            <img src="<?= base_url('uploads/images/profile_male.png') ?>" alt="" style="width: 150px; height: 90px;position: absolute; top: 0; bottom: 0; right: 0; left: 0; margin: auto; border: 1px solid #000;">
+                            <canvas id="canvas" width="150" height="90" style="position: absolute; top: 0; bottom: 0; right: 0; left: 0; margin: auto; border: 1px solid #000;"></canvas>
+                        </div>
+
+<script>
+        var canvas = document.getElementById('canvas');
+        const canvasDataInput = document.getElementById('TTD');
+        var context = canvas.getContext('2d');
+        var drawing = false;
+        const img = new Image();
+        img.onload = function() {
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = "data:image/png;base64,<?= $signatureBase64 ?>";
+        // Load the background image onto the canvas
+        const backgroundImage = new Image();
+        backgroundImage.onload = function() {
+            context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            // Load the signature image onto the canvas
+            const signatureImage = new Image();
+            signatureImage.onload = function() {
+                context.drawImage(signatureImage, 0, 0, canvas.width, canvas.height);
+            };
+            signatureImage.src = "data:image/png;base64,<?= $signatureBase64 ?>";
+        };
+        backgroundImage.src = "<?= base_url('uploads/images/profile_male.png') ?>";
+
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        function startDrawing(e) {
+            drawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            context.lineWidth = 2;
+            context.lineCap = 'round';
+            context.strokeStyle = '#000';
+
+            context.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            context.beginPath();
+        }
+
+        function saveSignatureData() {
+            const canvasData = canvas.toDataURL('image/png');
+
+            canvasDataInput.value = canvasData;
+        }
+    </script>
+
+
+
+
+
+$signatureData = $this->request->getPost("TTD");
+            $data = explode(',', (string)$signatureData);
+            $encodedData = $data[1];
+            $decodedData = base64_decode($encodedData);
+            $signaturePath = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($signaturePath)) {
+                mkdir($signaturePath, 0777, true);
+            }
+            $filename = uniqid('signature_') . '.png';
+            $fullPath = $signaturePath . $filename;
+            if (file_put_contents($fullPath, $decodedData)) {
+                // Signature saved successfully
+                // You can return any response as needed, for example, a success message
+                return $this->response->setJSON(['success' => true, 'filename' => $filename]);
+            } else {
+                // Failed to save the signature image
+                // You can return any response as needed, for example, an error message
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }

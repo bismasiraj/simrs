@@ -3394,28 +3394,54 @@ class SatuSehat extends BaseController
         // $select = $this->lowerKey($ea->where("employee_id like '%$dokter%'")->orderBy("fullname")->findAll());
 
         $db = db_connect();
-        $select = $db->query("select pv.no_registration,visit_id, trans_id, SSPASIEN_ID, replace(pv.diantar_oleh,'''','') diantar_oleh, ea.FULLNAME, ea.SSPRACTITIONER_ID, pv.VISIT_DATE, pv.EXIT_DATE,
-                                cr.NAME_OF_CLASS, cf.KELAS_CODE, cf.KELAS_DISPLAY, cuf.KELAS_DISPLAY, pv.CLASS_ID, pv.CLASS_ID_PLAFOND, o.SSORGANIZATIONID
-                                from pasien_visitation pv inner join pasien p on pv.NO_REGISTRATION = p.NO_REGISTRATION
-                                inner join EMPLOYEE_ALL ea on pv.KDDPJP = ea.DPJP
-                                inner join CLASS_ROOM cr on pv.CLASS_ROOM_ID = cr.CLASS_ROOM_ID
-                                inner join clinic c on c.clinic_id = cr.CLINIC_ID
-                                inner join CLASS cl on cr.CLASS_ID = cl.CLASS_ID
+        $select = $db->query("select
+                                ta.no_registration,
+                                ta.diantar_oleh,
+                                ta.ssencounter_id,
+                                o.ssorganizationid,
+                                ta.trans_id,
+                                ta.visit_id,
+                                p.sspasien_id,
+                                p.name_of_pasien,
+                                ea.sspractitioner_id,
+                                ea.fullname sspractitioner_name,
+                                ea.fullname,
+                                replace(convert(varchar,ta.visit_date,20),' ','T')+'+07:00' as visit_date,
+                                replace(convert(varchar,ta.exit_date,20),' ','T')+'+07:00' as exit_date,
+                                cf.KELAS_CODE,
+                                cf.KELAS_DISPLAY,
+                                cuf.KELAS_CODE as UPGRADE_CODE,
+                                cuf.KELAS_DISPLAY as UPGRADE_DISPLAY,
+                                ckh.disposition_code,
+                                ckh.disposition_display,
+                                ckh.description disposition_description,
+                                b.sslocationbed_id,
+                                b.bed_id,
+                                cr.name_of_class,
+                                c.name_of_clinic,
+                                ss.status,
+                                ss.parameter
+                                from PASIEN_VISITATION ta
+                                inner join EMPLOYEE_ALL ea on ta.KDDPJP = ea.DPJP
+                                inner join pasien p on ta.NO_REGISTRATION = p.NO_REGISTRATION
+                                inner join CLASS_ROOM cr on ta.CLASS_ROOM_ID = cr.CLASS_ROOM_ID
+                                    inner join CLASS cl on cr.CLASS_ID = cl.CLASS_ID
+                                    inner join CARA_KELUAR ck on ta.KELUAR_ID = ck.KELUAR_ID
+                                        inner join CARA_KELUAR_FHIR ckh on ck.disposition_code = ckh.disposition_code
+                                inner join beds b on ta.BED_ID = b.BED_ID and cr.CLASS_ROOM_ID = b.CLASS_ROOM_ID
                                 inner join CLASS_FHIR cf on cl.CLASS_FHIR_CODE = cf.KELAS_CODE
+                                inner join clinic c on c.clinic_id = cr.clinic_id
                                 inner join CLASS_UPGRADE_FHIR cuf on 
-                                case when (case when pv.class_id_plafond in (2,3,4) and (case when pv.class_id = '11' then pv.CLASS_ID_PLAFOND else pv.CLASS_ID end) > pv.class_id_plafond then pv.class_id_plafond
-                                else (case when pv.class_id = '11' then pv.class_id_plafond else pv.CLASS_ID end) end) <> pv.class_id_plafond then 'naik-kelas' else 'kelas-tetap' end = cuf.KELAS_CODE,
+                                                                case when (case when p.class_id in (2,3,4) and (case when ta.class_id = '11' then p.class_id else ta.CLASS_ID end) > ta.class_id then p.class_id
+                                                                else (case when ta.class_id = '11' then p.class_id else ta.CLASS_ID end) end) <> p.class_id then 'naik-kelas' else 'kelas-tetap' end = cuf.KELAS_CODE
+                                left join satu_sehat ss on ss.trans_id = ta.trans_id,
                                 ORGANIZATIONUNIT o
-                                where pv.CLASS_ROOM_ID is not null
-                                and KELUAR_ID not in (0,32,33,35)
-                                and trans_id = '844119202112201025420377';
-                                where exit_date between dateadd(day,0,'$mulai') and dateadd(day,1,'$akhir')
-                                and pv.clinic_id like '%$clinic_id%'
-                                and pv.status_pasien_id like '%$status%'
+                                where exit_date between dateadd(day,0,'$mulai') and dateadd(day,1,'$mulai')
+                                and c.clinic_id like '%$clinic_id%'
+                                and ta.status_pasien_id like '%$status%'
                                 and sspractitioner_id is not null
-                                pv.CLASS_ROOM_ID is not null
-                                and KELUAR_ID not in (0,32,33,35)
-                                group by pv.diantar_oleh,ssencounter_id, sslocation_id, name_of_clinic,sspractitioner_id,replace(fullname,'''',''), ssencounter_id, ssorganizationid, pv.trans_id,pv.visit_id, pv.no_registration, ss.status, ss.parameter, ss.url, ss.method, ss.result, p.name_of_pasien, p.sspasien_id")->getResultArray();;
+                                and ta.CLASS_ROOM_ID is not null")->getResultArray();
+        $select = $this->lowerKey($select);
         // return json_encode($select);
         $dt_data = array();
         $kunjungan = array();
@@ -3430,20 +3456,25 @@ class SatuSehat extends BaseController
                 // if (false) {
                 if ($value['status'] != '200') {
                     $db->query("delete from satu_sehat where trans_id = '" . $value['trans_id'] . "' and tipe = 4");
-                    $body = $value;
-                    $sspasien_id = $value['sspasien_id'];
-                    $namapasien = $value['diantar_pasien'];
-                    $sslocation_id = $value['sslocation_id'];
-                    $sslocation_name = $value['name_of_clinic'];
-                    $sspractitioner_id = $value['sspractitioner_id'];
-                    $sspractitioner_name = $value['fullname'];
                     $ssencounter_id = $value['ssencounter_id'];
                     $ssorganizationid = $value['ssorganizationid'];
-                    $visit_id = $value['visit_id'];
                     $trans_id = $value['trans_id'];
-                    $no_registration = $value['no_registration'];
+                    $visit_id = $value['visit_id'];
+                    $sspasien_id = $value['sspasien_id'];
+                    $namapasien = $value['name_of_pasien'];
+                    $sspractitioner_id = $value['sspractitioner_id'];
+                    $sspractitioner_name = $value['sspractitioner_name'];
                     $visit_date = $value['visit_date'];
                     $exit_date = $value['exit_date'];
+                    $kelas_code = $value['kelas_code'];
+                    $kelas_display = $value['kelas_display'];
+                    $upgrade_code = $value['upgrade_code'];
+                    $upgrade_display = $value['upgrade_display'];
+                    $disposition_code = $value['disposition_code'];
+                    $disposition_display = $value['disposition_display'];
+                    $disposition_description = $value['disposition_description'];
+                    $sslocationbed_id = $value['sslocationbed_id'];
+                    $no_registration = $value['no_registration'];
 
                     $ss = new SatuSehat();
 
@@ -3521,8 +3552,8 @@ class SatuSehat extends BaseController
                                             "location": [
                                                 {
                                                     "location": {
-                                                        "reference": "Location/b29038d4-9ef0-4eb3-a2e9-3c02df668b07",
-                                                        "display": "Bed 2, Ruang 210, Bangsal Rawat Inap Kelas 1, Layanan Penyakit Dalam, Lantai 2, Gedung Utama"
+                                                        "reference": "Location/' . $sslocationbed_id . '",
+                                                        "display": "Bed' . $value['bed_id'] . ', Bangsal ' . $value['name_of_class'] . '"
                                                     },
                                                     "extension": [
                                                         {
@@ -3534,8 +3565,8 @@ class SatuSehat extends BaseController
                                                                         "coding": [
                                                                             {
                                                                                 "system": "http://terminology.kemkes.go.id/CodeSystem/locationServiceClass-Inpatient",
-                                                                                "code": "1",
-                                                                                "display": "Kelas 1"
+                                                                                "code": "' . $kelas_code . '",
+                                                                                "display": "' . $kelas_display . '"
                                                                             }
                                                                         ]
                                                                     }
@@ -3546,8 +3577,8 @@ class SatuSehat extends BaseController
                                                                         "coding": [
                                                                             {
                                                                                 "system": "http://terminology.kemkes.go.id/CodeSystem/locationUpgradeClass",
-                                                                                "code": "kelas-tetap",
-                                                                                "display": "Kelas Tetap Perawatan"
+                                                                                "code": "' . $upgrade_code . '",
+                                                                                "display": "' . $upgrade_display . '"
                                                                             }
                                                                         ]
                                                                     }
@@ -3558,52 +3589,21 @@ class SatuSehat extends BaseController
                                                 }
                                             ],
                                             "diagnosis": [
-                                                {
-                                                    "condition": {
-                                                        "reference": "Condition/a734df17-84ca-4a09-998c-95442eba13d9",
-                                                        "display": "Chronic kidney disease, stage 5"
-                                                    },
-                                                    "use": {
-                                                        "coding": [
-                                                            {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                                                                "code": "DD",
-                                                                "display": "Discharge diagnosis"
-                                                            }
-                                                        ]
-                                                    },
-                                                    "rank": 1
-                                                },
-                                                {
-                                                    "condition": {
-                                                        "reference": "Condition/23cc164d-9e49-4d6c-b46b-576efbb123fe",
-                                                        "display": "Anemia in chronic kidney disease"
-                                                    },
-                                                    "use": {
-                                                        "coding": [
-                                                            {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                                                                "code": "DD",
-                                                                "display": "Discharge diagnosis"
-                                                            }
-                                                        ]
-                                                    },
-                                                    "rank": 2
-                                                }
+                                                
                                             ],
                                             "statusHistory": [
                                                 {
                                                     "status": "in-progress",
                                                     "period": {
-                                                        "start": "2021-09-10T08:00:00+00:00",
-                                                        "end": "2021-09-15T09:30:27+07:00"
+                                                        "start": "' . $visit_date . '",
+                                                        "end": "' . $exit_date . '"
                                                     }
                                                 },
                                                 {
                                                     "status": "finished",
                                                     "period": {
-                                                        "start": "2021-09-15T09:30:27+07:00",
-                                                        "end": "2021-09-15T09:30:27+07:00"
+                                                        "start": "' . $exit_date . '",
+                                                        "end": "' . $exit_date . '"
                                                     }
                                                 }
                                             ],
@@ -3612,21 +3612,16 @@ class SatuSehat extends BaseController
                                                     "coding": [
                                                         {
                                                             "system": "http://terminology.hl7.org/CodeSystem/discharge-disposition",
-                                                            "code": "home",
-                                                            "display": "Home"
+                                                            "code": "' . $disposition_code . '",
+                                                            "display": "' . $disposition_display . '"
                                                         }
                                                     ],
-                                                    "text": "Anjuran dokter untuk pulang dan kontrol kembali"
+                                                    "text": "' . $disposition_description . '"
                                                 }
                                             },
                                             "serviceProvider": {
-                                                "reference": "Organization/10085103"
-                                            },
-                                            "basedOn": [
-                                                {
-                                                    "reference": "ServiceRequest/1e1a260d-538f-4172-ad68-0aa5f8ccfc4a"
-                                                }
-                                            ]
+                                                "reference": "Organization/' . $ssorganizationid . '"
+                                            }
                                         },
                                         "request": {
                                             "method": "POST",
@@ -3637,74 +3632,6 @@ class SatuSehat extends BaseController
                     // return json_encode(in_array($batching[4]['tipe'], ['25', '27']));
                     $iscontinue = false;
 
-                    $bb = new BatchingBridgingModel();
-
-                    $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("max(case when tipe = 21 then waktu else null end) as waktu1,
-                    max(case when tipe = 22 then waktu else null end) as waktu2,
-                    max(case when tipe = 23 then waktu else null end) as waktu3,
-                    max(case when tipe = 24 then waktu else null end) as waktu4,
-                    max(case when tipe = 25 then waktu else null end) as waktu5,
-                    max(case when tipe = 26 then waktu else null end) as waktu6,
-                    max(case when tipe = 27 then waktu else null end) as waktu7
-                    ")->findAll();
-                    if (isset($batching[0])) {
-                        $valueb = $batching[0];
-                        $jsonencounter['resource']['period']['start'] = $valueb['waktu1'];
-                        if ($valueb['waktu7'] == null) {
-                            $jsonencounter['resource']['period']['end'] = $valueb['waktu5'];
-                        } else {
-                            $jsonencounter['resource']['period']['end'] = $valueb['waktu7'];
-                        }
-                        $jsonencounter['resource']['statusHistory'][0]['status'] = 'arrived';
-                        $jsonencounter['resource']['statusHistory'][0]['period']['start'] = $valueb['waktu1'];
-                        $jsonencounter['resource']['statusHistory'][0]['period']['end'] = $valueb['waktu3'];
-                        $jsonencounter['resource']['statusHistory'][1]['status'] = 'in_progress';
-                        $jsonencounter['resource']['statusHistory'][1]['period']['start'] = $valueb['waktu3'];
-                        $jsonencounter['resource']['statusHistory'][1]['period']['end'] = $valueb['waktu5'];
-                        $jsonencounter['resource']['statusHistory'][2]['status'] = 'finished';
-                        $jsonencounter['resource']['statusHistory'][2]['period']['start'] = $valueb['waktu5'];
-                        if ($valueb['waktu7'] == null) {
-                            $jsonencounter['resource']['statusHistory'][2]['period']['end'] = $valueb['waktu5'];
-                        } else {
-                            $jsonencounter['resource']['statusHistory'][2]['period']['end'] = $valueb['waktu7'];
-                        }
-                        if ($valueb['waktu7'] == null && $valueb['waktu5']  == null) {
-                            $iscontinue = false;
-                        } else {
-                            $iscontinue = true;
-                        }
-
-
-
-                        // if ($valueb['tipe'] == '21') {
-                        //     $jsonencounter['resource']['period']['start'] = $valueb['waktu'];
-                        // } else if ($keyb == count($batching) - 1 && ($valueb['tipe'] == '25' || $valueb['tipe'] == '27')) {
-                        //     $jsonencounter['resource']['period']['end'] = $valueb['waktu'];
-                        // } else if ($keyb == count($batching) - 1 && !in_array($valueb['tipe'], ['25', '27'])) {
-                        //     // return response()->setStatusCode(401, 'Kunjungan belum selesai, silahkan selesaikan kunjungan terlebih dahulu.');
-                        //     $iscontinue = false;
-                        //     break;
-                        // }
-                        // if ($valueb['tipe'] == '21') {
-                        //     $jsonencounter['resource']['statusHistory'][0]['status'] = 'arrived';
-                        //     $jsonencounter['resource']['statusHistory'][0]['period']['start'] = $valueb['waktu'];
-                        // } else if ($valueb['tipe'] == '23') {
-                        //     $jsonencounter['resource']['statusHistory'][0]['period']['end'] = $valueb['waktu'];
-                        //     $jsonencounter['resource']['statusHistory'][1]['status'] = 'in_progress';
-                        //     $jsonencounter['resource']['statusHistory'][1]['period']['start'] = $valueb['waktu'];
-                        // } else if ($valueb['tipe'] == '25') {
-                        //     $jsonencounter['resource']['statusHistory'][1]['period']['end'] = $valueb['waktu'];
-                        //     $jsonencounter['resource']['statusHistory'][2]['status'] = 'finished';
-                        //     $jsonencounter['resource']['statusHistory'][2]['period']['start'] = $valueb['waktu'];
-                        // }
-                        // if ($keyb == count($batching) - 1 && in_array($valueb['tipe'], ['25', '27'])) {
-                        //     $jsonencounter['resource']['statusHistory'][2]['period']['end'] = $valueb['waktu'];
-                        //     $iscontinue = true;
-                        //     $lastwaktu = $valueb['tipe'];
-                        // }
-                    }
-                    // $select[$key]['lastwaktu'] = $lastwaktu;
-                    // if ($iscontinue == true) {
                     if (true) {
                         $ssjson = array();
 
@@ -3820,8 +3747,8 @@ class SatuSehat extends BaseController
                                                         "display": "Tindakan ' . $pvalue['diagnosa_name'] . '"
                                                     },
                                                     "performedPeriod": {
-                                                                            "start": "' . $jsonencounter['resource']['statusHistory'][1]['period']['start'] . '",
-                                                                            "end": "' . $jsonencounter['resource']['statusHistory'][1]['period']['end'] . '"
+                                                                            "start": "' . $visit_date . '",
+                                                                            "end": "' . $exit_date . '"
                                                                         },
                                                     "performer": [
                                                         {
@@ -4140,8 +4067,9 @@ class SatuSehat extends BaseController
 
                         $db = db_connect();
                         try {
-                            $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
-                            values('$no_registration','$trans_id','" . $this->baseurlfhir . "','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
+                            $result = $db->query("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
+                            values('$no_registration','$trans_id','" . $this->baseurlfhir . "','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'6',getdate())");
+                            // return json_encode($result);
                         } catch (\Exception $e) {
                             exit($e->getMessage());
                         }
@@ -4164,7 +4092,8 @@ class SatuSehat extends BaseController
                         $select[$key]['isdiagnosa'] = $isdiagnosa;
                         $select[$key]['isprocedure'] = $isprocedure;
                         $select[$key]['isexam'] = $isexam;
-                        // return json_encode($value);
+                        // return json_encode("insert into satu_sehat(no_registration, trans_id, url, method, parameter, created_date, modified_date, tipe, waktu)
+                        //     values('$no_registration','$trans_id','" . $this->baseurlfhir . "','POST','" . json_encode($ssfulljson) . "',getdate(),getdate(),'4',getdate())");
                         $row[] = $i + 1;
                         $row[] = $value['diantar_oleh'] . "/" . $value['sspasien_id'];
                         $row[] = $value['fullname'];

@@ -27,9 +27,9 @@
                 <tbody>
                     <tr>
                         <td style="text-align: center;">
-                            <img src="<?= base_url('img/logo.png') ?>" alt="logo" width="100px">
+                            <img src="<?= base_url('assets/img/logo.png') ?>" alt="logo" width="100px">
                             <div>
-                                <label>SEhat-aMANah <br>tanGGungjawab-Islami</label>
+                                <label>Sehat-Amanah <br>Tanggungjawab-Islami</label>
                             </div>
                         </td>
                         <td>
