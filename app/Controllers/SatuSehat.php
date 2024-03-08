@@ -2378,8 +2378,8 @@ class SatuSehat extends BaseController
                         // }
                     }
                     // $select[$key]['lastwaktu'] = $lastwaktu;
-                    // if ($iscontinue == true) {
-                    if (true) {
+                    if ($iscontinue == true) {
+                        // if (true) {
                         $ssjson = array();
 
                         $sscondition = array();
@@ -2996,7 +2996,8 @@ class SatuSehat extends BaseController
                     $statuscode = "200";
                 }
                 $db->query("update satu_sehat set status = '$statuscode', result = '" . $response . "' where trans_id = '" . $body['trans_id'] . "' and tipe = '4'");
-                return json_encode($httpcode . " ===== " . $response);
+                return json_encode($httpcode);
+                // return json_encode($httpcode . " ===== " . $response);
             } else {
                 $token = $this->getToken();
                 return $token;
