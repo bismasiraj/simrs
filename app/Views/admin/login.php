@@ -19,7 +19,7 @@
         }
 
         .loginbg {
-            background: #f5b225;
+            background: #81abcf;
             max-height: 480px;
             box-shadow: 0 10px 18px 0 rgba(62, 57, 107, 0.2);
             border-radius: 4px;
@@ -160,7 +160,7 @@
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
         $.backstretch([
-            base_url + "/assets/img/backgrounds/RS PKU MUH SAMPANGAN.png"
+            base_url + "/assets/img/backgrounds/RSMY-COVER-web.png"
         ], {
             duration: 3000,
             fade: 750
