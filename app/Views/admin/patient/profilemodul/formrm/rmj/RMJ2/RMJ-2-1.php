@@ -10,10 +10,49 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title>RMJ 2.1 ASSESMEN MEDIS PASIEN RAWAT JALAN ANAK</title>
+
+    <script src="<?php echo base_url(); ?>backend/custom/jquery.min.js"></script>
+    <script src="<?php echo base_url(); ?>backend/datepicker/date.js"></script>
+    <script src="<?php echo base_url(); ?>backend/dist/js/jquery-ui.min.js"></script>
 </head>
 
 <body>
-    <form>
+    <form id="form" action="/admin/rekammedis/rmj2_1/ <?= base64_encode(json_encode($visit)); ?>" method="POST">
+        <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
+        <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
+        <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
+        <input type="hidden" name="body_id" id="body_id">
+        <input type="hidden" name="org_unit_code" id="org_unit_code">
+        <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
+        <input type="hidden" name="diagnosa_id" id="diagnosa_id">
+        <input type="hidden" name="no_registration" id="no_registration">
+        <input type="hidden" name="visit_id" id="visit_id">
+        <input type="hidden" name="bill_id" id="bill_id">
+        <input type="hidden" name="clinic_id" id="clinic_id">
+        <input type="hidden" name="class_room_id" id="class_room_id">
+        <input type="hidden" name="in_date" id="in_date">
+        <input type="hidden" name="exit_date" id="exit_date">
+        <input type="hidden" name="keluar_id" id="keluar_id">
+        <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
+        <input type="hidden" name="employee_id" id="employee_id">
+        <input type="hidden" name="description" id="description">
+        <input type="hidden" name="modified_date" id="modified_date">
+        <input type="hidden" name="modified_by" id="modified_by">
+        <input type="hidden" name="modified_from" id="modified_from">
+        <input type="hidden" name="status_pasien_id" id="status_pasien_id">
+        <input type="hidden" name="ageyear" id="ageyear">
+        <input type="hidden" name="agemonth" id="agemonth">
+        <input type="hidden" name="ageday" id="ageday">
+        <input type="hidden" name="thename" id="thename">
+        <input type="hidden" name="theaddress" id="theaddress">
+        <input type="hidden" name="theid" id="theid">
+        <input type="hidden" name="isrj" id="isrj">
+        <input type="hidden" name="gender" id="gender">
+        <input type="hidden" name="doctor" id="doctor">
+        <input type="hidden" name="kal_id" id="kal_id">
+        <input type="hidden" name="petugas_id" id="petugas_id">
+        <input type="hidden" name="petugas" id="petugas">
+        <input type="hidden" name="account_id" id="account_id">
         <div class="container mt-3">
 
             <br>

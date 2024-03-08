@@ -942,9 +942,9 @@ class RekamMedis extends \App\Controllers\BaseController
                 $signaturePathPasien = $select[0]['target_of_therapy'];
 
                 // Check if the signature image file exists
-                if (file_exists($signaturePathDokter)) {
+                if (file_exists($signaturePathPasien)) {
                     // Read the signature image
-                    $signatureData = file_get_contents($signaturePathDokter);
+                    $signatureData = file_get_contents($signaturePathPasien);
 
                     // Convert the image data to base64 format
                     $signatureBase64 = base64_encode($signatureData);
@@ -1608,9 +1608,9 @@ class RekamMedis extends \App\Controllers\BaseController
                 $signaturePathPasien = $select[0]['target_of_therapy'];
 
                 // Check if the signature image file exists
-                if (file_exists($signaturePathDokter)) {
+                if (file_exists($signaturePathPasien)) {
                     // Read the signature image
-                    $signatureData = file_get_contents($signaturePathDokter);
+                    $signatureData = file_get_contents($signaturePathPasien);
 
                     // Convert the image data to base64 format
                     $signatureBase64 = base64_encode($signatureData);

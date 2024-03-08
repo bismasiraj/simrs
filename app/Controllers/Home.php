@@ -157,4 +157,14 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         return json_encode(password_verify(base64_encode(hash('sha384', "Agussalim7", true)), user()->password_hash));
         return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
     }
+
+    public function checkimage($norm)
+    {
+        $pv = new PasienVisitationModel();
+
+        $select = $this->lowerKey($pv->find($norm));
+
+        // return json_encode(($select['abdoment_image']));
+        echo '<img src="data:image/jpeg;base64,' . ($select['ttd']) . '" />';
+    }
 }

@@ -2236,6 +2236,12 @@ class SatuSehat extends BaseController
 
                     $ss = new SatuSehat();
 
+                    if ($ssencounter_id == '' || is_null(($ssencounter_id))) {
+                        $db = db_connect();
+                        $id = $db->query("select newid() as newid")->getResultArray();
+                        $ssencounter_id = $id[0];
+                    }
+
 
 
                     $jsonencounter = '';
@@ -2306,13 +2312,14 @@ class SatuSehat extends BaseController
 
                     $bb = new BatchingBridgingModel();
 
-                    $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("max(case when tipe = 21 then waktu else null end) as waktu1,
-                    max(case when tipe = 22 then waktu else null end) as waktu2,
-                    max(case when tipe = 23 then waktu else null end) as waktu3,
-                    max(case when tipe = 24 then waktu else null end) as waktu4,
-                    max(case when tipe = 25 then waktu else null end) as waktu5,
-                    max(case when tipe = 26 then waktu else null end) as waktu6,
-                    max(case when tipe = 27 then waktu else null end) as waktu7
+                    $batching = $bb->where('trans_id', $trans_id)->where('status', 200)->like('tipe', '2%')->select("
+                    replace(convert(varchar,max(case when tipe = 21 then waktu else null end),20),' ','T')+'+07:00' as waktu1,
+                    replace(convert(varchar,max(case when tipe = 22 then waktu else null end),20),' ','T')+'+07:00' as waktu2,
+                    replace(convert(varchar,max(case when tipe = 23 then waktu else null end),20),' ','T')+'+07:00' as waktu3,
+                    replace(convert(varchar,max(case when tipe = 24 then waktu else null end),20),' ','T')+'+07:00' as waktu4,
+                    replace(convert(varchar,max(case when tipe = 25 then waktu else null end),20),' ','T')+'+07:00' as waktu5,
+                    replace(convert(varchar,max(case when tipe = 26 then waktu else null end),20),' ','T')+'+07:00' as waktu6,
+                    replace(convert(varchar,max(case when tipe = 27 then waktu else null end),20),' ','T')+'+07:00' as waktu7
                     ")->findAll();
                     if (isset($batching[0])) {
                         $valueb = $batching[0];
@@ -2376,7 +2383,7 @@ class SatuSehat extends BaseController
                         $ssjson = array();
 
                         $sscondition = array();
-                        $condition = $db->query('select pds.diagnosa_id, pds.diagnosa_name, pds.sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
+                        $condition = $db->query('select pds.diagnosa_id, pds.diagnosa_name, isnull(pds.sscondition_id, newid()) sscondition_id from pasien_diagnosa pd inner join pasien_diagnosas pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id
                         where visit_id = \'' . $visit_id . '\'')->getResultArray();
 
                         foreach ($condition as $key1 => $value1) {
@@ -2453,62 +2460,68 @@ class SatuSehat extends BaseController
                         $isprocedure = '';
 
                         if (isset($condition[0])) {
-                            $procedures = $db->query("select pds.diagnosa_id, pds.diagnosa_name, pds.ssprocedure_id from pasien_diagnosa pd inner join pasien_procedures pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id where visit_id = '$visit_id'")->getResultArray();
+                            $procedures = $db->query("select pds.diagnosa_id, pds.diagnosa_name, isnull(pds.ssprocedure_id, newid()) as ssprocedure_id from pasien_diagnosa pd inner join pasien_procedures pds on pd.pasien_diagnosa_id = pds.pasien_diagnosa_id where visit_id = '$visit_id'")->getResultArray();
                             foreach ($procedures as $pkey => $pvalue) {
                                 $ssprocedure = '{
                                                     "fullUrl": "urn:uuid:' . $pvalue['ssprocedure_id'] . '",
-                                                    "resourceType": "Procedure",
-                                                    "status": "completed",
-                                                    "category": {
-                                                        "coding": [
+                                                    "resource": {
+                                                        "resourceType": "Procedure",
+                                                        "status": "completed",
+                                                        "category": {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://snomed.info/sct",
+                                                                    "code": "103693007",
+                                                                    "display": "Diagnostic procedure"
+                                                                }
+                                                            ],
+                                                            "text": "Diagnostic procedure"
+                                                        },
+                                                        "code": {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://hl7.org/fhir/sid/icd-9-cm",
+                                                                    "code": "' . $pvalue['diagnosa_id'] . '",
+                                                                    "display": "' . $pvalue['diagnosa_name'] . '"
+                                                                }
+                                                            ]
+                                                        },
+                                                        "subject": {
+                                                            "reference": "Patient/' . $sspasien_id . '",
+                                                            "display": "Budi Santoso"
+                                                        },
+                                                        "encounter": {
+                                                            "reference": "Encounter/' . $ssencounter_id . '",
+                                                            "display": "Tindakan ' . $pvalue['diagnosa_name'] . '"
+                                                        },
+                                                        "performedPeriod": {
+                                                                                "start": "' . $jsonencounter['resource']['statusHistory'][1]['period']['start'] . '",
+                                                                                "end": "' . $jsonencounter['resource']['statusHistory'][1]['period']['end'] . '"
+                                                                            },
+                                                        "performer": [
                                                             {
-                                                                "system": "http://snomed.info/sct",
-                                                                "code": "103693007",
-                                                                "display": "Diagnostic procedure"
+                                                                "actor": {
+                                                                    "reference": "Practitioner/' . $sspractitioner_id . '",
+                                                                    "display": "' . $sspractitioner_name . '"
+                                                                }
                                                             }
                                                         ],
-                                                        "text": "Diagnostic procedure"
-                                                    },
-                                                    "code": {
-                                                        "coding": [
+                                                        "reasonCode": [
                                                             {
-                                                                "system": "http://hl7.org/fhir/sid/icd-9-cm",
-                                                                "code": "' . $pvalue['diagnosa_id'] . '",
-                                                                "display": "' . $pvalue['diagnosa_name'] . '"
+                                                                "coding": [
+                                                                    {
+                                                                        "system": "http://hl7.org/fhir/sid/icd-10",
+                                                                        "code": "' . $condition[0]['diagnosa_id'] . '",
+                                                                        "display": "' . $condition[0]['diagnosa_name'] . '"
+                                                                    }
+                                                                ]
                                                             }
                                                         ]
                                                     },
-                                                    "subject": {
-                                                        "reference": "Patient/' . $sspasien_id . '",
-                                                        "display": "Budi Santoso"
-                                                    },
-                                                    "encounter": {
-                                                        "reference": "Encounter/' . $ssencounter_id . '",
-                                                        "display": "Tindakan ' . $pvalue['diagnosa_name'] . '"
-                                                    },
-                                                    "performedPeriod": {
-                                                                            "start": "' . $jsonencounter['resource']['statusHistory'][1]['period']['start'] . '",
-                                                                            "end": "' . $jsonencounter['resource']['statusHistory'][1]['period']['end'] . '"
-                                                                        },
-                                                    "performer": [
-                                                        {
-                                                            "actor": {
-                                                                "reference": "Practitioner/' . $sspractitioner_id . '",
-                                                                "display": "' . $sspractitioner_name . '"
-                                                            }
-                                                        }
-                                                    ],
-                                                    "reasonCode": [
-                                                        {
-                                                            "coding": [
-                                                                {
-                                                                    "system": "http://hl7.org/fhir/sid/icd-10",
-                                                                    "code": "' . $condition[0]['diagnosa_id'] . '",
-                                                                    "display": "' . $condition[0]['diagnosa_name'] . '"
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
+                                                    "request": {
+                                                        "method": "POST",
+                                                        "url": "Procedure"
+                                                    }
                                                 }';
                                 $ssprocedure = json_decode($ssprocedure, true);
                                 $ssjson[] = $ssprocedure;
@@ -2526,47 +2539,53 @@ class SatuSehat extends BaseController
                             if ($examvalue['nadi'] != null && $examvalue['nadi'] != '') {
                                 $ssexam = '{
                                                 "fullUrl": "urn:uuid:' . $examvalue['nadi_id'] . '",
-                                                "resourceType": "Observation",
-                                                "status": "final",
-                                                "category": [
-                                                    {
+                                                "resource": {
+                                                    "resourceType": "Observation",
+                                                    "status": "final",
+                                                    "category": [
+                                                        {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                    "code": "vital-signs",
+                                                                    "display": "Vital Signs"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "code": {
                                                         "coding": [
                                                             {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                                                "code": "vital-signs",
-                                                                "display": "Vital Signs"
+                                                                "system": "http://loinc.org",
+                                                                "code": "8867-4",
+                                                                "display": "Heart rate"
                                                             }
                                                         ]
-                                                    }
-                                                ],
-                                                "code": {
-                                                    "coding": [
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/' . $sspasien_id . '"
+                                                    },
+                                                    "performer": [
                                                         {
-                                                            "system": "http://loinc.org",
-                                                            "code": "8867-4",
-                                                            "display": "Heart rate"
+                                                            "reference": "Practitioner/' . $sspractitioner_id . '"
                                                         }
-                                                    ]
-                                                },
-                                                "subject": {
-                                                    "reference": "Patient/' . $sspasien_id . '"
-                                                },
-                                                "performer": [
-                                                    {
-                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    ],
+                                                    "encounter": {
+                                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                                        "display": "Pemeriksaan Nadi' . $namapasien . '"
+                                                    },
+                                                    "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                    "issued": "' . $examvalue['examination_date'] . '",
+                                                    "valueQuantity": {
+                                                        "value": ' . $examvalue['nadi'] . ',
+                                                        "unit": "beats/minute",
+                                                        "system": "http://unitsofmeasure.org",
+                                                        "code": "/min"
                                                     }
-                                                ],
-                                                "encounter": {
-                                                    "reference": "Encounter/' . $ssencounter_id . '",
-                                                    "display": "Pemeriksaan Nadi' . $namapasien . '"
                                                 },
-                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
-                                                "issued": "' . $examvalue['examination_date'] . '",
-                                                "valueQuantity": {
-                                                    "value": ' . $examvalue['nadi'] . ',
-                                                    "unit": "beats/minute",
-                                                    "system": "http://unitsofmeasure.org",
-                                                    "code": "/min"
+                                                "request": {
+                                                    "method": "POST",
+                                                    "url": "Observation"
                                                 }
                                             }';
                                 $ssjson[] = json_decode($ssexam, true);
@@ -2574,47 +2593,53 @@ class SatuSehat extends BaseController
                             if ($examvalue['nafas'] != null && $examvalue['nafas'] != '') {
                                 $ssexam = '{
                                                 "fullUrl": "urn:uuid:' . $examvalue['nafas_id'] . '",
-                                                "resourceType": "Observation",
-                                                "status": "final",
-                                                "category": [
-                                                    {
+                                                "resource": {
+                                                    "resourceType": "Observation",
+                                                    "status": "final",
+                                                    "category": [
+                                                        {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                    "code": "vital-signs",
+                                                                    "display": "Vital Signs"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "code": {
                                                         "coding": [
                                                             {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                                                "code": "vital-signs",
-                                                                "display": "Vital Signs"
+                                                                "system": "http://loinc.org",
+                                                                "code": "9279-1",
+                                                                "display": "Respiratory rate"
                                                             }
                                                         ]
-                                                    }
-                                                ],
-                                                "code": {
-                                                    "coding": [
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/' . $sspasien_id . '"
+                                                    },
+                                                    "performer": [
                                                         {
-                                                            "system": "http://loinc.org",
-                                                            "code": "9279-1",
-                                                            "display": "Respiratory rate"
+                                                            "reference": "Practitioner/' . $sspractitioner_id . '"
                                                         }
-                                                    ]
-                                                },
-                                                "subject": {
-                                                    "reference": "Patient/' . $sspasien_id . '"
-                                                },
-                                                "performer": [
-                                                    {
-                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    ],
+                                                    "encounter": {
+                                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                                        "display": "Pemeriksaan Nafas' . $namapasien . '"
+                                                    },
+                                                    "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                    "issued": "' . $examvalue['examination_date'] . '",
+                                                    "valueQuantity": {
+                                                        "value": ' . $examvalue['nafas'] . ',
+                                                        "unit": "breaths/minute",
+                                                        "system": "http://unitsofmeasure.org",
+                                                        "code": "/min"
                                                     }
-                                                ],
-                                                "encounter": {
-                                                    "reference": "Encounter/' . $ssencounter_id . '",
-                                                    "display": "Pemeriksaan Nafas' . $namapasien . '"
                                                 },
-                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
-                                                "issued": "' . $examvalue['examination_date'] . '",
-                                                "valueQuantity": {
-                                                    "value": ' . $examvalue['nafas'] . ',
-                                                    "unit": "breaths/minute",
-                                                    "system": "http://unitsofmeasure.org",
-                                                    "code": "/min"
+                                                "request": {
+                                                    "method": "POST",
+                                                    "url": "Observation"
                                                 }
                                             }';
                                 $ssjson[] = json_decode($ssexam, true);
@@ -2622,56 +2647,62 @@ class SatuSehat extends BaseController
                             if ($examvalue['tension_upper'] != null && $examvalue['tension_upper'] != '') {
                                 $ssexam = '{
                                                 "fullUrl": "urn:uuid:' . $examvalue['tension_upper_id'] . '",
-                                                "resourceType": "Observation",
-                                                "status": "final",
-                                                "category": [
-                                                    {
+                                                "resource": {
+                                                    "resourceType": "Observation",
+                                                    "status": "final",
+                                                    "category": [
+                                                        {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                    "code": "vital-signs",
+                                                                    "display": "Vital Signs"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "code": {
                                                         "coding": [
                                                             {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                                                "code": "vital-signs",
-                                                                "display": "Vital Signs"
+                                                                "system": "http://loinc.org",
+                                                                "code": "8480-6",
+                                                                "display": "Systolic blood pressure"
                                                             }
                                                         ]
-                                                    }
-                                                ],
-                                                "code": {
-                                                    "coding": [
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/' . $sspasien_id . '"
+                                                    },
+                                                    "performer": [
                                                         {
-                                                            "system": "http://loinc.org",
-                                                            "code": "8480-6",
-                                                            "display": "Systolic blood pressure"
+                                                            "reference": "Practitioner/' . $sspractitioner_id . '"
                                                         }
-                                                    ]
-                                                },
-                                                "subject": {
-                                                    "reference": "Patient/' . $sspasien_id . '"
-                                                },
-                                                "performer": [
-                                                    {
-                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    ],
+                                                    "encounter": {
+                                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                                        "display": "Pemeriksaan Sistol' . $namapasien . '"
+                                                    },
+                                                    "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                    "issued": "' . $examvalue['examination_date'] . '",
+                                                    "bodySite": {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://snomed.info/sct",
+                                                                "code": "368209003",
+                                                                "display": "Right arm"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "valueQuantity": {
+                                                        "value": ' . $examvalue['tension_upper'] . ',
+                                                        "unit": "mm[Hg]",
+                                                        "system": "http://unitsofmeasure.org",
+                                                        "code": "mm[Hg]"
                                                     }
-                                                ],
-                                                "encounter": {
-                                                    "reference": "Encounter/' . $ssencounter_id . '",
-                                                    "display": "Pemeriksaan Sistol' . $namapasien . '"
                                                 },
-                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
-                                                "issued": "' . $examvalue['examination_date'] . '",
-                                                "bodySite": {
-                                                    "coding": [
-                                                        {
-                                                            "system": "http://snomed.info/sct",
-                                                            "code": "368209003",
-                                                            "display": "Right arm"
-                                                        }
-                                                    ]
-                                                },
-                                                "valueQuantity": {
-                                                    "value": ' . $examvalue['tension_upper'] . ',
-                                                    "unit": "mm[Hg]",
-                                                    "system": "http://unitsofmeasure.org",
-                                                    "code": "mm[Hg]"
+                                                "request": {
+                                                    "method": "POST",
+                                                    "url": "Observation"
                                                 }
                                             }';
                                 $ssjson[] = json_decode($ssexam, true);
@@ -2679,108 +2710,120 @@ class SatuSehat extends BaseController
                             if ($examvalue['tension_below'] != null && $examvalue['tension_below'] != '') {
                                 $ssexam = '{
                                                 "fullUrl": "urn:uuid:' . $examvalue['tension_below_id'] . '",
-                                                "resourceType": "Observation",
-                                                "status": "final",
-                                                "category": [
-                                                    {
+                                                "resource": {
+                                                    "resourceType": "Observation",
+                                                    "status": "final",
+                                                    "category": [
+                                                        {
+                                                            "coding": [
+                                                                {
+                                                                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                                                                    "code": "vital-signs",
+                                                                    "display": "Vital Signs"
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "code": {
                                                         "coding": [
                                                             {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                                                "code": "vital-signs",
-                                                                "display": "Vital Signs"
+                                                                "system": "http://loinc.org",
+                                                                "code": "8462-4",
+                                                                "display": "Diastolic blood pressure"
                                                             }
                                                         ]
-                                                    }
-                                                ],
-                                                "code": {
-                                                    "coding": [
+                                                    },
+                                                    "subject": {
+                                                        "reference": "Patient/' . $sspasien_id . '"
+                                                    },
+                                                    "performer": [
                                                         {
-                                                            "system": "http://loinc.org",
-                                                            "code": "8462-4",
-                                                            "display": "Diastolic blood pressure"
+                                                            "reference": "Practitioner/' . $sspractitioner_id . '"
                                                         }
-                                                    ]
-                                                },
-                                                "subject": {
-                                                    "reference": "Patient/' . $sspasien_id . '"
-                                                },
-                                                "performer": [
-                                                    {
-                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
+                                                    ],
+                                                    "encounter": {
+                                                        "reference": "urn:uuid:' . $ssencounter_id . '",
+                                                        "display": "Pemeriksaan Diastol' . $namapasien . '"
+                                                    },
+                                                    "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                                                    "issued": "' . $examvalue['examination_date'] . '",
+                                                    "bodySite": {
+                                                        "coding": [
+                                                            {
+                                                                "system": "http://snomed.info/sct",
+                                                                "code": "368209003",
+                                                                "display": "Right arm"
+                                                            }
+                                                        ]
+                                                    },
+                                                    "valueQuantity": {
+                                                        "value": ' . $examvalue['tension_below'] . ',
+                                                        "unit": "mm[Hg]",
+                                                        "system": "http://unitsofmeasure.org",
+                                                        "code": "mm[Hg]"
                                                     }
-                                                ],
-                                                "encounter": {
-                                                    "reference": "Encounter/' . $ssencounter_id . '",
-                                                    "display": "Pemeriksaan Diastol' . $namapasien . '"
                                                 },
-                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
-                                                "issued": "' . $examvalue['examination_date'] . '",
-                                                "bodySite": {
-                                                    "coding": [
-                                                        {
-                                                            "system": "http://snomed.info/sct",
-                                                            "code": "368209003",
-                                                            "display": "Right arm"
-                                                        }
-                                                    ]
-                                                },
-                                                "valueQuantity": {
-                                                    "value": ' . $examvalue['tension_below'] . ',
-                                                    "unit": "mm[Hg]",
-                                                    "system": "http://unitsofmeasure.org",
-                                                    "code": "mm[Hg]"
+                                                "request": {
+                                                    "method": "POST",
+                                                    "url": "Observation"
                                                 }
                                             }';
                                 $ssjson[] = json_decode($ssexam, true);
                             }
-                            if ($examvalue['temperature'] != null && $examvalue['temperature'] != '') {
-                                $ssexam = '{
-                                                "fullUrl": "urn:uuid:' . $examvalue['temperature_id'] . '",
-                                                "resourceType": "Observation",
-                                                "status": "final",
-                                                "category": [
-                                                    {
-                                                        "coding": [
-                                                            {
-                                                                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
-                                                                "code": "vital-signs",
-                                                                "display": "Vital Signs"
-                                                            }
-                                                        ]
-                                                    }
-                                                ],
-                                                "code": {
-                                                    "coding": [
-                                                        {
-                                                            "system": "http://loinc.org",
-                                                            "code": "8310-5",
-                                                            "display": "Body temperature"
-                                                        }
-                                                    ]
-                                                },
-                                                "subject": {
-                                                    "reference": "Patient/' . $sspasien_id . '"
-                                                },
-                                                "performer": [
-                                                    {
-                                                        "reference": "Practitioner/' . $sspractitioner_id . '"
-                                                    }
-                                                ],
-                                                "encounter": {
-                                                    "reference": "Encounter/' . $ssencounter_id . '",
-                                                    "display": "Pemeriksaan Suhu' . $namapasien . '"
-                                                },
-                                                "effectiveDateTime": "' . $examvalue['examination_date'] . '",
-                                                "issued": "' . $examvalue['examination_date'] . '",
-                                                "valueQuantity": {
-                                                    "value": ' . $examvalue['temperature'] . ',
-                                                    "unit": "C",
-                                                    "system": "http://unitsofmeasure.org",
-                                                    "code": "Cel"
-                                                },
-                                            }';
-                                $ssjson[] = json_decode($ssexam, true);
-                            }
+                            // if (!is_null($examvalue['temperature']) && $examvalue['temperature'] != '') {
+                            //     $ssexam = '{
+                            //                     "fullUrl": "urn:uuid:' . $examvalue['temperature_id'] . '",
+                            //                     "resource": {
+                            //                         "resourceType": "Observation",
+                            //                         "status": "final",
+                            //                         "category": [
+                            //                             {
+                            //                                 "coding": [
+                            //                                     {
+                            //                                         "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                            //                                         "code": "vital-signs",
+                            //                                         "display": "Vital Signs"
+                            //                                     }
+                            //                                 ]
+                            //                             }
+                            //                         ],
+                            //                         "code": {
+                            //                             "coding": [
+                            //                                 {
+                            //                                     "system": "http://loinc.org",
+                            //                                     "code": "8310-5",
+                            //                                     "display": "Body temperature"
+                            //                                 }
+                            //                             ]
+                            //                         },
+                            //                         "subject": {
+                            //                             "reference": "Patient/' . $sspasien_id . '"
+                            //                         },
+                            //                         "performer": [
+                            //                             {
+                            //                                 "reference": "Practitioner/' . $sspractitioner_id . '"
+                            //                             }
+                            //                         ],
+                            //                         "encounter": {
+                            //                             "reference": "urn:uuid:' . $ssencounter_id . '",
+                            //                             "display": "Pemeriksaan Suhu' . $namapasien . '"
+                            //                         },
+                            //                         "effectiveDateTime": "' . $examvalue['examination_date'] . '",
+                            //                         "issued": "' . $examvalue['examination_date'] . '",
+                            //                         "valueQuantity": {
+                            //                             "value": ' . $examvalue['temperature'] . ',
+                            //                             "unit": "C",
+                            //                             "system": "http://unitsofmeasure.org",
+                            //                             "code": "Cel"
+                            //                         },
+                            //                     },
+                            //                     "request": {
+                            //                         "method": "POST",
+                            //                         "url": "Observation"
+                            //                     }
+                            //                 }';
+                            //     $ssjson[] = json_decode($ssexam, true);
+                            // }
                             $isexam = 'terisi';
                         }
 
