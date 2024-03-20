@@ -1580,36 +1580,36 @@ This Function is used to Add Patient
 
         if ($clinic_id == 'P041' || $clinic_id == 'P061') {
             $ttarif = $this->cekTindakanTarif(14);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
             $ttarif = $this->cekTindakanTarif(1);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         } else if ($clinic_id == 'P012') {
             $ttarif = $this->cekTindakanTarif(13);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         } else if ($clinic_id == 'P011' || $clinic_id == 'P017' || $clinic_id == 'P029') {
             $ttarif = $this->cekTindakanTarif(1);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         } else if ($clinic_id == 'MCU01') {
             $ttarif = $this->cekTindakanTarif(15);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
             $ttarif = $this->cekTindakanTarif(1);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         } else if ($liTipe == '2') {
             $ttarif = $this->cekTindakanTarif(2);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         } else {
             $ttarif = $this->cekTindakanTarif(11);
             // return json_encode($ttarif);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
             $ttarif = $this->cekTindakanTarif(1);
-            $this->saveTarifDaftar($data, $ttarif, $generateId);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
         }
 
         $lsBaru = $this->cek_baru_lama_rs($data['no_registration'], $data['visit_date']);
 
         if ($lsBaru == '1' && $liTipe != '2') {
             $cekTarifBaru = $this->cek_tindakan_tarif_baru($lsBaru);
-            $this->saveTarifDaftar($data, $cekTarifBaru, $generateId);
+            $this->saveTarifDaftar($data, $cekTarifBaru, $this->generateIdTgl());
         }
 
 
