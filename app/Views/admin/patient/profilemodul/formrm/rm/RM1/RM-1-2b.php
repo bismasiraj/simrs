@@ -239,7 +239,7 @@
             <table class="table table-bordered mb-0" style="border: 2px solid black">
                 <tr>
                     <td width="20%" align="center">
-                        <img class="mt-3" src="<?= base_url('assets/logopku.png') ?>" width="80px">
+                        <img class="mt-3" src="<?= base_url('assets/img/logo.png') ?>" width="80px">
 
                         <p class="mt-3">Sehat-Amanah <br> Tanggung Jawab-Islami</p>
                     </td>

@@ -164,16 +164,6 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Grafik Per Daerah</h4>
 
-                <!-- <div class="row text-center mt-4">
-                    <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[1]['JML']; ?></h5>
-                        <p class="text-muted">UMUM</p>
-                    </div>
-                    <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[18]['JML']; ?></h5>
-                        <p class="text-muted">BPJS</p>
-                    </div>
-                </div> -->
                 <div id="daerahChart" data-colors='["#adb5bd","--bs-primary","--bs-info"]' class="morris-charts morris-charts-height" dir="ltr"></div>
             </div>
         </div>
@@ -185,11 +175,11 @@
 
                 <div class="row text-center mt-4">
                     <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[1]['JML']; ?></h5>
+                        <h5 class="font-size-20"><?= isset($status[1]['JML']) ? $status[1]['JML'] : 0; ?></h5>
                         <p class="text-muted">UMUM</p>
                     </div>
                     <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[18]['JML']; ?></h5>
+                        <h5 class="font-size-20"><?= isset($status[18]['JML']) ? $status[18]['JML'] : 0; ?></h5>
                         <p class="text-muted">BPJS</p>
                     </div>
                 </div>
@@ -202,16 +192,6 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Grafik Per Umur</h4>
 
-                <!-- <div class="row text-center mt-4">
-                    <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[1]['JML']; ?></h5>
-                        <p class="text-muted">UMUM</p>
-                    </div>
-                    <div class="col-6">
-                        <h5 class="font-size-20"><?= $status[18]['JML']; ?></h5>
-                        <p class="text-muted">BPJS</p>
-                    </div>
-                </div> -->
                 <div id="umurChart" data-colors='["#adb5bd","--bs-primary","--bs-info"]' class="morris-charts morris-charts-height" dir="ltr"></div>
             </div>
         </div>

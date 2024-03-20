@@ -121,8 +121,14 @@
     }
 
     function requestLab() {
+        <?php json_decode($visit['responpost_vklaim']);
+        if (json_last_error() === JSON_ERROR_NONE) {
+        } else {
+        ?>
+        <?php
+            unset($visit['responpost_vklaim']);
+        } ?>
         url = '<?php echo base_url(); ?>admin/rekammedis/labOnlineRequest/' + btoa('<?= json_encode($visit); ?>')
-
         window.open(url, "_blank")
     }
 </script>

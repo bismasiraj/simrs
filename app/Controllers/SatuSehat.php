@@ -8,6 +8,9 @@ use App\Models\ClassRoomModel;
 use App\Models\ClinicModel;
 use App\Models\DoctorScheduleModel;
 use App\Models\EmployeeAllModel;
+use App\Models\KfaIngredientModel;
+use App\Models\KfaProductModel;
+use App\Models\KfaTemplateModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
@@ -26,6 +29,7 @@ class SatuSehat extends BaseController
         $this->session = session();
         $this->session->set(['selectedMenu' => '']);
     }
+    protected $orgunitcode = '3372238';
 
     protected $baseurloath = 'https://api-satusehat.kemkes.go.id/oauth2/v1';
     protected $baseurlfhir = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1';
@@ -150,7 +154,7 @@ class SatuSehat extends BaseController
         $token = $result['access_token'];
 
         $org = new OrganizationunitModel();
-        $org->update("1771014", ["sstoken" => $token]);
+        $org->update($this->orgunitcode, ["sstoken" => $token]);
         return json_encode($token);
     }
 
@@ -188,7 +192,127 @@ class SatuSehat extends BaseController
             return json_encode($response['entry']['0']['resource']['id']);
         }
     }
+    public function getKFA()
+    {
+        $org = new OrganizationunitModel();
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
+        $ssToken = $select['sstoken'];
+        $ssorgid = $select['ssorganizationid'];
+        $curl = curl_init();
 
+        $db = db_connect();
+        $select = $db->query("select count(kfa_code) as jml from kfa_product")->getResultArray();
+        $jml = $select[0]['jml'];
+        $jml = round($jml / 2000) + 1;
+
+        echo $jml;
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api-satusehat.kemkes.go.id/kfa-v2/products/all?page=' . $jml . '&size=2000&product_type=farmasi',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Accept: application/json',
+                'Authorization: Bearer ' . $ssToken
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $response = json_decode($response, true);
+        $return[] = $response;
+
+
+        curl_close($curl);
+
+
+        if ($httpcode != 401) {
+            $kfaproduct = new KfaProductModel();
+            $kfatemplate = new KfaTemplateModel();
+            $kfaingredient = new KfaIngredientModel();
+            $db = db_connect();
+
+            $data = $response["items"]["data"];
+            foreach ($data as $key => $value) {
+                echo $value['kfa_code'] . "<br>";
+                $kfaproduct->save([
+                    'kfa_code' => $value['kfa_code'],
+                    'name' => $value['name'],
+                    'active' => $value['active'],
+                    'state' => $value['state'],
+                    'updated_at' => $value['updated_at'],
+                    'farmalkes_type' => $value['farmalkes_type']['code'],
+                    'dosage_form' => $value['dosage_form']['code'],
+                    'produksi_buatan' => $value['produksi_buatan'],
+                    'nie' => $value['nie'],
+                    'nama_dagang' => $value['nama_dagang'],
+                    'manufacturer' => $value['manufacturer'],
+                    'registrar' => $value['registrar'],
+                    'generik' => $value['generik'],
+                    'rxterm' => $value['rxterm'],
+                    'dose_per_unit' => $value['dose_per_unit'],
+                    'fix_price' => $value['fix_price'],
+                    'het_price' => $value['het_price'],
+                    'farmalkes_hscode' => $value['farmalkes_hscode'],
+                    'tayang_lkpp' => $value['tayang_lkpp'],
+                    'kode_lkpp' => $value['kode_lkpp'],
+                    'net_weight' => $value['net_weight'],
+                    'net_weight_uom_name' => $value['net_weight_uom_name'],
+                    'volume' => $value['volume'],
+                    'volume_uom_name' => $value['volume_uom_name'],
+                    'uom_name' => $value['uom']['name'],
+                    'product_template' => $value['product_template']['kfa_code'],
+                    'active_ingredients' => null,
+                    'tags' => null,
+                    'replacement_product' => $value['replacement']['product']['kfa_code'],
+                    'replacement_template' => $value['replacement']['template']['kfa_code']
+                ]);
+                $kfatemplate->save([
+                    'kfa_code' => $value['product_template']['kfa_code'],
+                    'name' => $value['product_template']['name'],
+                    'state' => $value['product_template']['state'],
+                    'active' => $value['product_template']['active'],
+                    'updated_at' => $value['product_template']['updated_at'],
+                    'display_name' => $value['product_template']['display_name'],
+                ]);
+                foreach ($value['active_ingredients'] as $key1 => $value1) {
+                    if (!is_null($value1['kfa_code'])) {
+                        $kfaingredient->save([
+                            'kfa_code' => $value1['kfa_code'],
+                            'state' => $value1['state'],
+                            'active' => $value1['active'],
+                            'zat_aktif' => $value1['zat_aktif'],
+                            'updated_at' => $value1['updated_at'],
+                            'kekuatan_zat_aktif' => $value1['kekuatan_zat_aktif'],
+                        ]);
+                        try {
+                            $db->query("insert into kfa_ingredient_mapping values ('" . $value['kfa_code'] . "', '" . $value1['kfa_code'] . "')");
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
+                    }
+                }
+                foreach ($value['tags'] as $key2 => $value2) {
+                    if (!is_null($value2['code'])) {
+                        try {
+                            $db->query("insert into kfa_tags values ('" . $value['kfa_code'] . "', '" . $value2['code'] . "', '" . $value2['name'] . "')");
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
+                    }
+                }
+            }
+        } else {
+            $token = $this->getToken();
+            return $token;
+        }
+        echo json_encode($response);
+    }
     public function getAllPasienId()
     {
         // $token = json_decode($this->getToken(), true);
@@ -204,7 +328,7 @@ class SatuSehat extends BaseController
 
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
 
@@ -259,7 +383,7 @@ class SatuSehat extends BaseController
     public function getOrganization()
     {
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         // return json_encode($token);
 
@@ -267,7 +391,7 @@ class SatuSehat extends BaseController
         $clinic = $this->lowerKey($c->select("replace(name_of_clinic,' ','%20') as name_of_clinic, clinic_id")->where("ssclinic_id is null")->findAll());
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
         $ssorgid = $select['ssorganizationid'];
 
         $return = [];
@@ -315,7 +439,7 @@ class SatuSehat extends BaseController
     public function postOrganization()
     {
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         // return json_encode($token);
 
@@ -324,7 +448,7 @@ class SatuSehat extends BaseController
         // return json_encode($clinic);
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
         $ssorgid = $select['ssorganizationid'];
 
         $return = [];
@@ -399,7 +523,7 @@ class SatuSehat extends BaseController
     public function getLocation()
     {
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
 
         $c = new ClinicModel();
@@ -412,7 +536,7 @@ class SatuSehat extends BaseController
         ")->getResultArray());
         // return json_encode($clinic);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
         $ssorgid = $select['ssorganizationid'];
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
@@ -463,7 +587,7 @@ class SatuSehat extends BaseController
     public function postLocation()
     {
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
 
         $c = new ClinicModel();
@@ -476,7 +600,7 @@ class SatuSehat extends BaseController
         ")->getResultArray());
         // return json_encode($clinic);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
         $ssorgid = $select['ssorganizationid'];
         foreach ($clinic as $key => $value) {
             $curl = curl_init();
@@ -557,7 +681,7 @@ class SatuSehat extends BaseController
     public function getPractitioner()
     {
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
 
         $c = new EmployeeAllModel();
@@ -570,7 +694,7 @@ class SatuSehat extends BaseController
         ")->getResultArray());
         // return json_encode($clinic);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid")->find($this->orgunitcode));
         $ssorgid = $select['ssorganizationid'];
         foreach ($employee as $key => $value) {
             if ($value['npk']) {
@@ -625,7 +749,7 @@ class SatuSehat extends BaseController
         $body = $this->request->getBody();
         $body = json_decode($body, true);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
 
         $curl = curl_init();
@@ -858,7 +982,7 @@ class SatuSehat extends BaseController
         $body = json_decode($body, true);
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $sstoken = $select['sstoken'];
         // $ssToken = $this->request->getHeaderLine("ssToken");
         $db = db_connect();
@@ -1085,7 +1209,7 @@ class SatuSehat extends BaseController
 
         // $ssToken = $this->request->getHeaderLine("ssToken");
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $db = db_connect();
         // return json_encode(str_replace('\\', '', $satusehat[0]['parameter']));
@@ -1238,7 +1362,7 @@ class SatuSehat extends BaseController
         $pasien_id = $body['pasien_id'];
         // return json_encode($body);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
         $p = new PasienModel();
@@ -1364,7 +1488,7 @@ class SatuSehat extends BaseController
         $name_of_clinic = $body['clinic_id'];
         // return json_encode($body);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
         $c = new ClinicModel();
@@ -1611,7 +1735,7 @@ class SatuSehat extends BaseController
         $name_of_clinic = $body['clinic_id'];
         // return json_encode($body);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
         $c = new ClinicModel();
@@ -1735,7 +1859,7 @@ class SatuSehat extends BaseController
         $name_of_clinic = $body['clinic_id'];
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
 
@@ -2049,7 +2173,7 @@ class SatuSehat extends BaseController
         $npk = $body['npk'];
         // return json_encode($body);
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $ssorgid = $select['ssorganizationid'];
         $c = new ClinicModel();
@@ -2947,7 +3071,7 @@ class SatuSehat extends BaseController
         // return json_encode($body);
 
         $org = new OrganizationunitModel();
-        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find("1771014"));
+        $select = $this->lowerKey($org->select("ssorganizationid, sstoken")->find($this->orgunitcode));
         $ssToken = $select['sstoken'];
         $db = db_connect();
         $ispass = false;
@@ -4153,6 +4277,227 @@ class SatuSehat extends BaseController
                         $i++;
                         $kunjungan[] = $select[$key];
                     }
+                } else {
+                    $parameter = $value['parameter'];
+                    $parameter = json_decode($parameter, true);
+
+                    // return json_encode($parameter['entry']);
+                    if (!isset($parameter['entry'])) {
+                        foreach ($parameter['entry'] as $key2 => $value2) {
+                            if (isset($value2['resource']['resourceType']) == 'Condition') {
+                                $isdiagnosa = 'terisi';
+                            }
+                            if (isset($value2['resource']['resourceType']) == 'Procedure') {
+                                $isprocedure = 'terisi';
+                            }
+                            if (isset($value2['resource']['resourceType']) == 'Observation') {
+                                $isexam = 'terisi';
+                            }
+                        }
+                    }
+
+                    $isdiagnosa = '';
+                    $isprocedure = '';
+                    $isexam = '';
+
+
+                    $row[] = $i + 1;
+                    $row[] = $value['diantar_oleh'] . "/" . $value['sspasien_id'];
+                    $row[] = $value['fullname'];
+                    $row[] = $value['name_of_clinic'];
+                    $row[] = $value['trans_id'];
+                    $row[] = $value['ssencounter_id'];
+                    $row[] = $isdiagnosa;
+                    $row[] = $isprocedure;
+                    $row[] = $isexam;
+                    $row[] = '<div id="status_' . $value['sspasien_id'] . '">' . $value['status'] . '</div>';
+                    $dt_data[] = $row;
+                    $i++;
+                    $kunjungan[] = $select[$key];
+                }
+            }
+        }
+
+
+        $json_data = array(
+            "body" => $dt_data,
+            "jsonData" => $kunjungan
+        );
+        echo json_encode($json_data);
+    }
+
+
+    public function viewServiceRequest()
+    {
+        $giTipe = 7;
+        $title = 'Kunjungan dan Diagnosa Inap';
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        $selectedMenu = ['satusehat'];
+        $sessionData = ['selectedMenu' => $selectedMenu];
+        $this->session->set($sessionData);
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        // $clinicModel = new ClinicModel();
+        // $clinic = $this->lowerKey($clinicModel->orderBy("name_of_clinic")->findAll());
+
+        $ea = new EmployeeAllModel();
+        $dokter = $this->lowerKey($ea->where("specialist_type_id is not null")->findAll());
+
+        $sp = new StatusPasienModel();
+        $status = $this->lowerKey($sp->where("name_of_status_pasien <> ''")->findAll());
+
+        $c = new ClinicModel();
+        $clinic = $this->lowerKey($c->where("stype_id in ('1','2')")->findAll());
+
+        // $ds = new DoctorScheduleModel();
+        // $dokter = $this->lowerKey($ds->getSchedule());
+
+        // return json_encode($dokter);
+        $header = [];
+        $header =
+            '<tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Dokter</th>
+                        <th>Poli</th>
+                        <th>Tanggal Permintaan</th>
+                    </tr>';
+
+        return view('admin\satusehat\ssview', [
+            'giTipe' => $giTipe,
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'status' => $status,
+            'clinic' => $clinic,
+            // 'schedule' => $dokter,
+            'dokterfill' => $dokter,
+            'header' => $header
+        ]);
+    }
+    public function viewServiceRequestpost()
+    {
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $dokter = $this->request->getPost('dokter');
+        $clinic_id = $this->request->getPost('clinic_id');
+        $status = $this->request->getPost('status_pasien_id');
+
+        $dokter = $dokter ?? '%';
+        // return json_encode($dokter);
+        // $ea = new EmployeeAllModel();
+        // $select = $this->lowerKey($ea->where("employee_id like '%$dokter%'")->orderBy("fullname")->findAll());
+
+        $db = db_connect();
+        $labtype = $db->query("select * from laborat_type")->getResultArray();
+        $labtype = $this->lowerKey($labtype);
+
+        $select = $db->query("select * from pasien_visitation pv ")->getResultArray();
+        $select = $this->lowerKey($select);
+        // return json_encode($select);
+        $dt_data = array();
+        $kunjungan = array();
+
+        if (!empty($select)) {
+            $kunjbaru = [];
+            $i = 0;
+
+            foreach ($select as $key => $value) {
+                $row = [];
+                $ssfulljson = json_decode($value['parameter'], true);
+                // if (false) {
+                if ($value['status'] != '200') {
+                    $db->query("delete from satu_sehat where trans_id = '" . $value['trans_id'] . "' and tipe = 4");
+                    $id = $value['id'];
+                    $ssencounter_id = $value['ssencounter_id'];
+                    $sspasien_id = $value['sspasien_id'];
+                    $ssorganizationid = $value['ssorganizationid'];
+                    $vactination_id = $value['$vactination_id'];
+                    $sspractitioner_idreq  = $value['sspractitioner_idreq'];
+                    $fullnamereq = $value['fullnamereq'];
+                    $sspractitioner_id  = $value['sspractitioner_id'];
+                    $fullname = $value['fullname'];
+                    $namapasien = $value['name_of_pasien'];
+                    $description = $value['description'];
+
+                    $ss = new SatuSehat();
+
+
+
+                    $jsonencounter = '';
+                    $jsonencounter = '{
+                                        "fullUrl": "urn:uuid:' . $id . '",
+                                        "resource": {
+                                            "resourceType": "ServiceRequest",
+                                            "identifier": [
+                                                {
+                                                    "system": "http://sys-ids.kemkes.go.id/servicerequest/' . $ssorganizationid . '",
+                                                    "value": "' . $vactination_id . '"
+                                                }
+                                            ],
+                                            "status": "active",
+                                            "intent": "original-order",
+                                            // "priority": "routine",
+                                            "category": [
+                                                {
+                                                    "coding": [
+                                                        {
+                                                            "system": "http://snomed.info/sct",
+                                                            "code": "108252007",
+                                                            "display": "Laboratory procedure"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "code": {
+                                                "coding": [
+                                                    {
+                                                        "system": "http://loinc.org",
+                                                        "code": "11477-7",
+                                                        "display": "Microscopic observation [Identifier] in Sputum by Acid fast stain"
+                                                    }
+                                                ],
+                                                "text": "Pemeriksaan Sputum BTA"
+                                            },
+                                            "subject": {
+                                                "reference": "Patient/' . $sspasien_id . '"
+                                            },
+                                            "encounter": {
+                                                "reference": "Encounter/' . $ssencounter_id . '",
+                                                "display": "Permintaan BTA Sputum Budi Santoso di tanggakl 14 Juli 2023 pukul 09:30 WIB"
+                                            },
+                                            "occurrenceDateTime": "2022-11-14T16:00:00+00:00",
+                                            "authoredOn": "2022-11-13T19:30:00+00:00",
+                                            "requester": {
+                                                "reference": "Practitioner/' . $sspractitioner_idreq . '",
+                                                "display": "' . $fullnamereq . '"
+                                            },
+                                            "performer": [
+                                                {
+                                                    "reference": "Practitioner/' . $sspractitioner_id . '", //dokter pembaca
+                                                    "display": "' . $fullname . '"
+                                                }
+                                            ],
+                                            "reasonCode": [
+                                                {
+                                                    "text": "' . $description . '"
+                                                }
+                                            ]
+                                        },
+                                        "request": {
+                                            "method": "POST",
+                                            "url": "ServiceRequest"
+                                        }
+                                    }';
+                    $jsonencounter = json_decode($jsonencounter, true);
+                    // return json_encode(in_array($batching[4]['tipe'], ['25', '27']));
+                    $iscontinue = false;
                 } else {
                     $parameter = $value['parameter'];
                     $parameter = json_decode($parameter, true);

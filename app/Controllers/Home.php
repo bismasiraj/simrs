@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\AssessmentModel;
 use App\Models\ClinicModel;
 use App\Models\EmployeeAllModel;
+use App\Models\erm\RMJ27Model;
 use App\Models\GenerateIdModel;
 use App\Models\PasienModel;
 use App\Models\PasienVisitationModel;
@@ -158,13 +159,13 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
     }
 
-    public function checkimage($norm)
+    public function checkimage($format, $norm, $namatable)
     {
-        $pv = new PasienVisitationModel();
+        $db = db_connect();
 
-        $select = $this->lowerKey($pv->find($norm));
+        $select = $db->query("select * from hosnic_emr_rj_mata where body_id = '$norm'")->getResultArray();
 
-        // return json_encode(($select['abdoment_image']));
-        echo '<img src="data:image/jpeg;base64,' . ($select['ttd']) . '" />';
+        // return json_encode(($select));
+        echo '<img src="data:image/' . $format . ';base64,' . ($select[0][$namatable]) . '" />';
     }
 }

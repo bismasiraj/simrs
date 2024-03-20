@@ -80,7 +80,6 @@
                         <td>
                             <div class="container" style="height: 150px; border: 1px solid black; border-radius: 3px">
                                 <h5 style="text-align: center; margin-top: 60px">Label Identitas Pasien</h5>
-
                             </div>
                         </td>
                     </tr>
@@ -200,7 +199,7 @@
                                                         <label>Alloanamnesis* dengan</label>
                                                     </div>
                                                     <div class="col-md-7">
-                                                        <input class="form-control" type="text" name="ana_past_disease_history" id="ana_past_disease_history">
+                                                        <input class="form-control" type="text" name="" id="">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1207,7 +1206,7 @@
                     img.onload = function() {
                         context.drawImage(img, 0, 0, canvas.width, canvas.height);
                     };
-                    img.src = "data:image/png;base64,<?= $val['clinical_indication']; ?>";
+                    img.src = "data:image/jpeg;base64,<?= $val['doctor_name']; ?>";
                     const img1 = new Image();
                     img1.onload = function() {
                         context1.drawImage(img1, 0, 0, canvas1.width, canvas1.height);

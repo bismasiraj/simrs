@@ -104,7 +104,7 @@ class Patient extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = $this->lowerKey($kalurahanModel->where("kal_id in (select kal_id from pasien group by kal_id)")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -299,7 +299,7 @@ class Patient extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = $this->lowerKey($kalurahanModel->where("kal_id in (select kal_id from pasien group by kal_id)")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());

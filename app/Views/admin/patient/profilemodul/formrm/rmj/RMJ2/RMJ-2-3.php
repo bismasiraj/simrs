@@ -33,7 +33,7 @@
                     <td colspan="2">
                         <div class="row">
                             <div class="col-md-3" align="center">
-                                <img class="mt-2" src="<?= base_url('assets/logopku.png') ?>" width="90px">
+                                <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
 
                                 <p class="mt-2">Sehat-Amanah <br> Tanggung Jawab-Islami</p>
                             </div>
