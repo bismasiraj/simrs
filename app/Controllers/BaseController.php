@@ -318,7 +318,7 @@ abstract class BaseController extends Controller
                                 right(cast((datepart(minute,getdate()) + 100) as varchar(3)),2)+
                                 right(cast((datepart(second,getdate()) + 100) as varchar(3)),2)+
                                 right(cast((datepart(millisecond,getdate()) + 10000) as varchar(5)),4)+right(newid(),3) theid
-                                ");
+                                ")->getResultArray();
         $id = $builder[0]['theid'];
         return $id;
     }
