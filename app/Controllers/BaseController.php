@@ -447,7 +447,6 @@ abstract class BaseController extends Controller
                 $dataBill['agemonth'] = $data['agemonth'];
                 $dataBill['ageday'] = $data['ageday'];
                 $dataBill['gender'] = $data['gender'];
-                $dataBill['kal_id'] = $data['kal_id'];
                 $dataBill['racikan'] = 102;
                 $dataBill['account_id'] = null;
                 $dataBill['tagihan'] = $jml;
