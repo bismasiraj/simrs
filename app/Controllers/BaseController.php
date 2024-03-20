@@ -554,19 +554,24 @@ abstract class BaseController extends Controller
 
         $db = db_connect();
         $select = $db->query("select sum(percentage) as percentage, sum(subsidi) as subsidi from subsidi where status_pasien_id = '$status' and tarif_id = '$tarif' group by status_pasien_id, tarif_id")->getResultArray();
-        $percentage = $select[0]['percentage'];
-        $subsidi = $select[0]['subsidi'];
+        if (isset($select[0])) {
+            $percentage = $select[0]['percentage'];
+            $subsidi = $select[0]['subsidi'];
 
-        if (is_null($subsidi))
-            $subsidi = 0;
-        if (is_null($percentage))
-            $percentage = 0;
+            if (is_null($subsidi))
+                $subsidi = 0;
+            if (is_null($percentage))
+                $percentage = 0;
 
-        if ($subsidi == 0) {
-            return $percentage;
+            if ($subsidi == 0) {
+                return $percentage;
+            } else {
+                return $subsidi;
+            }
         } else {
-            return $subsidi;
+            return 0;
         }
+
 
         // decimal ldcPersen, ldcSubsidi
 
