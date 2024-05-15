@@ -75,6 +75,7 @@
                                             }
                                             asort($dokterlist);
                                             ?>
+                                            <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
                                             <?php foreach ($dokterlist as $key => $value) { ?>
                                                 <option value="<?= $key; ?>"><?= $value; ?></option>
                                             <?php } ?>
@@ -251,7 +252,6 @@
 
     $("#aquantity").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
-
     });
     $("#etbquantity").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
@@ -429,7 +429,6 @@
                 $("aclass_id_plafond").val('<?= $visit['class_id_plafond']; ?>')
                 $("atarif_id_plafond").val(tarifData.tarif_id)
                 $("atreatment_plafond").val(tarifData.tarif_name)
-
             }
         }
 

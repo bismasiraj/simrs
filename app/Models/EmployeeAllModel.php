@@ -16,6 +16,7 @@ class EmployeeAllModel extends Model
 
     protected $allowedFields = [
         'sspractitioner_id',
+        'ttdpath'
     ];
 
     protected $useTimestamps = true;

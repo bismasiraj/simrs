@@ -959,11 +959,13 @@ class RekamMedis extends \App\Controllers\BaseController
                 }
                 return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
                     "visit" => $visit,
-                    "val" => $select[0]
+                    "val" => $select[0],
+                    'title' => 'ASSESMEN MEDIS PASIEN RAWAT JALAN ANAK'
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-1.php", [
-                    "visit" => $visit
+                    "visit" => $visit,
+                    'title' => 'ASSESMEN MEDIS PASIEN RAWAT JALAN ANAK'
                 ]);
             }
         }
@@ -1548,39 +1550,97 @@ class RekamMedis extends \App\Controllers\BaseController
     }
     public function rmj2_2($visit, $vactination_id = null)
     {
+        $title = "ASSESMEN MEDIS PASIEN RAWAT JALAN KANDUNGAN";
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-2.php", [
-                "visit" => $visit
-            ]);
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bidan_kandung where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            // $select = $this->lowerKey($db->query("hosnic_emr_rj_bidan_kandung")->getResultArray());
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-2.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-2.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
         }
     }
     public function rmj2_3($visit, $vactination_id = null)
     {
+        $title = "ASSESMEN MEDIS PASIEN PENYAKIT DALAM"; //hosnic_emr_rj_pny_dalam
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-3.php", [
-                "visit" => $visit
-            ]);
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_pny_dalam where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-3.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-3.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
         }
     }
     public function rmj2_4($visit, $vactination_id = null)
     {
+        $title = "ASSESMEN MEDIS PASIEN BEDAH"; //hosnic_emr_rj_bedah
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-4.php", [
-                "visit" => $visit
-            ]);
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-4.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-4.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
         }
     }
 
     public function rmj2_5($visit, $vactination_id = null)
     {
+        $title = "ASESMEN AWAL MEDIS PASIEN KULIT DAN KELAMIN"; //hosnic_emr_rj_kulit
+        $visit = base64_decode($visit);
+        $visit = json_decode($visit, true);
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_kulit where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-5.php", [
-                "visit" => $visit
-            ]);
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-5.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-5.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
         }
     }
     public function rmj2_6($visit, $vactination_id = null)
     {
+        $title = 'ASESMEN MEDIS NEUROLOGI RAWAT JALAN';
         if ($this->request->is('get')) {
 
             $visit = base64_decode($visit);
@@ -1625,11 +1685,13 @@ class RekamMedis extends \App\Controllers\BaseController
                 }
                 return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
                     "visit" => $visit,
-                    "val" => $select[0]
+                    "val" => $select[0],
+                    'title' => $title
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
                     "visit" => $visit,
+                    'title' => $title
                 ]);
             }
         }
@@ -2267,61 +2329,34 @@ class RekamMedis extends \App\Controllers\BaseController
 
             return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-6.php", [
                 "visit" => $visit,
-                "val" => $select[0]
+                "val" => $select[0],
+                'title' => $title
             ]);
         }
     }
     public function rmj2_7($visit, $vactination_id = null)
     {
+        $title = 'ASSESMEN MEDIS PASIEN THT';
         if ($this->request->is('get')) {
 
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
-            // return $visit;
+            // return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
+            //     "visit" => $visit,
+            // ]);
             $db = db_connect();
             $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_ases_tht where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            // return json_encode($select[0]['doctor']);
+
             if (isset($select[0])) {
-                // Define the path to the signature image
-                $signaturePathDokter = $select[0]['clinical_indication'];
-
-                // Check if the signature image file exists
-                if (file_exists($signaturePathDokter)) {
-                    // Read the signature image
-                    $signatureData = file_get_contents($signaturePathDokter);
-
-                    // Convert the image data to base64 format
-                    $signatureBase64 = base64_encode($signatureData);
-                    $select[0]['clinical_indication'] = $signatureBase64;
-
-                    // Load the display signature view with the signature data
-                } else {
-                    // If the signature image file doesn't exist, show an error message
-                    // return "<p>Signature not found!</p>";
-                }
-                $signaturePathPasien = $select[0]['target_of_therapy'];
-
-                // Check if the signature image file exists
-                if (file_exists($signaturePathPasien)) {
-                    // Read the signature image
-                    $signatureData = file_get_contents($signaturePathPasien);
-
-                    // Convert the image data to base64 format
-                    $signatureBase64 = base64_encode($signatureData);
-                    $select[0]['target_of_therapy'] = $signatureBase64;
-
-                    // Load the display signature view with the signature data
-                } else {
-                    // If the signature image file doesn't exist, show an error message
-                    // return "<p>Signature not found!</p>";
-                }
-                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-7.php", [
                     "visit" => $visit,
-                    "val" => $select[0]
+                    "val" => $select[0],
+                    'title' => $title
                 ]);
             } else {
-                return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-7.php", [
                     "visit" => $visit,
+                    'title' => $title
                 ]);
             }
         }
@@ -2933,28 +2968,73 @@ class RekamMedis extends \App\Controllers\BaseController
 
             return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
                 "visit" => $visit,
-                "val" => $select[0]
+                "val" => $select[0],
+                'title' => $title
             ]);
         }
     }
     public function rmj2_8($visit, $vactination_id = null)
     {
+        $title = 'ASSESMEN MEDIS PASIEN GIGI DAN MULUT';
+        $visit = base64_decode($visit);
+        $visit = json_decode($visit, true);
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_kulit where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-8.php", [
-                "visit" => $visit
-            ]);
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-8.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-8.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
         }
     }
     public function rmj2_9($visit, $vactination_id = null)
     {
+        $title = 'ASSESMEN MEDIS PASIEN RAWAT JALAN MATA';
         if ($this->request->is('get')) {
-            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-8.php", [
-                "visit" => $visit
+
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            // return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-7.php", [
+            //     "visit" => $visit,
+            // ]);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_mata where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-9.php", [
+                    "visit" => $visit,
+                    "val" => $select[0],
+                    'title' => $title
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-9.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
+        }
+    }
+    public function rmj2_10($visit, $vactination_id = null)
+    {
+        $title = 'ASESMEN AWAL MEDIS PASIEN BEDAH ORTHOPEDI RAWAT JALAN';
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2/RMJ-2-10.php", [
+                "visit" => $visit,
+                'title' => $title
             ]);
         }
     }
     public function rmj2_11($visit, $vactination_id = null)
     {
+        $title = 'ASESMEN RAWAT JALAN GERIATRI';
         if ($this->request->is('get')) {
             return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-11.php", [
                 "visit" => $visit
@@ -2977,6 +3057,14 @@ class RekamMedis extends \App\Controllers\BaseController
             ]);
         }
     }
+    public function rmj2_14($visit, $vactination_id = null)
+    {
+        if ($this->request->is('get')) {
+            return view("admin/patient/profilemodul/formrm/rmj/RMJ2//RMJ-2-14.php", [
+                "visit" => $visit
+            ]);
+        }
+    }
 
 
 
@@ -2993,5 +3081,13 @@ class RekamMedis extends \App\Controllers\BaseController
                 "visit" => $visit
             ]);
         }
+    }
+
+    public function rm_cppt($visit)
+    {
+        $visit = base64_decode($visit);
+        $visit = json_decode($visit, true);
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select examination_date from hosnic_emr_rj_mata where examination_info = '" . $visit['no_registration'] . "'")->getResultArray());
     }
 }

@@ -46,8 +46,9 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li>
                                         <li class="nav-item"><a id="rekammedisTab" class="nav-link active" href="#rekammedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Rekam Medis</a></li>
                                         <li class="nav-item"><a id="rmTab" class="nav-link" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Form RM</a></li>
+                                        <li class="nav-item"><a id="assessmentmedisTab" class="nav-link" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li>
+                                        <li class="nav-item"><a id="assessmentigdTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li>
                                         <?php if ($visit['isrj'] == '0') { ?>
-                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Awal</a></li>
                                             <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li>
                                         <?php } else { ?>
                                             <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li>
@@ -77,71 +78,7 @@ $currency_symbol = 'Rp. ';
                                                             // if (false) {
                                                         ?>
                                                             <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Ringkasan Diagnosis:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmdescription"><?= $pasienDiagnosa['description']; ?></div>
-                                                                </li>
-                                                                <li>
-                                                                    <div><?= $pasienDiagnosa['diagnosa_desc_05']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Riwayat Alergi:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmdiagnosa_desc_06"><?= $pasienDiagnosa['diagnosa_desc_06']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Anamnesis:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmanamnase"><?= $pasienDiagnosa['anamnase']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Periksa Fisik:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmpemeriksaan"><?= $pasienDiagnosa['pemeriksaan']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Periksa Lab:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmpemeriksaan_02"><?= $pasienDiagnosa['pemeriksaan_02']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Periksa RO:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmpemeriksaan_03"><?= $pasienDiagnosa['pemeriksaan_03']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Pemeriksaan Lain:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmpemeriksaan_05"><?= $pasienDiagnosa['pemeriksaan_05']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Terapi:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmteraphy_desc"><?= $pasienDiagnosa['teraphy_desc']; ?></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Instruksi:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rminstruction"><?= $pasienDiagnosa['instruction']; ?></div>
-                                                                </li>
-                                                            </ul>
+
                                                         <?php
                                                         } else { ?>
                                                             <hr class="hr-panel-heading hr-10">
@@ -471,6 +408,27 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/assessmentmedis', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue
+                                        ]); ?>
                                         <?php echo view('admin/patient/profilemodul/assessmentigd', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -486,7 +444,11 @@ $currency_symbol = 'Rp. ';
                                             'diagCat' => $diagCat,
                                             'employee' => $employee,
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/vitalsign', [
                                             'title' => '',
@@ -572,6 +534,17 @@ $currency_symbol = 'Rp. ';
 <?php $this->endSection() ?>
 
 <?php $this->section('jsContent') ?>
+
+<script type="text/javascript">
+    var historyJson = new Array();
+    var pasienDiagnosa = new Array();
+    var pasienDiagnosaAll = new Array();
+    var lokalisAll = new Array();
+    var riwayatAll = new Array();
+    var diagnosasAll = new Array();
+    var proceduresAll = new Array();
+    var billPerawatJson = new Array();
+</script>
 <script type="text/javascript">
     $(document).ready(function() {
         getAlergi(<?= $visit['no_registration']; ?>)
@@ -1062,6 +1035,27 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/assessmentmedis_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue
+]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
     'title' => '',
     'orgunit' => $orgunit,
@@ -1077,7 +1071,11 @@ $currency_symbol = 'Rp. ';
     'diagCat' => $diagCat,
     'employee' => $employee,
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa
+    'pasienDiagnosa' => $pasienDiagnosa,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/vitalsign_js', [
     'title' => '',

@@ -11,6 +11,16 @@
     ?>
     <link href="<?php echo base_url(); ?>assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/5g7w8tvjkbh44os7ofcvvekubugvamhvapsc1d240upj366h/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+
+
+    <!-- Bootstrap-wysihtml5 CSS -->
+    <style>
+        body {
+            font-weight: 400;
+        }
+    </style>
 
 </head>
 
@@ -49,6 +59,8 @@
 
 
     <?php echo view('layout/partials/vendor-scripts.php'); ?>
+    <!-- Bootstrap-wysihtml5 JavaScript -->
+
     <script src="<?php echo base_url(); ?>assets/libs/select2/js/select2.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
@@ -60,8 +72,17 @@
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
 
     <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
+
+
     <script>
         var baseurl = "<?php echo base_url(); ?>";
+        tinymce.init({
+            selector: '#armstanding_order'
+        });
+        // $(document).ready(function() {
+        //     $('#armstanding_order').wysihtml5();
+        //     $('#arminstruction').wysihtml5();
+        // });
     </script>
     <?php $this->renderSection('jsContent'); ?>
 </body>

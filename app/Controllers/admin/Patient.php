@@ -1766,6 +1766,11 @@ This Function is used to Add Patient
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
+        foreach ($statusPasien as $key => $value) {
+            if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
+                $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
+            }
+        }
         foreach ($employee as $key => $value) {
 
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
@@ -1873,7 +1878,16 @@ This Function is used to Add Patient
                 $visit['sspractitioner_name'] = $value['fullname'];
             }
         }
-        // dd($practitioner_id);
+
+        $assessmentParam = array();
+
+        $db = db_connect();
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type ")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+
+        // return json_encode($aValue);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -1911,7 +1925,11 @@ This Function is used to Add Patient
             'pd' => $pasienDiagnosa,
             'suffer' => $suffer,
             'diagCat' => $diagCat,
-            'employee' => $employee
+            'employee' => $employee,
+            'aParent' => $aParent,
+            'aType' => $aType,
+            'aParameter' => $aParameter,
+            'aValue' => $aValue
         ]);
     }
 
@@ -5313,6 +5331,204 @@ This Function is used to Add Patient
         $class_id_plafond = $this->request->getPost('class_id_plafond');
         $treatment_plafond = $this->request->getPost('treatment_plafond');
         $nota_no = $this->request->getPost('nota_no');
+
+        // echo $treat_date;
+
+
+        $eaModel = new EmployeeAllModel();
+        $doctor = $eaModel->select('fullname')->find($employee_id);
+
+
+
+        if (is_null($sell_price) || empty($sell_price) || $sell_price == '') {
+            $sell_price = 0;
+        }
+        if (is_null($quantity) || empty($quantity) || $quantity == '') {
+            $quantity = 0;
+        }
+        if (is_null($amount_paid) || empty($amount_paid) || $amount_paid == '') {
+            $amount_paid = 0;
+        }
+        if (is_null($discount) || empty($discount) || $discount == '') {
+            $discount = 0;
+        }
+        if (is_null($subsidisat) || empty($subsidisat) || $subsidisat == '') {
+            $subsidisat = 0;
+        }
+        if (is_null($amount) || empty($amount) || $amount == '') {
+            $amount = 0;
+        }
+        if (is_null($tagihan) || empty($tagihan) || $tagihan == '') {
+            $tagihan = 0;
+        }
+        if (is_null($subsidi) || empty($subsidi) || $subsidi == '') {
+            $subsidi = 0;
+        }
+        if (is_null($profesi) || empty($profesi) || $profesi == '') {
+            $profesi = 0;
+        }
+
+
+        if (is_null($amount_plafond) || empty($amount_plafond) || $amount_plafond == '') {
+            $amount_plafond = 0;
+        }
+        if (is_null($amount_paid_plafond) || empty($amount_paid_plafond) || $amount_paid_plafond == '') {
+            $amount_paid_plafond = 0;
+        }
+
+
+
+
+
+        $tbModel = new TreatmentBillModel();
+
+
+        $orgModel = new OrganizationunitModel();
+
+        $isnew = true;
+        if ($bill_id == null || $bill_id == '') {
+            $id = $orgModel->generateId();
+            $isnew = false;
+        } else {
+            $id = $bill_id;
+            $isnew = true;
+        }
+
+        if (is_null($nota_no)) {
+            $nota_no = $orgModel->generateId();
+        }
+
+
+        // return json_encode($kalurahan);
+
+
+        $data = [
+            'bill_id' => $id,
+            'trans_id' => $trans_id,
+            'nota_no' => $nota_no,
+            'no_registration' => $no_registration,
+            'theorder' => $theorder,
+            'visit_id' => $visit_id,
+            'org_unit_code' => $org_unit_code,
+            'class_id_plafond' => $class_id_plafond,
+            'payor_id' => $payor_id,
+            'karyawan' => $karyawan,
+            'theid' => $theid,
+            'thename' => $thename,
+            'theaddress' => $theaddress,
+            'status_pasien_id' => $status_pasien_id,
+            'isRJ' => $isRJ,
+            'gender' => $gender,
+            'ageyear' => $ageyear,
+            'agemonth' => $agemonth,
+            'ageday' => $ageday,
+            'kal_id' => $kal_id,
+            'karyawan' => $karyawan,
+            'class_room_ID' => $class_room_ID,
+            'bed_id' => $bed_id,
+            'employee_id_from' => $employee_id_from,
+            'doctor_from' => $doctor_from,
+            'clinic_id' => $clinic_id,
+            'clinic_id_from' => $clinic_id_from,
+            'status_pasien_id' => $status_pasien_id,
+            'treat_date' => $treat_date,
+            'exit_date' => $exit_date,
+            'cashier' => $cashier,
+            'modified_from' => $modified_from,
+            'islunas' => $islunas,
+            'measure_id' => $measure_id,
+            'tarif_id' => $tarif_id,
+            'treatment' => $treatment,
+            'employee_id' => $employee_id,
+            'sell_price' => $sell_price,
+            'quantity' => $quantity,
+            'amount_paid' => $amount_paid,
+            'discount' => $discount,
+            'subsidisat' => $subsidisat,
+            'amount' => $amount,
+            'tagihan' => $tagihan,
+            'subsidi' => $subsidi,
+            'profesi' => $profesi,
+            'tarif_type' => $tarif_type,
+            'class_id' => $class_id,
+            'amount_plafond' => $amount_plafond,
+            'amount_paid_plafond' => $amount_paid_plafond,
+            'class_id_plafond' => $class_id_plafond,
+            'treatment_plafond' => $treatment_plafond,
+            'doctor' => $doctor
+        ];
+
+        // return json_encode($data);
+        $tbModel->save($data);
+        // String of all alphanumeric character
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        // Shufle the $str_result and returns substring
+        // of specified length
+        $alfa_no = substr(str_shuffle($str_result), 0, 5);
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah tindakan berhasil', 'billId' => $id, 'data' => $data);
+        echo json_encode($array);
+    }
+    public function addBillCharge()
+    {
+        // dd($this->request->is('post'));
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+
+        $bill_id = $body['bill_id']; //$this->request->getPost('bill_id');
+        $trans_id = $body['trans_id']; //$this->request->getPost('trans_id');
+        $no_registration = $body['no_registration']; //$this->request->getPost('no_registration');
+        $theorder = $body['theorder']; //$this->request->getPost('theorder');
+        $visit_id = $body['visit_id']; //$this->request->getPost('visit_id');
+        $org_unit_code = $body['org_unit_code']; //$this->request->getPost('org_unit_code');
+        $payor_id = $body['payor_id']; //$this->request->getPost('payor_id');
+        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
+        $theid = $body['theid']; //$this->request->getPost('theid');
+        $thename = $body['thename']; //$this->request->getPost('thename');
+        $theaddress = $body['theaddress']; //$this->request->getPost('theaddress');
+        $isRJ = $body['isRJ']; //$this->request->getPost('isRJ');
+        $gender = $body['gender']; //$this->request->getPost('gender');
+        $ageyear = $body['ageyear']; //$this->request->getPost('ageyear');
+        $agemonth = $body['agemonth']; //$this->request->getPost('agemonth');
+        $ageday = $body['ageday']; //$this->request->getPost('ageday');
+        $kal_id = $body['kal_id']; //$this->request->getPost('kal_id');
+        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
+        $class_room_ID = $body['class_room_ID']; //$this->request->getPost('class_room_ID');
+        $bed_id = $body['bed_id']; //$this->request->getPost('bed_id');
+        $employee_id_from = $body['employee_id_from']; //$this->request->getPost('employee_id_from');
+        $doctor_from = $body['doctor_from']; //$this->request->getPost('doctor_from');
+        $clinic_id = $body['clinic_id']; //$this->request->getPost('clinic_id');
+        $clinic_id_from = $body['clinic_id_from']; //$this->request->getPost('clinic_id_from');
+        $status_pasien_id = $body['status_pasien_id']; //$this->request->getPost('status_pasien_id');
+        $treat_date = $body['treat_date']; //$this->request->getPost('treat_date');
+        $exit_date = $body['exit_date']; //$this->request->getPost('exit_date');
+        $cashier = $body['cashier']; //$this->request->getPost('cashier');
+        $modified_from = $body['modified_from']; //$this->request->getPost('modified_from');
+        $islunas = $body['islunas']; //$this->request->getPost('islunas');
+        $measure_id = $body['measure_id']; //$this->request->getPost('measure_id');
+        $tarif_id = $body['tarif_id']; //$this->request->getPost('tarif_id');
+        $treatment = $body['treatment']; //$this->request->getPost('treatment');
+        $employee_id = $body['employee_id']; //$this->request->getPost('employee_id');
+        $sell_price = $body['sell_price']; //$this->request->getPost('sell_price');
+        $quantity = $body['quantity']; //$this->request->getPost('quantity');
+        $amount_paid = $body['amount_paid']; //$this->request->getPost('amount_paid');
+        $discount = $body['discount']; //$this->request->getPost('discount');
+        $subsidisat = $body['subsidisat']; //$this->request->getPost('subsidisat');
+        $amount = $body['amount']; //$this->request->getPost('amount');
+        $tagihan = $body['tagihan']; //$this->request->getPost('tagihan');
+        $subsidi = $body['subsidi']; //$this->request->getPost('subsidi');
+        $profesi = $body['profesi']; //$this->request->getPost('profesi');
+        $tarif_type = $body['tarif_type']; //$this->request->getPost('tarif_type');
+        $class_id = $body['class_id']; //$this->request->getPost('class_id');
+        $amount_plafond = $body['amount_plafond']; //$this->request->getPost('amount_plafond');
+        $amount_paid_plafond = $body['amount_paid_plafond']; //$this->request->getPost('amount_paid_plafond');
+        $class_id_plafond = $body['class_id_plafond']; //$this->request->getPost('class_id_plafond');
+        $treatment_plafond = $body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
+        $nota_no = $body['nota_no']; //$this->request->getPost('nota_no');
 
         // echo $treat_date;
 

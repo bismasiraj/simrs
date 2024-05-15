@@ -25,8 +25,6 @@
     })
 </script>
 <script type="text/javascript">
-    var historyJson = new Array();
-    var pasienDiagnosa = new Array();
     var pasienDiagnosa = <?= json_encode($pasienDiagnosa); ?>;
     var currentIndex;
     var indexLength;
