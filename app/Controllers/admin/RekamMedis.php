@@ -40,7 +40,7 @@ class RekamMedis extends \App\Controllers\BaseController
                 order by EXAMINATION_DATE desc";
         $select = $db->query($query)->getResultArray();
 
-        return json_encode($select);
+        return json_encode($select[0]);
     }
     public function getPeriksaLab($trans_id)
     {

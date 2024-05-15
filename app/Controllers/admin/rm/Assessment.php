@@ -561,7 +561,7 @@ class Assessment extends BaseController
             'ecg_result' => $ecg_result,
             'standing_order' => $standing_order,
             'instruction' => $instruction,
-            'rencanatl' => $rencanatl,
+            // 'rencanatl' => $rencanatl,
             // 'dirujukke' => $dirujukke,
             // 'tglkontrol' => $tglkontrol,
             // 'kdpoli_kontrol' => $kdpoli_kontrol,
@@ -736,35 +736,46 @@ class Assessment extends BaseController
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
-        $primaryPD = "";
-        foreach ($selectpd as $key => $value) {
-            $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
-        }
-        $primaryPD = substr($primaryPD, 0, -1);
-        // return ($primaryPD);
-        $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
-        $selectprocedures = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+        // return json_encode($selectpd);
+        if (isset($selectpd[0])) {
+            $primaryPD = "";
+            foreach ($selectpd as $key => $value) {
+                $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
+            }
+            $primaryPD = substr($primaryPD, 0, -1);
+            // return ($primaryPD);
+            $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectprocedures = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
 
-        $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryPD)")->getResultArray());
+            $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryPD)")->getResultArray());
 
-        foreach ($selectlokalis as $key => $value) {
-            if ($value['value_score'] == 3) {
-                $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
-                if (file_exists($filepath)) {
-                    $filedata = file_get_contents($filepath);
-                    $filedata64 = base64_encode($filedata);
-                    $selectlokalis[$key]['filedata64'] = $filedata64;
+            foreach ($selectlokalis as $key => $value) {
+                if ($value['value_score'] == 3) {
+                    $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
+                    if (file_exists($filepath)) {
+                        $filedata = file_get_contents($filepath);
+                        $filedata64 = base64_encode($filedata);
+                        $selectlokalis[$key]['filedata64'] = $filedata64;
+                    }
                 }
             }
-        }
 
-        return json_encode([
-            'pasienDiagnosa' => $selectpd,
-            'pasienHistory' => $selecthistory,
-            'papsienDiagnosas' => $selectdiagnosas,
-            'pasienProcedures' => $selectprocedures,
-            'lokalis' => $selectlokalis
-        ]);
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'pasienHistory' => $selecthistory,
+                'papsienDiagnosas' => $selectdiagnosas,
+                'pasienProcedures' => $selectprocedures,
+                'lokalis' => $selectlokalis
+            ]);
+        } else {
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'pasienHistory' => $selecthistory,
+                // 'papsienDiagnosas' => $selectdiagnosas,
+                // 'pasienProcedures' => $selectprocedures,
+                // 'lokalis' => $selectlokalis
+            ]);
+        }
     }
 
     public function saveStabilitas()

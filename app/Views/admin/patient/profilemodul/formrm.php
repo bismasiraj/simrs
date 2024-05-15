@@ -44,7 +44,7 @@ $permission = user()->getPermissions();
                                 <b>RMJ 2</b>
                             </button>
                         </h2>
-                        <div id="collapsermj2" class="accordion-collapse collapse" aria-labelledby="rmj2" data-bs-parent="#accodrionFormRm" style="">
+                        <div id="collapsermj2" class="accordion-collapse collapse" aria-labelledby="rmj2" data-bs-parent="#accodrionFormRm">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -76,7 +76,7 @@ $permission = user()->getPermissions();
                                 <b>RM 1</b>
                             </button>
                         </h2>
-                        <div id="collapserm1" class="accordion-collapse collapse" aria-labelledby="rm1" data-bs-parent="#accodrionFormRm" style="">
+                        <div id="collapserm1" class="accordion-collapse collapse" aria-labelledby="rm1" data-bs-parent="#accodrionFormRm">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -100,7 +100,7 @@ $permission = user()->getPermissions();
                                 <b>RM 2</b>
                             </button>
                         </h2>
-                        <div id="collapserm2" class="accordion-collapse collapse" aria-labelledby="rm2" data-bs-parent="#accodrionFormRm" style="">
+                        <div id="collapserm2" class="accordion-collapse collapse" aria-labelledby="rm2" data-bs-parent="#accodrionFormRm">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -144,7 +144,7 @@ $permission = user()->getPermissions();
                                 <b>RM 3</b>
                             </button>
                         </h2>
-                        <div id="collapserm3" class="accordion-collapse collapse" aria-labelledby="rm3" data-bs-parent="#accodrionFormRm" style="">
+                        <div id="collapserm3" class="accordion-collapse collapse" aria-labelledby="rm3" data-bs-parent="#accodrionFormRm">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -182,7 +182,7 @@ $permission = user()->getPermissions();
                                 <b>RM 4</b>
                             </button>
                         </h2>
-                        <div id="collapserm4" class="accordion-collapse collapse" aria-labelledby="rm4" data-bs-parent="#accodrionFormRm" style="">
+                        <div id="collapserm4" class="accordion-collapse collapse" aria-labelledby="rm4" data-bs-parent="#accodrionFormRm">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -211,9 +211,157 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                     </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="medis">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsemedis" aria-expanded="true" aria-controls="collapsemedis">
+                                <b>MEDIS</b>
+                            </button>
+                        </h2>
+                        <div id="collapsemedis" class="accordion-collapse collapse" aria-labelledby="medis" data-bs-parent="#accodrionFormRm">
+                            <div class="accordion-body text-muted">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul id="medisListLink" class="list-group list-group-flush">
+                                            <input id="armpasien_diagnosa_id" type="hidden" value="asdf">
+                                            <!-- <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Anak</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Bedah</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Dalam</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kebidanan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Kebidanan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kulit_kelamin/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Kulit Kelamin</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_mata/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Mata</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_tht/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan THT</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ranap Anak</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_dalam/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ranap Dalam</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_kebidanan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ranap Kebidanan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_neonatal/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ranap Neonatal</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_paru/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ranap Paru</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_inap/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Rawat Inap</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/reconsialisasi/' . base64_encode(json_encode($visit)); ?>" target="_blank">Reconsialisasi Obat</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>" target="_blank">Resume Medis</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>" target="_blank">Surat Keterangan Diagnosis</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>" target="_blank">Surat Kontrol Pasien BPJS</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>" target="_blank">Surat Perintah Rawat Inap</a></li> -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="keperawatan">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsekeperawatan" aria-expanded="true" aria-controls="collapsekeperawatan">
+                                <b>KEPERAWATAN</b>
+                            </button>
+                        </h2>
+                        <div id="collapsekeperawatan" class="accordion-collapse collapse" aria-labelledby="keperawatan" data-bs-parent="#accodrionFormRm">
+                            <div class="accordion-body text-muted">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul id="keperawatanListLink" class="list-group list-group-flush">
+                                            <input id="arpbody_id" type="hidden" value="asdf">
+                                            <!-- <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ralan Anak</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_dewasa/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ralan Dewasa</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_dewasa/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ranap Dewasa</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_kandungan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ranap Kandungan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_neonatus/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ranap Neonatus</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_gizi/' . base64_encode(json_encode($visit)); ?>" target="_blank">Asuhan Gizi</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_kebidanan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Asuhan Kebidanan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ranap/' . base64_encode(json_encode($visit)); ?>" target="_blank">CPPT Rawat Inap</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ralan/' . base64_encode(json_encode($visit)); ?>" target="_blank">CPPT Rawat Jalan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Diagnosis Keperawatan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_integrasi/' . base64_encode(json_encode($visit)); ?>" target="_blank">Edukasi Integrasi</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_obat/' . base64_encode(json_encode($visit)); ?>" target="_blank">Edukasi Obat Oleh Apoteker</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/formulir_edukasi/' . base64_encode(json_encode($visit)); ?>" target="_blank">Formulir Pemberian Edukasi</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/hak_dan_kewajiban/' . base64_encode(json_encode($visit)); ?>" target="_blank">Hak dan Kewajiban Pasien</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/identitas/' . base64_encode(json_encode($visit)); ?>" target="_blank">Identitas dan Pernyataan Pasien Rawat Inap</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/implementasi/' . base64_encode(json_encode($visit)); ?>" target="_blank">Implementasi Asuhan Keperawatan</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/inform_concern/' . base64_encode(json_encode($visit)); ?>" target="_blank">Inform Concern (Pemasangan Infus)</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Keperawatan IGD Anak</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_dewasa/' . base64_encode(json_encode($visit)); ?>" target="_blank">Keperawatan IGD Dewasa</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/monitoring_nyeri/' . base64_encode(json_encode($visit)); ?>" target="_blank">Monitoring Nyeri</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/resiko_jatuh/' . base64_encode(json_encode($visit)); ?>" target="_blank">Monitoring Resiko Jatuh</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/persetujuan_umum/' . base64_encode(json_encode($visit)); ?>" target="_blank">Persetujuan Umum (General Concert)</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/sdki/' . base64_encode(json_encode($visit)); ?>" target="_blank">SDKI SLKI SIKI</a></li>
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>" target="_blank">Transfer Internal</a></li> -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="lainnya">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapselainnya" aria-expanded="true" aria-controls="collapselainnya">
+                                <b>LAIN-LAIN</b>
+                            </button>
+                        </h2>
+                        <div id="collapselainnya" class="accordion-collapse collapse" aria-labelledby="lainnya" data-bs-parent="#accodrionFormRm">
+                            <div class="accordion-body text-muted">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/lainnya_14/' . base64_encode(json_encode($visit)); ?>" target="_blank">Permintaan Laboratorium Patologi Anatomi (PA)</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div><!--./row-->
 </div>
 <!-- -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kebidanan/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kebidanan</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kulit_kelamin/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kulit Kelamin</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_mata/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Mata</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_tht/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan THT</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_anak/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Anak</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_dalam/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Dalam</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_kebidanan/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Kebidanan</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_neonatal/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Neonatal</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_paru/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Paru</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_inap/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Rawat Inap</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/reconsialisasi/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Reconsialisasi Obat</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Resume Medis</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
+    $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
+</script>
+<script type="text/javascript">
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + $("#armbody_id").val() + '" target="_blank">Assessmen Keperawatan Ralan Anak</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_dewasa/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ralan Dewasa</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_dewasa/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ranap Dewasa</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_kandungan/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ranap Kandungan</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_neonatus/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ranap Neonatus</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_gizi/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Asuhan Gizi</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/asuhan_kebidanan/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Asuhan Kebidanan</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ranap/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">CPPT Rawat Inap</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/cppt_ralan/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">CPPT Rawat Jalan</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Diagnosis Keperawatan</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_integrasi/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Edukasi Integrasi</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/edukasi_obat/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Edukasi Obat Oleh Apoteker</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/formulir_edukasi/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Formulir Pemberian Edukasi</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/hak_dan_kewajiban/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Hak dan Kewajiban Pasien</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/identitas/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Identitas dan Pernyataan Pasien Rawat Inap</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/implementasi/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Implementasi Asuhan Keperawatan</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/inform_concern/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Inform Concern (Pemasangan Infus)</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_anak/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Keperawatan IGD Anak</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_dewasa/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Keperawatan IGD Dewasa</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/monitoring_nyeri/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Monitoring Nyeri</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/resiko_jatuh/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Monitoring Resiko Jatuh</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/persetujuan_umum/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Persetujuan Umum (General Concert)</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/sdki/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">SDKI SLKI SIKI</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + $("#arpbody_id").val() + '" target="_blank">Transfer Internal</a></li>')
+</script>

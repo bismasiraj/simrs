@@ -59,10 +59,10 @@
             <input type="hidden" name="vactination_id" id="vactination_id">
             <div class="row mt-5">
                 <div class="col" style="text-align: center;">
-                    <h4><b>DR. M YUNUS BENGKULU<br></b></h4>
-                    <h5>Jl. Bhayangkara, Sidomulyo, Kec. Gading Cemp., Kota Bengkulu 38211<br>
+                    <h4><b>RS Muhammadiyah PKU Sampangan<br></b></h4>
+                    <!-- <h5>Jl. Bhayangkara, Sidomulyo, Kec. Gading Cemp., Kota Bengkulu 38211<br>
                         Telp.(0736) 52004
-                    </h5>
+                    </h5> -->
                 </div>
                 <hr style="border: 1px solid black;">
             </div>

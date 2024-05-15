@@ -19,10 +19,11 @@
         }
 
         .loginbg {
-            background: #81abcf;
+            background: rgb(14 131 136);
             max-height: 480px;
             box-shadow: 0 10px 18px 0 rgba(62, 57, 107, 0.2);
             border-radius: 4px;
+            color: #fff;
         }
 
         a.forgot {

@@ -60,37 +60,42 @@ $permission = user()->getPermissions();
                                                 <div class="col-md-12">
                                                     <div class="dividerhr"></div>
                                                 </div><!--./col-md-12-->
-                                                <div class="col-sm-2 col-xs-12">
-                                                    <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
-                                                </div>
-                                                <div class="col-sm-3 col-xs-12">
-                                                    <div class="mb-3">
-                                                        <div class="form-group">
-                                                            <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
-                                                            <input name="date_of_diagnosa" id="armdate_of_diagnosa" type="datetime-local" class="form-control " />
-                                                        </div>
+                                                <div class="row">
+                                                    <div class="col-sm-2 col-xs-12">
+                                                        <h5 class="font-size-14 mb-4 badge bg-primary">dokumen assessment:</h5>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3 col-xs-12">
-                                                    <div class="mb-3">
-                                                        <div class="form-group">
-                                                            <label for="armclinic_id">Poli</label>
-                                                            <select name="clinic_id" id="armclinic_id" type="hidden" class="form-control ">
-                                                                <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
+                                                <div class="row">
+                                                    <div class="col-sm-4 col-xs-12">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
+                                                                <input name="date_of_diagnosa" id="armdate_of_diagnosa" type="datetime-local" class="form-control " />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4 col-xs-12">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="armclinic_id">Poli</label>
+                                                                <select name="clinic_id" id="armclinic_id" type="hidden" class="form-control ">
+                                                                    <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
 
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-3 col-xs-12">
-                                                    <div class="mb-3">
-                                                        <div class="form-group">
-                                                            <label for="armemployee_id">Dokter</label>
-                                                            <select name="employee_id" id="armemployee_id" type="hidden" class="form-control ">
-                                                                <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
-                                                            </select>
+                                                    <div class="col-sm-4 col-xs-12">
+                                                        <div class="mb-3">
+                                                            <div class="form-group">
+                                                                <label for="armemployee_id">Dokter</label>
+                                                                <select name="employee_id" id="armemployee_id" type="hidden" class="form-control ">
+                                                                    <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                                 <div class="accordion" id="accordionAssessmentMedis">
                                                     <div class="accordion-item">
@@ -134,7 +139,7 @@ $permission = user()->getPermissions();
                                                                     <div class="col-sm-12 col-xs-12">
                                                                         <div class="mb-3">
                                                                             <div class="form-group">
-                                                                                <label for="armpemeriksaan">Vital Sign</label>
+                                                                                <label for="armpemeriksaan">Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>
                                                                                 <textarea id="armpemeriksaan" name="pemeriksaan" rows="5" class="form-control " autocomplete="off"></textarea>
                                                                             </div>
                                                                         </div>
@@ -515,6 +520,24 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="medis">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsemedis" aria-expanded="true" aria-controls="collapsemedis">
+                                                                <b>MEDIS</b>
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapsemedis" class="accordion-collapse collapse" aria-labelledby="medis" data-bs-parent="#accodrionFormRm">
+                                                            <div class="accordion-body text-muted">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <ul id="medisListLinkAll" class="list-group list-group-flush">
+                                                                            <input id="armpasien_diagnosa_id" type="hidden" value="asdf">
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-12">
                                                     <hr>
@@ -699,8 +722,9 @@ $permission = user()->getPermissions();
                                         </div><!--./row-->
                                         <div class="panel-footer text-end mb-4">
                                             <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                                            <button type="submit" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="submit" id="formsavearmbtns" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                            <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                         </div>
                                     </div><!--./col-md-4-->

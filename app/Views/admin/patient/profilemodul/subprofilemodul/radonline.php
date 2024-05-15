@@ -57,7 +57,7 @@
                         <img src="img/logo.png" alt="" style="width: 70px;">
                     </td>
                     <td colspan="3" style="text-align: center;">
-                        <h4><b>DR. M YUNUS BENGKULU<br>FORMULIR PERMINTAAN PEMERIKSAAN<br>RADIOLOGI</b></h4>
+                        <h4><b>RS Muhammadiyah PKU Sampangan<br>FORMULIR PERMINTAAN PEMERIKSAAN<br>RADIOLOGI</b></h4>
                     </td>
                 </tr>
             </table>

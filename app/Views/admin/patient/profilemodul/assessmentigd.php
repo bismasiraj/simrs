@@ -89,89 +89,104 @@ $permission = user()->getPermissions();
                             <div class="col-md-12">
                                 <div class="dividerhr"></div>
                             </div><!--./col-md-12-->
-                            <div class="col-sm-2 col-xs-12">
-                                <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
-                            </div>
-                            <div class="col-sm-3 col-xs-12">
-                                <div class="mb-3">
-                                    <div class="form-group">
-                                        <label for="arpexamination_date">Tanggal Assessmennt</label>
-                                        <input name="examination_date" id="arpexamination_date" type="datetime-local" class="form-control" />
-                                    </div>
+                            <div class="row">
+                                <div class="col-sm-2 col-xs-12">
+                                    <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
                                 </div>
                             </div>
-                            <div class="col-sm-3 col-xs-12">
-                                <div class="mb-3">
-                                    <div class="form-group">
-                                        <label for="arpclinic_id">Poli</label>
-                                        <select name="clinic_id" id="arpclinic_id" type="hidden" class="form-control ">
-                                            <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
-                                        </select>
+                            <div class="row">
+                                <div class="col-sm-4 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arpexamination_date">Tanggal Assessmennt</label>
+                                            <input name="examination_date" id="arpexamination_date" type="datetime-local" class="form-control" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-3 col-xs-12">
-                                <div class="mb-3">
-                                    <div class="form-group">
-                                        <label for="arpemployee_id">Dokter</label>
-                                        <select name="employee_id" id="arpemployee_id" type="hidden" class="form-control ">
-                                            <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
-                                        </select>
+                                <div class="col-sm-4 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arpclinic_id">Poli</label>
+                                            <select name="clinic_id" id="arpclinic_id" type="hidden" class="form-control ">
+                                                <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="accordion" id="accodrionAssessmentAwal">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="vitalSignPerawat">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSignPerawat" aria-expanded="true" aria-controls="collapseVitalSignPerawat">
-                                        <b>Vital Sign</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseVitalSignPerawat" class="accordion-collapse collapse" aria-labelledby="VitalSignPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                <div class="row mb-4">
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                            <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
-                                                                <h4>/</h4>
-                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-2 mt-2">
-                                                        <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
-                                                    </div>
-                                                    <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                <div class="col-sm-4 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arpemployee_id">Dokter</label>
+                                            <select name="employee_id" id="arpemployee_id" type="hidden" class="form-control ">
+                                                <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                    <div class="row mb-4">
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
+                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
+                                                    <h4>/</h4>
+                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-2 mt-2">
+                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
+                                        </div>
+                                        <div class="col-sm-12 mt-2">
+                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-12">
+                                <hr>
+                            </div><!--./col-md-12-->
+                            <div class="panel-footer text-end mb-4">
+                                <button type="button" id="formaddarpbtnid" name="save" data-loading-text="Tambah" class="btn btn-info pull-right formaddarpbtn"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
+                                <button type="button" id="formsavearpbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsavearpbtn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                <button type="button" id="formeditarpid" name="editrm" onclick="enableARP()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditarp"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                <button type="button" id="formsignarpid" name="signrm" onclick="signArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignarp"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                            </div>
+                        </div>
+                        <div class="accordion" id="accodrionAssessmentAwal">
+                            <!-- <div class="accordion-item">
+                                <h2 class="accordion-header" id="vitalSignPerawat">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSignPerawat" aria-expanded="true" aria-controls="collapseVitalSignPerawat">
+                                        <b>VITAL SIGN</b>
+                                    </button>
+                                </h2>
+                                <div id="collapseVitalSignPerawat" class="accordion-collapse collapse" aria-labelledby="VitalSignPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                    <div class="accordion-body text-muted">
+
+                                    </div>
+                                </div>
+                            </div> -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingRiwayat">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRiwayat" aria-expanded="false" aria-controls="collapseRiwayat">
@@ -247,6 +262,74 @@ $permission = user()->getPermissions();
                                                     <div class="col-md-12">
                                                         <div id="addDekubitusButton" class="box-tab-tools text-center">
                                                             <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingFormEdukasi">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormEdukasi" aria-expanded="false" aria-controls="collapseFormEdukasi">
+                                        <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                    </button>
+                                </h2>
+                                <div id="collapseFormEdukasi" class="accordion-collapse collapse" aria-labelledby="headingFormEdukasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="bodyFormEdukasi">
+                                                    <div class="mb-3 row"><label class="col-md-4 col-form-label mb-4">Tanggal</label>
+                                                        <div class="col-md-8"><input class="form-control" type="datetime-local" id="" name="others" placeholder=""></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="arpeducation_material">Materi Edukasi </label>
+                                                                    <textarea id="arpeducation_material" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="arpinformatinreceive">Penerima Informasi </label>
+                                                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="arpinformatinreceive" id="arpinformatinreceive" value="0210208" onchange="aValueParamScore('002', 'ASES022', '02', 1)"><label class="form-check-label" for="parent_id002021020820240514014716254">Keluarga/Kerabat</label></div>
+                                                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="arpinformatinreceive" id="arpinformatinreceive" value="0210208" onchange="aValueParamScore('002', 'ASES022', '02', 1)"><label class="form-check-label" for="parent_id002021020820240514014716254">Pasien</label></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="familyname">Nama Keluarga </label>
+                                                                    <input type="text" id="familyname" name="familyname" rows="2" class="form-control " autocomplete="off"></input>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 col-xs-12">
+                                                            <div class="mb-3">
+                                                                <div class="form-group">
+                                                                    <label for="familyrelation">Hubungan Keluarga </label>
+                                                                    <input type="text" id="familyrelation" name="familyrelation" rows="2" class="form-control " autocomplete="off"></input>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-4">
+                                                    <div class="col-md-12">
+                                                        <div id="addFormEdukasiButton" class="box-tab-tools text-center">
+                                                            <a onclick="addFormEdukasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1118,7 +1201,7 @@ $permission = user()->getPermissions();
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="tindakanPerawatImplementasi">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatImplementasi" aria-expanded="true" aria-controls="collapseTindakanPerawatImplementasi">
-                                        <b>Implementasi Keperawatan</b>
+                                        <b>IMPLEMENTASI KEPERAWATAN</b>
                                     </button>
                                 </h2>
                                 <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionAssessmentAwal" style="">
@@ -1195,6 +1278,24 @@ $permission = user()->getPermissions();
                                     </div>
                                 </div>
                             </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="cetakprintKeperawatan">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseprintKeperawatan" aria-expanded="true" aria-controls="collapseprintKeperawatan">
+                                        <b>CETAK KEPERAWATAN</b>
+                                    </button>
+                                </h2>
+                                <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionAssessmentAwal">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <ul id="keperawatanListLinkAll" class="list-group list-group-flush">
+                                                    <input id="arpbody_id" type="hidden" value="asdf">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-12">
                             <hr>
@@ -1202,7 +1303,8 @@ $permission = user()->getPermissions();
                         <div class="panel-footer text-end mb-4">
                             <button type="button" id="formaddarpbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                             <button type="button" id="formsavearpbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button type="button" id="formeditarp" name="editrm" onclick="editArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formeditarp" name="editrm" onclick="enableARP()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formsignarp" name="signrm" onclick="signArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                         </div>
                     </form>

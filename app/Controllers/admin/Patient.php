@@ -1284,13 +1284,13 @@ This Function is used to Add Patient
         $employee_id = $this->request->getPost('employeeId');
         if (isset($search_term) && $search_term != '') {
             $model = new GoodsModel();
-            $customObat = $this->lowerKey($model->find('00000'));
-            $customObat['name'] = $search_term;
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
             // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
             $result = $this->lowerKey($model->getObatDokter($search_term, $employee_id));
             $data   = array();
             // $data[] = array("id" => '%', "text" => "Semua (%)");
-            $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
             if (!empty($result)) {
                 foreach ($result as $value) {
                     $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");

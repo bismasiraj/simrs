@@ -76,9 +76,7 @@
 
     <script>
         var baseurl = "<?php echo base_url(); ?>";
-        tinymce.init({
-            selector: '#armstanding_order'
-        });
+
         // $(document).ready(function() {
         //     $('#armstanding_order').wysihtml5();
         //     $('#arminstruction').wysihtml5();
