@@ -90,9 +90,6 @@
                     canvas<?= $value1['value_id'] ?>.addEventListener('mouseup', stopDrawing<?= $value1['value_id'] ?>);
                     canvas<?= $value1['value_id'] ?>.addEventListener('mouseout', stopDrawing<?= $value1['value_id'] ?>);
 
-                    console.log(canvas<?= $value1['value_id'] ?>.toDataURL("image/png"))
-
-
                     function startDrawing<?= $value1['value_id'] ?>(e) {
                         drawing<?= $value1['value_id'] ?> = true;
                         draw<?= $value1['value_id'] ?>(e);

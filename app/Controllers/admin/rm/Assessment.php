@@ -15,6 +15,8 @@ use App\Models\Assessment\IndicatorModel;
 use App\Models\Assessment\IntegumenModel;
 use App\Models\Assessment\LokalisModel;
 use App\Models\Assessment\NeurosensorisModel;
+use App\Models\Assessment\NutritionDetailModel;
+use App\Models\Assessment\NutritionModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
@@ -1669,6 +1671,91 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         return json_encode([
             'psikologi' => $select,
             'psikologiDetail' => $selectSpiritual
+        ]);
+    }
+
+    public function savegizi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new NutritionModel();
+
+        $model->save($data);
+
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'gizi%'")->getResultArray());
+        $nutrition = new NutritionDetailModel();
+        $db->query("delete from assessment_screen_nutrition_detail where body_id = '$body_id' and visit_id = '$visit_id'");
+        foreach ($select as $key => $value) {
+            if (isset(${$value['p_type'] . $value['parameter_id']})) {
+                if (${$value['p_type'] . $value['parameter_id']} == $value['value_score']) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $value['p_type'],
+                        'parameter_id' => $value['parameter_id'],
+                        'value_id' => $value['value_id'],
+                        'value_score' => $value['value_score'],
+                        'value_desc' => $value['value_desc'],
+                        'modified_by' => user()->username
+                    ];
+
+                    $nutrition->insert($data);
+                }
+            }
+        }
+
+
+
+        return json_encode($data);
+    }
+    public function getgizi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new NutritionModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        $bodyAll = [];
+        foreach ($select as $key => $value) {
+            $bodyAll[] = $value['body_id'];
+        }
+
+        $giziDetail = new NutritionDetailModel();
+        $selectgizi = $this->lowerKey($giziDetail->whereIn("body_id", $bodyAll)->findAll());
+
+        return json_encode([
+            'gizi' => $select,
+            'giziDetail' => $selectgizi
         ]);
     }
 

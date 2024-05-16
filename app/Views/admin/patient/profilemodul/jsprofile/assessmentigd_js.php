@@ -495,6 +495,8 @@ foreach ($aValue as $key => $value) {
         getPencernaan(ex.body_id)
         getDekubitus(ex.body_id)
         getPsikologi(ex.body_id)
+        getPerkemihan(ex.body_id)
+        getGizi(ex.body_id)
         disableARP()
     }
 
@@ -611,6 +613,7 @@ foreach ($aValue as $key => $value) {
     var psikologiDetailAll;
     var dekubitusAll;
     var giziAll;
+    var giziDetailAll;
     $("#assessmentigdTab").on("click", function() {
         // getPainMonitoring()
         // getTriage()
@@ -5594,7 +5597,7 @@ foreach ($aValue as $key => $value) {
             bodyId = date.toISOString().substring(0, 23);
             bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         } else {
-            bodyId = GiziAll[index].body_id
+            bodyId = giziAll[index].body_id
         }
         $("#bodyGizi").append(
             $('<form id="formGizi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
@@ -5630,7 +5633,7 @@ foreach ($aValue as $key => $value) {
                             )
                         )
                     )
-                    .append($('<div id="gizimalnutrition_detil" class="mb-3 row" style="display: none">')
+                    .append($('<div id="rowmalnutritiondetail' + bodyId + '" class="mb-3 row" style="display: none">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
 
 
@@ -5643,9 +5646,9 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI001') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
                                     )
                                 )
                             )
@@ -5663,15 +5666,15 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI002') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Nutrisi melalui NGT</label>')
-                                .append('<input name="GIZI00301" class="form-check-input" type="checkbox" id="valGIZI00301' + bodyId + '" value="1">')
+                                .append('<input name="GIZI00301" class="form-check-input" type="checkbox" id="giziGIZI00301' + bodyId + '" value="1">')
                             )
                             .append($('<div class="mb-3 row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Tanggal pasang</label>')
@@ -5681,14 +5684,13 @@ foreach ($aValue as $key => $value) {
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Mukosa mulut / lidah</label>')
-
+                                    .append('<label for="giziGIZI004' + bodyId + '" class="col-form-label mb-4">Mukosa mulut / lidah</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00401" id="valGIZI00401' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                    .append($('<select class="form-control" name="GIZI004" id="giziGIZI004' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
                                                                                                                                     if ($value['p_type'] == 'GIZI004' && $value['parameter_id'] == '01') {
                                                                                                                                 ?>
-                                                .append('<option value="<?= $value['value_id']; ?>"><?= $value['value_desc']; ?></option>')
+                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
                                                                                                                                     }
@@ -5705,15 +5707,15 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI005') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Intake Cairan (Fluid Intake</label>')
-                                .append('<div class="col-md-8"><input class="form-control" type="text" id="valueothers' + bodyId + '" name="GIZI00601" placeholder=""></div>')
+                                .append('<div class="col-md-8"><input class="form-control" type="text" id="giziGIZI00601' + bodyId + '" name="GIZI00601" placeholder=""></div>')
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
@@ -5723,26 +5725,26 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI007') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Status Gangguan Metabolik</label>')
+                                    .append('<label for="giziGIZI00801' + bodyId + '" class="col-form-label mb-4">Status Gangguan Metabolik</label>')
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="valGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI008' && $value['parameter_id'] == '01') {
-                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_id']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-control" name="GIZI00801" id="giziGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                        if ($value['p_type'] == 'GIZI008' && $value['parameter_id'] == '01') {
+                                                                                                                                    ?>
+                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                        }
+                                                                                                                                    } ?>
                                     )
                                 )
                             )
@@ -5754,11 +5756,11 @@ foreach ($aValue as $key => $value) {
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="giziage_range' + bodyId + '" class="col-form-label mb-4">Kategori usia</label>')
+                                    .append('<label for="giziage_cat' + bodyId + '" class="col-form-label mb-4">Kategori usia</label>')
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="age_range" id="giziage_range' + bodyId + '">')
+                                    .append($('<select class="form-control" name="age_cat" id="giziage_cat' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -5767,83 +5769,81 @@ foreach ($aValue as $key => $value) {
                             )
                             .append($('<div class="row">')
                                 .append('<label for="giziweight' + bodyId + '" class="col-md-4 col-form-label mb-4">BB</label>')
-                                .append('<div class="col-md-8"><input class="form-control" type="text" id="giziweight' + bodyId + '" name="weight" placeholder=""></div>')
+                                .append('<div class="col-md-8"><input class="form-control" type="number" step=".01" id="giziweight' + bodyId + '" name="weight" placeholder=""></div>')
                             )
                             .append($('<div class="row">')
                                 .append('<label for="giziheight' + bodyId + '" class="col-md-4 col-form-label mb-4">TB</label>')
-                                .append('<div class="col-md-8"><input class="form-control" type="text" id="giziheight' + bodyId + '" name="height" placeholder=""></div>')
+                                .append('<div class="col-md-8"><input class="form-control" type="number" step=".01" id="giziheight' + bodyId + '" name="height" placeholder=""></div>')
                             )
                             .append($('<div class="row">')
-                                .append('<label class="col-md-4 col-form-label mb-4">IMT</label>')
-                                .append('<div class="col-md-8"><input class="form-control" type="text" id="valueothers' + bodyId + '" name="IMT" placeholder="" readonly></div>')
+                                .append('<label for="gizimt' + bodyId + '" class="col-md-4 col-form-label mb-4">IMT</label>')
+                                .append('<div class="col-md-8"><select class="form-control" type="text" id="gizimt' + bodyId + '" name="imt" placeholder="" readonly></select></div>')
                             )
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Step 1|Skor IMT</label>')
+                                    .append('<label for="gizistep1_score_imt' + bodyId + '" class="col-form-label mb-4">Step 1|Skor IMT</label>')
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="valGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '01') {
-                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_id']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-control" name="step1_score_imt" id="gizistep1_score_imt' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '01') {
+                                                                                                                                                ?>
+                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                                    }
+                                                                                                                                                } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Step 2|Skor Penurunan BB</label>')
-
+                                    .append('<label for="gizistep2_score_wightloss' + bodyId + '" class="col-form-label mb-4">Step 2|Skor Penurunan BB</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="valGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '02') {
-                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_id']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-control" name="step2_score_wightloss" id="gizistep2_score_wightloss' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                                if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '02') {
+                                                                                                                                                            ?>
+                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                                                }
+                                                                                                                                                            } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Step 3|Skor Efek Penyakit Akut</label>')
-
+                                    .append('<label for="gizistep3_score_acute_disease' + bodyId + '" class="col-form-label mb-4">Step 3|Skor Efek Penyakit Akut</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="valGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '03') {
-                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_id']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-control" name="step3_score_acute_disease" id="gizistep3_score_acute_disease' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                                        if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '03') {
+                                                                                                                                                                    ?>
+                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                                                        }
+                                                                                                                                                                    } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Step 4|Resiko Malnutrisi Keseluruhan</label>')
+                                    .append('<label for="gizistep4_score_malnutrition' + bodyId + '" class="col-form-label mb-4">Step 4|Resiko Malnutrisi Keseluruhan</label>')
 
                                 )
-                                .append('<div class="col-xs-12 col-sm-8 col-md-8"><input class="form-control" type="number" id="valueothers' + bodyId + '" name="GIZI00601" placeholder=""></div>')
+                                .append('<div class="col-xs-12 col-sm-8 col-md-8"><input class="form-control" type="number" id="gizistep4_score_malnutrition' + bodyId + '" name="step4_score_malnutrition" placeholder=""></div>')
                             )
                             .append($('<div class="row">')
                                 .append($('<div class="col-xs-12 col-sm-4 col-md-4">')
-                                    .append('<label for="valGIZI00401' + bodyId + '" class="col-form-label mb-4">Step 5|Management Guidelines</label>')
+                                    .append('<label for="giziscore_desc' + bodyId + '" class="col-form-label mb-4">Step 5|Management Guidelines</label>')
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="valGIZI00801' + bodyId + '">')
+                                    .append($('<select class="form-control" name="score_desc" id="giziscore_desc' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -5861,6 +5861,83 @@ foreach ($aValue as $key => $value) {
             )
         )
 
+        // GIZI011	0.00	18.50	Berat badan kurang (Underweight)
+        // GIZI011	18.51	22.90	Berat badan Normal
+        // GIZI011	23.00	24.90	Kelebihan berat Badan (Overwight)
+        // GIZI011	25.00	29.90	Obesitas I
+        // GIZI011	30.00	200.00	Obesitas II
+        $("#gizimalnutrition" + bodyId).on("change", function() {
+            if ($("#gizimalnutrition" + bodyId).is(":checked")) {
+                $("#rowmalnutritiondetail" + bodyId).show()
+            } else {
+                $("#rowmalnutritiondetail" + bodyId).hide()
+            }
+        })
+
+        $("#giziweight" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $('#giziweight' + bodyId).on("change", function() {
+            var w = $('#giziweight' + bodyId).val()
+            var h = $('#giziheight' + bodyId).val()
+            w = parseFloat(w)
+            h = parseFloat(h) / 100
+            var imt = w / h / h
+            var imtString = checkImt(imt.toFixed(2))
+            $("#gizimt" + bodyId).html("");
+            $("#gizimt" + bodyId).append('<option value="' + imt + '">' + imtString + '</option>');
+            $("#gizimt" + bodyId).val(imt);
+            $("#gizistep1_score_imt" + bodyId).val(score1Imt(imt.toFixed(2)))
+        })
+        $("#giziheight" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $('#giziheight' + bodyId).on("change", function() {
+            var w = $('#giziweight' + bodyId).val()
+            var h = $('#giziheight' + bodyId).val()
+            w = parseFloat(w)
+            h = parseFloat(h) / 100
+            var imt = w / h / h
+            var imtString = checkImt(imt.toFixed(2))
+            $("#gizimt" + bodyId).html("");
+            $("#gizimt" + bodyId).append('<option value="' + imt + '">' + imtString + '</option>');
+            $("#gizimt" + bodyId).val(imt);
+            $("#gizistep1_score_imt" + bodyId).val(score1Imt(imt.toFixed(2)))
+        })
+
+        $("#gizistep1_score_imt" + bodyId).on("change", function() {
+            var gizistep1_score_imt = $("#gizistep1_score_imt" + bodyId).val()
+            var gizistep2_score_wightloss = $("#gizistep2_score_wightloss" + bodyId).val()
+            var gizistep3_score_acute_disease = $("#gizistep3_score_acute_disease" + bodyId).val()
+
+            var totalscore = parseInt(gizistep1_score_imt) + parseInt(gizistep2_score_wightloss) + parseInt(gizistep3_score_acute_disease)
+
+            $("#gizistep4_score_malnutrition" + bodyId).val(totalscore)
+            $("#giziscore_desc" + bodyId).val(step5Gizi(totalscore))
+        })
+        $("#gizistep2_score_wightloss" + bodyId).on("change", function() {
+
+            var gizistep1_score_imt = $("#gizistep1_score_imt" + bodyId).val()
+            var gizistep2_score_wightloss = $("#gizistep2_score_wightloss" + bodyId).val()
+            var gizistep3_score_acute_disease = $("#gizistep3_score_acute_disease" + bodyId).val()
+
+            var totalscore = parseInt(gizistep1_score_imt) + parseInt(gizistep2_score_wightloss) + parseInt(gizistep3_score_acute_disease)
+
+            $("#gizistep4_score_malnutrition" + bodyId).val(totalscore)
+            $("#giziscore_desc" + bodyId).val(step5Gizi(totalscore))
+        })
+        $("#gizistep3_score_acute_disease" + bodyId).on("change", function() {
+
+            var gizistep1_score_imt = $("#gizistep1_score_imt" + bodyId).val()
+            var gizistep2_score_wightloss = $("#gizistep2_score_wightloss" + bodyId).val()
+            var gizistep3_score_acute_disease = $("#gizistep3_score_acute_disease" + bodyId).val()
+
+            var totalscore = parseInt(gizistep1_score_imt) + parseInt(gizistep2_score_wightloss) + parseInt(gizistep3_score_acute_disease)
+
+            $("#gizistep4_score_malnutrition" + bodyId).val(totalscore)
+            $("#giziscore_desc" + bodyId).val(step5Gizi(totalscore))
+        })
+
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES046' && $value1['value_score'] == '99') {
         ?>
@@ -5876,13 +5953,22 @@ foreach ($aValue as $key => $value) {
             }
         } ?>
 
-        $("#formGizi" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
-            .append('<input name="no_registration" id="stabilitasno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="ASES046" class="form-control" />')
+        $("#formGizi" + bodyId).append('<input name="org_unit_code" id="giziorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="gizivisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="gizitrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="gizibody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="gizidocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="no_registration" id="gizino_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="thename" id="gizithename' + bodyId + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
+            .append('<input name="theaddress" id="gizitheaddress' + bodyId + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="examination_date" id="giziexamination_date' + bodyId + '" type="hidden" value="' + get_date() + '" class="form-control" />')
+            .append('<input name="clinic_id" id="giziclinic_id' + bodyId + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="employee_id" id="giziemployee_id' + bodyId + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
+            .append('<input name="petugas_id" id="gizipetugas_id' + bodyId + '" type="hidden" value="<?= user()->username; ?>" class="form-control" />')
+            .append('<input name="class_room_id" id="giziclass_room_id' + bodyId + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="bed_id" id="gizibed_id' + bodyId + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
+            // .append('<input name="no_registration" id="giziparent_id' + bodyId + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="gizip_type' + bodyId + '" type="hidden" value="ASES046" class="form-control" />')
         $("#formGizi" + bodyId).on('submit', (function(e) {
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
@@ -5917,37 +6003,111 @@ foreach ($aValue as $key => $value) {
         if (flag == 1) {
 
         } else {
-            var digest = GiziAll[index];
-            console.log(digest)
-            <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES046') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
-            ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
-                    <?php
+            var gizi = giziAll[index];
 
-                    } else if ($value['entry_type'] == '2') {
-                    ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
-                            <?php foreach ($aValue as $key1 => $value1) {
-                                if ($value1['p_type'] == 'ASES046' && $value1['value_score'] == '99') {
-                            ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
-                            <?php
-                                }
-                            } ?>
-                        }
-            <?php
+            if (gizi.malnutrition_risk == 1)
+                $("#gizimalnutrition_risk" + bodyId).prop("checked", true)
+            if (gizi.nutrition_consult == 1)
+                $("#gizinutrition_consult" + bodyId).prop("checked", true)
+            if (gizi.operation_elder == 1)
+                $("#gizioperation_elder" + bodyId).prop("checked", true)
+            if (gizi.malnutrition == 1) {
+                $("#gizimalnutrition" + bodyId).prop("checked", true)
+                $("#rowmalnutritiondetail" + bodyId).show()
+            }
+            $("#giziage_cat" + bodyId).val(gizi.age_cat)
+            $("#giziweight" + bodyId).val(gizi.weight)
+            $("#giziheight" + bodyId).val(gizi.height)
+            var imtString = checkImt(parseFloat(gizi.imt).toFixed(2))
+            $("#gizimt" + bodyId).html("");
+            $("#gizimt" + bodyId).append('<option value="' + gizi.imt + '">' + imtString + '</option>');
+            $("#gizimt" + bodyId).val(gizi.imt);
+            $("#gizistep1_score_imt" + bodyId).val(gizi.step1_score_imt);
+            $("#gizistep2_score_wightloss" + bodyId).val(gizi.step2_score_wightloss);
+            $("#gizistep3_score_acute_disease" + bodyId).val(gizi.step3_score_acute_disease);
+            var gizistep1_score_imt = $("#gizistep1_score_imt" + bodyId).val()
+            var gizistep2_score_wightloss = $("#gizistep2_score_wightloss" + bodyId).val()
+            var gizistep3_score_acute_disease = $("#gizistep3_score_acute_disease" + bodyId).val()
+
+            var totalscore = parseInt(gizistep1_score_imt) + parseInt(gizistep2_score_wightloss) + parseInt(gizistep3_score_acute_disease)
+
+            $("#gizistep4_score_malnutrition" + bodyId).val(totalscore)
+            $("#giziscore_desc" + bodyId).val(step5Gizi(totalscore))
+
+            $.each(giziDetailAll, function(key, value) {
+                if (value.body_id == bodyId) {
+                    if (value.p_type == 'GIZI001' && value.value_score == 1) {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI002' && value.value_score == 1) {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI003' && value.value_score == 1) {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI004') {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).val(value.value_score)
+                    }
+                    if (value.p_type == 'GIZI005') {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI006' && value.value_score == 1) {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI007' && value.value_score == 1) {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                    }
+                    if (value.p_type == 'GIZI008') {
+                        $("#gizi" + value.p_type + value.parameter_id + bodyId).val(value.value_score)
                     }
                 }
-            } ?>
+                // if (value.p_type == 'GIZI006' && value.value_score == 1) {
+                //     $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                // }
+            })
 
         }
         index++
         $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function checkImt(score) {
+        // GIZI011	0.00	18.50	Berat badan kurang (Underweight)
+        // GIZI011	18.51	22.90	Berat badan Normal
+        // GIZI011	23.00	24.90	Kelebihan berat Badan (Overwight)
+        // GIZI011	25.00	29.90	Obesitas I
+        // GIZI011	30.00	200.00	Obesitas II
+        if (score <= 18.5) {
+            return score + 'Berat badan kurang (Underweight)'
+        } else if (score > 18.5 && score <= 22.9) {
+            return score + ' Berat badan Normal'
+        } else if (score > 22.9 && score <= 24.9) {
+            return score + ' Kelebuhan berat Badan (overWeight)'
+        } else if (score > 24.9 && score <= 29.9) {
+            return score + ' Obesitas I'
+        } else {
+            return score + ' Obesitas II'
+        }
+    }
+
+    function score1Imt(score) {
+        if (score <= 18.5) {
+            return '2'
+        } else if (score > 18.5 && score <= 20) {
+            return '1'
+        } else if (score > 20) {
+            return '0'
+        }
+    }
+
+    function step5Gizi(score) {
+        if (score <= 1) {
+            return 'Resiko Rendah (Low Risk) - Routine Clinical Care'
+        } else if (score > 1 && score <= 2) {
+            return 'Resiko sedang (Medium Risk) - Observe'
+        } else if (score > 2) {
+            return 'Resiko Tinggi (High Risk) - Treat'
+        }
     }
 
     function getGizi(bodyId) {
@@ -5965,9 +6125,10 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                GiziAll = data.Gizi
+                giziAll = data.gizi
+                giziDetailAll = data.giziDetail
 
-                $.each(GiziAll, function(key, value) {
+                $.each(giziAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
                         addGizi(0, key)
                 })
