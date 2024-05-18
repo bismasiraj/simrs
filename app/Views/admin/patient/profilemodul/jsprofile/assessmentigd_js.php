@@ -365,7 +365,14 @@ foreach ($aValue as $key => $value) {
                 "account_id": $("#arpaccount_id").val(),
                 "kesadaran": $("#arpkesadaran").val(),
                 "isvalid": $("#arpisvalid").val(),
+                <?php foreach ($aValue as $key => $value) {
+                    if ($value['p_type'] == 'GEN0009') {
+                ?> "<?= $value['value_id']; ?>": $("#arp<?= $value['p_type'] . $value['value_id']; ?>").val(),
+                <?php
+                    }
+                } ?>
             }),
+            // data: new FormData(document.getElementById('formaddarp')),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -3433,9 +3440,9 @@ foreach ($aValue as $key => $value) {
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
                                                 .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
-                                                    .append('<option value="0">-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
-                                                                                            ?>
+                                                    .append('<option value="99">-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
                                                                                                                                                     } ?>
@@ -3451,7 +3458,7 @@ foreach ($aValue as $key => $value) {
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES016' && in_array($value['parameter_id'], array('06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                    if ($value['p_type'] == 'ASES016' && in_array($value['parameter_id'], array('07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
                                                                                 ?> <?php if ($value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
@@ -3480,9 +3487,9 @@ foreach ($aValue as $key => $value) {
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
                                                 .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
-                                                    .append('<option value="0">-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
-                                                                                            ?>
+                                                    .append('<option value="99">-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
                                                                                                                                                     } ?>
@@ -3502,8 +3509,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formADLSave' + bodyId + '" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formADLEdit' + bodyId + '" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -3550,6 +3557,8 @@ foreach ($aValue as $key => $value) {
                 success: function(data) {
                     $('#formADL' + bodyId + ' select').prop("disabled", true)
                     $('#formADL' + bodyId + ' input').prop("disabled", true)
+                    $("#formADLSave" + bodyId).hide()
+                    $("#formADLEdit" + bodyId).show()
                     clicked_submit_btn.button('reset');
                 },
                 error: function(xhr) { // if error occured
@@ -3562,6 +3571,11 @@ foreach ($aValue as $key => $value) {
                 }
             });
         }));
+        $("#formADLEdit" + bodyId).on("click", function() {
+            $("#formADLSave" + bodyId).show()
+            $("#formADLEdit" + bodyId).hide()
+            $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
         $("#formADL" + bodyId).find("select").on("change", function(e) {
             var totalScoreAdl = 0;
             $("#formADL" + bodyId).find("select").each(function() {
@@ -3585,6 +3599,8 @@ foreach ($aValue as $key => $value) {
         if (flag == 1) {
 
         } else {
+            $("#formADLSave" + bodyId).hide()
+            $("#formADLEdit" + bodyId).show()
             var adl = adlAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES016') {
@@ -3601,8 +3617,8 @@ foreach ($aValue as $key => $value) {
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES016' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(adl.<?= strtolower($value1['value_info']); ?>)
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?>' + bodyId).val(adl.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
                             } ?>
@@ -3624,6 +3640,7 @@ foreach ($aValue as $key => $value) {
 
             $("#total_dependency" + bodyId).html("")
             $("#total_dependency" + bodyId).append($('<option value="' + totalScoreAdl + '">' + scoreAdlName + '</option>'))
+            $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", true)
         }
 
         index++

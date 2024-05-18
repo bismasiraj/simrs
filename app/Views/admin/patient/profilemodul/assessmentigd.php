@@ -63,7 +63,6 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="arpteraphy_desc" name="teraphy_desc">
                         <input type="hidden" id="arpinstruction" name="instruction">
                         <input type="hidden" id="arpmedical_treatment" name="medical_treatment">
-                        <input type="hidden" id="arpdescription" name="description">
                         <input type="hidden" id="arpmodified_date" name="modified_date">
                         <input type="hidden" id="arpmodified_by" name="modified_by">
                         <input type="hidden" id="arpmodified_from" name="modified_from">
@@ -125,43 +124,41 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                             <div class="row">
-                                <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                    <div class="row mb-4">
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
-                                                    <h4>/</h4>
-                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
-                                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>T.Darah(mmHg)</label>
+                                            <div class="col-sm-12" style="display: flex;  align-items: center;">
+                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
+                                                <h4>/</h4>
+                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-2 mt-2">
-                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
-                                        </div>
-                                        <div class="col-sm-12 mt-2">
-                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                        </div>
                                     </div>
-                                </form>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-2 mt-2">
+                                        <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
+                                    </div>
+                                    <div class="col-sm-12 mt-2">
+                                        <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-12">
                                 <hr>
@@ -199,8 +196,8 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="mb-3">
                                                     <div class="form-group">
-                                                        <label for="armdescription">Riwayat Penyakit Sekarang</label>
-                                                        <textarea id="armdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
+                                                        <label for="arpdescription">Riwayat Penyakit Sekarang</label>
+                                                        <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1269,7 +1266,6 @@ $permission = user()->getPermissions();
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <ul id="keperawatanListLinkAll" class="list-group list-group-flush">
-                                                    <input id="arpbody_id" type="hidden" value="asdf">
                                                 </ul>
                                             </div>
                                         </div>

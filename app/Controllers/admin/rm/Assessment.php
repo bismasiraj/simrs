@@ -2000,6 +2000,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
+        // $body = $this->request->getPost();
         $data = [];
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -2028,8 +2029,10 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         }
 
         $ex = new ExaminationModel();
+        $ex->save($data);
 
-        $orgModel = new OrganizationunitModel();
+        // return json_encode($data);
+        $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();
 
@@ -2047,13 +2050,13 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                     'histories' => ${$value['value_id']},
                     'modified_by' => user()->username
                 ];
+                // return json_encode($data);
                 $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
                 $pasienHistory->insert($data);
             }
         }
 
 
-        $ex->save($data);
 
         return json_encode($data);
     }
