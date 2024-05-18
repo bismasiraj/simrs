@@ -63,15 +63,15 @@
             <input type="hidden" name="account_id" id="account_id">
             <?php csrf_field(); ?>
             <div class="row">
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h2>RS PKU Muhammadiyah Sampangan</h2>
-                    <h2>Surakarta</h2>
+                    <h3>RS PKU Muhammadiyah Sampangan</h3>
+                    <h3>Surakarta</h3>
                     <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
                 </div>
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
                 </div>
             </div>
@@ -86,39 +86,42 @@
                     <tr>
                         <td>
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_rm" name="no_rm" value="<?= $val['no_rm']; ?>">
+                            <input type="text" class="form-control" id="no_registration" name="no_registration">
                         </td>
                         <td>
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="nama" name="nama" value="<?= $val['nama']; ?>">
+                            <input type="text" class="form-control" id="thename" name="thename">
                         </td>
                         <td>
                             <b>Jenis Kelamin</b>
-                            <input type="text" name="jeniskel" id="jeniskel" class="form-control" value="<?= $val['jeniskel']; ?>">
+                            <select name="gender" id="gender" class="form-control">
+                                <option value="1">Laki-Laki</option>
+                                <option value="2">Perempuan</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="umur" name="umur" value="<?= $val['date_of_birth']; ?> (<?= $val['umur']; ?>)">
+                            <input type="text" class="form-control" id="patient_age" name="patient_age">
                         </td>
                         <td colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="alamat" name="alamat" value="<?= $val['alamat']; ?>">
+                            <input type="text" class="form-control" id="theaddress" name="theaddress">
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="dpjp" name="dpjp" value="<?= $val['dpjp']; ?>">
+                            <input type="text" class="form-control" id="doctor" name="doctor">
                         </td>
                         <td>
                             <b>Department</b>
-                            <input type="text" class="form-control" id="department" name="department" value="<?= $val['department']; ?>">
+                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="tgl_masuk" name="tgl_masuk" value="<?= $val['tgl_masuk']; ?>">
+                            <input type="text" class="form-control" id="examination_date" name="examination_date">
                         </td>
                     </tr>
                     <tr>
@@ -138,7 +141,7 @@
                 </tbody>
             </table>
             <div class="row mb-5">
-                <h2 class="text-center"><b><u>SURAT KONTROL PASIEN BPJS</u></b></h2><br>
+                <h3 class="text-center"><b><u>SURAT KONTROL PASIEN BPJS</u></b></h3><br>
                 <b class="text-center">No. Surat Kontrol: <?= $val['nosuratkontrol']; ?></b>
             </div>
             <div class="row mb-1">
@@ -183,7 +186,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-5">
+            <div class="row mb-3">
                 <div class="col">
                     <p>Surat Keterangan ini digunakan untuk 1(satu) kali kunjungan dengan diagnosa di atas. <br>
                         Tanggal Rujukan Awal: (Berlaku 90 hari) <br>
@@ -194,7 +197,7 @@
                 <div class="col"></div>
                 <div class="col-auto" align="center">
                     <div>DPJP</div>
-                    <div class="mb-4">
+                    <div class="mb-1">
                         <div id="qrcode"></div>
                     </div>
                 </div>
@@ -217,6 +220,67 @@
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
     });
+</script>
+<script>
+    $(document).ready(function() {
+        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
+        $("#no_registration").val("<?= $visit['no_registration']; ?>")
+        $("#visit_id").val("<?= $visit['visit_id']; ?>")
+        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
+        $("#in_date").val("<?= $visit['in_date']; ?>")
+        $("#exit_date").val("<?= $visit['exit_date']; ?>")
+        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
+        ?>
+        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#description").val("<?= $visit['description']; ?>")
+        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#modified_by").val("<?= user()->username; ?>")
+        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
+        $("#ageyear").val("<?= $visit['ageyear']; ?>")
+        $("#agemonth").val("<?= $visit['agemonth']; ?>")
+        $("#ageday").val("<?= $visit['ageday']; ?>")
+        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
+        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
+        $("#theid").val("<?= $visit['pasien_id']; ?>")
+        $("#isrj").val("<?= $visit['isrj']; ?>")
+        $("#gender").val("<?= $visit['gender']; ?>")
+        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#petugas_id").val("<?= user()->username; ?>")
+        $("#petugas").val("<?= user()->fullname; ?>")
+        $("#account_id").val("<?= $visit['account_id']; ?>")
+    })
+    $("#btnSimpan").on("click", function() {
+        saveSignatureData()
+        saveSignatureData1()
+        console.log($("#TTD").val())
+        $("#form").submit()
+    })
+    $("#btnEdit").on("click", function() {
+        $("input").prop("disabled", false);
+        $("textarea").prop("disabled", false);
+
+    })
+</script>
+<style>
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
+
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
+    }
+</style>
+<script type="text/javascript">
+    window.print();
 </script>
 
 </html>

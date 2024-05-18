@@ -63,7 +63,7 @@
             <input type="hidden" name="account_id" id="account_id">
             <?php csrf_field(); ?>
             <div class="row">
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
@@ -71,7 +71,7 @@
                     <h2>Surakarta</h2>
                     <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
                 </div>
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
                 </div>
             </div>
@@ -86,39 +86,42 @@
                     <tr>
                         <td>
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_rm" name="no_rm" value="<?= $val['no_rm']; ?>">
+                            <input type="text" class="form-control" id="no_registration" name="no_registration">
                         </td>
                         <td>
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="nama" name="nama" value="<?= $val['nama']; ?>">
+                            <input type="text" class="form-control" id="thename" name="thename">
                         </td>
                         <td>
                             <b>Jenis Kelamin</b>
-                            <input type="text" class="form-control" id="jeniskel" name="jeniskel" value="<?= $val['jeniskel']; ?>">
+                            <select name="gender" id="gender" class="form-control">
+                                <option value="1">Laki-Laki</option>
+                                <option value="2">Perempuan</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="umur" name="umur" value="<?= $val['date_of_birth']; ?> (<?= $val['umur']; ?>)">
+                            <input type="text" class="form-control" id="patient_age" name="patient_age">
                         </td>
                         <td colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="alamat" name="alamat" value="<?= $val['alamat']; ?>">
+                            <input type="text" class="form-control" id="theaddress" name="theaddress">
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="dpjp" name="dpjp" value="<?= $val['dpjp']; ?>">
+                            <input type="text" class="form-control" id="doctor" name="doctor">
                         </td>
                         <td>
                             <b>Department</b>
-                            <input type="text" class="form-control" id="departemen" name="departemen" value="<?= $val['departemen']; ?>">
+                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="tanggal_masuk" name="tanggal_masuk" value="<?= $val['tanggal_masuk']; ?>">
+                            <input type="text" class="form-control" id="examination_date" name="examination_date">
                         </td>
                     </tr>
                     <tr>
@@ -412,7 +415,7 @@
 </script>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: 'a',
+        text: '<?= $val['nama']; ?>',
         width: 150,
         height: 150,
         colorDark: "#000000",

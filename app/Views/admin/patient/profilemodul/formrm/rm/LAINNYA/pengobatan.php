@@ -19,6 +19,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
 </head>
 
 <body>
@@ -72,28 +76,48 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="text-center">Catatan Perkembangan Pasien Terintegrasi RJ</h3>
+                <h3 class="text-center"><?= $title; ?></h3>
             </div>
             <div class="row">
-                <h4 class="text-start">Bagian I: Informasi Pasien</h4>
+                <h4 class="text-start">Informasi Pasien</h4>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 50%;">
-                            <b>Nomor RM / Nama Pasien / Jenis Kelamin</b>
-                            <div class="row mb-1">
-                                <div class="col-4">
-                                    <input type="text" class="form-control" id="no_registration" name="no_registration">
-                                </div> /
-                                <div class="col">
-                                    <input type="text" class="form-control" id="thename" name="thename">
-                                </div>
-                            </div>
+                        <td>
+                            <b>Nomor RM</b>
+                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                        </td>
+                        <td>
+                            <b>Nama Pasien</b>
+                            <input type="text" class="form-control" id="thename" name="thename">
+                        </td>
+                        <td>
+                            <b>Jenis Kelamin</b>
                             <select name="gender" id="gender" class="form-control">
                                 <option value="1">Laki-Laki</option>
                                 <option value="2">Perempuan</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Tanggal Lahir (Usia)</b>
+                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                        </td>
+                        <td colspan="2">
+                            <b>Alamat Pasien</b>
+                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>DPJP</b>
+                            <input type="text" class="form-control" id="doctor" name="doctor">
+                        </td>
+                        <td>
+                            <b>Department</b>
+                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
@@ -102,55 +126,89 @@
                     </tr>
                     <tr>
                         <td>
-                            <b>Tanggal Lahir (Umur)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <b>Kelas</b>
+                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
                         </td>
                         <td>
-                            <b>No. Episode</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Alamat</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <b>Bangsal/Kamar</b>
+                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
                         </td>
                         <td>
-                            <b>DPJP / Department</b>
-                            <div class="row">
-                                <div class="col-2">
-                                    <input type="text" class="form-control" id="doctor" name="doctor">
-                                </div> /
-                                <div class="col">
-                                    <input type="text" class="form-control" id="clinic_id" name="clinic_id">
-                                </div>
-                            </div>
+                            <b>Bed</b>
+                            <input type="text" class="form-control" id="bed" name="bed" value="">
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <div class="row mb-1">
+                <div class="col">
+                    <h4>Daftar Obat</h4>
+                </div>
+            </div>
             <table class="table table-bordered">
                 <thead class="fw-bold">
                     <tr>
-                        <td style="width: 7%;">Tanggal</td>
-                        <td style="width: 5%;">Kode PPA</td>
-                        <td style="width: 13%;">Dokter/PPA</td>
-                        <td>Catatan Dokter</td>
-                        <td>Response</td>
-                        <td>Verifikasi</td>
+                        <td>Nama Obat</td>
+                        <td>Aturan Pakai</td>
+                        <td>Rute</td>
+                        <td>Tanggal Pemberian Obat</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($val as $key => $value) : ?>
-                        <tr>
-                            <td><?= $value['visit_date']; ?></td>
-                            <td><?= $value['kodeppa']; ?></td>
-                            <td><?= $value['fullname']; ?></td>
-                            <td><?= $value['catatan']; ?></td>
-                            <td><?= $value['response']; ?></td>
-                            <td><?= $value['verifikasi']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <tr>
+                        <td>Piracetam Injeksi</td>
+                        <td>3 gr/6 jam</td>
+                        <td>Intravenous</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Clopidogrel tablet</td>
+                        <td>1x1</td>
+                        <td>Oral</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Furosemide Injeksi Jk</td>
+                        <td>1 ampl/12 jam</td>
+                        <td>Intravenous</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Fluimucil Injeksi Jk / acetylcistein inj</td>
+                        <td>1 ampl/8 jam</td>
+                        <td>Intravenous</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Methylprednisolon Injeksi</td>
+                        <td>31.25 mg/12 jam</td>
+                        <td>Intravenous</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Amlodipin 10 mg Jk</td>
+                        <td>1x1</td>
+                        <td>Oral</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Lisinopril 10 mg Jk</td>
+                        <td>1x1</td>
+                        <td>Oral</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Isdn 5 mg tab</td>
+                        <td>3x1</td>
+                        <td>Oral</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Piracetam Injeksi</td>
+                        <td>3 gr/6 jam</td>
+                        <td>Intravenous</td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         </form>
@@ -162,7 +220,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
-
 <script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
@@ -211,8 +268,8 @@
 <style>
     @media print {
         @page {
-            margin: none;
-            scale: 85;
+            margin: 0;
+            scale: 80;
         }
 
         .container {

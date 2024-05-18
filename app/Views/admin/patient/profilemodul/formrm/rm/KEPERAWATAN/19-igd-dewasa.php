@@ -72,4 +72,20 @@ $this->extend('admin/patient/profilemodul/formrm/rm/KEPERAWATAN/0-igd-template.p
 
     })
 </script>
+<style>
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
+
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
+    }
+</style>
+<script type="text/javascript">
+    window.print();
+</script>
 <?php $this->endSection() ?>

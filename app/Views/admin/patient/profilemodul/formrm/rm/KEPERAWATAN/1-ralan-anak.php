@@ -71,52 +71,6 @@ $this->extend('admin/patient/profilemodul/formrm/rm/KEPERAWATAN/0-ralan-template
 <?php $this->endSection() ?>
 <?php $this->section('jsContent') ?>
 <script>
-    var canvas = document.getElementById('canvas');
-    const canvasDataInput = document.getElementById('ttd');
-    var context = canvas.getContext('2d');
-    var drawing = false;
-
-    // Load the background image onto the canvas
-    const backgroundImage = new Image();
-
-
-
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-
-    function startDrawing(e) {
-        drawing = true;
-        draw(e);
-    }
-
-    function draw(e) {
-        if (!drawing) return;
-
-        context.lineWidth = 2;
-        context.lineCap = 'round';
-        context.strokeStyle = '#000';
-
-        context.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-        context.stroke();
-        context.beginPath();
-        context.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-    }
-
-    function stopDrawing() {
-        drawing = false;
-        context.beginPath();
-    }
-
-    function saveSignatureData() {
-        const canvasData = canvas.toDataURL('image/png');
-
-        canvasDataInput.value = canvasData;
-    }
-</script>
-<script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
         $("#no_registration").val("<?= $visit['no_registration']; ?>")
@@ -160,5 +114,21 @@ $this->extend('admin/patient/profilemodul/formrm/rm/KEPERAWATAN/0-ralan-template
         $("textarea").prop("disabled", false);
 
     })
+</script>
+<style>
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
+
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
+    }
+</style>
+<script type="text/javascript">
+    window.print();
 </script>
 <?php $this->endSection() ?>

@@ -64,7 +64,7 @@
             <input type="hidden" name="account_id" id="account_id">
             <?php csrf_field(); ?>
             <div class="row">
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
@@ -72,7 +72,7 @@
                     <h2>Surakarta</h2>
                     <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
                 </div>
-                <div class="col-md-2" align="center">
+                <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
                 </div>
             </div>

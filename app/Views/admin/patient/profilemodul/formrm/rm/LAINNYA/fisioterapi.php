@@ -19,6 +19,10 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
 </head>
 
 <body>
@@ -72,87 +76,120 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="text-center">Catatan Perkembangan Pasien Terintegrasi RJ</h3>
+                <h3 class="text-center">Surat Pengantar Pemeriksaan Fisioterapi</h3>
             </div>
             <div class="row">
-                <h4 class="text-start">Bagian I: Informasi Pasien</h4>
+                <h4 class="text-start">Informasi Pasien</h4>
             </div>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td style="width: 50%;">
-                            <b>Nomor RM / Nama Pasien / Jenis Kelamin</b>
-                            <div class="row mb-1">
-                                <div class="col-4">
-                                    <input type="text" class="form-control" id="no_registration" name="no_registration">
-                                </div> /
-                                <div class="col">
-                                    <input type="text" class="form-control" id="thename" name="thename">
-                                </div>
-                            </div>
+                        <td>
+                            <b>Nomor RM</b>
+                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                        </td>
+                        <td>
+                            <b>Nama Pasien</b>
+                            <input type="text" class="form-control" id="thename" name="thename">
+                        </td>
+                        <td>
+                            <b>Jenis Kelamin</b>
                             <select name="gender" id="gender" class="form-control">
                                 <option value="1">Laki-Laki</option>
                                 <option value="2">Perempuan</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Tanggal Lahir (Usia)</b>
+                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                        </td>
+                        <td colspan="2">
+                            <b>Alamat Pasien</b>
+                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>DPJP</b>
+                            <input type="text" class="form-control" id="doctor" name="doctor">
+                        </td>
+                        <td>
+                            <b>Department</b>
+                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
                             <input type="text" class="form-control" id="examination_date" name="examination_date">
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <b>Tanggal Lahir (Umur)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
-                        </td>
-                        <td>
-                            <b>No. Episode</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Alamat</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
-                        </td>
-                        <td>
-                            <b>DPJP / Department</b>
-                            <div class="row">
-                                <div class="col-2">
-                                    <input type="text" class="form-control" id="doctor" name="doctor">
-                                </div> /
-                                <div class="col">
-                                    <input type="text" class="form-control" id="clinic_id" name="clinic_id">
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
-            <table class="table table-bordered">
-                <thead class="fw-bold">
-                    <tr>
-                        <td style="width: 7%;">Tanggal</td>
-                        <td style="width: 5%;">Kode PPA</td>
-                        <td style="width: 13%;">Dokter/PPA</td>
-                        <td>Catatan Dokter</td>
-                        <td>Response</td>
-                        <td>Verifikasi</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($val as $key => $value) : ?>
-                        <tr>
-                            <td><?= $value['visit_date']; ?></td>
-                            <td><?= $value['kodeppa']; ?></td>
-                            <td><?= $value['fullname']; ?></td>
-                            <td><?= $value['catatan']; ?></td>
-                            <td><?= $value['response']; ?></td>
-                            <td><?= $value['verifikasi']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col text-center">
+                    <h3><b><u>Surat Pengantar Pemeriksaan Fisioterapi</u></b></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Dengan hormat, <br>
+                    Bersama ini kami kirimkan pasien :
+                </div>
+            </div>
+            <div class="row">
+                <label for="sa" class="col-sm-2 col-form-label">Nama pasien</label>
+                <label for="sa" class="col-sm-auto col-form-label">:</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="sa" name="sa" value="">
+                </div>
+            </div>
+            <div class="row">
+                <label for="sa" class="col-sm-2 col-form-label">Umur</label>
+                <label for="sa" class="col-sm-auto col-form-label">:</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="sa" name="sa" value="">
+                </div>
+            </div>
+            <div class="row">
+                <label for="sa" class="col-sm-2 col-form-label">No. Register</label>
+                <label for="sa" class="col-sm-auto col-form-label">:</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="sa" name="sa" value="">
+                </div>
+            </div>
+            <div class="row">
+                <label for="sa" class="col-sm-2 col-form-label">Alamat</label>
+                <label for="sa" class="col-sm-auto col-form-label">:</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="sa" name="sa" value="">
+                </div>
+            </div>
+            <div class="row mb-2">
+                <label for="sa" class="col-sm-2 col-form-label">Diagnosis sementara</label>
+                <label for="sa" class="col-sm-auto col-form-label">:</label>
+                <div class="col">
+                    <input type="text" class="form-control" id="sa" name="sa" value="">
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    Mohon dapat diberikan tindakan / pemeriksaan : <br>
+                    1. INFRA RED - REHAB MEDIK <br>
+                    2. TENS - REHAB MEDIK <br>
+                    Atas perhatian dan kerjasamanya kami ucapkan terima kasih. <br>
+                    Catatan:
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-auto" align="center">
+                    <div>RS PKU Muhammadiyah Sampangan Surakarta <br>Dokter</div>
+                    <div class="mb-1">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -162,7 +199,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
-
+<script>
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: 'sa',
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
+</script>
 <script>
     $(document).ready(function() {
         $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
@@ -211,8 +257,8 @@
 <style>
     @media print {
         @page {
-            margin: none;
-            scale: 85;
+            margin: 0;
+            scale: 80;
         }
 
         .container {

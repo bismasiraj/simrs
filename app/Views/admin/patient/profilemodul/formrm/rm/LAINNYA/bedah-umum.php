@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="text-center">Transfer Pasien Internal</h3>
+                <h3 class="text-center"><?= $title; ?></h3>
             </div>
             <div class="row">
                 <h4 class="text-start">Informasi Pasien</h4>
@@ -127,118 +127,15 @@
                     <tr>
                         <td>
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
                         </td>
                         <td>
                             <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
                         </td>
                         <td>
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <h4 class="text-start">Derajat Stabilitas</h4>
-            </div>
-            <table class="table table-bordered">
-                <thead style="vertical-align: text-top;">
-                    <tr>
-                        <td style="width: 5%;">
-                            <b>Level</b>
-                        </td>
-                        <td>
-                            <b>Kategori</b>
-                        </td>
-                        <td style="width: 10%;">
-                            <b>Pendamping Internal</b>
-                        </td>
-                        <td style="width: 25%;">
-                            <b>Peralatan</b>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>0</td>
-                        <td>
-                            <p>Pasien yang hanya membutuhkan ruang perawatan biasa</p>
-                        </td>
-                        <td>
-                            <p>Perawat Pra PK/PK 1 PU</p>
-                        </td>
-                        <td>
-                            <p>Status rekam medis, hasil pemeriksaan penunjang, lembar transfer pasien,
-                                kursi roda/tempat tidur</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>
-                            <p>Kondisi pasien yang beresiko mengalami perburukan, pasien yang baru
-                                dipindahkan dari HND/ICU, pasien yang akan dirawat di ruang perawatan
-                                biasa dengan pengawasan dari tim perawatan khusus</p>
-                        </td>
-                        <td>
-                            <p>perawat PK 1 (1 Orang) Perawat PK 2 (1 Orang)</p>
-                        </td>
-                        <td>
-                            <p>Peralatan level 0 ditambah tabung oksigen, standar infus, suction,
-                                pulse oksimetri. Transfer eksternal ditambah tasemergensi</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>
-                            <p>Pasien yang memerlukan observasi ketat atau intervensi khusus misalnya
-                                pada pasien yang mengalami kegagalan satu sistem organ, pasien
-                                perawatan post operasi</p>
-                        </td>
-                        <td>
-                            <p>Perawat PK 1 (1 Orang) Perawat PK 2 (1 Orang) Dokter Jaga</p>
-                        </td>
-                        <td>
-                            <p>Peralatan level 1 ditambah monitor EKG dan defibrilator</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>
-                            <p>Pasien yang mengalami kegagalan multi organ dan memerlukan bantuan
-                                hidup jangka panjang ditambah dengan kebutuhan akan alat bantu nafas</p>
-                        </td>
-                        <td>
-                            <p>Perawat PK 2 (2 Orang) Dokter Jaga</p>
-                        </td>
-                        <td>
-                            <p>Peralatan level 2 ditambah alat bantu nafas</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <h4 class="text-start">Informasi Transfer</h4>
-            </div>
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td>
-                            <b>Derajat Stabilitas</b>
-                            <input type="text" class="form-control" name="" id="">
-                        </td>
-                        <td>
-                            <b>Asal Pasien</b>
-                            <input type="text" class="form-control" name="" id="">
-                            <b>Tujuan Pasien</b>
-                            <input type="text" class="form-control" name="" id="">
-                        </td>
-                        <td>
-                            <b>Waktu Berangkat</b>
-                            <input type="text" class="form-control" name="" id="">
-                            <b>Waktu Tiba</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <input type="text" class="form-control" id="bed" name="bed" value="">
                         </td>
                     </tr>
                 </tbody>
@@ -250,8 +147,12 @@
                 <tbody>
                     <tr>
                         <td>
-                            <b>Keluhan Utama (Autoanamnesis)</b>
-                            <input type="text" class="form-control" id="anamnesis" name="anamnesis" value="<?= $val['anamnesis']; ?>">
+                            <div class="row mb-1">
+                                <div class="col">
+                                    <b>Keluhan Utama (Autoanamnesis)</b>
+                                    <input type="text" class="form-control" id="anamnesis" name="anamnesis" value="<?= $val['anamnesis']; ?>">
+                                </div>
+                            </div>
                         </td>
                         <td>
                             <b>Riwayat Penyakit Sekarang</b>
@@ -259,7 +160,7 @@
                         </td>
                         <td>
                             <b>Riwayat Penyakit Dahulu</b>
-                            <input type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value="<?= $val['riwayat_penyakit_dahulu']; ?>">
+                            <input type="text" class="form-control" id="riwayat_penyakit_dahulu" name="riwayat_penyakit_dahulu" value="<?= $val['riwayat_penyakit_dahulu']; ?>">
                         </td>
                     </tr>
                     <tr>
@@ -434,16 +335,20 @@
                 </tbody>
             </table>
             <table class="table table-bordered">
-                <tr>
-                    <td>
-                        <div class="row mb-1">
-                            <label for="sa" class="col-sm-auto col-form-label"><b>Temuan Klinis</b></label>
-                            <div class="col">
-                                <input type="text" class="form-control" id="sa" name="sa" value="">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+                <tbody>
+                    <tr class="fw-bold">
+                        <td>Gambar Laki-laki</td>
+                        <td>Gambar Perempuan</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;">
+                            <img class="mt-3" src="<?= base_url('assets/img/asesmen/bedah/male.jpg') ?>" width="400px">
+                        </td>
+                        <td>
+                            <img class="mt-3" src="<?= base_url('assets/img/asesmen/bedah/female.jpg') ?>" width="400px">
+                        </td>
+                    </tr>
+                </tbody>
             </table>
             <div class="row">
                 <h4 class="text-start">Assessment (A)</h4>
@@ -542,132 +447,17 @@
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Status Pasien</h4>
-            </div>
-            <table class="table table-bordered mb-5">
-                <thead>
-                    <tr>
-                        <td colspan="4" style="text-align: center; vertical-align:middle;">
-                            <b>Kondisi Pasien</b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <b>Sebelum Transfer</b>
-                        </td>
-                        <td>
-                            <b>Selama Transfer</b>
-                        </td>
-                        <td>
-                            <b>Setelah Transfer</b>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <b>Kondisi Umum</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>T (Tensi)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>N (Detak Jantung)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>RR (Frekuensi Pernapasan)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>S (Suhu Badan)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>BB (Berat Badan)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>TB (Tinggi Badan)</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>SpO2</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Catatan Penting</b>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row mb-2">
-                <b>Serah Terima Saat Mengantar Pasien</b>
-                <div class="col-3" align="center">
-                    <div>Petugas Yang Menyerahkan</div>
-                    <div class="mb-4">
+                <div class="col-auto" align="center">
+                    <div>Dokter</div>
+                    <div class="mb-1">
                         <div id="qrcode"></div>
                     </div>
                 </div>
                 <div class="col"></div>
-                <div class="col-3" align="center">
-                    <div>Petugas Yang Menerima</div>
-                    <div class="mb-4">
+                <div class="col-auto" align="center">
+                    <div>Penerima Penjelasan</div>
+                    <div class="mb-1">
                         <div id="qrcode1"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-2">
-                <b>Serah Terima Saat Menjemput Pasien</b>
-                <div class="col-auto" align="center">
-                    <div>Petugas Yang Menyerahkan</div>
-                    <div class="mb-1">
-                        <div id="qrcode2"></div>
-                    </div>
-                </div>
-                <div class="col"></div>
-                <div class="col-auto" align="center">
-                    <div>Petugas Yang Menerima</div>
-                    <div class="mb-1">
-                        <div id="qrcode3"></div>
                     </div>
                 </div>
             </div>
@@ -682,7 +472,7 @@
 </body>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: 'a',
+        text: '<?= $val['dpjp']; ?>',
         width: 150,
         height: 150,
         colorDark: "#000000",
@@ -692,27 +482,7 @@
 </script>
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: 'a',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode2"), {
-        text: 'a',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode3"), {
-        text: 'a',
+        text: '<?= $val['nama']; ?>',
         width: 150,
         height: 150,
         colorDark: "#000000",
