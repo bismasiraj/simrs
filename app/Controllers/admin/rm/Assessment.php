@@ -9,6 +9,11 @@ use App\Models\Assessment\BladderModel;
 use App\Models\Assessment\CirculationModel;
 use App\Models\Assessment\DekubitusModel;
 use App\Models\Assessment\DigestionModel;
+use App\Models\Assessment\EducationFormModel;
+use App\Models\Assessment\EducationIntegrationDetailModel;
+use App\Models\Assessment\EducationIntegrationModel;
+use App\Models\Assessment\EducationIntegrationPlanModel;
+use App\Models\Assessment\EducationIntegrationProvisionModel;
 use App\Models\Assessment\indicatorDetail;
 use App\Models\Assessment\indicatorDetailModel;
 use App\Models\Assessment\IndicatorModel;
@@ -25,6 +30,7 @@ use App\Models\Assessment\SpiritualDetailModel;
 use App\Models\Assessment\SpiritualModel;
 use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\Assessment\TriaseDetilModel;
+use App\Models\EducationModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\OrganizationunitModel;
@@ -1156,7 +1162,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $no_registration = $body['nomor'];
 
         $db = db_connect();
-        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' order by examination_date")->getResultArray());
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -1758,7 +1764,234 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'giziDetail' => $selectgizi
         ]);
     }
+    public function saveeducationForm()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
 
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new EducationFormModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function geteducationForm()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new EducationFormModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'educationForm' => $select
+        ]);
+    }
+    public function saveeducationIntegration()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new EducationIntegrationModel();
+
+        $model->save($data);
+
+        $modelDetail = new EducationIntegrationDetailModel();
+
+        $db = db_connect();
+        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = '" . $p_type . "' ")->getResultArray());
+        $db->query("delete from assessment_education_integration_detail where body_id = '" . $body_id . "'");
+
+
+        foreach ($select as $key => $value) {
+            if ($value['p_type'] == $p_type && isset(${$value['value_info']})) {
+
+                if ($value['value_score'] == ${$value['value_info']}) {
+
+                    $data1 = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $p_type,
+                        'parameter_id' => $value['parameter_id'],
+                        'value_score' => $value['value_score'],
+                        'value_id' => $value['value_id'],
+                        'value_desc' => $value['value_desc'],
+                        'modified_by' => user()->username,
+                    ];
+                    // return json_encode($data1);
+
+                    $modelDetail->insert($data1);
+                }
+            }
+        }
+
+        if (isset($GEN0014Bahasa)) {
+            foreach ($GEN0014Bahasa as $key => $value) {
+                $data1 = [
+                    'org_unit_code' => $org_unit_code,
+                    'visit_id' => $visit_id,
+                    'trans_id' => $trans_id,
+                    'body_id' => $body_id,
+                    'p_type' => 'GEN0014',
+                    'parameter_id' => $value,
+                    'value_score' => $value,
+                    'value_id' => 'G014' . $value,
+                    'value_desc' => $GEN0014Aktif[$key],
+                    'modified_by' => user()->username,
+                ];
+
+                $modelDetail->insert($data1);
+            }
+        }
+
+        return json_encode($data);
+    }
+    public function saveEducationIntegrationPlan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new EducationIntegrationPlanModel();
+
+        $model->insert($data);
+
+        return json_encode($data);
+    }
+    public function saveEducationIntegrationProvision()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($reevaluation_date))
+                $data['reevaluation_date'] = str_replace("T", " ", $reevaluation_date);
+        }
+
+
+        $model = new EducationIntegrationProvisionModel();
+
+        $model->insert($data);
+
+        return json_encode($data);
+    }
+    public function geteducationIntegration()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new EducationIntegrationModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        // return json_encode($select);
+        $db = db_connect();
+        $queryDetil = "select * from assessment_education_integration_detail where body_id in (";
+        $queryPlan = "select * from assessment_education_plan where body_id in (";
+        $queryProvision = "select * from assessment_education_plan where body_id in (";
+
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['body_id'] . "',";
+            $queryPlan .= "'" . $value['body_id'] . "',";
+            $queryProvision .= "'" . $value['body_id'] . "',";
+        }
+        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+        $queryPlan = substr($queryPlan, 0, strlen($queryPlan) - 1);
+        $queryProvision = substr($queryProvision, 0, strlen($queryProvision) - 1);
+
+        $queryDetil .= ");";
+        $queryPlan .= ") order by body_id, plan_ke;";
+        $queryProvision .= ") order by body_id, plan_ke;";
+
+        $eduDetail = $this->lowerKey($db->query($queryDetil)->getResultArray());
+        $eduPlan = $this->lowerKey($db->query($queryPlan)->getResultArray());
+        $eduProvision = $this->lowerKey($db->query($queryProvision)->getResultArray());
+
+
+        return json_encode([
+            'educationIntegration' => $select,
+            'educationIntegrationDetail' => $eduDetail,
+            'educationPlan' => $eduPlan,
+            'educationProvision' => $eduProvision
+        ]);
+    }
     public function saveExaminationInfo()
     {
         if (!$this->request->is('post')) {

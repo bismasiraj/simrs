@@ -271,65 +271,45 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingFormEdukasi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFormEdukasi" aria-expanded="false" aria-controls="collapseFormEdukasi">
-                                        <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                <h2 class="accordion-header" id="headingEducationIntegration">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationIntegration" aria-expanded="false" aria-controls="collapseEducationIntegration">
+                                        <b>EDUKASI INTEGRASI</b>
                                     </button>
                                 </h2>
-                                <div id="collapseFormEdukasi" class="accordion-collapse collapse" aria-labelledby="headingFormEdukasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div id="collapseEducationIntegration" class="accordion-collapse collapse" aria-labelledby="headingEducationIntegration" data-bs-parent="#accodrionAssessmentAwal" style="">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div id="bodyFormEdukasi">
-                                                    <div class="mb-3 row"><label class="col-md-4 col-form-label mb-4">Tanggal</label>
-                                                        <div class="col-md-8"><input class="form-control" type="datetime-local" id="" name="others" placeholder=""></div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-sm-12 col-xs-12">
-                                                            <div class="mb-3">
-                                                                <div class="form-group">
-                                                                    <label for="arpeducation_material">Materi Edukasi </label>
-                                                                    <textarea id="arpeducation_material" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-sm-12 col-xs-12">
-                                                            <div class="mb-3">
-                                                                <div class="form-group">
-                                                                    <label for="arpinformatinreceive">Penerima Informasi </label>
-                                                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="arpinformatinreceive" id="arpinformatinreceive" value="0210208" onchange="aValueParamScore('002', 'ASES022', '02', 1)"><label class="form-check-label" for="parent_id002021020820240514014716254">Keluarga/Kerabat</label></div>
-                                                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="arpinformatinreceive" id="arpinformatinreceive" value="0210208" onchange="aValueParamScore('002', 'ASES022', '02', 1)"><label class="form-check-label" for="parent_id002021020820240514014716254">Pasien</label></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-sm-12 col-xs-12">
-                                                            <div class="mb-3">
-                                                                <div class="form-group">
-                                                                    <label for="familyname">Nama Keluarga </label>
-                                                                    <input type="text" id="familyname" name="familyname" rows="2" class="form-control " autocomplete="off"></input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-sm-12 col-xs-12">
-                                                            <div class="mb-3">
-                                                                <div class="form-group">
-                                                                    <label for="familyrelation">Hubungan Keluarga </label>
-                                                                    <input type="text" id="familyrelation" name="familyrelation" rows="2" class="form-control " autocomplete="off"></input>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div id="bodyEducationIntegration">
                                                 </div>
                                                 <div class="row mb-4">
                                                     <div class="col-md-12">
-                                                        <div id="addFormEdukasiButton" class="box-tab-tools text-center">
-                                                            <a onclick="addFormEdukasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
+                                                            <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingEducationForm">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
+                                        <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                    </button>
+                                </h2>
+                                <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div id="bodyEducationForm">
+                                                </div>
+                                                <div class="row mb-4">
+                                                    <div class="col-md-12">
+                                                        <div id="addEducationFormButton" class="box-tab-tools text-center">
+                                                            <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1335,3 +1315,424 @@ $permission = user()->getPermissions();
 
 </div>
 <!-- -->
+
+<div class="modal fade" id="addEducationListPlan" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+                <form id="formEducationIntegrationPlan" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+
+                    <input name="body_id" id="eduplanbody_id" type="hidden" class="form-control" />
+                    <input name="plan_ke" id="eduplanplan_ke" type="hidden" class="form-control" />
+                    <input name="p_type" id="eduplanp_type" type="hidden" class="form-control" />
+
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="box-header border-b mb-10 pl-0 pt0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tambah List Perencanaan Edukasi</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-4">
+                            <div class="col-sm-12">
+                                <div class="form-group"><label for="employee_id">Materi Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="col-md-6 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_material" id="eduplaneducation_material1" checked="" value="1">
+                                            <label class="form-check-label" for="formRadios1">
+                                                Pilih Material
+                                            </label>
+                                        </div>
+                                        <div class=" col-md-6 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_material" id="eduplaneducation_material2" checked="" value="2">
+                                            <label class="form-check-label" for="formRadios1">
+                                                Tulis Bebas
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <div class="form-group"><label>Judul Edukasi</label>
+                                    <select type="text" name="treatment_type" id="eduplantreatment_type" placeholder="" value="" class="form-control">
+                                        <option value="1">Pengertian penyakit</option>
+                                        <option value="2">Gizi</option>
+                                        <option value="3">Farmasi</option>
+                                        <option value="4">Rehabilitasi Medik</option>
+                                        <option value="5">Nyeri dan Manajemen Nyeri</option>
+                                        <option value="6">Pencegahan dan Pengendalian Infeksi</option>
+                                        <option value="7">Pelayanan Saat Pelayanan di RS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group mb-2"><label>Taggal Edukasi</label><input type="datetime-local" name="examination_date" id="eduplanexamination_date" placeholder="" value="" class="form-control"></div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group"><label for="employee_id">Pemberian Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="1">
+                                            <label class="form-check-label" for="eduplan">
+                                                Perawat
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="2">
+                                            <label class="form-check-label" for="eduplan">
+                                                Dokter
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="3">
+                                            <label class="form-check-label" for="eduplan">
+                                                Ahli Gizi
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="4">
+                                            <label class="form-check-label" for="eduplan">
+                                                Terapis
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="5">
+                                            <label class="form-check-label" for="eduplan">
+                                                Bidan
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaeducation_provisionn" checked="" value="6">
+                                            <label class="form-check-label" for="eduplan">
+                                                Lain-lain
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="employee_id">Sasaran Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target1" checked="" value="1">
+                                            <label class="form-check-label" for="eduplan">
+                                                Pasien
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target2" checked="" value="2">
+                                            <label class="form-check-label" for="eduplan">
+                                                Dokter
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_target" id="eduplaneducation_target3" checked="" value="3">
+                                            <label class="form-check-label" for="eduplan">
+                                                Ahli Gizi
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="employee_id">Metode Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <label class="form-check-label" for="eduplan">
+                                                Leaflet
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <label class="form-check-label" for="eduplan">
+                                                Demonstrasi
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <label class="form-check-label" for="eduplan">
+                                                Wawancara
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group mb-2"><label>Penjelasan Metode Evaluasi</label><input type="text" name="EDUCAITON_EVALUATION" id="eduplaneducaiton_evaluation" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
+                            </div>
+                        </div>
+                    </div><!--./row-->
+                    <div class="pull-right">
+                        <button type="button" id="formEducationIntegrationPlanBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary" onclick="saveEducationIntegrationPlan()"><?php echo lang('Word.save'); ?></button>
+                    </div>
+                </form>
+            </div>
+            <!-- <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addEducationListProvision" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+                <form id="formEducationIntegrationProvision" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+
+                    <input name="body_id" id="eduprovbody_id" type="hidden" class="form-control" />
+                    <input name="provision_ke" id="eduprovprovision_ke" type="hidden" class="form-control" />
+                    <input name="p_type" id="eduprovp_type" type="hidden" class="form-control" />
+
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="box-header border-b mb-10 pl-0 pt0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Tambah List Perencanaan Edukasi</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-4">
+                            <div class="col-sm-12">
+                                <div class="form-group"><label for="">Materi Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="col-md-6 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_material" id="eduproveducation_material1" checked="" value="1">
+                                            <label class="form-check-label" for="eduproveducation_material1">
+                                                Pilih Material
+                                            </label>
+                                        </div>
+                                        <div class=" col-md-6 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_material" id="eduproveducation_material2" checked="" value="2">
+                                            <label class="form-check-label" for="eduproveducation_material2">
+                                                Tulis Bebas
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 mb-2">
+                                <div class="form-group"><label>Judul Edukasi</label>
+                                    <select type="text" name="treatment_type" id="eduprovtreatment_type" placeholder="" value="" class="form-control">
+                                        <option value="1">Pengertian penyakit</option>
+                                        <option value="2">Gizi</option>
+                                        <option value="3">Farmasi</option>
+                                        <option value="4">Rehabilitasi Medik</option>
+                                        <option value="5">Nyeri dan Manajemen Nyeri</option>
+                                        <option value="6">Pencegahan dan Pengendalian Infeksi</option>
+                                        <option value="7">Pelayanan Saat Pelayanan di RS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group mb-2">
+                                    <label>Deskripsi Edukasi</label>
+                                    <textarea type="datetime-local" name="education_desc" id="eduproveducation_desc" placeholder="" value="" class="form-control">
+                                        </textarea>
+                                </div>
+                                <script>
+                                    tinymce.init({
+                                        selector: "#eduproveducation_desc",
+                                        height: 300,
+                                        plugins: [
+                                            "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                                            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                                            "save table contextmenu directionality emoticons template paste textcolor",
+                                        ],
+                                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                                        style_formats: [{
+                                                title: "Bold text",
+                                                inline: "b"
+                                            },
+                                            {
+                                                title: "Red text",
+                                                inline: "span",
+                                                styles: {
+                                                    color: "#ff0000"
+                                                }
+                                            },
+                                            {
+                                                title: "Red header",
+                                                block: "h1",
+                                                styles: {
+                                                    color: "#ff0000"
+                                                }
+                                            },
+                                            {
+                                                title: "Example 1",
+                                                inline: "span",
+                                                classes: "example1"
+                                            },
+                                            {
+                                                title: "Example 2",
+                                                inline: "span",
+                                                classes: "example2"
+                                            },
+                                            {
+                                                title: "Table styles"
+                                            },
+                                            {
+                                                title: "Table row 1",
+                                                selector: "tr",
+                                                classes: "tablerow1"
+                                            },
+                                        ],
+                                    });
+                                </script>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group"><label for="">Tingkat Pemahaman Awal</label>
+                                    <div class="row p-3">
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level1" checked="" value="1">
+                                            <label class="form-check-label" for="eduprovunderstanding_level1">
+                                                Sudah Mengerti
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level2" checked="" value="2">
+                                            <label class="form-check-label" for="eduprovunderstanding_level2">
+                                                Edukasi Ulang
+                                            </label>
+                                        </div>
+                                        <div class="col-md-2 form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="understanding_level" id="eduprovunderstanding_level3" checked="" value="3">
+                                            <label class="form-check-label" for="eduprovunderstanding_level3">
+                                                Hal Baru
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group mb-2">
+                                    <label>Assessment Ulang</label>
+                                    <input type="checkbox" name="re_assessment" id="eduprovre_assessment" placeholder="" value="" class="form-check-input">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group mb-2">
+                                    <label>Tanggal/Jam Edukasi</label>
+                                    <input type="datetime-local" name="examination_date" id="eduprovexamination_date" placeholder="" value="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="employee_id">Metode Edukasi</label>
+                                    <div class="row p-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method1" checked="" value="1">
+                                            <label class="form-check-label" for="eduproveducation_method1">
+                                                Leaflet
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method2" checked="" value="2">
+                                            <label class="form-check-label" for="eduproveducation_method2">
+                                                Demonstrasi
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduproveducation_method3" checked="" value="3">
+                                            <label class="form-check-label" for="eduproveducation_method3">
+                                                Wawancara
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="employee_id">Evaluasi/Verifikasi</label>
+                                    <div class="row p-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation1" checked="" value="1">
+                                            <label class="form-check-label" for="eduprovevaluation1">
+                                                Sudah Mengerti
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation2" checked="" value="2">
+                                            <label class="form-check-label" for="eduprovevaluation2">
+                                                Re-Edukasi
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="evaluation" id="eduprovevaluation3" checked="" value="3">
+                                            <label class="form-check-label" for="eduprovevaluation3">
+                                                Re-Demo
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group mb-2">
+                                    <label>Tgl Reedukasi</label>
+                                    <input type="datetime-local" name="reevaluation_date" id="eduprovreevaluation_date" placeholder="" value="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group"><label for="">Re-evaluasi</label>
+                                    <div class="row p-3">
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation1" checked="" value="1">
+                                            <label class="form-check-label" for="eduprovre_evaluation1">
+                                                Leaflet
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation2" checked="" value="2">
+                                            <label class="form-check-label" for="eduprovre_evaluation2">
+                                                Demonstrasi
+                                            </label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="radio" name="re_evaluation" id="eduprovre_evaluation3" checked="" value="3">
+                                            <label class="form-check-label" for="eduprovre_evaluation3">
+                                                Wawancara
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group mb-2"><label>Lama Edukasi</label><input type="text" name="education_duration" id="eduproveducation_duration" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
+                            </div>
+                        </div>
+                    </div><!--./row-->
+                    <div class="pull-right">
+                        <button type="button" id="formEducationIntegrationProvisionBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary" onclick="saveEducationIntegrationProvision()"><?php echo lang('Word.save'); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

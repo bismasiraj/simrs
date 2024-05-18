@@ -11,7 +11,8 @@
     ?>
     <link href="<?php echo base_url(); ?>assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-    <script src="https://cdn.tiny.cloud/1/5g7w8tvjkbh44os7ofcvvekubugvamhvapsc1d240upj366h/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet"> -->
+    <script src="<?php echo base_url(); ?>assets/libs/tinymce/tinymce.min.js"></script>
 
 
 

@@ -1809,12 +1809,14 @@ This Function is used to Add Patient
         $visit['exit_datetime'] = $visit['exit_date'];
         $visit['exit_date'] = $visitDate;
 
-        $examModel = new ExaminationModel();
-        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        // $examModel = new ExaminationModel();
+        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        $exam = [];
 
-        $pdModel = new PasienDiagnosaModel();
-        $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
-        $irModel = new InasisRujukanModel();
+        // $pdModel = new PasienDiagnosaModel();
+        // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        $pasienDiagnosa = [];
+        // $irModel = new InasisRujukanModel();
         // $nmprovider = $irModel->select('nmprovider')->find($pasienDiagnosa[0]['dirujukke']);
         // $pasienDiagnosa['nmprovider'] = $nmprovider['nmprovider'];
 

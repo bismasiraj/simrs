@@ -20,6 +20,38 @@ foreach ($aValue as $key => $value) {
     var aparameter = <?= json_encode($aParameter); ?>;
     var avalueparent = <?= json_encode($aValueParent); ?>;
     var fallRiskScore = Array();
+    var painMonitoring;
+    var painMonitoringDetil;
+    var painIntervensi;
+    var triage;
+    var triageDetil;
+    var apgar;
+    var apgarDetil;
+    var stabilitas;
+    var stabilitasDetail;
+    var tPerawat;
+    var tPerawatAll;
+    var napasAll;
+    var sirkulasiAll;
+    var neuroAll;
+    var integumenAll;
+    var adlAll;
+    var digestAll;
+    var perkemihanAll;
+    var seksualAll;
+    var sleepingAll;
+    var hearingAll;
+    var socialAll;
+    var psikologiAll;
+    var psikologiDetailAll;
+    var dekubitusAll;
+    var giziAll;
+    var giziDetailAll;
+    var educationFormAll;
+    var educationIntegrationAll;
+    var educationIntegrationDetailAll;
+    var educationIntegrationPlanAll = [];
+    var educationIntegrationProvisionAll = [];
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';
         var ke = '%'
@@ -34,13 +66,12 @@ foreach ($aValue as $key => $value) {
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
         $("#aigdexamination_date").val(get_date())
-        getAssessmentKeperawatan()
         // armstanding_ordereditor.init({
         //     selector: '#arpeducation_material'
         // });
-        tinymce.init({
-            selector: '#arpeducation_material'
-        });
+        // tinymce.init({
+        //     selector: '#arpeducation_material'
+        // });
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armbody_id").val() + '" target="_blank">Assessmen Keperawatan Ralan Anak</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ralan Dewasa</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#arpbody_id").val() + '" target="_blank">Assessmen Keperawatan Ranap Dewasa</a></li>')
@@ -497,6 +528,8 @@ foreach ($aValue as $key => $value) {
         getPsikologi(ex.body_id)
         getPerkemihan(ex.body_id)
         getGizi(ex.body_id)
+        getEducationForm(ex.body_id)
+        getEducationIntegration(ex.body_id)
         disableARP()
     }
 
@@ -587,33 +620,7 @@ foreach ($aValue as $key => $value) {
         )
     }
 
-    var painMonitoring;
-    var painMonitoringDetil;
-    var painIntervensi;
-    var triage;
-    var triageDetil;
-    var apgar;
-    var apgarDetil;
-    var stabilitas;
-    var stabilitasDetail;
-    var tPerawat;
-    var tPerawatAll;
-    var napasAll;
-    var sirkulasiAll;
-    var neuroAll;
-    var integumenAll;
-    var adlAll;
-    var digestAll;
-    var perkemihanAll;
-    var seksualAll;
-    var sleepingAll;
-    var hearingAll;
-    var socialAll;
-    var psikologiAll;
-    var psikologiDetailAll;
-    var dekubitusAll;
-    var giziAll;
-    var giziDetailAll;
+
     $("#assessmentigdTab").on("click", function() {
         // getPainMonitoring()
         // getTriage()
@@ -3192,7 +3199,7 @@ foreach ($aValue as $key => $value) {
                                             ?>
                                         .append($('<div class="row">')
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
                                                                                             if ($value['parameter_id'] == '09') {
@@ -3245,7 +3252,7 @@ foreach ($aValue as $key => $value) {
                                             ?>
                                         .append($('<div class="row">')
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
                                                                                         }
@@ -4160,7 +4167,7 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Perkemihan"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES041') {
+                                                                                    if ($value['p_type'] == 'ASES042') {
                                                                                 ?> <?php if ($value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
@@ -4202,193 +4209,192 @@ foreach ($aValue as $key => $value) {
                                                                                         if ($value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>' + $("#armpasien_diagnosa_id").val())
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
-                                        ) <?php
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>'
+                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            ) <?php
                                                                                         } ?> <?php }
                                                                                             if ($value['parameter_id'] == '09') {
                                                                                                 break;
                                                                                             }
                                                                                         }
                                                                                                 ?>
-                        )
-                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES042 ' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
-                                                                                    ?>
-                                        .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
-                                        ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
-                                            ?>
-                                        .append($('<div class="form-group col-md-12">')
-                                            .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
-                                            ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
-                                                ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
-                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
-                                                    ) <?php
-                                                                                                }
-                                                                                            } ?>
-                                        ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
-                                            ?>
-                                        .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
-                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
-                                                                                    ?>
-                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
-                                                                                                                                                        }
-                                                                                                                                                    } ?>
-                                                )
-                                            )
-                                        ) <?php
-                                                                                        }
-                                                                                        if ($value['entry_type'] == 4) {
-                                            ?>
-                                        .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
-                                        ) <?php
-                                                                                        } ?> <?php }
-                                                                                        }
-                                                                                                ?>
-                        )
-                    )
-                    .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
-                        '</div>')
+                                        )
+                                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                                    if ($value['p_type'] == 'ASES042 ' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                                    ?>
+                                                        .append($('<div class="row">')
+                                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                                        ) <?php
+                                                                                                        } else if ($value['entry_type'] == 2) {
+                                                            ?>
+                                                        .append($('<div class="form-group col-md-12">')
+                                                            .append($('<div class="row">')
+                                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                ?>
+                                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                                    ) <?php
+                                                                                                                }
+                                                                                                            } ?>
+                                                        ) <?php
+                                                                                                        } else if ($value['entry_type'] == 3) {
+                                                            ?>
+                                                        .append($('<div class="row">')
+                                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                            .append($('<div class="col-md-8">')
+                                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                    ?>
+                                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                                        }
+                                                                                                                                                                    } ?>
+                                                                )
+                                                            )
+                                                        ) <?php
+                                                                                                        }
+                                                                                                        if ($value['entry_type'] == 4) {
+                                                            ?>
+                                                        .append($('<div class="row">')
+                                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                                        ) <?php
+                                                                                                        } ?> <?php }
+                                                                                                        }
+                                                                                                                ?>
+                                        )
+                                    )
+                        .append('<div class="panel-footer text-end mb-4">' +
+                            '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                            '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                            '</div>')
 
+                    )
                 )
             )
-        )
 
-        <?php foreach ($aValue as $key1 => $value1) {
-            if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
-        ?>
-                $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-
-                    if ($(this).is(":checked")) {
+            <?php foreach ($aValue as $key1 => $value1) {
+                if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
+            ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                    } else {
-                        console.log($(this).val())
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
-                    }
-                });
-        <?php
-            }
-        } ?>
 
-        $("#formPerkemihan" + bodyId).append('<input name="org_unit_code" id="Perkemihansorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+                        if ($(this).is(":checked")) {
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        } else {
+                            console.log($(this).val())
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        }
+                    }); <?php
+                    }
+                } ?>
+
+            $("#formPerkemihan" + bodyId).append('<input name="org_unit_code" id="Perkemihansorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="Perkemihansvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="Perkemihanstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="Perkemihansbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
             .append('<input name="document_id" id="Perkemihansdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
             .append('<input name="no_registration" id="Perkemihansno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="Perkemihansp_type' + bodyId + '" type="hidden" value="ASES042 " class="form-control" />')
-        $("#formPerkemihan" + bodyId).on('submit', (function(e) {
-            let clicked_submit_btn = $(this).closest('form').find(':submit');
-            e.preventDefault();
+
+            $("#formPerkemihan" + bodyId).on('submit', (function(e) {
+                let clicked_submit_btn = $(this).closest('form').find(':submit');
+                e.preventDefault();
+                $.ajax({
+                    url: '<?php echo base_url(); ?>admin/rm/assessment/savePerkemihan',
+                    type: "POST",
+                    data: new FormData(this),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function() {
+                        clicked_submit_btn.button('loading');
+                    },
+                    success: function(data) {
+                        $('#formPerkemihan' + bodyId + ' select').prop("disabled", true)
+                        $('#formPerkemihan' + bodyId + ' input').prop("disabled", true)
+                        clicked_submit_btn.button('reset');
+                    },
+                    error: function(xhr) { // if error occured
+                        alert("Error occured.please try again");
+                        clicked_submit_btn.button('reset');
+                        errorMsg(xhr);
+                    },
+                    complete: function() {
+                        clicked_submit_btn.button('reset');
+                    }
+                });
+            }));
+
+
+            if (flag == 1) {
+
+            } else {
+                var perkemihan = perkemihanAll[index];
+                <?php foreach ($aParameter as $key => $value) {
+                    if ($value['p_type'] == 'ASES042') {
+                        // if ($value['entry_type'] == '3') {
+                        if (in_array($value['entry_type'], [1, 3, 4])) {
+                ?>
+                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value['column_name']); ?>)
+                        <?php
+
+                        } else if ($value['entry_type'] == '2') {
+                        ?>
+                            if (perkemihan.<?= strtolower($value['column_name']); ?> == 1) {
+                                $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                                <?php foreach ($aValue as $key1 => $value1) {
+                                    if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
+                                ?>
+                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value1['value_info']); ?>)
+                                <?php
+                                    }
+                                } ?>
+                            }
+                <?php
+                        }
+                    }
+                } ?>
+            }
+            index++
+            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
+
+        function getPerkemihan(bodyId) {
+            $("#bodyPerkemihan").html("")
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/rm/assessment/savePerkemihan',
+                url: '<?php echo base_url(); ?>admin/rm/assessment/getPerkemihan',
                 type: "POST",
-                data: new FormData(this),
+                data: JSON.stringify({
+                    'visit_id': visit,
+                    'nomor': nomor,
+                    'body_id': bodyId
+                }),
                 dataType: 'json',
                 contentType: false,
                 cache: false,
                 processData: false,
-                beforeSend: function() {
-                    clicked_submit_btn.button('loading');
-                },
                 success: function(data) {
-                    $('#formPerkemihan' + bodyId + ' select').prop("disabled", true)
-                    $('#formPerkemihan' + bodyId + ' input').prop("disabled", true)
-                    clicked_submit_btn.button('reset');
+                    perkemihanAll = data.perkemihan
+                    // stabilitasDetail = data.stabilitasDetail
+
+                    $.each(perkemihanAll, function(key, value) {
+                        if (value.document_id == $("#arpbody_id").val())
+                            addPerkemihan(0, key)
+                    })
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
-                },
-                complete: function() {
-                    clicked_submit_btn.button('reset');
+                error: function() {
+
                 }
             });
-        }));
-
-
-        if (flag == 1) {
-
-        } else {
-            var perkemihan = perkemihanAll[index];
-            <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES042') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
-            ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value['column_name']); ?>)
-                    <?php
-
-                    } else if ($value['entry_type'] == '2') {
-                    ?>
-                        if (perkemihan.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
-                            <?php foreach ($aValue as $key1 => $value1) {
-                                if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
-                            ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value1['value_info']); ?>)
-                            <?php
-                                }
-                            } ?>
-                        }
-            <?php
-                    }
-                }
-            } ?>
         }
-        index++
-        $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
-    }
-
-    function getPerkemihan(bodyId) {
-        $("#bodyPerkemihan").html("")
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/getPerkemihan',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor,
-                'body_id': bodyId
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                perkemihanAll = data.perkemihan
-                // stabilitasDetail = data.stabilitasDetail
-
-                $.each(perkemihanAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addPerkemihan(0, key)
-                })
-            },
-            error: function() {
-
-            }
-        });
-    }
 </script>
 <script type="text/javascript">
     function addPsikologi(flag, index) {
@@ -6131,6 +6137,893 @@ foreach ($aValue as $key => $value) {
                 $.each(giziAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
                         addGizi(0, key)
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    function addEducationForm(flag, index) {
+        var bodyId = '';
+        if (flag == 1) {
+            const date = new Date();
+            bodyId = date.toISOString().substring(0, 23);
+            bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        } else {
+            bodyId = educationFormAll[index].body_id
+        }
+        $("#bodyEducationForm").append(
+            $('<form id="formEducationForm' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            .append(
+                $('<div class="card border border-1 rounded-4 m-4 p-4">')
+                .append($('<div class="card-body">')
+                    .append($('<h4 class="card-title">').html("Education Form"))
+                    .append($('<div class="mb-3 row">')
+                        .append($('<div class="col-xs-12 col-sm-12 col-md-12">') <?php foreach ($aParameter as $key => $value) {
+                                                                                        if ($value['p_type'] == 'GEN0013') {
+                                                                                    ?> <?php if ($value['entry_type'] == 1) {
+                                                                                        ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                            } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                    }
+                                                                                                } ?>
+                                        ) <?php
+                                                                                            } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                            } else if ($value['entry_type'] == 4) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-12"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                        ) <?php
+                                                                                            }
+                                            ?> <?php }
+                                                                                        if ($value['parameter_id'] == '09') {
+                                                                                            break;
+                                                                                        }
+                                                                                    }
+                                                ?>
+                        )
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6" style="display: none">') <?php foreach ($aParameter as $key => $value) {
+                                                                                                            if ($value['p_type'] == 'GEN0013' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                                        ?> <?php if ($value['entry_type'] == 1) {
+                                                                                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                                                } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                                        }
+                                                                                                                    } ?>
+                                        ) <?php
+                                                                                                                } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                                                }
+                                            ?> <?php }
+                                                                                                        }
+                                                ?>
+                        )
+                    )
+                    .append('<div class="panel-footer text-end mb-4">' +
+                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '</div>')
+
+                )
+            )
+        )
+
+        <?php foreach ($aParameter as $key => $value) {
+            if ($value['p_type'] == 'GEN0013') {
+        ?> <?php if ($value['entry_type'] == 4) {
+            ?> tinymce.init({
+                        selector: "#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId,
+                        height: 300,
+                        plugins: [
+                            "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                            "save table contextmenu directionality emoticons template paste textcolor",
+                        ],
+                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                        style_formats: [{
+                                title: "Bold text",
+                                inline: "b"
+                            },
+                            {
+                                title: "Red text",
+                                inline: "span",
+                                styles: {
+                                    color: "#ff0000"
+                                }
+                            },
+                            {
+                                title: "Red header",
+                                block: "h1",
+                                styles: {
+                                    color: "#ff0000"
+                                }
+                            },
+                            {
+                                title: "Example 1",
+                                inline: "span",
+                                classes: "example1"
+                            },
+                            {
+                                title: "Example 2",
+                                inline: "span",
+                                classes: "example2"
+                            },
+                            {
+                                title: "Table styles"
+                            },
+                            {
+                                title: "Table row 1",
+                                selector: "tr",
+                                classes: "tablerow1"
+                            },
+                        ],
+                    });
+        <?php }
+            }
+        } ?>
+
+        <?php foreach ($aValue as $key1 => $value1) {
+            if ($value1['p_type'] == 'GEN0013 ' && $value1['value_score'] == '99') {
+        ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+
+                    if ($(this).is(":checked")) {
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    } else {
+                        console.log($(this).val())
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                    }
+                });
+        <?php
+            }
+        } ?>
+
+        $("#formEducationForm" + bodyId).append('<input name="org_unit_code" id="EducationFormsorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="EducationFormsvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="EducationFormstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="EducationFormsbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="EducationFormsdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="no_registration" id="EducationFormsno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="EducationFormsp_type' + bodyId + '" type="hidden" value="GEN0013 " class="form-control" />')
+        $("#formEducationForm" + bodyId).on('submit', (function(e) {
+            let clicked_submit_btn = $(this).closest('form').find(':submit');
+            e.preventDefault();
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveEducationForm',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+                    $('#formEducationForm' + bodyId + ' select').prop("disabled", true)
+                    $('#formEducationForm' + bodyId + ' input').prop("disabled", true)
+                    clicked_submit_btn.button('reset');
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    clicked_submit_btn.button('reset');
+                    errorMsg(xhr);
+                },
+                complete: function() {
+                    clicked_submit_btn.button('reset');
+                }
+            });
+        }));
+
+
+        if (flag == 1) {
+
+        } else {
+            var EducationForm = educationFormAll[index];
+            <?php foreach ($aParameter as $key => $value) {
+                if ($value['p_type'] == 'GEN0013') {
+                    // if ($value['entry_type'] == '3') {
+                    if (in_array($value['entry_type'], [1, 3, 4])) {
+            ?>
+                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower($value['column_name']); ?>)
+                    <?php
+
+                    } else if ($value['entry_type'] == '2') {
+                    ?>
+                        if (EducationForm.<?= strtolower($value['column_name']); ?> == 1) {
+                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                            <?php foreach ($aValue as $key1 => $value1) {
+                                if ($value1['p_type'] == 'GEN0013 ' && $value1['value_score'] == '99') {
+                            ?>
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(EducationForm.<?= strtolower($value1['value_info']); ?>)
+                            <?php
+                                }
+                            } ?>
+                        }
+            <?php
+                    }
+                }
+            } ?>
+        }
+        index++
+        $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function getEducationForm(bodyId) {
+        $("#bodyEducationForm").html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationForm',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                educationFormAll = data.educationForm
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(educationFormAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val())
+                        addEducationForm(0, key)
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function addEducationIntegration(flag, index) {
+        var bodyId = '';
+        if (flag == 1) {
+            const date = new Date();
+            bodyId = date.toISOString().substring(0, 23);
+            bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        } else {
+            bodyId = educationIntegrationAll[index].body_id
+        }
+        <?php
+        $ptype = 'ASES049';
+        ?>
+        $("#bodyEducationIntegration").append(
+            $('<form id="formEducationIntegration' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            .append(
+                $('<div class="card border border-1 rounded-4 m-4 p-4">')
+                .append($('<div class="card-body">')
+                    .append($('<h4 class="card-title">').html("EducationIntegration"))
+                    .append($('<div class="mb-3 row">')
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                    if ($value['p_type'] == $ptype) {
+                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                }
+                                                                                            } ?>
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="049<?= $value['parameter_id'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 4) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>'
+                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            )) <?php
+                                                                                        } else if ($value['entry_type'] == 5) {
+                                                                                        } else if ($value['entry_type'] == 6) {
+                                                ?>
+                                        .append($('<div class="row">')
+                                            .append($('<div class="col-md-4">')
+                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                            )
+                                            .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                ?>
+                                                        .append($('<div class="form-check mb-3">' +
+                                                            '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="checkbox" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
+                                                            '<label class="form-check-label" for="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '">' +
+                                                            '<?= $value1['value_desc']; ?>' +
+                                                            '</label>' +
+                                                            '</div>')) <?php
+                                                                                                }
+                                                                                            } ?>
+                                            )
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 7) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append($('<div class="col-md-4">')
+                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                            )
+                                            .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                ?>
+                                                        .append($('<div class="form-check mb-3">' +
+                                                            '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="radio" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
+                                                            '<label class="form-check-label" for="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '">' +
+                                                            '<?= $value1['value_desc']; ?>' +
+                                                            '</label>' +
+                                                            '</div>')) <?php
+                                                                                                }
+                                                                                            } ?>
+                                            )
+                                        ) <?php
+                                                                                        } ?> <?php }
+                                                                                            if ($value['parameter_id'] == '09') {
+                                                                                                break;
+                                                                                            }
+                                                                                        }
+                                                                                                ?>
+                        )
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                    if ($value['p_type'] == $ptype  && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                }
+                                                                                            } ?>
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 4) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>'
+                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            )) <?php
+                                                                                        } else if ($value['entry_type'] == 5) {
+                                                                                        } else if ($value['entry_type'] == 6) {
+                                                ?>
+                                        .append($('<div class="row">')
+                                            .append($('<div class="col-md-4">')
+                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                            )
+                                            .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                ?>
+                                                        .append($('<div class="form-check mb-3">' +
+                                                            '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="checkbox" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
+                                                            '<label class="form-check-label" for="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '">' +
+                                                            '<?= $value1['value_desc']; ?>' +
+                                                            '</label>' +
+                                                            '</div>')) <?php
+                                                                                                }
+                                                                                            } ?>
+                                            )
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 7) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append($('<div class="col-md-4">')
+                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                            )
+                                            .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                ?>
+                                                        .append($('<div class="form-check mb-3">' +
+                                                            '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="radio" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">' +
+                                                            '<label class="form-check-label" for="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '">' +
+                                                            '<?= $value1['value_desc']; ?>' +
+                                                            '</label>' +
+                                                            '</div>')) <?php
+                                                                                                }
+                                                                                            } ?>
+                                            )
+                                        ) <?php
+                                                                                        } ?> <?php }
+                                                                                        }
+                                                                                                ?>
+                        )
+                        .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
+                            .append($('<h5>Bahasa Sehari-hari</h5>'))
+                            .append($('<table id="educationIntegrationLanguage' + bodyId + '" class="table table-striped">')
+                                .append($('<thead>')
+                                    .append($('<tr>')
+                                        .append('<th width="50">Bahasa</th><th width="50">Status</th>')
+                                    )
+                                )
+                                .append($('<tbody id="educationIntegrationLanguageBody' + bodyId + '">'))
+                            )
+                            .append($('<div class="col-md-12">' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
+                                '</div>)'))
+                        )
+                        .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
+                            .append($('<h5>Perencanaan Edukasi</h5>'))
+                            .append($('<table id="educationIntegrationLanguagePlan' + bodyId + '" class="table table-striped">')
+                                .append($('<thead>')
+                                    .append($('<tr>')
+                                        .append('<th width="50">Kebutuhan Edukasi</th>')
+                                        .append('<th width="50">Pemberian Edukasi</th>')
+                                        .append('<th width="50">Tanggal/Jam Edukasi</th>')
+                                        .append('<th width="50">Sasaran Edukasi</th>')
+                                        .append('<th width="50">Metode Edukasi</th>')
+                                        .append('<th width="50">Metode Evaluasi</th>')
+                                    )
+                                )
+                                .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
+                            )
+                            .append($('<div class="col-md-12">' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '</div>)'))
+                        )
+                        .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
+                            .append($('<h5>Daftar Pemberian Edukasi</h5>'))
+                            .append($('<table id="educationIntegrationLanguageProvision' + bodyId + '" class="table table-striped">')
+                                .append($('<thead>')
+                                    .append($('<tr>')
+                                        .append('<th width="50">Judul Edukasi</th>')
+                                        .append('<th width="50">Tanggal/jam Edukasi</th>')
+                                        .append('<th width="50">Tingkat Pemahaman Awal</th>')
+                                        .append('<th width="50">Assessmen Ulang</th>')
+                                        .append('<th width="50">Evaluasi/Verifikasi</th>')
+                                        .append('<th width="50">Staff Name</th>')
+                                    )
+                                )
+                                .append($('<tbody id="educationIntegrationLanguageProvisionBody' + bodyId + '">'))
+                            )
+                            .append($('<div class="col-md-12">' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '</div>)'))
+                        )
+                        .append('<div class="panel-footer text-end mb-4">' +
+                            '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                            '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                            '</div>')
+
+                    )
+                )
+            )
+        )
+
+        <?php foreach ($aValue as $key1 => $value1) {
+            if ($value1['p_type'] == $ptype && $value1['value_score'] == '99') {
+        ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+
+                    if ($(this).is(":checked")) {
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    } else {
+                        console.log($(this).val())
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                    }
+                });
+        <?php
+            }
+        } ?>
+
+        $("#formEducationIntegration" + bodyId).append('<input name="org_unit_code" id="EducationIntegrationsorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="educationintegraitonvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="educationintegraitontrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="educationintegraitonbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="educationintegraitondocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="no_registration" id="educationintegraitonno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="educationintegraitonp_type' + bodyId + '" type="hidden" value="<?= $ptype; ?>" class="form-control" />')
+            .append('<input name="examination_date" id="educationintegraitonexamination_date' + bodyId + '" type="hidden" value="' + get_date() + ' " class="form-control" />')
+
+        $("#formEducationIntegration" + bodyId).on('submit', (function(e) {
+            let clicked_submit_btn = $(this).closest('form').find(':submit');
+            e.preventDefault();
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveEducationIntegration',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+                    $('#formEducationIntegration' + bodyId + ' select').prop("disabled", true)
+                    $('#formEducationIntegration' + bodyId + ' input').prop("disabled", true)
+                    clicked_submit_btn.button('reset');
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    clicked_submit_btn.button('reset');
+                    errorMsg(xhr);
+                },
+                complete: function() {
+                    clicked_submit_btn.button('reset');
+                }
+            });
+        }));
+
+
+        if (flag == 1) {
+
+        } else {
+            var eduInt = educationIntegrationAll[index];
+
+            $.each(eduInt, function(key, value) {
+                $("#educationintegraiton".key).val(value)
+            })
+            $.each(educationIntegrationDetailAll, function(key, value) {
+                if (value.body_id == eduInt.body_id) {
+                    if (value.p_type == 'ASES049') {
+                        <?php foreach ($aParameter as $key => $value) {
+                            if ($value['p_type'] == $ptype) {
+                                if ($value['entry_type'] == 3) {
+                        ?>
+                                    if (value.parameter_id == '<?= $value['parameter_id']; ?>')
+                                        $("#" + value.p_type + value.parameter_id + bodyId).val(value.value_score)
+                                    <?php
+                                }
+                                if ($value['entry_type'] == 6) {
+                                    foreach ($aValue as $key1 => $value1) {
+                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                    ?>
+                                            if (value.parameter_id == '<?= $value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
+                                                $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true)
+                                        <?php
+                                        }
+                                    }
+                                }
+                                if ($value['entry_type'] == 7) {
+                                    foreach ($aValue as $key1 => $value1) {
+                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                        ?>
+                                            if (value.parameter_id == '<?= $value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
+                                                $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true)
+                        <?php
+                                        }
+                                    }
+                                }
+                            }
+                        } ?>
+                    } else if (value.p_type == 'GEN0014') {
+                        console.log(value.value_id)
+                        addEducationIntegrationLanguage(bodyId, value.parameter_id, value.value_desc)
+                    }
+                }
+            })
+            $.each(educationIntegrationPlanAll, function(key, value) {
+                if (value.body_id == eduInt.body_id) {
+                    addRowEducationIntegrationPlan(value)
+                }
+            })
+            $.each(educationIntegrationProvisionAll, function(key, value) {
+                if (value.body_id == eduInt.body_id) {
+                    addRowEducationIntegrationProvision(value)
+                }
+            })
+        }
+        index++
+        $("#addEducationIntegrationButton").html('<a onclick="addEducationIntegration(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function addEducationIntegrationLanguage(bodyId, language, isactive) {
+        var rowcount = $("#educationIntegrationLanguageBody tr").length + 1;
+        $("#educationIntegrationLanguageBody" + bodyId).append($('<tr>')
+            .append($('<td>')
+                .append($('<select id="GEN0014Bahasa' + bodyId + rowcount + '" name="GEN0014Bahasa[]" class="form-control">') <?php foreach ($aParameter as $key => $value) {
+                                                                                                                                    if ($value['p_type'] == 'GEN0014')
+                                                                                                                                        echo '.append(\'<option value="' . $value['parameter_id'] . '">' . $value['parameter_desc'] . '</option>\')';
+                                                                                                                                } ?>)
+            )
+            .append($('<td>')
+                .append($('<select id="GEN0014Aktif' + bodyId + rowcount + '" name="GEN0014Aktif[]" class="form-control">')
+                    .append($('<option value="1">Aktif</option>'))
+                    .append($('<option value="0">Pasif</option>'))
+                )
+            )
+        )
+        $("#GEN0014Bahasa" + bodyId + rowcount).val(language)
+        $("#GEN0014Aktif" + bodyId + rowcount).val(isactive)
+    }
+
+    function addEducationIntegrationPlan(bodyId, flag) {
+        $("#addEducationListPlan").modal('show')
+        $("#eduplanbody_id").val(bodyId)
+        $("#eduplanp_type").val('<?= $ptype; ?>')
+        var lng = $("#educationIntegrationLanguagePlanBody" + bodyId + " tr").length + 1
+        $("#eduplanplan_ke").val(lng)
+    }
+
+    function addRowEducationIntegrationPlan(value) {
+        var edutreatment_type = [
+            '',
+            'Pengertian penyakit',
+            'Gizi',
+            'Farmasi',
+            'Rehabilitasi Medik',
+            'Nyeri dan Manajemen Nyeri',
+            'Pencegahan dan Pengendalian Infeksi',
+            'Pelayanan Saat Pelayanan di RS'
+        ]
+        var edueducation_provision = [
+            '', 'Perawat', 'Dokter', 'Ahli Gizi', 'Terapis', 'Bidan', 'Lain-lain'
+        ]
+        var edueducation_target = [
+            '', 'Pasien', 'Dokter', 'Ahli Gizi'
+        ]
+        var edueducation_method = [
+            '', 'Leaflet', 'Demonstrasi', 'Wawancara'
+        ]
+        $("#educationIntegrationLanguagePlanBody" + value.body_id)
+            .append($('<tr>')
+                .append($('<td>').html(edutreatment_type[value.treatment_type]))
+                .append($('<td>').html(edueducation_provision[value.education_provision]))
+                .append($('<td>').html(value.examination_date))
+                .append($('<td>').html(edueducation_target[value.education_target]))
+                .append($('<td>').html(edueducation_method[value.education_method]))
+                .append($('<td>').html(value.education_evaluation))
+            )
+    }
+
+    function addEducationIntegrationProvision(bodyId, flag) {
+        $("#addEducationListProvision").modal('show')
+        $("#eduprovbody_id").val(bodyId)
+        $("#eduprovp_type").val('<?= $ptype; ?>')
+        var lng = $("#educationIntegrationLanguageProvisionBody" + bodyId + " tr").length + 1
+        $("#eduprovprovision_ke").val(lng)
+    }
+
+    function addRowEducationIntegrationProvision(value) {
+        var edutreatment_type = [
+            '',
+            'Pengertian penyakit',
+            'Gizi',
+            'Farmasi',
+            'Rehabilitasi Medik',
+            'Nyeri dan Manajemen Nyeri',
+            'Pencegahan dan Pengendalian Infeksi',
+            'Pelayanan Saat Pelayanan di RS'
+        ]
+        var edueducation_provision = [
+            '', 'Perawat', 'Dokter', 'Ahli Gizi', 'Terapis', 'Bidan', 'Lain-lain'
+        ]
+        var edueducation_target = [
+            '', 'Pasien', 'Dokter', 'Ahli Gizi'
+        ]
+        var edueducation_method = [
+            '', 'Leaflet', 'Demonstrasi', 'Wawancara'
+        ]
+        var eduunderstanding_level = [
+            '', 'Sudah Mengerti', 'Edukasi Ulang', 'Hal Baru'
+        ]
+        var eduevaluation = [
+            '', 'Sudah Mengerti', 'Re-Edukasi', 'Re-Demo'
+        ]
+
+        if (value.re_assessment == '1') {
+            var reas = 'Ya'
+        } else {
+            var reas = 'Tidak'
+        }
+        $("#educationIntegrationLanguageProvisionBody" + value.body_id)
+            .append($('<tr>')
+                .append($('<td>').html(edutreatment_type[value.treatment_type]))
+                .append($('<td>').html(value.examination_date))
+                .append($('<td>').html(eduunderstanding_level[value.understanding_level]))
+                .append($('<td>').html(reas))
+                .append($('<td>').html(eduevaluation[value.evaluation]))
+                .append($('<td>').html(value.modified_by))
+            )
+    }
+
+    function saveEducationIntegrationPlan() {
+        let clicked_submit_btn = $("#formEducationIntegrationPlanBtn");
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/saveEducationIntegrationPlan',
+            type: "POST",
+            data: new FormData(document.getElementById("formEducationIntegrationPlan")),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+            },
+            success: function(data) {
+                $("#addEducationListPlan").modal('hide')
+                educationIntegrationPlanAll.push(data)
+
+                $("#educationIntegrationLanguagePlanBody" + $("#eduplanbody_id").val()).html("")
+                $.each(educationIntegrationPlanAll, function(key, value) {
+                    addRowEducationIntegrationPlan(value)
+                })
+
+                clicked_submit_btn.button('reset');
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_submit_btn.button('reset');
+                errorMsg(xhr);
+            },
+            complete: function() {
+                clicked_submit_btn.button('reset');
+            }
+        });
+    }
+
+    function saveEducationIntegrationProvision() {
+        let clicked_submit_btn = $("#formEducationIntegrationProvisionBtn");
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/saveEducationIntegrationProvision',
+            type: "POST",
+            data: new FormData(document.getElementById("formEducationIntegrationProvision")),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                clicked_submit_btn.button('loading');
+            },
+            success: function(data) {
+                $("#addEducationListProvision").modal('hide')
+                educationIntegrationProvisionAll.push(data)
+
+                $("#educationIntegrationLanguageProvisionBody" + $("#eduprovisionbody_id").val()).html("")
+                $.each(educationIntegrationProvisionAll, function(key, value) {
+                    addRowEducationIntegrationProvision(value)
+                })
+
+                clicked_submit_btn.button('reset');
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                clicked_submit_btn.button('reset');
+                errorMsg(xhr);
+            },
+            complete: function() {
+                clicked_submit_btn.button('reset');
+            }
+        });
+    }
+
+    function getEducationIntegration(bodyId) {
+        $("#bodyEducationIntegration").html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationIntegration',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                educationIntegrationAll = data.educationIntegration
+                educationIntegrationDetailAll = data.educationIntegrationDetail
+                educationIntegrationPlanAll = data.educationPlan
+                educationIntegrationProvisionAll = data.educationProvision
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(educationIntegrationAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val())
+                        addEducationIntegration(0, key)
                 })
             },
             error: function() {
