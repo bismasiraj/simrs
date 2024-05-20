@@ -25,11 +25,16 @@ use App\Models\Assessment\NutritionModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
+use App\Models\Assessment\ReproductionModel;
 use App\Models\Assessment\RespirationModel;
+use App\Models\Assessment\SleepingModel;
+use App\Models\Assessment\SocialModel;
+use App\Models\Assessment\SocialonModel;
 use App\Models\Assessment\SpiritualDetailModel;
 use App\Models\Assessment\SpiritualModel;
 use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\Assessment\TriaseDetilModel;
+use App\Models\Assessment\VisionHearingModel;
 use App\Models\EducationModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
@@ -1623,18 +1628,18 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $model->save($data);
 
         $db = db_connect();
-        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'ASES035' and parameter_id in ('01','02','03')")->getResultArray());
+        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GIZI001' and value_score = '1'")->getResultArray());
         $spiritual = new SpiritualDetailModel();
         $db->query("delete from assessment_spiritual_detail where body_id = '$body_id' and visit_id = '$visit_id'");
         foreach ($select as $key => $value) {
-            if (isset(${$value['value_id']})) {
+            if (isset(${$value['p_type'] . $value['parameter_id']})) {
 
                 $data = [
                     'org_unit_code' => $org_unit_code,
                     'visit_id' => $visit_id,
                     'trans_id' => $trans_id,
                     'body_id' => $body_id,
-                    'p_type' => $p_type,
+                    'p_type' => $value['p_type'],
                     'parameter_id' => $value['parameter_id'],
                     'value_id' => $value['value_id'],
                     'value_score' => $value['value_score'],
@@ -1990,6 +1995,198 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'educationIntegrationDetail' => $eduDetail,
             'educationPlan' => $eduPlan,
             'educationProvision' => $eduProvision
+        ]);
+    }
+    public function saveSeksual()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new ReproductionModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getSeksual()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new ReproductionModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'seksual' => $select
+        ]);
+    }
+    public function saveSocial()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new SocialModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getSocial()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new SocialModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'social' => $select
+        ]);
+    }
+    public function saveHearing()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new VisionHearingModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getHearing()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new VisionHearingModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'hearing' => $select
+        ]);
+    }
+    public function saveSleeping()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new SleepingModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getSleeping()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new SleepingModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'sleeping' => $select
         ]);
     }
     public function saveExaminationInfo()

@@ -534,9 +534,13 @@ foreach ($aValue as $key => $value) {
         getDekubitus(ex.body_id)
         getPsikologi(ex.body_id)
         getPerkemihan(ex.body_id)
+        getSeksual(ex.body_id)
+        getSocial(ex.body_id)
         getGizi(ex.body_id)
         getEducationForm(ex.body_id)
         getEducationIntegration(ex.body_id)
+        getHearing(ex.body_id)
+        getSleeping(ex.body_id)
         disableARP()
     }
 
@@ -696,8 +700,8 @@ foreach ($aValue as $key => $value) {
                     '</table>' +
                     '</div>' +
                     '<div class="panel-footer text-end mb-4">' +
-                    '<button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                    '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>' +
+                    '<button type="submit" id="formPainMonitoringSave' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                    '<button style="margin-right: 10px" type="button" id="formPainMonitoringEdit' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -750,11 +754,21 @@ foreach ($aValue as $key => $value) {
                         }
                     });
                 }));
-
+                $("#formPainMonitoringEdit" + bodyId).on("click", function() {
+                    $("#formPainMonitoringSaveBtn" + bodyId).show()
+                    $("#formPainMonitoringEdit" + bodyId).hide()
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
+                })
 
                 if (flag == 1) {
-
+                    $("#formPainMonitoringSaveBtn" + bodyId).show()
+                    $("#formPainMonitoringEditBtn" + bodyId).hide()
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
                 } else {
+                    $("#formPainMonitoringSaveBtn" + bodyId).hide()
+                    $("#formPainMonitoringEditBtn" + bodyId).show()
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
+
                     $.each(painMonitoringDetil, function(key, value) {
 
                         if (value.p_type == 'ASES021' && value.body_id == bodyId && value.parameter_id == '01') {
@@ -1707,13 +1721,20 @@ foreach ($aValue as $key => $value) {
             '</table>' +
             '</div>' +
             '<div class="panel-footer text-end mb-4">' +
-            '<button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-            '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+            '<button type="submit" id="formStabilitasSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+            '<button style="margin-right: 10px" type="button" id="formStabilitasEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
             '</div>' +
             '</div>' +
             '</div>' +
             '</form>'
         )
+
+
+        $("#formStabilitasEditBtn" + bodyId).on("click", function() {
+            $("#formStabilitasSaveBtn" + bodyId).show()
+            $("#formStabilitasEditBtn" + bodyId).hide()
+            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
         $("#formStabilitas" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
@@ -1760,8 +1781,14 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formStabilitasSaveBtn" + bodyId).show()
+            $("#formStabilitasEditBtn" + bodyId).hide()
+            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
+            $("#formStabilitasSaveBtn" + bodyId).hide()
+            $("#formStabilitasEditBtn" + bodyId).show()
+            $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", true)
+
             $.each(stabilitasDetail, function(key, value) {
                 if (value.body_id == bodyId) {
                     $('#stabilitas' + bodyId).val(value.value_id)
@@ -2538,13 +2565,28 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formPernapasanSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formPernapasanEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
             )
         )
+
+        $("#formPernapasanEditBtn" + bodyId).on("click", function() {
+            $("#formPernapasanSaveBtn" + bodyId).show()
+            $("#formPernapasanEditBtn" + bodyId).hide()
+            $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
+        $("#ASES04105" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#ASES04108" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#ASES04108" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
 
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES041' && $value1['value_score'] == '99') {
@@ -2600,7 +2642,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formPernapasanSaveBtn" + bodyId).show()
+            $("#formPernapasanEditBtn" + bodyId).hide()
+            $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var napas = napasAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -2628,16 +2672,9 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
-
-
-
-            // $.each(stabilitasDetail, function(key, value) {
-            //     if (value.body_id == bodyId) {
-            //         $('#stabilitas' + bodyId).val(value.value_id)
-            //         $('#stabilitas' + bodyId).prop("disabled", true)
-            //     }
-
-            // })
+            $("#formPernapasanSaveBtn" + bodyId).hide()
+            $("#formPernapasanEditBtn" + bodyId).show()
+            $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addPernapasanButton").html('<a onclick="addPernapasan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -2783,8 +2820,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formSirkulasiSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formSirkulasiEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -2807,6 +2844,17 @@ foreach ($aValue as $key => $value) {
         <?php
             }
         } ?>
+
+        $("#formSirkulasiEditBtn" + bodyId).on("click", function() {
+            $("#formSirkulasiSaveBtn" + bodyId).show()
+            $("#formSirkulasiEditBtn" + bodyId).hide()
+            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
+
+        $("#ASES03906" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+
 
         $("#formSirkulasi" + bodyId).append('<input name="org_unit_code" id="sirkulasiorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="sirkulasivisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -2833,6 +2881,9 @@ foreach ($aValue as $key => $value) {
                     $('#formSirkulasi' + bodyId + ' select').prop("disabled", true)
                     $('#formSirkulasi' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
+                    $("#formSirkulasiSaveBtn" + bodyId).hide()
+                    $("#formSirkulasiEditBtn" + bodyId).show()
+                    $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disable", true)
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
@@ -2847,8 +2898,14 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
+            $("#formSirkulasiSaveBtn" + bodyId).show()
+            $("#formSirkulasiEditBtn" + bodyId).hide()
+            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
+            $("#formSirkulasiSaveBtn" + bodyId).hide()
+            $("#formSirkulasiEditBtn" + bodyId).show()
+            $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
             var sirkulasi = sirkulasiAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES039') {
@@ -3019,8 +3076,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formNeurosensorisSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formNeurosensorisEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -3065,9 +3122,10 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formNeurosensoris' + bodyId + ' select').prop("disabled", true)
-                    $('#formNeurosensoris' + bodyId + ' input').prop("disabled", true)
+                    $('#formNeurosensoris' + bodyId + ' select').find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
+                    $("#formNeurosensorisSaveBtn" + bodyId).hide()
+                    $("#formNeurosensorisEditBtn" + bodyId).show()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
@@ -3080,10 +3138,20 @@ foreach ($aValue as $key => $value) {
             });
         }));
 
-
+        $("#ASES03803" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#ASES03805" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
         if (flag == 1) {
-
+            $("#formNeurosensorisSaveBtn" + bodyId).show()
+            $("#formNeurosensorisEditBtn" + bodyId).hide()
         } else {
+
+            $("#formNeurosensorisSaveBtn" + bodyId).show()
+            $("#formNeurosensorisEditBtn" + bodyId).hide()
+
             var neuro = neuroAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES038') {
@@ -3110,6 +3178,7 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
+            $('#formNeurosensoris' + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addNeurosensorisButton").html('<a onclick="addNeurosensoris(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -3267,8 +3336,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formIntegumenSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formIntegumenEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -3314,9 +3383,10 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formIntegumen' + bodyId + ' select').prop("disabled", true)
-                    $('#formIntegumen' + bodyId + ' input').prop("disabled", true)
+                    $('#formIntegumen' + bodyId).find("input,select,textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
+                    $("#formIntegumenSaveBtn" + bodyId).hide()
+                    $("formIntegumenEditBtn" + bodyId).show()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
@@ -3329,9 +3399,17 @@ foreach ($aValue as $key => $value) {
             });
         }));
 
-
+        $("#ASES03606" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#formIntegumenEditBtn" + bodyId).on("click", function() {
+            $("#formIntegumenSaveBtn" + bodyId).show()
+            $("#formIntegumenEditBtn" + bodyId).hide()
+            $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
         if (flag == 1) {
-
+            $("#formIntegumenSaveBtn" + bodyId).show()
+            $("formIntegumenEditBtn" + bodyId).hide()
         } else {
             var integumen = integumenAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -3359,6 +3437,9 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
+            $("#formIntegumenSaveBtn" + bodyId).hide()
+            $("formIntegumenEditBtn" + bodyId).show()
+            $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -3597,7 +3678,8 @@ foreach ($aValue as $key => $value) {
         })
 
         if (flag == 1) {
-
+            $("#formADLSave" + bodyId).show()
+            $("#formADLEdit" + bodyId).hide()
         } else {
             $("#formADLSave" + bodyId).hide()
             $("#formADLEdit" + bodyId).show()
@@ -3786,8 +3868,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formDekubitusSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formDekubitusEditBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary" style="display: none"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -3834,6 +3916,9 @@ foreach ($aValue as $key => $value) {
                     $('#formDekubitus' + bodyId + ' select').prop("disabled", true)
                     $('#formDekubitus' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
+
+                    $("#formDekubitusSaveBtn" + bodyId).hide()
+                    $("#formDekubitusEditBtn" + bodyId).show()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
@@ -3847,8 +3932,15 @@ foreach ($aValue as $key => $value) {
         }));
 
 
-        if (flag == 1) {
+        $("#formDekubitusEditBtn" + bodyId).on("click", function() {
+            $("#formDekubitusSaveBtn" + bodyId).show()
+            $("#formDekubitusEditBtn" + bodyId).hide()
+            $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
 
+        if (flag == 1) {
+            $("#formDekubitusSaveBtn" + bodyId).show()
+            $("#formDekubitusEditBtn" + bodyId).hide()
         } else {
             var digest = dekubitusAll[index];
             console.log(digest)
@@ -3877,16 +3969,12 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
+            $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", true)
+            $("#formDekubitusSaveBtn" + bodyId).hide()
+            $("#formDekubitusEditBtn" + bodyId).show()
 
 
 
-            // $.each(stabilitasDetail, function(key, value) {
-            //     if (value.body_id == bodyId) {
-            //         $('#stabilitas' + bodyId).val(value.value_id)
-            //         $('#stabilitas' + bodyId).prop("disabled", true)
-            //     }
-
-            // })
         }
         index++
         $("#addDekubitusButton").html('<a onclick="addDekubitus(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -4031,14 +4119,18 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formPencernaanSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formPencernaanEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
             )
         )
-
+        $("#formPencernaanEditBtn").on("click", function() {
+            $("#formPencernaan" + body).find("input, textarea, select").prop("disabled", false)
+            $("#formPencernaanSaveBtn" + bodyId).show()
+            $("#formPencernaanEditBtn" + bodyId).hide()
+        })
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES040' && $value1['value_score'] == '99') {
         ?>
@@ -4076,8 +4168,9 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formPencernaan' + bodyId + ' select').prop("disabled", true)
-                    $('#formPencernaan' + bodyId + ' input').prop("disabled", true)
+                    $("#formPencernaan" + body).find("input, textarea, select").prop("disabled", true)
+                    $("#formPencernaanSaveBtn" + bodyId).hide()
+                    $("#formPencernaanEditBtn" + bodyId).show()
                     clicked_submit_btn.button('reset');
                 },
                 error: function(xhr) { // if error occured
@@ -4093,7 +4186,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formPencernaanSaveBtn" + bodyId).show()
+            $("#formPencernaanEditBtn" + bodyId).hide()
         } else {
             var digest = digestAll[index];
             console.log(digest)
@@ -4122,16 +4217,9 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
-
-
-
-            // $.each(stabilitasDetail, function(key, value) {
-            //     if (value.body_id == bodyId) {
-            //         $('#stabilitas' + bodyId).val(value.value_id)
-            //         $('#stabilitas' + bodyId).prop("disabled", true)
-            //     }
-
-            // })
+            $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
+            $("#formPencernaanSaveBtn" + bodyId).hide()
+            $("#formPencernaanEditBtn" + bodyId).show()
         }
         index++
         $("#addPencernaanButton").html('<a onclick="addPencernaan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -4288,13 +4376,15 @@ foreach ($aValue as $key => $value) {
                                         )
                                     )
                         .append('<div class="panel-footer text-end mb-4">' +
-                            '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                            '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                            '<button type="submit" id="formPerkemihanSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                            '<button style="margin-right: 10px" type="button" id="formPerkemihanEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                             '</div>')
 
                     )
                 )
             )
+
+
 
             <?php foreach ($aValue as $key1 => $value1) {
                 if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
@@ -4319,6 +4409,12 @@ foreach ($aValue as $key => $value) {
             .append('<input name="no_registration" id="Perkemihansno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="Perkemihansp_type' + bodyId + '" type="hidden" value="ASES042 " class="form-control" />')
 
+            $("#formPerkemihanEditBtn" + bodyId).on("click", function() {
+                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
+                $("#formPerkemihanSaveBtn" + bodyId).show()
+                $("#formPerkemihanEditBtn" + bodyId).hide()
+            })
+
             $("#formPerkemihan" + bodyId).on('submit', (function(e) {
                 let clicked_submit_btn = $(this).closest('form').find(':submit');
                 e.preventDefault();
@@ -4334,8 +4430,9 @@ foreach ($aValue as $key => $value) {
                         clicked_submit_btn.button('loading');
                     },
                     success: function(data) {
-                        $('#formPerkemihan' + bodyId + ' select').prop("disabled", true)
-                        $('#formPerkemihan' + bodyId + ' input').prop("disabled", true)
+                        $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
+                        $("#formPerkemihanSaveBtn" + bodyId).hide()
+                        $("#formPerkemihanEditBtn" + bodyId).show()
                         clicked_submit_btn.button('reset');
                     },
                     error: function(xhr) { // if error occured
@@ -4351,6 +4448,9 @@ foreach ($aValue as $key => $value) {
 
 
             if (flag == 1) {
+                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
+                $("#formPerkemihanSaveBtn" + bodyId).show()
+                $("#formPerkemihanEditBtn" + bodyId).hide()
 
             } else {
                 var perkemihan = perkemihanAll[index];
@@ -4379,6 +4479,9 @@ foreach ($aValue as $key => $value) {
                         }
                     }
                 } ?>
+                $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
+                $("#formPerkemihanSaveBtn" + bodyId).hide()
+                $("#formPerkemihanEditBtn" + bodyId).show()
             }
             index++
             $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -4539,13 +4642,20 @@ foreach ($aValue as $key => $value) {
 
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formPsikologiSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formPsikologiEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
             )
         )
+
+
+        $("#formPsikologiEditBtn" + bodyId).on("click", function() {
+            $("#formPsikologiSaveBtn" + bodyId).show()
+            $("#formPsikologiEditBtn" + bodyId).hide()
+            $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
 
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES035' && $value1['value_score'] == '99') {
@@ -4584,8 +4694,10 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formPsikologi' + bodyId + ' select').prop("disabled", true)
-                    $('#formPsikologi' + bodyId + ' input').prop("disabled", true)
+                    $("#formPsikologiSaveBtn" + bodyId).hide()
+                    $("#formPsikologiEditBtn" + bodyId).show()
+                    $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", true)
+
                     clicked_submit_btn.button('reset');
                 },
                 error: function(xhr) { // if error occured
@@ -4601,7 +4713,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formPsikologiSaveBtn" + bodyId).show()
+            $("#formPsikologiEditBtn" + bodyId).hide()
+            $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var psikologi = psikologiAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -4630,11 +4744,15 @@ foreach ($aValue as $key => $value) {
                 }
             } ?>
             $.each(psikologiDetailAll, function(key, value) {
-                if (value.body_id = psikologi.body_id) {
+                if (value.body_id == psikologi.body_id) {
                     console.log("#val" + value.p_type + value.value_id + bodyId)
-                    $("#val" + value.p_type + value.value_id + bodyId).prop("checked", true)
+                    $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 }
             })
+
+            $("#formPsikologiSaveBtn" + bodyId).hide()
+            $("#formPsikologiEditBtn" + bodyId).show()
+            $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addPsikologiButton").html('<a onclick="addPsikologi(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -4779,13 +4897,26 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formSeksualSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formSeksualEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
             )
         )
+
+        $("#formSeksualEditBtn" + bodyId).on("click", function() {
+            $("#formSeksualSaveBtn" + bodyId).show()
+            $("#formSeksualEditBtn" + bodyId).hide()
+            $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
+
+        $("#ASES04306").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#ASES04308").keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
 
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES043' && $value1['value_score'] == '99') {
@@ -4824,8 +4955,9 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formSeksual' + bodyId + ' select').prop("disabled", true)
-                    $('#formSeksual' + bodyId + ' input').prop("disabled", true)
+                    $("#formSeksualSaveBtn" + bodyId).hide()
+                    $("#formSeksualEditBtn" + bodyId).show()
+                    $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                 },
                 error: function(xhr) { // if error occured
@@ -4841,7 +4973,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formSeksualSaveBtn" + bodyId).show()
+            $("#formSeksualEditBtn" + bodyId).hide()
+            $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var digest = seksualAll[index];
             console.log(digest)
@@ -4870,7 +5004,9 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
-
+            $("#formSeksualSaveBtn" + bodyId).hide()
+            $("#formSeksualEditBtn" + bodyId).show()
+            $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addSeksualButton").html('<a onclick="addSeksual(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -4891,7 +5027,7 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                seksualAll = data.Seksual
+                seksualAll = data.seksual
 
                 $.each(seksualAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
@@ -5014,8 +5150,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formSocialSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formSocialEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -5036,7 +5172,11 @@ foreach ($aValue as $key => $value) {
         <?php
             }
         } ?>
-
+        $("#formSocialEditBtn" + bodyId).on("click", function() {
+            $("#formSocialSaveBtn" + bodyId).show()
+            $("#formSocialEditBtn" + bodyId).hide()
+            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
         $("#formSocial" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
@@ -5059,8 +5199,9 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formSocial' + bodyId + ' select').prop("disabled", true)
-                    $('#formSocial' + bodyId + ' input').prop("disabled", true)
+                    $("#formSocialSaveBtn" + bodyId).hide()
+                    $("#formSocialEditBtn" + bodyId).show()
+                    $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                 },
                 error: function(xhr) { // if error occured
@@ -5076,6 +5217,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
+            $("#formSocialSaveBtn" + bodyId).show()
+            $("#formSocialEditBtn" + bodyId).hide()
+            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
             var digest = socialAll[index];
@@ -5105,7 +5249,9 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
-
+            $("#formSocialSaveBtn" + bodyId).hide()
+            $("#formSocialEditBtn" + bodyId).show()
+            $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
         }
         index++
         $("#addSocialButton").html('<a onclick="addSocial(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
@@ -5126,13 +5272,14 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                socialAll = data.Social
+                socialAll = data.social
 
 
 
                 $.each(socialAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
+                    if (value.document_id == $("#arpbody_id").val()) {
                         addSocial(0, key)
+                    }
                 })
             },
             error: function() {
@@ -5251,8 +5398,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formHearingSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formHearingEditBtn' + bodyId + '" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -5273,6 +5420,12 @@ foreach ($aValue as $key => $value) {
         <?php
             }
         } ?>
+
+        $("#formHearing" + bodyId).on("click", function() {
+            $("#formHearingSaveBtn" + bodyId).show()
+            $("#formHearingEditBtn" + bodyId).hide()
+            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
 
         $("#formHearing" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -5313,8 +5466,14 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formHearingSaveBtn" + bodyId).show()
+            $("#formHearingEditBtn" + bodyId).hide()
+            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
+            $("#formHearingSaveBtn" + bodyId).hide()
+            $("#formHearingEditBtn" + bodyId).show()
+            $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
+
             var digest = hearingAll[index];
             console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
@@ -5363,7 +5522,7 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                hearingAll = data.Hearing
+                hearingAll = data.hearing
 
                 $.each(hearingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
@@ -5486,8 +5645,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formSleepingSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formSleepingEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -5508,6 +5667,12 @@ foreach ($aValue as $key => $value) {
         <?php
             }
         } ?>
+
+        $("#formSleepingEditBtn" + bodyId).on("click", function() {
+            $("#formSleepingSaveBtn" + bodyId).show()
+            $("#formSleepingEditBtn" + bodyId).hide()
+            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
+        })
 
         $("#formSleeping" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
@@ -5548,8 +5713,15 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
+            $("#formSleepingSaveBtn" + bodyId).show()
+            $("#formSleepingEditBtn" + bodyId).hide()
+            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
+            $("#formSleepingSaveBtn" + bodyId).hide()
+            $("#formSleepingEditBtn" + bodyId).show()
+            $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
+
             var digest = sleepingAll[index];
             console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
@@ -5598,7 +5770,7 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                sleepingAll = data.Sleeping
+                sleepingAll = data.sleeping
 
                 $.each(sleepingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
@@ -5669,7 +5841,7 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI001') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     } ?>
                                     )
@@ -5689,14 +5861,14 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI002') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
-                                .append('<label class="col-md-4 col-form-label mb-4">Nutrisi melalui NGT</label>')
+                                .append('<label for="giziGIZI00301' + bodyId + '" class="col-md-4 col-form-label mb-4">Nutrisi melalui NGT</label>')
                                 .append('<input name="GIZI00301" class="form-check-input" type="checkbox" id="giziGIZI00301' + bodyId + '" value="1">')
                             )
                             .append($('<div class="mb-3 row">')
@@ -5730,14 +5902,14 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI005') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     } ?>
                                     )
                                 )
                             )
                             .append($('<div class="row">')
-                                .append('<label class="col-md-4 col-form-label mb-4">Intake Cairan (Fluid Intake</label>')
+                                .append('<label id="giziGIZI00601' + bodyId + '" class="col-md-4 col-form-label mb-4">Intake Cairan (Fluid Intake</label>')
                                 .append('<div class="col-md-8"><input class="form-control" type="text" id="giziGIZI00601' + bodyId + '" name="GIZI00601" placeholder=""></div>')
                             )
                             .append($('<div class="row">')
@@ -5748,7 +5920,7 @@ foreach ($aValue as $key => $value) {
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
                                                                         if ($value['p_type'] == 'GIZI007') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
                                                                                                                                                                                                                                                                                                                                                                                                                                                                         }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     } ?>
                                     )
@@ -5877,8 +6049,8 @@ foreach ($aValue as $key => $value) {
                     )
                     .append($('<div class="mb-3 row">'))
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formaddprescrbtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formGiziSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formGiziEditBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
                 )
             )
@@ -5926,6 +6098,12 @@ foreach ($aValue as $key => $value) {
             $("#gizimt" + bodyId).append('<option value="' + imt + '">' + imtString + '</option>');
             $("#gizimt" + bodyId).val(imt);
             $("#gizistep1_score_imt" + bodyId).val(score1Imt(imt.toFixed(2)))
+        })
+
+        $("#formGiziEditBtn" + bodyId).on("click", function() {
+            $("#formGiziSaveBtn" + bodyId).show()
+            $("#formGiziEditBtn" + bodyId).hide()
+            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
         $("#gizistep1_score_imt" + bodyId).on("change", function() {
@@ -6024,7 +6202,9 @@ foreach ($aValue as $key => $value) {
 
 
         if (flag == 1) {
-
+            $("#formGiziSaveBtn" + bodyId).show()
+            $("#formGiziEditBtn" + bodyId).hide()
+            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
             var gizi = giziAll[index];
 
@@ -6088,7 +6268,9 @@ foreach ($aValue as $key => $value) {
                 //     $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 // }
             })
-
+            $("#formGiziSaveBtn" + bodyId).hide()
+            $("#formGiziEditBtn" + bodyId).show()
+            $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", true)
         }
         index++
         $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')

@@ -4,9 +4,9 @@ namespace App\Models\Assessment;
 
 use CodeIgniter\Model;
 
-class BladderModel extends Model
+class SocialModel extends Model
 {
-    protected $table      = 'assessment_bladder';
+    protected $table      = 'assessment_socec';
     protected $primaryKey = 'body_id';
 
     protected $useAutoIncrement = false;
@@ -23,21 +23,19 @@ class BladderModel extends Model
         'no_registration',
         'examination_date',
         'p_type',
-        'bak',
-        'urine_catheter',
-        'urine_vol',
-        'urine_color',
-        'urine_catheter_desc',
-        'prostate',
-        'prostate_desc',
-        'back_pain',
-        'disorders',
-        'disorder_desc',
-        'elimination_disorder',
-        'elimination',
+        'maritalstatusid',
+        'children',
+        'education_type_code',
+        'nation_id',
+        'job_id',
+        'residence',
+        'activity',
+        'suspicion',
+        'livingwith',
         'status',
         'modified_date',
         'modified_by',
+        'children_desc'
     ];
 
     protected $useTimestamps = true;

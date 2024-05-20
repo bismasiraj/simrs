@@ -4,9 +4,9 @@ namespace App\Models\Assessment;
 
 use CodeIgniter\Model;
 
-class BladderModel extends Model
+class ReproductionModel extends Model
 {
-    protected $table      = 'assessment_bladder';
+    protected $table      = 'assessment_reproduction';
     protected $primaryKey = 'body_id';
 
     protected $useAutoIncrement = false;
@@ -23,21 +23,31 @@ class BladderModel extends Model
         'no_registration',
         'examination_date',
         'p_type',
-        'bak',
-        'urine_catheter',
-        'urine_vol',
-        'urine_color',
-        'urine_catheter_desc',
-        'prostate',
-        'prostate_desc',
-        'back_pain',
-        'disorders',
-        'disorder_desc',
-        'elimination_disorder',
-        'elimination',
+        'g',
+        'p',
+        'a',
+        'menstruasi',
+        'pregnant',
+        'postpartum_day',
+        'lochea',
+        'counting',
+        'breast',
+        'asi',
+        'asi_fail',
+        'asi_fail_desc',
+        'contraction',
+        'papsmear',
+        'mammografi',
+        'sadari',
+        'bleeding_risk',
+        'bleeding_desc',
+        'selfdisorder',
+        'selfdisorder_desc',
+        'skrining_prostat',
+        'skrining_date',
         'status',
         'modified_date',
-        'modified_by',
+        'modified_by'
     ];
 
     protected $useTimestamps = true;

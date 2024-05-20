@@ -4,9 +4,9 @@ namespace App\Models\Assessment;
 
 use CodeIgniter\Model;
 
-class BladderModel extends Model
+class VisionHearingModel extends Model
 {
-    protected $table      = 'assessment_bladder';
+    protected $table      = 'ASSESSMENT_VISION_HEARING';
     protected $primaryKey = 'body_id';
 
     protected $useAutoIncrement = false;
@@ -23,21 +23,18 @@ class BladderModel extends Model
         'no_registration',
         'examination_date',
         'p_type',
-        'bak',
-        'urine_catheter',
-        'urine_vol',
-        'urine_color',
-        'urine_catheter_desc',
-        'prostate',
-        'prostate_desc',
-        'back_pain',
-        'disorders',
-        'disorder_desc',
-        'elimination_disorder',
-        'elimination',
+        'ears',
+        'swollen_pain',
+        'teeth',
+        'toothache',
+        'denturest',
+        'eyes',
+        'censory_disorder',
+        'censory_desc',
         'status',
         'modified_date',
         'modified_by',
+
     ];
 
     protected $useTimestamps = true;
