@@ -23,7 +23,7 @@
 
 <body>
 
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <form action="<?= site_url('#') ?>" method="post" autocomplete="off">
             <?php csrf_field(); ?>
             <h6 align="right">RMJ.2.14</h6>

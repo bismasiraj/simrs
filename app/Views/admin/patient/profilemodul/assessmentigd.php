@@ -219,390 +219,7 @@ $permission = user()->getPermissions();
                                     </div>
                                 </div>
                             </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingADL">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseADL" aria-expanded="false" aria-controls="collapseADL">
-                                        <b>AKTIVITAS DAN LATIHAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseADL" class="accordion-collapse collapse" aria-labelledby="headingADL" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyADL">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addADLButton" class="box-tab-tools text-center">
-                                                            <a onclick="addADL(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingDekubitus">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDekubitus" aria-expanded="false" aria-controls="collapseDekubitus">
-                                        <b>DEKUBITUS</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseDekubitus" class="accordion-collapse collapse" aria-labelledby="headingDekubitus" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyDekubitus">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addDekubitusButton" class="box-tab-tools text-center">
-                                                            <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingEducationIntegration">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationIntegration" aria-expanded="false" aria-controls="collapseEducationIntegration">
-                                        <b>EDUKASI INTEGRASI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseEducationIntegration" class="accordion-collapse collapse" aria-labelledby="headingEducationIntegration" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyEducationIntegration">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
-                                                            <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingEducationForm">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
-                                        <b>FORMULIR PEMBERIAK EDUKASI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyEducationForm">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addEducationFormButton" class="box-tab-tools text-center">
-                                                            <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingIntegumen">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegumen" aria-expanded="false" aria-controls="collapseIntegumen">
-                                        <b>INTEGUMEN & MOSKULO SKELETAL</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseIntegumen" class="accordion-collapse collapse" aria-labelledby="headingIntegumen" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyIntegumen">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addIntegumenButton" class="box-tab-tools text-center">
-                                                            <a onclick="addIntegumen(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingNeurosensoris">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeurosensoris" aria-expanded="false" aria-controls="collapseNeurosensoris">
-                                        <b>NEUROSENSORIS</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseNeurosensoris" class="accordion-collapse collapse" aria-labelledby="headingNeurosensoris" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyNeurosensoris">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addNeurosensorisButton" class="box-tab-tools text-center">
-                                                            <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingPencernaan">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePencernaan" aria-expanded="false" aria-controls="collapsePencernaan">
-                                        <b>PENCERNAAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapsePencernaan" class="accordion-collapse collapse" aria-labelledby="headingPencernaan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyPencernaan">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addPencernaanButton" class="box-tab-tools text-center">
-                                                            <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingPerkemihan">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerkemihan" aria-expanded="false" aria-controls="collapsePerkemihan">
-                                        <b>PERKEMIHAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapsePerkemihan" class="accordion-collapse collapse" aria-labelledby="headingPerkemihan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyPerkemihan">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addPerkemihanButton" class="box-tab-tools text-center">
-                                                            <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingPernapasan">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernapasan" aria-expanded="false" aria-controls="collapsePernapasan">
-                                        <b>PERNAPASAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyPernapasan">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                            <a onclick="addPernapasan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingPsikologi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePsikologi" aria-expanded="false" aria-controls="collapsePsikologi">
-                                        <b>PSIKOLOGI SPIRITUAL</b>
-                                    </button>
-                                </h2>
-                                <div id="collapsePsikologi" class="accordion-collapse collapse" aria-labelledby="headingPsikologi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyPsikologi">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                            <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingSeksual">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeksual" aria-expanded="false" aria-controls="collapseSeksual">
-                                        <b>SEKSUAL/REPRODUKSI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseSeksual" class="accordion-collapse collapse" aria-labelledby="headingSeksual" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodySeksual">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addSeksualButton" class="box-tab-tools text-center">
-                                                            <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingSirkulasi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSirkulasi" aria-expanded="false" aria-controls="collapseSirkulasi">
-                                        <b>SIRKULASI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseSirkulasi" class="accordion-collapse collapse" aria-labelledby="headingSirkulasi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodySirkulasi">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                            <a onclick="addSirkulasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingGizi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGizi" aria-expanded="false" aria-controls="collapseGizi">
-                                        <b>SKRINING GIZI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseGizi" class="accordion-collapse collapse" aria-labelledby="headingGizi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyGizi">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addGiziButton" class="box-tab-tools text-center">
-                                                            <a onclick="addGizi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingSocial">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSocial" aria-expanded="false" aria-controls="collapseSocial">
-                                        <b>SOCIAL ECONOMY</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseSocial" class="accordion-collapse collapse" aria-labelledby="headingSocial" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodySocial">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addSocialButton" class="box-tab-tools text-center">
-                                                            <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingHearing">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHearing" aria-expanded="false" aria-controls="collapseHearing">
-                                        <b>THT & MATA</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseHearing" class="accordion-collapse collapse" aria-labelledby="headingHearing" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodyHearing">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addHearingButton" class="box-tab-tools text-center">
-                                                            <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingSleeping">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSleeping" aria-expanded="false" aria-controls="collapseSleeping">
-                                        <b>TIDUR DAN ISTIRAHAT</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseSleeping" class="accordion-collapse collapse" aria-labelledby="headingSleeping" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div id="bodySleeping">
-                                                </div>
-                                                <div class="row mb-4">
-                                                    <div class="col-md-12">
-                                                        <div id="addSleepingButton" class="box-tab-tools text-center">
-                                                            <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                             <?php foreach ($aParent as $key => $value) { ?>
                                 <?php if ($value['parent_id'] == '001') { ?>
                                     <div class="accordion-item">
@@ -755,44 +372,470 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                 <?php } ?>
-                                <?php if ($value['parent_id'] == '000') {
-                                    foreach ($aType as $key1 => $value1) {
-                                        if ($value['parent_id'] == $value1['parent_id'] && $value1['p_type'] == 'GEN0012') {
+                                <?php if ($value['parent_id'] == '006') {
                                 ?>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="<?= $value1['p_type']; ?>">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value1['p_type']; ?>" aria-expanded="true" aria-controls="collapse<?= $value1['p_type']; ?>">
-                                                        <b><?= $value1['p_description']; ?></b>
-                                                    </button>
-                                                </h2>
-                                                <style>
-                                                    .table-striped-vertical :nth-child(odd) {
-                                                        /* // Specify the background color for odd rows  */
-                                                        /* background-color: lightblue; */
-                                                    }
-                                                </style>
-                                                <div id="collapse<?= $value1['p_type']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value1['p_type']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                                    <div class="accordion-body text-muted">
-                                                        <div class="row">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingGizi">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGizi" aria-expanded="false" aria-controls="collapseGizi">
+                                                <b>SKRINING GIZI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseGizi" class="accordion-collapse collapse" aria-labelledby="headingGizi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyGizi">
+                                                        </div>
+                                                        <div class="row mb-4">
                                                             <div class="col-md-12">
-                                                                <div id="bodyStabilitas">
-                                                                </div>
-                                                                <div class="row mb-4">
-                                                                    <div class="col-md-12">
-                                                                        <div id="addDerajatStabilitasButton" class="box-tab-tools text-center">
-                                                                            <a onclick="addDerajatStabilitas(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                        </div>
-                                                                    </div>
+                                                                <div id="addGiziButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addGizi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                <?php }
-                                    }
+                                        </div>
+                                    </div>
+                                <?php
                                 } ?>
                             <?php } ?>
+                            <?php foreach ($aType as $key => $value) {
+                                if ($value['p_type'] == 'ASES016') {
+                            ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingADL">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseADL" aria-expanded="false" aria-controls="collapseADL">
+                                                <b>AKTIVITAS DAN LATIHAN</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseADL" class="accordion-collapse collapse" aria-labelledby="headingADL" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyADL">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addADLButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addADL(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES047') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingDekubitus">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDekubitus" aria-expanded="false" aria-controls="collapseDekubitus">
+                                                <b>DEKUBITUS</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseDekubitus" class="accordion-collapse collapse" aria-labelledby="headingDekubitus" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyDekubitus">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addDekubitusButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'GEN0012') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="<?= $value['p_type']; ?>">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['p_type']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['p_type']; ?>">
+                                                <b><?= $value['p_description']; ?></b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse<?= $value['p_type']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['p_type']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyStabilitas">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addDerajatStabilitasButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addDerajatStabilitas(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES049') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingEducationIntegration">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationIntegration" aria-expanded="false" aria-controls="collapseEducationIntegration">
+                                                <b>EDUKASI INTEGRASI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseEducationIntegration" class="accordion-collapse collapse" aria-labelledby="headingEducationIntegration" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyEducationIntegration">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'GEN0013') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingEducationForm">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
+                                                <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyEducationForm">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addEducationFormButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES036') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingIntegumen">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegumen" aria-expanded="false" aria-controls="collapseIntegumen">
+                                                <b>INTEGUMEN & MOSKULO SKELETAL</b> ASES036
+                                            </button>
+                                        </h2>
+                                        <div id="collapseIntegumen" class="accordion-collapse collapse" aria-labelledby="headingIntegumen" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyIntegumen">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addIntegumenButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addIntegumen(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES038') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingNeurosensoris">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeurosensoris" aria-expanded="false" aria-controls="collapseNeurosensoris">
+                                                <b>NEUROSENSORIS</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseNeurosensoris" class="accordion-collapse collapse" aria-labelledby="headingNeurosensoris" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyNeurosensoris">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addNeurosensorisButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES040') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingPencernaan">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePencernaan" aria-expanded="false" aria-controls="collapsePencernaan">
+                                                <b>PENCERNAAN</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapsePencernaan" class="accordion-collapse collapse" aria-labelledby="headingPencernaan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyPencernaan">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addPencernaanButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES042') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingPerkemihan">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerkemihan" aria-expanded="false" aria-controls="collapsePerkemihan">
+                                                <b>PERKEMIHAN</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapsePerkemihan" class="accordion-collapse collapse" aria-labelledby="headingPerkemihan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyPerkemihan">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addPerkemihanButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES041') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingPernapasan">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernapasan" aria-expanded="false" aria-controls="collapsePernapasan">
+                                                <b>PERNAPASAN</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyPernapasan">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addPernapasanButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addPernapasan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES035') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingPsikologi">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePsikologi" aria-expanded="false" aria-controls="collapsePsikologi">
+                                                <b>PSIKOLOGI SPIRITUAL</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapsePsikologi" class="accordion-collapse collapse" aria-labelledby="headingPsikologi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyPsikologi">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addPsikologiButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES043') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingSeksual">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeksual" aria-expanded="false" aria-controls="collapseSeksual">
+                                                <b>SEKSUAL/REPRODUKSI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseSeksual" class="accordion-collapse collapse" aria-labelledby="headingSeksual" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodySeksual">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addSeksualButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES039') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingSirkulasi">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSirkulasi" aria-expanded="false" aria-controls="collapseSirkulasi">
+                                                <b>SIRKULASI</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseSirkulasi" class="accordion-collapse collapse" aria-labelledby="headingSirkulasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodySirkulasi">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addSirkulasiButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addSirkulasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES037') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingSocial">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSocial" aria-expanded="false" aria-controls="collapseSocial">
+                                                <b>SOCIAL ECONOMY</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseSocial" class="accordion-collapse collapse" aria-labelledby="headingSocial" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodySocial">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addSocialButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES044') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingHearing">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHearing" aria-expanded="false" aria-controls="collapseHearing">
+                                                <b>THT & MATA</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseHearing" class="accordion-collapse collapse" aria-labelledby="headingHearing" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyHearing">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addHearingButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES046') {
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingSleeping">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSleeping" aria-expanded="false" aria-controls="collapseSleeping">
+                                                <b>TIDUR DAN ISTIRAHAT</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseSleeping" class="accordion-collapse collapse" aria-labelledby="headingSleeping" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodySleeping">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addSleepingButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            <?php
+                                }
+                            } ?>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="tindakanPerawat">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawat" aria-expanded="true" aria-controls="collapseTindakanPerawat">

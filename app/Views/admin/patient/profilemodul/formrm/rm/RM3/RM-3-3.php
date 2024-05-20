@@ -23,7 +23,7 @@
 
 <body>
 
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <a href="<?= base_url('pku/halamanform2') ?>" class="btn btn-success mt-3"><i class="bi bi-arrow-left"></i></a>
         <form action="<?= site_url('#') ?>" method="post" autocomplete="off">
             <?php csrf_field(); ?>

@@ -1884,10 +1884,14 @@ This Function is used to Add Patient
         $assessmentParam = array();
 
         $db = db_connect();
-        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type ")->getResultArray());
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
         $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
         $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+
+        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
         // return json_encode($aValue);
 

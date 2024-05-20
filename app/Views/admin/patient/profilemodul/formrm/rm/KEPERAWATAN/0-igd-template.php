@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
             <div style="display: none;">
                 <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
@@ -67,8 +67,8 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h2>RS PKU Muhammadiyah Sampangan</h2>
-                    <h2>Surakarta</h2>
+                    <h3>RS PKU Muhammadiyah Sampangan</h3>
+                    <h3>Surakarta</h3>
                     <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
                 </div>
                 <div class="col-auto" align="center">
@@ -76,10 +76,10 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="text-center"><?= $title; ?></h3>
+                <h4 class="text-center"><?= $title; ?></h4>
             </div>
             <div class="row">
-                <h4 class="text-start">Informasi Pasien</h4>
+                <h5 class="text-start">Informasi Pasien</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
@@ -616,7 +616,7 @@
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Skrining Gizi</h4>
+                <h5 class="text-start">Skrining Gizi</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
@@ -679,7 +679,7 @@
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">Diagnosis Keperawatan</h4>
+                <h5 class="text-start">Diagnosis Keperawatan</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
@@ -692,7 +692,7 @@
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">1. Tindakan Kolaborasi</h4>
+                <h5 class="text-start">1. Tindakan Kolaborasi</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
@@ -721,7 +721,7 @@
                 </tbody>
             </table>
             <div class="row">
-                <h4 class="text-start">2. Tindakan Mandiri</h4>
+                <h5 class="text-start">2. Tindakan Mandiri</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>

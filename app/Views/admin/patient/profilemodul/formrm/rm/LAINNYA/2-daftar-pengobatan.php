@@ -22,7 +22,49 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <style>
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
+
+        @page {
+            size: A4;
+        }
+
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
 <body>

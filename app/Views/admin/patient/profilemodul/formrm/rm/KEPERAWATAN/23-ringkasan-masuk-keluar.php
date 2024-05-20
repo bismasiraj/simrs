@@ -18,11 +18,53 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <style>
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
+
+        @page {
+            size: A4;
+        }
+
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
             <div style="display: none;">
                 <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
@@ -63,8 +105,8 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h2>RS PKU Muhammadiyah Sampangan</h2>
-                    <h2>Surakarta</h2>
+                    <h3>RS PKU Muhammadiyah Sampangan</h3>
+                    <h3>Surakarta</h3>
                     <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
                 </div>
                 <div class="col-auto" align="center">
@@ -75,7 +117,7 @@
                 <h3 class="text-center">Ringkasan Masuk Keluar</h3>
             </div>
             <div class="row">
-                <h4 class="text-start">Informasi Pasien</h4>
+                <h5 class="text-start">Informasi Pasien</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>

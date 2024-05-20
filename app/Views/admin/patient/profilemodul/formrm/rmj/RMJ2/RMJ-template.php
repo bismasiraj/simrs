@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
             <div style="display: none;">
                 <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
@@ -72,10 +72,10 @@
                 </div>
             </div>
             <div class="row">
-                <h3 class="text-center"><?= $title; ?></h3>
+                <h4 class="text-center"><?= $title; ?></h4>
             </div>
             <div class="row">
-                <h4 class="text-start">Informasi Pasien</h4>
+                <h5 class="text-start">Informasi Pasien</h5>
             </div>
             <table class="table table-bordered">
                 <tbody>
