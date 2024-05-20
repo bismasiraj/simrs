@@ -14,8 +14,10 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $select = $this->lowerKey($db->query("select
-            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, 'bmi' as bmi, 'respiration' as respiration,
-            'alkohol' as alkohol, 'merokok' as merokok, 'lingkar_lengan' as lingkar_lengan, 'kondisi_pasien' as kondisi_pasien,
+            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, format(round(WEIGHT*10000/height/height,2), '0.##') as bmi, saturasi as respiration,
+            alkohol, merokok, riwayat_dahulu, riwayat_drug, riwayat_nondrug, riwayat_keluarga, riwayat_diet, riwayat_obat_konsumsi, riwayat_hamil, riwayat_imunisasi,
+            
+            ARM_DIAMETER as lingkar_lengan, 'kondisi_pasien' as kondisi_pasien,
             'hubungan_keluarga' as hubungan_keluarga, 'permintaan_khusus' as permintaan_khusus, 'agama' as agama,
             'hambatan_sosial' as hambatan_sosial, 'larangan_keyakinan' as larangan_keyakinan, 'mitos_budaya' as mitos_budaya,
             'status_perkawinan' as status_perkawinan, 'punya_anak' as punya_anak, 'jumlah_anak' as jumlah_anak,
@@ -32,7 +34,17 @@ class keperawatan extends \App\Controllers\BaseController
             'tempramen' as tempramen, 'kebiasaan_perilaku' as kebiasaan_perilaku, 'pd3i' as pd3i, 'gangguan_tumbuh' as gangguan_tumbuh, 
             'skala_nyeri' as skala_nyeri, 'resiko_jatuh' as resiko_jatuh, 'luka_operasi' as luka_operasi, 'deskripsi_nyeri' as deskripsi_nyeri, 
             'hipertermi' as hipertermi, 'nama_diagnosis' as nama_diagnosis
-            from examination_info where visit_id = '80214'")->getResultArray());
+            from examination_info ea left outer join (select no_registration, max(case when VALUE_ID = 'G0090301' then HISTORIES else '' end) as alkohol,
+            max(case when VALUE_ID = 'G0090302' then HISTORIES else '' end) as merokok,
+            max(case when VALUE_ID = 'G0090202' then HISTORIES else '' end) as riwayat_dahulu,
+            max(case when VALUE_ID = 'G0090101' then HISTORIES else '' end) as riwayat_drug,
+            max(case when VALUE_ID = 'G0090102' then HISTORIES else '' end) as riwayat_nondrug,
+            max(case when VALUE_ID = 'G0090201' then HISTORIES else '' end) as riwayat_keluarga,
+            max(case when VALUE_ID = 'G0090303' then HISTORIES else '' end) as riwayat_diet,
+            max(case when VALUE_ID = 'G0090401' then HISTORIES else '' end) as riwayat_obat_konsumsi,
+            max(case when VALUE_ID = 'G0090402' then HISTORIES else '' end) as riwayat_hamil,
+            max(case when VALUE_ID = 'G0090403' then HISTORIES else '' end) as riwayat_imunisasi
+            from PASIEN_HISTORY group by no_registration)ph on ph.no_registration = ea.no_registration  where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
             $spiritualSelect = $this->lowerKey($db->query("select
             ORG_UNIT_CODE,
             VISIT_ID,
@@ -51,7 +63,7 @@ class keperawatan extends \App\Controllers\BaseController
             MODIFIED_DATE,
             MODIFIED_BY
             from ASSESSMENT_SPIRITUAL
-            where visit_id = '202404241151300470C77'
+            where visit_id = '" . $visit['visit_id'] . "'
             order by examination_date")->getResultArray());
             $spiritual = $spiritualSelect[0] ?? [];
             $socecSelect = $this->lowerKey($db->query("select
@@ -76,7 +88,7 @@ class keperawatan extends \App\Controllers\BaseController
             MODIFIED_DATE,
             MODIFIED_BY
             from ASSESSMENT_SOCEC
-            where visit_id = '202404241151300470C77'
+            where visit_id = '" . $visit['visit_id'] . "'
             order by examination_date")->getResultArray());
             $socec = $socecSelect[0] ?? [];
             if (isset($select[0])) {
@@ -103,7 +115,7 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $select = $this->lowerKey($db->query("select
-            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, 'bmi' as bmi, 'respiration' as respiration,
+            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, format(round(WEIGHT*10000/height/height,2), '0.##') as bmi, 'respiration' as respiration,
             'alkohol' as alkohol, 'merokok' as merokok, 'lingkar_lengan' as lingkar_lengan, 'kondisi_pasien' as kondisi_pasien,
             'hubungan_keluarga' as hubungan_keluarga, 'permintaan_khusus' as permintaan_khusus, 'agama' as agama,
             'hambatan_sosial' as hambatan_sosial, 'larangan_keyakinan' as larangan_keyakinan, 'mitos_budaya' as mitos_budaya,
@@ -1162,7 +1174,7 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $select = $this->lowerKey($db->query("select
-            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, 'bmi' as bmi, 'respiration' as respiration,
+            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, format(round(WEIGHT*10000/height/height,2), '0.##') as bmi, 'respiration' as respiration,
             'lla' as lla, 'penyebab_cidera' as penyebab_cidera, 'airway' as airway, 'benda_asing' as benda_asing, 'ett' as ett,
             'breathing' as breathing, 'bunyi_paru' as bunyi_paru, 'posisi_paru' as posisi_paru, 'kesulitan_bernafas' as kesulitan_bernafas,
             'penggunaan_bantu_nafas' as penggunaan_bantu_nafas, 'menggunakan_oksigen' as menggunakan_oksigen, 'frekuensi_nafas' as frekuensi_nafas,
@@ -1338,7 +1350,7 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
             $select = $this->lowerKey($db->query("select
-            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, 'bmi' as bmi, 'respiration' as respiration,
+            tension_upper, tension_below, temperature, NADI, NAFAS, WEIGHT, HEIGHT, format(round(WEIGHT*10000/height/height,2), '0.##') as bmi, 'respiration' as respiration,
             'lla' as lla, 'penyebab_cidera' as penyebab_cidera, 'airway' as airway, 'benda_asing' as benda_asing, 'ett' as ett,
             'breathing' as breathing, 'bunyi_paru' as bunyi_paru, 'posisi_paru' as posisi_paru, 'kesulitan_bernafas' as kesulitan_bernafas,
             'penggunaan_bantu_nafas' as penggunaan_bantu_nafas, 'menggunakan_oksigen' as menggunakan_oksigen, 'frekuensi_nafas' as frekuensi_nafas,

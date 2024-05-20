@@ -136,6 +136,13 @@ foreach ($aValue as $key => $value) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
 
+    $("#cpptTab").on("click", function() {
+        $("#arpanamnase_label").html("Subyektif (S)")
+        $("#collapseRiwayat").hide()
+        $("#subjectiveGroupHeader").show()
+        $("#objectiveGroupHeader").show()
+    })
+
 
 
     function assessmentIgdInput(prop) {
@@ -600,6 +607,82 @@ foreach ($aValue as $key => $value) {
     $(".formaddarpbtn").on("click", function() {
         initialAddArp()
     })
+</script>
+<script type="text/javascript">
+    function addRowDiagPerawat(diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
+        diagIndex++;
+        if (diag_cat == null) {
+            diag_cat = 1
+        }
+        if (diag_cat == null && diagIndex > 1) {
+            diag_cat = 2
+        }
+        $("#bodyDiagPerawat")
+            .append($('<tr id="arpdiag' + diagIndex + '">')
+                // .append($('<td>').html(diagIndex + "."))
+                .append($('<td>')
+                    .append('<select id="arpdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')" style="width: 100%"></select>')
+                    .append('<input id="arpdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
+                    .append('<input id="arpsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
+                    // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
+                )
+                // .append($('<td>')
+                //     .append($('<input>').attr('name', 'diag_name[]').attr('id', 'diag_name' + diagIndex).attr('value', diag_name).attr('type', 'text').attr('readonly', 'readonly'))
+                // )
+                .append($('<td>')
+                    .append($("<select class=\"form-control\">")
+                        .attr('name', 'suffer_type[]').attr('id', 'arpsuffer_type' + diagIndex) <?php foreach ($suffer as $key => $value) { ?>
+                            .append($("<option>")
+                                .attr('value', '<?= $suffer[$key]['suffer_type']; ?>').html('<?= $suffer[$key]['suffer']; ?>')
+                            ) <?php } ?>
+                        .val(diag_suffer)
+                    )
+                )
+                .append($('<td>')
+                    .append($("<select class=\"form-control\">")
+                        .attr('name', 'diag_cat[]').attr('id', 'diag_cat' + diagIndex) <?php foreach ($diagCat as $key => $value) { ?>
+                            .append($("<option>")
+                                .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
+                            ) <?php } ?>
+                        .val(diag_cat)
+                    )
+                )
+                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
+            );
+
+        initializeDiagPerawatSelect2("arpdiag_id" + diagIndex, diag_id, diag_name)
+        $("#arpsuffer_type" + diagIndex).val(0)
+        $("#arpdiag_cat" + diagIndex).val(diagIndex)
+    }
+
+    function initializeDiagPerawatSelect2(theid, initialvalue = null, initialname = null, initialcat = null) {
+        $("#" + theid).select2({
+            placeholder: "Input Diagnosa",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDiagnosisPerawatListAjax',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term,
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            var option = new Option(initialname, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+
+    }
 </script>
 <script type='text/javascript'>
     function aValueParamFallRisk(parent_id, p_type) {

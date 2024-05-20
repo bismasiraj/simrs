@@ -57,7 +57,6 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="arpgcs_m" name="gcs_m">
                         <input type="hidden" id="arpgcs_score" name="gcs_score">
                         <input type="hidden" id="arpgcs_desc" name="gcs_desc">
-                        <input type="hidden" id="arpanamnase" name="anamnase">
                         <input type="hidden" id="arpalo_anamnase" name="alo_anamnase">
                         <input type="hidden" id="arppemeriksaan" name="pemeriksaan">
                         <input type="hidden" id="arpteraphy_desc" name="teraphy_desc">
@@ -123,40 +122,124 @@ $permission = user()->getPermissions();
                                     </div>
                                 </div>
                             </div>
+                            <h4 id="subjectiveGroupHeader">S:</h4>
                             <div class="row">
-                                <div class="row mb-4">
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
+                                <div class="col-sm-12 mt-2">
+                                    <div class="form-group"><label id="arpanamnase_label">Keluhan Utama</label><textarea name="anamnase" id="arpanamnase" placeholder="" value="" class="form-control"></textarea></div>
+                                </div>
+                            </div>
+                            <div id="groupRiwayat" class="row">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arpdescription">Riwayat Penyakit Sekarang</label>
+                                            <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>T.Darah(mmHg)</label>
-                                            <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
-                                                <h4>/</h4>
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
+                                </div>
+                                <?php foreach ($aValue as $key => $value) {
+                                    if ($value['p_type'] == 'GEN0009') {
+                                ?>
+                                        <div class="col-sm-6 col-xs-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                                                    <textarea id="arp<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                <?php
+                                    }
+                                } ?>
+                            </div>
+                            <h4 id="objectiveGroupHeader">O:</h4>
+                            <div class="accordion" id="accodrionExamInfo">
+                                <div class="accordion-item">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingVitalSign">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                                <b>VITAL SIGN</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accodrionExamInfo" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="row mb-4">
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
+                                                                    <h4>/</h4>
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-2 mt-2">
+                                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
+                                                        </div>
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-2 mt-2">
-                                        <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
-                                    </div>
-                                    <div class="col-sm-12 mt-2">
-                                        <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                </div>
+                            </div>
+                            <h4 id="assessmentGroupHeader">A:</h4>
+                            <div class="accordion" id="accodrionExamInfo">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingDiagnosaPerawat">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat" aria-expanded="false" aria-controls="collapseDiagnosaPerawat">
+                                            <b>DIAGNOSA PERAWAT</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaPerawat" data-bs-parent="#accodrionAsesmen">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row mb-2">
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="mb-4">
+                                                        <div class="staff-members">
+                                                            <div class="table tablecustom-responsive">
+                                                                <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                    <?php if (true) { ?>
+                                                                        <thead>
+                                                                            <th class="text-center" style="width: 40%">DiagnosaPerawat</th>
+                                                                            <th class="text-center" style="width: 20%">Jenis Kasus</th>
+                                                                            <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
+                                                                        </thead>
+                                                                        <tbody id="bodyDiagPerawat">
+                                                                        </tbody>
+                                                                    <?php }   ?>
+                                                                </table>
+                                                            </div>
+                                                            <div class="box-tab-tools" style="text-align: center;">
+                                                                <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -172,53 +255,7 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                         <div class="accordion" id="accodrionAssessmentAwal">
-                            <!-- <div class="accordion-item">
-                                <h2 class="accordion-header" id="vitalSignPerawat">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSignPerawat" aria-expanded="true" aria-controls="collapseVitalSignPerawat">
-                                        <b>VITAL SIGN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseVitalSignPerawat" class="accordion-collapse collapse" aria-labelledby="VitalSignPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
 
-                                    </div>
-                                </div>
-                            </div> -->
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingRiwayat">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRiwayat" aria-expanded="false" aria-controls="collapseRiwayat">
-                                        <b>RIWAYAT</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseRiwayat" class="accordion-collapse collapse" aria-labelledby="headingRiwayat" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-sm-6 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="arpdescription">Riwayat Penyakit Sekarang</label>
-                                                        <textarea id="arpdescription" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <?php foreach ($aValue as $key => $value) {
-                                                if ($value['p_type'] == 'GEN0009') {
-                                            ?>
-                                                    <div class="col-sm-6 col-xs-12">
-                                                        <div class="mb-3">
-                                                            <div class="form-group">
-                                                                <label for="arp<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                <textarea id="arp<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                            <?php
-                                                }
-                                            } ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <?php foreach ($aParent as $key => $value) { ?>
                                 <?php if ($value['parent_id'] == '001') { ?>

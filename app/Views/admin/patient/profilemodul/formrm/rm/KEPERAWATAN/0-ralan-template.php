@@ -186,21 +186,21 @@
                     <tr>
                         <td>
                             <b>Riwayat Penyakit Dahulu</b>
-                            <input type="text" class="form-control" id="ana_past_disease_history" name="ana_past_disease_history">
+                            <input type="text" class="form-control" id="ana_past_disease_history" name="ana_past_disease_history" value="<?= $val['riwayat_dahulu'] ?? ''; ?>">
                         </td>
                         <td>
                             <b>Riwayat Alergi (Non Obat)</b>
-                            <input type="text" class="form-control" id="ana_allergy_history_non_drugs" name="ana_allergy_history_non_drugs">
+                            <input type="text" class="form-control" id="ana_allergy_history_non_drugs" name="ana_allergy_history_non_drugs" value="<?= $val['riwayat_nondrug'] ?? ''; ?>">
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Riwayat Penyakit Keluarga</b>
-                            <input type="text" class="form-control" id="ana_family_disease_history" name="ana_family_disease_history">
+                            <input type="text" class="form-control" id="ana_family_disease_history" name="ana_family_disease_history" value="<?= $val['riwayat_keluarga'] ?? ''; ?>">
                         </td>
                         <td>
                             <b>Riwayat Alergi (Obat)</b>
-                            <input type="text" class="form-control" id="ana_drugs_consumed" name="ana_drugs_consumed">
+                            <input type="text" class="form-control" id="ana_drugs_consumed" name="ana_drugs_consumed" value="<?= $val['riwayat_drug'] ?? ''; ?>">
                         </td>
                     </tr>
                 </tbody>
