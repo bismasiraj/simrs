@@ -259,7 +259,6 @@ $permission = user()->getPermissions();
                                 <div class="row">
                                     <div class="col-md-12">
                                         <ul id="keperawatanListLink" class="list-group list-group-flush">
-                                            <input id="arpbody_id" type="hidden" value="asdf">
                                             <!-- <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ralan Anak</a></li>
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_dewasa/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ralan Dewasa</a></li>
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ranap_dewasa/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Keperawatan Ranap Dewasa</a></li>
@@ -302,8 +301,6 @@ $permission = user()->getPermissions();
                                 <div class="row">
                                     <div class="col-md-12">
                                         <ul id="lainnyaListLink" class="list-group list-group-flush">
-                                            <input id="armpasien_diagnosa_id" type="hidden" value="asdf">
-                                            <input id="arpbody_id" type="hidden" value="asdf">
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/lainnya_1/' . base64_encode(json_encode($visit)); ?>" target="_blank">Permintaan Laboratorium Patologi Anatomi (PA)</a></li>
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/lainnya_2/' . base64_encode(json_encode($visit)); ?>" target="_blank">Daftar Pengobatan Parenteral</a></li>
                                         </ul>

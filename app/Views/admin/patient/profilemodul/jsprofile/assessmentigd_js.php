@@ -139,9 +139,68 @@ foreach ($aValue as $key => $value) {
     $("#cpptTab").on("click", function() {
         $("#arpanamnase_label").html("Subyektif (S)")
         $("#collapseRiwayat").hide()
+        $("#groupRiwayat").hide()
         $("#subjectiveGroupHeader").show()
         $("#objectiveGroupHeader").show()
+        $("#arpFallRisk_Group").show()
+        $("#arpPainMonitoring_Group").hide()
+        $("#arpTriage_Group").hide()
+        $("#arpApgar_Group").hide()
+        $("#arpGizi_Group").hide()
+        $("#arpAdl_Group").hide()
+        $("#arpDekubitus_Group").hide()
+        $("#arpStabilitas_Group").hide()
+        $("#arpEdukasiIntegrasi_Group").hide()
+        $("#arpEdukasiForm_Group").hide()
+        $("#arpGcs_Group").show()
+        $("#arpIntegumen_Group").hide()
+        $("#arpNeurosensoris_Group").hide()
+        $("#arpPencernaan_Group").hide()
+        $("#arpPerkemihan_Group").hide()
+        $("#arpPernapasan_Group").hide()
+        $("#arpPsikologi_Group").hide()
+        $("#arpSeksual_Group").hide()
+        $("#arpSirkulasi_Group").hide()
+        $("#arpSocial_Group").hide()
+        $("#arpHearing_Group").hide()
+        $("#arpSleeping_Group").hide()
+        $("#arpTindakanKolaboratif_Group").show()
+        $("#arpTindakanMandiri_Group").show()
+        $("#arpImplementasi_Group").hide()
     })
+    $("#assessmentigdTab").on("click", function() {
+        $("#arpanamnase_label").html("Subyektif (S)")
+        $("#collapseRiwayat").show()
+        $("#groupRiwayat").show()
+        $("#subjectiveGroupHeader").show()
+        $("#objectiveGroupHeader").show()
+        $("#arpFallRisk_Group").show()
+        $("#arpPainMonitoring_Group").show()
+        $("#arpTriage_Group").show()
+        $("#arpApgar_Group").show()
+        $("#arpGizi_Group").show()
+        $("#arpAdl_Group").show()
+        $("#arpDekubitus_Group").show()
+        $("#arpStabilitas_Group").show()
+        $("#arpEdukasiIntegrasi_Group").show()
+        $("#arpEdukasiForm_Group").show()
+        $("#arpGcs_Group").show()
+        $("#arpIntegumen_Group").show()
+        $("#arpNeurosensoris_Group").show()
+        $("#arpPencernaan_Group").show()
+        $("#arpPerkemihan_Group").show()
+        $("#arpPernapasan_Group").show()
+        $("#arpPsikologi_Group").show()
+        $("#arpSeksual_Group").show()
+        $("#arpSirkulasi_Group").show()
+        $("#arpSocial_Group").show()
+        $("#arpHearing_Group").show()
+        $("#arpSleeping_Group").show()
+        $("#arpTindakanKolaboratif_Group").show()
+        $("#arpTindakanMandiri_Group").show()
+        $("#arpImplementasi_Group").show()
+    })
+
 
 
 
@@ -314,72 +373,9 @@ foreach ($aValue as $key => $value) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
             type: "POST",
-            data: JSON.stringify({
-                "body_id": $("#arpbody_id").val(),
-                "org_unit_code": $("#arporg_unit_code").val(),
-                "pasien_diagnosa_id": $("#arppasien_diagnosa_id").val(),
-                "diagnosa_id": $("#arpdiagnosa_id").val(),
-                "no_registration": $("#arpno_registration").val(),
-                "visit_id": $("#arpvisit_id").val(),
-                "bill_id": $("#arpbill_id").val(),
-                "clinic_id": $("#arpclinic_id").val(),
-                "class_room_id": $("#arpclass_room_id").val(),
-                "bed_id": $("#arpbed_id").val(),
-                "in_date": $("#arpin_date").val(),
-                "exit_date": $("#arpexit_date").val(),
-                "keluar_id": $("#arpkeluar_id").val(),
-                "examination_date": $("#arpexamination_date").val(),
-                "temperature": $("#arptemperature").val(),
-                "tension_upper": $("#arptension_upper").val(),
-                "tension_below": $("#arptension_below").val(),
-                "nadi": $("#arpnadi").val(),
-                "nafas": $("#arpnafas").val(),
-                "weight": $("#arpweight").val(),
-                "height": $("#arpheight").val(),
-                "imt_score": $("#arpimt_score").val(),
-                "imt_desc": $("#arpimt_desc").val(),
-                "gcs_e": $("#arpgcs_e").val(),
-                "gcs_v": $("#arpgcs_v").val(),
-                "gcs_m": $("#arpgcs_m").val(),
-                "gcs_score": $("#arpgcs_score").val(),
-                "gcs_desc": $("#arpgcs_desc").val(),
-                "saturasi": $("#arpsaturasi").val(),
-                "arm_diameter": $("#arparm_diameter").val(),
-                "anamnase": $("#arpanamnase").val(),
-                "alo_anamnase": $("#arpalo_anamnase").val(),
-                "pemeriksaan": $("#arppemeriksaan").val(),
-                "teraphy_desc": $("#arpteraphy_desc").val(),
-                "instruction": $("#arpinstruction").val(),
-                "medical_treatment": $("#arpmedical_treatment").val(),
-                "employee_id": $("#arpemployee_id").val(),
-                "description": $("#arpdescription").val(),
-                "modified_date": $("#arpmodified_date").val(),
-                "modified_by": $("#arpmodified_by").val(),
-                "modified_from": $("#arpmodified_from").val(),
-                "status_pasien_id": $("#arpstatus_pasien_id").val(),
-                "ageyear": $("#arpageyear").val(),
-                "agemonth": $("#arpagemonth").val(),
-                "ageday": $("#arpageday").val(),
-                "thename": $("#arpthename").val(),
-                "theaddress": $("#arptheaddress").val(),
-                "theid": $("#arptheid").val(),
-                "isrj": $("#arpisrj").val(),
-                "gender": $("#arpgender").val(),
-                "doctor": $("#arpdoctor").val(),
-                "kal_id": $("#arpkal_id").val(),
-                "petugas_id": $("#arppetugas_id").val(),
-                "petugas": $("#arppetugas").val(),
-                "account_id": $("#arpaccount_id").val(),
-                "kesadaran": $("#arpkesadaran").val(),
-                "isvalid": $("#arpisvalid").val(),
-                <?php foreach ($aValue as $key => $value) {
-                    if ($value['p_type'] == 'GEN0009') {
-                ?> "<?= $value['value_id']; ?>": $("#arp<?= $value['p_type'] . $value['value_id']; ?>").val(),
-                <?php
-                    }
-                } ?>
-            }),
-            // data: new FormData(document.getElementById('formaddarp')),
+            // data: 
+
+            data: new FormData(document.getElementById('formaddarp')),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -621,7 +617,7 @@ foreach ($aValue as $key => $value) {
             .append($('<tr id="arpdiag' + diagIndex + '">')
                 // .append($('<td>').html(diagIndex + "."))
                 .append($('<td>')
-                    .append('<select id="arpdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiag(' + diagIndex + ')" style="width: 100%"></select>')
+                    .append('<select id="arpdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiagNurse(' + diagIndex + ')" style="width: 100%"></select>')
                     .append('<input id="arpdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     .append('<input id="arpsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
@@ -682,6 +678,13 @@ foreach ($aValue as $key => $value) {
             $("#" + theid).append(option).trigger('change');
         }
 
+    }
+
+    function selectedDiagNurse(index) {
+        var diagname = $("#arpdiag_id" + index).text()
+        if (typeof diagname !== 'undefined') {
+            $("#arpdiag_name" + index).val(diagname)
+        }
     }
 </script>
 <script type='text/javascript'>
@@ -7306,6 +7309,267 @@ foreach ($aValue as $key => $value) {
                 $.each(educationIntegrationAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
                         addEducationIntegration(0, key)
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function addGcs(flag, index) {
+        var bodyId = '';
+        if (flag == 1) {
+            const date = new Date();
+            bodyId = date.toISOString().substring(0, 23);
+            bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        } else {
+            bodyId = gcsAll[index].body_id
+        }
+        $("#bodyGcs").append(
+            $('<form id="formGcs' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            .append(
+                $('<div class="card border border-1 rounded-4 m-4 p-4">')
+                .append($('<div class="card-body">')
+                    .append($('<h4 class="card-title">').html("GCS"))
+                    .append($('<div class="mb-3 row">')
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                    if ($value['p_type'] == 'GEN0011') {
+                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 2) {
+                                            ?> <?php
+                                                                                        } else if ($value['entry_type'] == 3) {
+                                                ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                        }
+                                            ?> <?php }
+                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                ?>
+                        )
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
+                            .append($('<div class="row">')
+                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                .append($('<div class="col-md-8">')
+                                    .append($('<select id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">')
+                                        .append('<option>-</option>')
+                                        .append('<option value="1">Ringan</option>')
+                                        .append('<option value="2">Sedang</option>')
+                                        .append('<option value="3">Berat</option>')
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    .append('<div class="panel-footer text-end mb-4">' +
+                        '<button type="submit" id="formGcsSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formGcsEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '</div>')
+
+                )
+            )
+        )
+
+        $("#GEN001101" + bodyId).on("change", function() {
+            var e = $("#GEN001101" + bodyId).val()
+            var m = $("#GEN001102" + bodyId).val()
+            var v = $("#GEN001103" + bodyId).val()
+
+            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+            var conclutionScore = 0
+            if (totalScore >= 3 && totalScore <= 8)
+                conclutionScore = 3
+            if (totalScore > 8 && totalScore <= 12)
+                conclutionScore = 2
+            if (totalScore > 12 && totalScore <= 15)
+                conclutionScore = 1
+
+
+            $('GCS_SCORE' + bodyId).val(conclutionScore)
+        })
+        $("#GEN001102" + bodyId).on("change", function() {
+            var e = $("#GEN001101" + bodyId).val()
+            var m = $("#GEN001102" + bodyId).val()
+            var v = $("#GEN001103" + bodyId).val()
+
+            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+            var conclutionScore = 0
+            if (totalScore >= 3 && totalScore <= 8)
+                conclutionScore = 3
+            if (totalScore > 8 && totalScore <= 12)
+                conclutionScore = 2
+            if (totalScore > 12 && totalScore <= 15)
+                conclutionScore = 1
+
+
+            $('GCS_SCORE' + bodyId).val(conclutionScore)
+        })
+        $("#GEN001103" + bodyId).on("change", function() {
+            var e = $("#GEN001101" + bodyId).val()
+            var m = $("#GEN001102" + bodyId).val()
+            var v = $("#GEN001103" + bodyId).val()
+
+            var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
+            var conclutionScore = 0
+            if (totalScore >= 3 && totalScore <= 8)
+                conclutionScore = 3
+            if (totalScore > 8 && totalScore <= 12)
+                conclutionScore = 2
+            if (totalScore > 12 && totalScore <= 15)
+                conclutionScore = 1
+
+
+            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+        })
+
+        $("#formGcsEditBtn" + bodyId).on("click", function() {
+            $("#formGcsSaveBtn" + bodyId).show()
+            $("#formGcsEditBtn" + bodyId).hide()
+            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
+
+        <?php foreach ($aValue as $key1 => $value1) {
+            if ($value1['p_type'] == 'GEN0011' && $value1['value_score'] == '99') {
+        ?>
+                $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
+                    if ($(this).is(":checked")) {
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    } else {
+                        console.log($(this).val())
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                    }
+                });
+        <?php
+            }
+        } ?>
+
+        $("#formGcs" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="no_registration" id="stabilitasno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="GEN0011" class="form-control" />')
+        $("#formGcs" + bodyId).on('submit', (function(e) {
+            let clicked_submit_btn = $(this).closest('form').find(':submit');
+            e.preventDefault();
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveGcs',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+                    $("#formGcsSaveBtn" + bodyId).hide()
+                    $("#formGcsEditBtn" + bodyId).show()
+                    $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
+
+                    clicked_submit_btn.button('reset');
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    clicked_submit_btn.button('reset');
+                    errorMsg(xhr);
+                },
+                complete: function() {
+                    clicked_submit_btn.button('reset');
+                }
+            });
+        }));
+
+
+        if (flag == 1) {
+            $("#formGcsSaveBtn" + bodyId).show()
+            $("#formGcsEditBtn" + bodyId).hide()
+            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
+        } else {
+            var gcs = gcsAll[index];
+            <?php foreach ($aParameter as $key => $value) {
+                if ($value['p_type'] == 'GEN0011') {
+                    // if ($value['entry_type'] == '3') {
+                    if (in_array($value['entry_type'], [1, 3, 4])) {
+            ?>
+                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(gcs.<?= strtolower($value['column_name']); ?>)
+                    <?php
+
+                    } else if ($value['entry_type'] == '2') {
+                    ?>
+                        if (gcs.<?= strtolower($value['column_name']); ?> == 1) {
+                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                            <?php foreach ($aValue as $key1 => $value1) {
+                                if ($value1['p_type'] == 'GEN0011' && $value1['value_score'] == '99') {
+                            ?>
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(gcs.<?= strtolower($value1['value_info']); ?>)
+                            <?php
+                                }
+                            } ?>
+                        }
+            <?php
+                    }
+                }
+            } ?>
+            $.each(GcsDetailAll, function(key, value) {
+                if (value.body_id == Gcs.body_id) {
+                    console.log("#val" + value.p_type + value.value_id + bodyId)
+                    $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
+                }
+            })
+
+            $("#formGcsSaveBtn" + bodyId).hide()
+            $("#formGcsEditBtn" + bodyId).show()
+            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
+        }
+        index++
+        $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function getGcs(bodyId) {
+        $("#bodyGcs").html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getGcs',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                gcsAll = data.gcs
+                gcsDetailAll = data.gcsDetail
+
+                $.each(gcsAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val())
+                        addGcs(0, key)
                 })
             },
             error: function() {

@@ -41,9 +41,10 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="arpbody_id" name="body_id">
                         <input type="hidden" id="arporg_unit_code" name="org_unit_code">
                         <input type="hidden" id="arppasien_diagnosa_id" name="pasien_diagnosa_id">
-                        <input type="hidden" id="arpdiagnosa_id" name="diagnosa_id">
+                        <!-- <input type="hidden" id="arpdiagnosa_id" name="diagnosa_id"> -->
                         <input type="hidden" id="arpno_registration" name="no_registration">
                         <input type="hidden" id="arpvisit_id" name="visit_id">
+                        <input type="hidden" id="arptrans_id" name="trans_id" value="<?= $visit['trans_id']; ?>">
                         <input type="hidden" id="arpbill_id" name="bill_id">
                         <input type="hidden" id="arpclass_room_id" name="class_room_id">
                         <input type="hidden" id="arpbed_id" name="bed_id">
@@ -254,1116 +255,1142 @@ $permission = user()->getPermissions();
                                 <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                             </div>
                         </div>
-                        <div class="accordion" id="accodrionAssessmentAwal">
-
-
-                            <?php foreach ($aParent as $key => $value) { ?>
-                                <?php if ($value['parent_id'] == '001') { ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                <b><?= $value['parent_parameter']; ?></b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                        <div class="col-md-12">
-                                                            <div class="row">
-                                                                <div class="col-md-3">
-                                                                    <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Alat Ukur:</h5>
-                                                                </div>
-                                                                <div class="col-md-9">
-                                                                    <?php foreach ($aType as $key1 => $value1) { ?>
-                                                                        <?php if ($value1['parent_id'] == $value['parent_id']) {
-                                                                        ?>
-                                                                            <div class="form-check mb-3">
-                                                                                <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>')">
-                                                                                <label class="form-check-label" for="atype<?= $value1['p_type']; ?>">
-                                                                                    <?= $value1['p_description']; ?>
-                                                                                </label>
-                                                                            </div>
-                                                                        <?php
-                                                                        } ?>
-                                                                    <?php } ?>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Parameter 2:</h5>
-                                                                </div>
-                                                                <table class="col-md-12 table table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>No</th>
-                                                                            <th>Deskripsi</th>
-                                                                            <th>Pilihan</th>
-                                                                            <th>Score</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="bodyAssessment<?= $value['parent_id']; ?>">
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                            <div class="panel-footer text-end mb-4">
-                                                                <button type="submit" id="formsavefallriskbtn" name="save" data-loading-text="processing" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                                <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="processing" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                <?php if ($value['parent_id'] == '002') { ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                <b><?= $value['parent_parameter']; ?></b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                        <div class="col-md-12">
-                                                            <div id="bodyPainMonitoring">
-                                                            </div>
-                                                            <div class="row mb-4">
-                                                                <div class="col-md-12">
-                                                                    <div id="addPainMonitoringButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPainMonitoring(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                <?php if ($value['parent_id'] == '004') { ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                <b><?= $value['parent_parameter']; ?></b>
-                                            </button>
-                                        </h2>
-                                        <style>
-                                            .table-striped-vertical :nth-child(odd) {
-                                                /* // Specify the background color for odd rows  */
-                                                /* background-color: lightblue; */
-                                            }
-                                        </style>
-                                        <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyTriage">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addTriageButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addTriage(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                <?php if ($value['parent_id'] == '005') { ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                <b><?= $value['parent_parameter']; ?></b>
-                                            </button>
-                                        </h2>
-                                        <style>
-                                            .table-striped-vertical :nth-child(odd) {
-                                                /* // Specify the background color for odd rows  */
-                                                /* background-color: lightblue; */
-                                            }
-                                        </style>
-                                        <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyApgar">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addApgarButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addApgar(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php } ?>
-                                <?php if ($value['parent_id'] == '006') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingGizi">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGizi" aria-expanded="false" aria-controls="collapseGizi">
-                                                <b>SKRINING GIZI</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseGizi" class="accordion-collapse collapse" aria-labelledby="headingGizi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyGizi">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addGiziButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addGizi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } ?>
-                            <?php } ?>
-                            <?php foreach ($aType as $key => $value) {
-                                if ($value['p_type'] == 'ASES016') {
-                            ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingADL">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseADL" aria-expanded="false" aria-controls="collapseADL">
-                                                <b>AKTIVITAS DAN LATIHAN</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseADL" class="accordion-collapse collapse" aria-labelledby="headingADL" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyADL">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addADLButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addADL(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES047') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingDekubitus">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDekubitus" aria-expanded="false" aria-controls="collapseDekubitus">
-                                                <b>DEKUBITUS</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseDekubitus" class="accordion-collapse collapse" aria-labelledby="headingDekubitus" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyDekubitus">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addDekubitusButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'GEN0012') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="<?= $value['p_type']; ?>">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['p_type']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['p_type']; ?>">
-                                                <b><?= $value['p_description']; ?></b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapse<?= $value['p_type']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['p_type']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyStabilitas">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addDerajatStabilitasButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addDerajatStabilitas(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES049') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingEducationIntegration">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationIntegration" aria-expanded="false" aria-controls="collapseEducationIntegration">
-                                                <b>EDUKASI INTEGRASI</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseEducationIntegration" class="accordion-collapse collapse" aria-labelledby="headingEducationIntegration" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyEducationIntegration">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'GEN0013') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingEducationForm">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
-                                                <b>FORMULIR PEMBERIAK EDUKASI</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyEducationForm">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addEducationFormButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES036') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingIntegumen">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegumen" aria-expanded="false" aria-controls="collapseIntegumen">
-                                                <b>INTEGUMEN & MOSKULO SKELETAL</b> ASES036
-                                            </button>
-                                        </h2>
-                                        <div id="collapseIntegumen" class="accordion-collapse collapse" aria-labelledby="headingIntegumen" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyIntegumen">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addIntegumenButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addIntegumen(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES038') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingNeurosensoris">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeurosensoris" aria-expanded="false" aria-controls="collapseNeurosensoris">
-                                                <b>NEUROSENSORIS</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseNeurosensoris" class="accordion-collapse collapse" aria-labelledby="headingNeurosensoris" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyNeurosensoris">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addNeurosensorisButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES040') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingPencernaan">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePencernaan" aria-expanded="false" aria-controls="collapsePencernaan">
-                                                <b>PENCERNAAN</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapsePencernaan" class="accordion-collapse collapse" aria-labelledby="headingPencernaan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyPencernaan">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addPencernaanButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES042') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingPerkemihan">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerkemihan" aria-expanded="false" aria-controls="collapsePerkemihan">
-                                                <b>PERKEMIHAN</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapsePerkemihan" class="accordion-collapse collapse" aria-labelledby="headingPerkemihan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyPerkemihan">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addPerkemihanButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES041') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingPernapasan">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernapasan" aria-expanded="false" aria-controls="collapsePernapasan">
-                                                <b>PERNAPASAN</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyPernapasan">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPernapasan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES035') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingPsikologi">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePsikologi" aria-expanded="false" aria-controls="collapsePsikologi">
-                                                <b>PSIKOLOGI SPIRITUAL</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapsePsikologi" class="accordion-collapse collapse" aria-labelledby="headingPsikologi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyPsikologi">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES043') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingSeksual">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeksual" aria-expanded="false" aria-controls="collapseSeksual">
-                                                <b>SEKSUAL/REPRODUKSI</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseSeksual" class="accordion-collapse collapse" aria-labelledby="headingSeksual" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodySeksual">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addSeksualButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES039') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingSirkulasi">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSirkulasi" aria-expanded="false" aria-controls="collapseSirkulasi">
-                                                <b>SIRKULASI</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseSirkulasi" class="accordion-collapse collapse" aria-labelledby="headingSirkulasi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodySirkulasi">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addSirkulasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES037') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingSocial">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSocial" aria-expanded="false" aria-controls="collapseSocial">
-                                                <b>SOCIAL ECONOMY</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseSocial" class="accordion-collapse collapse" aria-labelledby="headingSocial" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodySocial">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addSocialButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES044') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingHearing">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHearing" aria-expanded="false" aria-controls="collapseHearing">
-                                                <b>THT & MATA</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseHearing" class="accordion-collapse collapse" aria-labelledby="headingHearing" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodyHearing">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addHearingButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                } else if ($value['p_type'] == 'ASES046') {
-                                ?>
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingSleeping">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSleeping" aria-expanded="false" aria-controls="collapseSleeping">
-                                                <b>TIDUR DAN ISTIRAHAT</b>
-                                            </button>
-                                        </h2>
-                                        <div id="collapseSleeping" class="accordion-collapse collapse" aria-labelledby="headingSleeping" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                            <div class="accordion-body text-muted">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div id="bodySleeping">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addSleepingButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                            <?php
-                                }
-                            } ?>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawat">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawat" aria-expanded="true" aria-controls="collapseTindakanPerawat">
-                                        <b>TINDAKAN KOLABORATIF</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawat" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawat", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
-
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
-
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawat" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawat" class="table-group-divider">
-                                                                        <?php
-                                                                        $total = 0;
-                                                                        ?>
-                                                                    </tbody>
-                                                                    <tfoot class="table-group-divider">
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-6"></div>
-                                                                                    <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                        <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                    </label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawatMandiri">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatMandiri" aria-expanded="true" aria-controls="collapseTindakanPerawatMandiri">
-                                        <b>TINDAKAN MANDIRI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatMandiri" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiri", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
-
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
-
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatMandiri" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawatMandiri" class="table-group-divider">
-                                                                        <?php
-                                                                        $total = 0;
-                                                                        ?>
-                                                                    </tbody>
-                                                                    <tfoot class="table-group-divider">
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-6"></div>
-                                                                                    <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                        <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                    </label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawatImplementasi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatImplementasi" aria-expanded="true" aria-controls="collapseTindakanPerawatImplementasi">
-                                        <b>IMPLEMENTASI KEPERAWATAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionAssessmentAwal" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatImplementasi" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatImplementasi", 3, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
-
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
-
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatImplementasi" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawatImplementasi" class="table-group-divider">
-                                                                    </tbody>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="cetakprintKeperawatan">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseprintKeperawatan" aria-expanded="true" aria-controls="collapseprintKeperawatan">
-                                        <b>CETAK KEPERAWATAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionAssessmentAwal">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <ul id="keperawatanListLinkAll" class="list-group list-group-flush">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <hr>
-                        </div><!--./col-md-12-->
-                        <div class="panel-footer text-end mb-4">
-                            <button type="button" id="formaddarpbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                            <button type="button" id="formsavearpbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button type="button" id="formeditarp" name="editrm" onclick="enableARP()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                            <button type="button" id="formsignarp" name="signrm" onclick="signArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
-                        </div>
                     </form>
+                    <div class="accordion" id="accodrionAssessmentAwal">
+
+
+                        <?php foreach ($aParent as $key => $value) { ?>
+                            <?php if ($value['parent_id'] == '001') { ?>
+                                <div id="arpFallRisk_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
+                                            <b><?= $value['parent_parameter']; ?></b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Alat Ukur:</h5>
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <?php foreach ($aType as $key1 => $value1) { ?>
+                                                                    <?php if ($value1['parent_id'] == $value['parent_id']) {
+                                                                    ?>
+                                                                        <div class="form-check mb-3">
+                                                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>')">
+                                                                            <label class="form-check-label" for="atype<?= $value1['p_type']; ?>">
+                                                                                <?= $value1['p_description']; ?>
+                                                                            </label>
+                                                                        </div>
+                                                                    <?php
+                                                                    } ?>
+                                                                <?php } ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Parameter 2:</h5>
+                                                            </div>
+                                                            <table class="col-md-12 table table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>No</th>
+                                                                        <th>Deskripsi</th>
+                                                                        <th>Pilihan</th>
+                                                                        <th>Score</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="bodyAssessment<?= $value['parent_id']; ?>">
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="panel-footer text-end mb-4">
+                                                            <button type="submit" id="formsavefallriskbtn" name="save" data-loading-text="processing" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="processing" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <?php if ($value['parent_id'] == '002') { ?>
+                                <div id="arpPainMonitoring_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
+                                            <b><?= $value['parent_parameter']; ?></b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyPainMonitoring">
+                                                        </div>
+                                                        <div class="row mb-4">
+                                                            <div class="col-md-12">
+                                                                <div id="addPainMonitoringButton" class="box-tab-tools text-center">
+                                                                    <a onclick="addPainMonitoring(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <?php if ($value['parent_id'] == '004') { ?>
+                                <div id="arpTriage_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
+                                            <b><?= $value['parent_parameter']; ?></b>
+                                        </button>
+                                    </h2>
+                                    <style>
+                                        .table-striped-vertical :nth-child(odd) {
+                                            /* // Specify the background color for odd rows  */
+                                            /* background-color: lightblue; */
+                                        }
+                                    </style>
+                                    <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyTriage">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addTriageButton" class="box-tab-tools text-center">
+                                                                <a onclick="addTriage(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <?php if ($value['parent_id'] == '005') { ?>
+                                <div id="arpApgar_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
+                                            <b><?= $value['parent_parameter']; ?></b>
+                                        </button>
+                                    </h2>
+                                    <style>
+                                        .table-striped-vertical :nth-child(odd) {
+                                            /* // Specify the background color for odd rows  */
+                                            /* background-color: lightblue; */
+                                        }
+                                    </style>
+                                    <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyApgar">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addApgarButton" class="box-tab-tools text-center">
+                                                                <a onclick="addApgar(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                            <?php if ($value['parent_id'] == '006') {
+                            ?>
+                                <div id="arpGizi_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingGizi">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGizi" aria-expanded="false" aria-controls="collapseGizi">
+                                            <b>SKRINING GIZI</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseGizi" class="accordion-collapse collapse" aria-labelledby="headingGizi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyGizi">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addGiziButton" class="box-tab-tools text-center">
+                                                                <a onclick="addGizi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } ?>
+                        <?php } ?>
+                        <?php foreach ($aType as $key => $value) {
+                            if ($value['p_type'] == 'ASES016') {
+                        ?>
+                                <div id="arpAdl_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingADL">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseADL" aria-expanded="false" aria-controls="collapseADL">
+                                            <b>AKTIVITAS DAN LATIHAN</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseADL" class="accordion-collapse collapse" aria-labelledby="headingADL" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyADL">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addADLButton" class="box-tab-tools text-center">
+                                                                <a onclick="addADL(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES047') {
+                            ?>
+                                <div id="arpDekubitus_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingDekubitus">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDekubitus" aria-expanded="false" aria-controls="collapseDekubitus">
+                                            <b>DEKUBITUS</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseDekubitus" class="accordion-collapse collapse" aria-labelledby="headingDekubitus" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyDekubitus">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addDekubitusButton" class="box-tab-tools text-center">
+                                                                <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'GEN0012') {
+                            ?>
+                                <div id="arpStabilitas_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="<?= $value['p_type']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['p_type']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['p_type']; ?>">
+                                            <b><?= $value['p_description']; ?></b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<?= $value['p_type']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['p_type']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyStabilitas">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addDerajatStabilitasButton" class="box-tab-tools text-center">
+                                                                <a onclick="addDerajatStabilitas(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES049') {
+                            ?>
+                                <div id="arpEdukasiIntegrasi_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingEducationIntegration">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationIntegration" aria-expanded="false" aria-controls="collapseEducationIntegration">
+                                            <b>EDUKASI INTEGRASI</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseEducationIntegration" class="accordion-collapse collapse" aria-labelledby="headingEducationIntegration" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyEducationIntegration">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
+                                                                <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'GEN0013') {
+                            ?>
+                                <div id="arpEdukasiForm_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingEducationForm">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
+                                            <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyEducationForm">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addEducationFormButton" class="box-tab-tools text-center">
+                                                                <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'GEN0011') {
+                            ?>
+                                <div id="arpGcs_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingGcs">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGcs" aria-expanded="false" aria-controls="collapseGcs">
+                                            <b>GLASGOW COMA SCALE (GCS)</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseGcs" class="accordion-collapse collapse" aria-labelledby="headingGcs" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyGcs">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addGcsButton" class="box-tab-tools text-center">
+                                                                <a onclick="addGcs(1,0)" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES036') {
+                            ?>
+                                <div id="arpIntegumen_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingIntegumen">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegumen" aria-expanded="false" aria-controls="collapseIntegumen">
+                                            <b>INTEGUMEN & MOSKULO SKELETAL</b> ASES036
+                                        </button>
+                                    </h2>
+                                    <div id="collapseIntegumen" class="accordion-collapse collapse" aria-labelledby="headingIntegumen" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyIntegumen">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addIntegumenButton" class="box-tab-tools text-center">
+                                                                <a onclick="addIntegumen(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES038') {
+                            ?>
+                                <div id="arpNeurosensoris_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingNeurosensoris">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeurosensoris" aria-expanded="false" aria-controls="collapseNeurosensoris">
+                                            <b>NEUROSENSORIS</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseNeurosensoris" class="accordion-collapse collapse" aria-labelledby="headingNeurosensoris" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyNeurosensoris">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addNeurosensorisButton" class="box-tab-tools text-center">
+                                                                <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES040') {
+                            ?>
+                                <div id="arpPencernaan_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPencernaan">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePencernaan" aria-expanded="false" aria-controls="collapsePencernaan">
+                                            <b>PENCERNAAN</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePencernaan" class="accordion-collapse collapse" aria-labelledby="headingPencernaan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyPencernaan">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addPencernaanButton" class="box-tab-tools text-center">
+                                                                <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES042') {
+                            ?>
+                                <div id="arpPerkemihan_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPerkemihan">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePerkemihan" aria-expanded="false" aria-controls="collapsePerkemihan">
+                                            <b>PERKEMIHAN</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePerkemihan" class="accordion-collapse collapse" aria-labelledby="headingPerkemihan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyPerkemihan">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addPerkemihanButton" class="box-tab-tools text-center">
+                                                                <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES041') {
+                            ?>
+                                <div id="arpPernapasan_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPernapasan">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernapasan" aria-expanded="false" aria-controls="collapsePernapasan">
+                                            <b>PERNAPASAN</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyPernapasan">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addPernapasanButton" class="box-tab-tools text-center">
+                                                                <a onclick="addPernapasan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES035') {
+                            ?>
+                                <div id="arpPsikologi_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingPsikologi">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePsikologi" aria-expanded="false" aria-controls="collapsePsikologi">
+                                            <b>PSIKOLOGI SPIRITUAL</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapsePsikologi" class="accordion-collapse collapse" aria-labelledby="headingPsikologi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyPsikologi">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addPsikologiButton" class="box-tab-tools text-center">
+                                                                <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES043') {
+                            ?>
+                                <div id="arpSeksual_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSeksual">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeksual" aria-expanded="false" aria-controls="collapseSeksual">
+                                            <b>SEKSUAL/REPRODUKSI</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSeksual" class="accordion-collapse collapse" aria-labelledby="headingSeksual" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodySeksual">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addSeksualButton" class="box-tab-tools text-center">
+                                                                <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES039') {
+                            ?>
+                                <div id="arpSirkulasi_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSirkulasi">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSirkulasi" aria-expanded="false" aria-controls="collapseSirkulasi">
+                                            <b>SIRKULASI</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSirkulasi" class="accordion-collapse collapse" aria-labelledby="headingSirkulasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodySirkulasi">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addSirkulasiButton" class="box-tab-tools text-center">
+                                                                <a onclick="addSirkulasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES037') {
+                            ?>
+                                <div id="arpSocial_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSocial">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSocial" aria-expanded="false" aria-controls="collapseSocial">
+                                            <b>SOCIAL ECONOMY</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSocial" class="accordion-collapse collapse" aria-labelledby="headingSocial" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodySocial">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addSocialButton" class="box-tab-tools text-center">
+                                                                <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES044') {
+                            ?>
+                                <div id="arpHearing_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingHearing">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHearing" aria-expanded="false" aria-controls="collapseHearing">
+                                            <b>THT & MATA</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseHearing" class="accordion-collapse collapse" aria-labelledby="headingHearing" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodyHearing">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addHearingButton" class="box-tab-tools text-center">
+                                                                <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            } else if ($value['p_type'] == 'ASES046') {
+                            ?>
+                                <div id="arpSleeping_Group" class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSleeping">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSleeping" aria-expanded="false" aria-controls="collapseSleeping">
+                                            <b>TIDUR DAN ISTIRAHAT</b>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSleeping" class="accordion-collapse collapse" aria-labelledby="headingSleeping" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div class="accordion-body text-muted">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div id="bodySleeping">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="addSleepingButton" class="box-tab-tools text-center">
+                                                                <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php
+                            }
+                        } ?>
+                        <div id="arpTindakanKolaboratif_Group" class="accordion-item">
+                            <h2 class="accordion-header" id="tindakanPerawat">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawat" aria-expanded="true" aria-controls="collapseTindakanPerawat">
+                                    <b>TINDAKAN KOLABORATIF</b>
+                                </button>
+                            </h2>
+                            <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <form id="form1" action="" method="post" class="">
+                                                <div class="box-body row mt-4">
+                                                    <input type="hidden" name="ci_csrf_token" value="">
+                                                    <div class="col-sm-12 col-md-12 mb-4">
+                                                        <div class="row">
+                                                            <div class="col-md-8"><select id="searchTarifPerawat" class="form-control" style="width: 100%"></select></div>
+                                                            <div class="col-md-4">
+                                                                <div class="box-tab-tools">
+                                                                    <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawat", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                                                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                                                <div class="row">
+                                                                    <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="box-tab-tools">
+                                                                            <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        <?php }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <div class="table-responsive">
+                                                <style>
+                                                    th {
+                                                        width: 200px;
+                                                    }
+
+                                                    #chargesBody td {
+                                                        text-align: center;
+                                                    }
+
+                                                    #chargesBody p {
+                                                        color: cadetblue;
+                                                    }
+                                                </style>
+                                                <div class="table-rep-plugin">
+                                                    <div class="table-responsive mb-0">
+                                                        <form id="formchargesBodyPerawat" action="" method="post" class="">
+                                                            <table class="table table-sm table-hover">
+                                                                <thead class="table-primary" style="text-align: center;">
+                                                                    <tr>
+                                                                        <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
+                                                                        <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2"></th class="text-center">
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="chargesBodyPerawat" class="table-group-divider">
+                                                                    <?php
+                                                                    $total = 0;
+                                                                    ?>
+                                                                </tbody>
+                                                                <tfoot class="table-group-divider">
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-6"></div>
+                                                                                <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="totalnya" class="col-sm-4 col-form-label text-end">
+                                                                                    <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
+                                                                                </label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="arpTindakanMandiri_Group" class="accordion-item">
+                            <h2 class="accordion-header" id="tindakanPerawatMandiri">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatMandiri" aria-expanded="true" aria-controls="collapseTindakanPerawatMandiri">
+                                    <b>TINDAKAN MANDIRI</b>
+                                </button>
+                            </h2>
+                            <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <form id="form1" action="" method="post" class="">
+                                                <div class="box-body row mt-4">
+                                                    <input type="hidden" name="ci_csrf_token" value="">
+                                                    <div class="col-sm-12 col-md-12 mb-4">
+                                                        <div class="row">
+                                                            <div class="col-md-8"><select id="searchTarifPerawatMandiri" class="form-control" style="width: 100%"></select></div>
+                                                            <div class="col-md-4">
+                                                                <div class="box-tab-tools">
+                                                                    <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiri", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                                                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                                                <div class="row">
+                                                                    <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="box-tab-tools">
+                                                                            <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        <?php }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <div class="table-responsive">
+                                                <style>
+                                                    th {
+                                                        width: 200px;
+                                                    }
+
+                                                    #chargesBody td {
+                                                        text-align: center;
+                                                    }
+
+                                                    #chargesBody p {
+                                                        color: cadetblue;
+                                                    }
+                                                </style>
+                                                <div class="table-rep-plugin">
+                                                    <div class="table-responsive mb-0">
+                                                        <form id="formchargesBodyPerawatMandiri" action="" method="post" class="">
+                                                            <table class="table table-sm table-hover">
+                                                                <thead class="table-primary" style="text-align: center;">
+                                                                    <tr>
+                                                                        <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
+                                                                        <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2"></th class="text-center">
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="chargesBodyPerawatMandiri" class="table-group-divider">
+                                                                    <?php
+                                                                    $total = 0;
+                                                                    ?>
+                                                                </tbody>
+                                                                <tfoot class="table-group-divider">
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-6"></div>
+                                                                                <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="totalnya" class="col-sm-4 col-form-label text-end">
+                                                                                    <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
+                                                                                </label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan='11' class="align_right">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-5"></div>
+                                                                                <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
+                                                                                <div class="col-sm-3">
+                                                                                    <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="arpImplementasi_Group" class="accordion-item">
+                            <h2 class="accordion-header" id="tindakanPerawatImplementasi">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatImplementasi" aria-expanded="true" aria-controls="collapseTindakanPerawatImplementasi">
+                                    <b>IMPLEMENTASI KEPERAWATAN</b>
+                                </button>
+                            </h2>
+                            <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <form id="form1" action="" method="post" class="">
+                                                <div class="box-body row mt-4">
+                                                    <input type="hidden" name="ci_csrf_token" value="">
+                                                    <div class="col-sm-12 col-md-12 mb-4">
+                                                        <div class="row">
+                                                            <div class="col-md-8"><select id="searchTarifPerawatImplementasi" class="form-control" style="width: 100%"></select></div>
+                                                            <div class="col-md-4">
+                                                                <div class="box-tab-tools">
+                                                                    <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatImplementasi", 3, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <?php if (isset($permissions['tindakanpoli']['c'])) {
+                                                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
+                                                                <div class="row">
+                                                                    <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="box-tab-tools">
+                                                                            <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                        <?php }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                            <div class="table-responsive">
+                                                <style>
+                                                    th {
+                                                        width: 200px;
+                                                    }
+
+                                                    #chargesBody td {
+                                                        text-align: center;
+                                                    }
+
+                                                    #chargesBody p {
+                                                        color: cadetblue;
+                                                    }
+                                                </style>
+                                                <div class="table-rep-plugin">
+                                                    <div class="table-responsive mb-0">
+                                                        <form id="formchargesBodyPerawatImplementasi" action="" method="post" class="">
+                                                            <table class="table table-sm table-hover">
+                                                                <thead class="table-primary" style="text-align: center;">
+                                                                    <tr>
+                                                                        <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
+                                                                        <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
+                                                                        <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
+                                                                        <th class="text-center" rowspan="2"></th class="text-center">
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody id="chargesBodyPerawatImplementasi" class="table-group-divider">
+                                                                </tbody>
+                                                            </table>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="cetakprintKeperawatan">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseprintKeperawatan" aria-expanded="true" aria-controls="collapseprintKeperawatan">
+                                    <b>CETAK KEPERAWATAN</b>
+                                </button>
+                            </h2>
+                            <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionAssessmentAwal">
+                                <div class="accordion-body text-muted">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <ul id="keperawatanListLinkAll" class="list-group list-group-flush">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <hr>
+                    </div><!--./col-md-12-->
+                    <!-- <div class="panel-footer text-end mb-4">
+                        <button type="button" id="formaddarpbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
+                        <button type="button" id="formsavearpbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                        <button type="button" id="formeditarp" name="editrm" onclick="enableARP()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                        <button type="button" id="formsignarp" name="signrm" onclick="signArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                    </div> -->
                 </div>
             </div>
         </div>

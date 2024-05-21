@@ -14,6 +14,7 @@ use App\Models\Assessment\EducationIntegrationDetailModel;
 use App\Models\Assessment\EducationIntegrationModel;
 use App\Models\Assessment\EducationIntegrationPlanModel;
 use App\Models\Assessment\EducationIntegrationProvisionModel;
+use App\Models\Assessment\GcsModel;
 use App\Models\Assessment\indicatorDetail;
 use App\Models\Assessment\indicatorDetailModel;
 use App\Models\Assessment\IndicatorModel;
@@ -25,6 +26,8 @@ use App\Models\Assessment\NutritionModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
+use App\Models\Assessment\PasienDiagnosaPerawatModel;
+use App\Models\Assessment\PasienDiagnosasPerawatModel;
 use App\Models\Assessment\ReproductionModel;
 use App\Models\Assessment\RespirationModel;
 use App\Models\Assessment\SleepingModel;
@@ -2189,7 +2192,34 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'sleeping' => $select
         ]);
     }
-    public function saveExaminationInfo()
+    public function saveGcs()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new GcsModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getGcs()
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -2197,7 +2227,28 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
-        // $body = $this->request->getPost();
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new GcsModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'gcs' => $select
+        ]);
+    }
+    public function saveExaminationInfo()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // $body = $this->request->getBody();
+        // $body = json_decode($body, true);
+        $body = $this->request->getPost();
         $data = [];
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -2228,7 +2279,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $ex = new ExaminationModel();
         $ex->save($data);
 
-        // return json_encode($data);
+        // return json_encode($diag_id[0]);
         $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();
@@ -2250,6 +2301,45 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                 // return json_encode($data);
                 $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
                 $pasienHistory->insert($data);
+            }
+        }
+
+        $pdn = new PasienDiagnosaPerawatModel();
+        $org = new OrganizationunitModel();
+
+        $id = $org->generateId();
+        $pds = new PasienDiagnosasPerawatModel();
+        $db->query("delete from pasien_diagnosas_nurse where body_id in (select body_id from pasien_diagnosa_nurse where document_id = '$body_id')");
+        $db->query("delete from pasien_diagnosa_nurse where document_id = '$body_id'");
+        $data = [
+            'org_unit_code' => $org_unit_code,
+            'visit_id' => $visit_id,
+            'trans_id' => $trans_id,
+            'body_id' => $id,
+            'document_id' => $body_id,
+            'clinic_id' => $clinic_id,
+            'class_room_id' => $class_room_id,
+            'bed_id' => $bed_id,
+            'no_registration' => $no_registration,
+            'examination_date' => str_replace("T", " ", $examination_date),
+            'employee_id' => $employee_id,
+            'petugas_id' => user()->username,
+            'descriptions' => null,
+            'modified_by' => $modified_by,
+        ];
+        $pdn->insert($data);
+        if (!empty($diag_id)) {
+
+            foreach ($diag_id as $key => $value) {
+                $dataDiag = [
+                    'org_unit_code' => $org_unit_code,
+                    'body_id' => $id,
+                    'diagnosan_id' => $diag_id[$key],
+                    'diagnosa_date' => new RawSql("getdate()"),
+                    'diag_notes' => $diag_name[$key],
+                    'modified_by' => user()->username
+                ];
+                $pds->insert($dataDiag);
             }
         }
 

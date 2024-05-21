@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AgamaModel;
+use App\Models\Assessment\DiagnosaPerawatModel;
 use App\Models\AssessmentModel;
 use App\Models\BloodModel;
 use App\Models\CaraKeluarModel;
@@ -1224,6 +1225,21 @@ This Function is used to Add Patient
             if (!empty($result)) {
                 foreach ($result as $value) {
                     $data[] = array("id" => $value['diagnosa_id'], "text" => $value['name_of_diagnosa'] . " (" . $value['diagnosa_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
+    public function getDiagnosisPerawatListAjax()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        if (isset($search_term) && $search_term != '') {
+            $p = new DiagnosaPerawatModel();
+            $result = $this->lowerKey($p->getDiagnosa($search_term));
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => $value['diagnosan_id'], "text" => $value['diagnosan_name'] . " (" . $value['diagnosan_id'] . ")");
                 }
             }
             echo json_encode($data);
