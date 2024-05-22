@@ -568,7 +568,17 @@ foreach ($aValue as $key => $value) {
                     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
                     .append($("<td>").append($("<b>").html(value.examination_date)))
                     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.fullname)))
+                    .append($("<td>").append($("<b>").html(value.anamnase)))
+                    .append($("<td>").append($("<b>").html('BB: ' + ex.weight + 'Kg; TB: ' + ex.height + 'cm; ' +
+                        value.temperature + '°C; ' +
+                        value.nadi + '/menit; ' +
+                        value.tension_upper + 'mmHg; ' +
+                        value.tension_below + 'mmHg; ' +
+                        value.saturasi + 'SpO2%; ' +
+                        value.nafas + '/menit; ' +
+                        value.arm_diameter + 'cm; ')))
+                    .append($("<td>").append($("<b>").html()))
+                    .append($("<td>").append($("<b>").html()))
                     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
                 )
                 $('html, body').animate({
@@ -577,9 +587,19 @@ foreach ($aValue as $key => $value) {
             } else {
                 $("#assessmentKeperawatanHistoryBody").append($("<tr>")
                     .append($("<td>"))
-                    .append($("<td>").html(value.examination_date))
-                    .append($("<td>").html(value.name_of_clinic))
-                    .append($("<td>").html(value.fullname))
+                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                    .append($("<td>").append($("<b>").html(value.anamnase)))
+                    .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
+                        value.temperature + '°C; ' +
+                        value.nadi + '/menit; ' +
+                        value.tension_upper + 'mmHg; ' +
+                        value.tension_below + 'mmHg; ' +
+                        value.saturasi + 'SpO2%; ' +
+                        value.nafas + '/menit; ' +
+                        value.arm_diameter + 'cm; ')))
+                    .append($("<td>").append($("<b>").html()))
+                    .append($("<td>").append($("<b>").html()))
                     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
                 )
             }

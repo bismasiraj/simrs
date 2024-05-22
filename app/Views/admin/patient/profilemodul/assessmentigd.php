@@ -1394,9 +1394,13 @@ $permission = user()->getPermissions();
             <thead class="table-primary" style="text-align: center;">
                 <tr>
                     <th></th>
-                    <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
-                    <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                    <th class="text-center" colspan="2" style="width: 70%;">SOAP</th class="text-center">
+                    <th>Tanggal</th>
+                    <th>Klinik/Poli</th>
+                    <th class="text-center" style="width: 20%;">Subyektif</th class="text-center">
+                    <th class="text-center" style="width: 20%;">Obyektif</th class="text-center">
+                    <th class="text-center" style="width: 20%;">Asesmen</th class="text-center">
+                    <th class="text-center" style="width: 20%;">Prosedur</th class="text-center">
+                    <th></th>
                 </tr>
             </thead>
             <tbody id="assessmentKeperawatanHistoryBody">

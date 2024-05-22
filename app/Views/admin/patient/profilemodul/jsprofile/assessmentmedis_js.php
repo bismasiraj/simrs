@@ -552,7 +552,10 @@
                     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
                     .append($("<td>").append($("<b>").html(value.date_of_diagnosa)))
                     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.fullname)))
+                    .append($("<td>").html(value.alloanamnase))
+                    .append($("<td>").html(value.pemeriksaan))
+                    .append($("<td>").html(value.medical_problem))
+                    .append($("<td>").html(value.teraphy_desc))
                     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArm(' + key + ')">').html("Lihat")))
                 )
                 $('html, body').animate({
@@ -563,7 +566,10 @@
                     .append($("<td>"))
                     .append($("<td>").html(value.date_of_diagnosa))
                     .append($("<td>").html(value.name_of_clinic))
-                    .append($("<td>").html(value.fullname))
+                    .append($("<td>").html(value.alloanamnase))
+                    .append($("<td>").html(value.pemeriksaan))
+                    .append($("<td>").html(value.medical_problem))
+                    .append($("<td>").html(value.teraphy_desc))
                     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArm(' + key + ')">').html("Lihat")))
                 )
             }
@@ -1302,7 +1308,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armmedical_problem">Permasalahan Medis <a id="copyTerapiBtn" href="#"</label>
+                                    <label for="armmedical_problem">Permasalahan Medis</label>
                                     <textarea id="armmedical_problem" name="medical_problem" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
@@ -1310,7 +1316,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armhurt">Penyebab Cidera/Keracunan <a id="copyTerapiBtn" href="#"</label>
+                                    <label for="armhurt">Penyebab Cidera/Keracunan</label>
                                     <textarea id="armhurt" name="hurt" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>

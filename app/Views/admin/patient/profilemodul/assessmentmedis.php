@@ -302,7 +302,10 @@ $permission = user()->getPermissions();
                         <th></th>
                         <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
                         <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                        <th class="text-center" colspan="2" style="width: 70%;">SOAP</th class="text-center">
+                        <th class="text-center" style="width: 20%;">S (Subyektif)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">O (Obyektif)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">A (Asesmen)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">P (Prosedur)</th class="text-center">
                     </tr>
 
                 </thead>
