@@ -2,7 +2,7 @@
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
 ?>
-<div class="tab-pane active" id="rekammedis" role="tabpanel">
+<div class="tab-pane" id="rekammedis" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -51,15 +51,7 @@ $permission = user()->getPermissions();
                                 <input name="kddpjp" id="artglsep" type="hidden" class="form-control " />
                                 <input name="statusantrean" id="arstatusantrean" type="hidden" class="form-control " value="<?= $visit['statusantrean']; ?>" />
 
-
-
-
                                 <div class="row row-eq">
-
-
-                                    <!-- INI CURRENT FILLING DATA -->
-
-
 
                                     <div class="col-lg-12 col-md-12 col-sm-12">
                                         <div id="ajax_load"></div>

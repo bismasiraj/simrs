@@ -1904,6 +1904,7 @@ This Function is used to Add Patient
         $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
         $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
         $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
@@ -1951,7 +1952,8 @@ This Function is used to Add Patient
             'aParent' => $aParent,
             'aType' => $aType,
             'aParameter' => $aParameter,
-            'aValue' => $aValue
+            'aValue' => $aValue,
+            'mappingAssessment' => $mappingAssessment
         ]);
     }
 
@@ -2066,6 +2068,11 @@ This Function is used to Add Patient
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
+        foreach ($statusPasien as $key => $value) {
+            if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
+                $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
+            }
+        }
         foreach ($employee as $key => $value) {
 
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
@@ -2126,32 +2133,17 @@ This Function is used to Add Patient
 
         $userEmployee = user()->employee_id;
 
-        // if (!is_null($userEmployee)) {
-        //     foreach ($schedule as $key => $value) {
-        //         // if ($schedule[$key]['dpjp'] != '' && !is_null($schedule[$key]['dpjp'])) {
-        //         //     $dpjp[$schedule[$key]['employee_id']] = $schedule[$key]['dpjp'];
-        //         // }
-        //         if ($schedule[$key]['employee_id'] == $userEmployee) {
-        //             $clinicPermission[$schedule[$key]['clinic_id']]['clinic_id'] = $schedule[$key]['clinic_id'];
-        //             $clinicPermission[$schedule[$key]['clinic_id']]['name_of_clinic'] = $schedule[$key]['name_of_clinic'];
-        //             foreach ($clinic as $ckey => $cvalue) {
-        //                 if ($clinic[$ckey]['clinic_id'] == $schedule[$key]['clinic_id']) {
-        //                     $clinicPermission[$schedule[$key]['clinic_id']]['stype_id'] = $clinic[$ckey]['stype_id'];
-        //                 }
-        //             }
-        //         }
-        //     }
+        $db = db_connect();
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
-        //     // dd($clinicPermission);
+        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        //     unset($clinic);
-
-        //     $i = 0;
-        //     foreach ($clinicPermission as $key => $value) {
-        //         $i++;
-        //         $clinic[$i] = $clinicPermission[$key];
-        //     }
-        // }
 
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
@@ -2189,7 +2181,12 @@ This Function is used to Add Patient
             'suffer' => $suffer,
             'diagCat' => $diagCat,
             'schedule' => $schedule,
-            'employee' => $employee
+            'employee' => $employee,
+            'aParent' => $aParent,
+            'aType' => $aType,
+            'aParameter' => $aParameter,
+            'aValue' => $aValue,
+            'mappingAssessment' => $mappingAssessment
         ]);
     }
 
@@ -3208,8 +3205,6 @@ This Function is used to Add Patient
         } else {
             // return json_encode($data);
             $pd->save($data);
-
-            // $mesej = 'update';
         }
 
         if (!empty($diag_id)) {

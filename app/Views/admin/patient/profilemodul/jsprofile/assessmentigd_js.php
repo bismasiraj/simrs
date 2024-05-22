@@ -427,6 +427,9 @@ foreach ($aValue as $key => $value) {
 
                 if (examForassessment.length > 0) {
                     fillDataArp(examForassessment.length - 1)
+
+                    displayTableAssessmentKeperawatan(examForassessment.length - 1)
+                    displayTableAssessmentKeperawatanForVitalSign();
                     $("#arpAddDocument").hide()
                     $("#arpDocument").show()
                 }
@@ -523,7 +526,6 @@ foreach ($aValue as $key => $value) {
         $("#arpclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
         $("#arpemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
 
-        displayTableAssessmentKeperawatan(index)
         getPainMonitoring(ex.body_id)
         getTriage(ex.body_id)
         getApgar(ex.body_id)
@@ -1932,7 +1934,7 @@ foreach ($aValue as $key => $value) {
         if (flag == 1) {
             tarifDataJson = $("#" + container).val();
             tarifData = JSON.parse(tarifDataJson);
-            alert(tarifDataJson);
+
             var key = parseInt(billPerawatJson.length)
             billPerawatJson[key] = [];
         } else {

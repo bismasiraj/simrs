@@ -341,7 +341,7 @@
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
 
-        alert(tarifDataJson);
+
 
         $("#abill_id").val(null);
         $("#atrans_id").val('<?= $visit['trans_id']; ?>');

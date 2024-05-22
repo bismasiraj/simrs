@@ -2,7 +2,7 @@
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
 ?>
-<div class="tab-pane" id="assessmentmedis" role="tabpanel">
+<div class="tab-pane active" id="assessmentmedis" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -70,7 +70,7 @@ $permission = user()->getPermissions();
                                                         <div class="mb-3">
                                                             <div class="form-group">
                                                                 <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
-                                                                <input name="date_of_diagnosa" id="armdate_of_diagnosa" type="datetime-local" class="form-control " />
+                                                                <input name="date_of_diagnosa" id="armdate_of_diagnosa" type="datetime-local" class="form-control" value="<?php date('Y/m/d H:i:s'); ?>" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -149,12 +149,12 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                     <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingRiwayat">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRiwayat" aria-expanded="false" aria-controls="collapseRiwayat">
+                                                        <h2 class="accordion-header" id="headingRiwayatMedi">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRiwayatMedi" aria-expanded="false" aria-controls="collapseRiwayatMedi">
                                                                 <b>RIWAYAT</b>
                                                             </button>
                                                         </h2>
-                                                        <div id="collapseRiwayat" class="accordion-collapse collapse" aria-labelledby="headingRiwayat" data-bs-parent="#accordionAssessmentMedis" style="">
+                                                        <div id="collapseRiwayatMedis" class="accordion-collapse collapse" aria-labelledby="headingRiwayatMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                                                             <div class="accordion-body text-muted">
                                                                 <div class="row">
                                                                     <div class="col-sm-6 col-xs-12">
@@ -214,7 +214,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
 
-                                                    <div class="accordion-item">
+                                                    <div id="armPenunjang_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingPenunjang">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenunjang" aria-expanded="false" aria-controls="collapsePenunjang">
                                                                 <b>Penunjang dan Terapi</b>
@@ -283,7 +283,7 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="accordion-item">
+                                                    <div id="armDiagnosas_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingDiagnosa">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosa" aria-expanded="false" aria-controls="collapseDiagnosa">
                                                                 <b>DIAGNOSA (ICD X)</b>
@@ -334,7 +334,7 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="accordion-item">
+                                                    <div id="armProcedures_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingProsedur">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="false" aria-controls="collapseProsedur">
                                                                 <b>PROSEDUR (ICD IX)</b>
@@ -383,7 +383,7 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="accordion-item">
+                                                    <div id="armLokalis_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingLokalis">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLokalis" aria-expanded="false" aria-controls="collapseLokalis">
                                                                 <b>Lokalis</b>
@@ -427,7 +427,31 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="accordion-item">
+                                                    <div id="arpGcsMedis_Group" class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingGcsMedis">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGcsMedis" aria-expanded="false" aria-controls="collapseGcs">
+                                                                <b>GLASGOW COMA SCALE (GCS)</b>
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseGcsMedis" class="accordion-collapse collapse" aria-labelledby="headingGcsMedis" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                                            <div class="accordion-body text-muted">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div id="bodyGcsMedis">
+                                                                        </div>
+                                                                        <div class="row mb-4">
+                                                                            <div class="col-md-12">
+                                                                                <div id="addGcsMedisButton" class="box-tab-tools text-center">
+                                                                                    <a onclick="addGcsMedis(1,0)" class="btn btn-primary btn-lg" id="addGcsMedisBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="armRtl_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingrtl">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRtl" aria-expanded="false" aria-controls="collapseRtl">
                                                                 <b>Rencana Tindak Lanjut</b>
@@ -759,4 +783,43 @@ $permission = user()->getPermissions();
     </div><!--./row-->
 
 </div>
-<!-- -->
+<div class="modal fade" id="copyVitalSignModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+                <h3>Histori Vital Sign Perawat</h3>
+                <table class="table table-striped table-hover">
+                    <thead class="table-primary" style="text-align: center;">
+                        <tr>
+                            <th></th>
+                            <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                            <th class="text-center" style="width: 10%;">BB (Kg)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">TInggi (cm)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Suhu ()</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Nadi (/menit)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Sistole (mmhg)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Diastole (mmHg)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Saturasi (SpO2%)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Nafas/RR (/menit)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Diameter Lengan (cm)</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Pemeriksaan Fisik Tambahan (cm)</th class="text-center">
+                        </tr>
+                    </thead>
+                    <tbody id="copyListVitalSignModal">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

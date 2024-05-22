@@ -91,6 +91,8 @@ class keperawatan extends \App\Controllers\BaseController
             where visit_id = '" . $visit['visit_id'] . "'
             order by examination_date")->getResultArray());
             $socec = $socecSelect[0] ?? [];
+
+            $aParam = 
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/1-ralan-anak.php", [
                     "visit" => $visit,

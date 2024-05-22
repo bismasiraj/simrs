@@ -53,11 +53,6 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="arpkeluar_id" name="keluar_id">
                         <input type="hidden" id="arpimt_score" name="imt_score">
                         <input type="hidden" id="arpimt_desc" name="imt_desc">
-                        <input type="hidden" id="arpgcs_e" name="gcs_e">
-                        <input type="hidden" id="arpgcs_v" name="gcs_v">
-                        <input type="hidden" id="arpgcs_m" name="gcs_m">
-                        <input type="hidden" id="arpgcs_score" name="gcs_score">
-                        <input type="hidden" id="arpgcs_desc" name="gcs_desc">
                         <input type="hidden" id="arpalo_anamnase" name="alo_anamnase">
                         <input type="hidden" id="arppemeriksaan" name="pemeriksaan">
                         <input type="hidden" id="arpteraphy_desc" name="teraphy_desc">

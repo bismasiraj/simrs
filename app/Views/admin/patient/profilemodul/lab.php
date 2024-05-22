@@ -59,7 +59,7 @@ $permissions = user()->getPermissions();
 
                                     <div class="col-md-4">
                                         <div class="box-tab-tools">
-                                            <a data-toggle="modal" onclick='addBillLab()' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                            <a data-toggle="modal" onclick='addBillLab("searchTarifLab")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                         </div>
                                     </div>
                                 </div>
