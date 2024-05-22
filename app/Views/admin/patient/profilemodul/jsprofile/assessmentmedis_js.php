@@ -150,6 +150,7 @@
     })
     $("#assessmentmedisTab").on("click", function() {
         // Call each function to append respective accordion items
+        $("#armTitle").html("Asesmen Medis")
         $("#accordionAssessmentMedis").html("")
         acmAnamnesis("accordionAssessmentMedis")
         acmRiwayat("accordionAssessmentMedis")
@@ -167,6 +168,8 @@
         getAssessmentMedis()
     })
     $("#rekammedisTab").on("click", function() {
+        $("#armTitle").html("Resume Medis")
+
         $("#accordionAssessmentMedis").html("")
         acmAnamnesis("accordionAssessmentMedis")
         acmRiwayat("accordionAssessmentMedis")

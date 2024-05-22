@@ -137,6 +137,7 @@ foreach ($aValue as $key => $value) {
     });
 
     $("#cpptTab").on("click", function() {
+        $("#arpTitle").html("CPPT")
         $("#arpanamnase_label").html("Subyektif (S)")
         $("#collapseRiwayat").hide()
         $("#groupRiwayat").hide()
@@ -169,6 +170,8 @@ foreach ($aValue as $key => $value) {
         $("#arpImplementasi_Group").hide()
     })
     $("#assessmentigdTab").on("click", function() {
+        $("#arpTitle").html("Asesmen Keperawatan")
+
         $("#arpanamnase_label").html("Subyektif (S)")
         $("#collapseRiwayat").show()
         $("#groupRiwayat").show()

@@ -78,7 +78,7 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="arpkesadaran" name="kesadaran">
                         <input type="hidden" id="arpisvalid" name="isvalid">
                         <div class="row">
-                            <h3>Assessment Keperawatan</h3>
+                            <h3 id="arpTitle">Assessment Keperawatan</h3>
                             <hr>
                             <div class="col-md-12">
                                 <div class="dividerhr"></div>

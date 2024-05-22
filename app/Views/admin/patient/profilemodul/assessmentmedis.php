@@ -55,7 +55,7 @@ $permission = user()->getPermissions();
                                         <div class="col-lg-12 col-md-12 col-sm-12">
                                             <div id="ajax_load"></div>
                                             <div class="row">
-                                                <h3>Assessment Medis</h3>
+                                                <h3 id="armTitle">Assessment Medis</h3>
                                                 <hr>
                                                 <div class="col-md-12">
                                                     <div class="dividerhr"></div>
