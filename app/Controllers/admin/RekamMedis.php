@@ -45,36 +45,62 @@ class RekamMedis extends \App\Controllers\BaseController
     public function getPeriksaLab($trans_id)
     {
         $db = db_connect();
-        $query = "select  STUFF(
-             (SELECT ',' +  hl.tarif_name + ' : ' + cast(hasil as varchar(250))
-			 from sharelis.dbo.hasilLIS hl inner join  treatment_bill tb on 
-              hl.KODE_TARIF COLLATE DATABASE_DEFAULT = tb.TARIF_ID  COLLATE DATABASE_DEFAULT
-			  and hl.nolab_rs COLLATE DATABASE_DEFAULT = tb.NOTA_NO COLLATE DATABASE_DEFAULT and
-			  tb.trans_id = '$trans_id'
-			  order by hl.reg_date
+        // $query = "select  STUFF(
+        //      (SELECT ',' +  hl.tarif_name + ' : ' + cast(hasil as varchar(250))
+        // 	 from sharelis.dbo.hasilLIS hl inner join  treatment_bill tb on 
+        //       hl.KODE_TARIF COLLATE DATABASE_DEFAULT = tb.TARIF_ID  COLLATE DATABASE_DEFAULT
+        // 	  and hl.nolab_rs COLLATE DATABASE_DEFAULT = tb.NOTA_NO COLLATE DATABASE_DEFAULT and
+        // 	  tb.trans_id = '$trans_id'
+        // 	  order by hl.reg_date
+        //       FOR XML PATH (''))
+        //      , 1, 1, '') periksalab
+        //      from ORGANIZATIONUNIT;";
+        $query = "select REPLACE(replace( STUFF(
+             (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+			 from TREATMENT_BILL tr where
+			  tr.TRANS_ID = '$trans_id'  and
+              tr.CLINIC_ID = 'P013' 	 
+			  order by tr.TREATMENT
               FOR XML PATH (''))
-             , 1, 1, '') periksalab
-             from ORGANIZATIONUNIT;";
+             , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksalab
+			 from ORGANIZATIONUNIT";
         $select = $db->query($query)->getResultArray();
-
-        return json_encode($select);
+        if (isset($select[0])) {
+            return json_encode($select[0]);
+        } else {
+            return json_encode([]);
+        }
+        // return json_encode($select);
     }
     public function getPeriksaRad($trans_id)
     {
         $db = db_connect();
-        $query = " select REPLACE(replace( STUFF(
-             (SELECT ';' +  ' Pemeriksaan : ' + tr.tarif_name + '  '
-			 + ' - '  + ' Kesimpulan : ' + CONCLUSION
-			 from TREAT_RESULTS tr where
-			  tr.visit_trans = '$trans_id'  and
+        // $query = " select REPLACE(replace( STUFF(
+        //      (SELECT ';' +  ' Pemeriksaan : ' + tr.tarif_name + '  '
+        // 	 + ' - '  + ' Kesimpulan : ' + CONCLUSION
+        // 	 from TREAT_RESULTS tr where
+        // 	  tr.visit_trans = '$trans_id'  and
+        //       tr.CLINIC_ID = 'P016' 	 
+        // 	  order by tr.PICKUP_DATE
+        //       FOR XML PATH (''))
+        //      , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksarad
+        // 	 from ORGANIZATIONUNIT";
+
+        $query = "select REPLACE(replace( STUFF(
+             (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+			 from TREATMENT_BILL tr where
+			  tr.TRANS_ID = '$trans_id'  and
               tr.CLINIC_ID = 'P016' 	 
-			  order by tr.PICKUP_DATE
+			  order by tr.TREATMENT
               FOR XML PATH (''))
              , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksarad
 			 from ORGANIZATIONUNIT";
         $select = $db->query($query)->getResultArray();
-
-        return json_encode($select);
+        if (isset($select[0])) {
+            return json_encode($select[0]);
+        } else {
+            return json_encode([]);
+        }
     }
     public function getTerapi($visit_id)
     {

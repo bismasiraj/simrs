@@ -56,7 +56,8 @@ $currency_symbol = 'Rp. ';
                                         <?php } else { ?>
                                             <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->
                                         <?php } ?>
-                                        <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
+                                        <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li>
+                                        <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Billing</a></li>
                                         <!-- <li class="nav-item"><a id="mrpasienTab" class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li> -->
                                         <li class="nav-item"><a id="rmTab" class="nav-link" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Form RM</a></li>
                                         <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li>
