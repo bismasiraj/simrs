@@ -697,11 +697,11 @@ class Assessment extends BaseController
 
         if (!empty($diag_id)) {
             $pds = new PasienDiagnosaModel();
-            $pds->where('pasien_diagnosa_id', $id)->delete();
+            $pds->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
 
             foreach ($diag_id as $key => $value) {
                 $dataDiag = [];
-                $dataDiag['pasien_diagnosa_id'] = $id;
+                $dataDiag['pasien_diagnosa_id'] = $pasien_diagnosa_id;
                 $dataDiag['diagnosa_id'] = $diag_id[$key];
                 $dataDiag['diagnosa_name'] = $diag_name[$key];
                 $dataDiag['diag_cat'] = $diag_cat[$key];
@@ -714,11 +714,11 @@ class Assessment extends BaseController
         }
         if (!empty($proc_id)) {
             $pcs = new PasienProceduresModel();
-            $pcs->where('pasien_diagnosa_id', $id)->delete();
+            $pcs->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
 
             foreach ($proc_id as $key => $value) {
                 $dataProc = [];
-                $dataProc['pasien_diagnosa_id'] = $id;
+                $dataProc['pasien_diagnosa_id'] = $pasien_diagnosa_id;
                 $dataProc['diagnosa_id'] = $proc_id[$key];
                 $dataProc['diagnosa_name'] = $proc_name[$key];
                 $dataProc['modified_by'] = user_id();

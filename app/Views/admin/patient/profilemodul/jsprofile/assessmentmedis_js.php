@@ -1190,18 +1190,15 @@
                 <div id="armPenunjang_Group" class="accordion-item">
                     <h2 class="accordion-header" id="headingPenunjang">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePenunjang" aria-expanded="false" aria-controls="collapsePenunjang">
-                            <b>Penunjang dan Terapi</b>
+                            <b>PENUNJANG DAN TERAPI</b>
                         </button>
                     </h2>
                     <div id="collapsePenunjang" class="accordion-collapse collapse" aria-labelledby="headingPenunjang" data-bs-parent="#accordionAssessmentMedis">
                         <div class="accordion-body text-muted">
                             <div class="row mb-2">
-                                <div class="col-sm-6 col-xs-12">
+                                <div class="col-sm-12 col-xs-12">
                                     <div class="mb-3">
-                                        <div class="form-group">
-                                            <label for="pwd">Periksa Fisik <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>
-                                            <textarea id="armpemeriksaan" name="pemeriksaan" rows="2" class="form-control " autocomplete="off"></textarea>
-                                        </div>
+                                        <h4>PEMERIKSAAN DIAGNOSTIK PENUNJANG</h4>
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-xs-12">
@@ -1226,6 +1223,11 @@
                                             <label for="armecg_result">Periksa EKG</label>
                                             <textarea id="armecg_result" name="ecg_result" rows="2" class="form-control " autocomplete="off"></textarea>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="mb-3">
+                                        <h4>RENCANA ASUHAN DAN TERAPI</h4>
                                     </div>
                                 </div>
                                 <div class="col-sm-6 col-xs-12">
@@ -1270,7 +1272,7 @@
         <div id="armDiagnosas_Group" class="accordion-item">
             <h2 class="accordion-header" id="headingDiagnosa">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosa" aria-expanded="false" aria-controls="collapseDiagnosa">
-                    <b>DIAGNOSA (ICD X)</b>
+                    <b>ASSESSMENT</b>
                 </button>
             </h2>
             <div id="collapseDiagnosa" class="accordion-collapse collapse" aria-labelledby="headingDiagnosa" data-bs-parent="#accordionAssessmentMedis">
@@ -1279,7 +1281,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armmedical_problem">Permasalahan Medis <a id="copyTerapiBtn" href="#" onclick="copyTerapi()">(Copy)</a></label>
+                                    <label for="armmedical_problem">Permasalahan Medis <a id="copyTerapiBtn" href="#"</label>
                                     <textarea id="armmedical_problem" name="medical_problem" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
@@ -1287,7 +1289,7 @@
                         <div class="col-sm-6 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armhurt">Penyebab Cidera/Keracunan <a id="copyTerapiBtn" href="#" onclick="copyTerapi()">(Copy)</a></label>
+                                    <label for="armhurt">Penyebab Cidera/Keracunan <a id="copyTerapiBtn" href="#"</label>
                                     <textarea id="armhurt" name="hurt" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
