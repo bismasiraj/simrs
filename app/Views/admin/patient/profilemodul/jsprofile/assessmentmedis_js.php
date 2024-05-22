@@ -777,8 +777,8 @@
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formGcsSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="formGcsEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formGcsMedisSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formGcsMedisEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -837,10 +837,10 @@
             $('#GCS_SCORE' + bodyId).val(conclutionScore)
         })
 
-        $("#formGcsEditBtn" + bodyId).on("click", function() {
-            $("#formGcsSaveBtn" + bodyId).show()
-            $("#formGcsEditBtn" + bodyId).hide()
-            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
+        $("#formGcsMedisEditBtn" + bodyId).on("click", function() {
+            $("#formGcsMedisSaveBtn" + bodyId).show()
+            $("#formGcsMedisEditBtn" + bodyId).hide()
+            $("#formGcsMedis" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
         <?php foreach ($aValue as $key1 => $value1) {
@@ -858,14 +858,14 @@
             }
         } ?>
 
-        $("#formGcs" + bodyId).append('<input name="org_unit_code" id="gcsmedisorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+        $("#formGcsMedis" + bodyId).append('<input name="org_unit_code" id="gcsmedisorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="gcsmedisvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="gcsmedistrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="gcsmedisbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
             .append('<input name="document_id" id="gcsmedisdocument_id' + bodyId + '" type="hidden" value="' + $("#armpasien_diagnosa_id").val() + '" class="form-control" />')
             .append('<input name="no_registration" id="gcsmedisno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="gcsmedisp_type' + bodyId + '" type="hidden" value="GEN0011" class="form-control" />')
-        $("#formGcs" + bodyId).on('submit', (function(e) {
+        $("#formGcsMedis" + bodyId).on('submit', (function(e) {
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -880,9 +880,9 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formGcsSaveBtn" + bodyId).hide()
-                    $("#formGcsEditBtn" + bodyId).show()
-                    $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
+                    $("#formGcsMedisSaveBtn" + bodyId).hide()
+                    $("#formGcsMedisEditBtn" + bodyId).show()
+                    $("#formGcsMedis" + bodyId).find("input, select, textarea").prop("disabled", true)
 
                     clicked_submit_btn.button('reset');
                 },
@@ -899,9 +899,9 @@
 
 
         if (flag == 1) {
-            $("#formGcsSaveBtn" + bodyId).show()
-            $("#formGcsEditBtn" + bodyId).hide()
-            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
+            $("#formGcsMedisSaveBtn" + bodyId).show()
+            $("#formGcsMedisEditBtn" + bodyId).hide()
+            $("#formGcsMedis" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var gcs = gcsAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -936,9 +936,9 @@
                 }
             })
 
-            $("#formGcsSaveBtn" + bodyId).hide()
-            $("#formGcsEditBtn" + bodyId).show()
-            $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
+            $("#formGcsMedisSaveBtn" + bodyId).hide()
+            $("#formGcsMedisEditBtn" + bodyId).show()
+            $("#formGcsMedis" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
         $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
