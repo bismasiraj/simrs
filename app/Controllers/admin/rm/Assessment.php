@@ -43,6 +43,7 @@ use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
+use App\Models\PasienDiagnosasModel;
 use App\Models\PasienHistoryModel;
 use App\Models\PasienModel;
 use App\Models\PasienProceduresModel;
@@ -696,7 +697,7 @@ class Assessment extends BaseController
 
 
         if (!empty($diag_id)) {
-            $pds = new PasienDiagnosaModel();
+            $pds = new PasienDiagnosasModel();
             $pds->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
 
             foreach ($diag_id as $key => $value) {
