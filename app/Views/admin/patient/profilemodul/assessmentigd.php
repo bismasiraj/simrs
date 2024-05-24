@@ -276,7 +276,7 @@ $permission = user()->getPermissions();
                                                                     <?php if ($value1['parent_id'] == $value['parent_id']) {
                                                                     ?>
                                                                         <div class="form-check mb-3">
-                                                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>')">
+                                                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', 'armpasien_diagnosa_id', 'bodyAssessmentfallRiskMedis')">
                                                                             <label class="form-check-label" for="atype<?= $value1['p_type']; ?>">
                                                                                 <?= $value1['p_description']; ?>
                                                                             </label>
@@ -305,7 +305,7 @@ $permission = user()->getPermissions();
                                                         </div>
                                                         <div class="panel-footer text-end mb-4">
                                                             <button type="submit" id="formsavefallriskbtn" name="save" data-loading-text="processing" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="" name="save" data-loading-text="processing" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
+                                                            <button style="margin-right: 10px; display: none;" type="button" id="formeditfallriskbtn" onclick="" name="edit" data-loading-text="processing" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -331,7 +331,7 @@ $permission = user()->getPermissions();
                                                         <div class="row mb-4">
                                                             <div class="col-md-12">
                                                                 <div id="addPainMonitoringButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPainMonitoring(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                    <a onclick="addPainMonitoring(1,0,'arpbody_id', 'bodyPainMonitoring')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -349,12 +349,6 @@ $permission = user()->getPermissions();
                                             <b><?= $value['parent_parameter']; ?></b>
                                         </button>
                                     </h2>
-                                    <style>
-                                        .table-striped-vertical :nth-child(odd) {
-                                            /* // Specify the background color for odd rows  */
-                                            /* background-color: lightblue; */
-                                        }
-                                    </style>
                                     <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
                                         <div class="accordion-body text-muted">
                                             <div class="row">
@@ -364,7 +358,7 @@ $permission = user()->getPermissions();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addTriageButton" class="box-tab-tools text-center">
-                                                                <a onclick="addTriage(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriage')" class=" btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -381,12 +375,6 @@ $permission = user()->getPermissions();
                                             <b><?= $value['parent_parameter']; ?></b>
                                         </button>
                                     </h2>
-                                    <style>
-                                        .table-striped-vertical :nth-child(odd) {
-                                            /* // Specify the background color for odd rows  */
-                                            /* background-color: lightblue; */
-                                        }
-                                    </style>
                                     <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
                                         <div class="accordion-body text-muted">
                                             <div class="row">
@@ -588,7 +576,7 @@ $permission = user()->getPermissions();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addGcsButton" class="box-tab-tools text-center">
-                                                                <a onclick="addGcs(1,0)" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addGcs(1,0,'arpbody_id', 'bodyGcs')" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -723,7 +711,7 @@ $permission = user()->getPermissions();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                <a onclick="addPernapasan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -804,7 +792,7 @@ $permission = user()->getPermissions();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                <a onclick="addSirkulasi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>

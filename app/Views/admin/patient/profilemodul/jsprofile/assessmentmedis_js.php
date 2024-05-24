@@ -133,56 +133,48 @@
         // Call each function to append respective accordion items
         $("#armTitle").html("Asesmen Medis")
         $("#accordionAssessmentMedis").html("")
-        acmAnamnesis("accordionAssessmentMedis")
-        acmRiwayat("accordionAssessmentMedis")
-        acmVitalSign("accordionAssessmentMedis")
-        acmPemeriksaanFisik("accordionAssessmentMedis")
-        acmPenunjangTerapi("accordionAssessmentMedis")
-        appendDiagnosaAccordion("accordionAssessmentMedis");
-        appendProsedurAccordion("accordionAssessmentMedis");
-        appendLokalisAccordion("accordionAssessmentMedis");
-        appendGcsMedisAccordion("accordionAssessmentMedis");
-        appendRtlAccordion("accordionAssessmentMedis");
-        appendMedisAccordion("accordionAssessmentMedis");
-        generateLokalis()
+        var accMedisName = "accordionAssessmentMedis"
+        // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
+        if (true) {
+            appendTriaseMedis(accMedisName);
+            appendAnamnesisMedis(accMedisName);
+            appendRiwayatMedis(accMedisName);
+            appendVitalSignMedis(accMedisName);
+            // appendPernapasan(accMedisName);
+            // appendSirkulasi(accMedisName);
+            appendGcsMedisAccordion(accMedisName);
+            appendApgarAccordion(accMedisName)
+            appendPainMonitoringMedisAccordion(accMedisName)
+            appendFallRiskMedisAccordion(accMedisName)
+            appendPemeriksaanFisikMedis(accMedisName)
+            appendLokalisAccordion(accMedisName);
+            appendDiagnosaAccordion(accMedisName);
+            appendMedisAccordion(accMedisName);
+            appendProsedurAccordion(accMedisName);
+            acmPenunjangTerapi(accMedisName);
+            appendRtlAccordion(accMedisName);
+            appendFormEdukasi(accMedisName);
+        }
         $("#formaddarmbtn").trigger("click")
         getAssessmentMedis()
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kebidanan/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kebidanan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kulit_kelamin/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kulit Kelamin</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_mata/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Mata</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_tht/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan THT</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Anak</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Dalam</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_kebidanan/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Kebidanan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_neonatal/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Neonatal</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_paru/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Paru</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_inap/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Rawat Inap</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/reconsialisasi/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Reconsialisasi Obat</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Resume Medis</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
 
     })
     $("#rekammedisTab").on("click", function() {
         $("#armTitle").html("Resume Medis")
 
         $("#accordionAssessmentMedis").html("")
-        acmAnamnesis("accordionAssessmentMedis")
-        acmRiwayat("accordionAssessmentMedis")
-        acmVitalSign("accordionAssessmentMedis")
-        appendGcsMedisAccordion("accordionAssessmentMedis");
-        acmPemeriksaanFisik("accordionAssessmentMedis")
-        appendLokalisAccordion("accordionAssessmentMedis");
-        appendDiagnosaAccordion("accordionAssessmentMedis");
-        appendProsedurAccordion("accordionAssessmentMedis");
-        acmPenunjangTerapi("accordionAssessmentMedis")
-        // appendRtlAccordion("accordionAssessmentMedis");
-        // appendMedisAccordion("accordionAssessmentMedis");
+        appendAnamnesisMedis(accMedisName)
+        appendRiwayatMedis(accMedisName)
+        appendVitalSignMedis(accMedisName)
+        appendSirkulasi(accMedisName)
+        appendGcsMedisAccordion(accMedisName);
+        appendPemeriksaanFisikMedis(accMedisName)
+        appendLokalisAccordion(accMedisName);
+        appendDiagnosaAccordion(accMedisName);
+        appendProsedurAccordion(accMedisName);
+        acmPenunjangTerapi(accMedisName)
+        // appendRtlAccordion(accMedisName);
+        // appendMedisAccordion(accMedisName);
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
         getAssessmentMedis()
@@ -330,6 +322,10 @@
 
     function initialAddArm() {
         enableARM()
+        const date = new Date();
+        var pasienDiagnosaId = '';
+        pasienDiagnosaId = date.toISOString().substring(0, 23);
+        pasienDiagnosaId = pasienDiagnosaId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
         $("#formaddarm input").val(null)
         $("#formaddarm select").val(null)
@@ -360,7 +356,7 @@
         $('#armmodified_date').val(get_date())
         $('#armmodified_by').val('<?= $visit['modified_by']; ?>')
         $('#armnokartu').val('<?= $visit['pasien_id']; ?>')
-        $('#armpasien_diagnosa_id').val(null)
+        $('#armpasien_diagnosa_id').val(pasienDiagnosaId)
         $('#armno_registration').val('<?= $visit['no_registration']; ?>')
         $('#armthename').val('<?= $visit['diantar_oleh']; ?>')
         $('#armstatus_pasien_id').val('<?= $visit['status_pasien_id']; ?>')
@@ -397,6 +393,13 @@
         fillPemeriksaanFisik(pd.pasien_diagnosa_id)
 
         displayTableAssessmentMedis(index)
+
+        getTriage(pd.pasien_diagnosa_id, "bodyTriageMedis")
+        getSirkulasi(pd.pasien_diagnosa_id, "bodySirkulasiMedis")
+        getGcs(pd.pasien_diagnosa_id, "bodySirkulasiMedis")
+        getPainMonitoring(pd.pasien_diagnosa_id, "bodyPainMonitoringMedis")
+        getPernapasan(pd.pasien_diagnosa_id, "bodyPernapasanMedis")
+        getApgar(pd.pasien_diagnosa_id, "bodyApgarMedis")
 
 
         if (typeof pasienDiagnosa.description !== 'undefined') {
@@ -1087,7 +1090,7 @@
     })
 </script>
 <script>
-    function acmAnamnesis(accordionId) {
+    function appendAnamnesisMedis(accordionId) {
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingSubyektif">' +
@@ -1119,7 +1122,7 @@
         )
     }
 
-    function acmVitalSign(accordionId) {
+    function appendVitalSignMedis(accordionId) {
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingVitalSign">' +
@@ -1143,7 +1146,7 @@
         )
     }
 
-    function acmRiwayat(accordionId) {
+    function appendRiwayatMedis(accordionId) {
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingRiwayatMedis">' +
@@ -1179,7 +1182,7 @@
         )
     }
 
-    function acmPemeriksaanFisik(accordionId) {
+    function appendPemeriksaanFisikMedis(accordionId) {
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingBodyPart">' +
@@ -1349,6 +1352,8 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
+
+        generateLokalis()
     }
 
     function appendProsedurAccordion(accordionId) {
@@ -1465,7 +1470,7 @@
                     <b>GLASGOW COMA SCALE (GCS)</b>
                 </button>
             </h2>
-            <div id="collapseGcsMedis" class="accordion-collapse collapse" aria-labelledby="headingGcsMedis" data-bs-parent="#accodrionAssessmentAwal" style="">
+            <div id="collapseGcsMedis" class="accordion-collapse collapse" aria-labelledby="headingGcsMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -1578,6 +1583,130 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row mt-4 mb-4">
+                            <div id="armskdpgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan SKDP</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor SKDP</label>
+                                                    <input id="armskdp" name="skdp" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addskdp" onclick="postKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleteskdp" onclick="deleteKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="armsprigroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan SPRI</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor SPRI</label>
+                                                    <input id="armspri" name="spri" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addspri" onclick="postKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deletespri" onclick="deleteKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="armrujukaneksternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan Rujukan Eksternal</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor Rujukan</label>
+                                                    <input id="armnorujukan" name="norujukan" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="armrujukaninternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan Rujukan Internal</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Tanggal Rencana</label>
+                                                    <input id="rujintvisitdate" name=" rujintvisitdate" type="date" class="form-control" placeholder="yyyy-mm-dd" value="<?= date('Y-m-d'); ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Poli Tujuan</label>
+                                                    <select name='rujintclinicid' id="rujintclinicid" class="form-control select2 act" style="width:100%">
+                                                        <?php $cliniclist = array();
+                                                        foreach ($clinic as $key => $value) {
+                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                            }
+                                                        }
+                                                        asort($cliniclist);
+                                                        ?>
+                                                        <?php foreach ($cliniclist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select> <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Dokter Tujuan</label>
+                                                    <select name='rujintemployeeid' id="rujintemployeeid" class="form-control select2 act" style="width:100%">
+                                                        <?php $dokterlist = array();
+                                                        foreach ($dokter as $key => $value) {
+                                                            if ($key == 'P003') {
+                                                                foreach ($value as $key1 => $value1) {
+                                                                    $dokterlist[$key1] = $value1;
+                                                                }
+                                                            }
+                                                        }
+                                                        asort($dokterlist);
+                                                        ?>
+                                                        <?php foreach ($dokterlist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addnorujukan" onclick="postRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleterujukan" onclick="deleteRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1608,6 +1737,224 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
+    }
+
+    function appendPainMonitoringMedisAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpPainMonitoring_Group" class="accordion-item">
+            <h2 class="accordion-header" id="painMonitoringMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
+                    <b>MONITORING SKALA NYERI</b>
+                </button>
+            </h2>
+            <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                            <div class="col-md-12">
+                                <div id="bodyPainMonitoringMedis">
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div id="addPainMonitoringButton" class="box-tab-tools text-center">
+                                            <a onclick="addPainMonitoring(1,0,'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+        appendAccordionItem(accordionId, accordionContent);
+    }
+
+    function appendFallRiskMedisAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpFallRisk_Group" class="accordion-item">
+            <h2 class="accordion-header" id="FallRiskMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskMedis" aria-expanded="true" aria-controls="collapseFallRiskMedis">
+                    <b>RESIKO JATUH</b>
+                </button>
+            </h2>
+            <div id="collapseFallRiskMedis" class="accordion-collapse collapse" aria-labelledby="FallRiskMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                            <div class="col-md-12">
+                                <div id="bodyFallRiskMedis">
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div id="addFallRiskButton" class="box-tab-tools text-center">
+                                            <a onclick="addFallRisk(1,0,'armpasien_diagnosa_id', 'bodyFallRiskMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+        appendAccordionItem(accordionId, accordionContent);
+    }
+
+    function appendTriaseMedis(accordionId) {
+        var accordionContent = `
+            <div id="arpTriage_Group" class="accordion-item">
+                <h2 class="accordion-header" id="triaseMedis">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsetriaseMedis" aria-expanded="true" aria-controls="collapsetriaseMedis">
+                        <b>TRIASE</b>
+                    </button>
+                </h2>
+                <div id="collapsetriaseMedis" class="accordion-collapse collapse" aria-labelledby="triaseMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                    <div class="accordion-body text-muted">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="bodyTriageMedis">
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div id="addTriageButton" class="box-tab-tools text-center">
+                                            <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+    }
+
+    function appendFormEdukasi(accordionId) {
+        var accordionContent = `
+            <div id="arpEdukasiForm_Group" class="accordion-item">
+                <h2 class="accordion-header" id="headingEducationForm">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
+                        <b>FORMULIR PEMBERIAK EDUKASI</b>
+                    </button>
+                </h2>
+                <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accordionAssessmentMedis" style="">
+                    <div class="accordion-body text-muted">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="bodyEducationForm">
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-12">
+                                        <div id="addEducationFormButton" class="box-tab-tools text-center">
+                                            <a onclick="addEducationForm(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+
+    }
+
+    function appendSirkulasi(accordionId) {
+        var accordionContent = `
+        <div id="armSirkulasi_Group" class="accordion-item">
+            <h2 class="accordion-header" id="headingSirkulasiMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSirkulasiMedis" aria-expanded="false" aria-controls="collapseSirkulasiMedis">
+                    <b>SIRKULASI</b>
+                </button>
+            </h2>
+            <div id="collapseSirkulasiMedis" class="accordion-collapse collapse" aria-labelledby="headingSirkulasiMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="bodySirkulasiMedis">
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div id="addSirkulasiButton" class="box-tab-tools text-center">
+                                        <a onclick="addSirkulasi(1,0,'armpasien_diagnosa_id', 'bodySirkulasiMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+
+    }
+
+    function appendPernapasan(accordionId) {
+        var accordionContent = `
+        <div id="arpPernapasan_Group" class="accordion-item">
+            <h2 class="accordion-header" id="headingPernapasan">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePernapasan" aria-expanded="false" aria-controls="collapsePernapasan">
+                    <b>PERNAPASAN</b>
+                </button>
+            </h2>
+            <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="bodyPernapasanMedis">
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div id="addPernapasanButton" class="box-tab-tools text-center">
+                                        <a onclick="addPernapasan(1,0, 'armpasien_diagnosa_id', 'bodyPernapasanMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+
+    }
+
+    function appendApgarAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpApgar_Group" class="accordion-item">
+            <h2 class="accordion-header" id="apgarMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseapgarMedis" aria-expanded="true" aria-controls="collapseapgarMedis">
+                    <b>APGAR</b>
+                </button>
+            </h2>
+            <div id="collapseapgarMedis" class="accordion-collapse collapse" aria-labelledby="apgarMedis" data-bs-parent="#accodrionAssessmentAwal" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="bodyApgarMedis">
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div id="addApgarButton" class="box-tab-tools text-center">
+                                        <a onclick="addApgar(1,0,\'armpasien_diagnosa_id\', \'bodyApgarMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+
     }
 </script>
 

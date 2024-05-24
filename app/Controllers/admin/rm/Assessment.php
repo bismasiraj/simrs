@@ -159,6 +159,28 @@ class Assessment extends BaseController
                 }
             }
 
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+            foreach ($select as $key => $value) {
+                $valueId = ${"parameter_id" . $value['parameter_id']};
+                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
+                if (isset($paramvalue[0])) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $p_type,
+                        'parameter_id' => $value['parameter_id'],
+                        'value_id' => $valueId,
+                        'value_score' => $paramvalue[0]['value_score'],
+                        'value_desc' => $paramvalue[0]['value_desc'],
+                        'modified_date' => Time::now(),
+                        'modified_by' => $modified_by
+                    ];
+                    $painDetil->insert($data);
+                }
+            }
+
             $painIntervensi = new PainIntervensiModel();
             $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
             foreach ($timeIntervensi as $key => $value) {
@@ -274,7 +296,7 @@ class Assessment extends BaseController
             'class_room_id' => $class_room_id,
             'bed_id' => $bed_id,
             'p_type' => $p_type,
-            'total_score' => 0,
+            'total_score' => $total_score,
             'description' => $description,
             // 'modified_date' => Time::now(),
             'modified_by' => $modified_by,
@@ -409,6 +431,7 @@ class Assessment extends BaseController
             'p_type' => $p_type,
             'total_score' => 0,
             'description' => $description,
+            'document_id' => $document_id,
             // 'modified_date' => Time::now(),
             'modified_by' => $modified_by,
             'isvalid' => null,
@@ -2221,6 +2244,55 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         return json_encode($data);
     }
     public function getGcs()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new GcsModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+
+        return json_encode([
+            'gcs' => $select
+        ]);
+    }
+
+    public function saveFallRisk()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new GcsModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getFallRisk()
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
