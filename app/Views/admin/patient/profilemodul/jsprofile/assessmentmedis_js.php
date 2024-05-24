@@ -131,29 +131,16 @@
     })
     $("#assessmentmedisTab").on("click", function() {
         // Call each function to append respective accordion items
-        $("#armTitle").html("Asesmen Medis")
         $("#accordionAssessmentMedis").html("")
         var accMedisName = "accordionAssessmentMedis"
         // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
         if (true) {
-            appendTriaseMedis(accMedisName);
-            appendAnamnesisMedis(accMedisName);
-            appendRiwayatMedis(accMedisName);
-            appendVitalSignMedis(accMedisName);
-            // appendPernapasan(accMedisName);
-            // appendSirkulasi(accMedisName);
-            appendGcsMedisAccordion(accMedisName);
-            appendApgarAccordion(accMedisName)
-            appendPainMonitoringMedisAccordion(accMedisName)
-            appendFallRiskMedisAccordion(accMedisName)
-            appendPemeriksaanFisikMedis(accMedisName)
-            appendLokalisAccordion(accMedisName);
-            appendDiagnosaAccordion(accMedisName);
-            appendMedisAccordion(accMedisName);
-            appendProsedurAccordion(accMedisName);
-            acmPenunjangTerapi(accMedisName);
-            appendRtlAccordion(accMedisName);
-            appendFormEdukasi(accMedisName);
+            <?php foreach ($mapAssessment as $key => $value) {
+            ?>
+                <?= $value['doc_id']; ?>(accMedisName);
+            <?php
+            } ?>
+            $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
         $("#formaddarmbtn").trigger("click")
         getAssessmentMedis()
@@ -172,7 +159,7 @@
         appendLokalisAccordion(accMedisName);
         appendDiagnosaAccordion(accMedisName);
         appendProsedurAccordion(accMedisName);
-        acmPenunjangTerapi(accMedisName)
+        appendPenunjangTerapi(accMedisName)
         // appendRtlAccordion(accMedisName);
         // appendMedisAccordion(accMedisName);
         generateLokalis()
@@ -1215,7 +1202,7 @@
         )
     }
 
-    function acmPenunjangTerapi(accordionId) {
+    function appendPenunjangTerapi(accordionId) {
         var accordionContent = `
                 <div id="armPenunjang_Group" class="accordion-item">
                     <h2 class="accordion-header" id="headingPenunjang">
@@ -1353,7 +1340,6 @@
     `;
         appendAccordionItem(accordionId, accordionContent);
 
-        generateLokalis()
     }
 
     function appendProsedurAccordion(accordionId) {
@@ -1460,6 +1446,8 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
+
+        generateLokalis()
     }
 
     function appendGcsMedisAccordion(accordionId) {

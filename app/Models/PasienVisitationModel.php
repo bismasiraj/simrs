@@ -303,6 +303,19 @@ class PasienVisitationModel extends Model
             pv.RM_OUT_DATE,
             pv.RESEND_RM_DATE,
             pv.RM_IN_DATE,
+            pv.employee_inap,
+            pv.exit_date,
+            pv.statusantrean,
+            pv.kddpjp,
+            pv.bed_id,
+            pv.in_date,
+            pv.ssencounter_id,
+            pv.keluar_id,
+            pv.modified_by,
+            pv.modified_date,
+            pv.responpost_vklaim,
+            pv.asalrujukan,
+            pv.kdpoli_eks,
               pv.diagnosa")
                 ->where("(
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or

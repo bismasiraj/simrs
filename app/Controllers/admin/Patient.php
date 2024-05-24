@@ -906,46 +906,54 @@ This Function is used to Add Patient
         $dt_data     = array();
         if (!empty($kunjungan)) {
             foreach ($kunjungan as $key => $value) {
-
+                $kunjungan[$key]['way'] = '';
+                $kunjungan[$key]['name_of_status_pasien'] = '';
+                $kunjungan[$key]['name_of_gender'] = '';
+                $kunjungan[$key]['nama_agama'] = '';
+                $kunjungan[$key]['name_of_clinic'] = '';
+                $kunjungan[$key]['name_of_clinic_from'] = '';
+                $kunjungan[$key]['fullname'] = '';
+                $kunjungan[$key]['name_of_class'] = '';
+                $kunjungan[$key]['name_of_class_plafond'] = '';
                 foreach ($way as $key1 => $value1) {
                     if ($kunjungan[$key]['way_id'] == $way[$key1]['way_id']) {
-                        $kunjungan[$key]['way_id'] = $way[$key1]['way'];
+                        $kunjungan[$key]['way'] = $way[$key1]['way'];
                     }
                 }
                 foreach ($statusPasien as $key1 => $value1) {
                     if ($kunjungan[$key]['status_pasien_id'] == $statusPasien[$key1]['status_pasien_id']) {
-                        $kunjungan[$key]['status_pasien_id'] = $statusPasien[$key1]['name_of_status_pasien'];
+                        $kunjungan[$key]['name_of_status_pasien'] = $statusPasien[$key1]['name_of_status_pasien'];
                     }
                 }
                 foreach ($sex as $key1 => $value1) {
                     if ($kunjungan[$key]['gender'] == $sex[$key1]['gender']) {
-                        $kunjungan[$key]['gender'] = $sex[$key1]['name_of_gender'];
+                        $kunjungan[$key]['name_of_gender'] = $sex[$key1]['name_of_gender'];
                     }
                 }
                 foreach ($agama as $key1 => $value1) {
                     if ($kunjungan[$key]['kode_agama'] == $agama[$key1]['kode_agama']) {
-                        $kunjungan[$key]['kode_agama'] = $agama[$key1]['nama_agama'];
+                        $kunjungan[$key]['nama_agama'] = $agama[$key1]['nama_agama'];
                     }
                 }
                 foreach ($clinic as $key1 => $value1) {
                     if ($kunjungan[$key]['clinic_id'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
                     }
                     if ($kunjungan[$key]['clinic_id_from'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id_from'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
                     }
                 }
                 foreach ($employee as $key1 => $value1) {
                     if ($kunjungan[$key]['employee_id'] == $employee[$key1]['employee_id']) {
-                        $kunjungan[$key]['employee_id'] = $employee[$key1]['fullname'];
+                        $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
                     }
                 }
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
                     }
                     if ($kunjungan[$key]['class_id_plafond'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id_plafond'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
                 if ($kunjungan[$key]['locked'] == '1') {
@@ -1001,17 +1009,17 @@ This Function is used to Add Patient
                 // $action = "<div class='rowoptionview rowview-mt-19'>";
                 // $action .= "<a href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 // $action .= "</div'>";
-                $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
                 $row[] = '<h4 style="margin: auto;
                 padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h4>";
                 $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 $row[] = substr($kunjungan[$key]['visit_date'], 0, 10) . "<br>" . substr($kunjungan[$key]['date_of_birth'], 0, 10);
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'] . "<br>" . $kunjungan[$key]['way_id'];
-                $row[] = "<b>" . $kunjungan[$key]['clinic_id'] . "</b><br><b>" . $kunjungan[$key]['employee_id'] . "</b><br>" . $kunjungan[$key]['class_id'];
+                $row[] = $kunjungan[$key]['name_of_status_pasien'] . "/" . $kunjungan[$key]['name_of_gender'] . "/" . $kunjungan[$key]['nama_agama'] . "<br>" . $kunjungan[$key]['way'];
+                $row[] = "<b>" . $kunjungan[$key]['name_of_clinic'] . "</b><br><b>" . $kunjungan[$key]['fullname'] . "</b><br>" . $kunjungan[$key]['name_of_class'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
-                $row[] = $kunjungan[$key]['clinic_id_from'] . "<br>" . $kunjungan[$key]['class_id_plafond'] . "<br>" . $kunjungan[$key]['locked'];
+                $row[] = $kunjungan[$key]['name_of_clinic_from'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'] . "<br>" . $kunjungan[$key]['locked'];
                 $row[] = $action;
                 $dt_data[] = $row;
             }
@@ -1173,14 +1181,14 @@ This Function is used to Add Patient
                 $action = "<div class='rowoptionview rowview-mt-19'>";
                 $action .= "<a href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 $action .= "</div'>";
-                $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
                 // $row[] = '<p style="margin: auto;
                 // width: 50%;
                 // text-align: left;
                 // padding: 10px;">' . ($key + 1) . ".</p>";
                 $row[] = $kunjungan[$key]['no_registration'];
-                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>" . $action;
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>"; // . $action;
                 $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
                 $row[] = $kunjungan[$key]['status_pasien_id'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
                 $row[] = $kunjungan[$key]['clinic_id'] .  "<br>" . $kunjungan[$key]['employee_id'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
@@ -1675,12 +1683,16 @@ This Function is used to Add Patient
     }
 
 
-    public function profile($id)
+    public function profile($id, $pv)
     {
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
         // return json_encode($orgunit);
+
+        $pv = base64_decode($pv);
+        $pv = json_decode($pv, true);
+        // return $pv['visit_id'];
 
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
@@ -1777,11 +1789,17 @@ This Function is used to Add Patient
 
         // dd($employee);
 
-        $pv = new PasienVisitationModel();
-        $visit = $this->lowerKey($pv->find($id));
+        // $pv = new PasienVisitationModel();
+        // $visit = $this->lowerKey($pv->find($id));
+        $visit = $pv;
+        // return json_encode($visit['gender']);
+
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
+
+        if (is_null($visit['status_pasien_id']))
+            $visit['status_pasien_id'] = '1';
         foreach ($statusPasien as $key => $value) {
             if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
                 $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
@@ -1807,6 +1825,20 @@ This Function is used to Add Patient
             if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
+        }
+        $db = db_connect();
+        $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
         }
         if (!isset($visit['name_of_clinic'])) {
             $visit['name_of_clinic'] = '';
@@ -1910,7 +1942,7 @@ This Function is used to Add Patient
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        // return json_encode($visit['fullname']);
+        // return json_encode($visit['gender']);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -1953,11 +1985,12 @@ This Function is used to Add Patient
             'aType' => $aType,
             'aParameter' => $aParameter,
             'aValue' => $aValue,
-            'mappingAssessment' => $mappingAssessment
+            'mappingAssessment' => $mappingAssessment,
+            'mapAssessment' => $mapAssessment
         ]);
     }
 
-    public function profileranap($id)
+    public function profileranap($id, $ta)
     {
 
         $org = new OrganizationunitModel();
@@ -1966,6 +1999,11 @@ This Function is used to Add Patient
 
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
+
+        $ta = base64_decode($ta);
+        $ta = json_decode($ta, true);
+
+        // return $ta;
         //parameter
         // $coverageModel = new CoverageModel();
         // $coverage = $this->lowerKey($coverageModel->findAll());
@@ -2068,6 +2106,8 @@ This Function is used to Add Patient
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
+        if (is_null($visit['status_pasien_id']))
+            $visit['status_pasien_id'] = '1';
         foreach ($statusPasien as $key => $value) {
             if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
                 $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
@@ -2090,6 +2130,12 @@ This Function is used to Add Patient
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
         }
+
+        $db = db_connect();
+        $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, st.specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                                        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                                        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                                        where ct.clinic_type = '" . $ta['clinic_type'] . "'")->getResultArray());
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
                 $visit['gendername'] = $gender[$key]['name_of_gender'];
@@ -2144,7 +2190,7 @@ This Function is used to Add Patient
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-
+        // return json_encode($mapAssessment);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
@@ -2186,7 +2232,8 @@ This Function is used to Add Patient
             'aType' => $aType,
             'aParameter' => $aParameter,
             'aValue' => $aValue,
-            'mappingAssessment' => $mappingAssessment
+            'mappingAssessment' => $mappingAssessment,
+            'mapAssessment' => $mapAssessment
         ]);
     }
 
