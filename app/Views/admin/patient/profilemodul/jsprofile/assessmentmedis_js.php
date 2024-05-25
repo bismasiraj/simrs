@@ -200,7 +200,6 @@
                         foreach ($mapAssessment as $key2 => $value2) {
                             if ($value2['doc_id'] == $value1['value_id']) {
 
-
         ?>
                             var canvas<?= $value1['value_id']; ?> = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
                             const canvasDataInput<?= $value1['value_id']; ?> = document.getElementById('lokalis<?= $value1['value_id']; ?>');
@@ -459,12 +458,18 @@
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
+                        foreach ($mapAssessment as $key2 => $value2) {
+                            if ($value2['doc_id'] == $value1['value_id']) {
+
+
         ?>
 
-                    var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                    canvas.style.pointerEvents = 'auto';
+                            var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            canvas.style.pointerEvents = 'auto';
 
         <?php
+                            }
+                        }
                     }
                 }
         } ?>
@@ -1957,7 +1962,7 @@
                     <b>PERNAPASAN</b>
                 </button>
             </h2>
-            <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accodrionAssessmentAwal" style="">
+            <div id="collapsePernapasan" class="accordion-collapse collapse" aria-labelledby="headingPernapasan" data-bs-parent="#accordionAssessmentMedis" style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -1988,7 +1993,7 @@
                     <b>APGAR</b>
                 </button>
             </h2>
-            <div id="collapseapgarMedis" class="accordion-collapse collapse" aria-labelledby="apgarMedis" data-bs-parent="#accodrionAssessmentAwal" style="">
+            <div id="collapseapgarMedis" class="accordion-collapse collapse" aria-labelledby="apgarMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
@@ -2001,6 +2006,170 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+
+    }
+
+    function appendOculusAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpOculus_Group" class="accordion-item">
+            <h2 class="accordion-header" id="OculusMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOculusMedis" aria-expanded="true" aria-controls="collapseOculusMedis">
+                    <b>PEMERIKSAAN FISIK</b>
+                </button>
+            </h2>
+            <div id="collapseOculusMedis" class="accordion-collapse collapse" aria-labelledby="OculusMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td width="50%">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <td><b>Oculus Dextra</b></td>
+                                                        <td>Keterangan</td>
+                                                        <td><b>Oculus Sinistra</b></td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020206" name="G0020206" class="form-control"></td>
+                                                        <td><b>Visus</b></td>
+                                                        <td><input type="text" id="G0020228" name="G0020228" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020207" name="G0020207" class="form-control"></td>
+                                                        <td><b>Koreksi</b></td>
+                                                        <td><input type="text" id="G0020229" name="G0020229" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020208" name="G0020208" class="form-control"></td>
+                                                        <td><b>Skiaskopi</b></td>
+                                                        <td><input type="text" id="G0020230" name="G0020230" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020209" name="G0020209" class="form-control"></td>
+                                                        <td><b>Bulbus Oculi</b></td>
+                                                        <td><input type="text" id="G0020231" name="G0020231" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020210" name="G0020210" class="form-control"></td>
+                                                        <td><b>Parese Paralyse</b></td>
+                                                        <td><input type="text" id="G0020232" name="G0020232" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020211" name="G0020211" class="form-control"></td>
+                                                        <td><b>Supercilia</b></td>
+                                                        <td><input type="text" id="G0020233" name="G0020233" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020212" name="G0020212" class="form-control"></td>
+                                                        <td><b>Palpebra Superior</b></td>
+                                                        <td><input type="text" id="G0020234" name="G0020234" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020213" name="G0020213" class="form-control"></td>
+                                                        <td><b>Palpebra Inferior</b></td>
+                                                        <td><input type="text" id="G0020235" name="G0020235" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020214" name="G0020214" class="form-control"></td>
+                                                        <td><b>Conjunctiva Palpebralis</b></td>
+                                                        <td><input type="text" id="G0020236" name="G0020236" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020215" name="G0020215" class="form-control"></td>
+                                                        <td><b>Conjunctiva Fornices</b></td>
+                                                        <td><input type="text" id="G0020237" name="G0020237" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020216" name="G0020216" class="form-control"></td>
+                                                        <td><b>Conjunctiva Bulbi</b></td>
+                                                        <td><input type="text" id="G0020238" name="G0020238" class="form-control"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td width="50%">
+                                            <table class="table table-bordered text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020206" name="G0020206" class="form-control"><b>Oculus Dextra</b></td>
+                                                        <td>Keterangan</td>
+                                                        <td><input type="text" id="G0020206" name="G0020206" class="form-control"><b>Oculus Sinistra</b></td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020217" name="G0020217" class="form-control"></td>
+                                                        <td><b>Sclera</b></td>
+                                                        <td><input type="text" id="G0020239" name="G0020239" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020218" name="G0020218" class="form-control"></td>
+                                                        <td><b>Cornea</b></td>
+                                                        <td><input type="text" id="G0020240" name="G0020240" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020219" name="G0020219" class="form-control"></td>
+                                                        <td><b>Camera Oculi Anterior</b></td>
+                                                        <td><input type="text" id="G0020241" name="G0020241" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020220" name="G0020220" class="form-control"></td>
+                                                        <td><b>Iris</b></td>
+                                                        <td><input type="text" id="G0020242" name="G0020242" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020221" name="G0020221" class="form-control"></td>
+                                                        <td><b>Pupil</b></td>
+                                                        <td><input type="text" id="G0020243" name="G0020243" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020222" name="G0020222" class="form-control"></td>
+                                                        <td><b>Lensa</b></td>
+                                                        <td><input type="text" id="G0020244" name="G0020244" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020223" name="G0020223" class="form-control"></td>
+                                                        <td><b>Corpus Vitreous</b></td>
+                                                        <td><input type="text" id="G0020245" name="G0020245" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020224" name="G0020224" class="form-control"></td>
+                                                        <td><b>Fundus Reflek</b></td>
+                                                        <td><input type="text" id="G0020246" name="G0020246" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020225" name="G0020225" class="form-control"></td>
+                                                        <td><b>Tensio Oculi</b></td>
+                                                        <td><input type="text" id="G0020247" name="G0020247" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020226" name="G0020226" class="form-control"></td>
+                                                        <td><b>Sistem Canalis Lacrimaris</b></td>
+                                                        <td><input type="text" id="G0020248" name="G0020248" class="form-control"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input type="text" id="G0020227" name="G0020227" class="form-control"></td>
+                                                        <td><b>Lain-lain</b></td>
+                                                        <td><input type="text" id="G0020249" name="G0020249" class="form-control"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
