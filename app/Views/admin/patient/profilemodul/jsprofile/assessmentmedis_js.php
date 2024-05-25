@@ -328,8 +328,17 @@
 
 
         $('#armdate_of_diagnosa').val(get_date())
-        $('#armclinic_id').val('<?= $visit['clinic_id']; ?>')
-        $('#armemployee_id').val('<?= $visit['employee_id']; ?>')
+        <?php if (!is_null($visit['class_room_id'])) { ?>
+            $('#armclinic_id').val('<?= $visit['class_room_id']; ?>')
+        <?php } else { ?>
+            $('#armclinic_id').val('<?= $visit['clinic_id']; ?>')
+        <?php } ?>
+
+        <?php if (!is_null($visit['class_room_id'])) { ?>
+            $('#armemployee_id').val('<?= $visit['employee_inap']; ?>')
+        <?php } else { ?>
+            $('#armemployee_id').val('<?= $visit['employee_id']; ?>')
+        <?php } ?>
 
         $('#armorg_unit_code').val('<?= $visit['org_unit_code']; ?>')
         $('#armvisit_id').val('<?= $visit['visit_id']; ?>')
@@ -2103,9 +2112,9 @@
                                             <table class="table table-bordered text-center">
                                                 <thead>
                                                     <tr>
-                                                        <td><input type="text" id="G0020206" name="G0020206" class="form-control"><b>Oculus Dextra</b></td>
+                                                        <td><b>Oculus Dextra</b></td>
                                                         <td>Keterangan</td>
-                                                        <td><input type="text" id="G0020206" name="G0020206" class="form-control"><b>Oculus Sinistra</b></td>
+                                                        <td><b>Oculus Sinistra</b></td>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

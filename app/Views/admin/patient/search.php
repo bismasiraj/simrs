@@ -72,7 +72,7 @@ $currency_symbol = 'Rp. ';
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 0 && $giTipe != 5) { ?>
+                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 0 && $giTipe != 5 && $giTipe != 3) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>

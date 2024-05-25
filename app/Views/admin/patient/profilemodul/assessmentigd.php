@@ -103,7 +103,11 @@ $group = user()->getRoles();
                                         <div class="form-group">
                                             <label for="arpclinic_id">Poli</label>
                                             <select name="clinic_id" id="arpclinic_id" type="hidden" class="form-control ">
-                                                <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
+                                                <?php if (!is_null($visit['class_room_id'])) { ?>
+                                                    <option value="<?= $visit['class_room_id']; ?>"><?= $visit['name_of_class']; ?></option>
+                                                <?php } else { ?>
+                                                    <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>
@@ -113,7 +117,11 @@ $group = user()->getRoles();
                                         <div class="form-group">
                                             <label for="arpemployee_id">Dokter</label>
                                             <select name="employee_id" id="arpemployee_id" type="hidden" class="form-control ">
-                                                <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                                <?php if (!is_null($visit['class_room_id'])) { ?>
+                                                    <option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>
+                                                <?php } else { ?>
+                                                    <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                                <?php } ?>
                                             </select>
                                         </div>
                                     </div>

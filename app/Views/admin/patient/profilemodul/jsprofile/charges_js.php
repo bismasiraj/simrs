@@ -222,14 +222,19 @@
                     //     $("displayamount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
 
                     // })
-
-                    addRowBill("chargesBody", "a", key)
+                    var i = $('#chargesBody tr').length + 1;
+                    var counter = 'charge' + i
+                    addRowBill("chargesBody", "a", key, i, counter)
 
                     if (billJson[key].clinic_id == 'P016') {
-                        addRowBill("radChargesBody", "arad", key)
+                        var i = $('#radChargesBody tr').length + 1;
+                        var counter = 'rad' + i
+                        addRowBill("radChargesBody", "arad", key, i, counter)
                     }
                     if (billJson[key].clinic_id == 'P013') {
-                        addRowBill("labChargesBody", "alab", key)
+                        var i = $('#labChargesBody tr').length + 1;
+                        var counter = 'lab' + i
+                        addRowBill("labChargesBody", "alab", key, i, counter)
                     }
 
 
@@ -257,9 +262,10 @@
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
 
-        var key = parseInt(billJson.length)
-        $("#chargesBody").append($("<tr id=\"" + key + "\">")
-            .append($("<td>").html(String(key + 1) + "."))
+        var i = $('#chargesBody tr').length + 1;
+        var key = 'charge' + i
+        $("#chargesBody")
+            .append($("<td>").html(String(key) + "."))
             .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
             .append($("<td>").attr("id", "treat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
@@ -274,8 +280,8 @@
             .append($("<td>").attr("id", "displaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="asimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(' + key + ', \'a\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="aeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
-        )
+            .append($("<td>").append('<button id="asimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'a\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="aeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
 
         $("#chargesBody")
             .append('<input name="treatment[]" id="atreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
@@ -324,17 +330,17 @@
             <?php
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
             ?>
-                $("#chargesBody").append($("<tr id=\"" + key + "\">")
+                $("#chargesBody")
                     .append('<input name="employee_id_from[]" id="aemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
                     .append('<input name="doctor_from[]" id="adoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
-                )
+
             <?php
             } else {
             ?>
-                $("#chargesBody").append($("<tr id=\"" + key + "\">")
+                $("#chargesBody")
                     .append('<input name="employee_id_from[]" id="aemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
                     .append('<input name="doctor_from[]" id="adoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
-                )
+
             <?php
             }
             ?>
@@ -342,22 +348,22 @@
             <?php
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
             ?>
-                $("#chargesBody").append($("<tr id=\"" + key + "\">")
+                $("#chargesBody")
                     .append('<input name="employee_id_from[]" id="aemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
                     .append('<input name="doctor_from[]" id="adoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
-                )
+
             <?php
             } else {
             ?>
-                $("#chargesBody").append($("<tr id=\"" + key + "\">")
+                $("#chargesBody")
                     .append('<input name="employee_id_from[]" id="aemployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
                     .append('<input name="doctor_from[]" id="adoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-                )
+
             <?php
             }
             ?>
         }
-        $("#chargesBody").append($("<tr id=\"" + key + "\">")
+        $("#chargesBody")
             .append('<input name="employee_id[]" id="aemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
             .append('<input name="doctor[]" id="adoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="aamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
@@ -366,7 +372,7 @@
             .append('<input name="tagihan[]" id="atagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#aquantity" + key).val() + '" class="form-control" />')
             .append('<input name="treatment_plafond[]" id="atreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
             .append('<input name="tarif_type[]" id="atarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />')
-        )
+
         if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
             var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
             if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 && '<?= $visit['class_id_plafond']; ?>' != 99) {
@@ -491,74 +497,77 @@
         $("#" + identifier + "editDeleteCharge" + key).hide()
     }
 
-    function addRowBill(container, identifier, key) {
+    function addRowBill(container, identifier, key, i, counter) {
+        console.log(identifier)
+        console.log(key)
+        console.log(billJson)
         $("#" + container).append($("<tr id=\"" + key + "\">")
-            .append($("<td>").html(String(key + 1) + "."))
-            .append($("<td>").attr("id", identifier + "treatment" + key).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
-            .append($("<td>").attr("id", identifier + "treat_date" + key).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
+            .append($("<td>").html(String(i) + "."))
+            .append($("<td>").attr("id", identifier + "treatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
+            .append($("<td>").attr("id", identifier + "treat_date" + counter).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-            .append($("<td>").attr("id", identifier + "sell_price" + key).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
+            .append($("<td>").attr("id", identifier + "sell_price" + counter).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
             .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + key + '" placeholder="" value="' + billJson[key].quantity + '" class="form-control" readonly>')
+                .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + counter + '" placeholder="" value="' + billJson[key].quantity + '" class="form-control" readonly>')
                 .append($("<p>").html(billJson[key].name_of_status_pasien))
             )
-            .append($("<td>").attr("id", identifier + "displayamount_paid" + key).html(formatCurrency(billJson[key].tagihan)))
-            .append($("<td>").attr("id", identifier + "displayamount_plafond" + key).html((billJson[key].amount_plafond)))
-            .append($("<td>").attr("id", identifier + "displayamount_paid_plafond" + key).html(formatCurrency(billJson[key].amount_paid_plafond)))
-            .append($("<td>").attr("id", identifier + "displaydiscount" + key).html(formatCurrency(billJson[key].discount)))
-            .append($("<td>").attr("id", identifier + "subsidisat" + key).html(formatCurrency(billJson[key].subsidisat)))
-            .append($("<td>").attr("id", identifier + "subsidi" + key).html(formatCurrency(billJson[key].subsidi)))
-            .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(' + key + ', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'a\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").attr("id", identifier + "displayamount_paid" + counter).html(formatCurrency(billJson[key].tagihan)))
+            .append($("<td>").attr("id", identifier + "displayamount_plafond" + counter).html((billJson[key].amount_plafond)))
+            .append($("<td>").attr("id", identifier + "displayamount_paid_plafond" + counter).html(formatCurrency(billJson[key].amount_paid_plafond)))
+            .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
+            .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
+            .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
+            .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(' + counter + ', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'a\', ' + counter + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + counter + '\', ' + counter + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
             // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
             // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
-            .append('<input name="treatment[]" id="' + identifier + 'treatment' + key + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
-            .append('<input name="treat_date[]" id="' + identifier + 'treat_date' + key + '" type="hidden" value="' + billJson[key].treat_date + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="' + identifier + 'sell_price' + key + '" type="hidden" value="' + billJson[key].sell_price + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="' + identifier + 'amount_paid' + key + '" type="hidden" value="' + billJson[key].amount_paid + '" class="form-control" />')
-            .append('<input name="amount_plafond[]" id="' + identifier + 'amount_plafond' + key + '" type="hidden" value="' + billJson[key].amount_plafond + '" class="form-control" />')
-            .append('<input name="discount[]" id="' + identifier + 'discount' + key + '" type="hidden" value="' + billJson[key].discount + '" class="form-control" />')
-            .append('<input name="subsidisat[]" id="' + identifier + 'subsidisat' + key + '" type="hidden" value="' + billJson[key].subsidisat + '" class="form-control" />')
-            .append('<input name="subsidi[]" id="' + identifier + 'subsidi' + key + '" type="hidden" value="' + billJson[key].subsidi + '" class="form-control" />')
-            .append('<input name="bill_id[]" id="' + identifier + 'bill_id' + key + '" type="hidden" value="' + billJson[key].bill_id + '" class="form-control" />')
-            .append('<input name="trans_id[]" id="' + identifier + 'trans_id' + key + '" type="hidden" value="' + billJson[key].trans_id + '" class="form-control" />')
-            .append('<input name="no_registration[]" id="' + identifier + 'no_registration' + key + '" type="hidden" value="' + billJson[key].no_registration + '" class="form-control" />')
-            .append('<input name="theorder[]" id="' + identifier + 'theorder' + key + '" type="hidden" value="' + billJson[key].theorder + '" class="form-control" />')
-            .append('<input name="visit_id[]" id="' + identifier + 'visit_id' + key + '" type="hidden" value="' + billJson[key].visit_id + '" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="' + identifier + 'org_unit_code' + key + '" type="hidden" value="' + billJson[key].org_unit_code + '" class="form-control" />')
-            .append('<input name="class_id[]" id="' + identifier + 'class_id' + key + '" type="hidden" value="' + billJson[key].class_id + '" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="' + identifier + 'class_id_plafond' + key + '" type="hidden" value="' + billJson[key].class_id_plafond + '" class="form-control" />')
-            .append('<input name="payor_id[]" id="' + identifier + 'payor_id' + key + '" type="hidden" value="' + billJson[key].payor_id + '" class="form-control" />')
-            .append('<input name="karyawan[]" id="' + identifier + 'karyawan' + key + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
-            .append('<input name="theid[]" id="' + identifier + 'theid' + key + '" type="hidden" value="' + billJson[key].theid + '" class="form-control" />')
-            .append('<input name="thename[]" id="' + identifier + 'thename' + key + '" type="hidden" value="' + billJson[key].thename + '" class="form-control" />')
-            .append('<input name="theaddress[]" id="' + identifier + 'theaddress' + key + '" type="hidden" value="' + billJson[key].theaddress + '" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="' + identifier + 'status_pasien_id' + key + '" type="hidden" value="' + billJson[key].status_pasien_id + '" class="form-control" />')
-            .append('<input name="isRJ[]" id="' + identifier + 'isRJ' + key + '" type="hidden" value="' + billJson[key].isRJ + '" class="form-control" />')
-            .append('<input name="gender[]" id="' + identifier + 'gender' + key + '" type="hidden" value="' + billJson[key].gender + '" class="form-control" />')
-            .append('<input name="ageyear[]" id="' + identifier + 'ageyear' + key + '" type="hidden" value="' + billJson[key].ageyear + '" class="form-control" />')
-            .append('<input name="agemonth[]" id="' + identifier + 'agemonth' + key + '" type="hidden" value="' + billJson[key].agemonth + '" class="form-control" />')
-            .append('<input name="ageday[]" id="' + identifier + 'ageday' + key + '" type="hidden" value="' + billJson[key].ageday + '" class="form-control" />')
-            .append('<input name="kal_id[]" id="' + identifier + 'kal_id' + key + '" type="hidden" value="' + billJson[key].kal_id + '" class="form-control" />')
-            .append('<input name="karyawan[]" id="' + identifier + 'karyawan' + key + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
-            .append('<input name="class_room_ID[]" id="' + identifier + 'class_room_ID' + key + '" type="hidden" value="' + billJson[key].class_room_ID + '" class="form-control" />')
-            .append('<input name="bed_id[]" id="' + identifier + 'bed_id' + key + '" type="hidden" value="' + billJson[key].bed_id + '" class="form-control" />')
-            .append('<input name="employee_id_from[]" id="' + identifier + 'employee_id_from' + key + '" type="hidden" value="' + billJson[key].employee_id_from + '" class="form-control" />')
-            .append('<input name="employee_id[]" id="' + identifier + 'employee_id' + key + '" type="hidden" value="' + billJson[key].employee_id + '" class="form-control" />')
-            .append('<input name="doctor_from[]" id="' + identifier + 'doctor_from' + key + '" type="hidden" value="' + billJson[key].doctor_from + '" class="form-control" />')
-            .append('<input name="clinic_id[]" id="' + identifier + 'clinic_id' + key + '" type="hidden" value="' + billJson[key].clinic_id + '" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="' + identifier + 'clinic_id_from' + key + '" type="hidden" value="' + billJson[key].clinic_id_from + '" class="form-control" />')
-            .append('<input name="exit_date[]" id="' + identifier + 'exit_date' + key + '" type="hidden" value="' + billJson[key].exit_date + '" class="form-control" />')
-            .append('<input name="cashier[]" id="' + identifier + 'cashier' + key + '" type="hidden" value="' + billJson[key].cashier + '" class="form-control" />')
-            .append('<input name="modified_from[]" id="' + identifier + 'modified_from' + key + '" type="hidden" value="' + billJson[key].modified_from + '" class="form-control" />')
-            .append('<input name="islunas[]" id="' + identifier + 'islunas' + key + '" type="hidden" value="' + billJson[key].islunas + '" class="form-control" />')
-            .append('<input name="measure_id[]" id="' + identifier + 'measure_id' + key + '" type="hidden" value="' + billJson[key].measure_id + '" class="form-control" />')
-            .append('<input name="tarif_id[]" id="' + identifier + 'tarif_id' + key + '" type="hidden" value="' + billJson[key].tarif_id + '" class="form-control" />')
-            .append('<input name="amount[]" id="' + identifier + 'amount' + key + '" type="hidden" value="' + billJson[key].amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="' + identifier + 'nota_no' + key + '" type="hidden" value="' + billJson[key].nota_no + '" class="form-control" />')
-            .append('<input name="profesi[]" id="' + identifier + 'profesi' + key + '" type="hidden" value="' + billJson[key].profesi + '" class="form-control" />')
-            .append('<input name="tagihan[]" id="' + identifier + 'tagihan' + key + '" type="hidden" value="' + billJson[key].tagihan + '" class="form-control" />')
-            .append('<input name="treatment_plafond[]" id="' + identifier + 'treatment_plafond' + key + '" type="hidden" value="' + billJson[key].treatment_plafond + '" class="form-control" />')
-            .append('<input name="tarif_type[]" id="' + identifier + 'tarif_type' + key + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
+            .append('<input name="treatment[]" id="' + identifier + 'treatment' + counter + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
+            .append('<input name="treat_date[]" id="' + identifier + 'treat_date' + counter + '" type="hidden" value="' + billJson[key].treat_date + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="' + identifier + 'sell_price' + counter + '" type="hidden" value="' + billJson[key].sell_price + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="' + identifier + 'amount_paid' + counter + '" type="hidden" value="' + billJson[key].amount_paid + '" class="form-control" />')
+            .append('<input name="amount_plafond[]" id="' + identifier + 'amount_plafond' + counter + '" type="hidden" value="' + billJson[key].amount_plafond + '" class="form-control" />')
+            .append('<input name="discount[]" id="' + identifier + 'discount' + counter + '" type="hidden" value="' + billJson[key].discount + '" class="form-control" />')
+            .append('<input name="subsidisat[]" id="' + identifier + 'subsidisat' + counter + '" type="hidden" value="' + billJson[key].subsidisat + '" class="form-control" />')
+            .append('<input name="subsidi[]" id="' + identifier + 'subsidi' + counter + '" type="hidden" value="' + billJson[key].subsidi + '" class="form-control" />')
+            .append('<input name="bill_id[]" id="' + identifier + 'bill_id' + counter + '" type="hidden" value="' + billJson[key].bill_id + '" class="form-control" />')
+            .append('<input name="trans_id[]" id="' + identifier + 'trans_id' + counter + '" type="hidden" value="' + billJson[key].trans_id + '" class="form-control" />')
+            .append('<input name="no_registration[]" id="' + identifier + 'no_registration' + counter + '" type="hidden" value="' + billJson[key].no_registration + '" class="form-control" />')
+            .append('<input name="theorder[]" id="' + identifier + 'theorder' + counter + '" type="hidden" value="' + billJson[key].theorder + '" class="form-control" />')
+            .append('<input name="visit_id[]" id="' + identifier + 'visit_id' + counter + '" type="hidden" value="' + billJson[key].visit_id + '" class="form-control" />')
+            .append('<input name="org_unit_code[]" id="' + identifier + 'org_unit_code' + counter + '" type="hidden" value="' + billJson[key].org_unit_code + '" class="form-control" />')
+            .append('<input name="class_id[]" id="' + identifier + 'class_id' + counter + '" type="hidden" value="' + billJson[key].class_id + '" class="form-control" />')
+            .append('<input name="class_id_plafond[]" id="' + identifier + 'class_id_plafond' + counter + '" type="hidden" value="' + billJson[key].class_id_plafond + '" class="form-control" />')
+            .append('<input name="payor_id[]" id="' + identifier + 'payor_id' + counter + '" type="hidden" value="' + billJson[key].payor_id + '" class="form-control" />')
+            .append('<input name="karyawan[]" id="' + identifier + 'karyawan' + counter + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
+            .append('<input name="theid[]" id="' + identifier + 'theid' + counter + '" type="hidden" value="' + billJson[key].theid + '" class="form-control" />')
+            .append('<input name="thename[]" id="' + identifier + 'thename' + counter + '" type="hidden" value="' + billJson[key].thename + '" class="form-control" />')
+            .append('<input name="theaddress[]" id="' + identifier + 'theaddress' + counter + '" type="hidden" value="' + billJson[key].theaddress + '" class="form-control" />')
+            .append('<input name="status_pasien_id[]" id="' + identifier + 'status_pasien_id' + counter + '" type="hidden" value="' + billJson[key].status_pasien_id + '" class="form-control" />')
+            .append('<input name="isRJ[]" id="' + identifier + 'isRJ' + counter + '" type="hidden" value="' + billJson[key].isRJ + '" class="form-control" />')
+            .append('<input name="gender[]" id="' + identifier + 'gender' + counter + '" type="hidden" value="' + billJson[key].gender + '" class="form-control" />')
+            .append('<input name="ageyear[]" id="' + identifier + 'ageyear' + counter + '" type="hidden" value="' + billJson[key].ageyear + '" class="form-control" />')
+            .append('<input name="agemonth[]" id="' + identifier + 'agemonth' + counter + '" type="hidden" value="' + billJson[key].agemonth + '" class="form-control" />')
+            .append('<input name="ageday[]" id="' + identifier + 'ageday' + counter + '" type="hidden" value="' + billJson[key].ageday + '" class="form-control" />')
+            .append('<input name="kal_id[]" id="' + identifier + 'kal_id' + counter + '" type="hidden" value="' + billJson[key].kal_id + '" class="form-control" />')
+            .append('<input name="karyawan[]" id="' + identifier + 'karyawan' + counter + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
+            .append('<input name="class_room_ID[]" id="' + identifier + 'class_room_ID' + counter + '" type="hidden" value="' + billJson[key].class_room_ID + '" class="form-control" />')
+            .append('<input name="bed_id[]" id="' + identifier + 'bed_id' + counter + '" type="hidden" value="' + billJson[key].bed_id + '" class="form-control" />')
+            .append('<input name="employee_id_from[]" id="' + identifier + 'employee_id_from' + counter + '" type="hidden" value="' + billJson[key].employee_id_from + '" class="form-control" />')
+            .append('<input name="employee_id[]" id="' + identifier + 'employee_id' + counter + '" type="hidden" value="' + billJson[key].employee_id + '" class="form-control" />')
+            .append('<input name="doctor_from[]" id="' + identifier + 'doctor_from' + counter + '" type="hidden" value="' + billJson[key].doctor_from + '" class="form-control" />')
+            .append('<input name="clinic_id[]" id="' + identifier + 'clinic_id' + counter + '" type="hidden" value="' + billJson[key].clinic_id + '" class="form-control" />')
+            .append('<input name="clinic_id_from[]" id="' + identifier + 'clinic_id_from' + counter + '" type="hidden" value="' + billJson[key].clinic_id_from + '" class="form-control" />')
+            .append('<input name="exit_date[]" id="' + identifier + 'exit_date' + counter + '" type="hidden" value="' + billJson[key].exit_date + '" class="form-control" />')
+            .append('<input name="cashier[]" id="' + identifier + 'cashier' + counter + '" type="hidden" value="' + billJson[key].cashier + '" class="form-control" />')
+            .append('<input name="modified_from[]" id="' + identifier + 'modified_from' + counter + '" type="hidden" value="' + billJson[key].modified_from + '" class="form-control" />')
+            .append('<input name="islunas[]" id="' + identifier + 'islunas' + counter + '" type="hidden" value="' + billJson[key].islunas + '" class="form-control" />')
+            .append('<input name="measure_id[]" id="' + identifier + 'measure_id' + counter + '" type="hidden" value="' + billJson[key].measure_id + '" class="form-control" />')
+            .append('<input name="tarif_id[]" id="' + identifier + 'tarif_id' + counter + '" type="hidden" value="' + billJson[key].tarif_id + '" class="form-control" />')
+            .append('<input name="amount[]" id="' + identifier + 'amount' + counter + '" type="hidden" value="' + billJson[key].amount + '" class="form-control" />')
+            .append('<input name="nota_no[]" id="' + identifier + 'nota_no' + counter + '" type="hidden" value="' + billJson[key].nota_no + '" class="form-control" />')
+            .append('<input name="profesi[]" id="' + identifier + 'profesi' + counter + '" type="hidden" value="' + billJson[key].profesi + '" class="form-control" />')
+            .append('<input name="tagihan[]" id="' + identifier + 'tagihan' + counter + '" type="hidden" value="' + billJson[key].tagihan + '" class="form-control" />')
+            .append('<input name="treatment_plafond[]" id="' + identifier + 'treatment_plafond' + counter + '" type="hidden" value="' + billJson[key].treatment_plafond + '" class="form-control" />')
+            .append('<input name="tarif_type[]" id="' + identifier + 'tarif_type' + counter + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
 
         )
         $("#" + identifier + "quantity" + key).keydown(function(e) {

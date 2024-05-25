@@ -28,7 +28,11 @@
 
                 <tr>
                     <td class="bolds">Dokter</td>
-                    <td id="dokter"><?php echo $visit['fullname']; ?></td>
+                    <?php if (!is_null($visit['class_room_id'])) { ?>
+                        <td id="dokter"><?php echo $visit['fullname_inap']; ?></td>
+                    <?php } else { ?>
+                        <td id="dokter"><?php echo $visit['fullname']; ?></td>
+                    <?php } ?>
                 </tr>
                 <?php if (!is_null($visit['class_room_id'])) { ?>
                     <tr>
