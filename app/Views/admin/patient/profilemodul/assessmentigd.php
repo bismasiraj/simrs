@@ -1,6 +1,7 @@
 <?php
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
+$group = user()->getRoles();
 ?>
 
 <style>
@@ -19,7 +20,7 @@ $permission = user()->getPermissions();
         width: auto !important;
     }
 </style>
-<div class="tab-pane" id="assessmentigd" role="tabpanel">
+<div class="tab-pane <?= isset($group[13]) ? 'active' : '' ?>" id="assessmentigd" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [

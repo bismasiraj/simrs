@@ -1,8 +1,9 @@
 <?php
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
+$group = user()->getRoles();
 ?>
-<div class="tab-pane active" id="assessmentmedis" role="tabpanel">
+<div class="tab-pane <?= isset($group[11]) ? 'active' : '' ?>" id="assessmentmedis" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -18,38 +19,39 @@ $permission = user()->getPermissions();
                         <div class="modal-body pt0 pb0">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12">
-                                    <input name="org_unit_code" id="armorg_unit_code" type="hidden" class="form-control " />
-                                    <input name="visit_id" id="armvisit_id" type="hidden" class="form-control " />
-                                    <input name="trans_id" id="armtrans_id" type="hidden" class="form-control " />
-                                    <input name="report_date" id="armreport_date" type="hidden" class="form-control " />
-                                    <input name="theid" id="armtheid" type="hidden" class="form-control " />
-                                    <input name="body_id" id="armbody_id" type="hidden" class="form-control " />
-                                    <input name="theaddress" id="armtheaddress" type="hidden" class="form-control " />
-                                    <input name="isrj" id="armisrj" type="hidden" class="form-control " />
-                                    <input name="kal_id" id="armkal_id" type="hidden" class="form-control " />
-                                    <input name="spesialistik" id="armspesialistik" type="hidden" class="form-control " />
-                                    <input name="doctor" id="armdoctor" type="hidden" class="form-control " />
-                                    <input name="class_room_id" id="armclass_room_id" type="hidden" class="form-control " />
-                                    <input name="bed_id" id="armbed_id" type="hidden" class="form-control " />
-                                    <input name="result_id" id="armresult_id" type="hidden" class="form-control " />
-                                    <input name="keluar_id" id="armkeluar_id" type="hidden" class="form-control " />
-                                    <input name="in_date" id="armin_date" type="hidden" class="form-control " />
-                                    <input name="exit_date" id="armexit_date" type="hidden" class="form-control " />
-                                    <input name="modified_date" id="armmodified_date" type="hidden" class="form-control " />
-                                    <input name="modified_by" id="armmodified_by" type="hidden" class="form-control " />
-                                    <input name="nokartu" id="armnokartu" type="hidden" class="form-control " />
-                                    <input name="pasien_diagnosa_id" id="armpasien_diagnosa_id" type="hidden" class="form-control " />
-                                    <input name="no_registration" id="armno_registration" type="hidden" class="form-control " />
-                                    <input name="thename" id="armthename" type="hidden" class="form-control " />
-                                    <input name="status_pasien_id" id="armstatus_pasien_id" type="hidden" class="form-control " />
-                                    <input name="gender" id="armgender" type="hidden" class="form-control " />
-                                    <input name="ageyear" id="armageyear" type="hidden" class="form-control " />
-                                    <input name="agemonth" id="armagemonth" type="hidden" class="form-control " />
-                                    <input name="ageday" id="armageday" type="hidden" class="form-control " />
-                                    <input name="nosep" id="armnosep" type="hidden" class="form-control " />
-                                    <input name="tglsep" id="armtglsep" type="hidden" class="form-control " />
-                                    <input name="kddpjp" id="armtglsep" type="hidden" class="form-control " />
-                                    <input name="statusantrean" id="armstatusantrean" type="hidden" class="form-control " value="<?= $visit['statusantrean']; ?>" />
+                                    <input name="org_unit_code" id="armorg_unit_code" type="hidden" />
+                                    <input name="visit_id" id="armvisit_id" type="hidden" />
+                                    <input name="trans_id" id="armtrans_id" type="hidden" />
+                                    <input name="report_date" id="armreport_date" type="hidden" />
+                                    <input name="theid" id="armtheid" type="hidden" />
+                                    <input name="body_id" id="armbody_id" type="hidden" />
+                                    <input name="theaddress" id="armtheaddress" type="hidden" />
+                                    <input name="isrj" id="armisrj" type="hidden" />
+                                    <input name="kal_id" id="armkal_id" type="hidden" />
+                                    <input name="spesialistik" id="armspesialistik" type="hidden" />
+                                    <input name="doctor" id="armdoctor" type="hidden" />
+                                    <input name="class_room_id" id="armclass_room_id" type="hidden" />
+                                    <input name="bed_id" id="armbed_id" type="hidden" />
+                                    <input name="result_id" id="armresult_id" type="hidden" />
+                                    <input name="keluar_id" id="armkeluar_id" type="hidden" />
+                                    <input name="in_date" id="armin_date" type="hidden" />
+                                    <input name="exit_date" id="armexit_date" type="hidden" />
+                                    <input name="modified_date" id="armmodified_date" type="hidden" />
+                                    <input name="modified_by" id="armmodified_by" type="hidden" />
+                                    <input name="nokartu" id="armnokartu" type="hidden" />
+                                    <input name="pasien_diagnosa_id" id="armpasien_diagnosa_id" type="hidden" />
+                                    <input name="no_registration" id="armno_registration" type="hidden" />
+                                    <input name="thename" id="armthename" type="hidden" />
+                                    <input name="status_pasien_id" id="armstatus_pasien_id" type="hidden" />
+                                    <input name="gender" id="armgender" type="hidden" />
+                                    <input name="ageyear" id="armageyear" type="hidden" />
+                                    <input name="agemonth" id="armagemonth" type="hidden" />
+                                    <input name="ageday" id="armageday" type="hidden" />
+                                    <input name="nosep" id="armnosep" type="hidden" />
+                                    <input name="tglsep" id="armtglsep" type="hidden" />
+                                    <input name="kddpjp" id="armtglsep" type="hidden" />
+                                    <input name="diag_cat" id="armdiag_cat" type="hidden" />
+                                    <input name="statusantrean" id="armstatusantrean" type="hidden" value="<?= $visit['statusantrean']; ?>" />
                                     <div class="row row-eq">
                                         <!-- INI CURRENT FILLING DATA -->
                                         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -282,8 +284,8 @@ $permission = user()->getPermissions();
                                             </div><!--./row-->
                                         </div><!--./row-->
                                         <div class="panel-footer text-end mb-4">
-                                            <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                                            <button type="submit" id="formsavearmbtns" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right" style="display: none;"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
+                                            <button type="submit" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->

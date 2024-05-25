@@ -15,100 +15,100 @@
 
 
 
-        tinymce.init({
-            selector: '#armstanding_order',
-            height: 300,
-            plugins: [
-                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                "save table contextmenu directionality emoticons template paste textcolor",
-            ],
-            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-            style_formats: [{
-                    title: "Bold text",
-                    inline: "b"
-                },
-                {
-                    title: "Red text",
-                    inline: "span",
-                    styles: {
-                        color: "#ff0000"
-                    }
-                },
-                {
-                    title: "Red header",
-                    block: "h1",
-                    styles: {
-                        color: "#ff0000"
-                    }
-                },
-                {
-                    title: "Example 1",
-                    inline: "span",
-                    classes: "example1"
-                },
-                {
-                    title: "Example 2",
-                    inline: "span",
-                    classes: "example2"
-                },
-                {
-                    title: "Table styles"
-                },
-                {
-                    title: "Table row 1",
-                    selector: "tr",
-                    classes: "tablerow1"
-                },
-            ],
-        });
-        tinymce.init({
-            selector: '#arminstruction',
-            height: 300,
-            plugins: [
-                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                "save table contextmenu directionality emoticons template paste textcolor",
-            ],
-            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-            style_formats: [{
-                    title: "Bold text",
-                    inline: "b"
-                },
-                {
-                    title: "Red text",
-                    inline: "span",
-                    styles: {
-                        color: "#ff0000"
-                    }
-                },
-                {
-                    title: "Red header",
-                    block: "h1",
-                    styles: {
-                        color: "#ff0000"
-                    }
-                },
-                {
-                    title: "Example 1",
-                    inline: "span",
-                    classes: "example1"
-                },
-                {
-                    title: "Example 2",
-                    inline: "span",
-                    classes: "example2"
-                },
-                {
-                    title: "Table styles"
-                },
-                {
-                    title: "Table row 1",
-                    selector: "tr",
-                    classes: "tablerow1"
-                },
-            ],
-        });
+        // tinymce.init({
+        //     selector: '#armstanding_order',
+        //     height: 300,
+        //     plugins: [
+        //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+        //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+        //         "save table contextmenu directionality emoticons template paste textcolor",
+        //     ],
+        //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+        //     style_formats: [{
+        //             title: "Bold text",
+        //             inline: "b"
+        //         },
+        //         {
+        //             title: "Red text",
+        //             inline: "span",
+        //             styles: {
+        //                 color: "#ff0000"
+        //             }
+        //         },
+        //         {
+        //             title: "Red header",
+        //             block: "h1",
+        //             styles: {
+        //                 color: "#ff0000"
+        //             }
+        //         },
+        //         {
+        //             title: "Example 1",
+        //             inline: "span",
+        //             classes: "example1"
+        //         },
+        //         {
+        //             title: "Example 2",
+        //             inline: "span",
+        //             classes: "example2"
+        //         },
+        //         {
+        //             title: "Table styles"
+        //         },
+        //         {
+        //             title: "Table row 1",
+        //             selector: "tr",
+        //             classes: "tablerow1"
+        //         },
+        //     ],
+        // });
+        // tinymce.init({
+        //     selector: '#arminstruction',
+        //     height: 300,
+        //     plugins: [
+        //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+        //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+        //         "save table contextmenu directionality emoticons template paste textcolor",
+        //     ],
+        //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+        //     style_formats: [{
+        //             title: "Bold text",
+        //             inline: "b"
+        //         },
+        //         {
+        //             title: "Red text",
+        //             inline: "span",
+        //             styles: {
+        //                 color: "#ff0000"
+        //             }
+        //         },
+        //         {
+        //             title: "Red header",
+        //             block: "h1",
+        //             styles: {
+        //                 color: "#ff0000"
+        //             }
+        //         },
+        //         {
+        //             title: "Example 1",
+        //             inline: "span",
+        //             classes: "example1"
+        //         },
+        //         {
+        //             title: "Example 2",
+        //             inline: "span",
+        //             classes: "example2"
+        //         },
+        //         {
+        //             title: "Table styles"
+        //         },
+        //         {
+        //             title: "Table row 1",
+        //             selector: "tr",
+        //             classes: "tablerow1"
+        //         },
+        //     ],
+        // });
 
         // armstanding_ordereditor.init({
         //     selector: '#armstanding_order'
@@ -143,19 +143,19 @@
             $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
         $("#formaddarmbtn").trigger("click")
-        getAssessmentMedis()
-
+        $("#armdiag_cat").val(3)
+        getAssessmentMedis(3)
     })
     $("#rekammedisTab").on("click", function() {
         $("#armTitle").html("Resume Medis")
 
         $("#accordionAssessmentMedis").html("")
-        appendAnamnesisMedis(accMedisName)
-        appendRiwayatMedis(accMedisName)
-        appendVitalSignMedis(accMedisName)
-        appendSirkulasi(accMedisName)
+        appendAnamnesisMedis(accMedisName);
+        appendRiwayatMedis(accMedisName);
+        appendVitalSignMedis(accMedisName);
+        appendSirkulasi(accMedisName);
         appendGcsMedisAccordion(accMedisName);
-        appendPemeriksaanFisikMedis(accMedisName)
+        appendPemeriksaanFisikMedis(accMedisName);
         appendLokalisAccordion(accMedisName);
         appendDiagnosaAccordion(accMedisName);
         appendProsedurAccordion(accMedisName);
@@ -164,7 +164,8 @@
         // appendMedisAccordion(accMedisName);
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
-        getAssessmentMedis()
+        $("#armdiag_cat").val(1)
+        getAssessmentMedis(1)
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
@@ -184,7 +185,6 @@
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
-
     })
 </script>
 
@@ -362,8 +362,6 @@
             $("#formaddrmbtn").hide()
             $("#formeditrm").show()
         }
-
-
     }
 
     function fillDataArm(index) {
@@ -376,6 +374,7 @@
         })
         $("#armclinic_id").html('<option value="' + pd.clinic_id + '">' + pd.name_of_clinic + '</option>')
         $("#armemployee_id").html('<option value="' + pd.employee_id + '">' + pd.fullname + '</option>')
+        $("#armdiag_cat").val(pd.diag_cat)
 
         fillPemeriksaanFisik(pd.pasien_diagnosa_id)
 
@@ -388,11 +387,14 @@
         getPernapasan(pd.pasien_diagnosa_id, "bodyPernapasanMedis")
         getApgar(pd.pasien_diagnosa_id, "bodyApgarMedis")
 
+        // $("#formsavearmbtn").hide()
+        // $("#formeditarm").show()
+
 
         if (typeof pasienDiagnosa.description !== 'undefined') {
-            disableRM()
-            $("#formaddrmbtn").hide()
-            $("#formeditrm").show()
+            disableARM()
+            // $("#formaddrmbtn").hide()
+            // $("#formeditrm").show()
         }
     }
 
@@ -595,7 +597,7 @@
                     errorMsg(message);
                 } else {
                     successMsg(data.message);
-                    getAssessmentMedis()
+                    getAssessmentMedis($("#armdiag_cat").val())
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -698,13 +700,14 @@
 </script>
 
 <script type="text/javascript">
-    function getAssessmentMedis() {
+    function getAssessmentMedis(diagCat) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentMedis',
             type: "POST",
             data: JSON.stringify({
                 'visit_id': visit,
-                'nomor': nomor
+                'nomor': nomor,
+                'diagCat': diagCat
             }),
             dataType: 'json',
             contentType: false,
@@ -721,6 +724,7 @@
                     fillDataArm(pasienDiagnosaAll.length - 1)
                     fillRiwayat()
                     disableARM()
+                    $("#formaddarmbtn").hide()
                 }
             },
             error: function() {
@@ -1284,12 +1288,35 @@
         $("#" + accordionId).append(accordionContent);
     }
 
+    var stringdiagnosa = `<div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="mb-4">
+                                <div class="staff-members">
+                                    <div class="table tablecustom-responsive">
+                                        <table id="tablediagnosaMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                            <?php if (true) { ?>
+                                                <thead>
+                                                    <th class="text-center" style="width: 40%">Diagnosa</th>
+                                                    <th class="text-center" style="width: 20%">Jenis Kasus</th>
+                                                    <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
+                                                </thead>
+                                                <tbody id="bodyDiagMedis">
+                                                </tbody>
+                                            <?php }   ?>
+                                        </table>
+                                    </div>
+                                    <div class="box-tab-tools" style="text-align: center;">
+                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+
     function appendDiagnosaAccordion(accordionId) {
         var accordionContent = `
         <div id="armDiagnosas_Group" class="accordion-item">
             <h2 class="accordion-header" id="headingDiagnosa">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosa" aria-expanded="false" aria-controls="collapseDiagnosa">
-                    <b>ASSESSMENT</b>
+                    <b>ASSESSMENT (A)</b>
                 </button>
             </h2>
             <div id="collapseDiagnosa" class="accordion-collapse collapse" aria-labelledby="headingDiagnosa" data-bs-parent="#accordionAssessmentMedis">
@@ -1311,25 +1338,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="mb-4">
-                                <div class="staff-members">
-                                    <div class="table tablecustom-responsive">
-                                        <table id="tablediagnosaMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                            <?php if (true) { ?>
-                                                <thead>
-                                                    <th class="text-center" style="width: 40%">Diagnosa</th>
-                                                    <th class="text-center" style="width: 20%">Jenis Kasus</th>
-                                                    <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
-                                                </thead>
-                                                <tbody id="bodyDiagMedis">
-                                                </tbody>
-                                            <?php }   ?>
-                                        </table>
-                                    </div>
-                                    <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
-                                    </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                    <label for="armdiag_desc">Diagnosa Klinis</label>
+                                    <textarea id="diag_desc" name="hurt" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1347,7 +1360,7 @@
         <div id="armProcedures_Group" class="accordion-item">
             <h2 class="accordion-header" id="headingProsedur">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProsedur" aria-expanded="false" aria-controls="collapseProsedur">
-                    <b>PROSEDUR (ICD IX)</b>
+                    <b>PLANNING (P)</b>
                 </button>
             </h2>
             <div id="collapseProsedur" class="accordion-collapse collapse" aria-labelledby="headingProsedur" data-bs-parent="#accordionAssessmentMedis">
@@ -1356,16 +1369,8 @@
                         <div class="col-sm-12 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armstanding_order">Standing Order </label>
+                                    <label for="armstanding_order" class="mb-4 badge bg-primary">Standing Order </label>
                                     <textarea id="armstanding_order" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-xs-12">
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label for="arminstruction">Rencana Tindakan </label>
-                                    <textarea id="arminstruction" name="instruction" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1395,6 +1400,54 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
+
+        tinymce.init({
+            selector: '#armstanding_order',
+            height: 300,
+            plugins: [
+                "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                "save table contextmenu directionality emoticons template paste textcolor",
+            ],
+            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+            style_formats: [{
+                    title: "Bold text",
+                    inline: "b"
+                },
+                {
+                    title: "Red text",
+                    inline: "span",
+                    styles: {
+                        color: "#ff0000"
+                    }
+                },
+                {
+                    title: "Red header",
+                    block: "h1",
+                    styles: {
+                        color: "#ff0000"
+                    }
+                },
+                {
+                    title: "Example 1",
+                    inline: "span",
+                    classes: "example1"
+                },
+                {
+                    title: "Example 2",
+                    inline: "span",
+                    classes: "example2"
+                },
+                {
+                    title: "Table styles"
+                },
+                {
+                    title: "Table row 1",
+                    selector: "tr",
+                    classes: "tablerow1"
+                },
+            ],
+        });
     }
 
 

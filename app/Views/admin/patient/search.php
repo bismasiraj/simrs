@@ -4,9 +4,9 @@ $this->extend('layout/basiclayout', [
 ]) ?>
 <?php
 $rajalTipe = [1, 2, 0, 73, 50, 5];
-$ranapTipe = [1, 3, 2, 0, 73, 50, 5];
+$ranapTipe = [3, 2, 0, 73, 50, 5];
 $permissions = user()->getPermissions();
-
+// dd($giTipe);
 ?>
 <?php $this->section('topbar') ?>
 <?php echo view('layout/partials/topbar.php', [
@@ -67,12 +67,12 @@ $currency_symbol = 'Rp. ';
                                     </li>
                                     <!-- <li><a href="#rawat_inap" data-toggle="tab" aria-expanded="true"><i class="far fa-procedures"></i> Rawat Inap</a></li> -->
                                 <?php } ?>
-                                <?php if ($giTipe == 3 && $giTipe != 5) { ?>
+                                <?php if ($giTipe == 3) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
-                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 3  && $giTipe != 0 && $giTipe != 5) { ?>
+                                <?php if (in_array($giTipe, $ranapTipe) && $giTipe != 0 && $giTipe != 5) { ?>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>

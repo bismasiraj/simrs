@@ -7,6 +7,7 @@ $this->extend('layout/nosidelayout', [
 
 <?php
 $permissions = user()->getPermissions();
+$group = user()->getRoles();
 $pasienDiagnosa = array();
 $pasienDiagnosaAll = array();
 foreach ($pd as $key => $value) {
@@ -44,14 +45,28 @@ $currency_symbol = 'Rp. ';
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                                         <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li>
-                                        <li class="nav-item"><a id="assessmentmedisTab" class="nav-link active" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li>
-                                        <li class="nav-item"><a id="assessmentigdTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li>
-                                        <li class="nav-item"><a id="cpptTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li>
-                                        <li class="nav-item"><a id="eresepTab" class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
-                                        <li class="nav-item"><a id="labTab" class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
-                                        <li class="nav-item"><a id="radTab" class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
-                                        <li class="nav-item"><a id="rekammedisTab" class="nav-link" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li>
-                                        <?php if ($visit['isrj'] == '0') { ?>
+                                        <?php if (isset($permissions['assessmentmedis']['r'])) { ?>
+                                            <li class="nav-item"><a id="assessmentmedisTab" class="nav-link <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li>
+                                        <?php }
+                                        if (isset($permissions['assessmentperawat']['r'])) { ?>
+                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li>
+                                        <?php }
+                                        if (isset($permissions['cppt']['r'])) { ?>
+                                            <li class="nav-item"><a id="cpptTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li>
+                                        <?php }
+                                        if (isset($permissions['eresep']['r'])) { ?>
+                                            <li class="nav-item"><a id="eresepTab" class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li>
+                                        <?php }
+                                        if (isset($permissions['lab']['r'])) { ?>
+                                            <li class="nav-item"><a id="labTab" class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li>
+                                        <?php }
+                                        if (isset($permissions['rad']['r'])) { ?>
+                                            <li class="nav-item"><a id="radTab" class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li>
+                                        <?php }
+                                        if (isset($permissions['resumemedis']['r'])) { ?>
+                                            <li class="nav-item"><a id="rekammedisTab" class="nav-link" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li>
+                                        <?php }
+                                        if ($visit['isrj'] == '0') { ?>
                                             <!-- <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li> -->
                                         <?php } else { ?>
                                             <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->

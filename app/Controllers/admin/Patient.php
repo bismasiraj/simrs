@@ -1840,6 +1840,9 @@ This Function is used to Add Patient
                 inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
                 where c.CLINIC_ID = 'P001';")->getResultArray());
         }
+
+        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+
         if (!isset($visit['name_of_clinic'])) {
             $visit['name_of_clinic'] = '';
         }
@@ -2132,10 +2135,22 @@ This Function is used to Add Patient
         }
 
         $db = db_connect();
-        $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, st.specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
-                                        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
-                                        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
-                                        where ct.clinic_type = '" . $ta['clinic_type'] . "'")->getResultArray());
+        // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, st.specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        //                                 inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        //                                 inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        //                                 where ct.clinic_type = '" . $ta['clinic_type'] . "'")->getResultArray());
+        $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        where ct.clinic_type = '" . $ta['clinic_type'] . "'")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
+        }
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
                 $visit['gendername'] = $gender[$key]['name_of_gender'];
