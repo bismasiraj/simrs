@@ -128,8 +128,8 @@
 
         var i = $('#radChargesBody tr').length + 1;
         var key = 'rad' + i
-        $("#radChargesBody")
-            .append($("<td>").html(String(key + 1) + "."))
+        $("#radChargesBody").append($("<tr id=\"" + key + "\">")
+            .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
             .append($("<td>").attr("id", "araddisplaytreat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
@@ -144,7 +144,8 @@
             .append($("<td>").attr("id", "araddisplaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "araddisplaysubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "araddisplaysubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="aradsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'arad\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="aradeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'arad\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").append('<button id="aradsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'arad\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="aradeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'arad\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'arad\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+        )
 
 
         $("#radChargesBody")
@@ -177,7 +178,7 @@
             .append('<input name="ageday[]" id="aradageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
             .append('<input name="kal_id[]" id="aradkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
             .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_ID[]" id="aradclass_room_ID' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="aradclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
             .append('<input name="bed_id[]" id="aradbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
             .append('<input name="clinic_id[]" id="aradclinic_id' + key + '" type="hidden" value="P016" class="form-control" />')
             .append('<input name="clinic_id_from[]" id="aradclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
@@ -189,7 +190,7 @@
             .append('<input name="tarif_id[]" id="aradtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
 
         if ('<?= $visit['isrj']; ?>' == '0') {
-            $("#aclass_room_ID" + key).val('<?= $visit['class_room_id']; ?>');
+            $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
             $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
             <?php
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {

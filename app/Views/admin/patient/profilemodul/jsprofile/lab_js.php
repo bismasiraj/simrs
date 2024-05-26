@@ -64,7 +64,7 @@
             .append($("<td>").attr("id", "alabdisplaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'alab\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="alabeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").append('<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'alab\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="alabeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'alab\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         )
 
         $("#labChargesBody")
@@ -97,7 +97,7 @@
             .append('<input name="ageday[]" id="alabageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
             .append('<input name="kal_id[]" id="alabkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
             .append('<input name="karyawan[]" id="alabkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_ID[]" id="alabclass_room_ID' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="alabclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
             .append('<input name="bed_id[]" id="alabbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
             .append('<input name="clinic_id[]" id="alabclinic_id' + key + '" type="hidden" value="P013" class="form-control" />')
             .append('<input name="clinic_id_from[]" id="alabclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
@@ -109,7 +109,7 @@
             .append('<input name="tarif_id[]" id="alabtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
 
         if ('<?= $visit['isrj']; ?>' == '0') {
-            $("#aclass_room_ID" + key).val('<?= $visit['class_room_id']; ?>');
+            $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
             $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
             <?php
             if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
