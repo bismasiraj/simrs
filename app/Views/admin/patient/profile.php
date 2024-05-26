@@ -49,9 +49,9 @@ $currency_symbol = 'Rp. ';
                                         <?php if (isset($permissions['assessmentmedis']['r'])) { ?>
                                             <li class="nav-item"><a id="assessmentmedisTab" class="nav-link <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
                                             <!-- <li class="nav-item"><a id="assessmentmedisTab" class="nav-link <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li> -->
+                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
                                         <?php }
                                         if (isset($permissions['assessmentperawat']['r'])) { ?>
-                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
                                             <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li> -->
                                         <?php }
                                         if (isset($permissions['cppt']['r'])) { ?>
@@ -79,7 +79,7 @@ $currency_symbol = 'Rp. ';
                                         <?php } else { ?>
                                             <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->
                                         <?php } ?>
-                                        <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan</a></li>
+                                        <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#billpoli" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan</a></li>
                                         <!-- <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li> -->
                                         <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab">Billing</a></li>
                                         <!-- <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Billing</a></li> -->
@@ -365,6 +365,23 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/billpoli', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
                                         <?php echo view('admin/patient/profilemodul/prescription', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -580,6 +597,7 @@ $currency_symbol = 'Rp. ';
     $(document).ready(function() {
         getAlergi(<?= $visit['no_registration']; ?>)
     })
+    $(document).prop("title", "<?= $visit['no_registration']; ?> - <?= $visit['diantar_oleh']; ?>")
 
 
     var skunj = <?= json_encode($visit); ?>;
@@ -977,6 +995,23 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/lab_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/billpoli_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,

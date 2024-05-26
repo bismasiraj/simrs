@@ -72,6 +72,7 @@
                 $("#chargesBody").html("")
                 $("#labChargesBody").html("")
                 $("#radChargesBody").html("")
+                $("#billPoliChargesBody").html("")
                 billJson.forEach((element, key) => {
 
                     billJson[key].sell_price = parseFloat(billJson[key].sell_price)
@@ -236,7 +237,11 @@
                         var counter = 'lab' + i
                         addRowBill("labChargesBody", "alab", key, i, counter)
                     }
-
+                    if (billJson[key].clinic_id == '<?= $visit['clinic_id']; ?>') {
+                        var i = $('#billPoliChargesBody tr').length + 1;
+                        var counter = 'billpoli' + i
+                        addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
+                    }
 
 
 

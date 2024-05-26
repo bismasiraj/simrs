@@ -295,14 +295,23 @@
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
+                        foreach ($mapAssessment as $key2 => $value2) {
+                            if ($value2['doc_id'] == $value1['value_id']) {
+                                $file_path = $value1["value_info"];
+                                $extension = pathinfo(
+                                    $file_path,
+                                    PATHINFO_EXTENSION
+                                );
         ?>
-                    var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                    const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/png');
-                    console.log(canvasResult<?= $value1['value_id']; ?>)
+                            var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
+                            // console.log(canvasResult<?= $value1['value_id']; ?>)
 
-                    $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
+                            $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
 
         <?php
+                            }
+                        }
                     }
                 }
         } ?>
@@ -489,12 +498,16 @@
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
+                        foreach ($mapAssessment as $key2 => $value2) {
+                            if ($value2['doc_id'] == $value1['value_id']) {
         ?>
 
-                    var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                    canvas.style.pointerEvents = 'none';
+                            var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            canvas.style.pointerEvents = 'none';
 
         <?php
+                            }
+                        }
                     }
                 }
         } ?>
@@ -593,7 +606,7 @@
 </script>
 
 <script type="text/javascript">
-    $("#formaddarm").on('submit', (function(e) {
+    $("#formsavearmbtn").on('click', (function(e) {
         saveCanvasData()
         // $("#armstanding_order").val(armstanding_ordereditor.activeEditor.getContent());
         // $("#arminstruction").val(arminstructioneditor.activeEditor.getContent());
@@ -603,7 +616,7 @@
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/addAssessmentMedis',
             type: "POST",
-            data: new FormData(this),
+            data: new FormData(document.getElementById("formaddarm")),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -1394,6 +1407,14 @@
                                 <div class="form-group">
                                     <label for="armstanding_order" class="mb-4 badge bg-primary">Standing Order </label>
                                     <textarea id="armstanding_order" name="standing_order" rows="2" class="form-control " autocomplete="off"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="mb-3">
+                                <div class="form-group">
+                                    <label for="arminstruction" class="mb-4 badge bg-primary">Rencana Instruksi </label>
+                                    <textarea id="arminstruction" name="instruction" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>

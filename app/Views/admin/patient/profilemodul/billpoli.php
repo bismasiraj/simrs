@@ -59,7 +59,7 @@ $permissions = user()->getPermissions();
 
                                     <div class="col-md-4">
                                         <div class="box-tab-tools">
-                                            <a data-toggle="modal" onclick='addBillbillpoli("searchTarifbillpoli")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                            <a data-toggle="modal" onclick='addBillBillPoli("searchTarifbillpoli")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@ $permissions = user()->getPermissions();
                             <th class="text-center">Ke</th class="text-center"> -->
                                 </tr>
                             </thead>
-                            <tbody id="billpoliChargesBody" class="table-group-divider">
+                            <tbody id="billPoliChargesBody" class="table-group-divider">
                                 <?php
                                 $total = 0;
                                 ?>
