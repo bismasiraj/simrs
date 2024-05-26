@@ -419,7 +419,14 @@ class Admin extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = [];
+        // $kalurahan = $this->lowerKey($kalurahanModel->where("KEC_ID in
+        //                 (
+        //                 24750,
+        //                 24751,
+        //                 24752,
+        //                 24753
+        //                 )")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -623,7 +630,9 @@ class Admin extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        // $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = [];
+
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
