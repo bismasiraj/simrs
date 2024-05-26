@@ -121,6 +121,7 @@ class UserModel extends Model
             'email'    => $faker->email,
             'username' => $faker->userName,
             'password' => bin2hex(random_bytes(16)),
+            'employee_id' => $faker->employee_id
         ]);
     }
 }

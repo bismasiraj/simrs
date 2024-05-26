@@ -87,6 +87,7 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
     }
     public function homebase()
     {
+        return json_encode(user()->employee_id);
         $user              = new User($this->request->getPost($allowedPostFields));
 
         $selector = $users->select("max(id)+1 as id")->findAll();
@@ -147,7 +148,8 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
             $user = new User([
                 'password' => $value['password'],
                 'email' => strtolower(str_replace(' ', '', $value['username'])) . '@exindo.com',
-                'username' => strtolower(str_replace(' ', '', $value['username']))
+                'username' => strtolower(str_replace(' ', '', $value['username'])),
+                'employee_id' => $value['employee_id']
             ]);
             $selector = $users->select("max(id)+1 as id")->findAll();
             // return json_encode($user);

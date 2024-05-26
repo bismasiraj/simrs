@@ -2,7 +2,6 @@
 $session = session();
 $gsPoli = $session->gsPoli;
 $permissions = user()->getPermissions();
-// dd(isset($permissions['pendaftaranrajal']['c']));
 ?>
 
 <div class="tab-pane tab-content-height

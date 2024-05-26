@@ -83,7 +83,7 @@ $basecontroller->checkMenuActive('register');
                     </li>
 
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
                             <i class="fas fa-ambulance"></i>
