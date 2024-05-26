@@ -1107,38 +1107,51 @@ This Function is used to Add Patient
         $dt_data     = array();
         if (!empty($kunjungan)) {
             foreach ($kunjungan as $key => $value) {
+                $kunjungan[$key]['way'] = null;
+                $kunjungan[$key]['name_of_status_pasien'] = null;
+                $kunjungan[$key]['name_of_gender'] = null;
+                $kunjungan[$key]['nama_agama'] = null;
+                $kunjungan[$key]['name_of_clinic'] = null;
+                $kunjungan[$key]['name_of_clinic_from'] = null;
+                $kunjungan[$key]['fullname'] = null;
+                $kunjungan[$key]['cara_keluar'] = null;
+                $kunjungan[$key]['name_of_class'] = null;
+                $kunjungan[$key]['cara_keluar'] = null;
+                $kunjungan[$key]['name_of_class_plafond'] = null;
+                $kunjungan[$key]['payor'] = null;
 
+                return json_encode($kunjungan[$key]);
                 foreach ($way as $key1 => $value1) {
                     if ($kunjungan[$key]['way_id'] == $way[$key1]['way_id']) {
-                        $kunjungan[$key]['way_id'] = $way[$key1]['way'];
+                        $kunjungan[$key]['way'] = $way[$key1]['way'];
                     }
                 }
                 foreach ($statusPasien as $key1 => $value1) {
                     if ($kunjungan[$key]['status_pasien_id'] == $statusPasien[$key1]['status_pasien_id']) {
-                        $kunjungan[$key]['status_pasien_id'] = $statusPasien[$key1]['name_of_status_pasien'];
+                        $kunjungan[$key]['name_of_status_pasien'] = $statusPasien[$key1]['name_of_status_pasien'];
                     }
                 }
                 foreach ($sex as $key1 => $value1) {
                     if ($kunjungan[$key]['gender'] == $sex[$key1]['gender']) {
-                        $kunjungan[$key]['gender'] = $sex[$key1]['name_of_gender'];
+                        $kunjungan[$key]['name_of_gender'] = $sex[$key1]['name_of_gender'];
                     }
                 }
                 foreach ($agama as $key1 => $value1) {
                     if ($kunjungan[$key]['kode_agama'] == $agama[$key1]['kode_agama']) {
-                        $kunjungan[$key]['kode_agama'] = $agama[$key1]['nama_agama'];
+                        $kunjungan[$key]['nama_agama'] = $agama[$key1]['nama_agama'];
                     }
                 }
                 foreach ($clinic as $key1 => $value1) {
                     if ($kunjungan[$key]['clinic_id'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
                     }
                     if ($kunjungan[$key]['clinic_id_from'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id_from'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
                     }
                 }
                 foreach ($employee as $key1 => $value1) {
                     if ($kunjungan[$key]['employee_id'] == $employee[$key1]['employee_id']) {
-                        $kunjungan[$key]['employee_id'] = $employee[$key1]['fullname'];
+                        $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
                     }
                 }
                 foreach ($caraKeluar as $key1 => $value1) {
@@ -1148,15 +1161,15 @@ This Function is used to Add Patient
                 }
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
                     }
                     if ($kunjungan[$key]['class_id_plafond'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id_plafond'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
                 foreach ($payor as $key1 => $value1) {
                     if ($kunjungan[$key]['payor_id'] == $payor[$key1]['payor_id']) {
-                        $kunjungan[$key]['payor_id'] = $payor[$key1]['payor'];
+                        $kunjungan[$key]['payor'] = $payor[$key1]['payor'];
                     }
                 }
                 // if ($kunjungan[$key]['locked'] == '1') {
@@ -1190,12 +1203,12 @@ This Function is used to Add Patient
                 $row[] = $kunjungan[$key]['no_registration'];
                 $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>"; // . $action;
                 $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
-                $row[] = $kunjungan[$key]['clinic_id'] .  "<br>" . $kunjungan[$key]['employee_id'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
-                $row[] = $kunjungan[$key]['clinic_id_from'] .  "<br>" . $kunjungan[$key]['keluar_id'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
+                $row[] = $kunjungan[$key]['name_of_status_pasien'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
+                $row[] = $kunjungan[$key]['name_of_clinic'] .  "<br>" . $kunjungan[$key]['fullname'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
+                $row[] = $kunjungan[$key]['name_of_clinic_from'] .  "<br>" . $kunjungan[$key]['cara_keluar'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = substr($kunjungan[$key]['date_of_birth'], 0, 10) . "<br>" . $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bl " . $kunjungan[$key]['ageday'] . "hr";
-                $row[] = $kunjungan[$key]['payor_id'] . "<br>" . $kunjungan[$key]['class_id'] . "<br>" . $kunjungan[$key]['class_id_plafond'];
+                $row[] = $kunjungan[$key]['payor'] . "<br>" . $kunjungan[$key]['name_of_class'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'];
                 $dt_data[] = $row;
             }
         }
@@ -1205,7 +1218,7 @@ This Function is used to Add Patient
         );
         return json_encode($json_data);
 
-        return json_encode($kunjungan);
+        // return json_encode($kunjungan);
     }
     public function getPatientListAjax()
     {
@@ -2103,9 +2116,14 @@ This Function is used to Add Patient
 
 
 
-
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
+        // $visit = $ta;
+        unset($ta['visit_date']);
+        foreach ($ta as $key => $value) {
+            $visit[$key] = $value;
+        }
+        // return json_encode($visit['class_room_id']);
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
@@ -2205,7 +2223,7 @@ This Function is used to Add Patient
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        // return json_encode($mapAssessment);
+        // return json_encode($visit['class_room_id']);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
