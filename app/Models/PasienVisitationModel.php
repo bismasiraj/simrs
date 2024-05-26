@@ -119,7 +119,6 @@ class PasienVisitationModel extends Model
             ->join('clinic c', 'pasien_visitation.clinic_id = c.clinic_id', 'left')
             ->where('visit_date > \'2024-01-01\'')
             ->where('visit_date < getdate()')
-            ->where('false')
             ->groupBy([
                 'YEAR(VISIT_DATE)',
                 'MONTH(VISIT_DATE)',
@@ -141,7 +140,6 @@ class PasienVisitationModel extends Model
         c.CLINIC_ID")
             ->where('VISIT_DATE > CAST(CONVERT(VARCHAR(10),DATEADD(day, 0, \'2022-01-01\'),112) AS DATETIME)')
             ->where('c.Stype_id = 1')
-            ->where('false')
             ->groupBy([
                 'YEAR(VISIT_DATE)',
                 'MONTH(VISIT_DATE)',
