@@ -85,7 +85,7 @@ $permissions = user()->getPermissions();
                     <div class="col-sm-12 col-md-12 mb-4">
                         <?php if (isset($permissions['tindakanpoli']['c'])) {
                             if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                <div class="row">
+                                <div class="row" style="display: none">
 
                                     <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
 

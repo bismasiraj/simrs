@@ -595,8 +595,11 @@
             $("#" + identifier + "atagihan" + key).val($("#aamount" + key).val() * dInput)
             $("#" + identifier + "amount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
             $("#" + identifier + "displayamount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
-
         })
+        if (container == 'chargesBody') {
+            $('#' + identifier + 'simpanBillBtn' + counter + '').hide()
+            $('#' + identifier + 'editDeleteCharge' + counter + '').hide()
+        }
     }
 
     function getInacbg(visit) {
