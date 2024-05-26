@@ -8,6 +8,32 @@
     var pembayaran = 0.0;
     var retur = 0.0;
     var total = 0.0;
+
+    var billpolitagihan = 0.0;
+    var billpolisubsidi = 0.0;
+    var billpolipotongan = 0.0;
+    var billpolipembulatan = 0.0;
+    var billpolipembayaran = 0.0;
+    var billpoliretur = 0.0;
+    var billpolitotal = 0.0;
+
+    var labtagihan = 0.0;
+    var labsubsidi = 0.0;
+    var labpotongan = 0.0;
+    var labpembulatan = 0.0;
+    var labpembayaran = 0.0;
+    var labretur = 0.0;
+    var labtotal = 0.0;
+
+    var radtagihan = 0.0;
+    var radsubsidi = 0.0;
+    var radpotongan = 0.0;
+    var radpembulatan = 0.0;
+    var radpembayaran = 0.0;
+    var radretur = 0.0;
+    var radtotal = 0.0;
+
+
     var lastOrder = 0;
 
     var nomor = '<?= $visit['no_registration']; ?>';
@@ -76,6 +102,30 @@
                 pembulatan = 0;
                 pembayaran = 0;
                 retur = 0;
+
+                billpolitotal = 0;
+                billpolitagihan = 0;
+                billpolisubsidi = 0;
+                billpolipotongan = 0;
+                billpolipembulatan = 0;
+                billpolipembayaran = 0;
+                billpoliretur = 0;
+
+                labtotal = 0;
+                labtagihan = 0;
+                labsubsidi = 0;
+                labpotongan = 0;
+                labpembulatan = 0;
+                labpembayaran = 0;
+                labretur = 0;
+
+                radtotal = 0;
+                radtagihan = 0;
+                radsubsidi = 0;
+                radpotongan = 0;
+                radpembulatan = 0;
+                radpembayaran = 0;
+                radretur = 0;
 
                 $("#chargesBody").html("")
                 $("#labChargesBody").html("")
@@ -255,6 +305,9 @@
 
                 });
                 total += tagihan - (subsidi + potongan) + pembulatan - pembayaran + retur;
+                labtotal += labtagihan - (labsubsidi + labpotongan) + labpembulatan - labpembayaran + labretur;
+                radtotal += radtagihan - (radsubsidi + radpotongan) + radpembulatan - radpembayaran + radretur;
+                billpolitotal += billpolitagihan - (billpolisubsidi + billpolipotongan) + billpolipembulatan - billpolipembayaran + billpoliretur;
                 $("#tagihan_total").val(formatCurrency(tagihan));
                 $("#subsidi_total").val(formatCurrency(subsidi));
                 $("#potongan_total").val(formatCurrency(potongan));
@@ -262,6 +315,30 @@
                 $("#pelunasan_total").val(formatCurrency(pembayaran));
                 $("#retur_total").val(formatCurrency(retur));
                 $("#totalnya").val(formatCurrency(total));
+
+                $("#labtagihan_total").val(formatCurrency(labtagihan));
+                $("#labsubsidi_total").val(formatCurrency(labsubsidi));
+                $("#labpotongan_total").val(formatCurrency(labpotongan));
+                $("#labpembulatan_total").val(formatCurrency(labpembulatan));
+                $("#labpelunasan_total").val(formatCurrency(labpembayaran));
+                $("#labretur_total").val(formatCurrency(labretur));
+                $("#labtotalnya").val(formatCurrency(labtotal));
+
+                $("#radtagihan_total").val(formatCurrency(radtagihan));
+                $("#radsubsidi_total").val(formatCurrency(radsubsidi));
+                $("#radpotongan_total").val(formatCurrency(radpotongan));
+                $("#radpembulatan_total").val(formatCurrency(radpembulatan));
+                $("#radpelunasan_total").val(formatCurrency(radpembayaran));
+                $("#radretur_total").val(formatCurrency(radretur));
+                $("#radtotalnya").val(formatCurrency(radtotal));
+
+                $("#billpolitagihan_total").val(formatCurrency(billpolitagihan));
+                $("#billpolisubsidi_total").val(formatCurrency(billpolisubsidi));
+                $("#billpolipotongan_total").val(formatCurrency(billpolipotongan));
+                $("#billpolipembulatan_total").val(formatCurrency(billpolipembulatan));
+                $("#billpolipelunasan_total").val(formatCurrency(billpolipembayaran));
+                $("#billpoliretur_total").val(formatCurrency(billpoliretur));
+                $("#billpolitotalnya").val(formatCurrency(billpolitotal));
             },
             error: function() {
 
@@ -584,6 +661,8 @@
             .append('<input name="tarif_type[]" id="' + identifier + 'tarif_type' + counter + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
 
         )
+
+
         $("#" + identifier + "quantity" + key).keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
         });
@@ -599,6 +678,30 @@
         if (container == 'chargesBody') {
             $('#' + identifier + 'simpanBillBtn' + counter + '').hide()
             $('#' + identifier + 'editDeleteCharge' + counter + '').hide()
+        }
+        if (billJson[key].clinic_id == 'P013') {
+            labtagihan += parseFloat(billJson[key].tagihan)
+            labsubsidi += billJson[key].subsidi
+            labpotongan += billJson[key].potongan
+            labpembulatan += billJson[key].pembulatan
+            labpembayaran += billJson[key].bayar
+            labretur += billJson[key].retur
+        }
+        if (billJson[key].clinic_id == 'P016') {
+            radtagihan += parseFloat(billJson[key].tagihan)
+            radsubsidi += billJson[key].subsidi
+            radpotongan += billJson[key].potongan
+            radpembulatan += billJson[key].pembulatan
+            radpembayaran += billJson[key].bayar
+            radretur += billJson[key].retur
+        }
+        if (billJson[key].clinic_id == 'P016') {
+            billpolitagihan += parseFloat(billJson[key].tagihan)
+            billpolisubsidi += billJson[key].subsidi
+            billpolipotongan += billJson[key].potongan
+            billpolipembulatan += billJson[key].pembulatan
+            billpolipembayaran += billJson[key].bayar
+            billpoliretur += billJson[key].retur
         }
     }
 
