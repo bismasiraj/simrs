@@ -132,8 +132,8 @@ $group = user()->getRoles();
                     </form>
                 </div>
             </div>
-            <h3>Histori Assessmen Medis</h3>
-            <table class="table table-striped table-hover">
+            <!-- <h3>Histori Assessmen Medis</h3> -->
+            <table class="table table-striped table-hover" style="display: none">
                 <thead class="table-primary" style="text-align: center;">
                     <tr>
                         <th></th>

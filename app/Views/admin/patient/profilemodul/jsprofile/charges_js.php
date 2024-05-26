@@ -69,6 +69,14 @@
             success: function(data) {
                 billJson = data
 
+                total = 0;
+                tagihan = 0;
+                subsidi = 0;
+                potongan = 0;
+                pembulatan = 0;
+                pembayaran = 0;
+                retur = 0;
+
                 $("#chargesBody").html("")
                 $("#labChargesBody").html("")
                 $("#radChargesBody").html("")
