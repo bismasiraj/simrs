@@ -145,6 +145,8 @@
             } ?>
             $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
+        appendRtlAccordion(accMedisName);
+
         $("#formaddarmbtn").trigger("click")
         $("#armdiag_cat").val(3)
         getAssessmentMedis(3)
@@ -163,7 +165,6 @@
         appendDiagnosaAccordion(accMedisName);
         appendProsedurAccordion(accMedisName);
         appendPenunjangTerapi(accMedisName)
-        // appendRtlAccordion(accMedisName);
         // appendMedisAccordion(accMedisName);
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
@@ -821,7 +822,7 @@
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
                             .append($('<div class="row">')
-                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                .append('<label class="col-md-4 col-form-label mb-4">Score</label>')
                                 .append($('<div class="col-md-8">')
                                     .append($('<select id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">')
                                         .append('<option>-</option>')
@@ -1568,7 +1569,7 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div id="addGcsMedisButton" class="box-tab-tools text-center">
-                                        <a onclick="addGcsMedis(1,0)" class="btn btn-primary btn-lg" id="addGcsMedisBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis')" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                     </div>
                                 </div>
                             </div>
@@ -1635,10 +1636,7 @@
                                     <div class="form-group">
                                         <label>Tanggal Kontrol</label>
                                         <div class="input-group" id="armtglkontrol">
-                                            <input id="armtgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
-
-                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
+                                            <input id="armtgl_kontrol" name="tgl_kontrol" type="datetime-local" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
                                         </div>
                                     </div>
                                 </div>

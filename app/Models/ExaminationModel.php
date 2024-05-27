@@ -72,6 +72,7 @@ class ExaminationModel extends Model
         "account_id",
         "kesadaran",
         "isvalid",
+        'vs_status_id'
     ];
 
     protected $useTimestamps = true;

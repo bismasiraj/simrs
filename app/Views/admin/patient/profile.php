@@ -55,7 +55,7 @@ $currency_symbol = 'Rp. ';
                                             <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li> -->
                                         <?php }
                                         if (isset($permissions['cppt']['r'])) { ?>
-                                            <li class="nav-item"><a id="cpptTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
+                                            <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
                                             <!-- <li class="nav-item"><a id="cpptTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li> -->
                                         <?php }
                                         if (isset($permissions['eresep']['r'])) { ?>

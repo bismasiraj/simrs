@@ -78,6 +78,7 @@ $group = user()->getRoles();
                         <input type="hidden" id="arpaccount_id" name="account_id">
                         <input type="hidden" id="arpkesadaran" name="kesadaran">
                         <input type="hidden" id="arpisvalid" name="isvalid">
+                        <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
                         <div class="row">
                             <h3 id="arpTitle">Assessment Keperawatan</h3>
                             <hr>
@@ -1831,6 +1832,25 @@ $group = user()->getRoles();
                         <button type="button" id="formEducationIntegrationProvisionBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary" onclick="saveEducationIntegrationProvision()"><?php echo lang('Word.save'); ?></button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cpptModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+
             </div>
         </div>
     </div>

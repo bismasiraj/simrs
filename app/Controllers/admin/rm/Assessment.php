@@ -14,6 +14,8 @@ use App\Models\Assessment\EducationIntegrationDetailModel;
 use App\Models\Assessment\EducationIntegrationModel;
 use App\Models\Assessment\EducationIntegrationPlanModel;
 use App\Models\Assessment\EducationIntegrationProvisionModel;
+use App\Models\Assessment\FallRiskDetailModel;
+use App\Models\Assessment\FallRiskModel;
 use App\Models\Assessment\GcsModel;
 use App\Models\Assessment\indicatorDetail;
 use App\Models\Assessment\indicatorDetailModel;
@@ -1194,7 +1196,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $no_registration = $body['nomor'];
 
         $db = db_connect();
-        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' order by examination_date")->getResultArray());
+        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -2291,6 +2293,100 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $model->save($data);
 
         return json_encode($data);
+
+        // $parameter002 = $this->request->getPost('parameter002');
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+        $db = db_connect();
+        $fallRisk = new FallRiskModel();
+        // return json_encode($data);
+        $db->query("delete from assessment_fall_risk where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
+
+        $isSuccess = $fallRisk->save($data);
+        // return json_encode($isSuccess);
+
+        if (true) {
+            $fallRiskDetail  = new FallRiskDetailModel();
+
+            $db->query("delete from assessment_fall_risk_detail where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
+
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$p_type'")->getResultArray());
+            foreach ($select as $key => $value) {
+                $valueId = ${"parameter_id" . $value['parameter_id']};
+                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
+                if (isset($paramvalue[0])) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $p_type,
+                        'parameter_id' => $value['parameter_id'],
+                        'value_id' => $valueId,
+                        'value_score' => $paramvalue[0]['value_score'],
+                        'value_desc' => $paramvalue[0]['value_desc'],
+                        'modified_date' => Time::now(),
+                        'modified_by' => $modified_by
+                    ];
+                    $painDetil->insert($data);
+                }
+            }
+
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+            foreach ($select as $key => $value) {
+                $valueId = ${"parameter_id" . $value['parameter_id']};
+                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
+                if (isset($paramvalue[0])) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $p_type,
+                        'parameter_id' => $value['parameter_id'],
+                        'value_id' => $valueId,
+                        'value_score' => $paramvalue[0]['value_score'],
+                        'value_desc' => $paramvalue[0]['value_desc'],
+                        'modified_date' => Time::now(),
+                        'modified_by' => $modified_by
+                    ];
+                    $painDetil->insert($data);
+                }
+            }
+
+            $painIntervensi = new PainIntervensiModel();
+            $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
+            foreach ($timeIntervensi as $key => $value) {
+                // return json_encode(str_replace('T', ' ', $reassessment_date));
+
+                $data = [
+                    'body_id' => $body_id,
+                    'intervensi_ke' => $key,
+                    'no_registration' => $no_registration,
+                    'p_type' => $p_type,
+                    'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
+                    'intervensi' => $intervensi[$key],
+                    'rute' => $rute[$key],
+                    'reassessment' => $reAssessment[$key],
+                    'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
+                    'valid' => null,
+                    'petugas' => user()->username,
+                    'modified_date' => Time::now(),
+                    'modified_by' => $modified_by,
+                    'value_id' => $painscalescore[$key]
+                ];
+                $painIntervensi->insert($data);
+            }
+        }
+
+        return json_encode('berhasil');
     }
     public function getFallRisk()
     {
@@ -2306,11 +2402,25 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $visit = $body['visit_id'];
         $bodyId = $body['body_id'];
 
-        $model = new GcsModel();
+        $model = new FallRiskModel();
         $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
 
+        $db = db_connect();
+
+        $queryDetil = "select * from assessment_pain_detail where body_id in (";
+
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['body_id'] . "',";
+        }
+        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+
+        $queryDetil .= ");";
+
+        $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
+
         return json_encode([
-            'gcs' => $select
+            'fallRisk' => $select,
+            'fallRiskDetail' => $fallRiskDetil
         ]);
     }
     public function saveExaminationInfo()

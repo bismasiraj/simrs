@@ -2237,7 +2237,7 @@ This Function is used to Add Patient
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        // return json_encode($visit['class_room_id']);
+        // return json_encode(user()->getFullname());
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,

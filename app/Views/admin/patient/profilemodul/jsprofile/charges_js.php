@@ -588,9 +588,6 @@
     }
 
     function addRowBill(container, identifier, key, i, counter) {
-        console.log(identifier)
-        console.log(key)
-        console.log(billJson)
         $("#" + container).append($("<tr id=\"" + key + "\">")
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
@@ -695,7 +692,7 @@
             radpembayaran += billJson[key].bayar
             radretur += billJson[key].retur
         }
-        if (billJson[key].clinic_id == 'P016') {
+        if (billJson[key].clinic_id == '<?= $visit['clinic_id']; ?>') {
             billpolitagihan += parseFloat(billJson[key].tagihan)
             billpolisubsidi += billJson[key].subsidi
             billpolipotongan += billJson[key].potongan

@@ -136,46 +136,46 @@ foreach ($aValue as $key => $value) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
     });
 
-    $("#cpptTab").on("click", function() {
-        $("#arpTitle").html("CPPT")
-        $("#arpanamnase_label").html("Subyektif (S)")
-        $("#collapseRiwayat").hide()
-        $("#groupRiwayat").hide()
-        $("#subjectiveGroupHeader").show()
-        $("#objectiveGroupHeader").show()
-        $("#arpFallRisk_Group").show()
-        $("#arpPainMonitoring_Group").hide()
-        $("#arpTriage_Group").hide()
-        $("#arpApgar_Group").hide()
-        $("#arpGizi_Group").hide()
-        $("#arpAdl_Group").hide()
-        $("#arpDekubitus_Group").hide()
-        $("#arpStabilitas_Group").hide()
-        $("#arpEdukasiIntegrasi_Group").hide()
-        $("#arpEdukasiForm_Group").hide()
-        $("#arpGcs_Group").show()
-        $("#arpIntegumen_Group").hide()
-        $("#arpNeurosensoris_Group").hide()
-        $("#arpPencernaan_Group").hide()
-        $("#arpPerkemihan_Group").hide()
-        $("#arpPernapasan_Group").hide()
-        $("#arpPsikologi_Group").hide()
-        $("#arpSeksual_Group").hide()
-        $("#arpSirkulasi_Group").hide()
-        $("#arpSocial_Group").hide()
-        $("#arpHearing_Group").hide()
-        $("#arpSleeping_Group").hide()
-        $("#arpTindakanKolaboratif_Group").show()
-        $("#arpTindakanMandiri_Group").show()
-        $("#arpImplementasi_Group").hide()
-    })
+    // $("#cpptTab").on("click", function() {
+    //     $("#arpTitle").html("CPPT")
+    //     $("#arpanamnase_label").html("Subyektif (S)")
+    //     $("#collapseRiwayat").hide()
+    //     $("#groupRiwayat").hide()
+    //     // $("#subjectiveGroupHeader").show()
+    //     $("#objectiveGroupHeader").show()
+    //     $("#arpFallRisk_Group").show()
+    //     $("#arpPainMonitoring_Group").hide()
+    //     $("#arpTriage_Group").hide()
+    //     $("#arpApgar_Group").hide()
+    //     $("#arpGizi_Group").hide()
+    //     $("#arpAdl_Group").hide()
+    //     $("#arpDekubitus_Group").hide()
+    //     $("#arpStabilitas_Group").hide()
+    //     $("#arpEdukasiIntegrasi_Group").hide()
+    //     $("#arpEdukasiForm_Group").hide()
+    //     $("#arpGcs_Group").show()
+    //     $("#arpIntegumen_Group").hide()
+    //     $("#arpNeurosensoris_Group").hide()
+    //     $("#arpPencernaan_Group").hide()
+    //     $("#arpPerkemihan_Group").hide()
+    //     $("#arpPernapasan_Group").hide()
+    //     $("#arpPsikologi_Group").hide()
+    //     $("#arpSeksual_Group").hide()
+    //     $("#arpSirkulasi_Group").hide()
+    //     $("#arpSocial_Group").hide()
+    //     $("#arpHearing_Group").hide()
+    //     $("#arpSleeping_Group").hide()
+    //     $("#arpTindakanKolaboratif_Group").show()
+    //     $("#arpTindakanMandiri_Group").show()
+    //     $("#arpImplementasi_Group").hide()
+    // })
     $("#assessmentigdTab").on("click", function() {
         $("#arpTitle").html("Asesmen Keperawatan")
 
         $("#arpanamnase_label").html("Subyektif (S)")
         $("#collapseRiwayat").show()
         $("#groupRiwayat").show()
-        $("#subjectiveGroupHeader").show()
+        // $("#subjectiveGroupHeader").show()
         $("#objectiveGroupHeader").show()
         $("#arpFallRisk_Group").show()
         $("#arpPainMonitoring_Group").show()
@@ -429,13 +429,18 @@ foreach ($aValue as $key => $value) {
 
 
                 if (examForassessment.length > 0) {
-                    fillDataArp(examForassessment.length - 1)
+                    // fillDataArp(examForassessment.length - 1)
 
                     displayTableAssessmentKeperawatan(examForassessment.length - 1)
                     displayTableAssessmentKeperawatanForVitalSign();
                     $("#arpAddDocument").hide()
                     $("#arpDocument").show()
                 }
+                $.each(examForassessment, function(key, value) {
+                    if (value.vs_status_id == '1') {
+                        fillDataArp(key)
+                    }
+                })
                 fillRiwayatArp()
                 disableARP()
             },
@@ -461,7 +466,16 @@ foreach ($aValue as $key => $value) {
         $("#arpno_registration").val('<?= $visit['no_registration']; ?>')
         $("#arpvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#arpbill_id").val(null)
-        $("#arpclinic_id").val('<?= $visit['clinic_id']; ?>')
+        <?php if (!is_null($visit['class_room_id'])) { ?>
+            $('#arpclinic_id').val('<?= $visit['class_room_id']; ?>')
+        <?php } else { ?>
+            $('#arpclinic_id').val('<?= $visit['clinic_id']; ?>')
+        <?php } ?>
+        <?php if (!is_null($visit['class_room_id'])) { ?>
+            $('#arpemployee_id').val('<?= $visit['employee_inap']; ?>')
+        <?php } else { ?>
+            $('#arpemployee_id').val('<?= $visit['employee_id']; ?>')
+        <?php } ?>
         $("#arpclass_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#arpbed_id").val('<?= $visit['bed_id']; ?>')
         $("#arpin_date").val('<?= $visit['in_date']; ?>')
@@ -529,6 +543,7 @@ foreach ($aValue as $key => $value) {
         $("#arpclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
         $("#arpemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
 
+        getFallRisk(ex.body_id)
         getPainMonitoring(ex.body_id)
         getTriage(ex.body_id, "bodyTriage")
         getApgar(ex.body_id)
@@ -561,47 +576,53 @@ foreach ($aValue as $key => $value) {
 
     function displayTableAssessmentKeperawatan(index) {
         $("#assessmentKeperawatanHistoryBody").html("")
+        $("#cpptBody").html("")
         $.each(examForassessment, function(key, value) {
-            var pd = examForassessment[key]
-            if (key == index) {
-                $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
-                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.anamnase)))
-                    .append($("<td>").append($("<b>").html('BB: ' + ex.weight + 'Kg; TB: ' + ex.height + 'cm; ' +
-                        value.temperature + '°C; ' +
-                        value.nadi + '/menit; ' +
-                        value.tension_upper + 'mmHg; ' +
-                        value.tension_below + 'mmHg; ' +
-                        value.saturasi + 'SpO2%; ' +
-                        value.nafas + '/menit; ' +
-                        value.arm_diameter + 'cm; ')))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                )
-                $('html, body').animate({
-                    scrollTop: 0
-                }, 800);
-            } else {
-                $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                    .append($("<td>"))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
-                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.anamnase)))
-                    .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                        value.temperature + '°C; ' +
-                        value.nadi + '/menit; ' +
-                        value.tension_upper + 'mmHg; ' +
-                        value.tension_below + 'mmHg; ' +
-                        value.saturasi + 'SpO2%; ' +
-                        value.nafas + '/menit; ' +
-                        value.arm_diameter + 'cm; ')))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                )
+            if (value.vs_status_id == '1') {
+                var pd = examForassessment[key]
+                if (key == index) {
+                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
+                        .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
+                        .append($("<td>").append($("<b>").html(value.examination_date)))
+                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                        .append($("<td>").append($("<b>").html(value.anamnase)))
+                        .append($("<td>").append($("<b>").html('BB: ' + ex.weight + 'Kg; TB: ' + ex.height + 'cm; ' +
+                            value.temperature + '°C; ' +
+                            value.nadi + '/menit; ' +
+                            value.tension_upper + 'mmHg; ' +
+                            value.tension_below + 'mmHg; ' +
+                            value.saturasi + 'SpO2%; ' +
+                            value.nafas + '/menit; ' +
+                            value.arm_diameter + 'cm; ')))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
+                    )
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 800);
+                } else {
+                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
+                        .append($("<td>"))
+                        .append($("<td>").append($("<b>").html(value.examination_date)))
+                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                        .append($("<td>").append($("<b>").html(value.anamnase)))
+                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
+                            value.temperature + '°C; ' +
+                            value.nadi + '/menit; ' +
+                            value.tension_upper + 'mmHg; ' +
+                            value.tension_below + 'mmHg; ' +
+                            value.saturasi + 'SpO2%; ' +
+                            value.nafas + '/menit; ' +
+                            value.arm_diameter + 'cm; ')))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
+                    )
+                }
+
+            } else if (value.vs_status_id == '2' || value.vs_status_id == '7') {
+                addRowCPPT(value, key)
             }
         })
     }
@@ -713,34 +734,6 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 <script type='text/javascript'>
-    function aValueParamFallRisk(parent_id, p_type, bodyId, container) {
-        $("#" + container + bodyId).html("")
-        var counter = 0;
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == p_type) {
-                counter++;
-                $("#" + container + bodyId).append(
-                    '<tr>' +
-                    '<td>' + counter + '.</td>' +
-                    '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + ':</h6></td>' +
-                    '<td id="' + parent_id + value.p_type + value.parameter_id + bodyId + '">' +
-                    '</td>' +
-                    '<td><h6 id="score' + parent_id + value.p_type + value.parameter_id + bodyId + '" class="font-size-14 mb-4"></h6></td>' +
-                    '</tr>'
-                )
-                $.each(avalue, function(key1, value1) {
-                    if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                        $("#" + parent_id + value.p_type + value.parameter_id + bodyId).append(
-                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + value1.parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ')"><label class="form-check-label" for="parent_id' + value1.parent_id + value1.value_id + '">' + value1.value_desc + '</label></div>'
-                        )
-                    }
-                });
-            }
-        });
-        $("#bodyAssessment" + parent_id).append(
-            '<tr><td colspan="3"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="totalScore' + parent_id + p_type + '" class="font-size-14 mb-4"></h6></td></tr>'
-        )
-    }
     $("#formeditfallriskbtn").on("click", function() {
         $("#formeditfallriskbtn").hide()
         $("#formsavefallriskbtn").show()
@@ -762,15 +755,7 @@ foreach ($aValue as $key => $value) {
         getTindakanPerawat()
     })
 
-    function aValueParamScore(parent_id, p_type, parameter_id, score, bodyId) {
-        fallRiskScore['parameter_id' + parameter_id] = score;
-        $('#score' + parent_id + p_type + parameter_id + '').html(fallRiskScore['parameter_id' + parameter_id])
-        var total = 0;
-        for (var key in fallRiskScore) {
-            total += fallRiskScore[key]
-        }
-        $("#totalScore" + parent_id + p_type).html(total)
-    }
+
 
     function addPainMonitoring(flag, index, document_id, container) {
         <?php foreach ($aParent as $key => $value) { ?>
@@ -2993,7 +2978,7 @@ foreach ($aValue as $key => $value) {
                                     <?php if ($value1['parent_id'] == '001') {
                                     ?>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>` + bodyId + `" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', '` + bodyId + `', 'bodyAssessmentfallRiskMedis')">
+                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>` + bodyId + `" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', '` + bodyId + `', '` + container + `')">
                                             <label class="form-check-label" for="atype<?= $value1['p_type']; ?>` + bodyId + `">
                                                 <?= $value1['p_description']; ?>
                                             </label>
@@ -3016,7 +3001,7 @@ foreach ($aValue as $key => $value) {
                                         <th>Score</th>
                                     </tr>
                                 </thead>
-                                <tbody id="bodyAssessmentfallRiskMedis` + bodyId + `">
+                                <tbody id="` + container + `` + bodyId + `">
                                 </tbody>
                             </table>
                         </div>
@@ -3114,7 +3099,49 @@ foreach ($aValue as $key => $value) {
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
-        $("#addFallRiskButton").html('<a onclick="addFallRisk(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyFallRiskMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addFallRiskButton").html('<a onclick="addFallRisk(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function aValueParamFallRisk(parent_id, p_type, bodyId, container) {
+        $("#" + container + bodyId).html("")
+        var counter = 0;
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == p_type) {
+                counter++;
+                $("#" + container + bodyId).append(
+                    '<tr>' +
+                    '<td>' + counter + '.</td>' +
+                    '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + ':</h6></td>' +
+                    '<td id="' + parent_id + value.p_type + value.parameter_id + bodyId + '">' +
+                    '</td>' +
+                    '<td><h6 id="score' + parent_id + value.p_type + value.parameter_id + bodyId + '" class="font-size-14 mb-4"></h6></td>' +
+                    '</tr>'
+                )
+                aValueParamScore('001', 'ASES020', '01', 3)
+                $.each(avalue, function(key1, value1) {
+                    if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
+                        $("#" + parent_id + value.p_type + value.parameter_id + bodyId).append(
+                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ', ' + bodyId + ')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + bodyId + '">' + value1.value_desc + '</label></div>'
+                        )
+                    }
+                });
+            }
+        });
+        $("#" + container + bodyId).append(
+            '<tr><td colspan="3"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="totalScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td></tr>'
+        )
+    }
+
+    function aValueParamScore(parent_id, p_type, parameter_id, score, bodyId) {
+        console.log('#score' + parent_id + p_type + parameter_id + bodyId + '')
+        console.log(score)
+        fallRiskScore['parameter_id' + parameter_id] = score;
+        $('#score' + parent_id + p_type + parameter_id + bodyId + '').html(score)
+        var total = 0;
+        for (var key in fallRiskScore) {
+            total += fallRiskScore[key]
+        }
+        $("#totalScore" + parent_id + p_type + bodyId).html(total)
     }
 
     function getFallRisk(bodyId, container) {
@@ -7727,14 +7754,18 @@ foreach ($aValue as $key => $value) {
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
                             .append($('<div class="row">')
-                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                .append('<label class="col-md-4 col-form-label mb-4">Score</label>')
                                 .append($('<div class="col-md-8">')
-                                    .append($('<select id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">')
+                                    .append($('<select id="GCS_DESC' + bodyId + '" name="GCS_DESC" class="form-control">')
                                         .append('<option>-</option>')
-                                        .append('<option value="1">Ringan</option>')
-                                        .append('<option value="2">Sedang</option>')
-                                        .append('<option value="3">Berat</option>')
+                                        .append('<option value="1">Composmentis</option>')
+                                        .append('<option value="2">Apatis</option>')
+                                        .append('<option value="3">Delirium</option>')
+                                        .append('<option value="4">Samnolen</option>')
+                                        .append('<option value="5">Sopor</option>')
+                                        .append('<option value="6">Coma</option>')
                                     )
+                                    .append($('<input type="text" id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">'))
                                 )
                             )
                         )
@@ -7755,15 +7786,22 @@ foreach ($aValue as $key => $value) {
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 8)
+            if (totalScore >= 3 && totalScore <= 4)
+                conclutionScore = 6
+            if (totalScore > 4 && totalScore <= 6)
+                conclutionScore = 5
+            if (totalScore > 6 && totalScore <= 9)
+                conclutionScore = 4
+            if (totalScore > 9 && totalScore <= 11)
                 conclutionScore = 3
-            if (totalScore > 8 && totalScore <= 12)
+            if (totalScore > 11 && totalScore <= 13)
                 conclutionScore = 2
-            if (totalScore > 12 && totalScore <= 15)
+            if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
 
-            $('GCS_SCORE' + bodyId).val(conclutionScore)
+            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+            $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001102" + bodyId).on("change", function() {
             var e = $("#GEN001101" + bodyId).val()
@@ -7772,15 +7810,22 @@ foreach ($aValue as $key => $value) {
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 8)
+            if (totalScore >= 3 && totalScore <= 4)
+                conclutionScore = 6
+            if (totalScore > 4 && totalScore <= 6)
+                conclutionScore = 5
+            if (totalScore > 6 && totalScore <= 9)
+                conclutionScore = 4
+            if (totalScore > 9 && totalScore <= 11)
                 conclutionScore = 3
-            if (totalScore > 8 && totalScore <= 12)
+            if (totalScore > 11 && totalScore <= 13)
                 conclutionScore = 2
-            if (totalScore > 12 && totalScore <= 15)
+            if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
 
-            $('GCS_SCORE' + bodyId).val(conclutionScore)
+            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+            $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001103" + bodyId).on("change", function() {
             var e = $("#GEN001101" + bodyId).val()
@@ -7789,15 +7834,24 @@ foreach ($aValue as $key => $value) {
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
-            if (totalScore >= 3 && totalScore <= 8)
+            if (totalScore >= 3 && totalScore <= 4)
+                conclutionScore = 6
+            if (totalScore > 4 && totalScore <= 6)
+                conclutionScore = 5
+            if (totalScore > 6 && totalScore <= 9)
+                conclutionScore = 4
+            if (totalScore > 9 && totalScore <= 11)
                 conclutionScore = 3
-            if (totalScore > 8 && totalScore <= 12)
+            if (totalScore > 11 && totalScore <= 13)
                 conclutionScore = 2
-            if (totalScore > 12 && totalScore <= 15)
+            if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
+            console.log(conclutionScore)
 
-            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+
+            $('#GCS_SCORE' + bodyId).val(totalScore)
+            $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
 
         $("#formGcsEditBtn" + bodyId).on("click", function() {
