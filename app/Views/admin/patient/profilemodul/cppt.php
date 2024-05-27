@@ -187,7 +187,7 @@ $permission = user()->getPermissions();
                                                         <div class="form-group"><label id="acpptanamnase_label">Keluhan Utama</label><textarea name="anamnase" id="acpptanamnase" placeholder="" value="" class="form-control"></textarea></div>
                                                     </div>
                                                 </div>
-                                                <div id="groupRiwayatCppt" class="row">
+                                                <div id="groupRiwayatCppt" class="row" style="display: none;">
                                                     <div class="col-sm-6 col-xs-12">
                                                         <div class="mb-3">
                                                             <div class="form-group">

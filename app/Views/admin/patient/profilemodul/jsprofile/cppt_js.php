@@ -659,9 +659,9 @@
     }
 
     function disableacppt() {
-        $("#formsaveacpptbtn").hide()
-        $("#formeditacppt").show()
-        $("#formsignacppt").show()
+        $("#formsaveacpptbtnid").hide()
+        $("#formeditacpptid").show()
+        $("#formsignacpptid").show()
         $("#formaddacppt input").prop("disabled", true)
         $("#formaddacppt textarea").prop("disabled", true)
         $("#formaddacppt select").prop("disabled", true)
