@@ -153,7 +153,7 @@ $permissions = user()->getPermissions();
                                 $total = 0;
                                 ?>
                             </tbody>
-                            <tfoot class="table-group-divider">
+                            <tfoot class="table-group-divider" style="display: none">
                                 <tr>
                                     <td colspan='11' class="align_right">
                                         <div class="row">

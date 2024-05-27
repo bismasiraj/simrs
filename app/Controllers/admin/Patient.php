@@ -5410,7 +5410,7 @@ This Function is used to Add Patient
         $ageday = $this->request->getPost('ageday');
         $kal_id = $this->request->getPost('kal_id');
         $karyawan = $this->request->getPost('karyawan');
-        $class_room_ID = $this->request->getPost('class_room_ID');
+        $class_room_id = $this->request->getPost('class_room_id');
         $bed_id = $this->request->getPost('bed_id');
         $employee_id_from = $this->request->getPost('employee_id_from');
         $doctor_from = $this->request->getPost('doctor_from');
@@ -5535,7 +5535,7 @@ This Function is used to Add Patient
             'ageday' => $ageday,
             'kal_id' => $kal_id,
             'karyawan' => $karyawan,
-            'class_room_ID' => $class_room_ID,
+            'class_room_id' => $class_room_id,
             'bed_id' => $bed_id,
             'employee_id_from' => $employee_id_from,
             'doctor_from' => $doctor_from,
@@ -5608,7 +5608,7 @@ This Function is used to Add Patient
         $ageday = $body['ageday']; //$this->request->getPost('ageday');
         $kal_id = $body['kal_id']; //$this->request->getPost('kal_id');
         $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
-        $class_room_id = $body['class_room_id']; //$this->request->getPost('class_room_ID');
+        $class_room_id = $body['class_room_id']; //$this->request->getPost('class_room_id');
         $bed_id = $body['bed_id']; //$this->request->getPost('bed_id');
         $employee_id_from = $body['employee_id_from']; //$this->request->getPost('employee_id_from');
         $doctor_from = $body['doctor_from']; //$this->request->getPost('doctor_from');

@@ -2285,7 +2285,7 @@ foreach ($aValue as $key => $value) {
             inputvalue['tarif_id_plafond'] = $("#acptarif_id_plafond" + key).val()
             inputvalue['treatment_type'] = $("#acptreatment_type" + key).val()
 
-            console.log(inputvalue)
+            // console.log(inputvalue)
 
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/rm/assessment/addBillCharge',
@@ -2461,7 +2461,7 @@ foreach ($aValue as $key => $value) {
             $("#acpclinic_id" + key).val('<?= $visit['clinic_id']; ?>')
             $("#acptreatment_type" + key).val(type)
             if ('<?= $visit['isrj']; ?>' == '0') {
-                $("#acpclass_room_ID" + key).val('<?= $visit['class_room_id']; ?>');
+                $("#acpclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
                 $("#acpbed_id" + key).val('<?= $visit['bed_id']; ?>');
                 <?php
                 if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {

@@ -516,7 +516,7 @@ $permission = user()->getPermissions();
                                                     </style>
                                                     <div class="table-rep-plugin">
                                                         <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawat" action="" method="post" class="">
+                                                            <form id="formchargesBodyPerawatCppt" action="" method="post" class="">
                                                                 <table class="table table-sm table-hover">
                                                                     <thead class="table-primary" style="text-align: center;">
                                                                         <tr>
@@ -531,7 +531,7 @@ $permission = user()->getPermissions();
                                                                             <th class="text-center" rowspan="2"></th class="text-center">
                                                                         </tr>
                                                                     </thead>
-                                                                    <tbody id="chargesBodyPerawat" class="table-group-divider">
+                                                                    <tbody id="chargesBodyPerawatCppt" class="table-group-divider">
                                                                         <?php
                                                                         $total = 0;
                                                                         ?>
@@ -707,7 +707,7 @@ $permission = user()->getPermissions();
                                                     </style>
                                                     <div class="table-rep-plugin">
                                                         <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatMandiri" action="" method="post" class="">
+                                                            <form id="formchargesBodyPerawatMandiriCppt" action="" method="post" class="">
                                                                 <table class="table table-sm table-hover">
                                                                     <thead class="table-primary" style="text-align: center;">
                                                                         <tr>
@@ -722,7 +722,7 @@ $permission = user()->getPermissions();
                                                                             <th class="text-center" rowspan="2"></th class="text-center">
                                                                         </tr>
                                                                     </thead>
-                                                                    <tbody id="chargesBodyPerawatMandiri" class="table-group-divider">
+                                                                    <tbody id="chargesBodyPerawatMandiriCppt" class="table-group-divider">
                                                                         <?php
                                                                         $total = 0;
                                                                         ?>
@@ -898,7 +898,7 @@ $permission = user()->getPermissions();
                                                     </style>
                                                     <div class="table-rep-plugin">
                                                         <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatImplementasi" action="" method="post" class="">
+                                                            <form id="formchargesBodyPerawatImplementasiCppt" action="" method="post" class="">
                                                                 <table class="table table-sm table-hover">
                                                                     <thead class="table-primary" style="text-align: center;">
                                                                         <tr>
@@ -913,7 +913,7 @@ $permission = user()->getPermissions();
                                                                             <th class="text-center" rowspan="2"></th class="text-center">
                                                                         </tr>
                                                                     </thead>
-                                                                    <tbody id="chargesBodyPerawatImplementasi" class="table-group-divider">
+                                                                    <tbody id="chargesBodyPerawatImplementasiCppt" class="table-group-divider">
                                                                     </tbody>
                                                                 </table>
                                                             </form>
