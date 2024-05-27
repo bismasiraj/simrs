@@ -75,7 +75,7 @@ $permission = user()->getPermissions();
                 </div>
             </div><!--./modal-header-->
             <div class="modal-body pt0 pb0">
-                <div id="acpptDocument" class="border-1 rounded-4 m-4 p-4" style="">
+                <div id="acpptDocument" class="border-1 rounded-4 mb-4 p-4" style="">
                     <div class="">
                         <form id="formaddacppt" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                             <input type="hidden" id="acpptbody_id" name="body_id">
@@ -478,10 +478,10 @@ $permission = user()->getPermissions();
                                                         <input type="hidden" name="ci_csrf_token" value="">
                                                         <div class="col-sm-12 col-md-12 mb-4">
                                                             <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawat" class="form-control" style="width: 100%"></select></div>
+                                                                <div class="col-md-8"><select id="searchTarifPerawatCppt" class="form-control" style="width: 100%"></select></div>
                                                                 <div class="col-md-4">
                                                                     <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawat", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatCppt", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -669,10 +669,10 @@ $permission = user()->getPermissions();
                                                         <input type="hidden" name="ci_csrf_token" value="">
                                                         <div class="col-sm-12 col-md-12 mb-4">
                                                             <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatMandiri" class="form-control" style="width: 100%"></select></div>
+                                                                <div class="col-md-8"><select id="searchTarifPerawatMandiriCppt" class="form-control" style="width: 100%"></select></div>
                                                                 <div class="col-md-4">
                                                                     <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiri", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiriCppt", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -860,10 +860,10 @@ $permission = user()->getPermissions();
                                                         <input type="hidden" name="ci_csrf_token" value="">
                                                         <div class="col-sm-12 col-md-12 mb-4">
                                                             <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatImplementasi" class="form-control" style="width: 100%"></select></div>
+                                                                <div class="col-md-8"><select id="searchTarifPerawatImplementasiCppt" class="form-control" style="width: 100%"></select></div>
                                                                 <div class="col-md-4">
                                                                     <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatImplementasi", 3, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatImplementasiCppt", 3, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
