@@ -267,55 +267,17 @@ $group = user()->getRoles();
                         <?php foreach ($aParent as $key => $value) { ?>
                             <?php if ($value['parent_id'] == '001') { ?>
                                 <div id="arpFallRisk_Group" class="accordion-item">
-                                    <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                            <b><?= $value['parent_parameter']; ?></b>
+                                    <h2 class="accordion-header" id="FallRiskPerawat">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskPerawat" aria-expanded="true" aria-controls="collapseFallRiskPerawat">
+                                            <b>RESIKO JATUH</b>
                                         </button>
                                     </h2>
-                                    <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                    <div id="collapseFallRiskPerawat" class="accordion-collapse collapse" aria-labelledby="FallRiskPerawat" data-bs-parent="#accordionAssessmentPerawat" style="">
                                         <div class="accordion-body text-muted">
                                             <div class="row">
-                                                <form id="formfallrisk" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                                                     <div class="col-md-12">
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Alat Ukur:</h5>
-                                                            </div>
-                                                            <div class="col-md-9">
-                                                                <?php foreach ($aType as $key1 => $value1) { ?>
-                                                                    <?php if ($value1['parent_id'] == $value['parent_id']) {
-                                                                    ?>
-                                                                        <div class="form-check mb-3">
-                                                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', 'armpasien_diagnosa_id', 'bodyAssessmentfallRiskMedis')">
-                                                                            <label class="form-check-label" for="atype<?= $value1['p_type']; ?>">
-                                                                                <?= $value1['p_description']; ?>
-                                                                            </label>
-                                                                        </div>
-                                                                    <?php
-                                                                    } ?>
-                                                                <?php } ?>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Parameter 2:</h5>
-                                                            </div>
-                                                            <table class="col-md-12 table table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>No</th>
-                                                                        <th>Deskripsi</th>
-                                                                        <th>Pilihan</th>
-                                                                        <th>Score</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="bodyAssessment<?= $value['parent_id']; ?>">
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                        <div class="panel-footer text-end mb-4">
-                                                            <button type="submit" id="formsavefallriskbtn" name="save" data-loading-text="processing" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                            <button style="margin-right: 10px; display: none;" type="button" id="formeditfallriskbtn" onclick="" name="edit" data-loading-text="processing" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>
+                                                        <div id="bodyFallRiskPerawat">
                                                         </div>
                                                     </div>
                                                 </form>
@@ -336,14 +298,7 @@ $group = user()->getRoles();
                                             <div class="row">
                                                 <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                                                     <div class="col-md-12">
-                                                        <div id="bodyPainMonitoring">
-                                                        </div>
-                                                        <div class="row mb-4">
-                                                            <div class="col-md-12">
-                                                                <div id="addPainMonitoringButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addPainMonitoring(1,0,'arpbody_id', 'bodyPainMonitoring')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
+                                                        <div id="bodyPainMonitoringPerawat">
                                                         </div>
                                                     </div>
                                                 </form>
@@ -363,14 +318,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyTriage">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addTriageButton" class="box-tab-tools text-center">
-                                                                <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriage')" class=" btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyTriagePerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -389,14 +337,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyApgar">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addApgarButton" class="box-tab-tools text-center">
-                                                                <a onclick="addApgar(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyApgarPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -416,14 +357,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyGizi">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addGiziButton" class="box-tab-tools text-center">
-                                                                <a onclick="addGizi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyGiziPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -446,14 +380,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyADL">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addADLButton" class="box-tab-tools text-center">
-                                                                <a onclick="addADL(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyADLPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -473,14 +400,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyDekubitus">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addDekubitusButton" class="box-tab-tools text-center">
-                                                                <a onclick="addDekubitus(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyDekubitusPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -500,14 +420,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyStabilitas">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addDerajatStabilitasButton" class="box-tab-tools text-center">
-                                                                <a onclick="addDerajatStabilitas(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyStabilitasPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -547,21 +460,14 @@ $group = user()->getRoles();
                                 <div id="arpEdukasiForm_Group" class="accordion-item">
                                     <h2 class="accordion-header" id="headingEducationForm">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
-                                            <b>FORMULIR PEMBERIAK EDUKASI</b>
+                                            <b>FORMULIR PEMBERIAN EDUKASI</b>
                                         </button>
                                     </h2>
                                     <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accodrionAssessmentAwal" style="">
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyEducationForm">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addEducationFormButton" class="box-tab-tools text-center">
-                                                                <a onclick="addEducationForm(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyEducationFormPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -581,14 +487,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyGcs">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addGcsButton" class="box-tab-tools text-center">
-                                                                <a onclick="addGcs(1,0,'arpbody_id', 'bodyGcs')" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyGcsPerawat">
                                                     </div>
                                                 </div>
                                             </div>
@@ -608,14 +507,7 @@ $group = user()->getRoles();
                                         <div class="accordion-body text-muted">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <div id="bodyIntegumen">
-                                                    </div>
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-12">
-                                                            <div id="addIntegumenButton" class="box-tab-tools text-center">
-                                                                <a onclick="addIntegumen(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                            </div>
-                                                        </div>
+                                                    <div id="bodyIntegumenPerawat">
                                                     </div>
                                                 </div>
                                             </div>

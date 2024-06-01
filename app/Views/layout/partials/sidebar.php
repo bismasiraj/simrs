@@ -99,6 +99,25 @@ $basecontroller->checkMenuActive('register');
                     </li>
 
                 <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
+                        <a href="#" class="has-arrow waves-effect">
+                            <!-- <i class="fas fa-dot-circle"></i> -->
+                            <img src="<?php echo base_url(); ?>\assets\images\small\satusehat2.png" alt="" style="width: 30px; height: 30px">
+                            <span>Satu Sehat</span>
+                        </a>
+                        <ul class="-menu">
+                            <li class="<?= $basecontroller->checkMenuActive('viewPasienId'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPasienId" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Pasien ID Hari Ini</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewOrganization'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewOrganization" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Klinik Organisasi</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocation" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Klinik</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocationInap" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Bed</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewPractitioner'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPractitioner" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Kode Dokter</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewEncounterCondition'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewEncounterCondition" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Encounter & Condition</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewEncounterConditionInap'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewEncounterConditionInap" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Encounter & Condition Inap</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('viewMedication'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewMedication" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Medication</a></li>
+                        </ul>
+                    </li>
+                <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('fo'); ?>">
                         <a href="#" class="has-arrow waves-effect">
@@ -211,23 +230,7 @@ $basecontroller->checkMenuActive('register');
                     </li>
                 <?php } ?>
 
-                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
-                        <a href="#" class="has-arrow waves-effect">
-                            <i class="fas fa-dot-circle"></i><span>Satu Sehat</span>
-                        </a>
-                        <ul class="-menu">
-                            <li class="<?= $basecontroller->checkMenuActive('viewPasienId'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPasienId" target="_blank"><i class="mdi mdi-chevron-right"></i>Generate Pasien ID Hari Ini</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewOrganization'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewOrganization" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Klinik Organisasi</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocation" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Klinik</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewLocation'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewLocationInap" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Lokasi Bed</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewPractitioner'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewPractitioner" target="_blank"><i class="mdi mdi-chevron-right"></i>Parameter Kode Dokter</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewEncounterCondition'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewEncounterCondition" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Encounter & Condition</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewEncounterConditionInap'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewEncounterConditionInap" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Encounter & Condition Inap</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('viewMedication'); ?>"><a href="<?php echo base_url(); ?>satusehat/viewMedication" target="_blank"><i class="mdi mdi-chevron-right"></i>Bundle Medication</a></li>
-                        </ul>
-                    </li>
-                <?php } ?>
+
                 <li style="height: 300px"></li>
                 <!-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">

@@ -66,7 +66,8 @@
 
 
             </table>
-            <?php if (empty($pasienDiagnosa)) {
+            <?php if (false) {
+                // if (empty($pasienDiagnosa)) {
             ?>
                 <div class="profileRM" style="display: block">
                     <hr class="hr-panel-heading hr-10">

@@ -25,7 +25,8 @@ class ApgarDetailModel extends Model
         'value_desc',
         'modified_date',
         'modified_by',
-        'value_id'
+        'value_id',
+        'document_id'
     ];
 
     protected $useTimestamps = true;

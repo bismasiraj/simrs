@@ -25,6 +25,7 @@ class FallRiskDetailModel extends Model
         'value_desc',
         'modified_date',
         'modified_by',
+        'value_id'
     ];
 
     // Dates

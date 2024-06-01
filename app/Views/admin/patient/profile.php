@@ -33,6 +33,18 @@ $currency_symbol = 'Rp. ';
     }
 
     .table-biodata {}
+
+    input[type=radio] {
+        transform: scale(1.3);
+    }
+
+    .nav-tabs-custom .nav-item .nav-link {
+        border: none;
+        font-weight: bold;
+        font-size: 15px;
+        min-width: 120px;
+        height: 100%;
+    }
 </style>
 <div class="content-wrapper">
     <section>
@@ -44,49 +56,56 @@ $currency_symbol = 'Rp. ';
                             <div class="card-body">
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                        <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab">Profil</a></li>
+                                        <li class="nav-item"><a id="overviewTab" class="nav-link border-bottom" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab">Profil</a></li>
                                         <!-- <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li> -->
                                         <?php if (isset($permissions['assessmentmedis']['r'])) { ?>
-                                            <li class="nav-item"><a id="assessmentmedisTab" class="nav-link <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
-                                            <!-- <li class="nav-item"><a id="assessmentmedisTab" class="nav-link <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li> -->
-                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
+                                            <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom <?= isset($group[11]) || isset($group[1]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
+                                            <!-- <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li> -->
+                                            <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
                                         <?php }
                                         if (isset($permissions['assessmentperawat']['r'])) { ?>
-                                            <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li> -->
+                                            <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Perawat</a></li> -->
                                         <?php }
                                         if (isset($permissions['cppt']['r'])) { ?>
-                                            <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
-                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li> -->
+                                            <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
+                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li> -->
                                         <?php }
                                         if (isset($permissions['eresep']['r'])) { ?>
-                                            <li class="nav-item"><a id="eresepTab" class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">E-Resep</a></li>
-                                            <!-- <li class="nav-item"><a id="eresepTab" class="nav-link" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li> -->
+                                            <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">EResep</a></li>
+                                            <!-- <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li> -->
                                         <?php }
                                         if (isset($permissions['lab']['r'])) { ?>
-                                            <li class="nav-item"><a id="labTab" class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab">Laboratorium</a></li>
-                                            <!-- <li class="nav-item"><a id="labTab" class="nav-link" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li> -->
+                                            <li class="nav-item"><a id="labTab" class="nav-link border-bottom" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab">Laboratorium</a></li>
+                                            <!-- <li class="nav-item"><a id="labTab" class="nav-link border-bottom" href="#lab" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-microscope text-primary"></i>Laboratorium</a></li> -->
                                         <?php }
                                         if (isset($permissions['rad']['r'])) { ?>
-                                            <li class="nav-item"><a id="radTab" class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
-                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
+                                            <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
+                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
                                         if (isset($permissions['resumemedis']['r'])) { ?>
-                                            <li class="nav-item"><a id="rekammedisTab" class="nav-link" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
-                                            <!-- <li class="nav-item"><a id="rekammedisTab" class="nav-link" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li> -->
+                                            <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
+                                            <!-- <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li> -->
                                         <?php }
                                         if ($visit['isrj'] == '0') { ?>
-                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li> -->
+                                            <!-- <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-book text-primary"></i> CPPT</a></li> -->
                                         <?php } else { ?>
-                                            <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->
+                                            <!-- <li class="nav-item"><a is="vitalsignTab" class="nav-link border-bottom" href="#vitalsign" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Vital Sign</a></li> -->
                                         <?php } ?>
-                                        <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#billpoli" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan</a></li>
-                                        <!-- <li class="nav-item"><a id="tindakanTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li> -->
-                                        <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab">Billing</a></li>
-                                        <!-- <li class="nav-item"><a id="chargesTab" class="nav-link" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Billing</a></li> -->
-                                        <!-- <li class="nav-item"><a id="mrpasienTab" class="nav-link" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li> -->
-                                        <li class="nav-item"><a id="rmTab" class="nav-link" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab">Form RM</a></li>
-                                        <!-- <li class="nav-item"><a id="rmTab" class="nav-link" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Form RM</a></li> -->
-                                        <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab">E-Klaim</a></li>
+                                        <li class="nav-item"><a id="tindakanTab" class="nav-link border-bottom" href="#billpoli" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan</a></li>
+                                        <!-- <li class="nav-item"><a id="tindakanTab" class="nav-link border-bottom" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Tindakan</a></li> -->
+                                        <li class="nav-item"><a id="chargesTab" class="nav-link border-bottom" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab">Billing</a></li>
+                                        <!-- <li class="nav-item"><a id="chargesTab" class="nav-link border-bottom" href="#charges" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-caret-square-down text-primary"></i> Billing</a></li> -->
+                                        <!-- <li class="nav-item"><a id="mrpasienTab" class="nav-link border-bottom" href="#mrpasien" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-file text-primary"></i> MR Pasien</a></li> -->
+                                        <li class="nav-item"><a id="rmTab" class="nav-link border-bottom" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab">Form RM</a></li>
+                                        <!-- <li class="nav-item"><a id="rmTab" class="nav-link border-bottom" href="#rm" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Form RM</a></li> -->
+                                        <li class="nav-item"><a id="painTab" class="nav-link border-bottom" href="#pain" data-bs-toggle="tab" aria-expanded="true" role="tab">Monitoring Nyeri</a></li>
+                                        <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Fall Risk</a></li>
+                                        <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
+                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
+                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa Perawat</a></li>
+                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
+                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
+                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Inform Consern</a></li>
                                         <!-- <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li> -->
                                         <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
                                     </ul>
@@ -438,6 +457,57 @@ $currency_symbol = 'Rp. ';
                                             'dokter' => $employee
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/cppt', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/painmonitoring', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/fallrisk', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/gcs', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
                                             'statusPasien' => $statusPasien,
@@ -1085,6 +1155,57 @@ $currency_symbol = 'Rp. ';
     'clinic' => $clinic
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/cppt_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/painmonitoring_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/fallrisk_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/gcs_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,

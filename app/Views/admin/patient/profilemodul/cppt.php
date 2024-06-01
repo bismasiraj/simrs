@@ -275,7 +275,7 @@ $permission = user()->getPermissions();
                                         </h2>
                                         <div id="collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaPerawat" data-bs-parent="#accordionSOAP">
                                             <div class="accordion-body text-muted">
-                                                <div id="groupDiagnosaPerawatCppt" class="row mb-2">
+                                                <div id="groupDiagnosaPerawatCppt" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
                                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                                         <div class="mb-4">
                                                             <div class="staff-members">
@@ -385,7 +385,7 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                         </form>
-                        <div class="accordion" id="accodrionAssessmentAwal">
+                        <div class="accordion" id="accodrionCPPT">
 
 
                             <?php foreach ($aParent as $key => $value) { ?>
@@ -442,7 +442,7 @@ $permission = user()->getPermissions();
                                                 <b>GLASGOW COMA SCALE (GCS)</b>
                                             </button>
                                         </h2>
-                                        <div id="collapseGcs" class="accordion-collapse collapse" aria-labelledby="headingGcs" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                        <div id="collapseGcs" class="accordion-collapse collapse" aria-labelledby="headingGcs" data-bs-parent="#accodrionCPPT" style="">
                                             <div class="accordion-body text-muted">
                                                 <div class="row">
                                                     <div class="col-md-12">
@@ -469,7 +469,7 @@ $permission = user()->getPermissions();
                                         <b>TINDAKAN KOLABORATIF</b>
                                     </button>
                                 </h2>
-                                <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionCPPT" style="">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -660,7 +660,7 @@ $permission = user()->getPermissions();
                                         <b>TINDAKAN MANDIRI</b>
                                     </button>
                                 </h2>
-                                <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionCPPT" style="">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -851,7 +851,7 @@ $permission = user()->getPermissions();
                                         <b>IMPLEMENTASI KEPERAWATAN</b>
                                     </button>
                                 </h2>
-                                <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionCPPT" style="">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-md-12">
@@ -931,7 +931,7 @@ $permission = user()->getPermissions();
                                         <b>CETAK KEPERAWATAN</b>
                                     </button>
                                 </h2>
-                                <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionAssessmentAwal">
+                                <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionCPPT">
                                     <div class="accordion-body text-muted">
                                         <div class="row">
                                             <div class="col-md-12">

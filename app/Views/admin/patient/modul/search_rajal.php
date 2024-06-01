@@ -25,8 +25,8 @@ $permissions = user()->getPermissions();
                         <div class="form-group">
                             <label>Poli</label><small class="req"> *</small>
                             <select id="klinikrajal" class="form-control" name="klinik" onchange="showdate(this.value)" autocomplete="off">
+                                <option value="%">Semua</option>
                                 <?php if (is_null(user()->employee_id)) { ?>
-                                    <option value="%">Semua</option>
                                 <?php } ?>
                                 <?php $cliniclist = array();
                                 if ($giTipe != 2 && $giTipe != 5) {

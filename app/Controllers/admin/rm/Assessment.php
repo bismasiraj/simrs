@@ -94,7 +94,7 @@ class Assessment extends BaseController
         $trans_id = $this->request->getPost('trans_id');
         $body_id = $this->request->getPost('body_id');
         $no_registration = $this->request->getPost('no_registration');
-        $examination_date = $this->request->getPost('examination_date');
+        $examination_date = str_replace('T', ' ', $this->request->getPost('examination_date'));
         $clinic_id = $this->request->getPost('clinic_id');
         $employee_id = $this->request->getPost('employee_id');
         $petugas_id = $this->request->getPost('petugas_id');
@@ -225,8 +225,11 @@ class Assessment extends BaseController
         $bodyId = $body['body_id'];
 
         $db = db_connect();
-
-        $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit' and document_id = '$bodyId'  ")->getResultArray());
+        if ($bodyId != '') {
+            $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit' and document_id = '$bodyId'  ")->getResultArray());
+        } else {
+            $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit'")->getResultArray());
+        }
 
         $queryDetil = "select * from assessment_pain_detail where body_id in (";
         $queryIntervensi = "select * from assessment_pain_intervensi where body_id in (";
@@ -415,6 +418,7 @@ class Assessment extends BaseController
         foreach ($body as $key => $value) {
             ${$key} = $value;
         }
+        // return json_encode($document_id);
 
         $db = db_connect();
         $indicator = new IndicatorModel();
@@ -433,7 +437,6 @@ class Assessment extends BaseController
             'p_type' => $p_type,
             'total_score' => 0,
             'description' => $description,
-            'document_id' => $document_id,
             // 'modified_date' => Time::now(),
             'modified_by' => $modified_by,
             'isvalid' => null,
@@ -584,7 +587,7 @@ class Assessment extends BaseController
             'date_of_diagnosa' => str_replace('T', ' ', $date_of_diagnosa),
             'report_date' => $report_date,
             // 'diagnosa_id' => $diagnosa_id,
-            // 'diagnosa_desc' => $diagnosa_desc,
+            'diagnosa_desc' => $diagnosa_desc,
             'employee_id' => $employee_id,
             'diag_cat' => 4,
             'anamnase' => $anamnase,
@@ -1148,11 +1151,9 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                          PACKAGE_ID, MODULE_ID, profession, THEORDER, CASHIER, TRANS_ID, NOSEP, PASIEN_ID, TOTAL_TAGIHAN, tarif_id_plafond
                         from treatment_perawat where 
                         bill_id = '$id'
-                        and STATUS_TARIF is null
+                        and STATUS_TARIF = 0");
 
-                        -- jangan lupa setelah dikirim ke treatment_bill , status_tarifnya  diubah jadi 1 artinya sudah dikirim.");
-
-            $tpModel->update(['status_tarif' => 1, 'bill_id' => $id]);
+            $db->query("update treatment_perawat set status_tarif = '1' where bill_id = '$id'");
         }
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -2226,6 +2227,15 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
         $body = $this->request->getPost();
 
+        $gcsconclution = [
+            'Composmentis',
+            'Apatis',
+            'Delirium',
+            'Samnolen',
+            'Sopor',
+            'Coma',
+        ];
+
         $data = [];
 
         // return ($body['OBJECT_STRANGE']);
@@ -2236,8 +2246,11 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
             if (isset($examination_date))
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($data['gcs_desc']))
+                $data['gcs_desc'] = $gcsconclution[$GCS_DESC];
         }
 
+        // return json_encode($data);
 
         $model = new GcsModel();
 
@@ -2260,8 +2273,11 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $bodyId = $body['body_id'];
 
         $model = new GcsModel();
-        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
-
+        if ($bodyId == '') {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+        } else {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        }
         return json_encode([
             'gcs' => $select
         ]);
@@ -2286,31 +2302,18 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             if (isset($examination_date))
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
         }
+        $data['p_type'] = $parameter001;
+        // return json_encode($data);
 
-
-        $model = new GcsModel();
+        $model = new FallRiskModel();
 
         $model->save($data);
 
-        return json_encode($data);
-
-        // $parameter002 = $this->request->getPost('parameter002');
-        foreach ($body as $key => $value) {
-            ${$key} = $value;
-            if (!(is_null(${$key}) || ${$key} == ''))
-                $data[strtolower($key)] = $value;
-
-            if (isset($examination_date))
-                $data['examination_date'] = str_replace("T", " ", $examination_date);
-        }
+        // return json_encode($data);
 
         $db = db_connect();
-        $fallRisk = new FallRiskModel();
-        // return json_encode($data);
-        $db->query("delete from assessment_fall_risk where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
-
-        $isSuccess = $fallRisk->save($data);
-        // return json_encode($isSuccess);
+        $p_type = $parameter001;
+        // return json_encode($parameter001);
 
         if (true) {
             $fallRiskDetail  = new FallRiskDetailModel();
@@ -2335,54 +2338,8 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                         'modified_date' => Time::now(),
                         'modified_by' => $modified_by
                     ];
-                    $painDetil->insert($data);
+                    $fallRiskDetail->insert($data);
                 }
-            }
-
-            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
-            foreach ($select as $key => $value) {
-                $valueId = ${"parameter_id" . $value['parameter_id']};
-                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
-                if (isset($paramvalue[0])) {
-                    $data = [
-                        'org_unit_code' => $org_unit_code,
-                        'visit_id' => $visit_id,
-                        'trans_id' => $trans_id,
-                        'body_id' => $body_id,
-                        'p_type' => $p_type,
-                        'parameter_id' => $value['parameter_id'],
-                        'value_id' => $valueId,
-                        'value_score' => $paramvalue[0]['value_score'],
-                        'value_desc' => $paramvalue[0]['value_desc'],
-                        'modified_date' => Time::now(),
-                        'modified_by' => $modified_by
-                    ];
-                    $painDetil->insert($data);
-                }
-            }
-
-            $painIntervensi = new PainIntervensiModel();
-            $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
-            foreach ($timeIntervensi as $key => $value) {
-                // return json_encode(str_replace('T', ' ', $reassessment_date));
-
-                $data = [
-                    'body_id' => $body_id,
-                    'intervensi_ke' => $key,
-                    'no_registration' => $no_registration,
-                    'p_type' => $p_type,
-                    'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
-                    'intervensi' => $intervensi[$key],
-                    'rute' => $rute[$key],
-                    'reassessment' => $reAssessment[$key],
-                    'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
-                    'valid' => null,
-                    'petugas' => user()->username,
-                    'modified_date' => Time::now(),
-                    'modified_by' => $modified_by,
-                    'value_id' => $painscalescore[$key]
-                ];
-                $painIntervensi->insert($data);
             }
         }
 
@@ -2403,11 +2360,15 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $bodyId = $body['body_id'];
 
         $model = new FallRiskModel();
-        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        if ($bodyId != '') {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        } else {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+        }
 
         $db = db_connect();
 
-        $queryDetil = "select * from assessment_pain_detail where body_id in (";
+        $queryDetil = "select * from assessment_fall_risk_detail where body_id in (";
 
         foreach ($select as $key => $value) {
             $queryDetil .= "'" . $value['body_id'] . "',";

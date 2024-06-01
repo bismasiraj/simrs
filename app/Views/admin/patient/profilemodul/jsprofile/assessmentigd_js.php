@@ -18,6 +18,7 @@ foreach ($aValue as $key => $value) {
     var examForassessment = <?= json_encode($exam); ?>;
     var avalue = <?= json_encode($aValue); ?>;
     var aparameter = <?= json_encode($aParameter); ?>;
+    var atype = <?= json_encode($aType); ?>;
     var avalueparent = <?= json_encode($aValueParent); ?>;
     var fallRiskScore = Array();
     var painMonitoring;
@@ -31,7 +32,8 @@ foreach ($aValue as $key => $value) {
     var stabilitasDetail;
     var tPerawat;
     var tPerawatAll;
-    var napasAll;
+    var fallRisk;
+    var fallRiskDetail;
     var sirkulasiAll;
     var neuroAll;
     var integumenAll;
@@ -65,7 +67,11 @@ foreach ($aValue as $key => $value) {
         var nota = '%'
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
+
+
+
         $("#aigdexamination_date").val(get_date())
+
         // armstanding_ordereditor.init({
         //     selector: '#arpeducation_material'
         // });
@@ -202,171 +208,9 @@ foreach ($aValue as $key => $value) {
         $("#arpTindakanKolaboratif_Group").show()
         $("#arpTindakanMandiri_Group").show()
         $("#arpImplementasi_Group").show()
+
+        generateSatelite()
     })
-
-
-
-
-    function assessmentIgdInput(prop) {
-        var value = $(prop).val()
-        value = (Number(value.replace(/[^\d+(\.\d{1,2})$]/g, '')).toFixed(2))
-
-        console.log(prop.id)
-
-        if (prop.id == "aigdtemperature") {
-            // Number(GetText( )) < 50 and Number(GetText( )) > 10
-            if (value < 10)
-                value = 10.00
-
-            if (value > 50)
-                value = 50.00
-        }
-        if (prop.id == "aigdtension_upper") {
-            // Number(GetText()) < 250 and Number(GetText()) > 50
-            if (value < 50)
-                value = 50.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "aigdnadi") {
-            //Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "aigdweight") {
-            // Number(GetText( )) < 500
-            if (value > 500)
-                value = 500.00
-        }
-        if (prop.id == "aigdheight") {
-            // Number(GetText( )) between 30 and 250
-            if (value < 30)
-                value = 30.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "aigdtension_below") {
-            // Number(GetText( )) between 0 and 300
-            if (value < 0)
-                value = 0.00
-
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "aigdtension_below") {
-            // Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
-        }
-
-        $(prop).val(value)
-    }
-
-
-
-
-
-
-    function getAssessmentIgd(visit) {
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getAssessmentIgd',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': visit,
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                data.forEach((element, key) => {
-                    $('#clinic_id').val(data[key].clinic_id)
-                    $('#aigdclass_room_id').val(data[key].class_room_id)
-                    $('#aigdkeluar_id').val(data[key].keluar_id)
-                    $('#aigdemployee_id').val(data[key].employee_id)
-                    $('#aigdno_registration').val(data[key].no_registration)
-                    $('#aigdvisit_id').val(data[key].visit_id)
-                    $('#aigdorg_unit_code').val(data[key].org_unit_code)
-                    $('#aigddoctor').val(data[key].doctor)
-                    $('#aigdkal_id').val(data[key].kal_id)
-                    $('#aigdtheid').val(data[key].theid)
-                    $('#aigdthename').val(data[key].thename)
-                    $('#aigdtheaddress').val(data[key].theaddress)
-                    $('#aigdstatus_pasien_id').val(data[key].status_pasien_id)
-                    $('#aigdisrj').val(data[key].isrj)
-                    $('#aigdgender').val(data[key].gender)
-                    $('#aigdageyear').val(data[key].ageyear)
-                    $('#aigdagemonth').val(data[key].agemonth)
-                    $('#aigdageday').val(data[key].ageday)
-                    $('#aigdbody_id').val(data[key].body_id)
-                    $('#aigdmodified_by').val(data[key].modified_by)
-                    $('#aigdpasien_diagnosa_id').val(data[key].pasien_diagnosa_id)
-                    $('#aigdassessment_type').val(data[key].assessment_type)
-                    $('#aigdexamination_date').val(data[key].examination_date)
-                    $("input[name=t_01][value=" + data[key].t_01 + "]").prop('checked', true);
-                    $('#aigdv_01').val(data[key].v_01)
-                    $('#aigdt_02').val(data[key].t_02)
-                    $("input[name=t_02][value=" + data[key].t_02 + "]").prop('checked', true);
-                    $('#aigdt_04').val(data[key].t_04)
-                    $("input[name=t_04][value=" + data[key].t_04 + "]").prop('checked', true);
-                    $('#aigdriwayat_alergi').val(data[key].riwayat_alergi)
-                    $('#aigdv_02').val(data[key].v_02)
-                    $('#aigdv_03').val(data[key].v_03)
-                    $('#aigdalloanamnesis_contact').val(data[key].alloanamnesis_contact)
-                    $('#aigdalloanamnesis_hub').val(data[key].alloanamnesis_hub)
-                    $('#aigdanamnase').val(data[key].anamnase)
-                    $('#aigddiagnosa_history').val(data[key].diagnosa_history)
-                    $('#aigdriwayat_obat').val(data[key].riwayat_obat)
-                    $('#aigdtension_upper').val(data[key].tension_upper)
-                    $('#aigdtension_below').val(data[key].tension_below)
-                    $('#aigdnadi').val(data[key].nadi)
-                    $('#aigdnafas').val(data[key].nafas)
-                    $('#aigdsaturasi').val(data[key].saturasi)
-                    $('#aigdtemperature').val(data[key].temperature)
-                    $('#aigdt_012').val(data[key].t_012)
-                    $("input[name=t_012][value=" + data[key].t_012 + "]").prop('checked', true);
-                    $('#aigdweight').val(data[key].weight)
-                    $('#aigdheight').val(data[key].height)
-                    $('#aigdpemeriksaan').val(data[key].pemeriksaan)
-                    $('#aigdlokalis').val(data[key].lokalis)
-                    $('#aigdv_33').val(data[key].v_33)
-                    $('#aigdv_34').val(data[key].v_34)
-                    $('#aigdv_35').val(data[key].v_35)
-                    $('#aigddiagnosa_desc').val(data[key].diagnosa_desc)
-                    $('#aigdv_36').val(data[key].v_36)
-                    $('#aigdv_37').val(data[key].v_37)
-                    $('#aigdinstruction').val(data[key].instruction)
-                    $('#aigddescription').val(data[key].description)
-                    $('#aigdt_010').val(data[key].t_010)
-                    $("input[name=t_010][value=" + data[key].t_010 + "]").prop('checked', true);
-                    $("input[name=t_011][value=" + data[key].t_011 + "]").prop('checked', true);
-                    $('#aigdt_011').val(data[key].t_011)
-                    $('#aigddirujuk').val(data[key].dirujuk)
-                    $('#aigdv_31').val(data[key].v_31)
-                    $('#aigdteraphy_desc').val(data[key].teraphy_desc)
-                    $('#aigddiagnosa_kerja').val(data[key].diagnosa_kerja)
-                    $('#aigdeducation_date').val(data[key].education_date)
-                    $('#aigdv_39').val(data[key].v_39)
-                    $('#aigdv_40').val(data[key].v_40)
-                    $('#aigdpetugas').val(data[key].petugas)
-
-                    disableAssessmentIgd()
-                });
-                if (data.length == 0) {
-                    setDataassessmentIgd()
-                }
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                // clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                // clicked_submit_btn.button('reset');
-            }
-        });
-    }
 </script>
 
 <script type="text/javascript">
@@ -410,6 +254,20 @@ foreach ($aValue as $key => $value) {
             }
         });
     }));
+
+    function generateSatelite() {
+        addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat')
+        addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat')
+        addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat')
+        addGizi(1, 0, 'arpbody_id', 'bodyGiziPerawat')
+        addTriage(1, 0, 'arpbody_id', 'bodyTriagePerawat')
+        addADL(1, 0, 'arpbody_id', 'bodyADLPerawat')
+        addDekubitus(1, 0, 'arpbody_id', 'bodyDekubitusPerawat')
+        addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')
+        addEducationForm(1, 0, 'arpbody_id', 'bodyEducationFormPerawat')
+        addGcs(1, 0, 'arpbody_id', 'bodyGcsPerawat')
+        addIntegumen(1, 0, 'arpbody_id', 'bodyIntegumenPerawat')
+    }
 
     function getAssessmentKeperawatan() {
         $.ajax({
@@ -498,6 +356,7 @@ foreach ($aValue as $key => $value) {
         $("#arpkal_id").val('<?= $visit['kal_id']; ?>')
         $("#arppetugas_id").val('<?= user()->username; ?>')
         $("#arppetugas").val('<?= user()->getFullname(); ?>')
+        $("#arpvs_status_id").val(1)
 
         $('#keperawatanListLinkAll').html("")
 
@@ -532,6 +391,7 @@ foreach ($aValue as $key => $value) {
         $("#arpAddDocument").hide()
         $("#arpDocument").show()
         enableARP()
+        generateSatelite()
     }
 
     function fillDataArp(index) {
@@ -586,7 +446,7 @@ foreach ($aValue as $key => $value) {
                         .append($("<td>").append($("<b>").html(value.examination_date)))
                         .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                         .append($("<td>").append($("<b>").html(value.anamnase)))
-                        .append($("<td>").append($("<b>").html('BB: ' + ex.weight + 'Kg; TB: ' + ex.height + 'cm; ' +
+                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
                             value.temperature + '°C; ' +
                             value.nadi + '/menit; ' +
                             value.tension_upper + 'mmHg; ' +
@@ -787,6 +647,16 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '</div>' +
                     '</div>' +
+                    '<div class="row mt-4">' +
+                    '<div class="col-md-3">' +
+                    '<h5 class="font-size-14 mb-4 badge bg-primary">Tanggal:</h5>' +
+                    '</div>' +
+                    '<div class="col-md-9">' +
+                    '<div class="form-check mb-3">' +
+                    '<input id="ases022examination_date" name="examination_date" type="datetime-local" class="form-control" value="' + get_date() + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
                     '<div class="row">' +
                     '<div class="col-md-12">' +
                     '<h5 class="font-size-14 mb-4 badge bg-primary">Indikator:</h5>' +
@@ -808,7 +678,7 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="panel-footer text-end mb-4">' +
                     '<button type="submit" id="formPainMonitoringSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                    '<button style="margin-right: 10px" type="button" id="formPainMonitoringEdit' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                    '<button style="margin-right: 10px" type="button" id="formPainMonitoringEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -841,6 +711,7 @@ foreach ($aValue as $key => $value) {
 
 
                 $("#formPainMonitoring" + bodyId).on('submit', (function(e) {
+                    $("#ases022document_id" + bodyId).val($("#" + documentId).val())
                     let clicked_submit_btn = $(this).closest('form').find(':submit');
                     e.preventDefault();
                     $.ajax({
@@ -905,7 +776,7 @@ foreach ($aValue as $key => $value) {
             <?php } ?>
         <?php } ?>
         index++
-        $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyPainMonitoringMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function aValueParamPain(parent_id, p_type, body_id, flag) {
@@ -1295,7 +1166,6 @@ foreach ($aValue as $key => $value) {
     }
 
     function getPainMonitoring(bodyId, container) {
-        $("#" + container).html("")
         // $("#bodyPainMonitoring").html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPainMonitoring',
@@ -1315,10 +1185,12 @@ foreach ($aValue as $key => $value) {
                 painIntervensi = data.painIntervensi
 
                 $.each(painMonitoring, function(key, value) {
+                    $("#" + container).html("")
                     if (value.document_id == $("#arpbody_id").val()) {
-                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoring")
+                        $("#bodyPainMonitoringPerawat").html("")
+                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
-                        console.log("asdf")
+                        $("#bodyPainMonitoringMedis").html("")
                         addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis")
                     }
                 })
@@ -1355,7 +1227,8 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
+                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" >' +
+                    // '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
                     <?php foreach ($aType as $key1 => $value1) { ?> <?php if ($value1['parent_id'] == $value['parent_id']) { ?> '<option value="<?= $value1['p_type']; ?>"><?= $value1['p_description']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
@@ -1471,6 +1344,7 @@ foreach ($aValue as $key => $value) {
                     .append('<input name="modified_by" id="triagemodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
                     .append('<input name="p_type" id="triagep_type' + bodyId + '" type="hidden" value="" class="form-control" />')
                 $("#formTriage" + bodyId).on('submit', (function(e) {
+                    $("#triagedocument_id" + bodyId).val($("#" + document_id).val())
                     let clicked_submit_btn = $(this).closest('form').find(':submit');
                     e.preventDefault();
                     $.ajax({
@@ -1527,7 +1401,7 @@ foreach ($aValue as $key => $value) {
             <?php } ?>
         <?php } ?>
         index++
-        $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'' + document_id + '\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
 
     }
 
@@ -1619,10 +1493,14 @@ foreach ($aValue as $key => $value) {
 
                 $.each(triage, function(key, value) {
                     console.log(value.document_id)
-                    if (value.document_id == $("#arpbody_id").val())
-                        addTriage(0, key, "arpbody_id", "bodyTriage")
-                    if (value.document_id == $("#armpasien_diagnosa_id").val())
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyTriagePerawat").html("")
+                        addTriage(0, key, "arpbody_id", "bodyTriagePerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyTriageMedis").html("")
                         addTriage(0, key, "armpasien_diagnosa_id", "bodyTriageMedis")
+                    }
 
                 })
             },
@@ -1722,7 +1600,7 @@ foreach ($aValue as $key => $value) {
                     .append('<input name="visit_id" id="apgarvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
                     .append('<input name="trans_id" id="apgartrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
                     .append('<input name="body_id" id="apgarbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-                    .append('<input name="document_id" id="apgardocument_id' + documentId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+                    .append('<input name="document_id" id="apgardocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
                     .append('<input name="no_registration" id="apgarno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
                     .append('<input name="clinic_id" id="apgarclinic_id' + bodyId + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
                     .append('<input name="employee_id" id="apgaremployee_id' + bodyId + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
@@ -1734,6 +1612,7 @@ foreach ($aValue as $key => $value) {
                     .append('<input name="modified_by" id="apgarmodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
                     .append('<input name="p_type" id="apgarp_type' + bodyId + '" type="hidden" value="ASES032" class="form-control" />')
                 $("#formApgar" + bodyId).on('submit', (function(e) {
+                    $("#apgardocument_id" + bodyId).val($("#" + document_id).val())
                     let clicked_submit_btn = $(this).closest('form').find(':submit');
                     e.preventDefault();
                     $.ajax({
@@ -1748,9 +1627,9 @@ foreach ($aValue as $key => $value) {
                             clicked_submit_btn.button('loading');
                         },
                         success: function(data) {
-                            $("#formApgarSaveBtn" + bodyId).show()
-                            $("#formApgarEditBtn" + bodyId).hide()
-                            $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", false)
+                            $("#formApgarSaveBtn" + bodyId).hide()
+                            $("#formApgarEditBtn" + bodyId).show()
+                            $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", true)
                             clicked_submit_btn.button('reset');
                         },
                         error: function(xhr) { // if error occured
@@ -1875,10 +1754,14 @@ foreach ($aValue as $key => $value) {
                 apgarDetil = data.apgarDetil
 
                 $.each(apgar, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addApgar(0, key, "arpbody_id", "bodyApgar")
-                    if (value.document_id == $("#armpasien_diagnosa_id").val())
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyApgarPerawat").html("")
+                        addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyApgarMedis").html("")
                         addApgar(0, key, "armpasien_diagnosa_id", "bodyApgarMedis")
+                    }
                 })
             },
             error: function() {
@@ -1889,7 +1772,8 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addDerajatStabilitas(flag, index) {
+    function addDerajatStabilitas(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -1898,7 +1782,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = stabilitas[index].body_id
         }
-        $("#bodyStabilitas").append(
+        $("#" + container).append(
             '<form id="formStabilitas' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">' +
             '<div class="card border border-1 rounded-4 m-4 p-4">' +
             '<div class="card-body">' +
@@ -1969,7 +1853,7 @@ foreach ($aValue as $key => $value) {
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="stabilitasno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="clinic_id" id="stabilitasclinic_id' + bodyId + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
             .append('<input name="employee_id" id="stabilitasemployee_id' + bodyId + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
@@ -1981,6 +1865,7 @@ foreach ($aValue as $key => $value) {
             .append('<input name="modified_by" id="stabilitasmodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
             .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="ASES032" class="form-control" />')
         $("#formStabilitas" + bodyId).on('submit', (function(e) {
+            $("#stabilitasdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -2028,11 +1913,11 @@ foreach ($aValue as $key => $value) {
             })
         }
         index++
-        $("#addDerajatStabilitasButton").html('<a onclick="addDerajatStabilitas(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addDerajatStabilitasButton").html('<a onclick="addDerajatStabilitas(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getStabilitas(bodyId) {
-        $("#bodyStabilitas").html("")
+    function getStabilitas(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getStabilitas',
             type: "POST",
@@ -2051,7 +1936,9 @@ foreach ($aValue as $key => $value) {
 
                 $.each(stabilitas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
-                        addDerajatStabilitas(0, key)
+                        addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat")
+                    if (value.document_id == $("#armpasien_diagnosa_id").val())
+                        addDerajatStabilitas(0, key, "armpasien_diagnosa_id", "bodyStabilitasMedis")
                 })
             },
             error: function() {
@@ -2146,6 +2033,48 @@ foreach ($aValue as $key => $value) {
                 .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(billPerawat.amount_paid))))
                 .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         }
+
+        $("#radChargesBody")
+            .append('<input name="treatment[]" id="aradtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
+            .append('<input name="treat_date[]" id="aradtreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="aradsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="aradamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="discount[]" id="araddiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+            .append('<input name="subsidisat[]" id="aradsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+            .append('<input name="subsidi[]" id="aradsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+
+            .append('<input name="bill_id[]" id="aradbill_id' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="trans_id[]" id="aradtrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="no_registration[]" id="aradno_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="theorder[]" id="aradtheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
+            .append('<input name="visit_id[]" id="aradvisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="org_unit_code[]" id="aradorg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="class_id[]" id="aradclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
+            .append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+            .append('<input name="payor_id[]" id="aradpayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="theid[]" id="aradtheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
+            .append('<input name="thename[]" id="aradthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
+            .append('<input name="theaddress[]" id="aradtheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="status_pasien_id[]" id="aradstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
+            .append('<input name="isRJ[]" id="aradisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="gender[]" id="aradgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
+            .append('<input name="ageyear[]" id="aradageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
+            .append('<input name="agemonth[]" id="aradagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
+            .append('<input name="ageday[]" id="aradageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
+            .append('<input name="kal_id[]" id="aradkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="aradclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="bed_id[]" id="aradbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
+            .append('<input name="clinic_id[]" id="aradclinic_id' + key + '" type="hidden" value="P016" class="form-control" />')
+            .append('<input name="clinic_id_from[]" id="aradclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
+            .append('<input name="exit_date[]" id="aradexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
+            .append('<input name="cashier[]" id="aradcashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
+            .append('<input name="modified_from[]" id="aradmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="islunas[]" id="aradislunas' + key + '" type="hidden" value="0" class="form-control" />')
+            .append('<input name="measure_id[]" id="aradmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="tarif_id[]" id="aradtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+
 
 
 
@@ -2694,7 +2623,7 @@ foreach ($aValue as $key => $value) {
             bodyId = date.toISOString().substring(0, 23);
             bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         } else {
-            bodyId = napasAll[index].body_id
+            bodyId = fallRisk[index].body_id
         }
         $("#" + container).append(
             $('<form id="formPernapasan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
@@ -2886,7 +2815,7 @@ foreach ($aValue as $key => $value) {
             $("#formPernapasanEditBtn" + bodyId).hide()
             $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
-            var napas = napasAll[index];
+            var napas = fallRisk[index];
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES041') {
                     // if ($value['entry_type'] == '3') {
@@ -2935,10 +2864,10 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                napasAll = data.napas
+                fallRisk = data.napas
                 // stabilitasDetail = data.stabilitasDetail
 
-                $.each(napasAll, function(key, value) {
+                $.each(fallRisk, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
                         addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
                     else if (value.document_id == $("#armpasien_diagnosa_id").val())
@@ -2961,7 +2890,7 @@ foreach ($aValue as $key => $value) {
             bodyId = date.toISOString().substring(0, 23);
             bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         } else {
-            bodyId = napasAll[index].body_id
+            bodyId = fallRisk[index].body_id
         }
 
         var fallRiskContent = `
@@ -2969,6 +2898,14 @@ foreach ($aValue as $key => $value) {
             <div class="card border border-1 rounder-4 m-4 p-4">
                 <div class="card-body">
                     <div class="col-md-12">
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Tanggal:</h5>
+                            </div>
+                            <div class="col-md-9">
+                                <input id="examination_date` + bodyId + `" name="examination_date" type="datetime-local" class="form-control" value="2024-05-31 14:15">
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Alat Ukur:</h5>
@@ -2978,7 +2915,7 @@ foreach ($aValue as $key => $value) {
                                     <?php if ($value1['parent_id'] == '001') {
                                     ?>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>` + bodyId + `" value=" <?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', '` + bodyId + `', '` + container + `')">
+                                            <input class="form-check-input" type="radio" name="parameter<?= $value1['parent_id']; ?>" id="atype<?= $value1['p_type']; ?>` + bodyId + `" value="<?= $value1['p_type']; ?>" onchange="aValueParamFallRisk('<?= $value1['parent_id']; ?>', '<?= $value1['p_type']; ?>', '` + bodyId + `', '` + container + `')">
                                             <label class="form-check-label" for="atype<?= $value1['p_type']; ?>` + bodyId + `">
                                                 <?= $value1['p_description']; ?>
                                             </label>
@@ -3034,7 +2971,9 @@ foreach ($aValue as $key => $value) {
             .append('<input name="clinic_id" id="fallriskclinic_id' + bodyId + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
             .append('<input name="employee_id" id="fallriskemployee_id' + bodyId + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
             .append('<input name="p_type" id="fallriskp_type' + bodyId + '" type="hidden" value="ASES041" class="form-control" />')
+            .append('<input name="modified_by" id="fallriskmodified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>" class="form-control" />')
         $("#formFallRisk" + bodyId).on('submit', (function(e) {
+            $("#fallriskdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -3068,32 +3007,26 @@ foreach ($aValue as $key => $value) {
             $("#formFallRiskEditBtn" + bodyId).hide()
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
-            var napas = napasAll[index];
-            <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES041') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
-            ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(napas.<?= strtolower($value['column_name']); ?>)
-                    <?php
+            var fallselect = fallRisk[index];
 
-                    } else if ($value['entry_type'] == '2') {
-                    ?>
-                        if (napas.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
-                            <?php foreach ($aValue as $key1 => $value1) {
-                                if ($value1['p_type'] == 'ASES041' && $value1['value_score'] == '99') {
-                            ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(napas.<?= strtolower($value1['value_info']); ?>)
-                            <?php
-                                }
-                            } ?>
-                        }
-            <?php
-                    }
+            $.each(atype, function(key, value) {
+                if (value.parent_id == '001') {
+                    console.log("#atype" + fallselect.p_type + bodyId)
+                    $("#atype" + fallselect.p_type + bodyId).prop("checked", true)
                 }
-            } ?>
+            })
+
+
+            aValueParamFallRisk('001', fallselect.p_type, bodyId, container)
+
+            $.each(fallRiskDetail, function(key, value) {
+                if (value.body_id == fallselect.body_id) {
+                    console.log("#parent_id001" + value.value_id + value.body_id)
+                    $("#parent_id001" + value.value_id + value.body_id).prop("checked", true)
+                    aValueParamScore('001', value.p_type, value.parameter_id, value.value_score, bodyId)
+                }
+            })
+
             $("#formFallRiskSaveBtn" + bodyId).hide()
             $("#formFallRiskEditBtn" + bodyId).show()
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", true)
@@ -3121,7 +3054,7 @@ foreach ($aValue as $key => $value) {
                 $.each(avalue, function(key1, value1) {
                     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
                         $("#" + parent_id + value.p_type + value.parameter_id + bodyId).append(
-                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ', ' + bodyId + ')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + bodyId + '">' + value1.value_desc + '</label></div>'
+                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ', \'' + bodyId + '\')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + bodyId + '">' + value1.value_desc + '</label></div>'
                         )
                     }
                 });
@@ -3133,14 +3066,26 @@ foreach ($aValue as $key => $value) {
     }
 
     function aValueParamScore(parent_id, p_type, parameter_id, score, bodyId) {
-        console.log('#score' + parent_id + p_type + parameter_id + bodyId + '')
-        console.log(score)
+        // console.log('#score' + parent_id + p_type + parameter_id + bodyId)
+        // console.log(score)
         fallRiskScore['parameter_id' + parameter_id] = score;
-        $('#score' + parent_id + p_type + parameter_id + bodyId + '').html(score)
+
+        $('#score' + parent_id + p_type + parameter_id + bodyId).html(score)
+
         var total = 0;
-        for (var key in fallRiskScore) {
-            total += fallRiskScore[key]
-        }
+
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == p_type) {
+                var valuenya = parseInt($("#score" + parent_id + value.p_type + value.parameter_id + bodyId).html())
+                console.log(valuenya)
+                total += valuenya
+            }
+        });
+
+
+        // for (var key in fallRiskScore) {
+        //     total += fallRiskScore[key]
+        // }
         $("#totalScore" + parent_id + p_type + bodyId).html(total)
     }
 
@@ -3159,14 +3104,17 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                napasAll = data.napas
-                // stabilitasDetail = data.stabilitasDetail
+                fallRisk = data.fallRisk
+                fallRiskDetail = data.fallRiskDetail
 
-                $.each(napasAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addFallRisk(0, key, "arpbody_id", "bodyFallRisk")
-                    else if (value.document_id == $("#armpasien_diagnosa_id").val())
+                $.each(fallRisk, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyFallRiskPerawat").html("")
+                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyFallRiskMedis").html("")
                         addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis")
+                    }
                 })
             },
             error: function() {
@@ -3685,7 +3633,8 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addIntegumen(flag, index) {
+    function addIntegumen(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -3694,7 +3643,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = integumenAll[index].body_id
         }
-        $("#bodyIntegumen").append(
+        $("#" + container).append(
             $('<form id="formIntegumen' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -3835,10 +3784,11 @@ foreach ($aValue as $key => $value) {
             .append('<input name="visit_id" id="integumensvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="integumenstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="integumensbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="integumensdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="integumensdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="integumensno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="integumensp_type' + bodyId + '" type="hidden" value="ASES036" class="form-control" />')
         $("#formIntegumen" + bodyId).on('submit', (function(e) {
+            $("#integumensdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -3912,11 +3862,11 @@ foreach ($aValue as $key => $value) {
             $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
-        $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getIntegumen(bodyId) {
-        $("#bodyIntegumen").html("")
+    function getIntegumen(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getIntegumen',
             type: "POST",
@@ -3934,8 +3884,14 @@ foreach ($aValue as $key => $value) {
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(integumenAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addIntegumen(0, key)
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyIntegumenPerawat").html("")
+                        addIntegumen(0, key, "arpbody_id", "bodyIntegumenPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyIntegumenMedis").html("")
+                        addIntegumen(0, key, "armpasien_diagnosa_id", "bodyIntegumenMedis")
+                    }
                 })
             },
             error: function() {
@@ -3945,7 +3901,8 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 <script type="text/javascript">
-    function addADL(flag, index) {
+    function addADL(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -3954,7 +3911,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = adlAll[index].body_id
         }
-        $("#bodyADL").append(
+        $("#" + container).append(
             $('<form id="formADL' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -4088,10 +4045,11 @@ foreach ($aValue as $key => $value) {
             .append('<input name="visit_id" id="ADLsvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="ADLstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="ADLsbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="ADLsdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="ADLsdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="ADLsno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="ADLsp_type' + bodyId + '" type="hidden" value="ASES016" class="form-control" />')
         $("#formADL" + bodyId).on('submit', (function(e) {
+            $("#ADLsdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -4196,11 +4154,11 @@ foreach ($aValue as $key => $value) {
         }
 
         index++
-        $("#addADLButton").html('<a onclick="addADL(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addADLButton").html('<a onclick="addADL(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getADL(bodyId) {
-        $("#bodyADL").html("")
+    function getADL(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getADL',
             type: "POST",
@@ -4218,8 +4176,14 @@ foreach ($aValue as $key => $value) {
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(adlAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addADL(0, key)
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyADLPerawat".html(""))
+                        addADL(0, key, "arpbody_id", "bodyADLPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyADLMedis").html("")
+                        addADL(0, key, "armapsien_diagnosa_id", "bodyADLMedis")
+                    }
                 })
             },
             error: function() {
@@ -4229,7 +4193,8 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 <script type="text/javascript">
-    function addDekubitus(flag, index) {
+    function addDekubitus(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -4238,7 +4203,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = dekubitusAll[index].body_id
         }
-        $("#bodyDekubitus").append(
+        $("#" + container).append(
             $('<form id="formDekubitus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -4361,14 +4326,15 @@ foreach ($aValue as $key => $value) {
             }
         } ?>
 
-        $("#formDekubitus" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
-            .append('<input name="no_registration" id="stabilitasno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="ASES047" class="form-control" />')
+        $("#formDekubitus" + bodyId).append('<input name="org_unit_code" id="dekubitusorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="dekubitusvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="dekubitustrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="dekubitusbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="dekubitusdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
+            .append('<input name="no_registration" id="dekubitusno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="dekubitusp_type' + bodyId + '" type="hidden" value="ASES047" class="form-control" />')
         $("#formDekubitus" + bodyId).on('submit', (function(e) {
+            $("#dekubitusdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -4447,11 +4413,11 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addDekubitusButton").html('<a onclick="addDekubitus(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addDekubitusButton").html('<a onclick="addDekubitus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getDekubitus(bodyId) {
-        $("#bodyDekubitus").html("")
+    function getDekubitus(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getDekubitus',
             type: "POST",
@@ -4469,7 +4435,9 @@ foreach ($aValue as $key => $value) {
 
                 $.each(dekubitusAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val())
-                        addDekubitus(0, key)
+                        addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat")
+                    if (value.document_id == $("#armpasien_diagnosa_id").val())
+                        addDekubitus(0, key, 'armpasien_diagnosa_id', "bodyDekubitusMedis")
                 })
             },
             error: function() {
@@ -6255,7 +6223,8 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addGizi(flag, index) {
+    function addGizi(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -6264,7 +6233,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = giziAll[index].body_id
         }
-        $("#bodyGizi").append(
+        $("#" + container).append(
             $('<form id="formGizi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -6628,7 +6597,7 @@ foreach ($aValue as $key => $value) {
             .append('<input name="visit_id" id="gizivisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="gizitrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="gizibody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="gizidocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="gizidocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="gizino_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="thename" id="gizithename' + bodyId + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
             .append('<input name="theaddress" id="gizitheaddress' + bodyId + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
@@ -6641,6 +6610,7 @@ foreach ($aValue as $key => $value) {
             // .append('<input name="no_registration" id="giziparent_id' + bodyId + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
             .append('<input name="p_type" id="gizip_type' + bodyId + '" type="hidden" value="ASES046" class="form-control" />')
         $("#formGizi" + bodyId).on('submit', (function(e) {
+            $("#gizidocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -6743,7 +6713,7 @@ foreach ($aValue as $key => $value) {
             $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", true)
         }
         index++
-        $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function checkImt(score) {
@@ -6785,8 +6755,8 @@ foreach ($aValue as $key => $value) {
         }
     }
 
-    function getGizi(bodyId) {
-        $("#bodyGizi").html("")
+    function getGizi(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getGizi',
             type: "POST",
@@ -6804,8 +6774,14 @@ foreach ($aValue as $key => $value) {
                 giziDetailAll = data.giziDetail
 
                 $.each(giziAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addGizi(0, key)
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGiziPerawat").html("")
+                        addGizi(0, key, "arpbody_id", "bodyGiziPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyGiziMedis").html("")
+                        addGizi(0, key, "armpasien_diagnosa_id", "bodyGiziMedis")
+                    }
                 })
             },
             error: function() {
@@ -6816,7 +6792,8 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addEducationForm(flag, index) {
+    function addEducationForm(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -6825,7 +6802,7 @@ foreach ($aValue as $key => $value) {
         } else {
             bodyId = educationFormAll[index].body_id
         }
-        $("#bodyEducationForm").append(
+        $("#" + container).append(
             $('<form id="formEducationForm' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
@@ -7013,10 +6990,11 @@ foreach ($aValue as $key => $value) {
             .append('<input name="visit_id" id="EducationFormsvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="EducationFormstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="EducationFormsbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="EducationFormsdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="document_id" id="EducationFormsdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
             .append('<input name="no_registration" id="EducationFormsno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
             .append('<input name="p_type" id="EducationFormsp_type' + bodyId + '" type="hidden" value="GEN0013 " class="form-control" />')
         $("#formEducationForm" + bodyId).on('submit', (function(e) {
+            $("#EducationFormsdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -7078,11 +7056,11 @@ foreach ($aValue as $key => $value) {
             } ?>
         }
         index++
-        $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getEducationForm(bodyId) {
-        $("#bodyEducationForm").html("")
+    function getEducationForm(bodyId, container) {
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationForm',
             type: "POST",
@@ -7100,8 +7078,14 @@ foreach ($aValue as $key => $value) {
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(educationFormAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addEducationForm(0, key)
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyEducationFormPerawat").html("")
+                        addEducationForm(0, key, "arpbody_id", "bodyEducationFormPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyEducationFormMedis").html("")
+                        addEducationForm(0, key, "armpasien_diagnosa_id", "bodyEducationFormMedis")
+                    }
                 })
             },
             error: function() {
@@ -7718,6 +7702,14 @@ foreach ($aValue as $key => $value) {
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
                     .append($('<h4 class="card-title">').html("GCS"))
+                    .append(`<div class="row mb-4">
+                            <div class="col-md-3">
+                                <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Tanggal:</h5>
+                            </div>
+                            <div class="col-md-9">
+                                <input id="gcsexamination_date` + bodyId + `" name="examination_date" type="datetime-local" class="form-control" value="` + get_date() + `">
+                            </div>
+                        </div>`)
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
                                                                                     if ($value['p_type'] == 'GEN0011') {
@@ -7738,9 +7730,9 @@ foreach ($aValue as $key => $value) {
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
                                                                                                 if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
                                                                                     ?>
-                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
-                                                                                                                                                        }
-                                                                                                                                                    } ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                                                            }
+                                                                                                                                                                                        } ?>
                                                 )
                                             )
                                         ) <?php
@@ -7756,6 +7748,12 @@ foreach ($aValue as $key => $value) {
                             .append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Score</label>')
                                 .append($('<div class="col-md-8">')
+                                    .append($('<input type="text" id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">'))
+                                )
+                            )
+                            .append($('<div class="row">')
+                                .append('<label class="col-md-4 col-form-label mb-4">Kesimpulan</label>')
+                                .append($('<div class="col-md-8">')
                                     .append($('<select id="GCS_DESC' + bodyId + '" name="GCS_DESC" class="form-control">')
                                         .append('<option>-</option>')
                                         .append('<option value="1">Composmentis</option>')
@@ -7765,7 +7763,6 @@ foreach ($aValue as $key => $value) {
                                         .append('<option value="5">Sopor</option>')
                                         .append('<option value="6">Coma</option>')
                                     )
-                                    .append($('<input type="text" id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">'))
                                 )
                             )
                         )
@@ -7799,8 +7796,10 @@ foreach ($aValue as $key => $value) {
             if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
+            console.log(conclutionScore)
 
-            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+
+            $('#GCS_SCORE' + bodyId).val(totalScore)
             $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001102" + bodyId).on("change", function() {
@@ -7823,8 +7822,10 @@ foreach ($aValue as $key => $value) {
             if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
+            console.log(conclutionScore)
 
-            $('#GCS_SCORE' + bodyId).val(conclutionScore)
+
+            $('#GCS_SCORE' + bodyId).val(totalScore)
             $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001103" + bodyId).on("change", function() {
@@ -7875,14 +7876,16 @@ foreach ($aValue as $key => $value) {
             }
         } ?>
 
-        $("#formGcs" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="stabilitasdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
-            .append('<input name="no_registration" id="stabilitasno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="GEN0011" class="form-control" />')
+        $("#formGcs" + bodyId).append('<input name="org_unit_code" id=gcsorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id=gcsvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id=gcstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id=gcsbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id=gcsdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
+            .append('<input name="no_registration" id=gcsno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id=gcsp_type' + bodyId + '" type="hidden" value="GEN0011" class="form-control" />')
+            .append('<input name="modified_by" id=gcsmodified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>" class="form-control" />')
         $("#formGcs" + bodyId).on('submit', (function(e) {
+            $("#gcsdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
@@ -7947,6 +7950,7 @@ foreach ($aValue as $key => $value) {
                 }
             } ?>
             $("#GCS_SCORE" + bodyId).val(gcs.gcs_score)
+            $("#GCS_DESCRIPTION" + bodyId).val(gcs.gcs_score)
             $.each(gcsDetailAll, function(key, value) {
                 if (value.body_id == gcs.body_id) {
                     console.log("#val" + value.p_type + value.value_id + bodyId)
@@ -7981,10 +7985,14 @@ foreach ($aValue as $key => $value) {
                 gcsDetailAll = data.gcsDetail
 
                 $.each(gcsAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
-                        addGcs(0, key, "arpbody_id", "bodyGcs")
-                    if (value.document_id == $("#armpasien_diagnosa_id").val())
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGcsPerawat").html("")
+                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyGcsMedis").html()
                         addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis")
+                    }
                 })
             },
             error: function() {

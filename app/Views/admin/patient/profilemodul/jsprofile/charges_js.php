@@ -588,7 +588,7 @@
     }
 
     function addRowBill(container, identifier, key, i, counter) {
-        $("#" + container).append($("<tr id=\"" + key + "\">")
+        $("#" + container).append($("<tr id=\"" + counter + "\">")
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
             .append($("<td>").attr("id", identifier + "displaytreat_date" + counter).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
@@ -604,7 +604,7 @@
             .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
             .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
             .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
-            .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
             // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
             // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
             .append('<input name="treatment[]" id="' + identifier + 'treatment' + counter + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
@@ -660,17 +660,26 @@
         )
 
 
-        $("#" + identifier + "quantity" + key).keydown(function(e) {
+        $("#" + identifier + "quantity" + counter).keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
         });
-        $('#' + identifier + 'quantity' + key).on("input", function() {
+        $('#' + identifier + 'quantity' + counter).on("input", function() {
             var dInput = this.value;
-            console.log(dInput);
-            $("#" + identifier + "amount_paid" + key).val($("#aamount" + key).val() * dInput)
-            $("#" + identifier + "displayamount_paid" + key).val($("#aamount" + key).val() * dInput)
-            $("#" + identifier + "atagihan" + key).val($("#aamount" + key).val() * dInput)
-            $("#" + identifier + "amount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
-            $("#" + identifier + "displayamount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
+            // console.log(dInput);
+            // console.log("#" + identifier + "displayamount_paid" + counter)
+            // console.log("#" + identifier + "amount" + counter)
+            $("#" + identifier + "amount_paid" + counter).val(parseFloat($("#" + identifier + "amount" + counter).val()) * dInput)
+            $("#" + identifier + "displayamount_paid" + counter).html(parseFloat($("#" + identifier + "amount" + counter).val()) * dInput)
+            $("#" + identifier + "tagihan" + counter).val(parseFloat($("#" + identifier + "amount" + counter).val()) * dInput)
+            $("#" + identifier + "amount_paid_plafond" + counter).val(parseFloat($("#" + identifier + "amount_plafond" + counter).val()) * dInput)
+            $("#" + identifier + "displayamount_paid_plafond" + counter).html(parseFloat($("#" + identifier + "amount_plafond" + counter).val()) * dInput)
+
+
+            // $("#alabamount_paid" + key).val($("#alabamount" + key).val() * dInput)
+            // $("#alabdisplayamount_paid" + key).html(formatCurrency($("#alabamount" + key).val() * dInput))
+            // $("#alabtagihan" + key).val($("#alabamount" + key).val() * dInput)
+            // $("#alabamount_paid_plafond" + key).val($("#alabamount_plafond" + key).val() * dInput)
+            // $("#alabdisplayamount_paid_plafond" + key).html(formatCurrency($("#alabamount_plafond" + key).val() * dInput))
         })
         if (container == 'chargesBody') {
             $('#' + identifier + 'simpanBillBtn' + counter + '').hide()
@@ -700,6 +709,55 @@
             billpolipembayaran += billJson[key].bayar
             billpoliretur += billJson[key].retur
         }
+    }
+
+    function delBill(identifier, counter) {
+        var billId = $("#" + identifier + "bill_id" + counter).val()
+        var btn;
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/delBill/' + billId,
+            type: "DELETE",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                btn = $("#delBillBtn" + billId).html()
+                $("#delBillBtn" + billId).html("Loading...")
+            },
+            success: function(data) {
+                $("#delBillBtn" + billId).html(btn)
+                alert(data.message)
+                var nomor = '<?= $visit['no_registration']; ?>';
+                var ke = '%'
+                var mulai = '2023-08-01' //tidak terpakai
+                var akhir = '2023-08-31' //tidak terpakai
+                var lunas = '%'
+                // var klinik = '<?= $visit['clinic_id']; ?>'
+                var klinik = '%'
+                var rj = '%'
+                var status = '%'
+                var nota = '%'
+                var trans = '<?= $visit['trans_id']; ?>'
+
+                billJson = [];
+                $("#chargesBody").html("");
+                tagihan = 0.0;
+                subsidi = 0.0;
+                potongan = 0.0;
+                pembulatan = 0.0;
+                pembayaran = 0.0;
+                retur = 0.0;
+                total = 0.0;
+                lastOrder = 0;
+
+                getBillPoli(nomor, ke, mulai, akhir, lunas, klinik, rj, status, nota, trans);
+
+            },
+            error: function() {
+                $("#delBillBtn" + billId).html(btn)
+            }
+        });
     }
 
     function getInacbg(visit) {

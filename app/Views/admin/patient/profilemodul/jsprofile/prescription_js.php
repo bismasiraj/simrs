@@ -591,7 +591,7 @@
         var dose = 0;
         var origDose = '';
         var description = '';
-        var brandId = '';
+        var brandId = '00000';
         var measureId = '';
         var measudeId2 = '';
         var doctor = doctor
@@ -630,6 +630,7 @@
         var clinicIdFrom = '<?= $visit['clinic_id']; ?>'
         var islunas = 0
         var moduleId = '';
+        var soldstatus = $("#jenisresep").val()
         if (racikan == 1)
             var measureIdName = 'Bks';
         else
@@ -637,7 +638,11 @@
 
 
 
-        if (racikan == 0) {
+        if (racikan == 0) { //non racikan
+            tarifId = '1201008';
+            treatment = "PEMBELIAN OBAT NON RACIKAN"
+
+
             $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'non-racikan')
                 .append($('<td rowspan="2">')
                     .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
@@ -670,13 +675,19 @@
                 .append($("<td>").append(signa4Div))
                 .append($("<td>").append(signa5Div))
             )
-        } else if (racikan == 1 && theOrder == '1') {
+        } else if (racikan == 1 && theOrder == '1') { //racikan
+            tarifId = '1201007';
+            treatment = "PEMBELIAN OBAT RACIKAN"
             $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'racikan')
                 .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe)
                     .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 )
+                // .append($('<td>')
+                //     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
+                // )
                 .append($('<td rowspan="2">').attr("id", "tddescriptionresep" + resepKe)
-                    .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                    // .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                    .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
 
                 )
                 .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe)
@@ -713,7 +724,7 @@
                 .append($("<td>").attr("id", "tdsigna5Div" + resepKe)
                     .append(signa5Div))
             )
-        } else {
+        } else { //komponen
             $("#tdresep_keresep" + resepKe).attr('rowspan', theOrder)
             $("#tddescriptionresep" + resepKe).attr('rowspan', 1)
             $("#tdjml_bks" + resepKe).attr('rowspan', 1)
@@ -733,7 +744,7 @@
                 //     // .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 // )
                 .append($('<td>')
-                    .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                    .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
                 )
                 .append($('<td>')
                     // .append('<input type="text" name="dose_presc[]" id="aordose_presc' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
@@ -761,7 +772,6 @@
                 .append($('<td>')
                     .append('<button type="button" onclick="removeKomopnen(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                 )
-
             )
         }
 
@@ -831,10 +841,10 @@
             .append('<input name="dose2[]" id="aordose2' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="sell_price[]" id="aorsell_price' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="module_id[]" id="aormodule_id' + billId + '" type="hidden" class="form-control" />')
+            .append('<input name="sold_status[]" id="aorsold_status' + billId + '" type="hidden" class="form-control" />')
 
-        if (racikan == 0) {
-            $("#eresepBody").append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
-        }
+        $("#eresepBody").append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
+        if (racikan == 0) {}
 
         $("#aordose1" + billId).val(1);
         $("#aordose2" + billId).val(1);
@@ -896,8 +906,10 @@
         $("#aorjml_bks" + billId).val(jmlBks)
         $("#aordose" + billId).val(dose)
         $("#aormodule_id" + billId).val(moduleId);
+        $("#aorsold_status" + billId).val(soldstatus);
 
-        if (racikan != 1) {
+        if (true) {
+            // if (racikan != 1) {
             initializeResepSelect2('aordescription1' + billId);
             $("#aordescription" + billId).val(description)
         }
@@ -1075,7 +1087,7 @@
                         .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe + '' + resepNo)
                             .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         )
-                        .append($('<td rowspan="2">').attr("id", "tddescriptionresep" + resepKe + '' + resepNo)
+                        .append($('<td>').attr("id", "tddescriptionresep" + resepKe + '' + resepNo)
                             .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
                         )
                         .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe + '' + resepNo)

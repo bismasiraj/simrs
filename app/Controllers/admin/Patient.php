@@ -6169,7 +6169,7 @@ This Function is used to Add Patient
         $dose2 = $this->request->getPost('dose2');
         $theorder = $this->request->getPost('theorder');
 
-        // return json_encode($bill_id);
+        // return json_encode($this->request->getPost());
 
 
         $model = new TreatmentObatModel();

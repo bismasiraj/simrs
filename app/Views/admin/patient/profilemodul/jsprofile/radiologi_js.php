@@ -29,6 +29,9 @@
         getTreatResultList(nomor, visit)
         getListRequestRad(nomor, visit)
     })
+    $("#formSaveBillRadBtn").on("click", function() {
+        $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+    })
 </script>
 <script type='text/javascript'>
     function formatCurrency(total) {
@@ -62,15 +65,14 @@
             success: function(data) {
                 mrJson = data
 
-
                 mrJson.forEach((element, key) => {
 
                     $("#radBody").append($("<tr>")
-                        .append($("<td>").append($("<p>").html(mrJson[key].date_of_diagnosa)))
-                        .append($("<td>").html(mrJson[key].name_of_clinic))
-                        .append($("<td>").append($("<p>").html(mrJson[key].anamnase)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)).append($("<p>").html(mrJson[key].diagnosa_id + '-' + mrJson[key].diagnosa_desc)))
+                        .append($("<td>").append($("<p>").html(mrJson[key].pickup_date)))
+                        .append($("<td>").append($("<p>").html(mrJson[key].tarif_name)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)).append($("<p>").html(mrJson[key].diagnosa_id + '-' + mrJson[key].diagnosa_desc)))
+                        // .append($("<td>").html('<?= $visit['name_of_clinic']; ?>'))
                         .append($("<td>").append($("<p>").html(mrJson[key].teraphy_desc)).append($("<p>").html(mrJson[key].instruction)))
-                        .append($("<td>").html(mrJson[key].fullname))
+                        .append($("<td>").html(mrJson[key].result_value))
                     )
                 });
             },
@@ -144,7 +146,7 @@
             .append($("<td>").attr("id", "araddisplaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "araddisplaysubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "araddisplaysubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="aradsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'arad\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="aradeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'arad\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'arad\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").append('<button id="aradsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'arad\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="aradeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'arad\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'arad\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         )
 
 

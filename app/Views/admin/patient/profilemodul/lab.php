@@ -46,7 +46,7 @@ $permissions = user()->getPermissions();
                 </div>
             </div>
 
-            <form id="form1" action="" method="post" class="">
+            <form id="formlabbill" action="" method="post" class="">
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
 
@@ -262,6 +262,12 @@ $permissions = user()->getPermissions();
                                 </tr>
                             </tfoot>
                         </table>
+                        <div class="panel-footer text-end mb-4">
+                            <button type="button" id="formSaveBillLabBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button type="button" id="formEditBillLabBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                        </div>
                     </div>
                 </div>
             </div>

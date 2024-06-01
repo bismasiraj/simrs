@@ -289,53 +289,7 @@
         $("#addBill").modal("show")
     }
 
-    function delBill(billId, key) {
-        var btn;
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/delBill/' + billId,
-            type: "DELETE",
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                btn = $("#delBillBtn" + billId).html()
-                $("#delBillBtn" + billId).html("Loading...")
-            },
-            success: function(data) {
-                $("#delBillBtn" + billId).html(btn)
-                alert(data.message)
-                var nomor = '<?= $visit['no_registration']; ?>';
-                var ke = '%'
-                var mulai = '2023-08-01' //tidak terpakai
-                var akhir = '2023-08-31' //tidak terpakai
-                var lunas = '%'
-                // var klinik = '<?= $visit['clinic_id']; ?>'
-                var klinik = '%'
-                var rj = '%'
-                var status = '%'
-                var nota = '%'
-                var trans = '<?= $visit['trans_id']; ?>'
 
-                billJson = [];
-                $("#chargesBody").html("");
-                tagihan = 0.0;
-                subsidi = 0.0;
-                potongan = 0.0;
-                pembulatan = 0.0;
-                pembayaran = 0.0;
-                retur = 0.0;
-                total = 0.0;
-                lastOrder = 0;
-
-                getBillPoli(nomor, ke, mulai, akhir, lunas, klinik, rj, status, nota, trans);
-
-            },
-            error: function() {
-                $("#delBillBtn" + billId).html(btn)
-            }
-        });
-    }
 
     function setTarif(clinicIdTarif, container) {
         tarifDataJson = $("#" + container).val();

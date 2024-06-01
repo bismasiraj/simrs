@@ -10,112 +10,6 @@
     var lastOrder = 0;
 
     $(document).ready(function(e) {
-
-
-
-
-
-        // tinymce.init({
-        //     selector: '#armstanding_order',
-        //     height: 300,
-        //     plugins: [
-        //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-        //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-        //         "save table contextmenu directionality emoticons template paste textcolor",
-        //     ],
-        //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-        //     style_formats: [{
-        //             title: "Bold text",
-        //             inline: "b"
-        //         },
-        //         {
-        //             title: "Red text",
-        //             inline: "span",
-        //             styles: {
-        //                 color: "#ff0000"
-        //             }
-        //         },
-        //         {
-        //             title: "Red header",
-        //             block: "h1",
-        //             styles: {
-        //                 color: "#ff0000"
-        //             }
-        //         },
-        //         {
-        //             title: "Example 1",
-        //             inline: "span",
-        //             classes: "example1"
-        //         },
-        //         {
-        //             title: "Example 2",
-        //             inline: "span",
-        //             classes: "example2"
-        //         },
-        //         {
-        //             title: "Table styles"
-        //         },
-        //         {
-        //             title: "Table row 1",
-        //             selector: "tr",
-        //             classes: "tablerow1"
-        //         },
-        //     ],
-        // });
-        // tinymce.init({
-        //     selector: '#arminstruction',
-        //     height: 300,
-        //     plugins: [
-        //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-        //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-        //         "save table contextmenu directionality emoticons template paste textcolor",
-        //     ],
-        //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-        //     style_formats: [{
-        //             title: "Bold text",
-        //             inline: "b"
-        //         },
-        //         {
-        //             title: "Red text",
-        //             inline: "span",
-        //             styles: {
-        //                 color: "#ff0000"
-        //             }
-        //         },
-        //         {
-        //             title: "Red header",
-        //             block: "h1",
-        //             styles: {
-        //                 color: "#ff0000"
-        //             }
-        //         },
-        //         {
-        //             title: "Example 1",
-        //             inline: "span",
-        //             classes: "example1"
-        //         },
-        //         {
-        //             title: "Example 2",
-        //             inline: "span",
-        //             classes: "example2"
-        //         },
-        //         {
-        //             title: "Table styles"
-        //         },
-        //         {
-        //             title: "Table row 1",
-        //             selector: "tr",
-        //             classes: "tablerow1"
-        //         },
-        //     ],
-        // });
-
-        // armstanding_ordereditor.init({
-        //     selector: '#armstanding_order'
-        // });
-        // arminstructioneditor.init({
-        //     selector: '#arminstruction'
-        // });
         var nomor = '<?= $visit['no_registration']; ?>';
         var ke = '%'
         var mulai = '2023-08-01' //tidak terpakai
@@ -128,11 +22,13 @@
         var nota = '%'
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
+
+
     })
     $("#assessmentmedisTab").on("click", function() {
+        var accMedisName = "accordionAssessmentMedis"
         // Call each function to append respective accordion items
         $("#accordionAssessmentMedis").html("")
-        var accMedisName = "accordionAssessmentMedis"
         // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
         if (true) {
             <?php foreach ($mapAssessment as $key => $value) {
@@ -145,13 +41,15 @@
             } ?>
             $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
-        appendRtlAccordion(accMedisName);
+        // appendRtlAccordion(accMedisName);
 
         $("#formaddarmbtn").trigger("click")
         $("#armdiag_cat").val(3)
         getAssessmentMedis(3)
     })
     $("#rekammedisTab").on("click", function() {
+        var accMedisName = "accordionAssessmentMedis"
+
         $("#armTitle").html("Resume Medis")
 
         $("#accordionAssessmentMedis").html("")
@@ -529,6 +427,17 @@
                     alert("berhasil ambil periksa fisik")
                     $("#armpemeriksaan").val(data.periksafisik)
                     $("#armanamnase").val(data.anamnase)
+                    $("#armweight").val(data.weight)
+                    $("#armheight").val(data.height)
+                    $("#armtemperature").val(data.temperature)
+                    $("#armnadi").val(data.nadi)
+                    $("#armtension_upper").val(data.tension_upper)
+                    $("#armtension_below").val(data.tension_below)
+                    $("#armsaturasi").val(data.saturasi)
+                    $("#armnafas").val(data.nafas)
+                    $("#armsaturasi").val(data.saturasi)
+                    $("#armarm_diameter").val(data.arm_diameter)
+                    $("#armpemeriksaan").val(data.pemeriksaan)
                 }
             })
         <?php
@@ -1100,7 +1009,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#armGcs_Group").hide()
-        $("#arpFallRisk_Group").hide()
+        $("#armFallRisk_Group").hide()
         $("#armLokalis_Group").hide()
         $("#armProcedures_Group").hide()
         $("#vitalsign").hide()
@@ -1158,20 +1067,67 @@
             '</h2>' +
             '<div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionAssessmentMedis">' +
             '<div class="accordion-body text-muted">' +
-            '<div class="row mb-2">' +
-            '<div class="col-sm-12 col-xs-12">' +
-            '<div class="mb-3">' +
-            '<div class="form-group">' +
-            '<label for="armpemeriksaan">Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>' +
-            '<textarea id="armpemeriksaan" name="pemeriksaan" rows="5" class="form-control " autocomplete="off"></textarea>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
+            '<h5>Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></h5>' +
+            `<div class="row mb-4">
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="armweight" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="armheight" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="armtemperature" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="armnadi" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>T.Darah(mmHg)</label>
+                        <div class="col-sm-12" style="display: flex;  align-items: center;">
+                            <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="armtension_upper" placeholder="" value="" class="form-control">
+                            <h4>/</h4>
+                            <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="armtension_below" placeholder="" value="" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="armsaturasi" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="armnafas" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
+                    <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="armarm_diameter" placeholder="" value="" class="form-control"></div>
+                </div>
+                <div class="col-sm-12 mt-2">
+                    <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                </div>
+            </div>` +
             '</div>' +
             '</div>' +
             '</div>'
         )
+        // $("#" + accordionId).append(
+        //     '<div class="accordion-item">' +
+        //         '<h2 class="accordion-header" id="headingVitalSign">' +
+        //             '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign"><b>VITAL SIGN</b></button>' +
+        //         '</h2>' +
+        //             '<div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionAssessmentMedis">' +
+        //                 '<div class="accordion-body text-muted">' +
+        //                 '<div class="row mb-2">' +
+        //                     '<div class="col-sm-12 col-xs-12">' +
+        //                         '<div class="mb-3">' +
+        //                             '<div class="form-group">' +
+        //                                 '<label for="armpemeriksaan">Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>' +
+        //                                 '<textarea id="armpemeriksaan" name="pemeriksaan" rows="5" class="form-control " autocomplete="off"></textarea>' +
+        //                             '</div>' +
+        //                         '</div>' +
+        //                     '</div>' +
+        //                 '</div>' +
+        //             '</div>' +
+        //         '</div>' +
+        //     '</div>'
+        // )
     }
 
     function appendRiwayatMedis(accordionId) {
@@ -1378,8 +1334,8 @@
                         <div class="col-sm-12 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="armdiag_desc">Diagnosa Klinis</label>
-                                    <textarea id="diag_desc" name="hurt" rows="2" class="form-control " autocomplete="off"></textarea>
+                                    <label for="armdiagnosa_desc">Diagnosa Klinis</label>
+                                    <textarea id="diagnosa_desc" name="diagnosa_desc" rows="2" class="form-control " autocomplete="off"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1566,20 +1522,15 @@
                         <div class="col-md-12">
                             <div id="bodyGcsMedis">
                             </div>
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <div id="addGcsMedisButton" class="box-tab-tools text-center">
-                                        <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis')" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    `;
+        `;
+
         appendAccordionItem(accordionId, accordionContent);
+        addGcs(1, 0, 'armpasien_diagnosa_id', 'bodyGcsMedis')
     }
 
     function appendRtlAccordion(accordionId) {
@@ -1826,41 +1777,11 @@
         appendAccordionItem(accordionId, accordionContent);
     }
 
-    function appendPainMonitoringMedisAccordion(accordionId) {
-        var accordionContent = `
-        <div id="arpPainMonitoring_Group" class="accordion-item">
-            <h2 class="accordion-header" id="painMonitoringMedis">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
-                    <b>MONITORING SKALA NYERI</b>
-                </button>
-            </h2>
-            <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis" data-bs-parent="#accordionAssessmentMedis" style="">
-                <div class="accordion-body text-muted">
-                    <div class="row">
-                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                            <div class="col-md-12">
-                                <div id="bodyPainMonitoringMedis">
-                                </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-12">
-                                        <div id="addPainMonitoringButton" class="box-tab-tools text-center">
-                                            <a onclick="addPainMonitoring(1,0,'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-        appendAccordionItem(accordionId, accordionContent);
-    }
+
 
     function appendFallRiskMedisAccordion(accordionId) {
         var accordionContent = `
-        <div id="arpFallRisk_Group" class="accordion-item">
+        <div id="armFallRisk_Group" class="accordion-item">
             <h2 class="accordion-header" id="FallRiskMedis">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskMedis" aria-expanded="true" aria-controls="collapseFallRiskMedis">
                     <b>RESIKO JATUH</b>
@@ -1873,13 +1794,6 @@
                             <div class="col-md-12">
                                 <div id="bodyFallRiskMedis">
                                 </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-12">
-                                        <div id="addFallRiskButton" class="box-tab-tools text-center">
-                                            <a onclick="addFallRisk(1,0,'armpasien_diagnosa_id', 'bodyFallRiskMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </form>
                     </div>
@@ -1888,6 +1802,7 @@
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
+        addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis')
     }
 
     function appendTriaseMedis(accordionId) {
@@ -2206,6 +2121,33 @@
         `;
         appendAccordionItem(accordionId, accordionContent);
 
+    }
+
+    function appendPainMonitoringMedisAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpPainMonitoring_Group" class="accordion-item">
+            <h2 class="accordion-header" id="painMonitoringMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
+                    <b>MONITORING SKALA NYERI</b>
+                </button>
+            </h2>
+            <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                            <div class="col-md-12">
+                                <div id="bodyPainMonitoringMedis">
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+        appendAccordionItem(accordionId, accordionContent);
+        addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')
     }
 </script>
 

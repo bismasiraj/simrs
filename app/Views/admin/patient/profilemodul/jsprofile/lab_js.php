@@ -28,6 +28,9 @@
     $("#labTab").on("click", function() {
         getListRequestLab(nomor, visit)
     })
+    $("#formSaveBillLabBtn").on("click", function() {
+        $("#labChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+    })
 </script>
 <script type='text/javascript'>
     function formatCurrency(total) {
@@ -64,7 +67,7 @@
             .append($("<td>").attr("id", "alabdisplaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'alab\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="alabeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'alab\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>").append('<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'alab\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">Simpanse</button><div id="alabeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'alab\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         )
 
         $("#labChargesBody")

@@ -61,7 +61,7 @@ $currency_symbol = "Rp. ";
                                                 <div class="box-body row">
                                                     <?php
                                                     if (isset($mulai) ? $mulai != '0' : true) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="mb-3">
                                                                 <label>Mulai Tanggal</label>
                                                                 <div>
@@ -75,7 +75,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (isset($akhir) ? $akhir != '0' : true) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="mb-3">
                                                                 <label>Hingga Tanggal</label>
                                                                 <div>
@@ -90,7 +90,7 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php
                                                     if (isset($customtext)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customtextTitle; ?></label><small class="req"> *</small>
                                                                 <input id="customtext" name="customtext" placeholder="" type="text" class="form-control start_date" value="" />
@@ -99,7 +99,7 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php
                                                     if (isset($customtext1)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customtext1Title; ?></label><small class="req"> *</small>
                                                                 <input id="customtext1" name="customtext1" placeholder="" type="text" class="form-control start_date" value="" />
@@ -108,7 +108,7 @@ $currency_symbol = "Rp. ";
                                                     <?php } ?>
                                                     <?php
                                                     if (isset($customtext2)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customtext2Title; ?></label><small class="req"> *</small>
                                                                 <input id="customtext2" name="customtext2" placeholder="" type="text" class="form-control start_date" value="" />
@@ -116,7 +116,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($clinic)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Poli</label><small class="req"> *</small>
                                                                 <select id="klinik" class="form-control" name="clinic_id" autocomplete="off">
@@ -136,7 +136,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($schedule)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Dokter</label>
                                                                 <select id="dokter" class="form-control" name="employee_id">
@@ -158,7 +158,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($status)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Jenis Pasien</label><small class="req"> *</small>
                                                                 <select id="statuss" class="form-control" name="status_pasien_id">
@@ -170,7 +170,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($visitStatus)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Status Kunjung</label><small class="req"> *</small>
                                                                 <select id="visitStatus" class="form-control" name="isattended">
@@ -182,7 +182,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($kota)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Kab / Kota</label><small class="req"> *</small>
                                                                 <select id="kota" class="form-control" name="kota">
@@ -195,7 +195,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($isnew)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Baru / Lama</label><small class="req"> *</small>
                                                                 <select id="isnew" class="form-control" name="isnew">
@@ -208,7 +208,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($isrj)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Rajal / Ranap</label><small class="req"> *</small>
                                                                 <select id="isrj" class="form-control" name="isrj">
@@ -220,7 +220,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($sex)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Jenis Kelamin</label><small class="req"> *</small>
                                                                 <select id="sex" class="form-control" name="sex">
@@ -233,7 +233,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($regulation)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Jenis Barang Berdasarkan UU</label><small class="req"> *</small>
                                                                 <select id="regulation" class="form-control" name="regulation">
@@ -246,7 +246,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($diagnosa)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis</label>
                                                                 <div class="p-2 select2-full-width">
                                                                     <select name="diagnosa_id" class="form-control patient_list_ajax" id="filldiagnosa">
@@ -256,7 +256,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($itemName)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group"><label for="diag_awal">Nama Barang</label>
                                                                 <div class="p-2 select2-full-width">
                                                                     <select name="nama_obat" class="form-control patient_list_ajax" id="fillitemname">
@@ -266,7 +266,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($itemId)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group"><label for="diag_awal">Nama Barang</label>
                                                                 <div class="p-2 select2-full-width">
                                                                     <select name="brand_id" class="form-control patient_list_ajax" id="fillitemid">
@@ -276,7 +276,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($dokterfill)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group"><label for="diag_awal">Dokter</label>
                                                                 <div class="p-2 select2-full-width">
                                                                     <select name="dokter" class="form-control patient_list_ajax" id="filldokter">
@@ -286,7 +286,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($treatTarif)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Transaksi Pembayaran</label><small class="req"> *</small>
                                                                 <select id="tarif_id" class="form-control" name="tarif_id">
@@ -299,7 +299,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($shift)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Shift</label><small class="req"> *</small>
                                                                 <select id="shift" class="form-control" name="shift">
@@ -311,7 +311,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($shiftdays)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Shift</label><small class="req"> *</small>
                                                                 <select id="shift" class="form-control" name="shift">
@@ -324,7 +324,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($custom)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customTitle; ?></label><small class="req"></small>
                                                                 <select id="custom" class="form-control" name="custom">
@@ -336,7 +336,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($custom1)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customTitle1; ?></label><small class="req"></small>
                                                                 <select id="custom1" class="form-control" name="custom1">
@@ -348,7 +348,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($custom2)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customTitle2; ?></label><small class="req"></small>
                                                                 <select id="custom2" class="form-control" name="custom2">
@@ -360,7 +360,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($custom3)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customTitle3; ?></label><small class="req"></small>
                                                                 <select id="custom3" class="form-control" name="custom3">
@@ -372,7 +372,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($custom4)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label><?= $customTitle4; ?></label><small class="req"></small>
                                                                 <select id="custom4" class="form-control" name="custom4">
@@ -384,7 +384,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($tipeantrol)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Tipe Layanan</label><small class="req"> *</small>
                                                                 <select id="tipeantrol" class="form-control" name="tipeantrol">
@@ -401,7 +401,7 @@ $currency_symbol = "Rp. ";
                                                         </div>
                                                     <?php } ?>
                                                     <?php if (!empty($kasir)) { ?>
-                                                        <div class="col-sm-2 col-md-2">
+                                                        <div class="col-xs-12 col-sm-6 col-md-3">
                                                             <div class="form-group">
                                                                 <label>Kasir</label><small class="req"> *</small>
                                                                 <select id="kasir" class="form-control" name="kasir">
@@ -491,9 +491,9 @@ $currency_symbol = "Rp. ";
             <div id="tableDiv" class="modal-body">
                 <div class="col-md-6 mb-4">
                     <button type="button" class="btn btn-primary" onclick="getSatuSehat()">GET</button>
-                    <button type="button" class="btn btn-primary">POST</button>
+                    <!-- <button type="button" class="btn btn-primary">POST</button>
                     <button type="button" class="btn btn-primary">UPDATE</button>
-                    <button type="button" class="btn btn-primary">DELETE</button>
+                    <button type="button" class="btn btn-primary">DELETE</button> -->
                 </div>
                 <table id="reportDataTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead id="headdata" class="table-primary">
