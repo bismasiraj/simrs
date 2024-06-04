@@ -71,6 +71,7 @@ class TreatmentObatModel extends Model
         'dose1',
         'dose2',
         'theorder',
+        'sold_status'
         // 'org_unit_code',
         // 'jml_bks',
         // 'dose',

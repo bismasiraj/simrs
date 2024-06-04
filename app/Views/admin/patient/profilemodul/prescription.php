@@ -32,6 +32,10 @@ $permissions = user()->getPermissions();
             <div class="box-tab-header">
             </div>
             <form id="form1" action="" method="post" class="">
+                <div class="row mt-4">
+                    <h3 id="eresepTitle">E-Resep</h3>
+                    <hr>
+                </div>
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
                     <div class="col-sm-6 col-md-3">
@@ -67,6 +71,17 @@ $permissions = user()->getPermissions();
                                             <option value="<?= $statusPasien[$key]['status_pasien_id']; ?>"><?= $statusPasien[$key]['name_of_status_pasien']; ?></option>
                                     <?php }
                                     } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3" style="display: none;">
+                        <div class="mb-4">
+                            <div class="form-group">
+                                <label>Eresep bukan</label>
+                                <select name="iseresep" id="iseresep" class="form-control">
+                                    <option value="1">eresep</option>
+                                    <option value="0">medical item</option>
                                 </select>
                             </div>
                         </div>

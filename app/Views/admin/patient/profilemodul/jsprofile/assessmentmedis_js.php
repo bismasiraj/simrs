@@ -1766,7 +1766,6 @@
                     <div class="row">
                         <div class="col-md-12">
                             <ul id="medisListLinkAll" class="list-group list-group-flush">
-                                <input id="armpasien_diagnosa_id" type="hidden" value="asdf">
                             </ul>
                         </div>
                     </div>
@@ -2157,4 +2156,129 @@
         $("#chargesTab").trigger("click")
         $("#assessmentmedisTab").trigger("click")
     })
+</script>
+
+<script>
+    function cetakAssessmentMedis() {
+        var data = `<div class="container-fluid">
+                        <div class="row">
+                            <div class="col-auto" align="center">
+                                <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
+                            </div>
+                            <div class="col mt-2" align="center">
+                                <h3>RS PKU Muhammadiyah Sampangan</h3>
+                                <h3>Surakarta</h3>
+                                <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                            </div>
+                            <div class="col-auto" align="center">
+                                <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <h4 class="text-center">` + $("#armTitle").html() + `</h4>
+                        </div>
+                        <div class="row">
+                            <h5 class="text-start">Informasi Pasien</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <b>Nomor RM</b>
+                                        <div id="no_registration" name="no_registration" class="h6"><?= $visit['no_registration']; ?></div>
+                                    </td>
+                                    <td>
+                                        <b>Nama Pasien</b>
+                                        <div id="thename" name="thename" class="h6"><?= $visit['diantar_oleh']; ?></div>
+                                    </td>
+                                    <td>
+                                        <b>Jenis Kelamin</b>
+                                        <div id="thename" name="thename" class="h6"><?= $visit['gender']; ?></div>
+                                        <select name="gender" id="gender" class="form-control">
+                                            <option value="1">Laki-Laki</option>
+                                            <option value="2">Perempuan</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Tanggal Lahir (Usia)</b>
+                                        <div id="patient_age" name="patient_age" class="h6"><?= $visit['date_of_birth']; ?></div>
+                                    </td>
+                                    <td colspan="2">
+                                        <b>Alamat Pasien</b>
+                                        <div id="theaddress" name="theaddress" class="h6"><?= $visit['visitor_address']; ?></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>DPJP</b>
+                                        <div id="doctor" name="doctor" class="h6"><?= $visit['fullname']; ?></div>
+                                    </td>
+                                    <td>
+                                        <b>Department</b>
+                                        <div id="clinic_id" name="clinic_id" class="h6"><?= $visit['name_of_clinic']; ?></div>
+                                    </td>
+                                    <td>
+                                        <b>Tanggal Masuk</b>
+                                        <div id="examination_date" name="examination_date" class="h6"><?= $visit['visit_date']; ?></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <h4 class="text-start">Subjektif (S)</h4>
+                        </div>
+                        
+                        <div class="row">
+                            <h5 class="text-start">Edukasi Pasien</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
+                                        <div id="" name="" class="h6"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>Materi Edukasi:</b>
+                                        <div id="" name="" class="h6"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-auto" align="center">
+                                <div>Dokter</div>
+                                <div class="mb-1">
+                                    <div id="qrcode"></div>
+                                </div>
+                            </div>
+                            <div class="col"></div>
+                            <div class="col-auto" align="center">
+                                <div>Penerima Penjelasan</div>
+                                <div class="mb-1">
+                                    <div id="qrcode1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+
+
+        $("#cetakarmbody").html(data);
+        $("#cetakarm").modal("show")
+
+        // $.ajax({
+        //     url: '<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val(),
+        //     type: "GET",
+        //     success: function(data) {
+        //         // Insert fetched content into modal
+        //         $("#cetakarmbody").html(data);
+        //         // Display the modal
+        //         $("#cetakarm").css("display", "block");
+        //     }
+        // });
+    }
 </script>

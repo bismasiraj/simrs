@@ -8001,3 +8001,19 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<script>
+    function cetakAssessmenKeperawatan() {
+        $.ajax({
+            url: '<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
+            type: "GET",
+            success: function(data) {
+                // Insert fetched content into modal
+                // $("#cetakarpbody").html(data);
+                $("#pdfFrame").attr("src", "data:application/pdf;base64," + data);
+                // Display the modal
+                $("#cetakarp").modal('show');
+            }
+        });
+    }
+</script>

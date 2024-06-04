@@ -52,6 +52,7 @@ $group = user()->getRoles();
                                     <input name="kddpjp" id="armtglsep" type="hidden" />
                                     <input name="diag_cat" id="armdiag_cat" type="hidden" />
                                     <input name="statusantrean" id="armstatusantrean" type="hidden" value="<?= $visit['statusantrean']; ?>" />
+                                    <?php csrf_field(); ?>
                                     <div class="row row-eq">
                                         <!-- INI CURRENT FILLING DATA -->
                                         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -123,6 +124,7 @@ $group = user()->getRoles();
                                             <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                            <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
                                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                         </div>
                                     </div><!--./col-md-4-->
@@ -160,7 +162,7 @@ $group = user()->getRoles();
     </div><!--./row-->
 
 </div>
-<div class="modal fade" id="copyVitalSignModal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -172,30 +174,8 @@ $group = user()->getRoles();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div class="modal-body pt0 pb0">
-                <h3>Histori Vital Sign Perawat</h3>
-                <table class="table table-striped table-hover">
-                    <thead class="table-primary" style="text-align: center;">
-                        <tr>
-                            <th></th>
-                            <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                            <th class="text-center" style="width: 10%;">BB (Kg)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">TInggi (cm)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Suhu ()</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Nadi (/menit)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Sistole (mmhg)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Diastole (mmHg)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Saturasi (SpO2%)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Nafas/RR (/menit)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Diameter Lengan (cm)</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Pemeriksaan Fisik Tambahan (cm)</th class="text-center">
-                        </tr>
-                    </thead>
-                    <tbody id="copyListVitalSignModal">
+            <div class="modal-body pt0 pb0" id="cetakarmbody">
 
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

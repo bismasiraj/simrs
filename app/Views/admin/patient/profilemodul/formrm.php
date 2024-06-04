@@ -222,7 +222,6 @@ $permission = user()->getPermissions();
                                 <div class="row">
                                     <div class="col-md-12">
                                         <ul id="medisListLink" class="list-group list-group-flush">
-                                            <input id="armpasien_diagnosa_id" type="hidden" value="asdf">
                                             <!-- <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Anak</a></li>
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Bedah</a></li>
                                             <li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>" target="_blank">Assessmen Medis Ralan Dalam</a></li>

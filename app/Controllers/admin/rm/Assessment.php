@@ -589,7 +589,7 @@ class Assessment extends BaseController
             // 'diagnosa_id' => $diagnosa_id,
             'diagnosa_desc' => $diagnosa_desc,
             'employee_id' => $employee_id,
-            'diag_cat' => 4,
+            'diag_cat' => $diag_cat,
             'anamnase' => $anamnase,
             'alloanamnase' => $alloanamnase,
             'description' => $description,

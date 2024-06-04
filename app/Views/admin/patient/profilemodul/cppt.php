@@ -406,7 +406,7 @@ $permission = user()->getPermissions();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addFallRiskButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addFallRisk(1,0,'armpasien_diagnosa_id', 'bodyFallRiskCppt')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addFallRisk(1,0,'acpptbody_id', 'bodyFallRiskCppt')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>

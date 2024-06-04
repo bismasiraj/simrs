@@ -1335,6 +1335,27 @@ This Function is used to Add Patient
             echo json_encode($data);
         }
     }
+    public function getObatAlkesListAjax()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        $employee_id = $this->request->getPost('employeeId');
+        if (isset($search_term) && $search_term != '') {
+            $model = new GoodsModel();
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
+            // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
+            $result = $this->lowerKey($model->getObatDokter($search_term, $employee_id));
+            $data   = array();
+            // $data[] = array("id" => '%', "text" => "Semua (%)");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
     public function getDokterListAjax()
     {
         $search_term = $this->request->getPost("searchTerm");
@@ -6168,6 +6189,7 @@ This Function is used to Add Patient
         $dose1 = $this->request->getPost('dose1');
         $dose2 = $this->request->getPost('dose2');
         $theorder = $this->request->getPost('theorder');
+        $soldstatus = $this->request->getPost('sold_status');
 
         // return json_encode($this->request->getPost());
 
@@ -6233,7 +6255,8 @@ This Function is used to Add Patient
                 'dose1' => (float)$dose1[$key],
                 'dose2' => (float)$dose2[$key],
                 'module_id' => $moduleId[$key],
-                'theorder' => (int)$theorder[$key]
+                'theorder' => (int)$theorder[$key],
+                'sold_status' => $soldstatus[$key]
             ];
 
 

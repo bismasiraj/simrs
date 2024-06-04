@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Admin\rm;
 
-
+use Dompdf\Dompdf;
 
 class keperawatan extends \App\Controllers\BaseController
 {
@@ -92,7 +92,7 @@ class keperawatan extends \App\Controllers\BaseController
             order by examination_date")->getResultArray());
             $socec = $socecSelect[0] ?? [];
 
-            $aParam = 
+            // $aParam = 
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/1-ralan-anak.php", [
                     "visit" => $visit,
@@ -107,6 +107,37 @@ class keperawatan extends \App\Controllers\BaseController
                     'title' => $title
                 ]);
             }
+
+            // $html =
+            //     view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/1-ralan-anak.php", [
+            //         "visit" => $visit,
+            //         'title' => $title,
+            //         "val" => $select[0],
+            //         "spiritual" => $spiritual,
+            //         "socec" => $socec
+            //     ]);
+
+            // // Create new PDF instance
+            // $dompdf = new Dompdf();
+
+            // // Load HTML content
+            // $dompdf->loadHtml($html);
+
+            // // Render the PDF
+            // $dompdf->render();
+
+            // // Output the generated PDF
+
+            // $pdfContent = $dompdf->output();
+
+            // header('Content-Type: application/pdf');
+            // header('Content-Disposition: attachment; filename="filename.pdf"');
+            // header('Cache-Control: private, max-age=0, must-revalidate');
+            // header('Pragma: public');
+            // header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+            // header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+
+            // return $pdfContent;
         }
     }
     public function ralan_dewasa($visit, $vactination_id = null)

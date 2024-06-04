@@ -38,6 +38,7 @@ class medis extends \App\Controllers\BaseController
             pd.DIAGNOSA_DESC as namadiagnosa,
             pd.ANAMNASE as anamnesis,
             pd.DESCRIPTION as riwayat_penyakit_sekarang,
+            pd.alloanamnase,
             max(case when PH.value_id = 'G0090202'  then histories else '' end ) as riwayat_penyakit_dahulu,
             max(case when PH.value_id = 'G0090101'  then histories else '' end) as riwayat_alergi_obat,
             max(case when PH.value_id = 'G0090102'  then histories else '' end ) as riwayat_alergi_nonobat,
@@ -57,6 +58,7 @@ class medis extends \App\Controllers\BaseController
             ei.NAFAS as respiration,
             ei.SATURASI AS SPO2,
             EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
+            ei.pemeriksaan as pemeriksaan_fisik,
             isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
             where DOCUMENT_ID = pd.BODY_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
             isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
@@ -90,7 +92,9 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC AS FARMAKOLOGIA,
             PD.INSTRUCTION AS PROSEDUR,
             PD.STANDING_ORDER AS STANDING_ORDER,
-            PD.DOCTOR AS DOKTER
+            PD.DOCTOR AS DOKTER,
+            pd.rencanatl as rencana_tl,
+            '' as kontrol
             from pasien_diagnosa pd left outer join  clinic c on pd.clinic_id = c.clinic_id
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID
@@ -100,8 +104,8 @@ class medis extends \App\Controllers\BaseController
             left outer join ASSESSMENT_GCS gcs on pd.BODY_ID = gcs.DOCUMENT_ID,
             pasien p 
             where 
-            pd.PASIEN_DIAGNOSA_ID = '202405031057300447D03'
-            and PD.VISIT_ID = '202404241151300470C77' -- 
+            pd.diag_cat = '3'
+            and PD.VISIT_ID = '" . $visit['visit_id'] . "' -- 
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -120,6 +124,7 @@ class medis extends \App\Controllers\BaseController
             pd.IN_DATE,
             pd.ANAMNASE, 
             pd.DESCRIPTION,
+            pd.rencanatl,
             ei.WEIGHT,
             ei.HEIGHT, 
             ei.TENSION_UPPER, 
@@ -128,6 +133,7 @@ class medis extends \App\Controllers\BaseController
             ei.NAFAS, 
             ei.SATURASI,
             ei.TEMPERATURE,
+            ei.pemeriksaan,
             convert(varchar,P.date_of_birth,105),
             CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR',
             gcs.GCS_E, 
@@ -147,6 +153,7 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC, 
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
+            pd.alloanamnase,
             PD.DOCTOR")->getResultArray());
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/1-ralan-anak.php", [

@@ -25,6 +25,7 @@ foreach ($pd as $key => $value) {
 <?php
 $currency_symbol = 'Rp. ';
 ?>
+
 <script src="<?php echo base_url('/') ?>backend/js/Chart.bundle.js"></script>
 <script src="<?php echo base_url('/') ?>backend/js/utils.js"></script>
 <style>
@@ -101,10 +102,10 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="painTab" class="nav-link border-bottom" href="#pain" data-bs-toggle="tab" aria-expanded="true" role="tab">Monitoring Nyeri</a></li>
                                         <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Fall Risk</a></li>
                                         <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
-                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
+                                        <li class="nav-item"><a id="medicalitemTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
                                         <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa Perawat</a></li>
-                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
-                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
+                                        <li class="nav-item"><a id="orderGiziTab" class="nav-link border-bottom" href="#orderGizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
+                                        <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Inform Consern</a></li>
                                         <!-- <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li> -->
                                         <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
@@ -568,6 +569,28 @@ $currency_symbol = 'Rp. ';
                                             'aValue' => $aValue,
                                             'mappingAssessment' => $mappingAssessment
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/ordergizi', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                            'mappingAssessment' => $mappingAssessment
+                                        ]); ?>
                                         <?php echo view('admin/patient/profilemodul/vitalsign', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -652,7 +675,6 @@ $currency_symbol = 'Rp. ';
 <?php $this->endSection() ?>
 
 <?php $this->section('jsContent') ?>
-
 <script type="text/javascript">
     var historyJson = new Array();
     var pasienDiagnosa = new Array();
@@ -900,6 +922,36 @@ $currency_symbol = 'Rp. ';
             placeholder: "Input nama obat",
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatListAjax',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term, // search term
+                        employeeId: '<?= $visit['employee_id']; ?>'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            var option = new Option(initialvalue, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+
+    }
+
+    function initializeResepAlkesSelect2(theid, initialvalue = null) {
+        $("#" + theid).select2({
+            placeholder: "Input nama obat",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getObatAlkesListAjax',
                 type: "post",
                 dataType: 'json',
                 delay: 50,

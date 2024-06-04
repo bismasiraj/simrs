@@ -79,6 +79,7 @@ $group = user()->getRoles();
                         <input type="hidden" id="arpkesadaran" name="kesadaran">
                         <input type="hidden" id="arpisvalid" name="isvalid">
                         <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
+                        <?php csrf_field(); ?>
                         <div class="row">
                             <h3 id="arpTitle">Assessment Keperawatan</h3>
                             <hr>
@@ -257,6 +258,7 @@ $group = user()->getRoles();
                                 <button type="button" id="formsavearpbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsavearpbtn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                 <button type="button" id="formeditarpid" name="editrm" onclick="enableARP()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditarp"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                 <button type="button" id="formsignarpid" name="signrm" onclick="signArp()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignarp"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                <button type="button" id="formcetakarp" name="" onclick="cetakAssessmenKeperawatan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
                                 <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                             </div>
                         </div>
@@ -1742,7 +1744,7 @@ $group = user()->getRoles();
                 </div>
             </div><!--./modal-header-->
             <div class="modal-body pt0 pb0">
-
+                <iframe id="pdfFrame" style="width:100%; height:500px;"></iframe>
             </div>
         </div>
     </div>
