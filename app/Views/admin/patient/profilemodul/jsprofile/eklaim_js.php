@@ -186,7 +186,7 @@
         // var trans = '<?= $visit['trans_id']; ?>'
         // getBillEklaim18(trans)
 
-        getEklaimData(eknomor_sep)
+        // getEklaimData(eknomor_sep)
     })
 
     function addUnuDiag(initialvalue = null, initialname = null, initialcat = null) {

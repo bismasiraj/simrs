@@ -22,7 +22,7 @@
     var visit = '<?= $visit['visit_id']; ?>'
     $(document).ready(function(e) {
         // getListRequestLab(nomor, visit)
-        getHasilLab(nomor, visit)
+        // getHasilLab(nomor, visit)
         initializeSearchTarif("searchTarifLab", 'P013');
     })
     $("#labTab").on("click", function() {

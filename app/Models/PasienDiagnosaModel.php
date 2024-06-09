@@ -71,7 +71,10 @@ class PasienDiagnosaModel extends Model
         'nosep',
         'tglsep',
         'spesialistik',
-        'sscondition_id'
+        'sscondition_id',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     // Dates

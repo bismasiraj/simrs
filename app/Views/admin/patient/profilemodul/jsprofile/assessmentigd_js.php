@@ -54,6 +54,7 @@ foreach ($aValue as $key => $value) {
     var educationIntegrationDetailAll;
     var educationIntegrationPlanAll = [];
     var educationIntegrationProvisionAll = [];
+    var tarifData = []
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';
         var ke = '%'
@@ -107,10 +108,24 @@ foreach ($aValue as $key => $value) {
 
     })
 
+    function makeid(length) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
+        }
+        return result;
+    }
+
     function get_bodyid() {
-        var m = new Date();
-        m.setHours(m.getHours() + 7)
-        var bodyId = m.getUTCFullYear() + "-" + String(m.getUTCMonth() + 1 + 100).substring(1, 3) + "-" + String(m.getUTCDate() + 100).substring(1, 3) + " " + String(m.getUTCHours() + 100).substring(1, 3) + ":" + String(m.getUTCMinutes() + 100).substring(1, 3) + ":" + String(m.getUTCSeconds() + 100).substring(1, 3);
+        var bodyId = ''
+
+        const date = new Date();
+        bodyId = date.toISOString().substring(0, 23);
+        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "") + makeid(3);
         return bodyId;
     }
 
@@ -175,7 +190,7 @@ foreach ($aValue as $key => $value) {
     //     $("#arpTindakanMandiri_Group").show()
     //     $("#arpImplementasi_Group").hide()
     // })
-    $("#assessmentigdTab").on("click", function() {
+    $("#assessmentigdTab").on("mouseup", function() {
         $("#arpTitle").html("Asesmen Keperawatan")
 
         $("#arpanamnase_label").html("Subyektif (S)")
@@ -210,6 +225,14 @@ foreach ($aValue as $key => $value) {
         $("#arpImplementasi_Group").show()
 
         generateSatelite()
+        getAssessmentKeperawatan()
+        getTindakanPerawat()
+    })
+    $("#assessmentigdTab").on("mouseup", function() {
+        // getPainMonitoring()
+        // getTriage()
+        // getApgar()
+        // getStabilitas()
     })
 </script>
 
@@ -434,6 +457,10 @@ foreach ($aValue as $key => $value) {
         })
     }
 
+    function signArp() {
+        addSignUser("arp", "formsavearpbtnid")
+    }
+
     function displayTableAssessmentKeperawatan(index) {
         $("#assessmentKeperawatanHistoryBody").html("")
         $("#cpptBody").html("")
@@ -490,7 +517,7 @@ foreach ($aValue as $key => $value) {
     function enableARP() {
         $(".formsavearpbtn").show()
         $(".formeditarp").hide()
-        $(".formsignarp").hide()
+        $(".formsignarp").show()
         $("#formaddarp input").prop("disabled", false)
         $("#formaddarp textarea").prop("disabled", false)
         $("#formaddarp select").prop("disabled", false)
@@ -500,13 +527,18 @@ foreach ($aValue as $key => $value) {
     function disableARP() {
         $(".formsavearpbtn").hide()
         $(".formeditarp").show()
-        $(".formsignarp").show()
+        $(".formsignarp").hide()
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)
         $("#formaddarp select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
+        $("#arpvalid_date")
+        if ($("#arpvalid_date").val() != '' && $("#arpvalid_date").val() != null) {
+            $(".formeditarp").hide()
+            $(".formsignarp").hide()
+        }
     }
-    $(".formaddarpbtn").on("click", function() {
+    $(".formaddarpbtn").on("mouseup", function() {
         initialAddArp()
     })
 </script>
@@ -606,18 +638,11 @@ foreach ($aValue as $key => $value) {
     })
 
 
-    $("#assessmentigdTab").on("click", function() {
-        // getPainMonitoring()
-        // getTriage()
-        // getApgar()
-        // getStabilitas()
-        getAssessmentKeperawatan()
-        getTindakanPerawat()
-    })
 
 
 
-    function addPainMonitoring(flag, index, document_id, container) {
+
+    function addPainMonitoring(flag, index, document_id, container, isaddbutton = true) {
         <?php foreach ($aParent as $key => $value) { ?>
             <?php if ($value['parent_id'] == '002') { ?>
                 var documentId = $("#" + document_id).val()
@@ -766,17 +791,26 @@ foreach ($aValue as $key => $value) {
                         if (value.p_type == 'ASES021' && value.body_id == bodyId && value.parameter_id == '01') {
 
                             $('#atypeASES02101' + bodyId).val(value.value_id)
-                            $('#atypeASES02101' + bodyId).prop("readonly", true)
+                            // console.log($('#atypeASES02101' + bodyId).val())
+                            // $('#atypeASES02101' + bodyId).prop("disabled", true)
                             $("#ases022body_id" + bodyId).val(bodyId)
-                            $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
+                            // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
                             aValueParamPain('<?= $value['parent_id']; ?>', value.value_id, bodyId, flag)
+                            aValueParamPain('<?= $value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
+                            console.log($('#atypeASES02101' + bodyId).val())
+                        } else {
+                            aValueParamPain('<?= $value['parent_id']; ?>', value.p_type, bodyId, flag)
                         }
                     })
                 }
             <?php } ?>
         <?php } ?>
         index++
-        $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+
+        if (isaddbutton)
+            $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        else
+            $("#" + container + "AddBtn").html("")
     }
 
     function aValueParamPain(parent_id, p_type, body_id, flag) {
@@ -824,7 +858,6 @@ foreach ($aValue as $key => $value) {
                 });
             }
             if (value.p_type == p_type) {
-
                 if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
                     $("#bodyAssessment002Intervensi" + body_id).append(
                         '<thead>' +
@@ -903,6 +936,8 @@ foreach ($aValue as $key => $value) {
                     // document.getElementById("reassessment_date" + body_id + '0').value = formattedInitialDate;
                 } else {
                     if (value.p_type == p_type) {
+                        console.log(value.entry_type)
+
                         if (value.entry_type == 1) {
                             $("#bodyAssessment002Intervensi" + body_id).append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">' + value.parameter_desc + '</label>')
@@ -926,10 +961,12 @@ foreach ($aValue as $key => $value) {
                                 }
                             })
                         } else if (value.entry_type == 3) {
+                            console.log("bodyAssessment002Intervensi" + body_id)
+
                             $("#bodyAssessment002Intervensi" + body_id).append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">' + value.parameter_desc + '</label>')
                                 .append($('<div class="col-md-8">')
-                                    .append($('<select id="' + value.p_type + value.parameter_id + body_id + '" name="' + value.column_name + '" class="form-control">')
+                                    .append($('<select id="' + value.p_type + value.parameter_id + body_id + '" name="' + value.p_type + value.parameter_id + '" class="form-control">')
                                         .append('<option>-</option>')
                                     )
                                 )
@@ -975,25 +1012,32 @@ foreach ($aValue as $key => $value) {
                     $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
                     $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
                 } else {
-                    $("#002ASES02105" + body_id).val(value1.value_id)
-                    $('#002ASES02105' + body_id + ' option').prop("disabled", true)
+                    // $("#atypeASES02101" + body_id).val(value1.value_id)
+                    // $('#atypeASES02101' + body_id + ' option').prop("disabled", true)
+                }
+                if (value1.p_type == p_type) {
+                    $("#" + value1.p_type + value1.parameter_id + body_id).val(value1.value_score)
                 }
             });
         }
         if (flag == '0') {
-            $("#bodyAssessment002Intervensi" + body_id).html("")
-            // $.each(painMonitoringDetil, function(key1, value1) {
-            //     if (value1.body_id == body_id && value1.parameter_id != '05') {
-            //         $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
-            //         $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
-            //     } else {
-            //         $("#002ASES02105" + body_id).val(value1.value_id)
-            //         $('#002ASES02105' + body_id + ' option').prop("disabled", true)
-            //     }
-            // });
-            $.each(painIntervensi, function(key1, value1) {
-                addIntervensi(parent_id, p_type, body_id, key1, flag)
-            });
+            if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
+                $("#bodyAssessment002Intervensi" + body_id).html("")
+                $.each(painMonitoringDetil, function(key1, value1) {
+                    if (value1.body_id == body_id && value1.parameter_id != '05') {
+                        $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
+                        $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
+                    } else {
+                        $("#002ASES02105" + body_id).val(value1.value_id)
+                        $('#002ASES02105' + body_id + ' option').prop("disabled", true)
+                    }
+                });
+                $.each(painIntervensi, function(key1, value1) {
+                    addIntervensi(parent_id, p_type, body_id, key1, flag)
+                });
+            } else {
+                $("#bodyAssessment002Intervensi" + body_id).find("select, input, textarea").prop("disabled", true)
+            }
         }
     }
 
@@ -1203,7 +1247,7 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addTriage(flag, index, document_id, container) {
+    function addTriage(flag, index, document_id, container, isaddbutton = true) {
         <?php foreach ($aParent as $key => $value) { ?>
             <?php if ($value['parent_id'] == '004') { ?>
                 var bodyId = '';
@@ -1401,7 +1445,10 @@ foreach ($aValue as $key => $value) {
             <?php } ?>
         <?php } ?>
         index++
-        $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'' + document_id + '\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton)
+            $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'' + document_id + '\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        else
+            $("#" + container + "AddBtn").html("")
 
     }
 
@@ -1789,10 +1836,6 @@ foreach ($aValue as $key => $value) {
             '<h4 class="card-title"> Derajat Stabilitas' +
             '</h4>' +
             '<div class="row mt-4">' +
-
-
-
-
             '</div>' +
             '<div class="row">' +
             '<div class="col-md-3">' +
@@ -2882,7 +2925,7 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addFallRisk(flag, index, document_id, container) {
+    function addFallRisk(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -3032,7 +3075,11 @@ foreach ($aValue as $key => $value) {
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
-        $("#addFallRiskButton").html('<a onclick="addFallRisk(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+
+        if (isaddbutton)
+            $("#addFallRiskButton").html('<a onclick="addFallRisk(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        else
+            $("#" + container + "AddBtn").html("")
     }
 
     function aValueParamFallRisk(parent_id, p_type, bodyId, container) {
@@ -7686,7 +7733,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 <script type="text/javascript">
-    function addGcs(flag, index, document_id, container) {
+    function addGcs(flag, index, document_id, container, isaddbutton = true) {
         var bodyId = '';
         var documentId = $("#" + document_id).val()
         if (flag == 1) {
@@ -7963,7 +8010,10 @@ foreach ($aValue as $key => $value) {
             $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++
-        $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyGcsMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton)
+            $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyGcsMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        else
+            $("#" + container + "AddBtn").html("")
     }
 
     function getGcs(bodyId, container) {

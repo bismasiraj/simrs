@@ -30,6 +30,7 @@ use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
 use App\Models\Assessment\PasienDiagnosaPerawatModel;
 use App\Models\Assessment\PasienDiagnosasPerawatModel;
+use App\Models\Assessment\PasienTransferModel;
 use App\Models\Assessment\ReproductionModel;
 use App\Models\Assessment\RespirationModel;
 use App\Models\Assessment\SleepingModel;
@@ -40,6 +41,7 @@ use App\Models\Assessment\SpiritualModel;
 use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\Assessment\TriaseDetilModel;
 use App\Models\Assessment\VisionHearingModel;
+use App\Models\DietInapModel;
 use App\Models\EducationModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
@@ -53,6 +55,7 @@ use App\Models\PasienVisitationModel;
 use App\Models\TreatmentBillModel;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
+use Myth\Auth\Models\UserModel;
 
 class Assessment extends BaseController
 {
@@ -72,8 +75,10 @@ class Assessment extends BaseController
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-
-        // $parameter002 = $this->request->getPost('parameter002');
+        $body = $this->request->getPost();
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+        }
         $parameter_id01 = $this->request->getPost('parameter_id01');
         $parameter_id02 = $this->request->getPost('parameter_id02');
         $parameter_id03 = $this->request->getPost('parameter_id03');
@@ -137,7 +142,7 @@ class Assessment extends BaseController
         if (true) {
             $painDetil = new PainDetilModel();
 
-            $db->query("delete from assessment_pain_detail where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
+            $db->query("delete from assessment_pain_detail where body_id = '$body_id' and visit_id = '$visit_id'");
 
             $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = 'ASES021'")->getResultArray());
             foreach ($select as $key => $value) {
@@ -161,19 +166,22 @@ class Assessment extends BaseController
                 }
             }
 
-            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+            // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
+                                                    where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
+            // return json_encode($select);
             foreach ($select as $key => $value) {
-                $valueId = ${"parameter_id" . $value['parameter_id']};
-                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
+                $valueId = ${$value['p_type'] . $value['parameter_id']};
+                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type='" . $value['p_type'] . "' and parameter_id='" . $value['parameter_id'] . "' and value_score = '$valueId'")->getResultArray());
                 if (isset($paramvalue[0])) {
                     $data = [
                         'org_unit_code' => $org_unit_code,
                         'visit_id' => $visit_id,
                         'trans_id' => $trans_id,
                         'body_id' => $body_id,
-                        'p_type' => $p_type,
+                        'p_type' => $value['p_type'],
                         'parameter_id' => $value['parameter_id'],
-                        'value_id' => $valueId,
+                        'value_id' => $paramvalue[0]['value_score'],
                         'value_score' => $paramvalue[0]['value_score'],
                         'value_desc' => $paramvalue[0]['value_desc'],
                         'modified_date' => Time::now(),
@@ -183,28 +191,30 @@ class Assessment extends BaseController
                 }
             }
 
-            $painIntervensi = new PainIntervensiModel();
-            $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
-            foreach ($timeIntervensi as $key => $value) {
-                // return json_encode(str_replace('T', ' ', $reassessment_date));
+            if ($timeIntervensi != '' && $timeIntervensi != null) {
+                $painIntervensi = new PainIntervensiModel();
+                $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
+                foreach ($timeIntervensi as $key => $value) {
+                    // return json_encode(str_replace('T', ' ', $reassessment_date));
 
-                $data = [
-                    'body_id' => $body_id,
-                    'intervensi_ke' => $key,
-                    'no_registration' => $no_registration,
-                    'p_type' => $p_type,
-                    'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
-                    'intervensi' => $intervensi[$key],
-                    'rute' => $rute[$key],
-                    'reassessment' => $reAssessment[$key],
-                    'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
-                    'valid' => null,
-                    'petugas' => user()->username,
-                    'modified_date' => Time::now(),
-                    'modified_by' => $modified_by,
-                    'value_id' => $painscalescore[$key]
-                ];
-                $painIntervensi->insert($data);
+                    $data = [
+                        'body_id' => $body_id,
+                        'intervensi_ke' => $key,
+                        'no_registration' => $no_registration,
+                        'p_type' => $p_type,
+                        'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
+                        'intervensi' => $intervensi[$key],
+                        'rute' => $rute[$key],
+                        'reassessment' => $reAssessment[$key],
+                        'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
+                        'valid' => null,
+                        'petugas' => user()->username,
+                        'modified_date' => Time::now(),
+                        'modified_by' => $modified_by,
+                        'value_id' => $painscalescore[$key]
+                    ];
+                    $painIntervensi->insert($data);
+                }
             }
         }
 
@@ -368,7 +378,7 @@ class Assessment extends BaseController
                 // return json_encode(($istrue));
             }
         }
-        return json_encode(($istrue));
+        return json_encode("berhasil");
     }
 
     public function getTriage()
@@ -629,7 +639,10 @@ class Assessment extends BaseController
             'nosep' => $nosep,
             'tglsep' => $tglsep,
             'spesialistik' => $spesialistik,
-            'sscondition_id' => new RawSql("newid()")
+            'sscondition_id' => new RawSql("newid()"),
+            'valid_date' => $valid_date,
+            'valid_user' => $valid_user,
+            'valid_pasien' => $valid_pasien
         ];
 
 
@@ -2384,6 +2397,133 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'fallRiskDetail' => $fallRiskDetil
         ]);
     }
+
+    public function saveOrderGizi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+        // $body = json_decode($body, true);
+
+
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+        // return json_encode($data);
+
+        $model = new DietInapModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getOrderGizi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        // $bodyId = $body['body_id'];
+
+        $model = new DietInapModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+        return json_encode([
+            'orderGizi' => $select
+        ]);
+    }
+    public function saveTransfer()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+        // $body = json_decode($body, true);
+
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+        // return json_encode($data);
+
+        $model = new PasienTransferModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function getTransfer()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        // $bodyId = $body['body_id'];
+
+        $model = new PasienTransferModel();
+        // if ($bodyId != '') {
+        //     $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
+        // } else {
+        // }
+        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+
+        $db = db_connect();
+
+        $queryDetil = "select * from examination_info where body_id in (";
+
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id'] . "',";
+        }
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id2'] . "',";
+        }
+        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+
+        $queryDetil .= ");";
+
+        $examinfo = $this->lowerKey($db->query($queryDetil)->getResultArray());
+
+
+
+        return json_encode([
+            'transfer' => $select,
+            'examinfo' => $examinfo
+        ]);
+    }
+
     public function saveExaminationInfo()
     {
         if (!$this->request->is('post')) {
@@ -2402,28 +2542,54 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
             if (isset($temperature))
                 $data['temperature'] = (float)$data['temperature'];
+            else
+                $data['temperature'] = 0;
+
             if (isset($tension_upper))
                 $data['tension_upper'] = (float)$data['tension_upper'];
+            else
+                $data['tension_upper'] = 0;
+
             if (isset($tension_below))
                 $data['tension_below'] = (float)$data['tension_below'];
+            else
+                $data['tension_upper'] = 0;
+
             if (isset($nadi))
                 $data['nadi'] = (float)$data['nadi'];
+            else
+                $data['nadi'] = 0;
+
             if (isset($nafas))
                 $data['nafas'] = (float)$data['nafas'];
+            else
+                $data['nafas'] = 0;
+
             if (isset($weight))
                 $data['weight'] = (float)$data['weight'];
+            else
+                $data['weight'] = 0;
+
             if (isset($height))
                 $data['height'] = (float)$data['height'];
+            else
+                $data['height'] = 0;
+
             if (isset($arm_diameter))
                 $data['arm_diameter'] = (float)$data['arm_diameter'];
+            else
+                $data['arm_diameter'] = 0;
+
             if (isset($saturasi))
                 $data['saturasi'] = (int)$data['saturasi'];
+            else
+                $data['saturasi'] = 0;
         }
 
         $ex = new ExaminationModel();
         $ex->save($data);
 
-        // return json_encode($diag_id[0]);
+        // return json_encode($body_id);
         $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();
@@ -2490,5 +2656,32 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
 
         return json_encode($data);
+    }
+    public function checkpass()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+        // $body = json_decode($body, true);
+
+
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+        }
+
+
+        $users = new UserModel();
+
+        $select = $users->select('password_hash')->where('username', $login)->findAll();
+
+        // return json_encode(base64_encode(hash('sha384', $password, true)));
+
+        return json_encode(password_verify(base64_encode(hash('sha384', $password, true)), $select[0]->password_hash));
+        // return json_encode(password_verify(base64_encode(hash('sha384', "Heny3008", true)), $select[0]->password_hash));
+        // return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
     }
 }

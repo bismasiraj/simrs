@@ -36,7 +36,7 @@ $group = user()->getRoles();
             <div id="arpAddDocument" class="box-tab-tools text-center">
                 <a data-toggle="modal" onclick="initialAddArp()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
-            <div id="arpDocument" class="card border-1 rounded-4 m-4 p-4" style="display: none">
+            <div id="arpDocument" class="card border-1 rounded-4 p-4" style="display: none">
                 <div class="card-body">
                     <form id="formaddarp" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                         <input type="hidden" id="arpbody_id" name="body_id">
@@ -78,6 +78,9 @@ $group = user()->getRoles();
                         <input type="hidden" id="arpaccount_id" name="account_id">
                         <input type="hidden" id="arpkesadaran" name="kesadaran">
                         <input type="hidden" id="arpisvalid" name="isvalid">
+                        <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
+                        <input type="hidden" id="arpvalid_date" name="valid_date" value="1">
+                        <input type="hidden" id="arpvalid_user" name="valid_user" value="1">
                         <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
                         <?php csrf_field(); ?>
                         <div class="row">

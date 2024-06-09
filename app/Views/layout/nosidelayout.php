@@ -65,7 +65,7 @@
     <script src="<?php echo base_url(); ?>assets/libs/select2/js/select2.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
-    <script src="<?php echo base_url(); ?>assets/libs/parsleyjs/parsley.min.js"></script>
+    <!-- <script src="<?php echo base_url(); ?>assets/libs/parsleyjs/parsley.min.js"></script> -->
 
     <script src="<?php echo base_url(); ?>assets/js/pages/form-validation.init.js"></script>
 

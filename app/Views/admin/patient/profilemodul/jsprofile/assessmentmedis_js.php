@@ -22,8 +22,6 @@
         var nota = '%'
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
-
-
     })
     $("#assessmentmedisTab").on("click", function() {
         var accMedisName = "accordionAssessmentMedis"
@@ -41,10 +39,12 @@
             } ?>
             $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
+        $("#formaddarmbtn").trigger("click")
         // appendRtlAccordion(accMedisName);
 
-        $("#formaddarmbtn").trigger("click")
         $("#armdiag_cat").val(3)
+    })
+    $("#assessmentmedisTab").on("mouseup", function() {
         getAssessmentMedis(3)
     })
     $("#rekammedisTab").on("click", function() {
@@ -67,7 +67,6 @@
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
         $("#armdiag_cat").val(1)
-        getAssessmentMedis(1)
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
@@ -87,6 +86,9 @@
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
+    })
+    $("#rekammedisTab").on("click", function() {
+        getAssessmentMedis(1)
     })
 </script>
 
@@ -291,26 +293,26 @@
 
     function fillDataArm(index) {
         disableARM()
-        var pd = pasienDiagnosaAll[index]
+        pasienDiagnosa = pasienDiagnosaAll[index]
 
-        $.each(pd, function(key, value) {
+        $.each(pasienDiagnosa, function(key, value) {
             $("#arm" + key).val(value)
             $("#arm" + key).prop("disabled", true)
         })
-        $("#armclinic_id").html('<option value="' + pd.clinic_id + '">' + pd.name_of_clinic + '</option>')
-        $("#armemployee_id").html('<option value="' + pd.employee_id + '">' + pd.fullname + '</option>')
-        $("#armdiag_cat").val(pd.diag_cat)
+        $("#armclinic_id").html('<option value="' + pasienDiagnosa.clinic_id + '">' + pasienDiagnosa.name_of_clinic + '</option>')
+        $("#armemployee_id").html('<option value="' + pasienDiagnosa.employee_id + '">' + pasienDiagnosa.fullname + '</option>')
+        $("#armdiag_cat").val(pasienDiagnosa.diag_cat)
 
-        fillPemeriksaanFisik(pd.pasien_diagnosa_id)
+        fillPemeriksaanFisik(pasienDiagnosa.pasien_diagnosa_id)
 
         displayTableAssessmentMedis(index)
 
-        getTriage(pd.pasien_diagnosa_id, "bodyTriageMedis")
-        getSirkulasi(pd.pasien_diagnosa_id, "bodySirkulasiMedis")
-        getGcs(pd.pasien_diagnosa_id, "bodySirkulasiMedis")
-        getPainMonitoring(pd.pasien_diagnosa_id, "bodyPainMonitoringMedis")
-        getPernapasan(pd.pasien_diagnosa_id, "bodyPernapasanMedis")
-        getApgar(pd.pasien_diagnosa_id, "bodyApgarMedis")
+        getTriage(pasienDiagnosa.pasien_diagnosa_id, "bodyTriageMedis")
+        getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+        getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+        getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
+        getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
+        getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
 
         // $("#formsavearmbtn").hide()
         // $("#formeditarm").show()
@@ -367,6 +369,10 @@
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
+        if ($("#armvalid_date").val() != '' && $("#armvalid_date").val() != null) {
+            $("#formeditarm").hide()
+            $("#formsignarm").hide()
+        }
         disableCanvasLokalis()
     }
 
@@ -564,7 +570,9 @@
     })
 </script>
 <script type="text/javascript">
-
+    function signRM() {
+        addSignUser("arm", "formsavearmbtn")
+    }
 </script>
 <script type="text/javascript">
     function addRowDiagMedis(diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
@@ -1523,14 +1531,16 @@
                             <div id="bodyGcsMedis">
                             </div>
                         </div>
+                        <div id="bodyGcsMedisAddBtn" class="col-md-12 text-center">
+                            <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         `;
-
         appendAccordionItem(accordionId, accordionContent);
-        addGcs(1, 0, 'armpasien_diagnosa_id', 'bodyGcsMedis')
+        // addGcs(1, 0, 'armpasien_diagnosa_id', 'bodyGcsMedis');
     }
 
     function appendRtlAccordion(accordionId) {
@@ -1789,19 +1799,21 @@
             <div id="collapseFallRiskMedis" class="accordion-collapse collapse" aria-labelledby="FallRiskMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
-                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                            <div class="col-md-12">
-                                <div id="bodyFallRiskMedis">
-                                </div>
+                        <div class="col-md-12">
+                            <div id="bodyFallRiskMedis">
                             </div>
-                        </form>
+                        </div>
+                            
+                        <div id="bodyFallRiskMedisAddBtn" class="col-md-12 text-center">
+                            <a onclick="addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
-        addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis')
+        // addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis')
     }
 
     function appendTriaseMedis(accordionId) {
@@ -1820,8 +1832,8 @@
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-md-12">
-                                        <div id="addTriageButton" class="box-tab-tools text-center">
-                                            <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <div id="bodyTriageMedisAddBtn" class="box-tab-tools text-center">
+                                            <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2133,27 +2145,27 @@
             <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                 <div class="accordion-body text-muted">
                     <div class="row">
-                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                            <div class="col-md-12">
-                                <div id="bodyPainMonitoringMedis">
-                                </div>
-                                
+                        <div class="col-md-12">
+                            <div id="bodyPainMonitoringMedis">
                             </div>
-                        </form>
+                        </div>
+                        <div id="bodyPainMonitoringMedisAddBtn" class="col-md-12 text-center">
+                            <a onclick="addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
         appendAccordionItem(accordionId, accordionContent);
-        addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')
+        // addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')
     }
 </script>
 
 
 <script>
     $(document).ready(function() {
-        $("#chargesTab").trigger("click")
+        // $("#chargesTab").trigger("click")
         $("#assessmentmedisTab").trigger("click")
     })
 </script>

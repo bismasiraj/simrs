@@ -1,253 +1,283 @@
-<script type='text/javascript'>
-    $(document).ready(function(e) {
-        // getListRequestRad(nomor, visit)
-        initializeSearchTarif("searchTarifRad", 'P016');
-    })
-    $("#radTab").on("click", function() {
-        getTreatResultList(nomor, visit)
-        getListRequestRad(nomor, visit)
-    })
-    $("#formSaveBillRadBtn").on("click", function() {
-        $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+<script>
+    var orderGiziAll;
+    $("#orderGiziTab").on("click", function() {
+        getOrderGizi()
     })
 </script>
+
 <script type='text/javascript'>
-    function formatCurrency(total) {
-        //Seperates the components of the number
-        var components = total.toFixed(2).toString().split(".");
-        //Comma-fies the first part
-        components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //Combines the two sections
-        return components.join(",");
+    var arrayBentuk = {
+        1: 'Nasi Biasa(NB)',
+        2: 'Nasi Lunak(NL)',
+        3: 'Bubur Biasa(BB)',
+        4: 'Bubur Saring(BS)',
+        5: 'Makanan Cair',
+        6: 'BBLS',
+        7: 'Puasa',
+        8: 'Buah'
     }
+    $.each(arrayBentuk, function(key, value) {
+        $("#bentukmultibox").append(`<div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="dtype` + key + `" value="` + key + `">
+                        <label class="form-check-label" for="dtype` + key + `">
+                            ` + value + `
+                        </label>
+                    </div>`)
+    })
 
-
-    function isnullcheck(parameter) {
-        return parameter == null ? 0 : (parameter)
+    function isiBentukGizi(container) {
+        $("#bentukgizicontainer").val(container)
+        $("#bentukGizi").modal('show')
     }
-
-    function getTreatResultList(nomor, visit) {
-
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getTreatResultList',
-            type: "POST",
-            data: JSON.stringify({
-                'nomor': nomor,
-                'visit': visit
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                mrJson = data
-
-                mrJson.forEach((element, key) => {
-
-                    $("#radBody").append($("<tr>")
-                        .append($("<td>").append($("<p>").html(mrJson[key].pickup_date)))
-                        .append($("<td>").append($("<p>").html(mrJson[key].tarif_name)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)).append($("<p>").html(mrJson[key].diagnosa_id + '-' + mrJson[key].diagnosa_desc)))
-                        // .append($("<td>").html('<?= $visit['name_of_clinic']; ?>'))
-                        .append($("<td>").append($("<p>").html(mrJson[key].teraphy_desc)).append($("<p>").html(mrJson[key].instruction)))
-                        .append($("<td>").html(mrJson[key].result_value))
-                    )
-                });
-            },
-            error: function() {
-
+    $("#saveBentukGizi").on("click", function() {
+        var container = $("#bentukgizicontainer").val()
+        var bentukValue = '';
+        var bentukDesc = '';
+        $.each(arrayBentuk, function(key, value) {
+            if ($("#dtype" + key).is(":checked")) {
+                bentukValue += ',' + $("#dtype" + key).val()
+                bentukDesc += ', ' + arrayBentuk[$("#dtype" + key).val()]
             }
-        });
-    }
-
-    function getListRequestRad(nomor, visit) {
-
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestRad',
-            type: "POST",
-            data: JSON.stringify({
-                'nomor': nomor,
-                'visit': visit
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-
-
-                hasilradJson = data
-
-                $("#listRequestRad").html("")
-
-
-                hasilradJson.forEach((element, key) => {
-                    console.log(element)
-                    $("#listRequestRad").append('<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Radiologi </h3> <p> Tanggal ' + element.vactination_date + ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getRadOnlineRequest/' + btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id + '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
-                });
-            },
-            error: function() {
-
-            }
-        });
-    }
-
-    function requestRad() {
-        url = '<?php echo base_url(); ?>admin/rekammedis/radOnlineRequest/' + btoa('<?= json_encode($visit); ?>')
-
-        window.open(url, "_blank")
-    }
-
-    function addBillRad(container) {
-        // setTarif('P016', "searchTarifrad")
-        // $("#addBill").modal("show")
-
-        tarifDataJson = $("#" + container).val();
-        tarifData = JSON.parse(tarifDataJson);
-
-        var i = $('#radChargesBody tr').length + 1;
-        var key = 'rad' + i
-        $("#radChargesBody").append($("<tr id=\"" + key + "\">")
-            .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-            .append($("<td>").attr("id", "araddisplaytreat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
-            // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-            .append($("<td>").attr("id", "araddisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
-            .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="aradquantity' + key + '" placeholder="" value="1" class="form-control" >')
-                .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
-            )
-            .append($("<td>").attr("id", "araddisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "araddisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "araddisplayamount_paid_plafond" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "araddisplaydiscount" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "araddisplaysubsidisat" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "araddisplaysubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="aradsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'arad\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="aradeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'arad\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'arad\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
-        )
-
-
-        $("#radChargesBody")
-            .append('<input name="treatment[]" id="aradtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
-            .append('<input name="treat_date[]" id="aradtreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="aradsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="aradamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="discount[]" id="araddiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidisat[]" id="aradsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidi[]" id="aradsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-
-            .append('<input name="bill_id[]" id="aradbill_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="trans_id[]" id="aradtrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="no_registration[]" id="aradno_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="theorder[]" id="aradtheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
-            .append('<input name="visit_id[]" id="aradvisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="aradorg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="class_id[]" id="aradclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            .append('<input name="payor_id[]" id="aradpayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="theid[]" id="aradtheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
-            .append('<input name="thename[]" id="aradthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
-            .append('<input name="theaddress[]" id="aradtheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="aradstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isRJ[]" id="aradisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
-            .append('<input name="gender[]" id="aradgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
-            .append('<input name="ageyear[]" id="aradageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
-            .append('<input name="agemonth[]" id="aradagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
-            .append('<input name="ageday[]" id="aradageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
-            .append('<input name="kal_id[]" id="aradkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_id[]" id="aradclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
-            .append('<input name="bed_id[]" id="aradbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
-            .append('<input name="clinic_id[]" id="aradclinic_id' + key + '" type="hidden" value="P016" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="aradclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
-            .append('<input name="exit_date[]" id="aradexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="cashier[]" id="aradcashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
-            .append('<input name="modified_from[]" id="aradmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
-            .append('<input name="islunas[]" id="aradislunas' + key + '" type="hidden" value="0" class="form-control" />')
-            .append('<input name="measure_id[]" id="aradmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="aradtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
-
-        if ('<?= $visit['isrj']; ?>' == '0') {
-            $("#aclass_room_id" + key).val('<?= $visit['class_room_id']; ?>');
-            $("#abed_id" + key).val('<?= $visit['bed_id']; ?>');
-            <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
-
-            <?php
-            } else {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_inap']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_inap']; ?>" class="form-control" />')
-
-            <?php
-            }
-            ?>
-        } else {
-            <?php
-            if (!is_null($visit['employee_id_from']) && $visit['employee_id_from'] != '') {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id_from']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= $visit['fullname_from']; ?>" class="form-control" />')
-
-            <?php
-            } else {
-            ?>
-                $("#radChargesBody")
-                    .append('<input name="employee_id_from[]" id="arademployee_id_from' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-                    .append('<input name="doctor_from[]" id="araddoctor_from' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-
-            <?php
-            }
-            ?>
-        }
-        $("#radChargesBody")
-            .append('<input name="employee_id[]" id="arademployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="araddoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-            .append('<input name="amount[]" id="aradamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="aradnota_no' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="profesi[]" id="aradprofesi' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tagihan[]" id="aradtagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#aradquantity" + key).val() + '" class="form-control" />')
-            .append('<input name="treatment_plafond[]" id="aradtreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="tarif_type[]" id="aradtarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />')
-
-        if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
-            var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);
-            if (tarifKelas > 0 && '<?= $visit['payor_id']; ?>' != 0 && '<?= $visit['class_id_plafond']; ?>' != 99) {
-                $("#radChargesBody").append('<input name="amount_plafond[]" id="aradamount_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#radChargesBody").append('<input name="amount_paid_plafond[]" id="aradamount_paid_plafond' + key + '" type="hidden" value="' + tarifKelas + '" class="form-control" />')
-                $("#radChargesBody").append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-                $("#radChargesBody").append('<input name="tarif_id_plafond[]" id="aradtarif_id_plafond' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
-            } else {
-                $("#radChargesBody").append('<input name="amount_plafond[]" id="aradamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-                $("#radChargesBody").append('<input name="amount_paid_plafond[]" id="aradamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-                $("#radChargesBody").append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-                $("#radChargesBody").append('<input name="tarif_id_plafond[]" id="aradtarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
-            }
-        } else {
-            $("#radChargesBody").append('<input name="amount_plafond[]" id="aradamount_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-            $("#radChargesBody").append('<input name="amount_paid_plafond[]" id="aradamount_paid_plafond' + key + '" type="hidden" value="0" class="form-control" />')
-            $("#radChargesBody").append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            $("#radChargesBody").append('<input name="tarif_id_plafond[]" id="aradtarif_id_plafond' + key + '" type="hidden" value="" class="form-control" />')
-        }
-
-        $("#aradquantity" + key).keydown(function(e) {
-            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
-        });
-        $('#aradquantity' + key).on("input", function() {
-            var dInput = this.value;
-            $("#aradamount_paid" + key).val($("#aradamount" + key).val() * dInput)
-            $("#araddisplayamount_paid" + key).html(formatCurrency($("#aradamount" + key).val() * dInput))
-            $("#aradtagihan" + key).val($("#aradamount" + key).val() * dInput)
-            $("#aradamount_paid_plafond" + key).val($("#aradamount_plafond" + key).val() * dInput)
-            $("#araddisplayamount_paid_plafond" + key).html(formatCurrency($("#aradamount_plafond" + key).val() * dInput))
         })
+        if (bentukValue.charAt(0) === ',') {
+            // Remove the first character (comma)
+            bentukValue = bentukValue.substring(1);
+            bentukDesc = bentukDesc.substring(1);
+            // inputField.val(newValue);
+        }
+        // console.log("bentukValue")
+        // console.log(bentukValue)
+        // console.log(bentukDesc)
+        // console.log(container)
+        $("#ordergizi" + container).val(bentukValue)
+        $("#ordergizi" + container + "display").val(bentukDesc)
+        $("#bentukmultibox").find("input").prop("checked", false)
+
+        $("#bentukGizi").modal("hide")
+    })
+</script>
+
+<script>
+    var arrayPeringatan = ['ALBUMIN',
+        'BB',
+        'BS',
+        'DH I',
+        'DH II',
+        'DH III',
+        'DH IV',
+        'DJ I',
+        'DJ II',
+        'DJ III',
+        'DJ IV',
+        'DL I',
+        'DL II',
+        'DL III',
+        'DL IV',
+        'DM',
+        'ENCER',
+        'KECAP',
+        'LAUK SARING',
+        'MC',
+        'NABATI',
+        'NB',
+        'NL',
+        'PRO 40 GR',
+        'PRO 60 GR',
+        'R. LEMAK',
+        'R. PURIN',
+        'R. SERAT',
+        'RG',
+        'STROKE I',
+        'STROKE II A (BS)',
+        'STROKE II B (BB)',
+        'STROKE II C(NB)',
+        'T. SERAT',
+        'TIM SARING',
+        'TKTP',
+    ];
+
+    $.each(arrayPeringatan, function(key, value) {
+        var textnya = `<div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="peringatan` + key + `" value="` + value + `">
+                        <label class="form-check-label" for="peringatan` + key + `">
+                            ` + value + `
+                        </label>
+                    </div>`
+
+        $("#peringatanmultibox").append(textnya)
+    })
+
+    function isiPeringatanGizi(container) {
+        $("#peringatangizicontainer").val(container)
+        $("#peringatanGizi").modal('show')
+    }
+    $("#savePeringatanGizi").on("click", function() {
+        var container = $("#peringatangizicontainer").val()
+        var peringatan = '';
+
+        $.each(arrayPeringatan, function(key, value) {
+            if ($("#peringatan" + key).is(":checked")) {
+                peringatan += ',' + $("#peringatan" + key).val()
+            }
+        })
+
+        if (peringatan.charAt(0) === ',') {
+            // Remove the first character (comma)
+            var peringatan = peringatan.substring(1);
+            // inputField.val(newValue);
+        }
+        $("#ordergizi" + container).val(peringatan)
+        $("#peringatanmultibox").find("input").prop("checked", false)
+        $("#peringatanGizi").modal("hide")
+    })
+</script>
+<script>
+    function addOrderGizi(flag, counter, document_id, container) {
+        var bodyId = get_bodyid()
+        var content = `<form id="formGiziRequest` + counter + `" action="">
+                    <input type="hidden" id="ordergiziorg_unit_code` + counter + `" name="org_unit_code" value="<?= $visit['org_unit_code']; ?>">
+                    <input type="hidden" id="ordergizivisit_id` + counter + `" name="visit_id" value="<?= $visit['visit_id']; ?>">
+                    <input type="hidden" id="ordergizino_registration` + counter + `" name="no_registration" value="<?= $visit['no_registration']; ?>">
+                    <input type="hidden" id="ordergizidtype_id` + counter + `" name="dtype_id" value="` + bodyId + `">
+                    <input type="hidden" id="ordergizidescription` + counter + `" name="description">
+                    <input type="hidden" id="ordergiziorder_date` + counter + `" name="order_date" value"` + get_date() + `">
+                    <input type="hidden" id="ordergizithename` + counter + `" name="thename" value="<?= $visit['diantar_oleh']; ?>">
+                    <input type="hidden" id="ordergizitheaddress` + counter + `" name="theaddress" value="<?= $visit['visitor_address']; ?>">
+                    <div class="table-responsive mb-4">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th style='width:5%'>No</th>
+                                    <th style='width:10%'>Tanggal</th>
+                                    <th style='width:10%'></th>
+                                    <th style='width:25%'>Makan Pagi</th>
+                                    <th style='width:25%'>Makan Siang</th>
+                                    <th style='width:25%'>Makan Malam</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordergizi` + counter + `" class="table-group-divider">
+                                <tr>
+                                    <td rowspan="4">1.</td>
+                                    <td rowspan="4"><input type="datetime-local" class="form-control" id="orderdietdiet_date` + counter + `" value="` + get_date() + `"></td>
+                                    <!-- <td><?= $visit['diantar_oleh']; ?></td> -->
+                                    <td>Bentuk</td>
+                                    <td>
+                                        <input type="text" id="ordergizidtype_pagi` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')">
+                                        <input type="hidden" id="ordergizidtype_pagi` + counter + `" name="dtype_pagi" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="ordergizidtype_siang` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')">
+                                        <input type="hidden" id="ordergizidtype_siang` + counter + `" name="dtype_siang" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')">
+                                    </td>
+                                    <td>
+                                        <input type="text" id="ordergizidtype_malam` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')">
+                                        <input type="hidden" id="ordergizidtype_malam` + counter + `" name="dtype_malam" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!-- <td><?= $visit['no_registration']; ?></td> -->
+                                    <td>Jenis</td>
+                                    <td><input type="text" name="pantangan_pagi" id="ordergizipantangan_pagi` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_pagi` + counter + `')"></td>
+                                    <td><input type="text" name="pantangan_siang" id="ordergizipantangan_siang` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_siang` + counter + `')"></td>
+                                    <td><input type="text" name="pantangan_malam" id="ordergizipantangan_malam` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_malam` + counter + `')"></td>
+                                </tr>
+                                <tr>
+                                    <!-- <td><?= $visit['ageyear']; ?> th <?= $visit['agemonth']; ?> bln <?= $visit['ageday'] ?> hr</td> -->
+                                    <td>Mineral</td>
+                                    <td><input type="text" name="dtype_iddesc" id="ordergizidtype_iddesc` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="dtype_siangdesc" id="ordergizidtype_siangdesc` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="dtype_malamdesc" id="ordergizidtype_malamdesc` + counter + `" class="form-control"></td>
+                                </tr>
+                                <tr>
+                                    <!-- <td></td> -->
+                                    <td>Menu penunggu</td>
+                                    <td><input type="text" name="penunggu_pagi" id="ordergizipenunggu_pagi` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="penunggu_siang" id="ordergizipenunggu_siang` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="penunggu_malam" id="ordergizipenunggu_malam` + counter + `" class="form-control"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="panel-footer text-end mb-4">
+                            <button type="submit" id="formSaveOrderGiziBtn` + counter + `" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button type="button" id="formEditOrderGiziBtn` + counter + `" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formsign` + counter + `" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                        </div>
+                    </div>
+                </form>`;
+
+        $("#" + container).append(content)
+
+        $("#formGiziRequest" + counter).on("submit", function(e) {
+            e.preventDefault()
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveOrderGizi',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function(data) {
+                    $("#formGiziRequest" + counter).find("input").prop("readonly", true)
+                },
+                error: function() {
+
+                }
+            });
+        })
+        if (flag == 0) {
+            var detailnya = orderGiziAll[counter]
+            $.each(detailnya, function(key, value) {
+                $("#ordergizi" + key + counter).val(value)
+                //bentuk
+                var bentuk = value
+                bentuk = String(bentuk).split(",")
+                var bentukDesc = ''
+                $.each(arrayBentuk, function(key, value) {
+                    if (bentuk.includes(key)) {
+                        console.log(value)
+                        bentukDesc += ', ' + value
+                    }
+                })
+                if (bentukDesc.charAt(0) === ',') {
+                    bentukDesc = bentukDesc.substring(1);
+                }
+                $("#ordergizi" + key + counter + "display").val(bentukDesc)
+            })
+            $("#ordergizi" + counter).find("input").prop("disabled", true)
+        }
+
+
+        counter++
+        $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`)
+
+    }
+</script>
+<script>
+    function getOrderGizi() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getOrderGizi',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                orderGiziAll = data.orderGizi
+
+                $("#orderGiziBody").html("")
+                orderGiziAll.forEach((element, key) => {
+                    addOrderGizi(0, key, '', 'orderGiziBody')
+                });
+            },
+            error: function() {
+
+            }
+        });
     }
 </script>

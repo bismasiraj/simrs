@@ -1,4 +1,4 @@
-<div class="card bg-light border border-1 rounded-4 m-4">
+<div class="card bg-light border border-1 rounded-4 mt-4">
     <div class="card-body">
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
             <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>

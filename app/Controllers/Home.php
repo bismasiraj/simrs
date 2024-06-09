@@ -292,15 +292,5 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
                 // Save the image to the specified path
             }
         }
-
-
-
-
-        // // Check if the image was saved successfully
-        // if (file_exists($filePath)) {
-        //     echo "Image saved successfully: $filename";
-        // } else {
-        //     echo "Failed to save the image.";
-        // }
     }
 }

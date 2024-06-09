@@ -23,12 +23,6 @@
         setDataVitalSign()
     })
 
-    function get_bodyid() {
-        var m = new Date();
-        m.setHours(m.getHours() + 7)
-        var dateString = m.getUTCFullYear() + "-" + String(m.getUTCMonth() + 1 + 100).substring(1, 3) + "-" + String(m.getUTCDate() + 100).substring(1, 3) + " " + String(m.getUTCHours() + 100).substring(1, 3) + ":" + String(m.getUTCMinutes() + 100).substring(1, 3) + ":" + String(m.getUTCSeconds() + 100).substring(1, 3);
-        return dateString;
-    }
 
     $("#avtweight").keydown(function(e) {
         !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
@@ -66,7 +60,7 @@
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
-        $("#avtclinic_id").val(bodyId)
+        $("#avtbody_id").val(bodyId)
         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#avtbed_id").val()
@@ -353,7 +347,6 @@
         }
 
         if (typeof $("#avtbody_id").val() !== 'undefined' || $("#avtbody_id").val() == "") {
-            // $("#avtbody_id").val((get_bodyid() + String(Math.floor(Math.random() * 1000))).replaceAll(' ', '').replaceAll('-', '').replaceAll(':', ''))
             $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
             $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
             $("#avtbed_id").val()

@@ -115,12 +115,6 @@
         $(prop).val(value)
     }
 
-    function get_bodyid() {
-        var m = new Date();
-        m.setHours(m.getHours() + 7)
-        var dateString = m.getUTCFullYear() + "-" + String(m.getUTCMonth() + 1 + 100).substring(1, 3) + "-" + String(m.getUTCDate() + 100).substring(1, 3) + " " + String(m.getUTCHours() + 100).substring(1, 3) + ":" + String(m.getUTCMinutes() + 100).substring(1, 3) + ":" + String(m.getUTCSeconds() + 100).substring(1, 3);
-        return dateString;
-    }
 
     function disablecpptjson() {
         $("#examination_date").prop("disabled", true)

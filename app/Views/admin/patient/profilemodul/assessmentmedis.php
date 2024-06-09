@@ -13,7 +13,7 @@ $group = user()->getRoles();
             ]); ?>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
-            <div class="card border-1 rounded-4 m-4 p-4">
+            <div class="card border-1 rounded-4 p-4">
                 <div class="card-body">
                     <form id="formaddarm" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                         <div class="modal-body pt0 pb0">
@@ -51,6 +51,9 @@ $group = user()->getRoles();
                                     <input name="tglsep" id="armtglsep" type="hidden" />
                                     <input name="kddpjp" id="armtglsep" type="hidden" />
                                     <input name="diag_cat" id="armdiag_cat" type="hidden" />
+                                    <input name="valid_date" id="armvalid_date" type="hidden" />
+                                    <input name="valid_user" id="armvalid_user" type="hidden" />
+                                    <input name="valid_pasien" id="armvalid_pasien" type="hidden" />
                                     <input name="statusantrean" id="armstatusantrean" type="hidden" value="<?= $visit['statusantrean']; ?>" />
                                     <?php csrf_field(); ?>
                                     <div class="row row-eq">
@@ -80,13 +83,13 @@ $group = user()->getRoles();
                                                     <div class="col-sm-4 col-xs-12">
                                                         <div class="mb-3">
                                                             <div class="form-group">
-                                                                <label for="armclinic_id">Poli</label>
+                                                                <?php if (!is_null($visit['class_room_id'])) { ?>
+                                                                    <label for="armclinic_id">Bangsal</label>
+                                                                <?php } else { ?>
+                                                                    <label for="armclinic_id">Poli</label>
+                                                                <?php } ?>
                                                                 <select name="clinic_id" id="armclinic_id" type="hidden" class="form-control ">
-                                                                    <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                                        <option value="<?= $visit['class_room_id']; ?>"><?= $visit['name_of_class']; ?></option>
-                                                                    <?php } else { ?>
-                                                                        <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
-                                                                    <?php } ?>
+                                                                    <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
                                                                 </select>
                                                             </div>
                                                         </div>

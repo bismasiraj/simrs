@@ -1976,9 +1976,9 @@ This Function is used to Add Patient
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        // return json_encode($visit['gender']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        // return json_encode($visit['gender']);
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -2022,6 +2022,11 @@ This Function is used to Add Patient
             'aParameter' => $aParameter,
             'aValue' => $aValue,
             'mappingAssessment' => $mappingAssessment,
+            // 'aParent' => [],
+            // 'aType' => [],
+            // 'aParameter' => [],
+            // 'aValue' => [],
+            // 'mappingAssessment' => [],
             'mapAssessment' => $mapAssessment
         ]);
     }
