@@ -54,6 +54,7 @@ $group = user()->getRoles();
                                     <input name="valid_date" id="armvalid_date" type="hidden" />
                                     <input name="valid_user" id="armvalid_user" type="hidden" />
                                     <input name="valid_pasien" id="armvalid_pasien" type="hidden" />
+                                    <input name="specialist_type_id" id="armspecialist_type_id" type="hidden" />
                                     <input name="statusantrean" id="armstatusantrean" type="hidden" value="<?= $visit['statusantrean']; ?>" />
                                     <?php csrf_field(); ?>
                                     <div class="row row-eq">
@@ -123,7 +124,7 @@ $group = user()->getRoles();
                                         <!-- INI HISTORY PART -->
 
                                         <div class="panel-footer text-end mb-4">
-                                            <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right" style="display: none;"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
+                                            <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                                             <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>

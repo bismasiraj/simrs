@@ -74,7 +74,8 @@ class PasienDiagnosaModel extends Model
         'sscondition_id',
         'valid_date',
         'valid_user',
-        'valid_pasien'
+        'valid_pasien',
+        'specialist_type_id'
     ];
 
     // Dates

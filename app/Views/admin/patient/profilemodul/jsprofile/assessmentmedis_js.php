@@ -1,13 +1,7 @@
 <script type='text/javascript'>
-    var mrJson;
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
+    var mapAssessment = JSON.parse('<?= json_encode($mapAssessment); ?>')
+    var specialistTypeId = '<?= $visit['specialist_type_id']; ?>'
+
 
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';
@@ -30,8 +24,7 @@
         // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
         if (true) {
             <?php foreach ($mapAssessment as $key => $value) {
-                if ($value['doc_type'] == 1) {
-
+                if ($value['doc_type'] == 1 && $value['specialist_type_id'] == $visit['specialist_type_id']) {
             ?>
                     <?= $value['doc_id']; ?>(accMedisName);
             <?php
@@ -94,94 +87,195 @@
 
 <script type="text/javascript">
     function generateLokalis() {
+        var specialistLokalis = '';
+        if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
+            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+        } else {
+            specialistLokalis = pasienDiagnosa.specialist_type_id
+        }
+
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == 'GEN0002') {
+                $.each(avalue, function(key1, value1) {
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                        $.each(mapAssessment, function(key2, value2) {
+                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+                                // window[value.doc_id](accMedisName)
+                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                                const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
+                                var ctx = canvas.getContext('2d');
+                                var drawing = false;
+                                var line = []; // Store points for the current line being drawn
+                                let drawingHistory = [];
+
+                                var img = new Image();
+                                img.onload = function() {
+                                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                };
+                                img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+
+                                canvas.addEventListener('mousedown', startDrawing);
+                                canvas.addEventListener('mousemove', draw);
+                                canvas.addEventListener('mouseup', stopDrawing);
+                                canvas.addEventListener('mouseout', stopDrawing);
+
+                                function startDrawing(e) {
+                                    drawing = true;
+                                    draw(e);
+                                    line = []; // Clear the current line
+                                    line.push({
+                                        x: e.offsetX,
+                                        y: e.offsetY
+                                    }); // Add the starting point of the line
+                                }
+
+                                function draw(e) {
+                                    if (!drawing) return;
+
+                                    ctx.lineWidth = 2;
+                                    ctx.lineCap = 'round';
+                                    ctx.strokeStyle = '#000';
+
+                                    const x = e.offsetX;
+                                    const y = e.offsetY;
+
+                                    ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                                    ctx.stroke();
+                                    ctx.beginPath();
+                                    ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                                    line.push({
+                                        x,
+                                        y
+                                    }); // Add the current point to the line
+                                }
+
+                                function stopDrawing() {
+                                    drawing = false;
+                                    ctx.beginPath();
+                                    drawingHistory.push(line);
+                                }
+                                $("#clear" + value1.value_id).on("click", function() {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    drawingHistory = []; // Clear the drawing history
+                                    img.onload = function() {
+                                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                    };
+                                    img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+                                })
+                                $("#undo" + value1.value_id).on("click", function() {
+                                    if (drawingHistory.length > 0) {
+                                        // Remove the last line from the drawing history
+                                        drawingHistory.pop();
+                                        // Clear the canvas
+                                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                        // Redraw the remaining lines
+                                        // console.log(drawingHistory)
+                                        drawingHistory.forEach(line => {
+                                            for (let i = 1; i < line.length; i++) {
+                                                console.log(line[i].x)
+                                                ctx.beginPath();
+                                                ctx.moveTo(line[i - 1].x, line[i - 1].y);
+                                                ctx.lineTo(line[i].x, line[i].y);
+                                                ctx.stroke();
+                                            }
+                                        });
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+
+        })
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
                         foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id']) {
+                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
 
         ?>
-                            var canvas<?= $value1['value_id']; ?> = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            const canvasDataInput<?= $value1['value_id']; ?> = document.getElementById('lokalis<?= $value1['value_id']; ?>');
-                            var ctx<?= $value1['value_id']; ?> = canvas<?= $value1['value_id']; ?>.getContext('2d');
-                            var drawing<?= $value1['value_id'] ?> = false;
-                            var line<?= $value1['value_id'] ?> = []; // Store points for the current line being drawn
-                            let drawingHistory<?= $value1['value_id'] ?> = [];
+                            // var canvas<?= $value1['value_id']; ?> = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            // const canvasDataInput<?= $value1['value_id']; ?> = document.getElementById('lokalis<?= $value1['value_id']; ?>');
+                            // var ctx<?= $value1['value_id']; ?> = canvas<?= $value1['value_id']; ?>.getContext('2d');
+                            // var drawing<?= $value1['value_id'] ?> = false;
+                            // var line<?= $value1['value_id'] ?> = []; // Store points for the current line being drawn
+                            // let drawingHistory<?= $value1['value_id'] ?> = [];
 
-                            var img<?= $value1['value_id']; ?> = new Image();
-                            img<?= $value1['value_id']; ?>.onload = function() {
-                                ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
-                            };
-                            img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
+                            // var img<?= $value1['value_id']; ?> = new Image();
+                            // img<?= $value1['value_id']; ?>.onload = function() {
+                            //     ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
+                            // };
+                            // img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
 
-                            canvas<?= $value1['value_id'] ?>.addEventListener('mousedown', startDrawing<?= $value1['value_id'] ?>);
-                            canvas<?= $value1['value_id'] ?>.addEventListener('mousemove', draw<?= $value1['value_id'] ?>);
-                            canvas<?= $value1['value_id'] ?>.addEventListener('mouseup', stopDrawing<?= $value1['value_id'] ?>);
-                            canvas<?= $value1['value_id'] ?>.addEventListener('mouseout', stopDrawing<?= $value1['value_id'] ?>);
+                            // canvas<?= $value1['value_id'] ?>.addEventListener('mousedown', startDrawing<?= $value1['value_id'] ?>);
+                            // canvas<?= $value1['value_id'] ?>.addEventListener('mousemove', draw<?= $value1['value_id'] ?>);
+                            // canvas<?= $value1['value_id'] ?>.addEventListener('mouseup', stopDrawing<?= $value1['value_id'] ?>);
+                            // canvas<?= $value1['value_id'] ?>.addEventListener('mouseout', stopDrawing<?= $value1['value_id'] ?>);
 
-                            function startDrawing<?= $value1['value_id'] ?>(e) {
-                                drawing<?= $value1['value_id'] ?> = true;
-                                draw<?= $value1['value_id'] ?>(e);
-                                line = []; // Clear the current line
-                                line.push({
-                                    x: e.offsetX,
-                                    y: e.offsetY
-                                }); // Add the starting point of the line
-                            }
+                            // function startDrawing<?= $value1['value_id'] ?>(e) {
+                            //     drawing<?= $value1['value_id'] ?> = true;
+                            //     draw<?= $value1['value_id'] ?>(e);
+                            //     line = []; // Clear the current line
+                            //     line.push({
+                            //         x: e.offsetX,
+                            //         y: e.offsetY
+                            //     }); // Add the starting point of the line
+                            // }
 
-                            function draw<?= $value1['value_id'] ?>(e) {
-                                if (!drawing<?= $value1['value_id'] ?>) return;
+                            // function draw<?= $value1['value_id'] ?>(e) {
+                            //     if (!drawing<?= $value1['value_id'] ?>) return;
 
-                                ctx<?= $value1['value_id'] ?>.lineWidth = 2;
-                                ctx<?= $value1['value_id'] ?>.lineCap = 'round';
-                                ctx<?= $value1['value_id'] ?>.strokeStyle = '#000';
+                            //     ctx<?= $value1['value_id'] ?>.lineWidth = 2;
+                            //     ctx<?= $value1['value_id'] ?>.lineCap = 'round';
+                            //     ctx<?= $value1['value_id'] ?>.strokeStyle = '#000';
 
-                                const x = e.offsetX;
-                                const y = e.offsetY;
+                            //     const x = e.offsetX;
+                            //     const y = e.offsetY;
 
-                                ctx<?= $value1['value_id'] ?>.lineTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
-                                ctx<?= $value1['value_id'] ?>.stroke();
-                                ctx<?= $value1['value_id'] ?>.beginPath();
-                                ctx<?= $value1['value_id'] ?>.moveTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
-                                line<?= $value1['value_id'] ?>.push({
-                                    x,
-                                    y
-                                }); // Add the current point to the line
-                            }
+                            //     ctx<?= $value1['value_id'] ?>.lineTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
+                            //     ctx<?= $value1['value_id'] ?>.stroke();
+                            //     ctx<?= $value1['value_id'] ?>.beginPath();
+                            //     ctx<?= $value1['value_id'] ?>.moveTo(e.clientX - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().left, e.clientY - canvas<?= $value1['value_id'] ?>.getBoundingClientRect().top);
+                            //     line<?= $value1['value_id'] ?>.push({
+                            //         x,
+                            //         y
+                            //     }); // Add the current point to the line
+                            // }
 
-                            function stopDrawing<?= $value1['value_id'] ?>() {
-                                drawing<?= $value1['value_id'] ?> = false;
-                                ctx<?= $value1['value_id'] ?>.beginPath();
-                                drawingHistory<?= $value1['value_id'] ?>.push(line<?= $value1['value_id'] ?>);
-                            }
-                            $("#clear<?= $value1['value_id'] ?>").on("click", function() {
-                                ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
-                                drawingHistory<?= $value1['value_id'] ?> = []; // Clear the drawing history
-                                img<?= $value1['value_id']; ?>.onload = function() {
-                                    ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
-                                };
-                                img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
-                            })
-                            $("#undo<?= $value1['value_id'] ?>").on("click", function() {
-                                if (drawingHistory<?= $value1['value_id'] ?>.length > 0) {
-                                    // Remove the last line from the drawing history
-                                    drawingHistory<?= $value1['value_id'] ?>.pop();
-                                    // Clear the canvas
-                                    ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
-                                    // Redraw the remaining lines
-                                    // console.log(drawingHistory)
-                                    drawingHistory<?= $value1['value_id'] ?>.forEach(line => {
-                                        for (let i = 1; i < line<?= $value1['value_id'] ?>.length; i++) {
-                                            console.log(line<?= $value1['value_id'] ?>[i].x)
-                                            ctx<?= $value1['value_id'] ?>.beginPath();
-                                            ctx<?= $value1['value_id'] ?>.moveTo(line<?= $value1['value_id'] ?>[i - 1].x, line<?= $value1['value_id'] ?>[i - 1].y);
-                                            ctx<?= $value1['value_id'] ?>.lineTo(line<?= $value1['value_id'] ?>[i].x, line<?= $value1['value_id'] ?>[i].y);
-                                            ctx<?= $value1['value_id'] ?>.stroke();
-                                        }
-                                    });
-                                }
-                            })
+                            // function stopDrawing<?= $value1['value_id'] ?>() {
+                            //     drawing<?= $value1['value_id'] ?> = false;
+                            //     ctx<?= $value1['value_id'] ?>.beginPath();
+                            //     drawingHistory<?= $value1['value_id'] ?>.push(line<?= $value1['value_id'] ?>);
+                            // }
+                            // $("#clear<?= $value1['value_id'] ?>").on("click", function() {
+                            //     ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
+                            //     drawingHistory<?= $value1['value_id'] ?> = []; // Clear the drawing history
+                            //     img<?= $value1['value_id']; ?>.onload = function() {
+                            //         ctx<?= $value1['value_id']; ?>.drawImage(img<?= $value1['value_id']; ?>, 0, 0, canvas<?= $value1['value_id']; ?>.width, canvas<?= $value1['value_id']; ?>.height);
+                            //     };
+                            //     img<?= $value1['value_id']; ?>.src = '<?= base_url('assets/img/asesmen' . $value1['value_info']) ?>';
+                            // })
+                            // $("#undo<?= $value1['value_id'] ?>").on("click", function() {
+                            //     if (drawingHistory<?= $value1['value_id'] ?>.length > 0) {
+                            //         // Remove the last line from the drawing history
+                            //         drawingHistory<?= $value1['value_id'] ?>.pop();
+                            //         // Clear the canvas
+                            //         ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
+                            //         // Redraw the remaining lines
+                            //         // console.log(drawingHistory)
+                            //         drawingHistory<?= $value1['value_id'] ?>.forEach(line => {
+                            //             for (let i = 1; i < line<?= $value1['value_id'] ?>.length; i++) {
+                            //                 console.log(line<?= $value1['value_id'] ?>[i].x)
+                            //                 ctx<?= $value1['value_id'] ?>.beginPath();
+                            //                 ctx<?= $value1['value_id'] ?>.moveTo(line<?= $value1['value_id'] ?>[i - 1].x, line<?= $value1['value_id'] ?>[i - 1].y);
+                            //                 ctx<?= $value1['value_id'] ?>.lineTo(line<?= $value1['value_id'] ?>[i].x, line<?= $value1['value_id'] ?>[i].y);
+                            //                 ctx<?= $value1['value_id'] ?>.stroke();
+                            //             }
+                            //         });
+                            //     }
+                            // })
         <?php
                             }
                         }
@@ -197,7 +291,7 @@
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
                         foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id']) {
+                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
                                 $file_path = $value1["value_info"];
                                 $extension = pathinfo(
                                     $file_path,
@@ -282,6 +376,7 @@
         $('#armtglsep').val('<?= $visit['visit_date']; ?>')
         $('#armkddpjp').val('<?= $visit['kddpjp']; ?>')
         $('#armstatusantrean').val('<?= $visit['statusantrean']; ?>')
+        $('#armspecialist_type_id').val('<?= $visit['specialist_type_id']; ?>')
 
 
         if (typeof pasienDiagnosa.description !== 'undefined') {
@@ -292,8 +387,24 @@
     }
 
     function fillDataArm(index) {
-        disableARM()
         pasienDiagnosa = pasienDiagnosaAll[index]
+
+        var accMedisName = "accordionAssessmentMedis"
+
+        var titlerj = '';
+        if (pasienDiagnosa.class_room_id != '' && pasienDiagnosa.class_room_id != null) {
+            titlerj = ' RAWAT JALAN'
+        } else {
+            titlerj = ' RAWAT JALAN'
+        }
+        $("#accordionAssessmentMedis").html("")
+        $.each(mapAssessment, function(key, value) {
+            if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {
+                window[value.doc_id](accMedisName)
+                $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
+            }
+        })
+        disableARM()
 
         $.each(pasienDiagnosa, function(key, value) {
             $("#arm" + key).val(value)
@@ -377,18 +488,39 @@
     }
 
     function enableCanvasLokalis() {
+        var specialistLokalis = '';
+        if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
+            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+        } else {
+            specialistLokalis = pasienDiagnosa.specialist_type_id
+        }
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == 'GEN0002') {
+                $.each(avalue, function(key1, value1) {
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                        $.each(mapAssessment, function(key2, value2) {
+                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                                canvas.style.pointerEvents = 'auto';
+                            }
+                        })
+                    }
+                })
+            }
+
+        })
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
                     if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
                         foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id']) {
+                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
 
 
         ?>
 
-                            var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            canvas.style.pointerEvents = 'auto';
+                            // var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            // canvas.style.pointerEvents = 'auto';
 
         <?php
                             }
@@ -399,23 +531,28 @@
     }
 
     function disableCanvasLokalis() {
-        <?php foreach ($aParameter as $key => $value) {
-            if ($value['p_type'] == 'GEN0002')
-                foreach ($aValue as $key1 => $value1) {
-                    if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
-                        foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id']) {
-        ?>
-
-                            var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            canvas.style.pointerEvents = 'none';
-
-        <?php
+        var specialistLokalis = '';
+        if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
+            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+        } else {
+            specialistLokalis = pasienDiagnosa.specialist_type_id
+        }
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == 'GEN0002') {
+                $.each(avalue, function(key1, value1) {
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                        $.each(mapAssessment, function(key2, value2) {
+                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                                // var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                                canvas.style.pointerEvents = 'none';
                             }
-                        }
+                        })
                     }
-                }
-        } ?>
+                })
+            }
+
+        })
     }
 
     function copyPeriksaFisik() {
@@ -1462,6 +1599,13 @@
 
 
     function appendLokalisAccordion(accordionId) {
+        var specialistLokalis = '';
+        if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
+            specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
+        } else {
+            specialistLokalis = pasienDiagnosa.specialist_type_id
+        }
+
         var accordionContent = `
         <div id="armLokalis_Group" class="accordion-item">
             <h2 class="accordion-header" id="headingLokalis">
@@ -1471,42 +1615,41 @@
             </h2>
             <div id="collapseLokalis" class="accordion-collapse collapse" aria-labelledby="headingLokalis" data-bs-parent="#accordionAssessmentMedis">
                 <div class="accordion-body text-muted">
-                    <div class="row mb-2">
-                        <?php foreach ($aParameter as $key => $value) {
-                            if ($value['p_type'] == 'GEN0002')
-                                foreach ($aValue as $key1 => $value1) {
-                                    if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
-                                        foreach ($mapAssessment as $key2 => $value2) {
-                                            if ($value2['doc_id'] == $value1['value_id']) {
-                        ?>
-                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                <div class="mb-4">
-                                    <h5 class="font-size-14 mb-4 badge bg-primary"><?= $value1['value_desc']; ?>:</h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <canvas id="canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>" width="450" height="450" style="border: 1px solid #000;"></canvas>
-                                            <input type="hidden" name="lokalis<?= $value1['value_id']; ?>" id="lokalis<?= $value1['value_id']; ?>">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="lokalis<?= $value1['value_id']; ?>desc">Deskripsi</label>
-                                                <textarea name="lokalis<?= $value1['value_id']; ?>desc" id="lokalis<?= $value1['value_id']; ?>desc" class="form-control" cols="30" rows="10"></textarea>
+                    <div class="row mb-2">`
+        $.each(aparameter, function(key, value) {
+            if (value.p_type == 'GEN0002') {
+                $.each(avalue, function(key1, value1) {
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                        $.each(mapAssessment, function(key2, value2) {
+                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+                                accordionContent += `<div class="col-sm-12 col-md-12 col-lg-12">
+                                    <div class="mb-4">
+                                        <h5 class="font-size-14 mb-4 badge bg-primary">` + value1.value_desc + `:</h5>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <canvas id="canvas` + value1.p_type + value1.parameter_id + value1.value_id + `" width="450" height="450" style="border: 1px solid #000;"></canvas>
+                                                <input type="hidden" name="lokalis` + value1.value_id + `" id="lokalis` + value1.value_id + `">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="lokalis` + value1.value_id + `desc">Deskripsi</label>
+                                                    <textarea name="lokalis` + value1.value_id + `desc" id="lokalis` + value1.value_id + `desc" class="form-control" cols="30" rows="10"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button id="undo` + value1.value_id + `" class="btn btn-primary" type="button"> Undo</button>
+                                                <button id="clear` + value1.value_id + `" class="btn btn-danger" type="button"> Clear</button>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <button id="undo<?= $value1['value_id'] ?>" class="btn btn-primary" type="button"> Undo</button>
-                                            <button id="clear<?= $value1['value_id'] ?>" class="btn btn-danger" type="button"> Clear</button>
-                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                                        <?php
-                                            }
-                                        }
-                                    }
-                                }
-                        } ?>
-                    </div>
+                                </div>`
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        accordionContent += `</div>
                 </div>
             </div>
         </div>

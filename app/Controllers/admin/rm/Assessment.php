@@ -642,7 +642,8 @@ class Assessment extends BaseController
             'sscondition_id' => new RawSql("newid()"),
             'valid_date' => $valid_date,
             'valid_user' => $valid_user,
-            'valid_pasien' => $valid_pasien
+            'valid_pasien' => $valid_pasien,
+            'specialist_type_id' => $specialist_type_id
         ];
 
 
