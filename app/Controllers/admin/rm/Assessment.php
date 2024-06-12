@@ -544,9 +544,6 @@ class Assessment extends BaseController
         }
 
 
-
-
-        // dd(json_encode($diag_id[0]));
         $pv = new PasienVisitationModel();
         $kunjungan = $this->lowerKeyOne($pv->find($visit_id));
         $p = new PasienModel();
@@ -778,8 +775,117 @@ class Assessment extends BaseController
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
     }
+    public function addAssessmentMedisDiagnosa()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+        }
+        foreach ($body as $key => $value) {
+            $data[$key] = ${$key};
+        }
+
+        if (!empty($diag_id)) {
+            $pds = new PasienDiagnosasModel();
+            $pds->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
+
+            foreach ($diag_id as $key => $value) {
+                $dataDiag = [];
+                $dataDiag['pasien_diagnosa_id'] = $pasien_diagnosa_id;
+                $dataDiag['diagnosa_id'] = $diag_id[$key];
+                $dataDiag['diagnosa_name'] = $diag_name[$key];
+                $dataDiag['diag_cat'] = $diag_cat[$key];
+                $dataDiag['suffer_type'] = $suffer_type[$key];
+                $dataDiag['modified_by'] = user_id();
+                $dataDiag['sscondition_id'] = new RawSql('newid()');
+
+                $pds->insert($dataDiag);
+            }
+        }
+        if (!empty($proc_id)) {
+            $pcs = new PasienProceduresModel();
+            $pcs->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
+
+            foreach ($proc_id as $key => $value) {
+                $dataProc = [];
+                $dataProc['pasien_diagnosa_id'] = $pasien_diagnosa_id;
+                $dataProc['diagnosa_id'] = $proc_id[$key];
+                $dataProc['diagnosa_name'] = $proc_name[$key];
+                $dataProc['modified_by'] = user_id();
+                $pcs->insert($dataProc);
+            }
+        }
+
+
+        // String of all alphanumeric character
+        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        // Shufle the $str_result and returns substring
+        // of specified length
+        $alfa_no = substr(str_shuffle($str_result), 0, 5);
+        $array   = array('status' => 'success', 'error' => '', 'message' => "update" . ' riwayat rekam medis berhasil', 'data' => $data);
+        echo json_encode($array);
+    }
 
     public function getAssessmentMedis()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        $no_registration = $body['nomor'];
+
+        $db = db_connect();
+        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+        $selectexam = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname 
+                                                    from examination_info pd 
+                                                    left join employee_all ea on pd.employee_id = ea.employee_id 
+                                                    left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+
+        if (isset($selectpd[0])) {
+            $primaryPD = "";
+            foreach ($selectpd as $key => $value) {
+                $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
+            }
+            $primaryPD = substr($primaryPD, 0, -1);
+            // return ($primaryPD);
+            $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+
+
+            $primaryEA = "";
+            foreach ($selectexam as $key => $value) {
+                $primaryEA .= "'" . $value['body_id'] . "',";
+            }
+            $primaryEA = substr($primaryEA, 0, -1);
+
+            $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosas_nurse where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+
+
+
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'papsienDiagnosas' => $selectdiagnosas,
+                'pasienProcedures' => $selectprocedures,
+                'examInfo' => $selectexam,
+                'pasienDiagnosasNurse' => $selectdiagnosasnurse
+            ]);
+        } else {
+            return json_encode([
+                // 'papsienDiagnosas' => $selectdiagnosas,
+                // 'pasienProcedures' => $selectprocedures,
+                // 'lokalis' => $selectlokalis
+            ]);
+        }
+    }
+
+    public function getAssessmentDocument()
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -804,7 +910,7 @@ class Assessment extends BaseController
             $primaryPD = substr($primaryPD, 0, -1);
             // return ($primaryPD);
             $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
-            $selectprocedures = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
 
             $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryPD)")->getResultArray());
 
@@ -822,7 +928,7 @@ class Assessment extends BaseController
             return json_encode([
                 'pasienDiagnosa' => $selectpd,
                 'pasienHistory' => $selecthistory,
-                'papsienDiagnosas' => $selectdiagnosas,
+                'pasienDiagnosas' => $selectdiagnosas,
                 'pasienProcedures' => $selectprocedures,
                 'lokalis' => $selectlokalis
             ]);

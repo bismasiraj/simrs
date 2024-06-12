@@ -450,6 +450,7 @@
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).val(value.value_detail);
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).prop("disabled", true)
                 } else if (value.value_score == 3) {
+                    console.log(value.p_type + value.parameter_id + value.value_id)
                     $("#lokalis" + value.value_id).val(value.value_detail)
                     $("#lokalis" + value.value_id + "desc").val(value.value_desc)
                     var canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + value.value_id);
@@ -480,7 +481,7 @@
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
-        if ($("#armvalid_date").val() != '' && $("#armvalid_date").val() != null) {
+        if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").hide()
             $("#formsignarm").hide()
         }
@@ -585,7 +586,6 @@
             })
         <?php
         } ?>
-
     }
 
     function copyPeriksaLab() {

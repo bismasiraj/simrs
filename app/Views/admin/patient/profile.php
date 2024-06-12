@@ -103,7 +103,7 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Fall Risk</a></li>
                                         <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
                                         <li class="nav-item"><a id="medicalitemTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
-                                        <li class="nav-item"><a id="" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa Perawat</a></li>
+                                        <li class="nav-item"><a id="diagnosaTab" class="nav-link border-bottom" href="#diagnosa" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa Perawat</a></li>
                                         <li class="nav-item"><a id="orderGiziTab" class="nav-link border-bottom" href="#orderGizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
@@ -660,6 +660,23 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/diagnosa', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
                                     </div>
                                 </div>
                             </div>
@@ -1021,7 +1038,6 @@ $currency_symbol = 'Rp. ';
             var option = new Option(initialname, initialvalue, true, true);
             $("#" + theid).append(option).trigger('change');
         }
-
     }
 
     function initializeProcSelect2(theid, initialvalue = null, initialname = null, initialcat = null) {
@@ -1405,6 +1421,24 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/tandatangan_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+
+<?php echo view('admin/patient/profilemodul/jsprofile/diagnosa_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,

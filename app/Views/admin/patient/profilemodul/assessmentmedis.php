@@ -139,7 +139,7 @@ $group = user()->getRoles();
                 </div>
             </div>
             <!-- <h3>Histori Assessmen Medis</h3> -->
-            <table class="table table-striped table-hover" style="display: none">
+            <table class="table table-striped table-hover">
                 <thead class="table-primary" style="text-align: center;">
                     <tr>
                         <th></th>
@@ -153,10 +153,6 @@ $group = user()->getRoles();
 
                 </thead>
                 <tbody id="assessmentMedisHistoryBody">
-                    <?php
-                    $total = 0;
-
-                    ?>
 
 
                 </tbody>

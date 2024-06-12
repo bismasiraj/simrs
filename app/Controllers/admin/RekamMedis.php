@@ -43,6 +43,25 @@ class RekamMedis extends \App\Controllers\BaseController
 
         return json_encode($select[0]);
     }
+    public function getPeriksaFisikChoosed($visit_id, $body_id)
+    {
+        $db = db_connect();
+        $query = "select top 1
+                'BB : ' + isnull(cast(WEIGHT as varchar(10)),'')  + 'Kg , ' +'TB : ' + isnull(cast(height as varchar(10)),'') + ' cm , ' +
+                'IMT : ' +  isnull(cast( cast ( weight / ( (height /100) *(height /100)) as decimal(8,2)) as varchar(10)),'') + ' , ' +
+                'Suhu : ' + isnull(cast(temperature as varchar(10)),'') + ' C , ' +
+                'Tek.Darah : '+ isnull(cast(CAST(TENSION_UPPER AS DECIMAL(6,0)) as varchar(10)),'') + ' / ' + 
+                isnull(cast(CAST(TENSION_BELOW AS DECIMAL(6,0) ) as varchar(10)),'') + ' mmHg , ' + 
+                'Nadi : ' + isnull( cast(CAST(nadi AS DECIMAL(6,0) )as varchar(10)) , '') + ' /mnt , ' + 'Napas : ' + isnull(cast(CAST(NAFAS AS DECIMAL(4,0)) as varchar(10)),'') + ' /mnt , ' + ' SpO2 : ' + 
+                isnull(cast(saturasi as varchar(10)),'') + ' % ' as periksafisik
+                ,anamnase,
+                weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi, pemeriksaan
+                from EXAMINATION_INFO where visit_id = '$visit_id' and body_id = '$body_id'
+                order by EXAMINATION_DATE desc";
+        $select = $db->query($query)->getResultArray();
+
+        return json_encode($select[0]);
+    }
     public function getPeriksaLab($trans_id)
     {
         $db = db_connect();

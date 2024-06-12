@@ -1,0 +1,119 @@
+<?php
+$currency_symbol = "Rp. ";
+$permission = user()->getPermissions();
+?>
+
+<style>
+    table.table-fit {
+        width: auto !important;
+        table-layout: auto !important;
+    }
+
+    table.table-fit thead th,
+    table.table-fit tfoot th {
+        width: auto !important;
+    }
+
+    table.table-fit tbody td,
+    table.table-fit tfoot td {
+        width: auto !important;
+    }
+</style>
+<div class="tab-pane" id="diagnosa" role="tabpanel">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+            <?php echo view('admin/patient/profilemodul/profilebiodata', [
+                'visit' => $visit,
+                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                'pasienDiagnosa' => $pasienDiagnosa
+            ]); ?>
+
+
+        </div><!--./col-lg-6-->
+        <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
+            <div class="card border-1 rounded-4 p-4">
+                <div class="card-body">
+                    <div class="modal-body pt0 pb0">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="row row-eq">
+                                    <!-- INI CURRENT FILLING DATA -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div id="ajax_load"></div>
+                                        <div class="row">
+                                            <h3 id="armTitle">Diagnosa Klinis</h3>
+                                            <hr>
+                                            <div class="col-md-12">
+                                                <div class="dividerhr"></div>
+                                            </div><!--./col-md-12-->
+                                            <div class="accordion" id="accordionDiagnosa">
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <hr>
+                                            </div><!--./col-md-12-->
+                                            <div class="row">
+                                            </div>
+                                        </div><!--./row-->
+                                    </div><!--./col-md-8-->
+                                    <!-- INI HISTORY PART -->
+
+                                    <div class="panel-footer text-end mb-4">
+                                        <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
+                                        <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                        <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                        <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                        <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
+                                        <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                                    </div>
+                                </div><!--./col-md-4-->
+                            </div><!--./row-->
+                        </div><!--./col-md-12-->
+                    </div><!--./row-->
+                </div>
+            </div>
+            <!-- <h3>Histori Assessmen Medis</h3> -->
+            <table class="table table-striped table-hover">
+                <thead class="table-primary" style="text-align: center;">
+                    <tr>
+                        <th></th>
+                        <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                        <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                        <th class="text-center" style="width: 20%;">S (Subyektif)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">O (Obyektif)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">A (Asesmen)</th class="text-center">
+                        <th class="text-center" style="width: 20%;">P (Prosedur)</th class="text-center">
+                    </tr>
+
+                </thead>
+                <tbody id="assessmentMedisHistoryBody">
+
+
+                </tbody>
+
+            </table>
+        </div>
+    </div><!--./row-->
+</div>
+<!-- -->
+
+<div class="modal fade" id="gcsModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+                <div id="agcsDocument" class="border-1 rounded-4 mb-4" style="">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
