@@ -58,14 +58,6 @@ $permission = user()->getPermissions();
                                     </div><!--./col-md-8-->
                                     <!-- INI HISTORY PART -->
 
-                                    <div class="panel-footer text-end mb-4">
-                                        <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                                        <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                        <button type="button" id="formeditarm" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                        <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                                        <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
-                                        <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
-                                    </div>
                                 </div><!--./col-md-4-->
                             </div><!--./row-->
                         </div><!--./col-md-12-->

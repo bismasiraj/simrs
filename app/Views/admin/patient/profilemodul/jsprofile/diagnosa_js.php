@@ -24,7 +24,6 @@
     }
 
     function appendDiagnosa(accordionId, bodyId, pasienDiagnosa) {
-        console.log(pasienDiagnosa)
         var titleDoc = ''
         var titlerj = '';
 
@@ -48,7 +47,7 @@
             <div id="collapseDiagnosaPerawat` + bodyId + `" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaMedis` + bodyId + `" data-bs-parent="#accordionDiagnosa" style="">
                 <div class="accordion-body text-muted">
                     <form id="formaddarm` + bodyId + `">
-                        <input type="hidden" id="adiagpasien_diagnosa_id" name="pasien_diagnosa_id"/>
+                        <input type="hidden" id="adiagpasien_diagnosa_id` + bodyId + `" name="pasien_diagnosa_id"/>
                         <div class="row">
                             <div class="col-sm-2 col-xs-12">
                                 <h5 class="font-size-14 mb-4 badge bg-primary">dokumen assessment:</h5>
@@ -154,7 +153,7 @@
 
         $.each(pasienDiagnosasAll, function(key, value) {
             if (value.pasien_diagnosa_id == pasienDiagnosa.pasien_diagnosa_id) {
-                addRowDiagDokter('bodyDiagMedis', bodyId, value.diagnosa_id, value.dianogsa_name, value.diag_cat)
+                addRowDiagDokter('bodyDiagMedis', bodyId, value.diagnosa_id, value.diagnosa_name, value.diag_cat, value.diag_suffer)
             }
         })
 
@@ -173,15 +172,15 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
+                    disableArmDiag(bodyId)
                     if (data.status == "fail") {
                         var message = "";
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        // errorMsg(message);
                     } else {
-                        successMsg(data.message);
-                        getAssessmentMedis($("#armdiag_cat").val())
+                        // successMsg(data.message);
                     }
                     clicked_submit_btn.button('reset');
                 },
@@ -237,7 +236,8 @@
     }
 </script>
 <script>
-    function addRowDiagDokter(container, bodyId, diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
+    function addRowDiagDokter(container, bodyId, diag_id = null, diag_name = null, diag_cat = null, diag_suffer = 0) {
+        console.log(diag_name)
         var tbody = document.getElementById(container + bodyId);
         var diagIndex = tbody.getElementsByTagName("tr").length;
         if (diag_cat == null) {
@@ -250,7 +250,7 @@
         $("#" + container + bodyId)
             .append($('<tr id="adiagdiag' + diagIndex + '">')
                 .append($('<td>')
-                    .append('<select id="adiagdiag_id' + diagIndex + '" class="form-control enablekan" name="diag_id[]" onchange="selectedDiagnosa(\'' + diagIndex + '\')" style="width: 100%"></select>')
+                    .append('<select id="adiagdiag_id' + diagIndex + '" class="form-control enablekan" name="diag_id[]" onfocus="removetextdiag(\'' + diagIndex + '\')"  onchange="selectedDiagnosa(\'' + diagIndex + '\')" style="width: 100%"></select>')
                     .append('<input id="adiagdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
                     .append('<input id="adiagsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
                 )
@@ -276,8 +276,8 @@
             );
 
         initializeDiagSelect2("adiagdiag_id" + diagIndex, diag_id, diag_name)
-        $("#adiagdiag_idsuffer_type" + diagIndex).val(0)
-        $("#adiagdiag_iddiag_cat" + diagIndex).val(diag_cat)
+        $("#adiagsuffer_type" + diagIndex).val(diag_suffer)
+        $("#adiagdiag_cat" + diagIndex).val(diag_cat)
     }
 
     function addRowDiagPerawat(container, bodyId, diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
@@ -292,7 +292,7 @@
             .append($('<tr id="adiagdiag' + diagIndex + '">')
                 // .append($('<td>').html(diagIndex + "."))
                 .append($('<td>')
-                    .append('<select id="adiagdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiagNurse(' + diagIndex + ')" style="width: 100%"></select>')
+                    .append('<select id="adiagdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onfocus="removetextdiag(\'' + diagIndex + '\')" onchange="selectedDiagNurse(\'' + diagIndex + '\')" style="width: 100%"></select>')
                     .append('<input id="adiagdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     .append('<input id="adiagsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
                     // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
@@ -328,11 +328,13 @@
 
     function selectedDiagnosa(index) {
         var diagname = $("#adiagdiag_id" + index).text()
-        console.log("#adiagdiag_id" + index)
-        console.log(diagname)
         if (typeof diagname !== 'undefined') {
             $("#adiagdiag_name" + index).val(diagname)
         }
+    }
+
+    function removetextdiag(index) {
+        $("#adiagdiag_id" + index).text("")
     }
 </script>
 <script>
@@ -350,6 +352,7 @@
             cache: false,
             processData: false,
             success: function(data) {
+                $("#accordionDiagnosa").html("")
                 pasienDiagnosaAll = data.pasienDiagnosa
                 examForassessment = data.examInfo
 

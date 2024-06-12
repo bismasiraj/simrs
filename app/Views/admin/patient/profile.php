@@ -1036,6 +1036,8 @@ $currency_symbol = 'Rp. ';
         });
         if (initialvalue != null) {
             var option = new Option(initialname, initialvalue, true, true);
+            // console.log(theid)
+            // console.log(option)
             $("#" + theid).append(option).trigger('change');
         }
     }

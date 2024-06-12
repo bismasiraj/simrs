@@ -544,6 +544,9 @@ class Assessment extends BaseController
         }
 
 
+
+
+        // dd(json_encode($diag_id[0]));
         $pv = new PasienVisitationModel();
         $kunjungan = $this->lowerKeyOne($pv->find($visit_id));
         $p = new PasienModel();
@@ -832,7 +835,6 @@ class Assessment extends BaseController
         $array   = array('status' => 'success', 'error' => '', 'message' => "update" . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
     }
-
     public function getAssessmentMedis()
     {
         if (!$this->request->is('post')) {
@@ -845,62 +847,7 @@ class Assessment extends BaseController
         $no_registration = $body['nomor'];
 
         $db = db_connect();
-        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
-        $selectexam = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname 
-                                                    from examination_info pd 
-                                                    left join employee_all ea on pd.employee_id = ea.employee_id 
-                                                    left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
-
-        if (isset($selectpd[0])) {
-            $primaryPD = "";
-            foreach ($selectpd as $key => $value) {
-                $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
-            }
-            $primaryPD = substr($primaryPD, 0, -1);
-            // return ($primaryPD);
-            $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
-            $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
-
-
-            $primaryEA = "";
-            foreach ($selectexam as $key => $value) {
-                $primaryEA .= "'" . $value['body_id'] . "',";
-            }
-            $primaryEA = substr($primaryEA, 0, -1);
-
-            $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosas_nurse where body_id in ($primaryEA) ")->getResultArray());
-
-
-
-            return json_encode([
-                'pasienDiagnosa' => $selectpd,
-                'papsienDiagnosas' => $selectdiagnosas,
-                'pasienProcedures' => $selectprocedures,
-                'examInfo' => $selectexam,
-                'pasienDiagnosasNurse' => $selectdiagnosasnurse
-            ]);
-        } else {
-            return json_encode([
-                // 'papsienDiagnosas' => $selectdiagnosas,
-                // 'pasienProcedures' => $selectprocedures,
-                // 'lokalis' => $selectlokalis
-            ]);
-        }
-    }
-
-    public function getAssessmentDocument()
-    {
-        if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $body = $this->request->getBody();
-        $body = json_decode($body, true);
-        $visit_id = $body['visit_id'];
-        $no_registration = $body['nomor'];
-
-        $db = db_connect();
-        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' and diag_cat = '3'")->getResultArray());
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -931,7 +878,7 @@ class Assessment extends BaseController
             return json_encode([
                 'pasienDiagnosa' => $selectpd,
                 'pasienHistory' => $selecthistory,
-                'pasienDiagnosas' => $selectdiagnosas,
+                'papsienDiagnosas' => $selectdiagnosas,
                 'pasienProcedures' => $selectprocedures,
                 'lokalis' => $selectlokalis
             ]);
@@ -945,7 +892,52 @@ class Assessment extends BaseController
             ]);
         }
     }
+    public function getAssessmentDocument()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
 
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        $no_registration = $body['nomor'];
+
+        $db = db_connect();
+        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+        $selectexam = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname 
+                                                    from examination_info pd 
+                                                    left join employee_all ea on pd.employee_id = ea.employee_id 
+                                                    left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
+
+        if (isset($selectpd[0])) {
+            $primaryPD = "";
+            foreach ($selectpd as $key => $value) {
+                $primaryPD .= "'" . $value['pasien_diagnosa_id'] . "',";
+            }
+            $primaryPD = substr($primaryPD, 0, -1);
+            // return ($primaryPD);
+            $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+
+
+
+
+
+            return json_encode([
+                'pasienDiagnosa' => $selectpd,
+                'papsienDiagnosas' => $selectdiagnosas,
+                'pasienProcedures' => $selectprocedures,
+                'examInfo' => $selectexam
+            ]);
+        } else {
+            return json_encode([
+                // 'papsienDiagnosas' => $selectdiagnosas,
+                // 'pasienProcedures' => $selectprocedures,
+                // 'lokalis' => $selectlokalis
+            ]);
+        }
+    }
     public function saveStabilitas()
     {
         if (!$this->request->is('post')) {
