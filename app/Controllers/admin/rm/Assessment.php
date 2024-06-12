@@ -781,6 +781,8 @@ class Assessment extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        // return json_encode("asdf");
+
         $body = $this->request->getPost();
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -792,6 +794,7 @@ class Assessment extends BaseController
         if (!empty($diag_id)) {
             $pds = new PasienDiagnosasModel();
             $pds->where('pasien_diagnosa_id', $pasien_diagnosa_id)->delete();
+            // return json_encode($data);
 
             foreach ($diag_id as $key => $value) {
                 $dataDiag = [];
@@ -865,7 +868,7 @@ class Assessment extends BaseController
             }
             $primaryEA = substr($primaryEA, 0, -1);
 
-            $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosas_nurse where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
+            $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosas_nurse where body_id in ($primaryEA) ")->getResultArray());
 
 
 

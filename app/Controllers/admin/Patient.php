@@ -1103,6 +1103,9 @@ This Function is used to Add Patient
         $payorModel = new PayorModel();
         $payor = $this->lowerKey($payorModel->findAll());
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel);
+
 
         $dt_data     = array();
         if (!empty($kunjungan)) {

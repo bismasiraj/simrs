@@ -248,15 +248,15 @@
         }
         diagIndex = bodyId + diagIndex
         $("#" + container + bodyId)
-            .append($('<tr id="diag' + diagIndex + '">')
+            .append($('<tr id="adiagdiag' + diagIndex + '">')
                 .append($('<td>')
-                    .append('<select id="diag_id' + diagIndex + '" class="form-control enablekan" name="diag_id[]" onchange="selectedDiagnosa(\'' + diagIndex + '\')" style="width: 100%"></select>')
-                    .append('<input id="diag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
-                    .append('<input id="sscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
+                    .append('<select id="adiagdiag_id' + diagIndex + '" class="form-control enablekan" name="diag_id[]" onchange="selectedDiagnosa(\'' + diagIndex + '\')" style="width: 100%"></select>')
+                    .append('<input id="adiagdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
+                    .append('<input id="adiagsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />')
                 )
                 .append($('<td>')
                     .append($("<select class=\"form-control enablekan\">")
-                        .attr('name', 'suffer_type[]').attr('id', 'suffer_type' + diagIndex) <?php foreach ($suffer as $key => $value) { ?>
+                        .attr('name', 'suffer_type[]').attr('id', 'adiagsuffer_type' + diagIndex) <?php foreach ($suffer as $key => $value) { ?>
                             .append($("<option>")
                                 .attr('value', '<?= $suffer[$key]['suffer_type']; ?>').html('<?= $suffer[$key]['suffer']; ?>')
                             ) <?php } ?>
@@ -265,19 +265,19 @@
                 )
                 .append($('<td>')
                     .append($("<select class=\"form-control enablekan\">")
-                        .attr('name', 'diag_cat[]').attr('id', 'diag_cat' + diagIndex) <?php foreach ($diagCat as $key => $value) { ?>
+                        .attr('name', 'diag_cat[]').attr('id', 'adiagdiag_cat' + diagIndex) <?php foreach ($diagCat as $key => $value) { ?>
                             .append($("<option>")
                                 .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
                             ) <?php } ?>
                         .val(diag_cat)
                     )
                 )
-                .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right enablekan' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
+                .append("<td><a href='#' onclick='$(\"#adiagdiag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right enablekan' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
             );
 
-        initializeDiagSelect2("diag_id" + diagIndex, diag_id, diag_name)
-        $("#suffer_type" + diagIndex).val(0)
-        $("#diag_cat" + diagIndex).val(diag_cat)
+        initializeDiagSelect2("adiagdiag_id" + diagIndex, diag_id, diag_name)
+        $("#adiagdiag_idsuffer_type" + diagIndex).val(0)
+        $("#adiagdiag_iddiag_cat" + diagIndex).val(diag_cat)
     }
 
     function addRowDiagPerawat(container, bodyId, diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
@@ -328,6 +328,7 @@
 
     function selectedDiagnosa(index) {
         var diagname = $("#adiagdiag_id" + index).text()
+        console.log("#adiagdiag_id" + index)
         console.log(diagname)
         if (typeof diagname !== 'undefined') {
             $("#adiagdiag_name" + index).val(diagname)

@@ -71,7 +71,6 @@ $permission = user()->getPermissions();
             </div><!--./modal-header-->
             <div class="modal-body pt0 pb0">
                 <div id="agcsDocument" class="border-1 rounded-4 mb-4" style="">
-
                 </div>
             </div>
         </div>
