@@ -169,7 +169,7 @@ class Assessment extends BaseController
 
             $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
                                                 where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
-
+            $p_type = $select[0]['p_type'];
             if (in_array($select[0]['p_type'], [
                 'ASES025',
                 'ASES026',
@@ -271,6 +271,76 @@ class Assessment extends BaseController
             'painIntervensi' => $painIntervensi
         ]);
     }
+    public function copyPainMonitoring()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $db = db_connect();
+        if ($bodyId != '') {
+            $painMonitoring = $this->lowerKey($db->query("select top(1) * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit' order by examination_date")->getResultArray());
+            if (!empty($painMonitoring)) {
+                $model = new PainMonitoringModel();
+                $data = $painMonitoring[0];
+                $data['document_id'] = $bodyId;
+                $org = new OrganizationunitModel();
+                $id = $org->generateId();
+                $idOld = $data['body_id'];
+                $data['body_id'] = $id;
+                unset($data['modified_date']);
+                $data['examination_info'] = Time::now();
+                $data['modified_by'] = user()->username;
+                $ispassing = $model->insert($data);
+                $selectPain[] = $data;
+                if ($ispassing) {
+                    $queryDetil = "select * from assessment_pain_detail where body_id = '$idOld'";
+                    $painDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
+                    $selectDetil = [];
+                    foreach ($painDetil as $key => $value) {
+                        $modelDetail = new PainDetilModel();
+                        $dataDetail = $value;
+                        $dataDetail['body_id'] = $id;
+                        unset($data['modified_date']);
+                        $dataDetail['modified_by'] = user()->username;
+                        $modelDetail->insert($dataDetail);
+                        $selectDetil[] = $dataDetail;
+                    }
+
+
+                    $queryIntervensi = "select * from assessment_pain_intervensi where body_id= '$idOld'";
+                    $painIntervensi = $this->lowerKey($db->query($queryIntervensi)->getResultArray());
+                    $selectIntervensi = [];
+                    foreach ($painIntervensi as $key => $value) {
+                        $modelIntervensi = new PainIntervensiModel();
+                        $dataIntervensi = $value;
+                        $dataIntervensi['body_id'] = $id;
+                        unset($data['modified_date']);
+                        $dataIntervensi['modified_by'] = user()->username;
+                        $modelIntervensi->insert($dataIntervensi);
+                        $selectIntervensi[] = $dataIntervensi;
+                    }
+                    return json_encode([
+                        'painMonitoring' => $selectPain,
+                        'painDetil' => $selectDetil,
+                        'painIntervensi' => $selectIntervensi
+                    ]);
+                }
+            } else {
+                return $this->customResponse('No records found', 404);
+            }
+        } else {
+            return $this->customResponse('No records found', 404);
+        }
+    }
 
     public function saveTriage()
     {
@@ -363,29 +433,29 @@ class Assessment extends BaseController
         }
 
 
-        $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER_VALUE where P_TYPE = '$p_type'")->getResultArray());
+        // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER_VALUE where P_TYPE = '$p_type'")->getResultArray());
 
 
-        foreach ($select as $key => $value) {
-            if (isset(${'val' . $value['value_id']})) {
-                $data = [
-                    'org_unit_code' => $org_unit_code,
-                    'visit_id' => $visit_id,
-                    'trans_id' => $trans_id,
-                    'body_id' => $body_id,
-                    'p_type' => $p_type,
-                    'parameter_id' => $value['parameter_id'],
-                    'value_score' => $value['value_score'],
-                    'value_desc' => $value['value_desc'],
-                    // 'modified_date' => Time::now(),
-                    'modified_by' => user()->username,
-                    'value_id' => $value['value_id']
-                ];
+        // foreach ($select as $key => $value) {
+        //     if (isset(${'val' . $value['value_id']})) {
+        //         $data = [
+        //             'org_unit_code' => $org_unit_code,
+        //             'visit_id' => $visit_id,
+        //             'trans_id' => $trans_id,
+        //             'body_id' => $body_id,
+        //             'p_type' => $p_type,
+        //             'parameter_id' => $value['parameter_id'],
+        //             'value_score' => $value['value_score'],
+        //             'value_desc' => $value['value_desc'],
+        //             // 'modified_date' => Time::now(),
+        //             'modified_by' => user()->username,
+        //             'value_id' => $value['value_id']
+        //         ];
 
-                $istrue = $triaseDetil->insert($data);
-                // return json_encode(($istrue));
-            }
-        }
+        //         $istrue = $triaseDetil->insert($data);
+        //         // return json_encode(($istrue));
+        //     }
+        // }
         return json_encode("berhasil");
     }
 
@@ -407,6 +477,96 @@ class Assessment extends BaseController
 
         $triage = $this->lowerKey($db->query("select * from assessment_indicator where visit_id = '$visit' and document_id = '$bodyId' and p_type in (select p_type from assessment_parameter_type where PARENT_ID = '004') ")->getResultArray());
         // return json_encode($triage);
+
+        $triageDetil = "select * from assessment_triase_detail where body_id in (";
+
+        foreach ($triage as $key => $value) {
+            $triageDetil .= "'" . $value['body_id'] . "',";
+        }
+        $triageDetil = substr($triageDetil, 0, strlen($triageDetil) - 1);
+
+        $triageDetil .= ");";
+
+        $triageDetil = $this->lowerKey($db->query($triageDetil)->getResultArray());
+
+        return json_encode([
+            'triage' => $triage,
+            'triageDetil' => $triageDetil
+        ]);
+    }
+    public function copyTriage()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $document_id = $body['document_id'];
+
+        $triageCopy = [];
+        $triageDetilCopy = [];
+
+        $db = db_connect();
+
+        $triage = $this->lowerKey($db->query("select top(1) * from assessment_indicator where visit_id = '$visit' and p_type in (select p_type from assessment_parameter_type where PARENT_ID = '004') order by modified_date desc")->getResultArray());
+
+        if (!empty($triage)) {
+            $indicator = new IndicatorModel();
+            $data = $triage[0];
+            $data['document_id'] = $document_id;
+            $data['modified_by'] = user()->username;
+            $data['examination_date'] = Time::now();
+            unset($data['modified_date']);
+            $idOld = $data['body_id'];
+            $org = new OrganizationunitModel();
+            $id = $org->generateId();
+            $data['body_id'] = $id;
+            $isSuccess = $indicator->save($data);
+
+            if ($isSuccess) {
+                $triageCopy[0] = $data;
+                $triageDetail = $this->lowerKey($db->query("select * from assessment_triase_detail where body_id = '$idOld'")->getResultArray());
+                if (!empty($triageDetail)) {
+                    $triaseDetil = new TriaseDetilModel();
+                    foreach ($triageDetail as $key => $value) {
+                        // return json_encode($value);
+                        $dataDetil = $value;
+                        $dataDetil['body_id'] = $id;
+                        $dataDetil['modified_by'] = user()->username;
+                        unset($dataDetil['modified_date']);
+                        $triaseDetil->insert($dataDetil);
+                        $triaseDetilCopy[] = $dataDetil;
+                        unset($dataDetil);
+                    }
+                }
+            }
+            return $this->customResponse('No records found', 404);
+        } else {
+            return $this->customResponse('No records found', 404);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         $triageDetil = "select * from assessment_triase_detail where body_id in (";
 
@@ -2462,6 +2622,35 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'gcs' => $select
         ]);
     }
+    public function copyGcs()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new GcsModel();
+        $data = $this->lowerKey($model->where("visit_id", $visit)->orderBy("examination_date desc")->select("*")->first());
+        $org = new OrganizationunitModel();
+        $id = $org->generateId();
+        $data['body_id'] = $id;
+        $data['document_id'] = $bodyId;
+        unset($data['modified_date']);
+        $data['examination_date'] = Time::now();
+        $model->insert($data);
+        $result[] = $data;
+
+        return json_encode([
+            'gcs' => $result
+        ]);
+    }
 
     public function saveFallRisk()
     {
@@ -2563,6 +2752,62 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             'fallRisk' => $select,
             'fallRiskDetail' => $fallRiskDetil
         ]);
+    }
+    public function copyFallRisk()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+
+        $model = new FallRiskModel();
+        if ($bodyId != '') {
+            $select = $this->lowerKey($model->where("visit_id", $visit)->select("top(1) *")->orderBy("examination_date")->findAll());
+            if (!empty($select)) {
+                $model = new FallRiskModel();
+                $data = $select[0];
+                $data['document_id'] = $bodyId;
+                $org = new OrganizationunitModel();
+                $id = $org->generateId();
+                $idOld = $data['body_id'];
+                $data['body_id'] = $id;
+                unset($data['modified_date']);
+                $data['examination_info'] = Time::now();
+                $data['modified_by'] = user()->username;
+                $ispassing = $model->insert($data);
+                $selectFall[] = $data;
+                if ($ispassing) {
+                    $db = db_connect();
+                    $queryDetil = "select * from assessment_fall_risk_detail where body_id = '$idOld'";
+                    $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
+                    $selectDetil = [];
+                    foreach ($fallRiskDetil as $key => $value) {
+                        $modelDetail = new FallRiskDetailModel();
+                        $dataDetail = $value;
+                        $dataDetail['body_id'] = $id;
+                        unset($data['modified_date']);
+                        $dataDetail['modified_by'] = user()->username;
+                        $modelDetail->insert($dataDetail);
+                        $selectDetil[] = $dataDetail;
+                    }
+                    return json_encode([
+                        'fallRisk' => $selectFall,
+                        'fallRiskDetail' => $selectDetil
+                    ]);
+                }
+            } else {
+                return $this->customResponse('No records found', 404);
+            }
+        } else {
+            return $this->customResponse('No records found', 404);
+        }
     }
 
     public function saveOrderGizi()

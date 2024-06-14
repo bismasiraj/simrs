@@ -1423,6 +1423,7 @@
                         </div>
                         <div id="bodyGcsMedisAddBtn" class="col-md-12 text-center">
                             <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>
@@ -1695,6 +1696,7 @@
                         </div>
                         <div id="bodyFallRiskMedisAddBtn" class="col-md-12 text-center">
                             <a onclick="addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>
@@ -1723,6 +1725,7 @@
                                     <div class="col-md-12">
                                         <div id="bodyTriageMedisAddBtn" class="box-tab-tools text-center">
                                             <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                            <a onclick="copyTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2040,6 +2043,7 @@
                         </div>
                         <div id="bodyPainMonitoringMedisAddBtn" class="col-md-12 text-center">
                             <a onclick="addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>

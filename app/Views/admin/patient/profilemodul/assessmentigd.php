@@ -34,7 +34,7 @@ $group = user()->getRoles();
 
         <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
             <div id="arpAddDocument" class="box-tab-tools text-center">
-                <a data-toggle="modal" onclick="initialAddArp()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                <a data-toggle="modal" onclick="initialAddArp()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
             <div id="arpDocument" class="card border-1 rounded-4 p-4" style="display: none">
                 <div class="card-body">
@@ -81,7 +81,6 @@ $group = user()->getRoles();
                         <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
                         <input type="hidden" id="arpvalid_date" name="valid_date" value="1">
                         <input type="hidden" id="arpvalid_user" name="valid_user" value="1">
-                        <input type="hidden" id="arpvs_status_id" name="vs_status_id" value="1">
                         <?php csrf_field(); ?>
                         <div class="row">
                             <h3 id="arpTitle">Assessment Keperawatan</h3>
@@ -284,6 +283,9 @@ $group = user()->getRoles();
                                                     <div class="col-md-12">
                                                         <div id="bodyFallRiskPerawat">
                                                         </div>
+                                                        <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
+                                                            <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
                                                     </div>
                                                 </form>
                                             </div>
@@ -305,6 +307,9 @@ $group = user()->getRoles();
                                                     <div class="col-md-12">
                                                         <div id="bodyPainMonitoringPerawat">
                                                         </div>
+                                                        <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
+                                                            <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
                                                     </div>
                                                 </form>
                                             </div>
@@ -324,6 +329,13 @@ $group = user()->getRoles();
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div id="bodyTriagePerawat">
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-12">
+                                                            <div id="bodyTriagePerawatAddBtn" class="box-tab-tools text-center">
+                                                                <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -450,7 +462,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
-                                                                <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -493,6 +505,9 @@ $group = user()->getRoles();
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div id="bodyGcsPerawat">
+                                                    </div>
+                                                    <div id="bodyGcsPerawatAddBtn" class="col-md-12 text-center">
+                                                        <a onclick="addGcs(1,0,'arpbody_id', 'bodyGcsPerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -537,7 +552,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addNeurosensorisButton" class="box-tab-tools text-center">
-                                                                <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -564,7 +579,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addPencernaanButton" class="box-tab-tools text-center">
-                                                                <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -591,7 +606,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addPerkemihanButton" class="box-tab-tools text-center">
-                                                                <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -618,7 +633,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -645,7 +660,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                                <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -672,7 +687,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addSeksualButton" class="box-tab-tools text-center">
-                                                                <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -699,7 +714,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -726,7 +741,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addSocialButton" class="box-tab-tools text-center">
-                                                                <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -753,7 +768,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addHearingButton" class="box-tab-tools text-center">
-                                                                <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -780,7 +795,7 @@ $group = user()->getRoles();
                                                     <div class="row mb-4">
                                                         <div class="col-md-12">
                                                             <div id="addSleepingButton" class="box-tab-tools text-center">
-                                                                <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -865,114 +880,6 @@ $group = user()->getRoles();
                                                                     $total = 0;
                                                                     ?>
                                                                 </tbody>
-                                                                <tfoot class="table-group-divider" style="display: none">
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-6"></div>
-                                                                                <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                    <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                </label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                </tfoot>
                                                             </table>
                                                         </form>
                                                     </div>
@@ -1056,114 +963,6 @@ $group = user()->getRoles();
                                                                     $total = 0;
                                                                     ?>
                                                                 </tbody>
-                                                                <tfoot class="table-group-divider" style="display: none">
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-6"></div>
-                                                                                <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                    <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                </label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan='11' class="align_right">
-                                                                            <div class="row">
-                                                                                <div class="col-sm-5"></div>
-                                                                                <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                <div class="col-sm-3">
-                                                                                    <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td></td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                </tfoot>
                                                             </table>
                                                         </form>
                                                     </div>

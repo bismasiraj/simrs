@@ -632,4 +632,8 @@ abstract class BaseController extends Controller
 
         return $tarif;
     }
+    public function customResponse($message, $statusCode)
+    {
+        return $this->response->setStatusCode($statusCode)->setJSON(['message' => $message]);
+    }
 }

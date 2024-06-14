@@ -199,6 +199,7 @@ foreach ($aValue as $key => $value) {
         $("#arpFallRisk_Group").show()
         $("#arpPainMonitoring_Group").show()
         $("#arpTriage_Group").show()
+        $("#bodyTriagePerawat").html("")
         $("#arpApgar_Group").show()
         $("#arpGizi_Group").show()
         $("#arpAdl_Group").show()
@@ -277,17 +278,27 @@ foreach ($aValue as $key => $value) {
     }));
 
     function generateSatelite() {
-        addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat')
-        addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat')
-        addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat')
-        addGizi(1, 0, 'arpbody_id', 'bodyGiziPerawat')
-        addTriage(1, 0, 'arpbody_id', 'bodyTriagePerawat')
-        addADL(1, 0, 'arpbody_id', 'bodyADLPerawat')
-        addDekubitus(1, 0, 'arpbody_id', 'bodyDekubitusPerawat')
-        addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')
-        addEducationForm(1, 0, 'arpbody_id', 'bodyEducationFormPerawat')
-        addGcs(1, 0, 'arpbody_id', 'bodyGcsPerawat')
-        addIntegumen(1, 0, 'arpbody_id', 'bodyIntegumenPerawat')
+        $("#bodyFallRiskPerawat").html("")
+        // addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat')
+        $("#bodyApgarPerawat").html("")
+        // addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat')
+        $("#bodyPainMonitoringPerawat").html("")
+        // addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat')
+        $("#bodyGiziPerawat").html("")
+        // addGizi(1, 0, 'arpbody_id', 'bodyGiziPerawat')
+        $("#bodyTriagePerawat").html("")
+        // addTriage(1, 0, 'arpbody_id', 'bodyTriagePerawat')
+        $("#bodyADLPerawat").html("")
+        // addADL(1, 0, 'arpbody_id', 'bodyADLPerawat')
+        $("#bodyDekubitusPerawat").html("")
+        // addDekubitus(1, 0, 'arpbody_id', 'bodyDekubitusPerawat')
+        $("#bodyStabilitasPerawat").html("")
+        // addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')
+        $("#bodyEducationFormPerawat").html("")
+        // addEducationForm(1, 0, 'arpbody_id', 'bodyEducationFormPerawat')
+        $("#bodyGcsPerawat").html("")
+        // addGcs(1, 0, 'arpbody_id', 'bodyGcsPerawat')
+        $("#bodyIntegumenPerawat").html("")
     }
 
     function getAssessmentKeperawatan() {
@@ -318,10 +329,10 @@ foreach ($aValue as $key => $value) {
                 $.each(examForassessment, function(key, value) {
                     if (value.vs_status_id == '1') {
                         fillDataArp(key)
+                        disableARP()
                     }
                 })
                 fillRiwayatArp()
-                disableARP()
             },
             error: function() {
 
@@ -412,6 +423,7 @@ foreach ($aValue as $key => $value) {
         $("#arpAddDocument").hide()
         $("#arpDocument").show()
         enableARP()
+        fillRiwayatArp()
         generateSatelite()
     }
 
@@ -427,6 +439,7 @@ foreach ($aValue as $key => $value) {
         getFallRisk(ex.body_id)
         getPainMonitoring(ex.body_id)
         getTriage(ex.body_id, "bodyTriage")
+        getGcs(ex.body_id, "bodyGcsPerawat")
         getApgar(ex.body_id)
         getStabilitas(ex.body_id)
         getPernapasan(ex.body_id)
@@ -1054,7 +1067,6 @@ foreach ($aValue as $key => $value) {
                     '<th>Re-Assessment</th>' +
                     '</tr>' +
                     ' </thead>' +
-
                     '<tr>' +
                     '<td>' +
                     '<input id="timeIntervensi' + body_id + '' + lastIndex + '" name="timeIntervensi[]" type="datetime-local" class="form-control" value="">' +
@@ -1074,12 +1086,6 @@ foreach ($aValue as $key => $value) {
                     '</td>' +
                     '<td>' +
                     '<select id="reAssessment' + body_id + '' + lastIndex + '" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + lastIndex + ', this.value)">' +
-                    // '<option value="">5 Menit</option>' +
-                    // '<option value="">30 Menit</option>' +
-                    // '<option value="">1 Jam</option>' +
-                    // '<option value="">4 Jam</option>' +
-                    // '<option value="">8 Jam</option>' +
-                    // '<option value="">Nyeri Teratasi</option>' +
                     '</select>' +
                     '</td>' +
                     '<td>' +
@@ -1179,6 +1185,8 @@ foreach ($aValue as $key => $value) {
         }
     }
 
+
+
     function setRescheduleIntervensi(parent_id, p_type, body_id, index, thevalue) {
         // Get the value of the input field
         var inputDate = document.getElementById("timeIntervensi" + body_id + index).value;
@@ -1205,7 +1213,7 @@ foreach ($aValue as $key => $value) {
     }
 
     function getPainMonitoring(bodyId, container) {
-        // $("#bodyPainMonitoring").html("")
+        $("#" + container).html("")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getPainMonitoring',
             type: "POST",
@@ -1230,7 +1238,43 @@ foreach ($aValue as $key => $value) {
                         addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyPainMonitoringMedis").html("")
-                        addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis")
+                        addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis", false)
+                    }
+                })
+            },
+            error: function() {
+
+            }
+        });
+
+    }
+
+    function copyPainMonitoring(flag, index, document_id, container, isaddbutton = true) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/copyPainMonitoring',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': $("#" + document_id)?.val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                painMonitoring = data.painMonitoring
+                painMonitoringDetil = data.painDetil
+                painIntervensi = data.painIntervensi
+
+                $.each(painMonitoring, function(key, value) {
+                    $("#" + container).html("")
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyPainMonitoringPerawat").html("")
+                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyPainMonitoringMedis").html("")
+                        addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis", false)
                     }
                 })
             },
@@ -1400,8 +1444,8 @@ foreach ($aValue as $key => $value) {
                         success: function(data) {
                             $('#formTriage' + bodyId).find("input, select, textarea").prop("disabled", true)
                             $('#formTriage' + bodyId + ' input[type="datetime-local"]').prop("readonly", true)
-                            // $('#formTriage' + bodyId + ' option').prop("disabled", true)
-                            clicked_submit_btn.button('reset');
+                            $("#formTriageSaveBtn" + bodyId).hide()
+                            $("#formTriageEditBtn" + bodyId).save()
                         },
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
@@ -1424,7 +1468,6 @@ foreach ($aValue as $key => $value) {
                     $.each(triageDetil, function(key, value) {
                         $("#formTriageSaveBtn" + bodyId).hide()
                         $("#formTriageEditBtn" + bodyId).show()
-                        $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                         if (value.p_type == 'GEN0008' && value.body_id == bodyId) {
                             $('#aParamTriage' + bodyId).val(triage[index].p_type)
@@ -1432,9 +1475,10 @@ foreach ($aValue as $key => $value) {
                             $('#step1' + value.parameter_id + value.value_id + bodyId).prop("checked", true)
                             $('#step2' + value.parameter_id + value.value_id + bodyId).prop("checked", true)
                             $('#step3' + value.parameter_id + value.value_id + bodyId).prop("checked", true)
-                            $('#formTriage' + bodyId + ' option').prop("disabled", true)
+                            // $('#formTriage' + bodyId + ' option').prop("disabled", true)
                             aValueParamTriage('<?= $value['parent_id']; ?>', triage[index].p_type, bodyId, flag)
                         }
+                        $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", true)
                     })
                 }
             <?php } ?>
@@ -1523,6 +1567,42 @@ foreach ($aValue as $key => $value) {
                 'visit_id': visit,
                 'nomor': nomor,
                 'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                triage = data.triage
+                triageDetil = data.triageDetil
+
+                $.each(triage, function(key, value) {
+                    console.log(value.document_id)
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyTriagePerawat").html("")
+                        addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyTriageMedis").html("")
+                        addTriage(0, key, "armpasien_diagnosa_id", "bodyTriageMedis", false)
+                    }
+
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    function copyTriage(flag, index, document_id, container, isaddbutton = true) {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/copyTriage',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'document_id': $("#" + document_id)?.val()
             }),
             dataType: 'json',
             contentType: false,
@@ -3155,6 +3235,40 @@ foreach ($aValue as $key => $value) {
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyFallRiskMedis").html("")
                         addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis")
+                    }
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    function copyFallRisk(flag, index, document_id, container, isaddbutton = true) {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/copyFallRisk',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': $("#" + document_id)?.val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                fallRisk = data.fallRisk
+                fallRiskDetail = data.fallRiskDetail
+
+                $.each(fallRisk, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyFallRiskPerawat").html("")
+                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyFallRiskMedis").html("")
+                        addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
                     }
                 })
             },
@@ -7768,9 +7882,9 @@ foreach ($aValue as $key => $value) {
                                             .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
                                                 .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
-                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                    .append('<option value="0">-</option>') <?php foreach ($aValue as $key1 => $value1) {
                                                                                                 if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
-                                                                                    ?>
+                                                                                            ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                                                             }
                                                                                                                                                                                         } ?>
@@ -7818,9 +7932,9 @@ foreach ($aValue as $key => $value) {
         )
 
         $("#GEN001101" + bodyId).on("change", function() {
-            var e = $("#GEN001101" + bodyId).val()
-            var m = $("#GEN001102" + bodyId).val()
-            var v = $("#GEN001103" + bodyId).val()
+            var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
+            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
@@ -7837,16 +7951,15 @@ foreach ($aValue as $key => $value) {
             if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
 
-            console.log(conclutionScore)
 
 
             $('#GCS_SCORE' + bodyId).val(totalScore)
             $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001102" + bodyId).on("change", function() {
-            var e = $("#GEN001101" + bodyId).val()
-            var m = $("#GEN001102" + bodyId).val()
-            var v = $("#GEN001103" + bodyId).val()
+            var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
+            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
@@ -7862,17 +7975,15 @@ foreach ($aValue as $key => $value) {
                 conclutionScore = 2
             if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
-
-            console.log(conclutionScore)
 
 
             $('#GCS_SCORE' + bodyId).val(totalScore)
             $('#GCS_DESC' + bodyId).val(conclutionScore)
         })
         $("#GEN001103" + bodyId).on("change", function() {
-            var e = $("#GEN001101" + bodyId).val()
-            var m = $("#GEN001102" + bodyId).val()
-            var v = $("#GEN001103" + bodyId).val()
+            var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
+            var m = ($("#GEN001102" + bodyId).val() === null) ? 0 : $("#GEN001102" + bodyId).val();
+            var v = ($("#GEN001103" + bodyId).val() === null) ? 0 : $("#GEN001103" + bodyId).val();
 
             var totalScore = parseInt(e) + parseInt(m) + parseInt(v)
             var conclutionScore = 0
@@ -7888,8 +7999,6 @@ foreach ($aValue as $key => $value) {
                 conclutionScore = 2
             if (totalScore > 13 && totalScore <= 15)
                 conclutionScore = 1
-
-            console.log(conclutionScore)
 
 
             $('#GCS_SCORE' + bodyId).val(totalScore)
@@ -7991,13 +8100,14 @@ foreach ($aValue as $key => $value) {
                 }
             } ?>
             $("#GCS_SCORE" + bodyId).val(gcs.gcs_score)
-            $("#GCS_DESCRIPTION" + bodyId).val(gcs.gcs_score)
+            $("#GCS_DESC" + bodyId).val(gcs.gcs_score)
             $.each(gcsDetailAll, function(key, value) {
                 if (value.body_id == gcs.body_id) {
                     console.log("#val" + value.p_type + value.value_id + bodyId)
                     $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 }
             })
+
 
             $("#formGcsSaveBtn" + bodyId).hide()
             $("#formGcsEditBtn" + bodyId).show()
@@ -8027,6 +8137,41 @@ foreach ($aValue as $key => $value) {
             success: function(data) {
                 gcsAll = data.gcs
                 gcsDetailAll = data.gcsDetail
+
+                $.each(gcsAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGcsPerawat").html("")
+                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyGcsMedis").html()
+                        addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
+                    }
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    function copyGcs(flag, index, document_id, container, isaddbutton = true) {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/copyGcs',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': $("#" + document_id)?.val()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                gcsAll = data.gcs
+                // gcsDetailAll = data.gcsDetail
 
                 $.each(gcsAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
