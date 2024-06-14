@@ -55,6 +55,21 @@ $permission = user()->getPermissions();
                                             <div class="row">
                                             </div>
                                         </div><!--./row-->
+                                        <div class="row">
+                                            <h3 id="armTitle">Diagnosa Perawat</h3>
+                                            <hr>
+                                            <div class="col-md-12">
+                                                <div class="dividerhr"></div>
+                                            </div><!--./col-md-12-->
+                                            <div class="accordion" id="accordionDiagnosaPerawat">
+
+                                            </div>
+                                            <div class="col-md-12">
+                                                <hr>
+                                            </div><!--./col-md-12-->
+                                            <div class="row">
+                                            </div>
+                                        </div><!--./row-->
                                     </div><!--./col-md-8-->
                                     <!-- INI HISTORY PART -->
 

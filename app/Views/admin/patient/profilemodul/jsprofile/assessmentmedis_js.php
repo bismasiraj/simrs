@@ -1,3 +1,9 @@
+<script>
+    $(document).ready(function() {
+        $("#assessmentmedisTab").trigger("click")
+        $("#assessmentmedisTab").trigger("mouseup")
+    })
+</script>
 <script type='text/javascript'>
     var mapAssessment = JSON.parse('<?= json_encode($mapAssessment); ?>')
     var specialistTypeId = '<?= $visit['specialist_type_id']; ?>'
@@ -569,6 +575,7 @@
                 dataType: 'json',
                 success: function(data) {
                     alert("berhasil ambil periksa fisik")
+                    $("#armbody_id").val(data.body_id)
                     $("#armpemeriksaan").val(data.periksafisik)
                     $("#armanamnase").val(data.anamnase)
                     $("#armweight").val(data.weight)
@@ -1946,7 +1953,6 @@
                             <div id="bodyFallRiskMedis">
                             </div>
                         </div>
-                            
                         <div id="bodyFallRiskMedisAddBtn" class="col-md-12 text-center">
                             <a onclick="addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                         </div>
@@ -2306,12 +2312,7 @@
 </script>
 
 
-<script>
-    $(document).ready(function() {
-        // $("#chargesTab").trigger("click")
-        $("#assessmentmedisTab").trigger("click")
-    })
-</script>
+
 
 <script>
     function cetakAssessmentMedis() {

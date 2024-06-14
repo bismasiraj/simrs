@@ -1269,8 +1269,8 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" >' +
-                    // '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
+                    // '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" >' +
+                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
                     <?php foreach ($aType as $key1 => $value1) { ?> <?php if ($value1['parent_id'] == $value['parent_id']) { ?> '<option value="<?= $value1['p_type']; ?>"><?= $value1['p_description']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
@@ -1384,7 +1384,7 @@ foreach ($aValue as $key => $value) {
                     .append('<input name="description" id="triagedescription' + bodyId + '" type="hidden" value="<?= $visit['description']; ?>" class="form-control" />')
                     .append('<input name="modified_date" id="triagemodified_date' + bodyId + '" type="hidden" value="<?= $visit['modified_date']; ?>" class="form-control" />')
                     .append('<input name="modified_by" id="triagemodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
-                    .append('<input name="p_type" id="triagep_type' + bodyId + '" type="hidden" value="" class="form-control" />')
+                // .append('<input name="p_type" id="triagep_type' + bodyId + '" type="hidden" value="" class="form-control" />')
                 $("#formTriage" + bodyId).on('submit', (function(e) {
                     $("#triagedocument_id" + bodyId).val($("#" + document_id).val())
                     let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -1540,11 +1540,11 @@ foreach ($aValue as $key => $value) {
                     console.log(value.document_id)
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyTriagePerawat").html("")
-                        addTriage(0, key, "arpbody_id", "bodyTriagePerawat")
+                        addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
                     }
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyTriageMedis").html("")
-                        addTriage(0, key, "armpasien_diagnosa_id", "bodyTriageMedis")
+                        addTriage(0, key, "armpasien_diagnosa_id", "bodyTriageMedis", false)
                     }
 
                 })

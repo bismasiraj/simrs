@@ -341,6 +341,7 @@
     function editCppt(key) {
         var examselect = examForassessment[key];
 
+        console.log(examselect)
         $.each(examselect, function(key, value) {
             $("#acppt" + key).val(value)
         })
@@ -704,13 +705,12 @@
 
 <script>
     $("#formsaveacpptbtnid").on('click', (function(e) {
+        tinyMCE.triggerSave();
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
             type: "POST",
-            // data: 
-
             data: new FormData(document.getElementById('formaddacppt')),
             dataType: 'json',
             contentType: false,

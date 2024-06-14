@@ -36,7 +36,7 @@ class RekamMedis extends \App\Controllers\BaseController
                 'Nadi : ' + isnull( cast(CAST(nadi AS DECIMAL(6,0) )as varchar(10)) , '') + ' /mnt , ' + 'Napas : ' + isnull(cast(CAST(NAFAS AS DECIMAL(4,0)) as varchar(10)),'') + ' /mnt , ' + ' SpO2 : ' + 
                 isnull(cast(saturasi as varchar(10)),'') + ' % ' as periksafisik
                 ,anamnase,
-                weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi, pemeriksaan
+                weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi, pemeriksaan, body_id
                 from EXAMINATION_INFO where visit_id = '$visit_id'
                 order by EXAMINATION_DATE desc";
         $select = $db->query($query)->getResultArray();

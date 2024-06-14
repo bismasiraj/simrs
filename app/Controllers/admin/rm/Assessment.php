@@ -768,13 +768,6 @@ class Assessment extends BaseController
                 $pcs->insert($dataProc);
             }
         }
-
-
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
     }
@@ -806,7 +799,7 @@ class Assessment extends BaseController
                 $dataDiag['diagnosa_name'] = $diag_name[$key];
                 $dataDiag['diag_cat'] = $diag_cat[$key];
                 $dataDiag['suffer_type'] = $suffer_type[$key];
-                $dataDiag['modified_by'] = user_id();
+                $dataDiag['modified_by'] = user()->username;
                 $dataDiag['sscondition_id'] = new RawSql('newid()');
 
                 $pds->insert($dataDiag);
@@ -821,17 +814,69 @@ class Assessment extends BaseController
                 $dataProc['pasien_diagnosa_id'] = $pasien_diagnosa_id;
                 $dataProc['diagnosa_id'] = $proc_id[$key];
                 $dataProc['diagnosa_name'] = $proc_name[$key];
-                $dataProc['modified_by'] = user_id();
+                $dataProc['modified_by'] = user()->username;
                 $pcs->insert($dataProc);
             }
         }
 
+        $array   = array('status' => 'success', 'error' => '', 'message' => "update" . ' riwayat rekam medis berhasil', 'data' => $data);
+        echo json_encode($array);
+    }
+    public function addDiagnosaKeperawatan()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
 
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
+        // return json_encode("asdf");
+
+        $body = $this->request->getPost();
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+        }
+        foreach ($body as $key => $value) {
+            $data[$key] = ${$key};
+        }
+
+        $db = db_connect();
+        $org = new OrganizationunitModel();
+
+        $id = $org->generateId();
+        $pds = new PasienDiagnosasPerawatModel();
+        $pdn = new PasienDiagnosaPerawatModel();
+        $db->query("delete from pasien_diagnosas_nurse where body_id in (select body_id from pasien_diagnosa_nurse where document_id = '$body_id')");
+        $db->query("delete from pasien_diagnosa_nurse where document_id = '$body_id'");
+        $data = [
+            'org_unit_code' => $org_unit_code,
+            'visit_id' => $visit_id,
+            'trans_id' => $trans_id,
+            'body_id' => $id,
+            'document_id' => $body_id,
+            'clinic_id' => $clinic_id,
+            'class_room_id' => $class_room_id,
+            'bed_id' => $bed_id,
+            'no_registration' => $no_registration,
+            'examination_date' => str_replace("T", " ", $examination_date),
+            'employee_id' => $employee_id,
+            'petugas_id' => user()->username,
+            'descriptions' => null,
+            'modified_by' => user()->username,
+        ];
+        $pdn->insert($data);
+        if (!empty($diagnosan_id)) {
+            foreach ($diagnosan_id as $key => $value) {
+                $dataDiag = [
+                    'org_unit_code' => $org_unit_code,
+                    'body_id' => $id,
+                    'diagnosan_id' => $diagnosan_id[$key],
+                    'diagnosa_date' => new RawSql("getdate()"),
+                    'diag_notes' => $diag_notes[$key],
+                    'modified_by' => user()->username
+                ];
+                $pds->insert($dataDiag);
+            }
+        }
+
         $array   = array('status' => 'success', 'error' => '', 'message' => "update" . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
     }
@@ -847,7 +892,11 @@ class Assessment extends BaseController
         $no_registration = $body['nomor'];
 
         $db = db_connect();
-        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname from pasien_diagnosa pd left join employee_all ea on pd.employee_id = ea.employee_id left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' and diag_cat = '3'")->getResultArray());
+        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+        weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi
+        from pasien_diagnosa pd inner join examination_info ei on ei.body_id = pd.body_id
+        left join employee_all ea on pd.employee_id = ea.employee_id 
+        left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id' and pd.diag_cat = '3'")->getResultArray());
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -920,15 +969,26 @@ class Assessment extends BaseController
             $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
             $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
 
+            $selectdiagnosasnurse = [];
 
+            if (isset($selectexam[0])) {
+                $primaryExam = "";
+                foreach ($selectexam as $key => $value) {
+                    $primaryExam .= "'" . $value['body_id'] . "',";
+                }
+                $primaryExam = substr($primaryExam, 0, -1);
+                // return ($primaryExam);
+                $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosa_nurse pdn inner join pasien_diagnosas_nurse pds on pdn.body_id = pds.body_id where pdn.document_id in ($primaryExam) ")->getResultArray());
+            }
 
 
 
             return json_encode([
                 'pasienDiagnosa' => $selectpd,
-                'papsienDiagnosas' => $selectdiagnosas,
+                'pasienDiagnosas' => $selectdiagnosas,
                 'pasienProcedures' => $selectprocedures,
-                'examInfo' => $selectexam
+                'examInfo' => $selectexam,
+                'pasienDiagnosasNurse' => $selectdiagnosasnurse
             ]);
         } else {
             return json_encode([
@@ -1270,10 +1330,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
             $db->query("update treatment_perawat set status_tarif = '1' where bill_id = '$id'");
         }
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
+
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
         $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah tindakan berhasil', 'billId' => $id, 'data' => $data);
         echo json_encode($array);
@@ -2631,9 +2688,6 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-
-        // $body = $this->request->getBody();
-        // $body = json_decode($body, true);
         $body = $this->request->getPost();
         $data = [];
         foreach ($body as $key => $value) {
@@ -2741,7 +2795,6 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         ];
         $pdn->insert($data);
         if (!empty($diag_id)) {
-
             foreach ($diag_id as $key => $value) {
                 $dataDiag = [
                     'org_unit_code' => $org_unit_code,

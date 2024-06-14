@@ -540,7 +540,7 @@
         // $("#formeditavtid").hide()
     }
 
-    function editCppt(key) {
+    function editCpptVitalSign(key) {
         var examselect = vitalsign[key];
 
         $.each(examselect, function(key, value) {

@@ -7,7 +7,6 @@ use CodeIgniter\Database\RawSql;
 
 class PasienLaboratModel extends Model
 {
-    // protected $orgUnitCode = '1771014';
     protected $table      = 'pasien_laborat';
     protected $primaryKey = 'vactination_id';
 
