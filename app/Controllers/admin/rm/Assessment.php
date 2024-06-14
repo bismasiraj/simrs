@@ -166,28 +166,36 @@ class Assessment extends BaseController
                 }
             }
 
-            // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+
             $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
-                                                    where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
-            // return json_encode($select);
-            foreach ($select as $key => $value) {
-                $valueId = ${$value['p_type'] . $value['parameter_id']};
-                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type='" . $value['p_type'] . "' and parameter_id='" . $value['parameter_id'] . "' and value_score = '$valueId'")->getResultArray());
-                if (isset($paramvalue[0])) {
-                    $data = [
-                        'org_unit_code' => $org_unit_code,
-                        'visit_id' => $visit_id,
-                        'trans_id' => $trans_id,
-                        'body_id' => $body_id,
-                        'p_type' => $value['p_type'],
-                        'parameter_id' => $value['parameter_id'],
-                        'value_id' => $paramvalue[0]['value_score'],
-                        'value_score' => $paramvalue[0]['value_score'],
-                        'value_desc' => $paramvalue[0]['value_desc'],
-                        'modified_date' => Time::now(),
-                        'modified_by' => $modified_by
-                    ];
-                    $painDetil->insert($data);
+                                                where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
+
+            if (in_array($select[0]['p_type'], [
+                'ASES025',
+                'ASES026',
+                'ASES027'
+            ])) {
+                // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+                // return json_encode($select);
+                foreach ($select as $key => $value) {
+                    $valueId = ${$value['p_type'] . $value['parameter_id']};
+                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type='" . $value['p_type'] . "' and parameter_id='" . $value['parameter_id'] . "' and value_score = '$valueId'")->getResultArray());
+                    if (isset($paramvalue[0])) {
+                        $data = [
+                            'org_unit_code' => $org_unit_code,
+                            'visit_id' => $visit_id,
+                            'trans_id' => $trans_id,
+                            'body_id' => $body_id,
+                            'p_type' => $value['p_type'],
+                            'parameter_id' => $value['parameter_id'],
+                            'value_id' => $paramvalue[0]['value_score'],
+                            'value_score' => $paramvalue[0]['value_score'],
+                            'value_desc' => $paramvalue[0]['value_desc'],
+                            'modified_date' => Time::now(),
+                            'modified_by' => $modified_by
+                        ];
+                        $painDetil->insert($data);
+                    }
                 }
             }
 
@@ -2508,7 +2516,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
                         'value_score' => $paramvalue[0]['value_score'],
                         'value_desc' => $paramvalue[0]['value_desc'],
                         'modified_date' => Time::now(),
-                        'modified_by' => $modified_by
+                        'modified_by' => user()->username
                     ];
                     $fallRiskDetail->insert($data);
                 }

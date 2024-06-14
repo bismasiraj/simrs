@@ -185,7 +185,7 @@ class medis extends \App\Controllers\BaseController
             else 'Perempuan' end as jeniskel,
             p.CONTACT_ADDRESS as alamat,
             pd.DOCTOR as dpjp,
-            c.name_of_clinic as departemen,
+            c.name_of_clinic as departmen,
             class.NAME_OF_CLASS as kelas,
             cr.NAME_OF_CLASS as bangsal,
             pd.BED_ID as bed,
@@ -253,7 +253,9 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC AS FARMAKOLOGIA,
             PD.INSTRUCTION AS PROSEDUR,
             PD.STANDING_ORDER AS STANDING_ORDER,
-            PD.DOCTOR AS DOKTER
+            PD.DOCTOR AS DOKTER,
+            '' rencana_tl,
+            '' kontrol
             from pasien_diagnosa pd left outer join  clinic c on pd.clinic_id = c.clinic_id
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID

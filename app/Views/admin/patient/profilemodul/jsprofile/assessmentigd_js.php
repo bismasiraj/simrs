@@ -734,7 +734,7 @@ foreach ($aValue as $key => $value) {
 
 
                 $("#formPainMonitoring" + bodyId).on('submit', (function(e) {
-                    $("#ases022document_id" + bodyId).val($("#" + documentId).val())
+                    $("#ases022document_id" + bodyId).val($("#" + document_id).val())
                     let clicked_submit_btn = $(this).closest('form').find(':submit');
                     e.preventDefault();
                     $.ajax({
@@ -753,8 +753,8 @@ foreach ($aValue as $key => $value) {
                             // $('#formPainMonitoring' + bodyId + ' input[type="datetime-local"]').prop("readonly", true)
                             // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
                             $("#formPainMonitoringSaveBtn" + bodyId).hide()
-                            $("#formPainMonitoringEdit" + bodyId).show()
-                            $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
+                            $("#formPainMonitoringEditBtn" + bodyId).show()
+                            $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                             clicked_submit_btn.button('reset');
                             // successMsg(data.message);
@@ -795,11 +795,13 @@ foreach ($aValue as $key => $value) {
                             // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
                             aValueParamPain('<?= $value['parent_id']; ?>', value.value_id, bodyId, flag)
                             aValueParamPain('<?= $value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
-                            console.log($('#atypeASES02101' + bodyId).val())
                         } else {
                             aValueParamPain('<?= $value['parent_id']; ?>', value.p_type, bodyId, flag)
                         }
                     })
+                    $.each(painIntervensi, function(key1, value1) {
+                        addIntervensi('<?= $value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
+                    });
                 }
             <?php } ?>
         <?php } ?>
@@ -912,7 +914,6 @@ foreach ($aValue as $key => $value) {
 
                     $.each(avalue, function(key1, value1) {
                         if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                            console.log(value1.parameter_id)
                             $("#painscalescore" + body_id + '0').append(
                                 '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
                             )
@@ -934,8 +935,6 @@ foreach ($aValue as $key => $value) {
                     // document.getElementById("reassessment_date" + body_id + '0').value = formattedInitialDate;
                 } else {
                     if (value.p_type == p_type) {
-                        console.log(value.entry_type)
-
                         if (value.entry_type == 1) {
                             $("#bodyAssessment002Intervensi" + body_id).append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">' + value.parameter_desc + '</label>')
@@ -1030,9 +1029,7 @@ foreach ($aValue as $key => $value) {
                         $('#002ASES02105' + body_id + ' option').prop("disabled", true)
                     }
                 });
-                $.each(painIntervensi, function(key1, value1) {
-                    addIntervensi(parent_id, p_type, body_id, key1, flag)
-                });
+
             } else {
                 $("#bodyAssessment002Intervensi" + body_id).find("select, input, textarea").prop("disabled", true)
             }
@@ -1495,7 +1492,6 @@ foreach ($aValue as $key => $value) {
                         )
                         $.each(avalue, function(key2, value2) {
                             if (value2.value_info == value.value_id && value2.parameter_id == value1.parameter_id && value2.p_type == p_type) {
-                                console.log(value2.valie_id)
                                 $("#tbodyAssessment" + parent_id + body_id + value.value_id + value1.parameter_id).append(
                                     '<div class="form-check mb-3">' +
                                     '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' +
@@ -7793,13 +7789,13 @@ foreach ($aValue as $key => $value) {
                             .append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Score</label>')
                                 .append($('<div class="col-md-8">')
-                                    .append($('<input type="text" id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control">'))
+                                    .append($('<input type="text" id="GCS_SCORE' + bodyId + '" name="GCS_SCORE" class="form-control" readonly>'))
                                 )
                             )
                             .append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">Kesimpulan</label>')
                                 .append($('<div class="col-md-8">')
-                                    .append($('<select id="GCS_DESC' + bodyId + '" name="GCS_DESC" class="form-control">')
+                                    .append($('<select id="GCS_DESC' + bodyId + '" name="GCS_DESC" class="form-control" readonly>')
                                         .append('<option>-</option>')
                                         .append('<option value="1">Composmentis</option>')
                                         .append('<option value="2">Apatis</option>')
@@ -8039,7 +8035,7 @@ foreach ($aValue as $key => $value) {
                     }
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyGcsMedis").html()
-                        addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis")
+                        addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
                     }
                 })
             },
