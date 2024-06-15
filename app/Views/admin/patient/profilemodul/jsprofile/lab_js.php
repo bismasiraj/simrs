@@ -43,8 +43,19 @@
     }
 
     function addBillLab(container) {
-        // setTarif('P013', "searchTarifLab")
-        // $("#addBill").modal("show")
+        var nota_no = $("#notaNoLab").val();
+
+        if (nota_no == '%') {
+            nota_no = getbody_id()
+            $("#notaNoLab").append($("<option>").val(noresepbaru).text(noresepbaru))
+            $("#notaNoLab").val(noresepbaru)
+        } else {
+            // $("#eresepAdd").hide()
+            // $("#eresepRAdd").hide()
+            // $("#eresepTable").show()
+
+            // addBlankLine('nonracik')
+        }
 
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
@@ -59,12 +70,21 @@
             .append($("<td>").attr("id", "alabdisplaytreat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", "alabdisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
-
+            .append($("<td>")
+                .append('<input type="text" name="quantity[]" id="alabquantity' + key + '" placeholder="" value="1" class="form-control" >')
+                .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+            )
+            .append($("<td>").attr("id", "alabdisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
+            .append($("<td>").attr("id", "alabdisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
+            .append($("<td>").attr("id", "alabdisplayamount_paid_plafond" + key).html(formatCurrency(0)))
+            .append($("<td>").attr("id", "alabdisplaydiscount" + key).html(formatCurrency(0)))
+            .append($("<td>").attr("id", "asubsidisat" + key).html(formatCurrency(0)))
+            .append($("<td>").attr("id", "asubsidi" + key).html(formatCurrency(0)))
             .append($("<td>").append('<button id="alabsimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'alab\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">Simpanse</button><div id="alabeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'alab\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         )
 
         $("#labChargesBody")
-            .append('<input name="treatment[]" id="alabtreatment' + key + vactionation_id + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
+            .append('<input name="treatment[]" id="alabtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
             .append('<input name="treat_date[]" id="alabtreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
             .append('<input name="sell_price[]" id="alabsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
             .append('<input name="amount_paid[]" id="alabamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
@@ -147,7 +167,7 @@
             .append('<input name="employee_id[]" id="alabemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
             .append('<input name="doctor[]" id="alabdoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="alabamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="alabnota_no' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="nota_no[]" id="alabnota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
             .append('<input name="profesi[]" id="alabprofesi' + key + '" type="hidden" value="" class="form-control" />')
             .append('<input name="tagihan[]" id="alabtagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#alabquantity" + key).val() + '" class="form-control" />')
             .append('<input name="treatment_plafond[]" id="alabtreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
@@ -230,8 +250,6 @@
     }
 
     function getListRequestLab(nomor, visit) {
-
-
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestLab',
             type: "POST",
@@ -244,7 +262,6 @@
             cache: false,
             processData: false,
             success: function(data) {
-
 
                 hasilLabJson = data
 

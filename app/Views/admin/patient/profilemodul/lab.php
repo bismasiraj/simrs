@@ -54,12 +54,19 @@ $permissions = user()->getPermissions();
                         <?php if (isset($permissions['tindakanpoli']['c'])) {
                             if ($permissions['tindakanpoli']['c'] == '1') { ?>
                                 <div class="row">
-
-                                    <div class="col-md-8"><select id="searchTarifLab" class="form-control" style="width: 100%"></select></div>
-
-                                    <div class="col-md-4">
-                                        <div class="box-tab-tools">
-                                            <a data-toggle="modal" onclick='addBillLab("searchTarifLab")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="">Nomor Sesi</label>
+                                            <select id="notaNoLab" class="form-control" style="width: 100%"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label for="">Pencarian Tarif</label>
+                                            <div class="div">
+                                                <select id="searchTarifLab" class="form-control" style="width: 80%; height: 100%;"></select>
+                                                <a data-toggle="modal" onclick='addBillLab("searchTarifLab")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -153,114 +160,6 @@ $permissions = user()->getPermissions();
                                 $total = 0;
                                 ?>
                             </tbody>
-                            <tfoot class="table-group-divider" style="display: none">
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-6"></div>
-                                            <label for="labtagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labtagihan_total" name="labtagihan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labsubsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labsubsidi_total" name="labsubsidi_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labpotongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labpotongan_total" name="labpotongan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labpembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labpembulatan_total" name="labpembulatan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labpelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labpelunasan_total" name="labpelunasan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labpembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="labpembayaran_total" name="labpembayaran_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="labtotalnya" class="col-sm-4 col-form-label text-end">
-                                                <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                            </label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control border border-primary border-3 text-end" id="labtotalnya" name="labtotalnya" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
                         </table>
                         <div class="panel-footer text-end mb-4">
                             <button type="button" id="formSaveBillLabBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>

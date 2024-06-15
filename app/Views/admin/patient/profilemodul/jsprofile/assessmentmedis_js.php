@@ -61,7 +61,7 @@
         appendLokalisAccordion(accMedisName);
         appendDiagnosaAccordion(accMedisName);
         appendProsedurAccordion(accMedisName);
-        appendPenunjangTerapi(accMedisName)
+        appendPenunjangTerapi(accMedisName);
         // appendMedisAccordion(accMedisName);
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
@@ -175,10 +175,8 @@
                                         // Clear the canvas
                                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                                         // Redraw the remaining lines
-                                        // console.log(drawingHistory)
                                         drawingHistory.forEach(line => {
                                             for (let i = 1; i < line.length; i++) {
-                                                console.log(line[i].x)
                                                 ctx.beginPath();
                                                 ctx.moveTo(line[i - 1].x, line[i - 1].y);
                                                 ctx.lineTo(line[i].x, line[i].y);
@@ -270,10 +268,8 @@
                             //         // Clear the canvas
                             //         ctx<?= $value1['value_id'] ?>.clearRect(0, 0, canvas<?= $value1['value_id'] ?>.width, canvas<?= $value1['value_id'] ?>.height);
                             //         // Redraw the remaining lines
-                            //         // console.log(drawingHistory)
                             //         drawingHistory<?= $value1['value_id'] ?>.forEach(line => {
                             //             for (let i = 1; i < line<?= $value1['value_id'] ?>.length; i++) {
-                            //                 console.log(line<?= $value1['value_id'] ?>[i].x)
                             //                 ctx<?= $value1['value_id'] ?>.beginPath();
                             //                 ctx<?= $value1['value_id'] ?>.moveTo(line<?= $value1['value_id'] ?>[i - 1].x, line<?= $value1['value_id'] ?>[i - 1].y);
                             //                 ctx<?= $value1['value_id'] ?>.lineTo(line<?= $value1['value_id'] ?>[i].x, line<?= $value1['value_id'] ?>[i].y);
@@ -306,7 +302,6 @@
         ?>
                             var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
                             const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
-                            // console.log(canvasResult<?= $value1['value_id']; ?>)
 
                             $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
 
@@ -427,9 +422,11 @@
         getTriage(pasienDiagnosa.pasien_diagnosa_id, "bodyTriageMedis")
         getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
         getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+        getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
         getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
         getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
         getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
+        getEducationForm(pasienDiagnosa.pasien_diagnosa_id, "bodyEducationFormMedis")
 
         // $("#formsavearmbtn").hide()
         // $("#formeditarm").show()
@@ -456,7 +453,6 @@
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).val(value.value_detail);
                     $("#arm" + value.p_type + value.parameter_id + value.value_id).prop("disabled", true)
                 } else if (value.value_score == 3) {
-                    console.log(value.p_type + value.parameter_id + value.value_id)
                     $("#lokalis" + value.value_id).val(value.value_detail)
                     $("#lokalis" + value.value_id + "desc").val(value.value_desc)
                     var canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + value.value_id);
@@ -712,6 +708,12 @@
     $("#formaddarmbtn").on("click", function() {
         initialAddArm()
     })
+    $("#formcetakarm").on("click", function() {
+        var visit = <?= json_encode($visit); ?>;
+        var encodedVisit = btoa(JSON.stringify(visit));
+        var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val();
+        window.open(url, '_blank');
+    })
 </script>
 <script type="text/javascript">
     function signRM() {
@@ -790,7 +792,6 @@
 
     function selectedProcMedis(index) {
         var diagname = $("#proc_idmedis" + index).text()
-        console.log(diagname)
         if (typeof diagname !== 'undefined') {
             $("#proc_namemedis" + index).val(diagname)
         }
@@ -831,7 +832,6 @@
         });
     }
 </script>
-<!-- bisma -->
 
 <script type="text/javascript">
     function displayTableAssessmentKeperawatanForVitalSign() {
@@ -1743,19 +1743,19 @@
             <div id="arpEdukasiForm_Group" class="accordion-item">
                 <h2 class="accordion-header" id="headingEducationForm">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEducationForm" aria-expanded="false" aria-controls="collapseEducationForm">
-                        <b>FORMULIR PEMBERIAK EDUKASI</b>
+                        <b>FORMULIR PEMBERIAN EDUKASI</b>
                     </button>
                 </h2>
                 <div id="collapseEducationForm" class="accordion-collapse collapse" aria-labelledby="headingEducationForm" data-bs-parent="#accordionAssessmentMedis" style="">
                     <div class="accordion-body text-muted">
                         <div class="row">
                             <div class="col-md-12">
-                                <div id="bodyEducationForm">
+                                <div id="bodyEducationFormMedis">
                                 </div>
                                 <div class="row mb-4">
                                     <div class="col-md-12">
-                                        <div id="addEducationFormButton" class="box-tab-tools text-center">
-                                            <a onclick="addEducationForm(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <div id="bodyEducationFormMedisAddBtn" class="box-tab-tools text-center">
+                                            <a onclick="addEducationForm(1,0,'armpasien_diagnosa_id', 'bodyEducationFormMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                         </div>
                                     </div>
                                 </div>

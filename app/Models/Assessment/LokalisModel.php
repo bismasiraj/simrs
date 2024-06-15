@@ -19,6 +19,7 @@ class LokalisModel extends Model
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id',
         'p_type',
         'parameter_id',
         'value_id',

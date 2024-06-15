@@ -802,7 +802,6 @@ foreach ($aValue as $key => $value) {
                         if (value.p_type == 'ASES021' && value.body_id == bodyId && value.parameter_id == '01') {
 
                             $('#atypeASES02101' + bodyId).val(value.value_id)
-                            // console.log($('#atypeASES02101' + bodyId).val())
                             // $('#atypeASES02101' + bodyId).prop("disabled", true)
                             $("#ases022body_id" + bodyId).val(bodyId)
                             // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
@@ -971,7 +970,6 @@ foreach ($aValue as $key => $value) {
                                 }
                             })
                         } else if (value.entry_type == 3) {
-                            console.log("bodyAssessment002Intervensi" + body_id)
 
                             $("#bodyAssessment002Intervensi" + body_id).append($('<div class="row">')
                                 .append('<label class="col-md-4 col-form-label mb-4">' + value.parameter_desc + '</label>')
@@ -1109,7 +1107,6 @@ foreach ($aValue as $key => $value) {
                 )
                 $.each(avalue, function(key1, value1) {
                     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                        console.log(value1.parameter_id)
                         $("#painscalescore" + body_id + lastIndex).append(
                             '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
                         )
@@ -1151,7 +1148,6 @@ foreach ($aValue as $key => $value) {
         });
 
         $.each(aparameter, function(key1, value1) {
-            console.log("#intervensi" + body_id + lastIndex)
             if (value1.p_type == 'GEN0003') {
                 $("#intervensi" + body_id + lastIndex).append(
                     '<option value="' + value1.parameter_id + '">' + value1.parameter_desc + '.</option>'
@@ -1205,8 +1201,6 @@ foreach ($aValue as $key => $value) {
 
         // Format the date into a string compatible with the datetime-local input
         var formattedDate = date.toISOString().slice(0, 16);
-
-        console.log(formattedDate)
 
         // Update the value of the input field with the new date
         document.getElementById("reassessment_date" + body_id + index).value = formattedDate
@@ -1577,7 +1571,6 @@ foreach ($aValue as $key => $value) {
                 triageDetil = data.triageDetil
 
                 $.each(triage, function(key, value) {
-                    console.log(value.document_id)
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyTriagePerawat").html("")
                         addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
@@ -1613,7 +1606,7 @@ foreach ($aValue as $key => $value) {
                 triageDetil = data.triageDetil
 
                 $.each(triage, function(key, value) {
-                    console.log(value.document_id)
+
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyTriagePerawat").html("")
                         addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
@@ -1777,7 +1770,6 @@ foreach ($aValue as $key => $value) {
                     $.each(apgarDetil, function(key, value) {
 
                         if (value.body_id == bodyId) {
-                            // console.log("#005" + value.p_type + value.parameter_id + value.body_id + "; valuenya:" + value.value_id)
                             $("#005" + value.p_type + value.parameter_id + value.body_id).val(value.value_id)
                         }
                     })
@@ -1832,7 +1824,6 @@ foreach ($aValue as $key => $value) {
                         )
                         $.each(avalue, function(key2, value2) {
                             if (value2.value_info == value.value_id && value2.parameter_id == value1.parameter_id && value2.p_type == p_type) {
-                                console.log(value2.valie_id)
                                 $("#tbodyAssessment" + parent_id + body_id + value.value_id + value1.parameter_id).append(
                                     '<div class="form-check mb-3">' +
                                     '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' +
@@ -1841,7 +1832,6 @@ foreach ($aValue as $key => $value) {
                                 )
                                 $.each(triageDetil, function(key3, value3) {
                                     if (value3.value_id == value2.value_id) {
-                                        console.log(parent_id + body_id + value.value_id + value2.parameter_id + value3.value_id)
                                         $("#" + parent_id + body_id + value.value_id + value2.parameter_id + value3.value_id).prop("checked", true)
                                     }
                                 })
@@ -2200,7 +2190,6 @@ foreach ($aValue as $key => $value) {
             // $("#perawatBill" + key).find("input, textarea").each(function() {
             //     inputvalue[this.name] = this.value
             // })
-            // console.log(inputvalue)
             var formElemet = document.getElementById("formchargesBodyPerawat");
             var formData = new FormData(formElemet);
             var inputvalue = {};
@@ -2208,8 +2197,6 @@ foreach ($aValue as $key => $value) {
 
             // Loop through form data entries
             // formData.forEach(function(value1, key1) {
-            //     console.log(key1)
-            //     console.log(value1)
             //     // Check if key contains square brackets
             //     if (key1.indexOf('[]') !== -1) {
             //         var name = key1.substr(0, key1.length - 2);
@@ -2221,8 +2208,6 @@ foreach ($aValue as $key => $value) {
             //         }
             //     }
             // });
-            // console.log(inputvalue)
-            // console.log(JSON.stringify(inputvalue))
             inputvalue['org_unit_code'] = $("#acporg_unit_code" + key).val()
             inputvalue['bill_id'] = $("#acpbill_id" + key).val()
             inputvalue['no_registration'] = $("#acpno_registration" + key).val()
@@ -2331,7 +2316,6 @@ foreach ($aValue as $key => $value) {
             inputvalue['tarif_id_plafond'] = $("#acptarif_id_plafond" + key).val()
             inputvalue['treatment_type'] = $("#acptreatment_type" + key).val()
 
-            // console.log(inputvalue)
 
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/rm/assessment/addBillCharge',
@@ -2872,7 +2856,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -3128,7 +3111,6 @@ foreach ($aValue as $key => $value) {
 
             $.each(atype, function(key, value) {
                 if (value.parent_id == '001') {
-                    console.log("#atype" + fallselect.p_type + bodyId)
                     $("#atype" + fallselect.p_type + bodyId).prop("checked", true)
                 }
             })
@@ -3138,7 +3120,6 @@ foreach ($aValue as $key => $value) {
 
             $.each(fallRiskDetail, function(key, value) {
                 if (value.body_id == fallselect.body_id) {
-                    console.log("#parent_id001" + value.value_id + value.body_id)
                     $("#parent_id001" + value.value_id + value.body_id).prop("checked", true)
                     aValueParamScore('001', value.p_type, value.parameter_id, value.value_score, bodyId)
                 }
@@ -3187,8 +3168,6 @@ foreach ($aValue as $key => $value) {
     }
 
     function aValueParamScore(parent_id, p_type, parameter_id, score, bodyId) {
-        // console.log('#score' + parent_id + p_type + parameter_id + bodyId)
-        // console.log(score)
         fallRiskScore['parameter_id' + parameter_id] = score;
 
         $('#score' + parent_id + p_type + parameter_id + bodyId).html(score)
@@ -3198,7 +3177,6 @@ foreach ($aValue as $key => $value) {
         $.each(aparameter, function(key, value) {
             if (value.p_type == p_type) {
                 var valuenya = parseInt($("#score" + parent_id + value.p_type + value.parameter_id + bodyId).html())
-                console.log(valuenya)
                 total += valuenya
             }
         });
@@ -3234,7 +3212,7 @@ foreach ($aValue as $key => $value) {
                         addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyFallRiskMedis").html("")
-                        addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis")
+                        addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
                     }
                 })
             },
@@ -3407,7 +3385,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -3665,7 +3642,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -3927,7 +3903,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -4188,7 +4163,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -4257,7 +4231,6 @@ foreach ($aValue as $key => $value) {
                 $("#total_dependency" + bodyId).html("")
                 $("#total_dependency" + bodyId).append($('<option value="' + totalScoreAdl + '">' + scoreAdlName + '</option>'))
             })
-            console.log(totalScoreAdl)
         })
 
         if (flag == 1) {
@@ -4473,7 +4446,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -4534,7 +4506,6 @@ foreach ($aValue as $key => $value) {
             $("#formDekubitusEditBtn" + bodyId).hide()
         } else {
             var digest = dekubitusAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES047') {
                     // if ($value['entry_type'] == '3') {
@@ -4731,7 +4702,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -4784,7 +4754,6 @@ foreach ($aValue as $key => $value) {
             $("#formPencernaanEditBtn" + bodyId).hide()
         } else {
             var digest = digestAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES040') {
                     // if ($value['entry_type'] == '3') {
@@ -4987,7 +4956,6 @@ foreach ($aValue as $key => $value) {
                         if ($(this).is(":checked")) {
                             $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                         } else {
-                            console.log($(this).val())
                             $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                         }
                     }); <?php
@@ -5257,7 +5225,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -5338,7 +5305,6 @@ foreach ($aValue as $key => $value) {
             } ?>
             $.each(psikologiDetailAll, function(key, value) {
                 if (value.body_id == psikologi.body_id) {
-                    console.log("#val" + value.p_type + value.value_id + bodyId)
                     $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 }
             })
@@ -5518,7 +5484,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -5571,7 +5536,6 @@ foreach ($aValue as $key => $value) {
             $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var digest = seksualAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES043') {
                     // if ($value['entry_type'] == '3') {
@@ -5758,7 +5722,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -5816,7 +5779,6 @@ foreach ($aValue as $key => $value) {
 
         } else {
             var digest = socialAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES037') {
                     // if ($value['entry_type'] == '3') {
@@ -6006,7 +5968,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -6068,7 +6029,6 @@ foreach ($aValue as $key => $value) {
             $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
 
             var digest = hearingAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES044') {
                     // if ($value['entry_type'] == '3') {
@@ -6253,7 +6213,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -6316,7 +6275,6 @@ foreach ($aValue as $key => $value) {
             $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
 
             var digest = sleepingAll[index];
-            console.log(digest)
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'ASES046') {
                     // if ($value['entry_type'] == '3') {
@@ -6740,7 +6698,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -6947,7 +6904,7 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addEducationForm(flag, index, document_id, container) {
+    function addEducationForm(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -7074,53 +7031,55 @@ foreach ($aValue as $key => $value) {
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0013') {
         ?> <?php if ($value['entry_type'] == 4) {
-            ?> tinymce.init({
-                        selector: "#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId,
-                        height: 300,
-                        plugins: [
-                            "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                            "save table contextmenu directionality emoticons template paste textcolor",
-                        ],
-                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                        style_formats: [{
-                                title: "Bold text",
-                                inline: "b"
-                            },
-                            {
-                                title: "Red text",
-                                inline: "span",
-                                styles: {
-                                    color: "#ff0000"
-                                }
-                            },
-                            {
-                                title: "Red header",
-                                block: "h1",
-                                styles: {
-                                    color: "#ff0000"
-                                }
-                            },
-                            {
-                                title: "Example 1",
-                                inline: "span",
-                                classes: "example1"
-                            },
-                            {
-                                title: "Example 2",
-                                inline: "span",
-                                classes: "example2"
-                            },
-                            {
-                                title: "Table styles"
-                            },
-                            {
-                                title: "Table row 1",
-                                selector: "tr",
-                                classes: "tablerow1"
-                            },
-                        ],
-                    });
+            ?>
+                    // console.log("#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId)
+                    // tinymce.init({
+                    //     selector: "#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId,
+                    //     height: 300,
+                    //     plugins: [
+                    //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                    //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                    //         "save table contextmenu directionality emoticons template paste textcolor",
+                    //     ],
+                    //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                    //     style_formats: [{
+                    //             title: "Bold text",
+                    //             inline: "b"
+                    //         },
+                    //         {
+                    //             title: "Red text",
+                    //             inline: "span",
+                    //             styles: {
+                    //                 color: "#ff0000"
+                    //             }
+                    //         },
+                    //         {
+                    //             title: "Red header",
+                    //             block: "h1",
+                    //             styles: {
+                    //                 color: "#ff0000"
+                    //             }
+                    //         },
+                    //         {
+                    //             title: "Example 1",
+                    //             inline: "span",
+                    //             classes: "example1"
+                    //         },
+                    //         {
+                    //             title: "Example 2",
+                    //             inline: "span",
+                    //             classes: "example2"
+                    //         },
+                    //         {
+                    //             title: "Table styles"
+                    //         },
+                    //         {
+                    //             title: "Table row 1",
+                    //             selector: "tr",
+                    //             classes: "tablerow1"
+                    //         },
+                    //     ],
+                    // });
         <?php }
             }
         } ?>
@@ -7133,7 +7092,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -7190,6 +7148,59 @@ foreach ($aValue as $key => $value) {
                     if (in_array($value['entry_type'], [1, 3, 4])) {
             ?>
                         $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower($value['column_name']); ?>)
+                        <?php if ($value['entry_type'] == 4) {
+                        ?>
+                            setTimeout(function() {
+                                tinymce.init({
+                                    selector: "#GEN001302" + bodyId,
+                                    height: 300,
+                                    plugins: [
+                                        "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                                        "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                                        "save table contextmenu directionality emoticons template paste textcolor",
+                                    ],
+                                    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                                    style_formats: [{
+                                            title: "Bold text",
+                                            inline: "b"
+                                        },
+                                        {
+                                            title: "Red text",
+                                            inline: "span",
+                                            styles: {
+                                                color: "#ff0000"
+                                            }
+                                        },
+                                        {
+                                            title: "Red header",
+                                            block: "h1",
+                                            styles: {
+                                                color: "#ff0000"
+                                            }
+                                        },
+                                        {
+                                            title: "Example 1",
+                                            inline: "span",
+                                            classes: "example1"
+                                        },
+                                        {
+                                            title: "Example 2",
+                                            inline: "span",
+                                            classes: "example2"
+                                        },
+                                        {
+                                            title: "Table styles"
+                                        },
+                                        {
+                                            title: "Table row 1",
+                                            selector: "tr",
+                                            classes: "tablerow1"
+                                        },
+                                    ],
+                                });
+                            }, 2000);
+                        <?php
+                        } ?>
                     <?php
 
                     } else if ($value['entry_type'] == '2') {
@@ -7211,7 +7222,11 @@ foreach ($aValue as $key => $value) {
             } ?>
         }
         index++
-        $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        } else {
+            $("#" + container + "AddBtn").html("")
+        }
     }
 
     function getEducationForm(bodyId, container) {
@@ -7239,7 +7254,7 @@ foreach ($aValue as $key => $value) {
                     }
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyEducationFormMedis").html("")
-                        addEducationForm(0, key, "armpasien_diagnosa_id", "bodyEducationFormMedis")
+                        addEducationForm(0, key, "armpasien_diagnosa_id", "bodyEducationFormMedis", false)
                     }
                 })
             },
@@ -7518,7 +7533,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                     }
                 });
@@ -7608,7 +7622,6 @@ foreach ($aValue as $key => $value) {
                             }
                         } ?>
                     } else if (value.p_type == 'GEN0014') {
-                        console.log(value.value_id)
                         addEducationIntegrationLanguage(bodyId, value.parameter_id, value.value_desc)
                     }
                 }
@@ -8018,7 +8031,6 @@ foreach ($aValue as $key => $value) {
                     if ($(this).is(":checked")) {
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                     } else {
-                        console.log($(this).val())
                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
                     }
                 });
@@ -8103,7 +8115,6 @@ foreach ($aValue as $key => $value) {
             $("#GCS_DESC" + bodyId).val(gcs.gcs_score)
             $.each(gcsDetailAll, function(key, value) {
                 if (value.body_id == gcs.body_id) {
-                    console.log("#val" + value.p_type + value.value_id + bodyId)
                     $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 }
             })

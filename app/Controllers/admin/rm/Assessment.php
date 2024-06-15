@@ -831,7 +831,7 @@ class Assessment extends BaseController
 
         $db = db_connect();
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where VALUE_SCORE in (2, 3) and P_TYPE = 'GEN0002'")->getResultArray());
-        // return json_encode($select);
+
         $lokalisModel = new LokalisModel();
         foreach ($select as $key => $value) {
             if (isset(${'lokalis' . $value['value_id']}) && $value['value_score'] == 3) {
@@ -850,6 +850,7 @@ class Assessment extends BaseController
                         'visit_id' => $visit_id,
                         'trans_id' => $visit_id,
                         'body_id' => $pasien_diagnosa_id,
+                        'document_id' => $pasien_diagnosa_id,
                         'p_type' => $value['p_type'],
                         'parameter_id' => $value['parameter_id'],
                         'value_id' => $value['value_id'],
