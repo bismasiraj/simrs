@@ -1,33 +1,26 @@
 <script type='text/javascript'>
-    var mrJson;
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
-
-    var nomor = '<?= $visit['no_registration']; ?>';
-    var ke = '%'
-    var mulai = '2023-08-01' //tidak terpakai
-    var akhir = '2023-08-31' //tidak terpakai
-    var lunas = '%'
-    // var klinik = '<?= $visit['clinic_id']; ?>'
-    var klinik = '%'
-    var rj = '%'
-    var status = '%'
-    var nota = '%'
-    var trans = '<?= $visit['trans_id']; ?>'
-    var visit = '<?= $visit['visit_id']; ?>'
     $(document).ready(function(e) {
         // getListRequestRad(nomor, visit)
         initializeSearchTarif("searchTarifbillpoli", '<?= $visit['clinic_id']; ?>');
     })
     $("#billPoliTab").on("click", function() {
-        // getTreatResultList(nomor, visit)
-        // getListRequestRad(nomor, visit)
+        $('#notaNoLab').html(`<option value="%">Semua</option>`)
+        getBillPoli(nomor, ke, mulai, akhir, lunas, '<?= $visit['clinic_id']; ?>', rj, status, nota, trans)
+
+        // var seen = {};
+        // $('#notaNoPoli option').each(function() {
+        //     if (seen[$(this).val()]) {
+        //         $(this).remove();
+        //     } else {
+        //         seen[$(this).val()] = true;
+        //     }
+        // });
+    })
+    $("#formSaveBillRadBtn").on("click", function() {
+        $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+    })
+    $("#notaNoPoli").on("change", function() {
+        filterBillPoli()
     })
 </script>
 <script type='text/javascript'>
@@ -46,8 +39,15 @@
     }
 
     function addBillBillPoli(container) {
-        // setTarif('P016', "searchTarifrad")
-        // $("#addBill").modal("show")
+        var nota_no = $("#notaNoPoli").val();
+
+        if (nota_no == '%') {
+            nota_no = get_bodyid()
+            $("#notaNoPoli").append($("<option>").val(nota_no).text(nota_no))
+            $("#notaNoPoli").val(nota_no)
+            $("#billPoliChargesBody").html("")
+        }
+
 
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
@@ -194,6 +194,19 @@
             $("#abillpolitagihan" + key).val($("#abillpoliamount" + key).val() * dInput)
             $("#abillpoliamount_paid_plafond" + key).val($("#abillpoliamount_plafond" + key).val() * dInput)
             $("#abillpolidisplayamount_paid_plafond" + key).html(formatCurrency($("#abillpoliamount_plafond" + key).val() * dInput))
+        })
+    }
+</script>
+<script>
+    function filterBillPoli() {
+        $("#billPoliChargesBody").html("")
+        var notaNoPoli = $("#notaNoPoli").val()
+        billJson.forEach((element, key) => {
+            if (billJson[key].clinic_id == 'P016' && (billJson[key].nota_no == notaNoPoli || '%' == notaNoPoli)) {
+                var i = $('#billPoliChargesBody tr').length + 1;
+                var counter = 'billpoli' + i
+                addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
+            }
         })
     }
 </script>

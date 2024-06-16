@@ -1,36 +1,28 @@
 <script type='text/javascript'>
-    var mrJson;
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
-
-    var nomor = '<?= $visit['no_registration']; ?>';
-    var ke = '%'
-    var mulai = '2023-08-01' //tidak terpakai
-    var akhir = '2023-08-31' //tidak terpakai
-    var lunas = '%'
-    // var klinik = '<?= $visit['clinic_id']; ?>'
-    var klinik = '%'
-    var rj = '%'
-    var status = '%'
-    var nota = '%'
-    var trans = '<?= $visit['trans_id']; ?>'
-    var visit = '<?= $visit['visit_id']; ?>'
     $(document).ready(function(e) {
         // getListRequestRad(nomor, visit)
         initializeSearchTarif("searchTarifRad", 'P016');
     })
     $("#radTab").on("click", function() {
+        $('#notaNoRad').html(`<option value="%">Semua</option>`)
+
         getTreatResultList(nomor, visit)
         getListRequestRad(nomor, visit)
+        getBillPoli(nomor, ke, mulai, akhir, lunas, 'P016', rj, status, nota, trans)
+        // var seen = {};
+        // $('#notaNoRad option').each(function() {
+        //     if (seen[$(this).val()]) {
+        //         $(this).remove();
+        //     } else {
+        //         seen[$(this).val()] = true;
+        //     }
+        // });
     })
     $("#formSaveBillRadBtn").on("click", function() {
         $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+    })
+    $("#notaNoRad").on("change", function() {
+        filterBillRad()
     })
 </script>
 <script type='text/javascript'>
@@ -122,8 +114,14 @@
     }
 
     function addBillRad(container) {
-        // setTarif('P016', "searchTarifrad")
-        // $("#addBill").modal("show")
+        var nota_no = $("#notaNoRad").val();
+
+        if (nota_no == '%') {
+            nota_no = get_bodyid()
+            $("#notaNoRad").append($("<option>").val(nota_no).text(nota_no))
+            $("#notaNoRad").val(nota_no)
+            $("#radChargesBody").html("")
+        }
 
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
@@ -137,7 +135,7 @@
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", "araddisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
             .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="aradquantity' + key + '" placeholder="" value="1" class="form-control" >')
+                .append('<input type="text" name="quantity[]" id="aradquantity' + key + '" placeholder="" value="0" class="form-control" >')
                 .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
             )
             .append($("<td>").attr("id", "araddisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
@@ -151,6 +149,7 @@
 
 
         $("#radChargesBody")
+            .append('<input type="hidden" name="quantity[]" id="aradquantity' + key + '" placeholder="" value="0" class="form-control" >')
             .append('<input name="treatment[]" id="aradtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
             .append('<input name="treat_date[]" id="aradtreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
             .append('<input name="sell_price[]" id="aradsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
@@ -270,6 +269,19 @@
             $("#aradtagihan" + key).val($("#aradamount" + key).val() * dInput)
             $("#aradamount_paid_plafond" + key).val($("#aradamount_plafond" + key).val() * dInput)
             $("#araddisplayamount_paid_plafond" + key).html(formatCurrency($("#aradamount_plafond" + key).val() * dInput))
+        })
+    }
+</script>
+<script>
+    function filterBillRad() {
+        $("#radChargesBody").html("")
+        var notaNoRad = $("#notaNoRad").val()
+        billJson.forEach((element, key) => {
+            if (billJson[key].clinic_id == 'P016' && (billJson[key].nota_no == notaNoRad || '%' == notaNoRad)) {
+                var i = $('#radChargesBody tr').length + 1;
+                var counter = 'rad' + i
+                addRowBill("radChargesBody", "arad", key, i, counter)
+            }
         })
     }
 </script>

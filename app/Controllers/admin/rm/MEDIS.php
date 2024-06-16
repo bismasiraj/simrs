@@ -1908,7 +1908,8 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC, 
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
-            PD.DOCTOR")->getResultArray());
+            PD.DOCTOR,
+            pd.specialist_type_id")->getResultArray());
 
             $selectlokalis = $this->lowerKey($db->query(
                 "

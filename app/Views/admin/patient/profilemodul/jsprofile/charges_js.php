@@ -288,16 +288,19 @@
                     if (billJson[key].clinic_id == 'P016') {
                         var i = $('#radChargesBody tr').length + 1;
                         var counter = 'rad' + i
+                        $("#notaNoRad").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("radChargesBody", "arad", key, i, counter)
                     }
                     if (billJson[key].clinic_id == 'P013') {
                         var i = $('#labChargesBody tr').length + 1;
                         var counter = 'lab' + i
+                        $("#notaNoLab").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("labChargesBody", "alab", key, i, counter)
                     }
                     if (billJson[key].clinic_id == '<?= $visit['clinic_id']; ?>') {
                         var i = $('#billPoliChargesBody tr').length + 1;
                         var counter = 'billpoli' + i
+                        $("#notaNoPoli").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
                     }
 
@@ -339,6 +342,35 @@
                 $("#billpolipelunasan_total").val(formatCurrency(billpolipembayaran));
                 $("#billpoliretur_total").val(formatCurrency(billpoliretur));
                 $("#billpolitotalnya").val(formatCurrency(billpolitotal));
+
+                if (klinik == 'P013') {
+                    var seen = {};
+                    $('#notaNoLab option').each(function() {
+                        if (seen[$(this).val()]) {
+                            $(this).remove();
+                        } else {
+                            seen[$(this).val()] = true;
+                        }
+                    });
+                } else if (klinik == 'P016') {
+                    var seen = {};
+                    $('#notaNoRad option').each(function() {
+                        if (seen[$(this).val()]) {
+                            $(this).remove();
+                        } else {
+                            seen[$(this).val()] = true;
+                        }
+                    });
+                } else if (klinik == '<?= $visit['clinic_id']; ?>') {
+                    var seen = {};
+                    $('#notaNoRad option').each(function() {
+                        if (seen[$(this).val()]) {
+                            $(this).remove();
+                        } else {
+                            seen[$(this).val()] = true;
+                        }
+                    });
+                }
             },
             error: function() {
 

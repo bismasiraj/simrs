@@ -54,12 +54,21 @@ $permissions = user()->getPermissions();
                         <?php if (isset($permissions['tindakanpoli']['c'])) {
                             if ($permissions['tindakanpoli']['c'] == '1') { ?>
                                 <div class="row">
-
-                                    <div class="col-md-8"><select id="searchTarifbillpoli" class="form-control" style="width: 100%"></select></div>
-
-                                    <div class="col-md-4">
-                                        <div class="box-tab-tools">
-                                            <a data-toggle="modal" onclick='addBillBillPoli("searchTarifbillpoli")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="">Nomor Sesi</label>
+                                            <select id="notaNoPoli" class="form-control" style="width: 100%">
+                                                <option value="%">Semua</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label for="">Pencarian Tarif</label>
+                                            <div class="div">
+                                                <select id="searchTarifbillpoli" class="form-control" style="width: 80%; height: 100%;"></select>
+                                                <a data-toggle="modal" onclick='addBillBillPoli("searchTarifbillpoli")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -153,115 +162,13 @@ $permissions = user()->getPermissions();
                                 $total = 0;
                                 ?>
                             </tbody>
-                            <tfoot class="table-group-divider" style="display: none">
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-6"></div>
-                                            <billpoliel for="billpolitagihan_total" class="col-sm-3 col-form-billpoliel text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolitagihan_total" name="billpolitagihan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolisubsidi_total" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolisubsidi_total" name="billpolisubsidi_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolipotongan_total" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolipotongan_total" name="billpolipotongan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolipembulatan_total" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolipembulatan_total" name="billpolipembulatan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolipelunasan_total" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolipelunasan_total" name="billpolipelunasan_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolipembayaran_total" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="billpolipembayaran_total" name="billpolipembayaran_total" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="billpolitotalnya" class="col-sm-4 col-form-billpoliel text-end">
-                                                <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                            </billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control border border-primary border-3 text-end" id="billpolitotalnya" name="billpolitotalnya" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan='11' class="align_right">
-                                        <div class="row">
-                                            <div class="col-sm-5"></div>
-                                            <billpoliel for="inacbg" class="col-sm-4 col-form-billpoliel text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></billpoliel>
-                                            <div class="col-sm-3">
-                                                <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
                         </table>
+                        <div class="panel-footer text-end mb-4">
+                            <button type="button" id="formSaveBillPoliBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button type="button" id="formEditBillPoliBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                        </div>
                     </div>
                 </div>
             </div>
