@@ -711,7 +711,8 @@
     $("#formcetakarm").on("click", function() {
         var visit = <?= json_encode($visit); ?>;
         var encodedVisit = btoa(JSON.stringify(visit));
-        var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val();
+        var title = $("#armTitle").html()
+        var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
         window.open(url, '_blank');
     })
 </script>

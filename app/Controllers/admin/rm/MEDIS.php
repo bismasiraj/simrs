@@ -1730,10 +1730,10 @@ class medis extends \App\Controllers\BaseController
         }
     }
 
-    public function rawat_jalan($visit, $vactination_id = null)
+    public function rawat_jalan($visit, $vactination_id = null, $title = null)
     {
 
-        $title = "Asesmen Medis IGD Rawat Jalan";
+        // $title = "Asesmen Medis IGD Rawat Jalan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -1846,7 +1846,11 @@ class medis extends \App\Controllers\BaseController
 			  max(arp.g) as hamil_G,
 			   max(arp.p) as hamil_p,
 			    max(arp.a) as hamil_a,
-                pd.specialist_type_id
+                pd.specialist_type_id,
+                o.name_of_org_unit,
+                o.contact_address,
+                o.phone,
+                o.fax
 
             from pasien_diagnosa pd left outer join  clinic c on pd.clinic_id = c.clinic_id
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
@@ -1858,7 +1862,7 @@ class medis extends \App\Controllers\BaseController
             left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on pd.PASIEN_DIAGNOSA_ID = EDU.DOCUMENT_ID
 			left outer join INASIS_GET_TINDAKLANJUT igt on pd.RENCANATL = igt.KODE
 			left outer join ASSESSMENT_REPRODUCTION arp on pd.PASIEN_DIAGNOSA_ID = arp.DOCUMENT_ID
-           , pasien p 
+           , pasien p , organizationunit o
             where 
             pd.PASIEN_DIAGNOSA_ID = '" . $vactination_id . "'
             and PD.VISIT_ID =  '" . $visit['visit_id'] . "' -- 
@@ -1909,7 +1913,11 @@ class medis extends \App\Controllers\BaseController
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
             PD.DOCTOR,
-            pd.specialist_type_id")->getResultArray());
+            pd.specialist_type_id,
+                o.name_of_org_unit,
+                o.contact_address,
+                o.phone,
+                o.fax")->getResultArray());
 
             $selectlokalis = $this->lowerKey($db->query(
                 "
@@ -1922,7 +1930,8 @@ class medis extends \App\Controllers\BaseController
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select[0],
-                    "lokalis" => $selectlokalis
+                    "lokalis" => $selectlokalis,
+                    'title' => $title,
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
