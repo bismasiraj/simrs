@@ -38,6 +38,9 @@ class ADLModel extends Model
         'status',
         'modified_date',
         'modified_by',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

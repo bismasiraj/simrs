@@ -31,7 +31,10 @@ class PainMonitoringModel extends Model
         'modified_date',
         'modified_by',
         'pain_monitoring_status',
-        'document_id'
+        'document_id',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

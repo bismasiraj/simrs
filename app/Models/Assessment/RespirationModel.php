@@ -48,7 +48,10 @@ class RespirationModel extends Model
         'cough_type',
         'o2_q',
         'o2_type',
-        'breath_muscle'
+        'breath_muscle',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

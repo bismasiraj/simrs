@@ -140,7 +140,7 @@ $permissions = user()->getPermissions();
                 </style>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div class="row">
+                        <div id="eresepBtnGroup" class="row">
                             <div class="col-md-6">
                                 <div id="eresepAdd" class="box-tab-tools text-end">
                                     <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
@@ -149,6 +149,17 @@ $permissions = user()->getPermissions();
                             <div class="col-md-6">
                                 <div id="eresepRAdd" class="box-tab-tools text-start" style="">
                                     <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                                </div>
+                            </div>
+                        </div>
+                <?php }
+                } ?>
+                <?php if (isset($permissions['eresep']['c'])) {
+                    if ($permissions['eresep']['c'] == '1') { ?>
+                        <div id="medItemBtnGroup" class="row">
+                            <div class="col-md-12">
+                                <div id="eresepAdd" class="box-tab-tools text-center">
+                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
                                 </div>
                             </div>
                         </div>

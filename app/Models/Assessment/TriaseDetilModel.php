@@ -25,7 +25,10 @@ class TriaseDetilModel extends Model
         'value_desc',
         'modified_date',
         'modified_by',
-        'value_id'
+        'value_id',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

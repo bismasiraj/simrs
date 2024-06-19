@@ -17,6 +17,7 @@
                     <input type="hidden" name="valid_user" id="signvalid_user">
                     <input type="hidden" name="valid_pasien" id="signvalid_pasien">
                     <input type="hidden" name="tombolsave" id="signtombolsave">
+                    <input type="hidden" name="tombolform" id="signform">
                     <div class="form-group">
                         <label for="login"><?= lang('Auth.emailOrUsername') ?></label>
                         <input type="text" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="login" placeholder="<?= lang('Auth.emailOrUsername') ?>">

@@ -111,6 +111,9 @@ class Assessment extends BaseController
         $modified_by = $this->request->getPost('modified_by');
         $pain_monitoring_status = $this->request->getPost('pain_monitoring_status');
         $document_id = $this->request->getPost('document_id');
+        $valid_date = $this->request->getPost('valid_date');
+        $valid_user = $this->request->getPost('valid_user');
+        $valid_pasien = $this->request->getPost('valid_pasien');
 
         $db = db_connect();
         $painMonitoring = new PainMonitoringModel();
@@ -131,7 +134,10 @@ class Assessment extends BaseController
             'modified_date' => Time::now(),
             'modified_by' => $modified_by,
             'pain_monitoring_status' => $pain_monitoring_status,
-            'document_id' => $document_id
+            'document_id' => $document_id,
+            'valid_date' => $valid_date,
+            'valid_user' => $valid_user,
+            'valid_pasien' => $valid_pasien
         ];
         // return json_encode($data);
         $db->query("delete from assessment_pain_monitoring where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
@@ -395,7 +401,10 @@ class Assessment extends BaseController
             'modified_by' => $modified_by,
             'isvalid' => null,
             'valid_date' => null,
-            'document_id' => $document_id
+            'document_id' => $document_id,
+            'valid_date' => $valid_date,
+            'valid_user' => $valid_user,
+            'valid_pasien' => $valid_pasien
         ];
         // return json_encode($data);
         $select = $db->query("select body_id from assessment_indicator where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'")->getResultArray();
@@ -619,7 +628,10 @@ class Assessment extends BaseController
             'modified_by' => $modified_by,
             'isvalid' => null,
             'valid_date' => null,
-            'document_id' => $document_id
+            'document_id' => $document_id,
+            'valid_date' => $valid_date,
+            'valid_user' => $valid_user,
+            'valid_pasien' => $valid_pasien
         ];
         // return json_encode($data);
         $select = $db->query("select body_id from assessment_indicator where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'")->getResultArray();
@@ -1637,7 +1649,6 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
 
         $data = [];
 
-        // return ($body['OBJECT_STRANGE']);
         foreach ($body as $key => $value) {
             ${$key} = $value;
             if (!(is_null(${$key}) || ${$key} == ''))
@@ -2999,7 +3010,7 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
         $ex = new ExaminationModel();
         $ex->save($data);
 
-        // return json_encode($body_id);
+        // return json_encode($valid_user);
         $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();

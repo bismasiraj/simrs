@@ -35,7 +35,10 @@ class SocialModel extends Model
         'status',
         'modified_date',
         'modified_by',
-        'children_desc'
+        'children_desc',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

@@ -1,9 +1,10 @@
 <script>
-    function addSignUser(container, buttonId) {
+    function addSignUser(container, buttonId, formid) {
         $("#signvalid_date").val(container + "valid_date")
         $("#signvalid_user").val(container + "valid_user")
         $("#signvalid_pasien").val(container + "valid_pasien")
         $("#signtombolsave").val(buttonId)
+        $("#signform").val(formid)
 
         $("#digitalSignModal").modal("show")
     }
@@ -27,7 +28,17 @@
                     var valid_user = $("#signvalid_user").val()
                     var valid_pasien = $("#signvalid_pasien").val()
                     var signButton = $("#signtombolsave").val()
+                    var signform = $("#signform").val()
 
+                    $("#" + signform).find(".valid-date").each(function() {
+                        $(this).val(get_date())
+                    })
+                    $("#" + signform).find(".valid-user").each(function() {
+                        $(this).val(get_bodyid())
+                    })
+                    $("#" + signform).find(".valid-pasien").each(function() {
+                        $(this).val(get_bodyid())
+                    })
                     $("#" + valid_date).val(get_date())
                     $("#" + valid_user).val(get_bodyid())
                     $("#" + valid_pasien).val(get_bodyid())
@@ -47,4 +58,15 @@
         $("#digitalSignModal").modal("hide")
 
     }));
+</script>
+<script>
+    function checkSign(formId) {
+        var validUser = $("#" + formId + ' input[name="valid_user"]').val()
+
+        if (validUser != '' && validUser != null) {
+            $("#" + formId + ' .btn-edit').hide()
+        } else {
+            $("#" + formId + ' .btn-edit').show()
+        }
+    }
 </script>

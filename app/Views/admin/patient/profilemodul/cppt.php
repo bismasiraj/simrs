@@ -283,9 +283,7 @@ $permission = user()->getPermissions();
                                                                     <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
                                                                         <?php if (true) { ?>
                                                                             <thead>
-                                                                                <th class="text-center" style="width: 40%">DiagnosaPerawat</th>
-                                                                                <th class="text-center" style="width: 20%">Jenis Kasus</th>
-                                                                                <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
+                                                                                <th class="text-center" style="width: 100%">Diagnosa Perawat</th>
                                                                             </thead>
                                                                             <tbody id="bodyDiagPerawatCppt">
                                                                             </tbody>
@@ -293,7 +291,7 @@ $permission = user()->getPermissions();
                                                                     </table>
                                                                 </div>
                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawatCppt', '')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>

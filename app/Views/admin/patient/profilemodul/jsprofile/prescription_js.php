@@ -51,11 +51,16 @@
         getResep(visit, nomor)
         $("#iseresep").val(1)
         $("#eresepTitle").html("E-Resep")
+        $("#eresepBtnGroup").show()
+        $("#medItemBtnGroup").hide()
+
     })
     $("#medicalitemTab").on("click", function() {
         getResep(visit, nomor)
         $("#iseresep").val(0)
         $("#eresepTitle").html("Medical Item")
+        $("#eresepBtnGroup").hide()
+        $("#medItemBtnGroup").show()
     })
 </script>
 

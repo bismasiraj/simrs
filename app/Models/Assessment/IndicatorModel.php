@@ -33,7 +33,9 @@ class IndicatorModel extends Model
         'modified_by',
         'isvalid',
         'valid_date',
-        'document_id'
+        'document_id',
+        'valid_pasien',
+        'valid_user'
     ];
 
     protected $useTimestamps = true;

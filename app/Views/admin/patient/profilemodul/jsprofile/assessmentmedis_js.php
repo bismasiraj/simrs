@@ -1,7 +1,9 @@
 <script>
     $(document).ready(function() {
-        $("#assessmentmedisTab").trigger("click")
-        $("#assessmentmedisTab").trigger("mouseup")
+        // $("#assessmentmedisTab").trigger("click")
+        // $("#assessmentmedisTab").trigger("mouseup")
+        $("#assessmentigdTab").trigger("click")
+        $("#assessmentigdTab").trigger("mouseup")
     })
 </script>
 <script type='text/javascript'>
@@ -475,6 +477,10 @@
         $("#formaddarm textarea").prop("disabled", false)
         $("#formaddarm select").prop("disabled", false)
         enableCanvasLokalis()
+
+        $("#formaddarm").find(".btn-edit").each(function() {
+            $(this).trigger("click")
+        })
     }
 
     function disableARM() {
@@ -689,7 +695,11 @@
                     errorMsg(message);
                 } else {
                     successMsg(data.message);
-                    getAssessmentMedis($("#armdiag_cat").val())
+
+                    $("#formaddarm").find(".btn-save").each(function() {
+                        $(this).trigger("click")
+                    })
+                    disableARM()
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -718,7 +728,8 @@
 </script>
 <script type="text/javascript">
     function signRM() {
-        addSignUser("arm", "formsavearmbtn")
+        $("#formeditarm").trigger("click")
+        addSignUser("arm", "formsavearmbtn", "formaddarm")
     }
 </script>
 <script type="text/javascript">

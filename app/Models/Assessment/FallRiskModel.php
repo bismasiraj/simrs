@@ -33,6 +33,9 @@ class FallRiskModel extends Model
         'modified_date',
         'modified_by',
         'fall_risk_status',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     // Dates

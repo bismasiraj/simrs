@@ -59,7 +59,10 @@ class DietInapModel extends Model
         "iscetak",
         "penunggu_pagi",
         "penunggu_siang",
-        "penunggu_malam"
+        "penunggu_malam",
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

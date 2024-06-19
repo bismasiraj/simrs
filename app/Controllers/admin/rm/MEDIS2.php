@@ -1730,10 +1730,10 @@ class medis extends \App\Controllers\BaseController
         }
     }
 
-    public function rawat_jalan($visit, $vactination_id = null)
+    public function rawat_jalan($visit, $vactination_id = null, $title = null)
     {
-        
-        $title = "Asesmen Medis IGD Rawat Jalan";
+
+        // $title = "Asesmen Medis IGD Rawat Jalan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -1762,10 +1762,6 @@ class medis extends \App\Controllers\BaseController
             gcs.GCS_m,
             gcs.GCS_V, 
             gcs.GCS_SCORE as gcs,
-            gcs.GCS_DESC,
-            max(case when apv.PARAMETER_ID = '01' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_E_DESC,
-            max(case when apv.PARAMETER_ID = '02' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_M_DESC,
-            max(case when apv.PARAMETER_ID = '03' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_V_DESC,
             pd.DIAGNOSA_ID as icd10,
             pd.DIAGNOSA_DESC as namadiagnosa,
             pd.ANAMNASE as anamnesis,
@@ -1780,8 +1776,8 @@ class medis extends \App\Controllers\BaseController
             max(case when PH.value_id = 'G0090401'  then histories else '' end ) as riwayat_obat_dikonsumsi,
             max(case when PH.value_id = 'G0090402'  then histories else '' end ) as riwayat_kehamilan,
             max(case when PH.value_id = 'G0090403'  then histories else '' end ) as riwayat_imunisasi,
-            MAX(CASE WHEN EDU.INFORMATION_RECEIVER = '1' THEN 'Penerima Pasien' + ' materi edukasi : '   + edu.education_material
-            else 'Kerabat Pasien dengan nama : ' + edu.family_name + ' materi edukasi : ' + edu.education_material  end ) as edukasi_pasien,
+            MAX( CASE WHEN EDU.INFORMATION_RECEIVER = '1' THEN 'Penerima Pasien'  + ' materi edukasi : '   + edu.education_material
+            else 'Kerabat Pasien dengan nama : ' + edu.family_name + ' materi edukasi : ' +edu.education_material  end ) ,
             igt.nama as tindaklanjut,
             pd.TGLKONTROL as tanggal_kontrol,
             ei.WEIGHT as berat,
@@ -1849,7 +1845,12 @@ class medis extends \App\Controllers\BaseController
 			  else 'Tidak Hamil' end ) as hamil,
 			  max(arp.g) as hamil_G,
 			   max(arp.p) as hamil_p,
-			    max(arp.a) as hamil_a
+			    max(arp.a) as hamil_a,
+                pd.specialist_type_id,
+                o.name_of_org_unit,
+                o.contact_address,
+                o.phone,
+                o.fax
 
             from pasien_diagnosa pd left outer join  clinic c on pd.clinic_id = c.clinic_id
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
@@ -1861,11 +1862,10 @@ class medis extends \App\Controllers\BaseController
             left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on pd.PASIEN_DIAGNOSA_ID = EDU.DOCUMENT_ID
 			left outer join INASIS_GET_TINDAKLANJUT igt on pd.RENCANATL = igt.KODE
 			left outer join ASSESSMENT_REPRODUCTION arp on pd.PASIEN_DIAGNOSA_ID = arp.DOCUMENT_ID
-            LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
-           , pasien p 
+           , pasien p , organizationunit o
             where 
-            pd.PASIEN_DIAGNOSA_ID = '20240614173754692'
-            and PD.VISIT_ID =  '202406140643270000A44'
+            pd.PASIEN_DIAGNOSA_ID = '" . $vactination_id . "'
+            and PD.VISIT_ID =  '" . $visit['visit_id'] . "' -- 
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -1898,7 +1898,6 @@ class medis extends \App\Controllers\BaseController
             gcs.GCS_m,
             gcs.GCS_V, 
             gcs.GCS_SCORE, 
-            gcs.GCS_DESC,
             igt.nama,
             pd.TGLKONTROL,
             pd.DIAGNOSA_ID,
@@ -1913,19 +1912,26 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC, 
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
-            PD.DOCTOR")->getResultArray());
+            PD.DOCTOR,
+            pd.specialist_type_id,
+                o.name_of_org_unit,
+                o.contact_address,
+                o.phone,
+                o.fax")->getResultArray());
 
-            $selectlokalis = $this->lowerKey($db->query("
+            $selectlokalis = $this->lowerKey($db->query(
+                "
                 select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 3"
+                where body_id = '20240612075447793' AND assessment_lokalis.VALUE_SCORE = 3"
             )->getResultArray());
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select[0],
-                    "lokalis" => $selectlokalis
+                    "lokalis" => $selectlokalis,
+                    'title' => $title,
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [

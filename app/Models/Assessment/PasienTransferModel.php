@@ -39,7 +39,10 @@ class PasienTransferModel extends Model
         'org_name',
         'notes',
         'modified_date',
-        'modified_by'
+        'modified_by',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

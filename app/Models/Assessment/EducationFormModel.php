@@ -29,7 +29,10 @@ class EducationFormModel extends Model
         'family_relation',
         'status',
         'modified_date',
-        'modified_by'
+        'modified_by',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;

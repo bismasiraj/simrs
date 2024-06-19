@@ -51,7 +51,10 @@ class NutritionModel extends Model
         'total_score',
         'score_desc',
         'modified_date',
-        'modified_by'
+        'modified_by',
+        'valid_date',
+        'valid_user',
+        'valid_pasien'
     ];
 
     protected $useTimestamps = true;
