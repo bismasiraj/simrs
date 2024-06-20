@@ -3302,6 +3302,8 @@ foreach ($aValue as $key => $value) {
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyFallRiskMedis").html("")
                         addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
+                    } else if (value.document_id == $("#acpptbody_id").val()) {
+                        addFallRisk(0, key, "acpptbody_id", container, false)
                     }
                 })
             },
@@ -8559,6 +8561,9 @@ foreach ($aValue as $key => $value) {
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyGcsMedis").html()
                         addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
+                    }
+                    if (value.document_id == $("#acpptbody_id").val()) {
+                        addGcs(0, key, "acpptbody_id", container, false)
                     }
                 })
             },

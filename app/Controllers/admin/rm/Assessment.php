@@ -1075,7 +1075,7 @@ class Assessment extends BaseController
         $db = db_connect();
         $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
         weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi
-        from pasien_diagnosa pd inner join examination_info ei on ei.body_id = pd.body_id
+        from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
         left join employee_all ea on pd.employee_id = ea.employee_id 
         left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id' and pd.diag_cat = '3'")->getResultArray());
 

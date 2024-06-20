@@ -107,7 +107,7 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="orderGiziTab" class="nav-link border-bottom" href="#orderGizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
-                                        <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
+                                        <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
                                         <!-- <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li> -->
                                         <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
                                     </ul>
@@ -661,6 +661,23 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/diagnosa', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/tindakanperawat', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
                                             'statusPasien' => $statusPasien,
@@ -1441,6 +1458,23 @@ $currency_symbol = 'Rp. ';
 ]); ?>
 
 <?php echo view('admin/patient/profilemodul/jsprofile/diagnosa_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/tindakanperawat_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,

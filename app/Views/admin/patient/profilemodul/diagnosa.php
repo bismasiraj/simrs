@@ -41,7 +41,7 @@ $permission = user()->getPermissions();
                                     <div class="col-lg-12 col-md-12 col-sm-12">
                                         <div id="ajax_load"></div>
                                         <div class="row">
-                                            <h3 id="armTitle">Diagnosa Klinis</h3>
+                                            <h3 id="">Diagnosa Klinis</h3>
                                             <hr>
                                             <div class="col-md-12">
                                                 <div class="dividerhr"></div>
@@ -56,7 +56,7 @@ $permission = user()->getPermissions();
                                             </div>
                                         </div><!--./row-->
                                         <div class="row">
-                                            <h3 id="armTitle">Diagnosa Perawat</h3>
+                                            <h3 id="">Diagnosa Perawat</h3>
                                             <hr>
                                             <div class="col-md-12">
                                                 <div class="dividerhr"></div>

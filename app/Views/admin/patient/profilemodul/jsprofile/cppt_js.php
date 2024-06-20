@@ -345,6 +345,8 @@
         $.each(examselect, function(key, value) {
             $("#acppt" + key).val(value)
         })
+        var editor = tinymce.get('acpptinstruction')
+        editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
         $("#cpptModal").modal("show")
         $("#acpptDocument").find("input, select, textarea").prop("disabled", false)
@@ -490,6 +492,9 @@
         $("#acpptnafas").val(examselect.nafas)
         $("#acpptarm_diameter").val(examselect.arm_diameter)
         $("#acpptpemeriksaan").val(examselect.pemeriksaan)
+
+        var editor = tinymce.get('acpptinstruction')
+        editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
 
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
 

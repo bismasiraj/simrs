@@ -32,18 +32,30 @@
 
 
     function addRowgcs(gcsselect, key) {
-
-        $("#gcsBody").append($("<tr>")
-            .append($("<td>").append((gcsselect.examination_date).substring(0, 16)))
-            .append($("<td>").html(gcsselect.modified_by))
-            .append($("<td>").html(gcsselect.gcs_e))
-            .append($("<td>").html(gcsselect.gcs_m))
-            .append($("<td>").html(gcsselect.gcs_v))
-            .append($("<td>").html(gcsselect.gcs_score))
-            .append($("<td>").html(gcsselect.gcs_desc))
-            .append($("<td>").html('<button type="button" onclick="editgcs(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-            .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + gcsselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
-        )
+        if (gcsselect.valid_user === null) {
+            $("#gcsBody").append($("<tr>")
+                .append($("<td>").append((gcsselect.examination_date).substring(0, 16)))
+                .append($("<td>").html(gcsselect.modified_by))
+                .append($("<td>").html(gcsselect.gcs_e))
+                .append($("<td>").html(gcsselect.gcs_m))
+                .append($("<td>").html(gcsselect.gcs_v))
+                .append($("<td>").html(gcsselect.gcs_score))
+                .append($("<td>").html(gcsselect.gcs_desc))
+                .append($("<td>").html('<button type="button" onclick="editgcs(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+                .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + gcsselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+            )
+        } else {
+            $("#gcsBody").append($("<tr>")
+                .append($("<td>").append((gcsselect.examination_date).substring(0, 16)))
+                .append($("<td>").html(gcsselect.modified_by))
+                .append($("<td>").html(gcsselect.gcs_e))
+                .append($("<td>").html(gcsselect.gcs_m))
+                .append($("<td>").html(gcsselect.gcs_v))
+                .append($("<td>").html(gcsselect.gcs_score))
+                .append($("<td>").html(gcsselect.gcs_desc))
+                .append($("<td colspan=\"2\">"))
+            )
+        }
     }
 
     gcsjson.forEach((element, key) => {

@@ -448,8 +448,8 @@ $permission = user()->getPermissions();
                                                         </div>
                                                         <div class="row mb-4">
                                                             <div class="col-md-12">
-                                                                <div id="addGcsButton" class="box-tab-tools text-center">
-                                                                    <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="addGcsBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <div id="bodyGcsCpptAddBtn" class="box-tab-tools text-center">
+                                                                    <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="bodyGcsCpptAddBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                 </div>
                                                             </div>
                                                         </div>
