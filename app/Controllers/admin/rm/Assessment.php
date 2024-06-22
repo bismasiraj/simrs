@@ -1488,31 +1488,36 @@ class Assessment extends BaseController
         $isSuccess = $tpModel->save($data);
 
         if ($isSuccess && $sell_price > 0) {
-            $db = db_connect();
 
-            $db->query("insert into treatment_bill (ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CLINIC_ID, CLINIC_ID_FROM, TREATMENT, TREAT_DATE, AMOUNT, QUANTITY, MEASURE_ID, POKOK_JUAL, PPN, MARGIN, SUBSIDI, 
-                         EMBALACE, PROFESI, DISCOUNT, PAY_METHOD_ID, PAYMENT_DATE, ISLUNAS, DUEDATE_ANGSURAN, DESCRIPTION, KUITANSI_ID, NOTA_NO, ISCETAK, PRINT_DATE, RESEP_NO, RESEP_KE, DOSE, ORIG_DOSE, 
-                         DOSE_PRESC, ITER, ITER_KE, SOLD_STATUS, RACIKAN, CLASS_ROOM_ID, KELUAR_ID, BED_ID, PERDA_ID, EMPLOYEE_ID, DESCRIPTION2, MODIFIED_BY, MODIFIED_DATE, MODIFIED_FROM, BRAND_ID, DOCTOR, 
-                         JML_BKS, EXIT_DATE, FA_V, TASK_ID, EMPLOYEE_ID_FROM, DOCTOR_FROM, status_pasien_id, amount_paid, THENAME, THEADDRESS, THEID, serial_nb, TREATMENT_PLAFOND, AMOUNT_PLAFOND, 
-                         AMOUNT_PAID_PLAFOND, CLASS_ID_PLAFOND, PAYOR_ID, PEMBULATAN, ISRJ, AGEYEAR, AGEMONTH, AGEDAY, GENDER, KAL_ID, CORRECTION_ID, CORRECTION_BY, KARYAWAN, ACCOUNT_ID, sell_price, diskon, 
-                         INVOICE_ID, NUMER, MEASURE_ID2, POTONGAN, BAYAR, RETUR, TARIF_TYPE, PPNVALUE, TAGIHAN, KOREKSI, STATUS_OBAT, SUBSIDISAT, PRINTQ, PRINTED_BY, STOCK_AVAILABLE, STATUS_TARIF, CLINIC_TYPE, 
-                         PACKAGE_ID, MODULE_ID, profession, THEORDER, CASHIER, TRANS_ID, NOSEP, PASIEN_ID, TOTAL_TAGIHAN, tarif_id_plafond)
+            $tbModel = new TreatmentBillModel();
 
-select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CLINIC_ID, CLINIC_ID_FROM, TREATMENT, TREAT_DATE, AMOUNT, QUANTITY, MEASURE_ID, POKOK_JUAL, PPN, MARGIN, SUBSIDI, 
-                         EMBALACE, PROFESI, DISCOUNT, PAY_METHOD_ID, PAYMENT_DATE, ISLUNAS, DUEDATE_ANGSURAN, DESCRIPTION, KUITANSI_ID, NOTA_NO, ISCETAK, PRINT_DATE, RESEP_NO, RESEP_KE, DOSE, ORIG_DOSE, 
-                         DOSE_PRESC, ITER, ITER_KE, SOLD_STATUS, RACIKAN, CLASS_ROOM_ID, KELUAR_ID, BED_ID, PERDA_ID, EMPLOYEE_ID, DESCRIPTION2, MODIFIED_BY, MODIFIED_DATE, MODIFIED_FROM, BRAND_ID, DOCTOR, 
-                         JML_BKS, EXIT_DATE, FA_V, TASK_ID, EMPLOYEE_ID_FROM, DOCTOR_FROM, status_pasien_id, amount_paid, THENAME, THEADDRESS, THEID, serial_nb, TREATMENT_PLAFOND, AMOUNT_PLAFOND, 
-                         AMOUNT_PAID_PLAFOND, CLASS_ID_PLAFOND, PAYOR_ID, PEMBULATAN, ISRJ, AGEYEAR, AGEMONTH, AGEDAY, GENDER, KAL_ID, CORRECTION_ID, CORRECTION_BY, KARYAWAN, ACCOUNT_ID, sell_price, diskon, 
-                         INVOICE_ID, NUMER, MEASURE_ID2, POTONGAN, BAYAR, RETUR, TARIF_TYPE, PPNVALUE, TAGIHAN, KOREKSI, STATUS_OBAT, SUBSIDISAT, PRINTQ, PRINTED_BY, STOCK_AVAILABLE, STATUS_TARIF, CLINIC_TYPE, 
-                         PACKAGE_ID, MODULE_ID, profession, THEORDER, CASHIER, TRANS_ID, NOSEP, PASIEN_ID, TOTAL_TAGIHAN, tarif_id_plafond
-                        from treatment_perawat where 
-                        bill_id = '$id'
-                        and STATUS_TARIF = 0");
+            $tbModel->save($data);
 
-            $db->query("update treatment_perawat set status_tarif = '1' where bill_id = '$id'");
+            //             $db = db_connect();
+
+            //             $db->query("insert into treatment_bill (ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CLINIC_ID, CLINIC_ID_FROM, TREATMENT, TREAT_DATE, AMOUNT, QUANTITY, MEASURE_ID, POKOK_JUAL, PPN, MARGIN, SUBSIDI, 
+            //                          EMBALACE, PROFESI, DISCOUNT, PAY_METHOD_ID, PAYMENT_DATE, ISLUNAS, DUEDATE_ANGSURAN, DESCRIPTION, KUITANSI_ID, NOTA_NO, ISCETAK, PRINT_DATE, RESEP_NO, RESEP_KE, DOSE, ORIG_DOSE, 
+            //                          DOSE_PRESC, ITER, ITER_KE, SOLD_STATUS, RACIKAN, CLASS_ROOM_ID, KELUAR_ID, BED_ID, PERDA_ID, EMPLOYEE_ID, DESCRIPTION2, MODIFIED_BY, MODIFIED_DATE, MODIFIED_FROM, BRAND_ID, DOCTOR, 
+            //                          JML_BKS, EXIT_DATE, FA_V, TASK_ID, EMPLOYEE_ID_FROM, DOCTOR_FROM, status_pasien_id, amount_paid, THENAME, THEADDRESS, THEID, serial_nb, TREATMENT_PLAFOND, AMOUNT_PLAFOND, 
+            //                          AMOUNT_PAID_PLAFOND, CLASS_ID_PLAFOND, PAYOR_ID, PEMBULATAN, ISRJ, AGEYEAR, AGEMONTH, AGEDAY, GENDER, KAL_ID, CORRECTION_ID, CORRECTION_BY, KARYAWAN, ACCOUNT_ID, sell_price, diskon, 
+            //                          INVOICE_ID, NUMER, MEASURE_ID2, POTONGAN, BAYAR, RETUR, TARIF_TYPE, PPNVALUE, TAGIHAN, KOREKSI, STATUS_OBAT, SUBSIDISAT, PRINTQ, PRINTED_BY, STOCK_AVAILABLE, STATUS_TARIF, CLINIC_TYPE, 
+            //                          PACKAGE_ID, MODULE_ID, profession, THEORDER, CASHIER, TRANS_ID, NOSEP, PASIEN_ID, TOTAL_TAGIHAN, tarif_id_plafond)
+
+            // select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CLINIC_ID, CLINIC_ID_FROM, TREATMENT, TREAT_DATE, AMOUNT, QUANTITY, MEASURE_ID, POKOK_JUAL, PPN, MARGIN, SUBSIDI, 
+            //                          EMBALACE, PROFESI, DISCOUNT, PAY_METHOD_ID, PAYMENT_DATE, ISLUNAS, DUEDATE_ANGSURAN, DESCRIPTION, KUITANSI_ID, NOTA_NO, ISCETAK, PRINT_DATE, RESEP_NO, RESEP_KE, DOSE, ORIG_DOSE, 
+            //                          DOSE_PRESC, ITER, ITER_KE, SOLD_STATUS, RACIKAN, CLASS_ROOM_ID, KELUAR_ID, BED_ID, PERDA_ID, EMPLOYEE_ID, DESCRIPTION2, MODIFIED_BY, MODIFIED_DATE, MODIFIED_FROM, BRAND_ID, DOCTOR, 
+            //                          JML_BKS, EXIT_DATE, FA_V, TASK_ID, EMPLOYEE_ID_FROM, DOCTOR_FROM, status_pasien_id, amount_paid, THENAME, THEADDRESS, THEID, serial_nb, TREATMENT_PLAFOND, AMOUNT_PLAFOND, 
+            //                          AMOUNT_PAID_PLAFOND, CLASS_ID_PLAFOND, PAYOR_ID, PEMBULATAN, ISRJ, AGEYEAR, AGEMONTH, AGEDAY, GENDER, KAL_ID, CORRECTION_ID, CORRECTION_BY, KARYAWAN, ACCOUNT_ID, sell_price, diskon, 
+            //                          INVOICE_ID, NUMER, MEASURE_ID2, POTONGAN, BAYAR, RETUR, TARIF_TYPE, PPNVALUE, TAGIHAN, KOREKSI, STATUS_OBAT, SUBSIDISAT, PRINTQ, PRINTED_BY, STOCK_AVAILABLE, STATUS_TARIF, CLINIC_TYPE, 
+            //                          PACKAGE_ID, MODULE_ID, profession, THEORDER, CASHIER, TRANS_ID, NOSEP, PASIEN_ID, TOTAL_TAGIHAN, tarif_id_plafond
+            //                         from treatment_perawat where 
+            //                         bill_id = '$id'
+            //                         and STATUS_TARIF = 0");
+
+            //             $db->query("update treatment_perawat set status_tarif = '1' where bill_id = '$id'");
         }
 
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
+        // $alfa_no = substr(str_shuffle($str_result), 0, 5);
         $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah tindakan berhasil', 'billId' => $id, 'data' => $data);
         echo json_encode($array);
     }
@@ -2894,6 +2899,8 @@ select ORG_UNIT_CODE, BILL_ID, NO_REGISTRATION, VISIT_ID, TARIF_ID, CLASS_ID, CL
             if (isset($examination_date))
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
         }
+        $data['org_unit_code'] = '330710';
+        $data['visit_id'] = '202405231955390970F26';
 
         // return json_encode($data);
 

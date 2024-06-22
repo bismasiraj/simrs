@@ -37,14 +37,14 @@ $permission = user()->getPermissions();
                 <div class="col-md-12">
                     <div class="dividerhr"></div>
                 </div><!--./col-md-12-->
-                <div class="accordion" id="accordionDiagnosa">
+                <div class="accordion" id="accordionTindPerawat">
                     <div id="atipTindakanKolaboratif_Group" class="accordion-item">
-                        <h2 class="accordion-header" id="tindakanPerawat">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawat" aria-expanded="true" aria-controls="collapseTindakanPerawat">
+                        <h2 class="accordion-header" id="tindakanKolaboratirf">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanKolaboratirf" aria-expanded="true" aria-controls="collapseTindakanKolaboratirf">
                                 <b>TINDAKAN KOLABORATIF</b>
                             </button>
                         </h2>
-                        <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionAssessmentAwal" style="">
+                        <div id="collapseTindakanKolaboratirf" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accordionTindPerawat" style="">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -53,25 +53,32 @@ $permission = user()->getPermissions();
                                                 <input type="hidden" name="ci_csrf_token" value="">
                                                 <div class="col-sm-12 col-md-12 mb-4">
                                                     <div class="row">
-                                                        <div class="col-md-8"><select id="searchTarifPerawat" class="form-control" style="width: 100%"></select></div>
-                                                        <div class="col-md-4">
-                                                            <div class="box-tab-tools">
-                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawat", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="">Nomor Sesi</label>
+                                                                <select id="tindakanBodyPerawatKolaborasiNota" class="form-control" style="width: 100%">
+                                                                    <option value="%">Semua</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <div class="form-group">
+                                                                <label for="">Pencarian Tarif</label>
+                                                                <div class="div">
+                                                                    <select id="searchTarifKolaboratif" class="form-control" style="width: 80%; height: 100%;"></select>
+                                                                    <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifKolaboratif", 1, 1, 0,"tindakanBodyPerawat")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                        if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
+                                                    <!-- <div class="row">
+                                                        <div class="col-md-8"><select id="searchTarifKolaboratif" class="form-control" style="width: 100%"></select></div>
+                                                        <div class="col-md-4">
+                                                            <div class="box-tab-tools">
+                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifKolaboratif", 1, 1, 0,"tindakanBodyPerawat")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
                                                             </div>
-                                                    <?php }
-                                                    } ?>
+                                                        </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </form>
@@ -91,7 +98,7 @@ $permission = user()->getPermissions();
                                             </style>
                                             <div class="table-rep-plugin">
                                                 <div class="table-responsive mb-0">
-                                                    <form id="formchargesBodyPerawat" action="" method="post" class="">
+                                                    <form id="formtindakanBodyPerawat" action="" method="post" class="">
                                                         <table class="table table-sm table-hover">
                                                             <thead class="table-primary" style="text-align: center;">
                                                                 <tr>
@@ -106,10 +113,7 @@ $permission = user()->getPermissions();
                                                                     <th class="text-center" rowspan="2"></th class="text-center">
                                                                 </tr>
                                                             </thead>
-                                                            <tbody id="chargesBodyPerawat" class="table-group-divider">
-                                                                <?php
-                                                                $total = 0;
-                                                                ?>
+                                                            <tbody id="tindakanBodyPerawatKolaborasi" class="table-group-divider">
                                                             </tbody>
                                                         </table>
                                                     </form>
@@ -127,7 +131,7 @@ $permission = user()->getPermissions();
                                 <b>TINDAKAN MANDIRI</b>
                             </button>
                         </h2>
-                        <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionAssessmentAwal" style="">
+                        <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accordionTindPerawat" style="">
                             <div class="accordion-body text-muted">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -136,13 +140,32 @@ $permission = user()->getPermissions();
                                                 <input type="hidden" name="ci_csrf_token" value="">
                                                 <div class="col-sm-12 col-md-12 mb-4">
                                                     <div class="row">
-                                                        <div class="col-md-8"><select id="searchTarifPerawatMandiriSelf" class="form-control" style="width: 100%"></select></div>
-                                                        <div class="col-md-4">
-                                                            <div class="box-tab-tools">
-                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiriSelf", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label for="">Nomor Sesi</label>
+                                                                <select id="tindakanBodyPerawatMandiriNota" class="form-control" style="width: 100%">
+                                                                    <option value="%">Semua</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <div class="form-group">
+                                                                <label for="">Pencarian Tarif</label>
+                                                                <div class="div">
+                                                                    <select id="searchTarifPerawatMandiriSelf" class="form-control" style="width: 80%; height: 100%;"></select>
+                                                                    <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiriSelf", 2, 1, 0,"tindakanBodyPerawat")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- <div class="row">
+                                                        <div class="col-md-8"><select id="searchTarifPerawatMandiriSelf" class="form-control" style="width: 100%"></select></div>
+                                                        <div class="col-md-4">
+                                                            <div class="box-tab-tools">
+                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiriSelf", 2, 1, 0,"tindakanBodyPerawat")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
                                                 </div>
                                             </div>
                                         </form>
@@ -162,7 +185,7 @@ $permission = user()->getPermissions();
                                             </style>
                                             <div class="table-rep-plugin">
                                                 <div class="table-responsive mb-0">
-                                                    <form id="formchargesBodyPerawatMandiri" action="" method="post" class="">
+                                                    <form id="formtindakanBodyPerawatMandiri" action="" method="post" class="">
                                                         <table class="table table-sm table-hover">
                                                             <thead class="table-primary" style="text-align: center;">
                                                                 <tr>
@@ -177,8 +200,8 @@ $permission = user()->getPermissions();
                                                                     <th class="text-center" rowspan="2"></th class="text-center">
                                                                 </tr>
                                                             </thead>
-                                                            <tbody id="chargesBodyPerawatMandiri" class="table-group-divider">
-                                                                BISMA
+                                                            <tbody id="tindakanBodyPerawatMandiri" class="table-group-divider">
+
                                                             </tbody>
                                                         </table>
                                                     </form>

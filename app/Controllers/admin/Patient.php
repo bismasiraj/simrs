@@ -1990,7 +1990,10 @@ This Function is used to Add Patient
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
-        // return json_encode($visit['gender']);
+
+
+
+
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
 
@@ -2271,7 +2274,7 @@ This Function is used to Add Patient
         usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        // return json_encode(user()->getFullname());
+        // return json_encode($clinic);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
@@ -5401,10 +5404,10 @@ This Function is used to Add Patient
             ->join('tarif_comp', 'treat_tarif.tarif_id = tarif_comp.tarif_id', 'inner')
             ->where('treat_tarif.class_id', $classPlafond)
             ->where('iscito', $isCito)
-            ->where("upper(ltrim(rtrim(treat_tarif.tarif_name))) like upper(ltrim(rtrim(left(:tarif, 
-        case charindex('(', :tarif,1) 
-           when 0  then len(:tarif)
-           else charindex('.', :tarif,1)-1
+            ->where("upper(ltrim(rtrim(treat_tarif.tarif_name))) like upper(ltrim(rtrim(left('$tarifName', 
+        case charindex('(', '$tarifName',1)
+           when 0  then len('$tarifName')
+           else charindex('.', '$tarifName',1)-1
          end )))) +'%'")
             ->findAll();
         if (!empty($select)) {

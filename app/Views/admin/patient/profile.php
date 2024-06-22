@@ -72,7 +72,7 @@ $currency_symbol = 'Rp. ';
                                             <!-- <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> CPPT</a></li> -->
                                         <?php }
                                         if (isset($permissions['eresep']['r'])) { ?>
-                                            <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">EResep</a></li>
+                                            <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">EPrescription</a></li>
                                             <!-- <li class="nav-item"><a id="eresepTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-prescription text-primary"></i> E-Resep</a></li> -->
                                         <?php }
                                         if (isset($permissions['lab']['r'])) { ?>
@@ -103,7 +103,7 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Fall Risk</a></li>
                                         <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
                                         <li class="nav-item"><a id="medicalitemTab" class="nav-link border-bottom" href="#eresep" data-bs-toggle="tab" aria-expanded="true" role="tab">Medical Item</a></li>
-                                        <li class="nav-item"><a id="diagnosaTab" class="nav-link border-bottom" href="#diagnosa" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa Perawat</a></li>
+                                        <li class="nav-item"><a id="diagnosaTab" class="nav-link border-bottom" href="#diagnosa" data-bs-toggle="tab" aria-expanded="true" role="tab">Diagnosa</a></li>
                                         <li class="nav-item"><a id="orderGiziTab" class="nav-link border-bottom" href="#orderGizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Order Gizi</a></li>
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
@@ -609,6 +609,9 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
+                                        <?php
+                                        // dd($clinic);
+                                        ?>
                                         <?php echo view('admin/patient/profilemodul/transfer', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -624,7 +627,8 @@ $currency_symbol = 'Rp. ';
                                             'diagCat' => $diagCat,
                                             'employee' => $employee,
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+                                            'clinic' => $clinic
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/eklaim', [
                                             'title' => '',

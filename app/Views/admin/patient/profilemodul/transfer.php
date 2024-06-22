@@ -483,8 +483,8 @@ $permission = user()->getPermissions();
                                                 <select name="clinic_id" id="atransfer2clinic_id" type="hidden" class="form-control ">
                                                     <?php foreach ($clinic as $key => $value)
                                                         if ($value['stype_id'] == 3) {
-                                                            echo `<option value="` . $value['clinic_id'] . `">` . $value['name_of_clinic'] . `</option>`;
-                                                        } ?>
+                                                    ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
+                                                                                                                                        } ?>
                                                 </select>
                                             </div>
                                         </div>

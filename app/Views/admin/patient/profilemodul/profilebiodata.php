@@ -63,8 +63,6 @@
                     <td class="bolds">Alergi</td>
                     <td class="alergi"> - </td>
                 </tr>
-
-
             </table>
             <?php if (false) {
                 // if (empty($pasienDiagnosa)) {

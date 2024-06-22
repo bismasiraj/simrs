@@ -108,7 +108,7 @@
 
         $("#formaddatransfer2").find("input, textarea").val(null)
         $("#atransfer2body_id").val(bodyId2)
-        $("#atransfer2clinic_id").val('<?= $visit['clinic_id']; ?>')
+        // $("#atransfer2clinic_id").val('<?= $visit['clinic_id']; ?>')
         $("#atransfer2class_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#atransfer2bed_id").val()
         $("#atransfer2keluar_id").val('<?= $visit['keluar_id']; ?>')
