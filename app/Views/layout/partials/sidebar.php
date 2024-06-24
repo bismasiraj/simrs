@@ -31,6 +31,14 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
+                        <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
+                            <i class="fas fa-ambulance"></i>
+                            <span> <?php echo "Unit Gawat Darurat"; ?></span>
+                        </a>
+                    </li>
+                <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpendaftaran'])) { ?>
                     <li class=" <?= $basecontroller->checkMenuActive('search'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/search">
@@ -41,7 +49,7 @@ $basecontroller->checkMenuActive('register');
                 <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('rajal'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/rajal">
-                            <i class="mdi mdi-stethoscope"></i> <span> Pelayanan</span>
+                            <i class="mdi mdi-stethoscope"></i> <span> Rawat Jalan</span>
                         </a>
                     </li>
                 <?php } ?>
@@ -82,14 +90,6 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
 
-                <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter'])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
-                        <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
-                            <i class="fas fa-ambulance"></i>
-                            <span> <?php echo "Unit Gawat Darurat"; ?></span>
-                        </a>
-                    </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('kamaroperasi'); ?>">

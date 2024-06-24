@@ -94,13 +94,13 @@ $group = user()->getRoles();
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id1" value="1"><label class="form-check-label" for="arpvs_status_id2" checked>Dewasa</label></div>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id1" value="1"><label class="form-check-label" for="arpvs_status_id1" checked>Dewasa</label></div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id4" value="4"><label class="form-check-label" for="arpvs_status_id7">Neonatus</label></div>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id4" value="4"><label class="form-check-label" for="arpvs_status_id4">Neonatus</label></div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id5" value="5"><label class="form-check-label" for="arpvs_status_id7">Anak</label></div>
+                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id5" value="5"><label class="form-check-label" for="arpvs_status_id5">Anak</label></div>
                                 </div>
                             </div>
                             <div class="row">

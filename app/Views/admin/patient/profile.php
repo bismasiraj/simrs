@@ -108,8 +108,7 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
                                         <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
-                                        <!-- <li class="nav-item"><a id="klaimTab" class="nav-link" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> E-Klaim</a></li> -->
-                                        <!-- <li class="nav-item"><a class="nav-link" href="#coba" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="far fa-id-card text-primary"></i> coba</a></li> -->
+                                        <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height" id="overview">

@@ -2,6 +2,8 @@
     var mrJson;
     var lastOrder = 0;
     var transfer = <?= json_encode($exam); ?>;
+    var exam1 = [];
+    var exam2 = [];
 
     $("#transferTab").on("click", function() {
         gettransfer()
@@ -55,7 +57,7 @@
         $("#formaddatransfer").find("input, textarea").val(null)
 
         $("#transferDerajatBody").html("")
-        addDerajatStabilitas(1, 0, "atransferbody_id", "transferDerajatBody")
+        // addDerajatStabilitas(1, 0, "atransferbody_id", "transferDerajatBody")
 
         $("#transferModal").modal("show")
 
@@ -129,49 +131,48 @@
         $("#atransfer2ageday").val('<?= $visit['ageday']; ?>')
         $("#atransfer2examination_date").val(get_date())
         $("#atransfer2vs_status_id").val(9)
+
+        enabletransfer()
     }
 
     function addRowtransfer(examselect, key) {
-        $("#transferBody").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td rowspan='7'>").html(examselect.petugas))
-                .append($("<td>").html(''))
+
+        $.each(examForassessment, function(key, value) {
+            if (value.body_id == examselect.document_id) {
+                exam1 = value
+            } else if (value.body_id == examselect.document_id2) {
+                exam2 = value
+            }
+        })
+
+        $("#transferBodyHistory").append($("<tr>")
+                .append($("<td rowspan='3'>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td rowspan='3'>").html(examselect.petugas))
+                .append($("<td>").html('<b>Departemen</b>'))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
                 .append($("<td>").html('<b>Nadi</b>'))
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="copytransfer(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                .append($("<td rowspan='3'>").html('<button type="button" onclick="copytransfer(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                     '<button type="button" onclick="editCpptTransfer(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                .append($("<td rowspan='3'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
             .append($("<tr>")
-                .append($("<td>").html(''))
-                .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
-                .append($("<td>").html(examselect.nadi + '/menit'))
-                .append($("<td>").html(examselect.nafas + '/menit'))
-                .append($("<td>").html(examselect.temperature + '/°C'))
-                .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+                .append($("<td>").html(exam1.name_of_clinic))
+                .append($("<td>").html(exam1.tension_upper + '/' + exam1.tension_below + 'mmHg'))
+                .append($("<td>").html(exam1.nadi + '/menit'))
+                .append($("<td>").html(exam1.nafas + '/menit'))
+                .append($("<td>").html(exam1.temperature + '/°C'))
+                .append($("<td>").html(exam1.saturasi + '/SpO2%'))
             )
             .append($("<tr>")
-                .append($("<td>").html("<b>S</b>"))
-                .append($("<td colspan='5'>").html(examselect.anamnase))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>O</b>"))
-                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>A</b>"))
-                .append($("<td colspan='5'>").html(examselect.description))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>P</b>"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("Instruksi"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
+                .append($("<td>").html(exam2.name_of_clinic))
+                .append($("<td>").html(exam2.tension_upper + '/' + exam2.tension_below + 'mmHg'))
+                .append($("<td>").html(exam2.nadi + '/menit'))
+                .append($("<td>").html(exam2.nafas + '/menit'))
+                .append($("<td>").html(exam2.temperature + '/°C'))
+                .append($("<td>").html(exam2.saturasi + '/SpO2%'))
             )
     }
 
@@ -233,82 +234,45 @@
     }
 
     function disabletransfer() {
-        $("#atransferexamination_date").prop("disabled", true)
-        $("#atransferpetugas").prop("disabled", true)
-        $("#atransferweight").prop("disabled", true)
-        $("#atransferheight").prop("disabled", true)
-        $("#atransfertemperature").prop("disabled", true)
-        $("#atransfernadi").prop("disabled", true)
-        $("#atransfertension_upper").prop("disabled", true)
-        $("#atransfertension_below").prop("disabled", true)
-        $("#atransfersaturasi").prop("disabled", true)
-        $("#atransfernafas").prop("disabled", true)
-        $("#atransferarm_diameter").prop("disabled", true)
-        $("#atransferanamnase").prop("disabled", true)
-        $("#atransferpemeriksaan").prop("disabled", true)
-        $("#atransferteraphy_desc").prop("disabled", true)
-        $("#atransferdescription").prop("disabled", true)
-        $("#atransferclinic_id").prop("disabled", true)
-        $("#atransferclass_room_id").prop("disabled", true)
-        $("#atransferbed_id").prop("disabled", true)
-        $("#atransferkeluar_id").prop("disabled", true)
-        $("#atransferemployee_id").prop("disabled", true)
-        $("#atransferno_registraiton").prop("disabled", true)
-        $("#atransfervisit_id").prop("disabled", true)
-        $("#atransferorg_unit_code").prop("disabled", true)
-        $("#atransferdoctor").prop("disabled", true)
-        $("#atransferkal_id").prop("disabled", true)
-        $("#atransfertheid").prop("disabled", true)
-        $("#atransferthename").prop("disabled", true)
-        $("#atransfertheaddress").prop("disabled", true)
-        $("#atransferstatus_pasien_id").prop("disabled", true)
-        $("#atransferisrj").prop("disabled", true)
-        $("#atransfergender").prop("disabled", true)
-        $("#atransferageyear").prop("disabled", true)
-        $("#atransferagemonth").prop("disabled", true)
-        $("#atransferageday").prop("disabled", true)
-        $("#atransferinstruction").prop("disabled", true)
+        $("#formaddatransfer").find("input, select, textarea").prop("disabled", true)
+
+        $("#formtransfersubmit").hide()
+        $("#formtransferedit").show()
     }
 
     function enabletransfer() {
-        $("#atransferexamination_date").prop("disabled", false)
-        $("#atransferpetugas").prop("disabled", false)
-        $("#atransferweight").prop("disabled", false)
-        $("#atransferheight").prop("disabled", false)
-        $("#atransfertemperature").prop("disabled", false)
-        $("#atransfernadi").prop("disabled", false)
-        $("#atransfertension_upper").prop("disabled", false)
-        $("#atransfertension_below").prop("disabled", false)
-        $("#atransfersaturasi").prop("disabled", false)
-        $("#atransfernafas").prop("disabled", false)
-        $("#atransferarm_diameter").prop("disabled", false)
-        $("#atransferanamnase").prop("disabled", false)
-        $("#atransferpemeriksaan").prop("disabled", false)
-        $("#atransferteraphy_desc").prop("disabled", false)
-        $("#atransferdescription").prop("disabled", false)
-        $("#atransferclinic_id").prop("disabled", false)
-        $("#atransferclass_room_id").prop("disabled", false)
-        $("#atransferbed_id").prop("disabled", false)
-        $("#atransferkeluar_id").prop("disabled", false)
-        $("#atransferemployee_id").prop("disabled", false)
-        $("#atransferno_registraiton").prop("disabled", false)
-        $("#atransfervisit_id").prop("disabled", false)
-        $("#atransferorg_unit_code").prop("disabled", false)
-        $("#atransferdoctor").prop("disabled", false)
-        $("#atransferkal_id").prop("disabled", false)
-        $("#atransfertheid").prop("disabled", false)
-        $("#atransferthename").prop("disabled", false)
-        $("#atransfertheaddress").prop("disabled", false)
-        $("#atransferstatus_pasien_id").prop("disabled", false)
-        $("#atransferisrj").prop("disabled", false)
-        $("#atransfergender").prop("disabled", false)
-        $("#atransferageyear").prop("disabled", false)
-        $("#atransferagemonth").prop("disabled", false)
-        $("#atransferageday").prop("disabled", false)
-        $("#atransferinstruction").prop("disabled", false)
+        $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
 
-        $("#formtransfersubmit").toggle()
-        $("#formtransferedit").toggle()
+        $("#formtransfersubmit").show()
+        $("#formtransferedit").hide()
+    }
+
+    function disabletransfer1() {
+        $("#formaddatransfer1").find("input, select, textarea").prop("disabled", true)
+
+        $("#formsaveatransfer1btnid").hide()
+        $("#formeditatransfer1id").show()
+    }
+
+    function enabletransfer1() {
+        $("#formaddatransfer1").find("input, select, textarea").prop("disabled", false)
+
+        $("#formsaveatransfer1btnid").show()
+        $("#formeditatransfer1id").hide()
+    }
+
+    function disabletransfer2() {
+        $("#formaddatransfer2").find("input, select, textarea").prop("disabled", true)
+
+        $("#formsaveatransfer2btnid").hide()
+        $("#formeditatransfer2id").show()
+    }
+
+    function enabletransfer2() {
+        $("#formaddatransfer2").find("input, select, textarea").prop("disabled", false)
+
+        $("#formsaveatransfer2btnid").show()
+        $("#formeditatransfer2id").hide()
     }
 
     var transferdesc = []
@@ -413,8 +377,6 @@
             $("#atransferageyear").val('<?= $visit['ageyear']; ?>')
             $("#atransferagemonth").val('<?= $visit['agemonth']; ?>')
             $("#atransferageday").val('<?= $visit['ageday']; ?>')
-
-
         }
     });
     $("#formaddatransfer").on('submit', (function(e) {
@@ -474,11 +436,11 @@
             processData: false,
             success: function(data) {
                 transfer = data.transfer
+                examForassessment = data.examinfo
 
-                $("#transferBody").html("")
+                $("#transferBodyHistory").html("")
                 transfer.forEach((element, key) => {
-                    examselect = transfer[key];
-                    addRowtransfer(examselect, key)
+                    addRowtransfer(transfer[key], key)
                 });
             },
             error: function() {
@@ -591,59 +553,49 @@
     }
 
     function editCpptTransfer(key) {
-        var examselect = transfer[key];
+        var transferselect = transfer[key];
 
-        $.each(examselect, function(key, value) {
-            $("#atransfer" + key).val(value)
+        $.each(transferselect, function(keyt, value) {
+            $("#atransfer" + keyt).val(value)
+            if (keyt == 'employee_id') {
+                $("#atransferemployee_id").html("")
+                $("#atransferemployee_id").append(new Option(value.fullname, value.employee_id))
+            }
         })
-        // $("#atransfervs_status_id" + examselect.vs_status_id).prop("checked", true)
-        // $("#cpptModal").modal("show")
-        $("#atransferDocument").find("input, select, textarea").prop("disabled", false)
-        $("#formsaveatransferbtnid").show()
-        $("#formeditatransferid").hide()
-        getFallRisk(examselect.body_id, "bodyFallRiskCppt")
-        getGcs(examselect.body_id, "bodyGcsCppt")
-        if (examselect.petugas == '<?= user()->getFullname(); ?>') {
-            // alert("Tidak dapat meengubah inputan CPPT milik dokter/petugas lain")
-        } else {
+        $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
+        $.each(examForassessment, function(key, value) {
+            if (value.body_id == examselect.document_id) {
+                exam1 = value
+            } else if (value.body_id == examselect.document_id2) {
+                exam2 = value
+            }
+        })
+        $.each(exam1, function(keyt, value) {
+            if (keyt == 'employee_id') {
+                $("#atransfer1employee_id").html("")
+                $("#atransfer1employee_id").append(new Option(exam1.fullname, value.employee_id))
+            }
+            $("#atransfer1" + keyt).val(value)
+            $("#atransfer1" + keyt).prop("disabled", false)
+        })
+        $.each(exam2, function(keyt, value) {
+            if (keyt == 'employee_id') {
+                $("#atransfer2employee_id").html("")
+                $("#atransfer2employee_id").append(new Option(exam2.fullname, exam2.employee_id))
+            }
+            $("#atransfer2" + keyt).val(value)
+            $("#atransfer2" + keyt).prop("disabled", false)
+        })
 
-            // $("#cpptageday").val(examselect.ageday)
-            // $("#cpptagemonth").val(examselect.agemonth)
-            // $("#cpptageyear").val(examselect.ageyear)
-            // $("#cpptanamnase").val(examselect.anamnase)
-            // $("#cpptarm_diameter").val(examselect.arm_diameter)
-            // $("#cpptbed_id").val(examselect.bed_id)
-            // $("#cpptbody_id").val(examselect.body_id)
-            // $("#cpptclass_room_id").val(examselect.class_room_id)
-            // $("#cpptclinic_id").val(examselect.clinic_id)
-            // $("#cpptdescription").val(examselect.description)
-            // $("#cpptdoctor").val(examselect.doctor)
-            // $("#cpptemployee_id").val(examselect.employee_id)
-            // $("#cpptexamination_date").val(examselect.examination_date)
-            // $("#cpptgender").val(examselect.gender)
-            // $("#cpptheight").val(examselect.height)
-            // $("#cpptinstruction").val(examselect.instruction)
-            // $("#cpptisrj").val(examselect.isrj)
-            // $("#cpptkal_id").val(examselect.kal_id)
-            // $("#cpptkeluar_id").val(examselect.keluar_id)
-            // $("#cpptnadi").val(examselect.nadi)
-            // $("#cpptnafas").val(examselect.nafas)
-            // $("#cpptno_registraiton").val(examselect.no_registraiton)
-            // $("#cpptorg_unit_code").val(examselect.org_unit_code)
-            // $("#cpptpemeriksaan").val(examselect.pemeriksaan)
-            // $("#cpptpetugas").val(examselect.petugas)
-            // $("#cpptsaturasi").val(examselect.saturasi)
-            // $("#cpptstatus_pasien_id").val(examselect.status_pasien_id)
-            // $("#cppttemperature").val(examselect.temperature)
-            // $("#cppttension_below").val(examselect.tension_below)
-            // $("#cppttension_upper").val(examselect.tension_upper)
-            // $("#cpptteraphy_desc").val(examselect.teraphy_desc)
-            // $("#cppttheaddress").val(examselect.theaddress)
-            // $("#cppttheid").val(examselect.pasien_id)
-            // $("#cpptthename").val(examselect.diantar_oleh)
-            // $("#cpptvisit_id").val(examselect.visit_id)
-            // $("#cpptweight").val(examselect.weight)
-        }
+        getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
+        // addDerajatStabilitas(1, 0, "atransferbody_id", "transferDerajatBody")
+
+        $("#atransferDocument").find("input, select, textarea").prop("disabled", false)
+        enabletransfer()
+        enabletransfer1()
+        enabletransfer2()
+
+        $("#transferModal").modal('show')
     }
 </script>
 
@@ -665,19 +617,8 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                // $("#formsavearpbtn").hide()
-                // $("#formeditarp").show()
-                var isNewDocument = 0
-                $.each(examForassessment, function(key, value) {
-                    if (value.body_id == data.body_id) {
-                        examForassessment[key] = data
-                        isNewDocument = 1
-                    }
-                })
-                if (isNewDocument != 1)
-                    examForassessment.push(data)
+                disabletransfer1
                 $("#formaddatransfer1").find("input, textarea, select").prop("disabled", true)
-                // disableacppt()
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
@@ -713,18 +654,19 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
+                disabletransfer2()
                 // $("#formsavearpbtn").hide()
                 // $("#formeditarp").show()
-                var isNewDocument = 0
-                $.each(examForassessment, function(key, value) {
-                    if (value.body_id == data.body_id) {
-                        examForassessment[key] = data
-                        isNewDocument = 1
-                    }
-                })
-                if (isNewDocument != 1)
-                    examForassessment.push(data)
-                $("#formaddatransfer2").find("input, textarea, select").prop("disabled", false)
+                // var isNewDocument = 0
+                // $.each(examForassessment, function(key, value) {
+                //     if (value.body_id == data.body_id) {
+                //         examForassessment[key] = data
+                //         isNewDocument = 1
+                //     }
+                // })
+                // if (isNewDocument != 1)
+                //     examForassessment.push(data)
+                $("#formaddatransfer2").find("input, textarea, select").prop("disabled", true)
 
                 // disableacppt()
             },

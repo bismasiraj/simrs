@@ -81,8 +81,8 @@ $permission = user()->getPermissions();
                         <div class="col-sm-4 col-xs-12">
                             <div class="mb-3">
                                 <div class="form-group">
-                                    <label for="atransfer1examination_date">Tanggal Assessmennt</label>
-                                    <input name="examination_date" id="atransfer1examination_date" type="datetime-local" class="form-control" />
+                                    <label for="atransferexamination_date">Tanggal Assessmennt</label>
+                                    <input name="examination_date" id="atransferexamination_date" type="datetime-local" class="form-control" />
                                 </div>
                             </div>
                         </div>
@@ -102,14 +102,16 @@ $permission = user()->getPermissions();
                         </div>
                     </div>
                     <div class="panel-footer text-end mb-4">
-                        <button type="button" id="formaddatransferbtnid" name="save" data-loading-text="Tambah" class="btn btn-info pull-right formaddatransferbtn" style="display: none"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                         <button type="submit" id="formsaveatransferbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransferbtn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                        <button type="button" id="formeditatransferid" name="editrm" onclick="enableatransfer()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                        <button type="button" id="formeditatransferid" name="editrm" onclick="enabletransfer()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer"><i class="fa fa-edit"></i> <span>Edit</span></button>
                         <button type="button" id="formsignatransferid" name="signrm" onclick="signatransfer1()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer1"><i class="fa fa-signature"></i> <span>Sign</span></button>
                         <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                     </div>
                 </form>
                 <div id="transferDerajatBody">
+                </div>
+                <div id="transferDerajatBodyAddBtn" class="col-md-12 text-center">
+                    <a onclick="addDerajatStabilitas(1, 0, 'atransferbody_id', 'transferDerajatBody')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Derajat Stabilitas</a>
                 </div>
                 <div id="transferAsalBody" class="card border-1 rounded-4 m-4">
                     <div class="card-body">
@@ -176,11 +178,10 @@ $permission = user()->getPermissions();
                                             <div class="form-group">
                                                 <label for="atransfer1clinic_id">Ruangan</label>
                                                 <select name="clinic_id" id="atransfer1clinic_id" type="hidden" class="form-control ">
-                                                    <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                        <option value="<?= $visit['class_room_id']; ?>"><?= $visit['name_of_class']; ?></option>
-                                                    <?php } else { ?>
-                                                        <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
-                                                    <?php } ?>
+                                                    <?php foreach ($clinic as $key => $value)
+                                                        if ($value['stype_id'] == 3) {
+                                                    ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
+                                                                                                                                        } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -405,9 +406,8 @@ $permission = user()->getPermissions();
                                     <hr>
                                 </div><!--./col-md-12-->
                                 <div class="panel-footer text-end mb-4">
-                                    <button type="button" id="formaddatransfer1btnid" name="save" data-loading-text="Tambah" class="btn btn-info pull-right formaddatransfer1btn" style="display: none"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                                    <button type="button" id="formsaveatransfer1btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer1btn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                    <button type="button" id="formeditatransfer1id" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer1"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                    <button type="button" id="formSaveatransfer1btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer1btn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                    <button type="button" id="formeditatransfer1id" name="editrm" onclick="enabletransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer1"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                     <button type="button" id="formsignatransfer1id" name="signrm" onclick="signatransfer1()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer1"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                     <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                 </div>
@@ -709,9 +709,8 @@ $permission = user()->getPermissions();
                                     <hr>
                                 </div><!--./col-md-12-->
                                 <div class="panel-footer text-end mb-4">
-                                    <button type="button" id="formaddatransfer2btnid" name="save" data-loading-text="Tambah" class="btn btn-info pull-right formaddatransfer2btn" style="display: none"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                                     <button type="button" id="formsaveatransfer2btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer2btn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                    <button type="button" id="formeditatransfer2id" name="editrm" onclick="enableatransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer2"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                                    <button type="button" id="formeditatransfer2id" name="editrm" onclick="enabletransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer2"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                     <button type="button" id="formsignatransfer2id" name="signrm" onclick="signatransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer2"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                     <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                 </div>

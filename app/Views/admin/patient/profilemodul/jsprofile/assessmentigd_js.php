@@ -2104,6 +2104,8 @@ foreach ($aValue as $key => $value) {
                         addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat")
                     if (value.document_id == $("#armpasien_diagnosa_id").val())
                         addDerajatStabilitas(0, key, "armpasien_diagnosa_id", "bodyStabilitasMedis")
+                    if (value.document_id == $("#atransferbody_id").val())
+                        addDerajatStabilitas(0, key, "atransferbody_id", container, false)
                 })
             },
             error: function() {
@@ -3159,7 +3161,7 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formNeurosensoris' + bodyId + ' select').find("input, select, textarea").prop("disabled", true)
+                    $("#formNeurosensoris" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                     $("#formNeurosensorisSaveBtn" + bodyId).hide()
                     $("#formNeurosensorisEditBtn" + bodyId).show()

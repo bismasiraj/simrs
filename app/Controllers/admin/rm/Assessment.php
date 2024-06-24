@@ -2899,8 +2899,8 @@ class Assessment extends BaseController
             if (isset($examination_date))
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
         }
-        $data['org_unit_code'] = '330710';
-        $data['visit_id'] = '202405231955390970F26';
+        // $data['org_unit_code'] = '330710';
+        // $data['visit_id'] = '202405231955390970F26';
 
         // return json_encode($data);
 
@@ -2929,11 +2929,12 @@ class Assessment extends BaseController
         //     $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
         // } else {
         // }
-        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*, employee_all.fullname")->join("employee_all", "employee_all.employee_id = pasien_transfer.employee_id", "inner")->findAll());
 
         $db = db_connect();
 
-        $queryDetil = "select * from examination_info where body_id in (";
+        $queryDetil = "select *, c.name_of_clinic, ea.fullname from examination_info ei left join clinic c on c.clinic_id = ei.clinic_id left join employee_all ea on ei.employee_id = ea.employee_id
+        where body_id in (";
 
         foreach ($select as $key => $value) {
             $queryDetil .= "'" . $value['document_id'] . "',";
