@@ -181,9 +181,9 @@ abstract class BaseController extends Controller
         // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
 
         //BENGKULU
-        $consId = '4633';
-        $consSecret = 'rsud344myns618';
-        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
+        $consId = '16957';
+        $consSecret = '7dK0AAC16B';
+        $userKey = '6a7b82093922c4fafd211cfed64e82d9';
 
 
 
@@ -294,6 +294,7 @@ abstract class BaseController extends Controller
         array_push($headers, 'Content-length' . strlen($postdata));
         $result = $this->SendBridging($url, $method, $postdata, $headers);
 
+        // return ($headers);
         return ($result);
         // ->json($result)
         // ->header('Access-Control-Allow-Origin','*')
@@ -635,5 +636,81 @@ abstract class BaseController extends Controller
     public function customResponse($message, $statusCode)
     {
         return $this->response->setStatusCode($statusCode)->setJSON(['message' => $message]);
+    }
+    public function query_assessment($table, $p_type, $visit_id, $document_id)
+    {
+        $query =
+            "
+            SELECT ASSESSMENT_PARAMETER.PARAMETER_ID, ASSESSMENT_PARAMETER.PARAMETER_DESC,
+                MAX(CASE WHEN ASSESSMENT_PARAMETER.P_TYPE = '$p_type' AND ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID  THEN ASSESSMENT_PARAMETER_VALUE.VALUE_DESC ELSE '' END) AS VALUE_DESC,
+                MAX(CASE WHEN ASSESSMENT_PARAMETER.P_TYPE = '$p_type' AND ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID THEN ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE ELSE '' END) AS VALUE_SCORE
+            FROM $table
+                INNER JOIN ASSESSMENT_PARAMETER ON $table.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
+                INNER JOIN ASSESSMENT_PARAMETER_VALUE ON $table.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+            WHERE VISIT_ID = '$visit_id'
+                AND BODY_ID = '$document_id'
+            GROUP BY ASSESSMENT_PARAMETER.PARAMETER_ID, ASSESSMENT_PARAMETER.PARAMETER_DESC
+            ORDER BY PARAMETER_ID ASC
+        ";
+        return $query;
+    }
+
+    public function query_template_info($db, $visit_id, $diagnosa_id)
+    {
+        $info = $this->lowerKey($db->query(
+            "
+            select
+            pd.NO_REGISTRATION as no_RM,
+            p.NAME_OF_PASIEN as nama,
+            pd.PASIEN_DIAGNOSA_ID,
+            pd.BODY_ID,
+            case when p.gender = '1' then 'Laki-laki'
+            else 'Perempuan' end as jeniskel,
+            p.CONTACT_ADDRESS as alamat,
+            pd.DOCTOR as dpjp,
+            pv.TRANS_ID as no_episode,
+            c.name_of_clinic as departmen,
+            class.NAME_OF_CLASS as kelas,
+            cr.NAME_OF_CLASS as bangsal,
+            pd.BED_ID as bed,
+            cr.class_room_id,
+            pd.IN_DATE as tanggal_masuk,
+            convert(varchar,P.DATE_OF_BIRTH,105) as date_of_birth,
+            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
+            CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR
+        
+
+            from pasien_diagnosa pd 
+            left outer join  clinic c on pd.clinic_id = c.clinic_id
+            left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+            left outer join class on class.CLASS_ID = cr.CLASS_ID
+            INNER JOIN PASIEN_VISITATION pv ON pd.VISIT_ID = pv.VISIT_ID
+        , pasien p 
+            where 
+            pd.PASIEN_DIAGNOSA_ID = '$diagnosa_id'
+            and PD.VISIT_ID =  '$visit_id'
+            and pd.NO_REGISTRATION = p.NO_REGISTRATION
+            
+            group by 
+            pd.PASIEN_DIAGNOSA_ID,
+            pd.body_id,
+            pd.NO_REGISTRATION, 
+            p.NAME_OF_PASIEN, 
+            case when p.gender = '1' then 'Laki-laki'
+            else 'Perempuan' end, 
+            p.CONTACT_ADDRESS,
+            pv.TRANS_ID,
+            pd.DOCTOR, 
+            c.name_of_clinic, 
+            class.NAME_OF_CLASS,  
+            cr.NAME_OF_CLASS,  
+            cr.class_room_id,
+            pd.BED_ID,  
+            pd.IN_DATE,
+            convert(varchar,P.date_of_birth,105),
+            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR'"
+        )->getRow());
+
+        return $info;
     }
 }

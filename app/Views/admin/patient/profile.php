@@ -83,6 +83,10 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
                                             <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
+                                        if (isset($permissions['rad']['r'])) { ?>
+                                            <li class="nav-item"><a id="fisioTab" class="nav-link border-bottom" href="#fisio" data-bs-toggle="tab" aria-expanded="true" role="tab">Fisioterapi</a></li>
+                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
+                                        <?php }
                                         if (isset($permissions['resumemedis']['r'])) { ?>
                                             <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
                                             <!-- <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li> -->
@@ -108,7 +112,8 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
                                         <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
-                                        <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
+                                        <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li>
+                                        <li class="nav-item"><a id="informconcentTab" class="nav-link border-bottom" href="#infConsent" data-bs-toggle="tab" aria-expanded="true" role="tab">Inform Concent</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height" id="overview">
@@ -368,6 +373,23 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/fisio', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
                                         <?php echo view('admin/patient/profilemodul/lab', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -457,6 +479,8 @@ $currency_symbol = 'Rp. ';
                                             'clinic' => $clinic,
                                             'dokter' => $employee
                                         ]); ?>
+
+
                                         <?php echo view('admin/patient/profilemodul/cppt', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -681,6 +705,23 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosa' => $pasienDiagnosa
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/tindakanperawat', [
+                                            'title' => '',
+                                            'orgunit' => $orgunit,
+                                            'statusPasien' => $statusPasien,
+                                            'reason' => $reason,
+                                            'isattended' => $isattended,
+                                            'inasisPoli' => $inasisPoli,
+                                            'inasisFaskes' => $inasisFaskes,
+                                            'visit' => $visit,
+                                            'exam' => $exam,
+                                            'pd' => $pasienDiagnosa,
+                                            'suffer' => $suffer,
+                                            'diagCat' => $diagCat,
+                                            'employee' => $employee,
+                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                            'pasienDiagnosa' => $pasienDiagnosa
+                                        ]); ?>
+                                        <?php echo view('admin/patient/profilemodul/informconsent', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
                                             'statusPasien' => $statusPasien,
@@ -999,7 +1040,6 @@ $currency_symbol = 'Rp. ';
             var option = new Option(initialvalue, initialvalue, true, true);
             $("#" + theid).append(option).trigger('change');
         }
-
     }
 
     function initializeResepAlkesSelect2(theid, initialvalue = null) {
@@ -1156,6 +1196,23 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/radiologi_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/fisio_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,
@@ -1494,4 +1551,22 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/informconsent_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/calibs_js'); ?>
 <?php $this->endSection() ?>

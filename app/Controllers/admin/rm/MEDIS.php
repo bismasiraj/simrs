@@ -3,9 +3,9 @@
 namespace App\Controllers\Admin\rm;
 
 
-
 class medis extends \App\Controllers\BaseController
 {
+
     public function ralan_anak($visit, $vactination_id = null)
     {
         $title = "Asesmen Medis Anak Rawat Jalan";
@@ -1732,14 +1732,11 @@ class medis extends \App\Controllers\BaseController
 
     public function rawat_jalan($visit, $vactination_id = null)
     {
-        
         $title = "Asesmen Medis IGD Rawat Jalan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
-            // echo "<pre>";
-            // var_dump($vactination_id);
-            // die();
+
             $db = db_connect();
             $select = $this->lowerKey($db->query("select 
             pd.NO_REGISTRATION as no_RM,
@@ -1764,8 +1761,8 @@ class medis extends \App\Controllers\BaseController
             gcs.GCS_SCORE as gcs,
             gcs.GCS_DESC,
             max(case when apv.PARAMETER_ID = '01' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_E_DESC,
-            max(case when apv.PARAMETER_ID = '02' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_M_DESC,
-            max(case when apv.PARAMETER_ID = '03' and apv.VALUE_SCORE = GCS_E then apv.VALUE_DESC else '' end ) as GSC_V_DESC,
+            max(case when apv.PARAMETER_ID = '02' and apv.VALUE_SCORE = GCS_M then apv.VALUE_DESC else '' end ) as GSC_M_DESC,
+            max(case when apv.PARAMETER_ID = '03' and apv.VALUE_SCORE = GCS_V then apv.VALUE_DESC else '' end ) as GSC_V_DESC,
             pd.DIAGNOSA_ID as icd10,
             pd.DIAGNOSA_DESC as namadiagnosa,
             pd.ANAMNASE as anamnesis,
@@ -1797,25 +1794,6 @@ class medis extends \App\Controllers\BaseController
             where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
             isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
             where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as PAIN_SCORE,
-            max(case when ALO.value_id = 'G0020103'  then ALO.VALUE_DESC else '' end) as PF_KEPALA,
-            max(case when ALO.value_id = 'G0020203'  then ALO.VALUE_DESC else '' end) as PF_MATA,
-            max(case when ALO.value_id = 'G0020403'  then ALO.VALUE_DESC else '' end) as PF_HIDUNG,
-            max(case when ALO.value_id = 'G0020303'  then ALO.VALUE_DESC else '' end) as PF_TELINGA,
-            max(case when ALO.value_id = 'G0020503'  then ALO.VALUE_DESC else '' end) as PF_MULUT,
-            max(case when ALO.value_id = 'G0020603'  then ALO.VALUE_DESC else '' end) as pf_LEHER,
-            max(case when ALO.value_id = 'G0021403'  then ALO.VALUE_DESC else '' end) as PF_GIGI,
-            max(case when ALO.value_id = 'G0020703'  then ALO.VALUE_DESC else '' end) as PF_THORAX,
-            max(case when ALO.value_id = 'G0020703'  then ALO.VALUE_INFO else '' end) as LINK_THORAX,
-            max(case when ALO.value_id = 'G0020803'  then ALO.VALUE_DESC else '' end) as PF_JANTUNG,
-            max(case when ALO.value_id = 'G0020903'  then ALO.VALUE_DESC else '' end) as PF_PARU,
-            max(case when ALO.value_id = 'G0021003'  then ALO.VALUE_DESC else '' end) as PF_PERUT,
-            max(case when ALO.value_id = 'G0021003'  then ALO.VALUE_INFO else '' end) as GAMBAR_PERUT,
-            max(case when ALO.value_id = 'G0021803'  then ALO.VALUE_DESC else '' end) as PF_hepar,
-            max(case when ALO.value_id = 'G0021903'  then ALO.VALUE_DESC else '' end) as PF_lien,
-            max(case when ALO.value_id = 'G0021303'  then ALO.VALUE_DESC else '' end) as PF_GINJAL,
-            max(case when ALO.value_id = 'G0021703'  then ALO.VALUE_DESC else '' end) as PF_GENITAIS,
-            max(case when ALO.value_id = 'G0021503'  then ALO.VALUE_DESC else '' end) as PF_EKSTERMITAS_ATAS,
-            max(case when ALO.value_id = 'G0021603'  then ALO.VALUE_DESC else '' end) as PF_EXTERMINTAS_BAWAH,
             PD.DIAGNOSA_ID,
             PD.MEDICAL_PROBLEM AS MASALAH_MEDIS,
             'MASALAH_PERAWAT' AS MASALAH_PERAWAT,
@@ -1844,7 +1822,6 @@ class medis extends \App\Controllers\BaseController
 					where DOCUMENT_ID = pd.pasien_diagnosa_id)
               FOR XML PATH (''))
              , 1, 1, '') ,
-			  max(case when ALO.value_score = 3  then ALO.VALUE_DETAIL else '' end) as image_lokalis,
 			max(  case when arp.PREGNANT = '1' then 'Hamil'
 			  else 'Tidak Hamil' end ) as hamil,
 			  max(arp.g) as hamil_G,
@@ -1856,7 +1833,6 @@ class medis extends \App\Controllers\BaseController
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = pd.NO_REGISTRATION
             left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
-            LEFT OUTER JOIN ASSESSMENT_LOKALIS ALO ON PD.PASIEN_DIAGNOSA_ID = ALO.DOCUMENT_ID
             left outer join ASSESSMENT_GCS gcs on pd.PASIEN_DIAGNOSA_ID = gcs.DOCUMENT_ID
             left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on pd.PASIEN_DIAGNOSA_ID = EDU.DOCUMENT_ID
 			left outer join INASIS_GET_TINDAKLANJUT igt on pd.RENCANATL = igt.KODE
@@ -1915,22 +1891,40 @@ class medis extends \App\Controllers\BaseController
             PD.STANDING_ORDER, 
             PD.DOCTOR")->getResultArray());
 
-            $selectlokalis = $this->lowerKey($db->query("
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
+            $selectlokalis = $this->lowerKey($db->query(
+                "
                 select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                 where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 3"
             )->getResultArray());
+
+            $selectlokalis2 = $this->lowerKey($db->query(
+                "
+                select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 2"
+            )->getResultArray());
+
+            $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
+
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select[0],
-                    "lokalis" => $selectlokalis
+                    "lokalis" => $selectlokalis,
+                    "lokalis2" => $selectlokalis2,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
                     "visit" => $visit,
                     'title' => $title,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
                 ]);
             }
         }
@@ -1943,22 +1937,44 @@ class medis extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select visit_date, ea.FULLNAME, 'diagnosa' as diagnosa, 
-            'prosedur' as prosedur, 'lab' as lab, 'rad' as rad, 'farmasi' as farmasi
-            from pasien_visitation pv
-            inner join EMPLOYEE_ALL ea on pv.employee_id = ea.EMPLOYEE_ID
-            where pv.no_registration = '" . $visit['no_registration'] . "'
-            order by visit_date")->getResultArray());
+            $select = $this->lowerKey($db->query(
+                "
+                select 
+                    pasien_diagnosa_id,DATE_OF_DIAGNOSA as tgl_kunjungan,
+                    DOCTOR as DPJP,
+                    Diagnosis = 
+                            cast(STUFF(
+                            (SELECT ',' + pp.diagnosa_id + '( ' + pp.diagnosa_desc + ' ) '
+                            FROM PASIEN_DIAGNOSAs pp
+                            WHERE pp.PASIEN_DIAGNOSA_ID =(pd.PASIEN_DIAGNOSA_ID)
+                            
+                            FOR XML PATH (''))
+                            , 1, 1, '') as varchar(4000) ),
+                    LAB_RESULT as prosedur_lab,RO_RESULT as radiologi,TERAPHY_DESC as farmasi
+                from pasien_diagnosa pd 
+                where NO_REGISTRATION = '041171' 
+                and visit_id  ='202405131504360057D88' 
+                and (CLASS_ROOM_ID is null 
+                or CLASS_ROOM_ID = '')
+                "
+            )->getResultArray());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
+            $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "val" => $select
+                    "val" => $select,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
                     "visit" => $visit,
-                    'title' => $title
+                    'title' => $title,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
                 ]);
             }
         }

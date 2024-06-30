@@ -11,6 +11,7 @@
     ?>
     <link href="<?php echo base_url(); ?>assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
     <!-- <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet"> -->
     <script src="<?php echo base_url(); ?>assets/libs/tinymce/tinymce.min.js"></script>
 
@@ -69,11 +70,12 @@
 
     <script src="<?php echo base_url(); ?>assets/js/pages/form-validation.init.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
 
     <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
-
 
     <script>
         var baseurl = "<?php echo base_url(); ?>";

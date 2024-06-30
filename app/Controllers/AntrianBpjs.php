@@ -11,23 +11,18 @@ use LZCompressor\LZString;
 
 class AntrianBpjs extends \App\Controllers\BaseController
 {
-    private $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs';
+    private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev';
+    // private $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs';
 
 
     // function lzstring decompress https://github.com/nullpunkt/lz-string-php
 
     public function AuthBridgingAntrean()
     {
-        // $consId = '4697';
-        // $consId = '24450';
-        // $consSecret = '6aTA1A42BA';
-        // $consSecret = '7dG3AB437B';
-        // $userKey = 'a9ec6260b033129741a275c80a1ae0e5';
-
-        //WATES
-        $consId = '4633';
-        $consSecret = 'rsud344myns618';
-        $userKey = 'fef045822476dc7bcdfd934c24885bb7';
+        // tester sampangan
+        $consId = '16957';
+        $consSecret = '7dK0AAC16B';
+        $userKey = '6a7b82093922c4fafd211cfed64e82d9';
         $current_timestamp = Time::now()->timestamp;
         $this->keybridging = $consId . $consSecret . $current_timestamp;
         $db = db_connect('default');
@@ -112,15 +107,16 @@ class AntrianBpjs extends \App\Controllers\BaseController
             ->select("ABS(DATEDIFF_BIG(MILLISECOND,'" . $visitDate . "'+start_time,'1970-01-01 00:00:00.000')
                                                     + (" . $ticket . "-1)*10*60*1000)
                                                      as estimasidilayani,
-                            (maxquota - " . $ticket . ") as sisakuotajkn,
-                            MAXQUOTA as kuotajkn,
-                            (maxquota - " . $ticket . ") as sisakuotanonjkn,
-                            MAXQUOTA as kuotanonjkn,
+                            (isnull(maxquota,40) - " . $ticket . ") as sisakuotajkn,
+                            isnull(maxquota,40) as kuotajkn,
+                            (isnull(maxquota,40) - " . $ticket . ") as sisakuotanonjkn,
+                            isnull(maxquota,40) as kuotanonjkn,
                             ''keterangan")
             ->first();
         if (!isset($select['estimasidilayani'])) {
             return response()->setStatusCode(503, "Jadwal dokter tidak tersedia. Silahkan atur ulang jadwal dokter.");
         }
+
         $body['estimasidilayani'] = $select['estimasidilayani'];
         $body['sisakuotajkn'] = $select['sisakuotajkn'];
         $body['kuotajkn'] = $select['kuotajkn'];
@@ -134,6 +130,7 @@ class AntrianBpjs extends \App\Controllers\BaseController
 
         unset($result);
         $headers = $this->AuthBridging();
+        // return json_encode($postdata);
         array_push($headers, "Content-length: " . strlen($postdata));
         $result = $this->SendBridging($url, $method, $postdata, $headers);
 
@@ -196,9 +193,9 @@ class AntrianBpjs extends \App\Controllers\BaseController
         //echo date("d-m-Y", $seconds);
         // return $body;
         $postdata = json_encode($body);
-        // return $postdata;
         unset($result);
         $headers = $this->AuthBridging();
+        return json_encode($headers);
         $method = 'POST';
         array_push($headers, "Content-length: " . strlen($postdata));
         $result = $this->SendBridging($url, $method, $postdata, $headers);

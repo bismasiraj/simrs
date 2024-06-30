@@ -24,33 +24,6 @@
     })
 
 
-    $("#avtweight").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avtheight").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avttemperature").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avtnadi").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avttension_upper").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avttension_below").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avtsaturasi").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avtnafas").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#avtarm_diameter").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
 
     function setDataVitalSign() {
         $("#formvitalsign").find("input, textarea").val(null)
@@ -134,7 +107,7 @@
 
         console.log(prop.id)
 
-        if (prop.id == "cppttemperature") {
+        if (prop.id == "avtweight") {
             // Number(GetText( )) < 50 and Number(GetText( )) > 10
             if (value < 10)
                 value = 10.00
@@ -142,7 +115,7 @@
             if (value > 50)
                 value = 50.00
         }
-        if (prop.id == "aetension_upper") {
+        if (prop.id == "avttension_upper") {
             // Number(GetText()) < 250 and Number(GetText()) > 50
             if (value < 50)
                 value = 50.00
@@ -150,17 +123,17 @@
             if (value > 250)
                 value = 250.00
         }
-        if (prop.id == "aetnadi") {
+        if (prop.id == "avttnadi") {
             //Number(GetText( )) < 300 
             if (value > 300)
                 value = 300.00
         }
-        if (prop.id == "aeweight") {
+        if (prop.id == "avtweight") {
             // Number(GetText( )) < 500
             if (value > 500)
                 value = 500.00
         }
-        if (prop.id == "aeheight") {
+        if (prop.id == "avtheight") {
             // Number(GetText( )) between 30 and 250
             if (value < 30)
                 value = 30.00
@@ -168,7 +141,7 @@
             if (value > 250)
                 value = 250.00
         }
-        if (prop.id == "aetension_below") {
+        if (prop.id == "avttension_below") {
             // Number(GetText( )) between 0 and 300
             if (value < 0)
                 value = 0.00
@@ -176,7 +149,7 @@
             if (value > 300)
                 value = 300.00
         }
-        if (prop.id == "aetension_below") {
+        if (prop.id == "avttension_below") {
             // Number(GetText( )) < 300 
             if (value > 300)
                 value = 300.00

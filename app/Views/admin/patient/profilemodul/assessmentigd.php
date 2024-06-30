@@ -545,7 +545,7 @@ $group = user()->getRoles();
                                     <div id="arpIntegumen_Group" class="accordion-item">
                                         <h2 class="accordion-header" id="headingIntegumen">
                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIntegumen" aria-expanded="false" aria-controls="collapseIntegumen">
-                                                <b>INTEGUMEN & MOSKULO SKELETAL</b> ASES036
+                                                <b>INTEGUMEN & MOSKULO SKELETAL</b>
                                             </button>
                                         </h2>
                                         <div id="collapseIntegumen" class="accordion-collapse collapse" aria-labelledby="headingIntegumen" data-bs-parent="#accodrionAssessmentAwal" style="">
@@ -556,6 +556,52 @@ $group = user()->getRoles();
                                                         </div>
                                                         <div id="bodyIntegumenPerawatAddBtn" class="col-md-12 text-center">
                                                             <a onclick="addIntegumen(1,1, 'arpbody_id','bodyIntegumenPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES045') {
+                                ?>
+                                    <div id="arpAnak_Group" class="accordion-item">
+                                        <h2 class="accordion-header" id="headingAnak">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnak" aria-expanded="false" aria-controls="collapseAnak">
+                                                <b>KHUSUS ANAK</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseAnak" class="accordion-collapse collapse" aria-labelledby="headingAnak" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyAnakPerawat">
+                                                        </div>
+                                                        <div id="bodyAnakPerawatAddBtn" class="col-md-12 text-center">
+                                                            <a onclick="addAnak(1,1, 'arpbody_id','bodyAnakPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                } else if ($value['p_type'] == 'ASES050') {
+                                ?>
+                                    <div id="arpNeonatus_Group" class="accordion-item">
+                                        <h2 class="accordion-header" id="headingNeonatus">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNeonatus" aria-expanded="false" aria-controls="collapseNeonatus">
+                                                <b>NEONATUS</b>
+                                            </button>
+                                        </h2>
+                                        <div id="collapseNeonatus" class="accordion-collapse collapse" aria-labelledby="headingNeonatus" data-bs-parent="#accodrionAssessmentAwal" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="bodyNeonatusPerawat">
+                                                        </div>
+                                                        <div id="bodyNeonatusPerawatAddBtn" class="col-md-12 text-center">
+                                                            <a onclick="addNeonatus(1,1, 'arpbody_id','bodyNeonatusPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                         </div>
                                                     </div>
                                                 </div>

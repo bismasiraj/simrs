@@ -38,6 +38,7 @@ foreach ($aValue as $key => $value) {
     var sirkulasiAll;
     var neuroAll;
     var integumenAll;
+    var anakAll;
     var adlAll;
     var digestAll;
     var perkemihanAll;
@@ -3268,7 +3269,7 @@ foreach ($aValue as $key => $value) {
 </script>
 
 <script type="text/javascript">
-    function addIntegumen(flag, index, document_id, container) {
+    function addAnak(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -3276,17 +3277,17 @@ foreach ($aValue as $key => $value) {
             bodyId = date.toISOString().substring(0, 23);
             bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         } else {
-            bodyId = integumenAll[index].body_id
+            bodyId = anakAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formIntegumen' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formAnak' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
-                    .append($('<h4 class="card-title">').html("Integumen"))
+                    .append($('<h4 class="card-title">').html("Anak"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES036') {
+                                                                                    if ($value['p_type'] == 'ASES045') {
                                                                                 ?> <?php if ($value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
@@ -3339,7 +3340,7 @@ foreach ($aValue as $key => $value) {
                                                                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES036' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                    if ($value['p_type'] == 'ASES045' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
                                                                                 ?> <?php if ($value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
@@ -3390,8 +3391,8 @@ foreach ($aValue as $key => $value) {
                         )
                     )
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formIntegumenSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                        '<button style="margin-right: 10px" type="button" id="formIntegumenEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '<button type="submit" id="formAnakSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formAnakEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '</div>')
 
                 )
@@ -3399,7 +3400,7 @@ foreach ($aValue as $key => $value) {
         )
 
         <?php foreach ($aValue as $key1 => $value1) {
-            if ($value1['p_type'] == 'ASES036' && $value1['value_score'] == '99') {
+            if ($value1['p_type'] == 'ASES045' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
@@ -3414,23 +3415,23 @@ foreach ($aValue as $key => $value) {
             }
         } ?>
 
-        $("#formIntegumen" + bodyId).append('<input name="org_unit_code" id="integumensorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="visit_id" id="integumensvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="trans_id" id="integumenstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="body_id" id="integumensbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="integumensdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
-            .append('<input name="no_registration" id="integumensno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="p_type" id="integumensp_type' + bodyId + '" type="hidden" value="ASES036" class="form-control" />')
-            .append('<input name="valid_date" class="valid-date" id="integumensvalid_date' + bodyId + '" type="hidden"  />')
-            .append('<input name="valid_user" class="valid-user" id="integumensvalid_user' + bodyId + '" type="hidden"  />')
-            .append('<input name="valid_pasien" class="valid-pasien" id="integumensvalid_pasien' + bodyId + '" type="hidden"  />')
+        $("#formAnak" + bodyId).append('<input name="org_unit_code" id="anaksorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="anaksvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="anakstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="anaksbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="anaksdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
+            .append('<input name="no_registration" id="anaksno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="anaksp_type' + bodyId + '" type="hidden" value="ASES045" class="form-control" />')
+            .append('<input name="valid_date" class="valid-date" id="anaksvalid_date' + bodyId + '" type="hidden"  />')
+            .append('<input name="valid_user" class="valid-user" id="anaksvalid_user' + bodyId + '" type="hidden"  />')
+            .append('<input name="valid_pasien" class="valid-pasien" id="anaksvalid_pasien' + bodyId + '" type="hidden"  />')
 
-        $("#formIntegumen" + bodyId).on('submit', (function(e) {
-            $("#integumensdocument_id" + bodyId).val($("#" + document_id).val())
+        $("#formAnak" + bodyId).on('submit', (function(e) {
+            $("#anaksdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/rm/assessment/saveIntegumen',
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveAnak',
                 type: "POST",
                 data: new FormData(this),
                 dataType: 'json',
@@ -3441,11 +3442,11 @@ foreach ($aValue as $key => $value) {
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $('#formIntegumen' + bodyId).find("input,select,textarea").prop("disabled", true)
+                    $('#formAnak' + bodyId).find("input,select,textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formIntegumenSaveBtn" + bodyId).hide()
-                    $("formIntegumenEditBtn" + bodyId).show()
-                    checkSign("formIntegumen" + bodyId)
+                    $("#formAnakSaveBtn" + bodyId).hide()
+                    $("formAnakEditBtn" + bodyId).show()
+                    checkSign("formAnak" + bodyId)
 
                 },
                 error: function(xhr) { // if error occured
@@ -3459,42 +3460,42 @@ foreach ($aValue as $key => $value) {
             });
         }));
 
-        $("#ASES03606" + bodyId).keydown(function(e) {
+        $("#ASES04506" + bodyId).keydown(function(e) {
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
-        $("#formIntegumenEditBtn" + bodyId).on("click", function() {
-            $("#formIntegumenSaveBtn" + bodyId).show()
-            $("#formIntegumenEditBtn" + bodyId).hide()
-            $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", false)
+        $("#formAnakEditBtn" + bodyId).on("click", function() {
+            $("#formAnakSaveBtn" + bodyId).show()
+            $("#formAnakEditBtn" + bodyId).hide()
+            $("#formAnak" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         if (flag == 1) {
-            $("#formIntegumenSaveBtn" + bodyId).show()
-            $("formIntegumenEditBtn" + bodyId).hide()
+            $("#formAnakSaveBtn" + bodyId).show()
+            $("formAnakEditBtn" + bodyId).hide()
         } else {
 
-            var maindataset = integumenAll[index]
+            var maindataset = anakAll[index]
 
             $.each(maindataset, function(key, value) {
-                $("#integumens" + key + bodyId).val(value)
+                $("#anaks" + key + bodyId).val(value)
             })
-            var integumen = integumenAll[index];
+            var anak = anakAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES036') {
+                if ($value['p_type'] == 'ASES045') {
                     // if ($value['entry_type'] == '3') {
                     if (in_array($value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(integumen.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(anak.<?= strtolower($value['column_name']); ?>)
                     <?php
 
                     } else if ($value['entry_type'] == '2') {
                     ?>
-                        if (integumen.<?= strtolower($value['column_name']); ?> == 1) {
+                        if (anak.<?= strtolower($value['column_name']); ?> == 1) {
                             $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
-                                if ($value1['p_type'] == 'ASES036' && $value1['value_score'] == '99') {
+                                if ($value1['p_type'] == 'ASES045' && $value1['value_score'] == '99') {
                             ?>
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(integumen.<?= strtolower($value1['value_info']); ?>)
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(anak.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
                             } ?>
@@ -3503,20 +3504,20 @@ foreach ($aValue as $key => $value) {
                     }
                 }
             } ?>
-            $("#formIntegumenSaveBtn" + bodyId).hide()
-            $("formIntegumenEditBtn" + bodyId).show()
-            $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", true)
-            checkSign("formIntegumen" + bodyId)
+            $("#formAnakSaveBtn" + bodyId).hide()
+            $("formAnakEditBtn" + bodyId).show()
+            $("#formAnak" + bodyId).find("input, select, textarea").prop("disabled", true)
+            checkSign("formAnak" + bodyId)
 
         }
         index++
-        $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addAnakButton").html('<a onclick="addAnak(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
-    function getIntegumen(bodyId, container) {
+    function getAnak(bodyId, container) {
         $("#" + container).html("")
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/getIntegumen',
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAnak',
             type: "POST",
             data: JSON.stringify({
                 'visit_id': visit,
@@ -3528,17 +3529,298 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             success: function(data) {
-                integumenAll = data.integumen
+                anakAll = data.anak
                 // stabilitasDetail = data.stabilitasDetail
 
-                $.each(integumenAll, function(key, value) {
+                $.each(anakAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyIntegumenPerawat").html("")
-                        addIntegumen(0, key, "arpbody_id", "bodyIntegumenPerawat")
+                        $("#bodyAnakPerawat").html("")
+                        addAnak(0, key, "arpbody_id", "bodyAnakPerawat")
                     }
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
-                        $("#bodyIntegumenMedis").html("")
-                        addIntegumen(0, key, "armpasien_diagnosa_id", "bodyIntegumenMedis")
+                        $("#bodyAnakMedis").html("")
+                        addAnak(0, key, "armpasien_diagnosa_id", "bodyAnakMedis")
+                    }
+                })
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function addNeonatus(flag, index, document_id, container) {
+        var documentId = $("#" + document_id).val()
+        var bodyId = '';
+        if (flag == 1) {
+            const date = new Date();
+            bodyId = date.toISOString().substring(0, 23);
+            bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        } else {
+            bodyId = neonatusAll[index].body_id
+        }
+        $("#" + container).append(
+            $('<form id="formNeonatus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            .append(
+                $('<div class="card border border-1 rounded-4 m-4 p-4">')
+                .append($('<div class="card-body">')
+                    .append($('<h4 class="card-title">').html("Neonatus"))
+                    .append($('<div class="mb-3 row">')
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                    if ($value['p_type'] == 'ASES050') {
+                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                }
+                                                                                            } ?>
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                        }
+                                                                                        if ($value['entry_type'] == 4) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                        ) <?php
+                                                                                        } ?> <?php }
+                                                                                            if ($value['parameter_id'] == '09') {
+                                                                                                break;
+                                                                                            }
+                                                                                        }
+                                                                                                ?>
+                        )
+                        .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
+                                                                                    if ($value['p_type'] == 'ASES050' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
+                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 2) {
+                                            ?>
+                                        .append($('<div class="form-group col-md-12">')
+                                            .append($('<div class="row">')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                            ) <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                ?>
+                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                        .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                    ) <?php
+                                                                                                }
+                                                                                            } ?>
+                                        ) <?php
+                                                                                        } else if ($value['entry_type'] == 3) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append($('<div class="col-md-8">')
+                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                    .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
+                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                    ?>
+                                                            .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
+                                                                                                                                                        }
+                                                                                                                                                    } ?>
+                                                )
+                                            )
+                                        ) <?php
+                                                                                        }
+                                                                                        if ($value['entry_type'] == 4) {
+                                            ?>
+                                        .append($('<div class="row">')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                        ) <?php
+                                                                                        } ?> <?php }
+                                                                                        }
+                                                                                                ?>
+                        )
+                    )
+                    .append('<div class="panel-footer text-end mb-4">' +
+                        '<button type="submit" id="formNeonatusSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="button" id="formNeonatusEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                        '</div>')
+
+                )
+            )
+        )
+
+        <?php foreach ($aValue as $key1 => $value1) {
+            if ($value1['p_type'] == 'ASES050' && $value1['value_score'] == '99') {
+        ?>
+                $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+
+                    if ($(this).is(":checked")) {
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    } else {
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                    }
+                });
+        <?php
+            }
+        } ?>
+
+        $("#formNeonatus" + bodyId).append('<input name="org_unit_code" id="neonatussorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="neonatussvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="neonatusstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="neonatussbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="neonatussdocument_id' + bodyId + '" type="hidden" value="' + documentId + '" class="form-control" />')
+            .append('<input name="no_registration" id="neonatussno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="neonatussp_type' + bodyId + '" type="hidden" value="ASES050" class="form-control" />')
+            .append('<input name="valid_date" class="valid-date" id="neonatussvalid_date' + bodyId + '" type="hidden"  />')
+            .append('<input name="valid_user" class="valid-user" id="neonatussvalid_user' + bodyId + '" type="hidden"  />')
+            .append('<input name="valid_pasien" class="valid-pasien" id="neonatussvalid_pasien' + bodyId + '" type="hidden"  />')
+
+        $("#formNeonatus" + bodyId).on('submit', (function(e) {
+            $("#neonatussdocument_id" + bodyId).val($("#" + document_id).val())
+            let clicked_submit_btn = $(this).closest('form').find(':submit');
+            e.preventDefault();
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveNeonatus',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+                    $('#formNeonatus' + bodyId).find("input,select,textarea").prop("disabled", true)
+                    clicked_submit_btn.button('reset');
+                    $("#formNeonatusSaveBtn" + bodyId).hide()
+                    $("formNeonatusEditBtn" + bodyId).show()
+                    checkSign("formNeonatus" + bodyId)
+
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    clicked_submit_btn.button('reset');
+                    errorMsg(xhr);
+                },
+                complete: function() {
+                    clicked_submit_btn.button('reset');
+                }
+            });
+        }));
+
+        $("#ASES05006" + bodyId).keydown(function(e) {
+            !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+        });
+        $("#formNeonatusEditBtn" + bodyId).on("click", function() {
+            $("#formNeonatusSaveBtn" + bodyId).show()
+            $("#formNeonatusEditBtn" + bodyId).hide()
+            $("#formNeonatus" + bodyId).find("input, select, textarea").prop("disabled", false)
+        })
+        if (flag == 1) {
+            $("#formNeonatusSaveBtn" + bodyId).show()
+            $("formNeonatusEditBtn" + bodyId).hide()
+        } else {
+
+            var maindataset = neonatusAll[index]
+
+            $.each(maindataset, function(key, value) {
+                $("#neonatuss" + key + bodyId).val(value)
+            })
+            var neonatus = neonatusAll[index];
+            <?php foreach ($aParameter as $key => $value) {
+                if ($value['p_type'] == 'ASES050') {
+                    // if ($value['entry_type'] == '3') {
+                    if (in_array($value['entry_type'], [1, 3, 4])) {
+            ?>
+                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(neonatus.<?= strtolower($value['column_name']); ?>)
+                    <?php
+
+                    } else if ($value['entry_type'] == '2') {
+                    ?>
+                        if (neonatus.<?= strtolower($value['column_name']); ?> == 1) {
+                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                            <?php foreach ($aValue as $key1 => $value1) {
+                                if ($value1['p_type'] == 'ASES050' && $value1['value_score'] == '99') {
+                            ?>
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(neonatus.<?= strtolower($value1['value_info']); ?>)
+                            <?php
+                                }
+                            } ?>
+                        }
+            <?php
+                    }
+                }
+            } ?>
+            $("#formNeonatusSaveBtn" + bodyId).hide()
+            $("formNeonatusEditBtn" + bodyId).show()
+            $("#formNeonatus" + bodyId).find("input, select, textarea").prop("disabled", true)
+            checkSign("formNeonatus" + bodyId)
+
+        }
+        index++
+        $("#addNeonatusButton").html('<a onclick="addNeonatus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+    }
+
+    function getNeonatus(bodyId, container) {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getNeonatus',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': bodyId
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                neonatusAll = data.neonatus
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(neonatusAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyNeonatusPerawat").html("")
+                        addNeonatus(0, key, "arpbody_id", "bodyNeonatusPerawat")
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyNeonatusMedis").html("")
+                        addNeonatus(0, key, "armpasien_diagnosa_id", "bodyNeonatusMedis")
                     }
                 })
             },
@@ -7990,16 +8272,17 @@ foreach ($aValue as $key => $value) {
 
 <script>
     function cetakAssessmenKeperawatan() {
-        $.ajax({
-            url: '<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
-            type: "GET",
-            success: function(data) {
-                // Insert fetched content into modal
-                // $("#cetakarpbody").html(data);
-                $("#pdfFrame").attr("src", "data:application/pdf;base64," + data);
-                // Display the modal
-                $("#cetakarp").modal('show');
-            }
-        });
+        var win = window.open('<?= base_url() . '/admin/rm/assessment/cetakKeperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(), '_blank');
+        // $.ajax({
+        //     url: '<?= base_url() . '/admin/rm/assessment/cetakKeperawatan' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
+        //     type: "GET",
+        //     success: function(data) {
+        //         // Insert fetched content into modal
+        //         // $("#cetakarpbody").html(data);
+        //         $("#pdfFrame").attr("src", "data:application/pdf;base64," + data);
+        //         // Display the modal
+        //         $("#cetakarp").modal('show');
+        //     }
+        // });
     }
 </script>

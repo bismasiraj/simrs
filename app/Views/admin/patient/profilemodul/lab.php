@@ -101,12 +101,12 @@ $permissions = user()->getPermissions();
                                     <th class="text-center" style="width: 10%;">Tgl Tindakan</th class="text-center">
                                     <!-- <th class="text-center" >Cetak</th class="text-center"> -->
                                     <th class="text-center" style="width: 10%;">Nilai</th class="text-center">
-                                    <!-- <th class="text-center"  style="width: 2%;">Jml</th class="text-center">
-                                    <th class="text-center"  style="width: 10%;">Total Tagihan</th class="text-center">
+                                    <th class="text-center" style="width: 2%;">Jml</th class="text-center">
+                                    <th class="text-center" style="width: 10%;">Total Tagihan</th class="text-center">
                                     <th class="text-center" colspan="2" style="width: 20%;">Tanggungan pihak ke-3</th class="text-center">
-                                    <th class="text-center"  style="width: auto;">Diskon</th class="text-center">
-                                    <th class="text-center"  style="width: 10%;">Subsidi Satuan</th class="text-center">
-                                    <th class="text-center"  style="width: 10%;">Subsidi Total</th class="text-center"> -->
+                                    <th class="text-center" style="width: auto;">Diskon</th class="text-center">
+                                    <th class="text-center" style="width: 10%;">Subsidi Satuan</th class="text-center">
+                                    <th class="text-center" style="width: 10%;">Subsidi Total</th class="text-center">
                                     <th class="text-center"></th class="text-center">
                                 </tr>
                             </thead>

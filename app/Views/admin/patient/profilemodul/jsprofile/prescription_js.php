@@ -132,8 +132,6 @@
 
                 visitHistory = data.visitHistory;
 
-                console.log(visitHistory)
-
                 $("#historyEresep").html(visitHistory)
 
                 obat = data.historyObat
@@ -238,7 +236,6 @@
 
             addBlankLine('nonracik')
         }
-
     }
 
     function addR() {
@@ -255,9 +252,9 @@
 
     }
 
-    function addKomponen(noresep) {
+    function addKomponen(noresep, resepKe) {
         $("#resepno").val(noresep);
-        addBlankLine('komponen')
+        addBlankLine('komponen', resepKe)
     }
 
 
@@ -468,7 +465,6 @@
 
                         data.data.forEach((element, key) => {
                             datachild = data.data[key]
-                            console.log(datachild.bill_id)
                             resepDetail.push(data.data[key])
                         });
 
@@ -495,30 +491,30 @@
 </script>
 
 <script type="text/javascript">
-    function addBlankLine(obatType) {
+    function addBlankLine(obatType, resepKe = null) {
         var racikan = 0;
         resep_no = $("#resepno").val()
 
         var iseresep = $("#iseresep").val()
 
 
-        if (obatType != 'komponen') {
+        if (obatType != 'komponen') { // non racikan atau racikan
             resepOrder++;
-            if (obatType != 'racikan') {
+            if (obatType != 'racikan') { // non racikan
                 theOrder = resepOrder;
                 racikan = 0;
-            } else {
+            } else { // racikan
                 theOrder = 1;
                 racikan = 1;
             }
-        } else {
+        } else { //komponen
             theOrder++;
             racikan = 1;
         }
 
-        console.log(racikan)
-        console.log(theOrder)
-        var resepKe = resepOrder;
+        if (resepKe == null) {
+            var resepKe = resepOrder;
+        }
         var billId = (get_datesecond() + String(Math.floor(Math.random() * 1000))).replaceAll(' ', '').replaceAll('-', '').replaceAll(':', '');
 
         if (racikan == 1) {
@@ -656,48 +652,71 @@
             tarifId = '1201008';
             treatment = "PEMBELIAN OBAT NON RACIKAN"
 
+            $("#eresepBody").append(`<table id="${resep_no}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+                <thead class="table-primary" style="text-align: center;">
+                    <tr>
+                        <th class="text-center" style="width: 5%;"></th class="text-center">
+                        <th class="text-center" style="width: 30%;"></th class="text-center">
+                        <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
+                        <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                    </tr>
+                </thead>
+                <tbody id="${resep_no}${resepKe}">
+                </tbody>
+            </table>`)
 
-            $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'non-racikan')
-                .append($('<td rowspan="2">')
+            $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'non-racikan')
+                .append($('<td>')
+                    // .append($('<td rowspan="2">')
                     .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 )
-                .append($('<td rowspan="2">')
+                .append($('<td>')
+                    // .append($('<td rowspan="2">')
                     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
+                    // .append('<input type="hidden" name="description[]" id="aordescription' + billId + '" placeholder="" value="" class="form-control text-right">')
                 )
-                .append($('<td rowspan="2">')
+                .append($('<td>')
+                    // .append($('<td rowspan="2">')
                     .append('<input type="text" name="dose_presc[]" id="aordose_presc' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
                 )
-                .append($('<td rowspan="2">')
+                .append($('<td>')
+                    // .append($('<td rowspan="2">')
                     .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="" class="form-control medicine_name" readonly>')
                 )
             )
             if (iseresep == 1) {
-                $("#" + billId)
+                $(`#${billId}`)
                     .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
-                    .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
+                    .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                        // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                         .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                             .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
                             .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
                         )
                     )
-                    .append($('<td rowspan="2">')
-                        .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                    .append($('<td>')
+                        // .append($('<td rowspan="2">')
+                        .append('<button type="button" onclick="removeRacik(\'' + resep_no + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                     )
             } else {
-                $("#" + billId)
+                $(`#${billId}`)
                     .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
-                    .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
+                    .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                        // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                         .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                             .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
                         )
                     )
-                    .append($('<td rowspan="2">')
-                        .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                    .append($('<td>')
+                        // .append($('<td rowspan="2">')
+                        .append('<button type="button" onclick="removeRacik(\'' + resep_no + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                     )
             }
-            $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
-                .append($('<td colspan="5">').append(dosisDiv))
-            )
+            // $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
+            //     .append($('<td colspan="5">').append(dosisDiv))
+            // )
             // $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
             //     .append($("<td>").append(dosisDiv))
             //     .append($("<td>").append(dosis2Div))
@@ -706,45 +725,65 @@
             //     .append($("<td>").append(signa5Div))
             // )
         } else if (racikan == 1 && theOrder == '1') { //racikan
+            $("#eresepBody").append(`<table id="${resep_no}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+                <thead class="table-primary" style="text-align: center;">
+                    <tr>
+                        <th class="text-center" style="width: 5%;"></th class="text-center">
+                        <th class="text-center" style="width: 30%;"></th class="text-center">
+                        <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
+                        <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                    </tr>
+                </thead>
+                <tbody id="${resep_no}${resepKe}">
+                </tbody>
+            </table>`)
             tarifId = '1201007';
             treatment = "PEMBELIAN OBAT RACIKAN"
-            $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'racikan')
-                .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe)
+            $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'racikan' + racikan)
+                .append($('<td>').attr("id", "tdresep_keresep" + resepKe)
+                    // .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe)
                     .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 )
                 // .append($('<td>')
                 //     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
                 // )
-                .append($('<td rowspan="2">').attr("id", "tddescriptionresep" + resepKe)
+                .append($('<td>').attr("id", "tddescriptionresep" + resepKe)
+                    // .append($('<td rowspan="2">').attr("id", "tddescriptionresep" + resepKe)
                     // .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
                     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
-
+                    // .append('<input type="hidden" name="description[]" id="aordescription' + billId + '" placeholder="" value="" class="form-control text-right">')
                 )
-                .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe)
+                .append($('<td>').attr("id", "tdjml_bks" + resepKe)
+                    // .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe)
                     .append('<input type="text" name="jml_bks[]" id="aorjml_bks' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
                 )
-                .append($('<td rowspan="2">').attr("id", "tdmeasure_idnameresep" + resepKe)
+                .append($('<td>').attr("id", "tdmeasure_idnameresep" + resepKe)
+                    // .append($('<td rowspan="2">').attr("id", "tdmeasure_idnameresep" + resepKe)
                     .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="Bks" class="form-control medicine_name" readonly>')
                 )
                 .append($('<td colspan="5">').attr("id", "tddescription2resep" + resepKe)
-                    .append('<input type="text" name="description2[]" id="aordescription2' + resepKe + '" placeholder="" class="form-control">')
+                    .append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">')
                 )
 
-                .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
+                .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                    // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
                         .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
-                        .append('<button type="button" onclick="addKomponen(\'' + resepNo + '\')" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>')
+                        .append(`<button type="button" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>`)
                     )
                 )
-                .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe)
-                    .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                .append($('<td>').attr("id", "tdbtnremoveracikresep" + resepKe)
+                    // .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe)
+                    .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                 )
             )
-            $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe)
-                .attr("class", billId).attr('class', 'racikan')
-                .append($('<td colspan="5">'))
-            )
+            // $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe)
+            //     .attr("class", billId).attr('class', 'racikan')
+            //     .append($('<td colspan="5">'))
+            // )
             // $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe)
             //     .attr("class", billId).attr('class', 'racikan')
             //     .append($("<td>").attr("id", "tddosisDiv" + resepKe)
@@ -759,6 +798,7 @@
             //         .append(signa5Div))
             // )
         } else { //komponen
+            theOrder = $(`#${resep_no}${resepKe} tr`).length + 1
             $("#tdresep_keresep" + resepKe).attr('rowspan', theOrder)
             $("#tddescriptionresep" + resepKe).attr('rowspan', 1)
             $("#tdjml_bks" + resepKe).attr('rowspan', 1)
@@ -773,12 +813,13 @@
             $("#tdsigna4Div" + resepKe).remove()
             $("#tdsigna5Div" + resepKe).remove()
 
-            $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'komponen')
+            $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'racikan' + racikan)
                 // .append($('<td>')
                 //     // .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                 // )
                 .append($('<td>')
                     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
+                    // .append('<input type="hidden" name="description[]" id="aordescription' + billId + '" placeholder="" value="" class="form-control text-right">')
                 )
                 .append($('<td>')
                     // .append('<input type="text" name="dose_presc[]" id="aordose_presc' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
@@ -796,33 +837,34 @@
                 //     .append(signa4Div))
                 // .append($("<td>").attr("id", "tdsigna5Div" + resepKe)
                 //     .append(signa5Div))
-                .append($('<td colspan="5">'))
+                .append($('<td colspan="7">'))
 
                 // .append($('<td>')
                 //     // .append('<button type="button" onclick="addBlankLine()" class="addbtn nonracikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">NR</i></button>')
                 //     // .append('<button type="button" onclick="addBlankLine()" class="addbtn racikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">R</i></button>')
                 //     // .append('<button type="button" onclick="addBlankLineKomponen()" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
                 // )
-                .append($('<td>')
-                    .append('<button type="button" onclick="removeKomopnen(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
-                )
+                // .append($('<td>')
+                //     .append('<button type="button" onclick="removeKomopnen(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                // )
             )
         }
 
         if (racikan == 1 && theOrder != '1') {
-            $("#eresepBody").append('<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />')
-            $("#eresepBody").append('<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />')
+            $(`#${billId}`).append('<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />')
+            $(`#${billId}`).append('<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />')
                 .append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
         }
         if (racikan != 1) {
-            $("#eresepBody").append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
+            $(`#${billId}`).append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
         } else {
-            $("#eresepBody").append('<input name="dose_presc[]" id="aordose_presc' + billId + '" type="hidden" class="form-control" />')
+            $(`#${billId}`).append('<input name="dose_presc[]" id="aordose_presc' + billId + '" type="hidden" class="form-control" />')
         }
 
 
         // .append('<hr class="hr-panel-heading hr-10">')
-        $("#eresepBody").append('<input name="theorder[]" id="aortheorder' + billId + '" type="hidden" class="form-control" />')
+        console.log(`${billId}`)
+        $(`#${billId}`).append('<input name="theorder[]" id="aortheorder' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="brand_id[]" id="aorbrand_id' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="racikan[]" id="aorracikan' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="doctor[]" id="aordoctor' + billId + '" type="hidden" class="form-control" />')
@@ -877,8 +919,8 @@
             .append('<input name="module_id[]" id="aormodule_id' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="sold_status[]" id="aorsold_status' + billId + '" type="hidden" class="form-control" />')
 
-        $("#eresepBody").append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
-        if (racikan == 0) {}
+        $(`#${billId}`).append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
+
 
         $("#aordose1" + billId).val(1);
         $("#aordose2" + billId).val(1);
@@ -944,18 +986,19 @@
 
 
         if (iseresep == 1) {
-            initializeResepSelect2('aordescription1' + billId);
+            initializeResepSelect2('aordescription1' + billId)
             $("#aordescription" + billId).val(description)
         } else {
-            initializeResepAlkesSelect2('aordescription1' + billId);
+            initializeResepAlkesSelect2('aordescription1' + billId)
             $("#aordescription" + billId).val(description)
         }
-        // if (racikan != 1) {}
     }
 </script>
 <script type="text/javascript">
     function filteredResep(resepSelected) {
         $("#eresepBody").html("")
+        var iseresep = $("#iseresep").val()
+
         resepOrder = 0;
 
 
@@ -1049,11 +1092,13 @@
                 var qty = resep.quantity
                 var numer = resep.numer
                 var resepNo = resep.resep_no
+                var resep_no = resep.resep_no
                 var notaNo = resep.nota_no
                 var treatDate = resep.treat_date
                 var dose1 = resep.dose1
                 var dose2 = resep.dose2
                 var theorder = resep.theorder
+                var theOrder = resep.theorder
                 var classRoomId = resep.class_room_id
                 var clinicId = resep.clinic_id
                 var clinicIdFrom = resep.clinic_id_from
@@ -1088,35 +1133,75 @@
                 }
 
 
-                if (racikan == 0) {
-                    $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'non-racikan')
-                        .append($('<td rowspan="2">')
+                if (racikan == 0) { //non racikan
+                    tarifId = '1201008';
+                    treatment = "PEMBELIAN OBAT NON RACIKAN"
+
+                    $("#eresepBody").append(`<table id="${resep_no}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+                        <thead class="table-primary" style="text-align: center;">
+                            <tr>
+                                <th class="text-center" style="width: 5%;"></th class="text-center">
+                                <th class="text-center" style="width: 30%;"></th class="text-center">
+                                <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
+                                <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                                <th class="text-center" style="width: auto;"></th class="text-center">
+                                <th class="text-center" style="width: auto;"></th class="text-center">
+                            </tr>
+                        </thead>
+                        <tbody id="${resep_no}${resepKe}">
+                        </tbody>
+                    </table>`)
+
+                    $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'non-racikan')
+                        .append($('<td>')
+                            // .append($('<td rowspan="2">')
                             .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         )
-                        .append($('<td rowspan="2">')
-                            .append('<div class="p-2 select2-full-width"><select id="aordescription1' + billId + '" class="form-control fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" ></select></div>')
+                        .append($('<td>')
+                            // .append($('<td rowspan="2">')
+                            .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
+                            // .append('<input type="hidden" name="description[]" id="aordescription' + billId + '" placeholder="" value="" class="form-control text-right">')
                         )
-                        .append($('<td rowspan="2">')
+                        .append($('<td>')
+                            // .append($('<td rowspan="2">')
                             .append('<input type="text" name="dose_presc[]" id="aordose_presc' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
                         )
-                        .append($('<td rowspan="2">')
+                        .append($('<td>')
+                            // .append($('<td rowspan="2">')
                             .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="" class="form-control medicine_name" readonly>')
                         )
-                        .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
-
-                        .append($('<td rowspan="2">')
-                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
-                                .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>'))
-                        )
-                        .append($('<td rowspan="2">')
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
-                        )
-
                     )
-                    $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
-                        .append($('<td colspan="5">'))
-                    )
+                    if (iseresep == 1) {
+                        $(`#${billId}`)
+                            .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
+                            .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                                // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
+                                .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                    .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                    .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                                )
+                            )
+                            .append($('<td>')
+                                // .append($('<td rowspan="2">')
+                                .append('<button type="button" onclick="removeRacik(\'' + resep_no + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                            )
+                    } else {
+                        $(`#${billId}`)
+                            .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
+                            .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                                // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
+                                .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                    .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
+                                )
+                            )
+                            .append($('<td>')
+                                // .append($('<td rowspan="2">')
+                                .append('<button type="button" onclick="removeRacik(\'' + resep_no + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                            )
+                    }
+                    // $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
+                    //     .append($('<td colspan="5">').append(dosisDiv))
+                    // )
                     // $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'non-racikan')
                     //     .append($("<td>").append(dosisDiv))
                     //     .append($("<td>").append(dosis2Div))
@@ -1124,83 +1209,100 @@
                     //     .append($("<td>").append(signa4Div))
                     //     .append($("<td>").append(signa5Div))
                     // )
-                } else if (racikan == 1 && theorder == 1) {
-                    $("#eresepBody").append($("<tr id='" + billId + "'>").attr("class", billId).attr('class', 'racikan')
-                        .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe + '' + resepNo)
+                } else if (racikan == 1 && theOrder == '1') { //racikan
+                    $("#eresepBody").append(`<table id="${resep_no}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+                <thead class="table-primary" style="text-align: center;">
+                    <tr>
+                        <th class="text-center" style="width: 5%;"></th class="text-center">
+                        <th class="text-center" style="width: 30%;"></th class="text-center">
+                        <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
+                        <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                        <th class="text-center" style="width: auto;"></th class="text-center">
+                    </tr>
+                </thead>
+                <tbody id="${resep_no}${resepKe}">
+                </tbody>
+            </table>`)
+                    tarifId = '1201007';
+                    treatment = "PEMBELIAN OBAT RACIKAN"
+                    $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'racikan' + racikan)
+                        .append($('<td>').attr("id", "tdresep_keresep" + resepKe)
+                            // .append($('<td rowspan="2">').attr("id", "tdresep_keresep" + resepKe)
                             .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         )
-                        .append($('<td>').attr("id", "tddescriptionresep" + resepKe + '' + resepNo)
-                            .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                        // .append($('<td>')
+                        //     .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
+                        // )
+                        .append($('<td>').attr("id", "tddescriptionresep" + resepKe)
+                            // .append($('<td rowspan="2">').attr("id", "tddescriptionresep" + resepKe)
+                            // .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                            .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
                         )
-                        .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe + '' + resepNo)
+                        .append($('<td>').attr("id", "tdjml_bks" + resepKe)
+                            // .append($('<td rowspan="2">').attr("id", "tdjml_bks" + resepKe)
                             .append('<input type="text" name="jml_bks[]" id="aorjml_bks' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
                         )
-                        .append($('<td rowspan="2">').attr("id", "tdmeasure_idnameresep" + resepKe + '' + resepNo)
+                        .append($('<td>').attr("id", "tdmeasure_idnameresep" + resepKe)
+                            // .append($('<td rowspan="2">').attr("id", "tdmeasure_idnameresep" + resepKe)
                             .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="Bks" class="form-control medicine_name" readonly>')
                         )
-                        .append($('<td colspan="5">').attr("id", "tddescription2resep" + resepKe + '' + resepNo)
-                            .append('<input type="text" name="description2[]" id="aordescription2' + resepKe + '" placeholder="" class="form-control">')
+                        .append($('<td colspan="5">').attr("id", "tddescription2resep" + resepKe)
+                            .append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">')
                         )
 
-                        .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe + '' + resepNo)
+                        .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                            // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                             .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                                 .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
                                 .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
-                                .append('<button type="button" onclick="addKomponen(\'' + resepNo + '\')" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>')
+                                .append(`<button type="button" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>`)
                             )
                         )
-                        .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe + '' + resepNo)
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                        .append($('<td>').attr("id", "tdbtnremoveracikresep" + resepKe)
+                            // .append($('<td rowspan="2">').attr("id", "tdbtnremoveracikresep" + resepKe)
+                            .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
                     )
-                    $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe + '' + resepNo)
-                        .attr("class", billId).attr('class', 'racikan')
-                        .append($('<td colspan="5">'))
-                        // .append($("<td>").attr("id", "tddosisDiv" + resepKe + '' + resepNo)
-                        //     .append(dosisDiv))
-                        // .append($("<td>").attr("id", "tddosis2Div" + resepKe + '' + resepNo)
-                        //     .append(dosis2Div))
-                        // .append($("<td>").attr("id", "tdsigna2Div" + resepKe + '' + resepNo)
-                        //     .append(signa2Div))
-                        // .append($("<td>").attr("id", "tdsigna4Div" + resepKe + '' + resepNo)
-                        //     .append(signa4Div))
-                        // .append($("<td>").attr("id", "tdsigna5Div" + resepKe + '' + resepNo)
-                        //     .append(signa5Div))
-                    )
-                    // $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe + '' + resepNo)
+                    // $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe)
                     //     .attr("class", billId).attr('class', 'racikan')
-                    //     .append($("<td>").attr("id", "tddosisDiv" + resepKe + '' + resepNo)
+                    //     .append($('<td colspan="5">'))
+                    // )
+                    // $("#eresepBody").append($("<tr>").attr("id", "traturanminumresep" + resepKe)
+                    //     .attr("class", billId).attr('class', 'racikan')
+                    //     .append($("<td>").attr("id", "tddosisDiv" + resepKe)
                     //         .append(dosisDiv))
-                    //     .append($("<td>").attr("id", "tddosis2Div" + resepKe + '' + resepNo)
+                    //     .append($("<td>").attr("id", "tddosis2Div" + resepKe)
                     //         .append(dosis2Div))
-                    //     .append($("<td>").attr("id", "tdsigna2Div" + resepKe + '' + resepNo)
+                    //     .append($("<td>").attr("id", "tdsigna2Div" + resepKe)
                     //         .append(signa2Div))
-                    //     .append($("<td>").attr("id", "tdsigna4Div" + resepKe + '' + resepNo)
+                    //     .append($("<td>").attr("id", "tdsigna4Div" + resepKe)
                     //         .append(signa4Div))
-                    //     .append($("<td>").attr("id", "tdsigna5Div" + resepKe + '' + resepNo)
+                    //     .append($("<td>").attr("id", "tdsigna5Div" + resepKe)
                     //         .append(signa5Div))
                     // )
-                } else {
-                    $("#tdresep_keresep" + resepKe + '' + resepNo).attr('rowspan', theorder)
-                    $("#tddescriptionresep" + resepKe + '' + resepNo).attr('rowspan', 1)
-                    $("#tdjml_bks" + resepKe + '' + resepNo).attr('rowspan', 1)
-                    $("#tdmeasure_idnameresep" + resepKe + '' + resepNo).attr('rowspan', 1)
-                    $("#tddescription2resep" + resepKe + '' + resepNo).attr('rowspan', theorder - 1)
-                    $("#tdbtnracikresep" + resepKe + '' + resepNo).attr('rowspan', theorder)
-                    $("#tdbtnremoveracikresep" + resepKe + '' + resepNo).attr('rowspan', 1)
-                    $("#traturanminumresep" + resepKe + '' + resepNo).remove()
-                    $("#tddosisDiv" + resepKe + '' + resepNo).remove()
-                    $("#tddosis2Div" + resepKe + '' + resepNo).remove()
-                    $("#tdsigna2Div" + resepKe + '' + resepNo).remove()
-                    $("#tdsigna4Div" + resepKe + '' + resepNo).remove()
-                    $("#tdsigna5Div" + resepKe + '' + resepNo).remove()
+                } else { //komponen
+                    theOrder = $(`#${resep_no}${resepKe} tr`).length + 1
+                    $("#tdresep_keresep" + resepKe).attr('rowspan', theOrder)
+                    $("#tddescriptionresep" + resepKe).attr('rowspan', 1)
+                    $("#tdjml_bks" + resepKe).attr('rowspan', 1)
+                    $("#tdmeasure_idnameresep" + resepKe).attr('rowspan', 1)
+                    $("#tddescription2resep" + resepKe).attr('rowspan', theOrder - 1)
+                    $("#tdbtnracikresep" + resepKe).attr('rowspan', theOrder)
+                    $("#tdbtnremoveracikresep" + resepKe).attr('rowspan', 1)
+                    $("#traturanminumresep" + resepKe).remove()
+                    $("#tddosisDiv" + resepKe).remove()
+                    $("#tddosis2Div" + resepKe).remove()
+                    $("#tdsigna2Div" + resepKe).remove()
+                    $("#tdsigna4Div" + resepKe).remove()
+                    $("#tdsigna5Div" + resepKe).remove()
 
-                    $("#eresepBody").append($("<tr>").attr("class", billId).attr('class', 'komponen')
+                    $(`#${resep_no}${resepKe}`).append($(`<tr id="${billId}">`).attr("class", billId).attr('class', 'racikan' + racikan)
                         // .append($('<td>')
                         //     // .append('<input type="text" name="resep_ke[]" id="aorresep_ke' + billId + '" placeholder="" value="" class="form-control text-right" readonly>')
                         // )
                         .append($('<td>')
-                            .append('<input type="text" name="description[]" id="aordescription' + billId + '" placeholder="" class="form-control">')
+                            .append('<select id="aordescription1' + billId + '" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange(\'' + billId + '\',this.value)" style="width: 100%" ></select>')
                         )
                         .append($('<td>')
                             // .append('<input type="text" name="dose_presc[]" id="aordose_presc' + billId + '" placeholder="" value="" class="form-control text-right"  onchange="decimalInput(this)"  onfocus="this.value=\'\'">')
@@ -1208,41 +1310,41 @@
                         .append($('<td>')
                             // .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="" class="form-control medicine_name" readonly>')
                         )
-                        // .append($("<td>").attr("id", "tddosisDiv" + resepKe + '' + resepNo)
+                        // .append($("<td>").attr("id", "tddosisDiv" + resepKe)
                         //     .append(dosisDiv))
-                        // .append($("<td>").attr("id", "tddosis2Div" + resepKe + '' + resepNo)
+                        // .append($("<td>").attr("id", "tddosis2Div" + resepKe)
                         //     .append(dosis2Div))
-                        // .append($("<td>").attr("id", "tdsigna2Div" + resepKe + '' + resepNo)
+                        // .append($("<td>").attr("id", "tdsigna2Div" + resepKe)
                         //     .append(signa2Div))
-                        // .append($("<td>").attr("id", "tdsigna4Div" + resepKe + '' + resepNo)
+                        // .append($("<td>").attr("id", "tdsigna4Div" + resepKe)
                         //     .append(signa4Div))
-                        // .append($("<td>").attr("id", "tdsigna5Div" + resepKe + '' + resepNo)
+                        // .append($("<td>").attr("id", "tdsigna5Div" + resepKe)
                         //     .append(signa5Div))
-                        .append($('<td colspan="5">'))
+                        .append($('<td colspan="7">'))
 
                         // .append($('<td>')
                         //     // .append('<button type="button" onclick="addBlankLine()" class="addbtn nonracikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">NR</i></button>')
                         //     // .append('<button type="button" onclick="addBlankLine()" class="addbtn racikbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">R</i></button>')
                         //     // .append('<button type="button" onclick="addBlankLineKomponen()" class="addbtn komponenbtn" data-row-id="1" autocomplete="off"><i class="fa fa-plus">K</i></button>')
                         // )
-                        .append($('<td>')
-                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
-                        )
+                        // .append($('<td>')
+                        //     .append('<button type="button" onclick="removeKomopnen(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                        // )
                     )
                 }
 
-                if (racikan == 1 && theorder != '1') {
-                    $("#eresepBody").append('<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />')
-                    $("#eresepBody").append('<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />')
+                if (racikan == 1 && theOrder != '1') {
+                    $(`#${billId}`).append('<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />')
+                    $(`#${billId}`).append('<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />')
                         .append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
                 }
                 if (racikan != 1) {
-                    $("#eresepBody").append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
+                    $(`#${billId}`).append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
                 } else {
-                    $("#eresepBody").append('<input name="dose_presc[]" id="aordose_presc' + billId + '" type="hidden" class="form-control" />')
+                    $(`#${billId}`).append('<input name="dose_presc[]" id="aordose_presc' + billId + '" type="hidden" class="form-control" />')
                 }
 
-                $("#eresepBody").append('<input name="theorder[]" id="aortheorder' + billId + '" type="hidden" class="form-control" />')
+                $(`#${billId}`).append('<input name="theorder[]" id="aortheorder' + billId + '" type="hidden" class="form-control" />')
                     .append('<input name="brand_id[]" id="aorbrand_id' + billId + '" type="hidden" class="form-control" />')
                     .append('<input name="racikan[]" id="aorracikan' + billId + '" type="hidden" class="form-control" />')
                     .append('<input name="doctor[]" id="aordoctor' + billId + '" type="hidden" class="form-control" />')
@@ -1296,8 +1398,10 @@
                     .append('<input name="sell_price[]" id="aorsell_price' + billId + '" type="hidden" class="form-control" />')
                     .append('<input name="module_id[]" id="aormodule_id' + billId + '" type="hidden" class="form-control" />')
                     .append('<input name="sold_status[]" id="aorsold_status' + billId + '" type="hidden" class="form-control" />')
+
+                $(`#${billId}`).append('<input name="description[]" id="aordescription' + billId + '" type="hidden" class="form-control" />')
                 if (racikan == 0) {
-                    $("#eresepBody").append('<input name="module_id[]" id="aormodule_id' + billId + '" type="hidden" class="form-control" />')
+                    $(`#${billId}`).append('<input name="module_id[]" id="aormodule_id' + billId + '" type="hidden" class="form-control" />')
                 }
 
                 $("#aordose1" + billId).val(dose1);
@@ -1364,12 +1468,11 @@
                 $("#aormodule_id" + billId).val(moduleId);
                 $("#aorsold_status" + billId).val(soldstatus);
 
-                if (racikan != 1) {
-                    initializeResepSelect2('aordescription1' + billId, resep.description);
-                    $("#aordescription" + billId).val(description);
-                } else {
-                    $("#aordescription" + billId).val(description);
-                }
+                initializeResepSelect2('aordescription1' + billId, resep.description);
+                $("#aordescription" + billId).val(resep.description);
+                // if (racikan != 1) {} else {
+                //     $("#aordescription" + billId).val(description);
+                // }
 
 
                 $("#eresepAdd").hide()
@@ -1380,6 +1483,8 @@
     }
 
     function removeRacik(brand) {
+
+        console.log(brand)
         if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
             $("#" + brand).remove()
         }

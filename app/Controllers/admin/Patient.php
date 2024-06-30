@@ -376,6 +376,7 @@ class Patient extends \App\Controllers\BaseController
         $clinicTypeModel = new ClinicTypeModel();
         $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
+        // dd($schedule);
 
         foreach ($clinic as $key => $value) {
             $selectDokter = array();
@@ -400,7 +401,7 @@ class Patient extends \App\Controllers\BaseController
 
         asort($clinicInap);
 
-        // dd($dpjp);
+        // dd($dokter);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,

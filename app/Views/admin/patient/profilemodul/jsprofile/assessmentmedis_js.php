@@ -43,6 +43,7 @@
         $("#formaddarmbtn").trigger("click")
         // appendRtlAccordion(accMedisName);
 
+
         $("#armdiag_cat").val(3)
     })
     $("#assessmentmedisTab").on("mouseup", function() {
@@ -50,6 +51,7 @@
     })
     $("#rekammedisTab").on("click", function() {
         var accMedisName = "accordionAssessmentMedis"
+        getAssessmentMedis(1)
 
         $("#armTitle").html("Resume Medis")
 
@@ -87,9 +89,6 @@
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
         $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
-    })
-    $("#rekammedisTab").on("click", function() {
-        getAssessmentMedis(1)
     })
 </script>
 
@@ -407,6 +406,13 @@
                 $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
             }
         })
+
+        if (pasienDiagnosa.diag_cat == 1) {
+            $("#armTitle").html("RESUME MEDIS")
+        }
+        if ('<?= $visit['clinic_id']; ?>' == 'P012') {
+            $("#armTitle").html("ASESMEN MEDIS INSTALASI GAWAT DARURAT")
+        }
         disableARM()
 
         $.each(pasienDiagnosa, function(key, value) {
@@ -670,9 +676,11 @@
 <script type="text/javascript">
     $("#formsavearmbtn").on('click', (function(e) {
         saveCanvasData()
-        // $("#armstanding_order").val(armstanding_ordereditor.activeEditor.getContent());
-        // $("#arminstruction").val(arminstructioneditor.activeEditor.getContent());
-        // arminstructioneditor
+        if ($("#armbody_id").val() == '') {
+            if ($("#armweight").val() != '') {
+                $("#armbody_id").val(get_bodyid())
+            }
+        }
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         $.ajax({

@@ -130,6 +130,7 @@
                 $("#chargesBody").html("")
                 $("#labChargesBody").html("")
                 $("#radChargesBody").html("")
+                $("#fisioChargesBody").html("")
                 $("#billPoliChargesBody").html("")
                 billJson.forEach((element, key) => {
 
@@ -290,6 +291,12 @@
                         var counter = 'rad' + i
                         $("#notaNoRad").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("radChargesBody", "arad", key, i, counter)
+                    }
+                    if (billJson[key].clinic_id == 'P015') {
+                        var i = $('#fisioChargesBody tr').length + 1;
+                        var counter = 'fisio' + i
+                        $("#notaNofisio").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
+                        addRowBill("fisioChargesBody", "afisio", key, i, counter)
                     }
                     if (billJson[key].clinic_id == 'P013') {
                         var i = $('#labChargesBody tr').length + 1;

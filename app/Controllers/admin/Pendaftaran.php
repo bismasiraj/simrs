@@ -16,7 +16,9 @@ use PhpParser\Node\Expr\Cast\Array_;
 
 class Pendaftaran extends \App\Controllers\BaseController
 {
-
+    private $baseurlvclaim = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev';
+    // private $baseurlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest';
+    //
     public function getSinglePV()
     {
         if (!$this->request->is('post')) {
@@ -293,12 +295,12 @@ class Pendaftaran extends \App\Controllers\BaseController
         $ws_data = [];
         if ($noskdp != '') {
             $method = 'PUT';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url = $this->baseurlvclaim . '/RencanaKontrol/';
             $url .= 'Update';
             $request['noSuratKontrol'] = $noskdp;
         } else {
             $method = 'POST';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url = $this->baseurlvclaim . '/RencanaKontrol/';
             $url .= 'insert';
         }
 
@@ -363,7 +365,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'DELETE';
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+        $url = $this->baseurlvclaim . '/RencanaKontrol/';
         $url .= 'Delete';
 
 
@@ -422,12 +424,12 @@ class Pendaftaran extends \App\Controllers\BaseController
         $ws_data = [];
         if ($nospri != '') {
             $method = 'PUT';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url = $this->baseurlvclaim . '/RencanaKontrol/';
             $url .= 'UpdateSPRI';
             $request['noSPRI'] = $nospri;
         } else {
             $method = 'POST';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+            $url = $this->baseurlvclaim . '/RencanaKontrol/';
             $url .= 'InsertSPRI';
         }
 
@@ -517,7 +519,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'DELETE';
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/RencanaKontrol/';
+        $url = $this->baseurlvclaim . '/RencanaKontrol/';
         $url .= 'Delete';
 
 
@@ -549,13 +551,13 @@ class Pendaftaran extends \App\Controllers\BaseController
         $ws_data = [];
         $method = 'GET';
         if ($norujukan != '' && $norujukan != null) {
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/';
+            $url = $this->baseurlvclaim . '/Rujukan/';
             if ($asalrujukan == '2') {
                 $url .= 'RS/';
             }
             $url .= $norujukan;
         } else {
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/';
+            $url = $this->baseurlvclaim . '/Rujukan/';
             if ($asalrujukan == '2') {
                 $url .= 'RS/';
             }
@@ -626,7 +628,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'POST';
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/insert';
+        $url = $this->baseurlvclaim . '/SEP/2.0/insert';
 
         // return json_encode($url);
 
@@ -661,7 +663,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'PUT';
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/update';
+        $url = $this->baseurlvclaim . '/SEP/2.0/update';
 
         // return json_encode($body);
 
@@ -729,7 +731,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'DELETE';
-        $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/SEP/2.0/delete';
+        $url = $this->baseurlvclaim . '/SEP/2.0/delete';
 
         // return json_encode($url);
 
@@ -870,7 +872,7 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data = [];
         $method = 'GET';
-        $url = "https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Peserta/$getPesertaType/$text/tglSEP/$tglSEP";
+        $url = $this->baseurlvclaim . "/Peserta/$getPesertaType/$text/tglSEP/$tglSEP";
 
         // return $url;
         $ws_data = [];

@@ -140,7 +140,7 @@ $permissions = user()->getPermissions();
                 </style>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div id="eresepBtnGroup" class="row">
+                        <div id="eresepBtnGroupss" class="row">
                             <div class="col-md-6">
                                 <div id="eresepAdd" class="box-tab-tools text-end">
                                     <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
@@ -173,18 +173,14 @@ $permissions = user()->getPermissions();
                                     <th class="text-center" style="width: 4%;">No.</th class="text-center">
                                     <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
                                     <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                                    <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
-                                    <th class="text-center" style="width: auto;"></th class="text-center">
-                                    <th class="text-center" style="width: auto;"></th class="text-center">
+                                    <th class="text-center" colspan="5" style="width: 30%;">Aturan Minum</th class="text-center">
+                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
+                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
                                 </tr>
                             </thead>
-                            <tbody id="eresepBody">
-                                <?php
-                                $total = 0;
-
-                                ?>
-                            </tbody>
                         </table>
+                        <div id="eresepBody">
+                        </div>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                             <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>

@@ -13,6 +13,7 @@
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -76,7 +77,7 @@
                 <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
             </div>
 
-            <input type="hidden" name="body_id" id="body_id">
+            <!-- <input type="hidden" name="body_id" id="body_id">
             <input type="hidden" name="org_unit_code" id="org_unit_code">
             <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
             <input type="hidden" name="diagnosa_id" id="diagnosa_id">
@@ -85,9 +86,9 @@
             <input type="hidden" name="class_room_id" id="class_room_id">
             <input type="hidden" name="in_date" id="in_date">
             <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
+            <input type="hidden" name="keluar_id" id="keluar_id"> -->
             <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
+            <!-- <input type="hidden" name="employee_id" id="employee_id">
             <input type="hidden" name="description" id="description">
             <input type="hidden" name="modified_date" id="modified_date">
             <input type="hidden" name="modified_by" id="modified_by">
@@ -102,7 +103,7 @@
             <input type="hidden" name="kal_id" id="kal_id">
             <input type="hidden" name="petugas_id" id="petugas_id">
             <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
+            <input type="hidden" name="account_id" id="account_id"> -->
             <?php csrf_field(); ?>
             <div class="row">
                 <div class="col-auto" align="center">
@@ -123,65 +124,68 @@
             <div class="row">
                 <h5 class="text-start">Informasi Pasien</h5>
             </div>
+            
             <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td>
-                            <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
-                        </td>
-                        <td>
-                            <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
-                        </td>
-                        <td>
-                            <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
-                        </td>
-                        <td colspan="2">
-                            <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
-                        </td>
-                        <td>
-                            <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
-                        </td>
-                        <td>
-                            <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                        <td>
-                            <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <tbody>
+                <tr>
+                    <td class="p-1">
+                        <b>Nomor RM</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['no_registration']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Nama Pasien</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_pasien']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Jenis Kelamin</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_gender']; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1">
+                        <b>Tanggal Lahir (Usia)</b>
+                        <?php if (!empty($visit['date_of_birth'])) : ?>
+                            <p class="m-0 mt-1 p-0"><?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['visit']['age'] . ')'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0">-</p>
+                        <?php endif; ?>
+                    </td>
+                    <td class="p-1" colspan="2">
+                        <b>Alamat Pasien</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['contact_address']; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1">
+                        <b>DPJP</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['sspractitioner_name']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Department</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_clinic']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Tanggal Masuk</b>
+                        <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime( @$visit['visit']['visit_datetime'])) ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1">
+                        <b>Kelas</b>
+                        <div><?= @$sub['kelas']; ?></div>
+                    </td>
+                    <td class="p-1">
+                        <b>Bangsal/ Kamar</b>
+                        <div><?= @$sub['bangsal']; ?></div>
+                    </td>
+                    <td class="p-1">
+                        <b>Bed</b>
+                        <div><?= @$sub['bed'] === 0 ? "":@$sub['bed']; ?></div>
+                    </td>
+                   
+                </tr>
+            </tbody>
+        </table>
             <div class="row">
                 <h4 class="text-start">Derajat Stabilitas</h4>
             </div>
@@ -202,7 +206,7 @@
                         </td>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="drajat-stabilitas-tabels">
                     <tr>
                         <td>0</td>
                         <td>
@@ -268,19 +272,21 @@
                     <tr>
                         <td>
                             <b>Derajat Stabilitas</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <div type="text" class="form-control" name="" id=""></div>
                         </td>
                         <td>
                             <b>Asal Pasien</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <div type="text" class="form-control" name="" id=""><?= @$val['clinic_id']?></div>
                             <b>Tujuan Pasien</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <div type="text" class="form-control" name="" id=""><?= @$val['clinc_id_to']?></div>
                         </td>
                         <td>
                             <b>Waktu Berangkat</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <div type="text" class="form-control" name="" id=""><?= date('d-m-Y H:i', strtotime($doc['examination_date'])) ?>
+                            </div>
                             <b>Waktu Tiba</b>
-                            <input type="text" class="form-control" name="" id="">
+                            <div type="text" class="form-control" name="" id=""><?= date('d-m-Y H:i', strtotime($doc2['examination_date'])) ?>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -293,51 +299,51 @@
                     <tr>
                         <td>
                             <b>Keluhan Utama (Autoanamnesis)</b>
-                            <input type="text" class="form-control" id="anamnesis" name="anamnesis" value="<?= $val['anamnesis']; ?>">
+                            <div type="text" class="form-control" id="anamnesis" name="anamnesis" value=""><?= @$sub['anamnesis']?></div>
                         </td>
                         <td>
                             <b>Riwayat Penyakit Sekarang</b>
-                            <input type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value="<?= $val['riwayat_penyakit_sekarang']; ?>">
+                            <div type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value=""><?= @$sub['riwayat_penyakit_sekarang']?></div>
                         </td>
                         <td>
                             <b>Riwayat Penyakit Dahulu</b>
-                            <input type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value="<?= $val['riwayat_penyakit_dahulu']; ?>">
+                            <div type="text" class="form-control" id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" value=""><?= @$sub['riwayat_penyakit_dahulu']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Riwayat Penyakit Keluarga</b>
-                            <input type="text" class="form-control" id="riwayat_penyakit_keluarga" name="riwayat_penyakit_keluarga" value="<?= $val['riwayat_penyakit_keluarga']; ?>">
+                            <div type="text" class="form-control" id="riwayat_penyakit_keluarga" name="riwayat_penyakit_keluarga" ><?= @$sub['riwayat_penyakit_keluarga']?></div>
                         </td>
                         <td>
                             <b>Riwayat Alergi (Non Obat)</b>
-                            <input type="text" class="form-control" id="riwayat_alergi_nonobat" name="riwayat_alergi_nonobat" value="<?= $val['riwayat_alergi_nonobat']; ?>">
+                            <div type="text" class="form-control" id="riwayat_alergi_nonobat" name="riwayat_alergi_nonobat"><?= @$sub['riwayat_alergi_obat']?></div>
                             <b>Riwayat Alergi (Obat)</b>
-                            <input type="text" class="form-control" id="riwayat_alergi_obat" name="riwayat_alergi_obat" value="<?= $val['riwayat_alergi_obat']; ?>">
+                            <div type="text" class="form-control" id="riwayat_alergi_obat" name="riwayat_alergi_obat" ><?= @$sub['riwayat_alergi_obat']?></div>
                         </td>
                         <td>
                             <b>Riwayat Obat Yang Dikonsumsi</b>
-                            <input type="text" class="form-control" id="riwayat_obat_dikonsumsi" name="riwayat_obat_dikonsumsi" value="<?= $val['riwayat_obat_dikonsumsi']; ?>">
+                            <div type="text" class="form-control" id="riwayat_obat_dikonsumsi" name="riwayat_obat_dikonsumsi" ><?= @$sub['riwayat_obat_dikonsumsi']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Riwayat Kehamilan dan Persalinan</b>
-                            <input type="text" class="form-control" id="riwayat_kehamilan" name="riwayat_kehamilan" value="<?= $val['riwayat_kehamilan']; ?>">
+                            <div type="text" class="form-control" id="riwayat_kehamilan" name="riwayat_kehamilan" ><?= @$sub['riwayat_kehamilan']?></div>
                         </td>
                         <td>
                             <b>Riwayat Diet</b>
-                            <input type="text" class="form-control" id="riwayat_diet" name="riwayat_diet" value="<?= $val['riwayat_diet']; ?>">
+                            <div type="text" class="form-control" id="riwayat_diet" name="riwayat_diet" ><?= @$sub['riwayat_diet']?></div>
                         </td>
                         <td>
                             <b>Riwayat Imunisasi</b>
-                            <input type="text" class="form-control" id="riwayat_imunisasi" name="riwayat_imunisasi" value="<?= $val['riwayat_imunisasi']; ?>">
+                            <div type="text" class="form-control" id="riwayat_imunisasi" name="riwayat_imunisasi" ><?= @$sub['riwayat_imunisasi']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="3">
                             <b>Riwayat Kebiasaan (Negatif)</b>
-                            <input type="text" class="form-control" id="riwayat_alkohol" name="riwayat_alkohol" value="<?= $val['riwayat_alkohol']; ?>, <?= $val['riwayat_merokok']; ?>">
+                            <div type="text" class="form-control" id="riwayat_alkohol" name="riwayat_alkohol" ><?= @$sub['riwayat_alkohol']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -354,28 +360,28 @@
                         <td>
                             <b>Tekanan Darah</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="tensi_atas" name="tensi_atas" value="<?= $val['tensi_atas']; ?> / <?= $val['tensi_bawah']; ?>">
+                                <div type="text" class="form-control" id="tensi_atas" name="tensi_atas" value=""><?= @$doc['tension_upper']?>/<?= @$doc['tension_below']?></div>
                                 <span class="input-group-text" id="basic-addon2">mmHg</span>
                             </div>
                         </td>
                         <td>
                             <b>Denyut Nadi</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="nadi" name="nadi" value="<?= $val['nadi']; ?>">
+                                <div type="text" class="form-control" id="nadi" name="nadi" value=""><?= @$doc['nadi']?></div>
                                 <span class="input-group-text" id="basic-addon2">x/m</span>
                             </div>
                         </td>
                         <td>
                             <b>Suhu Tubuh</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="suhu" name="suhu" value="<?= $val['suhu']; ?>">
+                                <div type="text" class="form-control" id="suhu" name="suhu" value=""><?= @$doc['temperature']?></div>
                                 <span class="input-group-text" id="basic-addon2">℃</span>
                             </div>
                         </td>
                         <td>
                             <b>Respiration Rate</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="respiration" name="respiration" value="<?= $val['respiration']; ?>">
+                                <div type="text" class="form-control" id="respiration" name="respiration" ></div>
                                 <span class="input-group-text" id="basic-addon2">x/m</span>
                             </div>
                         </td>
@@ -384,32 +390,33 @@
                         <td>
                             <b>Berat Badan</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="berat" name="berat" value="<?= $val['berat']; ?>">
+                                <div type="text" class="form-control" id="berat" name="berat" ><?= @$doc['weight']?></div>
                                 <span class="input-group-text" id="basic-addon2">kg</span>
                             </div>
                         </td>
                         <td>
                             <b>Tinggi Badan</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="tinggi" name="tinggi" value="<?= $val['tinggi']; ?>">
+                                <div type="text" class="form-control" id="tinggi" name="tinggi" value=""><?= @$doc['height']?></div>
                                 <span class="input-group-text" id="basic-addon2">cm</span>
                             </div>
                         </td>
                         <td>
                             <b>SpO2</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="spo2" name="spo2" value="<?= $val['spo2']; ?>">
+                                <div type="text" class="form-control" id="spo2" name="spo2" value=""><?= @$doc['saturasi']?></div>
                             </div>
                         </td>
                         <td>
                             <b>BMI</b>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="imt" name="imt" value="<?= $val['imt']; ?>">
+                                <div type="text" class="form-control" id="imt" name="imt" value=""><?= @$sub['imt'] === null ? "-" :@$sub['imt']?></div>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+
             <table class="table table-bordered">
                 <tbody>
                     <tr>
@@ -424,7 +431,7 @@
                                     <b>GCS E / Respon Membuka Mata :</b>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="gcs_e" name="gcs_e" value="<?= $val['gcs_e']; ?>">
+                                    <div type="text" class="form-control" id="gcs_e" name="gcs_e" value=""><?= @$sub['gcs_e'] === null?"":'['.@$sub['gcs_e'].']'. @$sub['gsc_e_desc']?></div>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -432,7 +439,7 @@
                                     <b>GCS V / Respon Verbal Terbaik :</b>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="gcs_v" name="gcs_v" value="<?= $val['gcs_v']; ?>">
+                                    <div type="text" class="form-control" id="gcs_v" name="gcs_v" value=""><?= @$sub['gcs_v'] === null ? "":'['.@$sub['gcs_v'].']'. @$sub['gsc_v_desc']?></div>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -440,7 +447,7 @@
                                     <b>GCS M / Respon Motorik Terbaik :</b>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="gcs_m" name="gcs_m" value="<?= $val['gcs_m']; ?>">
+                                    <div type="text" class="form-control" id="gcs_m" name="gcs_m" value=""><?= @$sub['gcs_m'] === null ?"":'['.@$sub['gcs_m'].']'. @$sub['gsc_m_desc']?></div>
                                 </div>
                             </div>
                             <div class="row mb-2">
@@ -448,7 +455,7 @@
                                     <b>Score GCS : </b>
                                 </div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="gcs" name="gcs" value="<?= $val['gcs']; ?>">
+                                    <div type="text" class="form-control" id="gcs" name="gcs" value=""><?=@$sub['gcs_desc']?></div>
                                 </div>
                             </div>
                         </td>
@@ -456,7 +463,7 @@
                     <tr>
                         <td>
                             <b>Keadaan Umum</b>
-                            <input type="text" class="form-control" id="" name="" value="">
+                            <div type="text" class="form-control" id="" name="" value=""><?=@$sub['namadiagnosa']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -466,11 +473,11 @@
                     <tr>
                         <td>
                             <b>Skala Nyeri</b>
-                            <input type="text" class="form-control" id="pain_score" name="pain_score" value="<?= $val['pain_score']; ?>">
+                            <div type="text" class="form-control" id="pain_score" name="pain_score" value=""><?=@$sub['pain_score'] === 0 ? "Tidak Ada nyeri" :@$sub['pain_score']?></div>
                         </td>
                         <td>
                             <b>Resiko Jatuh</b>
-                            <input type="text" class="form-control" id="fall_score" name="fall_score" value="<?= $val['fall_score']; ?>">
+                            <div type="text" class="form-control" id="fall_score" name="fall_score" value=""><?=@$sub['fall_score']=== 0 ? "Tidak Ada resiko Jatuh" :@$sub['fall_score']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -481,7 +488,7 @@
                         <div class="row mb-1">
                             <label for="sa" class="col-sm-auto col-form-label"><b>Temuan Klinis</b></label>
                             <div class="col">
-                                <input type="text" class="form-control" id="sa" name="sa" value="">
+                                <div type="text" class="form-control" id="sa" name="sa" value=""></div>
                             </div>
                         </div>
                     </td>
@@ -495,23 +502,23 @@
                     <tr>
                         <td colspan="2">
                             <b>Diagnosis (ICD-10)</b>
-                            <input type="text" class="form-control" id="icd10" name="icd10" value="<?= $val['icd10']; ?>">
+                            <div type="text" class="form-control" id="icd10" name="icd10" value=""><?=@$sub['icd10']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Permasalahan Medis</b>
-                            <input type="text" class="form-control" id="masalah_medis" name="masalah_medis" value="<?= $val['masalah_medis']; ?>">
+                            <div type="text" class="form-control" id="masalah_medis" name="masalah_medis" value=""><?=@$sub['masalah_medis']?></div>
                         </td>
                         <td>
                             <b>Permasalahan Keperawatan</b>
-                            <input type="text" class="form-control" id="masalah_perawat" name="masalah_perawat" value="<?= $val['masalah_perawat']; ?>">
+                            <div type="text" class="form-control" id="masalah_perawat" name="masalah_perawat" value=""><?=@$sub['masalah_perawat']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
                             <b>Penyebab Cidera / Keracunan</b>
-                            <input type="text" class="form-control" id="penyebab_cidera" name="penyebab_cidera" value="<?= $val['penyebab_cidera']; ?>">
+                            <div type="text" class="form-control" id="penyebab_cidera" name="penyebab_cidera" value=""><?=@$sub['penyebab_cidera']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -524,7 +531,7 @@
                     <tr>
                         <td>
                             <b>Target / Sasaran Terapi</b>
-                            <input type="text" class="form-control" id="sasaran" name="sasaran" value="<?= $val['sasaran']; ?>">
+                            <div type="text" class="form-control" id="sasaran" name="sasaran" value=""><?=@$sub['sasaran']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -537,13 +544,13 @@
                     <tr>
                         <td>
                             <b>Laboratorium</b>
-                            <div type="text" class="form-control" id="laboratorium" name="laboratorium"><?= $val['laboratorium']; ?></div>
+                            <div type="text" class="form-control" id="laboratorium" name="laboratorium"><?=@$sub['laboratorium']?></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Radiologi</b>
-                            <div type="text" class="form-control" id="radiologi" name="radiologi"><?= $val['radiologi']; ?></div>
+                            <div type="text" class="form-control" id="radiologi" name="radiologi"><?=@$sub['radiologi']?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -556,14 +563,14 @@
                     <tr>
                         <td>
                             <b>Farmakoterapi</b>
-                            <div type="text" class="form-control" id="farmakologia" name="farmakologia"><?= $val['farmakologia']; ?>
+                            <div type="text" class="form-control" id="farmakologia" name="farmakologia"><?=@$sub['farmakologia']?>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Procedure</b>
-                            <div type="text" class="form-control" id="prosedur" name="prosedur"><?= $val['prosedur']; ?>
+                            <div type="text" class="form-control" id="prosedur" name="prosedur"><?=@$sub['prosedur']?>
                             </div>
                         </td>
                     </tr>
@@ -577,7 +584,7 @@
                     <tr>
                         <td>
                             <b>Standing Order</b>
-                            <div type="text" class="form-control" id="standing_order" name="standing_order"><?= $val['standing_order']; ?>
+                            <div type="text" class="form-control" id="standing_order" name="standing_order"><?=@$sub['standing_order']?>
                             </div>
                         </td>
                     </tr>
@@ -611,105 +618,107 @@
                         <td>
                             <b>Kondisi Umum</b>
                         </td>
+                        <td><?=@$doc['anamnase']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['anamnase']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>T (Tensi)</b>
                         </td>
+                        <td><?=@$doc['tension_upper']?>/<?=@$doc['tension_below']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['tension_upper']?>/<?=@$doc2['tension_below']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>N (Detak Jantung)</b>
                         </td>
+                        <td><?=@$doc['nadi']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['nadi']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>RR (Frekuensi Pernapasan)</b>
                         </td>
+                        <td><?=@$doc['nafas']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['nafas']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>S (Suhu Badan)</b>
                         </td>
+                        <td><?=@$doc['temperature']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['temperature']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>BB (Berat Badan)</b>
                         </td>
+                        <td><?=@$doc['weight']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['weight']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>TB (Tinggi Badan)</b>
                         </td>
+                        <td><?=@$doc['height']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['height']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>SpO2</b>
                         </td>
+                        <td><?=@$doc['saturasi']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['saturasi']?></td>
                     </tr>
                     <tr>
                         <td>
                             <b>Catatan Penting</b>
                         </td>
+                        <td><?=@$doc['alo_anamnase']?></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?=@$doc2['alo_anamnase']?></td>
                     </tr>
                 </tbody>
             </table>
+
+           
             <div class="row mb-2">
                 <b>Serah Terima Saat Mengantar Pasien</b>
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menyerahkan</div>
                     <div class="mb-4">
-                        <div id="qrcode"></div>
+                        <div class="pt-2" id="qrcode"></div>
                     </div>
                 </div>
                 <div class="col"></div>
                 <div class="col-3" align="center">
                     <div>Petugas Yang Menerima</div>
                     <div class="mb-4">
-                        <div id="qrcode1"></div>
+                        <div class="pt-2" id="qrcode1"></div>
                     </div>
                 </div>
             </div>
             <div class="row mb-2">
                 <b>Serah Terima Saat Menjemput Pasien</b>
-                <div class="col-auto" align="center">
+                <div class="col-3" align="center">
                     <div>Petugas Yang Menyerahkan</div>
                     <div class="mb-1">
-                        <div id="qrcode2"></div>
+                        <div class="pt-2"id="qrcode2"></div>
                     </div>
                 </div>
                 <div class="col"></div>
-                <div class="col-auto" align="center">
+                <div class="col-3" align="center">
                     <div>Petugas Yang Menerima</div>
                     <div class="mb-1">
-                        <div id="qrcode3"></div>
+                        <div class="pt-2" id="qrcode3"></div>
                     </div>
                 </div>
             </div>
@@ -725,8 +734,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         text: 'a',
-        width: 150,
-        height: 150,
+        width: 85,
+        height: 85,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
@@ -735,8 +744,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode1"), {
         text: 'a',
-        width: 150,
-        height: 150,
+        width: 85,
+        height: 85,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
@@ -745,8 +754,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode2"), {
         text: 'a',
-        width: 150,
-        height: 150,
+        width: 85,
+        height: 85,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
@@ -755,45 +764,71 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode3"), {
         text: 'a',
-        width: 150,
-        height: 150,
+        width: 85,
+        height: 85,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
     });
 </script>
+
+<?php 
+          
+            ?>
+
+
 <script>
+
     $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $visitJson = json_encode($visit); ?>
+        let dataResult=[]
+        let visitData = <?php echo $visitJson; ?>;
+        visitData.aValue.map((e) => {
+            let stabilitasArray = e.value_info.split(';');
+            dataResult += `<tr><td>${e.value_score}</td>
+                                <td>${e.value_desc}</td>
+                                <td>${stabilitasArray[0]}</td>
+                                <td>${stabilitasArray[1]}</td>
+                            </tr>`;
+            });
+
+        $("#drajat-stabilitas-tabels").html(dataResult)
+
+        $("#org_unit_code").val("<?= @$visit['visit']['org_unit_code']; ?>")
+        $("#no_registration").html("<?=@$visit['visit']['no_registration']; ?>")
+        $("#visit_id").val("<?=@$visit['visit']['visit_id']; ?>")
+        $("#clinic_id").html("<?= @$visit['visit']['clinic_id']; ?>")
+        $("#class_").val("")
+        $("#class-bangsal").val("")
+        $("#class-bed").val("")
+        $("#in_date").val("<?= @$visit['visit']['in_date']; ?>")
+        $("#exit_date").val("<?= @$visit['visit']['exit_date']; ?>")
+        $("#keluar_id").val("<?= @$visit['visit']['keluar_id']; ?>")
+        $("#name_of_class").html("<?= @$visit['visit']['name_of_class'];?>")
         <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
+        $("#examination_date").html("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= @$visit['visit']['employee_id']; ?>")
+        $("#description").val("<?= @$visit['visit']['description']; ?>")
         $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
         $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#modified_from").val("<?= @$visit['visit']['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?=@$visit['visit']['status_pasien_id']; ?>")
+        $("#ageyear").val("<?=@$visit['visit']['ageyear']; ?>")
+        $("#agemonth").val("<?= @$visit['visit']['agemonth']; ?>")
+        $("#ageday").val("<?=@$visit['visit']['ageday']; ?>")
+        $("#thename").html("<?= @$visit['visit']['diantar_oleh']; ?>")
+        $("#theaddress").html("<?= @$visit['visit']['visitor_address']; ?>")
+        $("#theid").val("<?= @$visit['visit']['pasien_id']; ?>")
+        $("#isrj").val("<?= @$visit['visit']['isrj']; ?>")
+        $("#gender").html("<?= @$visit['visit']['name_of_gender']; ?>")
+        $("#patient_age").html("<?= @$visit['visit']['age']; ?>")
+
+        $("#doctor").html("<?= @$visit['visit']['sspractitioner_name']; ?>")
+        $("#kal_id").val("<?= @$visit['visit']['kal_id']; ?>")
         $("#petugas_id").val("<?= user()->username; ?>")
         $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
+        $("#account_id").val("<?= @$visit['visit']['account_id']; ?>")
     })
     $("#btnSimpan").on("click", function() {
         saveSignatureData()
@@ -821,7 +856,7 @@
     }
 </style>
 <script type="text/javascript">
-    window.print();
+    // window.print();
 </script>
 
 </html>

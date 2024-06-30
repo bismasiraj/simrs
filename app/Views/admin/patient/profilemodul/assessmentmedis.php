@@ -62,7 +62,7 @@ $group = user()->getRoles();
                                         <div class="col-lg-12 col-md-12 col-sm-12">
                                             <div id="ajax_load"></div>
                                             <div class="row">
-                                                <h3 id="armTitle">Assessment Medis</h3>
+                                                <h3 id="armTitle">ASESMEN MEDIS INSTALASI GAWAT DARURAT</h3>
                                                 <hr>
                                                 <div class="col-md-12">
                                                     <div class="dividerhr"></div>
@@ -87,7 +87,7 @@ $group = user()->getRoles();
                                                                 <?php if (!is_null($visit['class_room_id'])) { ?>
                                                                     <label for="armclinic_id">Bangsal</label>
                                                                 <?php } else { ?>
-                                                                    <label for="armclinic_id">Poli</label>
+                                                                    <label for="armclinic_id">Pelayanan</label>
                                                                 <?php } ?>
                                                                 <select name="clinic_id" id="armclinic_id" type="hidden" class="form-control ">
                                                                     <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>

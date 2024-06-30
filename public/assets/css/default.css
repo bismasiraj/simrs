@@ -5,9 +5,11 @@
 .table-biodata>tbody>tr>td:nth-of-type(odd)>* {
     text-align: right;
 }
+
 body {
     font-size: 13px;
 }
+
 .table thead th {
     border-top: 0;
     border-bottom-width: 1px;
@@ -15,12 +17,14 @@ body {
     font-size: 12px;
     padding: 7px 5px;
 }
+
 .table td {
     font-size: 12px;
     line-height: 1.2rem;
     padding: 2px 4px;
     font-weight: 500 !important;
 }
+
 .left-col-datatable {
     float: left;
     width: 25%;
@@ -37,6 +41,7 @@ body {
     width: 25%;
     text-align: right;
 }
+
 page {
     background: white;
     display: block;
@@ -88,10 +93,58 @@ page[size="A5"][layout="landscape"] {
 
 
 
+.spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+}
 
+.preload {
+    height: 200px;
+    /* Atur tinggi sesuai kebutuhan */
+}
 
+.preload .spinner-border {
+    width: 3rem;
+    /* Atur lebar spinner */
+    height: 3rem;
+    /* Atur tinggi spinner */
+}
 
+.dot {
+    width: 20px;
+    height: 20px;
+    margin: 10px;
+    background-color: #999999;
+    border-radius: 50%;
+    animation: blink 1s ease-in-out infinite;
+}
 
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.dot:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+@keyframes blink {
+
+    0%,
+    80%,
+    100% {
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
 
 
 
@@ -1754,20 +1807,25 @@ body.swal2-no-backdrop .swal2-shown.swal2-bottom-right {
         transform: rotate(360deg)
     }
 }
+
 .form-control:disabled {
-    background-color:#e9ecef;
+    background-color: #e9ecef;
     opacity: 1;
 }
+
 .form-control[readonly] {
     background-color: #e9ecef;
     opacity: 1;
 }
+
 .page-content {
     min-height: 1100px;
 }
-.req{
+
+.req {
     color: red;
 }
+
 .toast-container {
     z-index: 7000;
 }

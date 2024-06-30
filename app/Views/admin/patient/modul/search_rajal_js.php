@@ -1869,6 +1869,7 @@ $permissions = user()->getPermissions();
                 success: function(data) {
                     console.log("Tambah Antrean " + data.metadata.message)
                     if (data.metadata.code == 200) {
+                        alert("Update task-id 1 berhasil")
                         $("#pvstatusantrean").val('11')
                         executeWaktuUpdate()
                     } else {
@@ -1979,7 +1980,12 @@ $permissions = user()->getPermissions();
                 $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
             },
             success: function(data) {
-                console.log("Update Waktu Selesai")
+                alert("Update Waktu Task-ID " + statusantrean + " Selesai dengan data: " + JSON.stringify({
+                    "norm": $("#pvno_registration").val(),
+                    "kodebooking": $("#pvtrans_id").val(),
+                    "taskid": $("#pvstatusantrean").val(),
+                    "waktu": Date.now()
+                }))
 
                 // if (data.metadata.code == 200) {
                 //     $("#pvstatusantrean").val('2' + (String)(task))
