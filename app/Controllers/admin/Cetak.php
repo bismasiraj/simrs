@@ -237,4 +237,77 @@ class Cetak extends \App\Controllers\BaseController
         // dd($data);
         return view('admin\patient\cetak\pendaftaran\cetaksep', $data);
     }
+
+    //==new
+    public function cetakVitalSign($visit, $vactination_id = null)
+    {
+        $title = "Early Warning Score";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("
+            select 
+                ex.*, 
+                c.name_of_clinic, 
+                ea.fullname, gcs.GCS_DESC
+            from examination_info ex 
+            left join employee_all ea on ex.employee_id = ea.employee_id 
+            left join clinic c on ex.clinic_id = c.clinic_id 
+            left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
+            where ex.no_registration = '060133' 
+            and ex.visit_id = '202406140643270000A44'
+            and ex.vs_status_id IN(1,4,5)
+            order by examination_date desc
+            ")->getResultArray());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
+            if (isset($select[0])) {
+                return view("admin/patient/cetak/cetakvitalsign.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/cetakvitalsign.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    //==endofnew
+    public function cetakVitalSignNeonatal($visit, $vactination_id = null)
+    {
+        $title = "Adult Early Warning Score";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("
+            select an.*
+            from ASSESSMENT_NEONATUS_PHYSIC an 
+            where an.no_registration = '060133' and an.visit_id = '202406140643270000A44' 
+            order by examination_date desc
+            ")->getResultArray());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
+            if (isset($select[0])) {
+                return view("admin/patient/cetak/cetakvitalsign-neonatal.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/cetakvitalsign-neonatal.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
 }

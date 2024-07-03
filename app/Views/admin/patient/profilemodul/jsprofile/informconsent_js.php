@@ -15,6 +15,8 @@
             $('#btn-save-inf-modal').removeAttr('hidden');
             $('#btn-edit-inf-modal').attr('hidden', true);
             $("#create-modal").modal("show");
+            $('#parameter_id').prop('disabled', false);
+            $('#parameter_id').select2();
         });
         $("#close-create-modal").off().on("click", (e) => {
             tinymce.remove();
@@ -22,18 +24,17 @@
             $("#create-modal").modal("hide");
         });
         $('#create-modal').on('shown.bs.modal', function() {
+            $('#parameter_id').select2({
+                dropdownParent: $('#create-modal')
+            });
             btnUpdateData();
         });
-    });
 
-    $("#informconcentTab").on("click", function() {
-        getDataTables({
-            visit_id: visit
-        });
-    })
+    });
 
     // select doc
     const selectParam = (props) => {
+
         let res = <?= json_encode($aParameter); ?>;
         let fill = res?.filter(item => item?.p_type === "GEN0017");
         let data = [];
@@ -190,13 +191,14 @@
     };
 
     const modalViewEdit = (data) => {
+        $('#parameter_id').prop('disabled', true);
+        $('#parameter_id').select2();
         let resultData = data;
         selectParam();
         let result = resultData.data[0];
         actionViewParam({
             id_param: result.parameter_id
         });
-
         $("#body_id").val(result?.body_id);
         $("#org_unit_code").val(result.org_unit_code);
         $("#visit_id").val(result.visit_id);
@@ -255,6 +257,8 @@
     };
 
     const modalViewDetail = (data) => {
+        $('#parameter_id').prop('disabled', true);
+        $('#parameter_id').select2();
         let resultData = data;
         selectParam();
         let result = resultData.data[0];
@@ -373,10 +377,6 @@
         }, 'admin/InformendConsent/deleteData', (res) => {
             if (res.respon === true) {
                 successSwal('Data berhasil Dihapus.');
-
-                // $("#notif-modal").modal("hide");
-                // $("#btn-notif").removeAttr("data-id");
-                // $("#btn-notif").removeAttr("data-visit_id");
                 let visit_id = '<?php echo $visit['visit_id']; ?>';
                 getDataTables({
                     visit_id: visit_id

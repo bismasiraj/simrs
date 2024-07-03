@@ -54,12 +54,6 @@ $permissions = user()->getPermissions();
                         </tr>
                     </thead>
                     <tbody id="radBody">
-                        <?php
-                        $total = 0;
-
-                        ?>
-
-
                     </tbody>
 
                 </table>
@@ -110,6 +104,7 @@ $permissions = user()->getPermissions();
                                 <th class="text-center" style="width: auto;">Diskon</th class="text-center">
                                 <th class="text-center" style="width: 10%;">Subsidi Satuan</th class="text-center">
                                 <th class="text-center" style="width: 10%;">Subsidi Total</th class="text-center">
+                                <th class="text-center"></th class="text-center">
                                 <th class="text-center"></th class="text-center">
                             </tr>
                         </thead>

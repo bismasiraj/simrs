@@ -369,7 +369,7 @@ class TreatmentObatModel extends Model
           isnull(treatment_obat.dose1,0) as dose1,
           isnull(treatment_obat.dose2,0) as dose2")
             ->where('no_registration', $nomor)
-            ->where("treat_date > dateadd(year,-1,getdate())")
+            ->where("treat_date > dateadd(month,-3,getdate())")
             ->orderBy('resep_no,resep_ke, theorder, treat_date')
             ->findAll();
         return $select;

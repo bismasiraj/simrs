@@ -20,14 +20,16 @@
         var trans = '<?= $visit['trans_id']; ?>'
         var visit = '<?= $visit['visit_id']; ?>'
         $("#avtexamination_date").val(get_date())
-        setDataVitalSign()
+        // setDataVitalSign()
     })
 
 
 
     function setDataVitalSign() {
         $("#formvitalsign").find("input, textarea").val(null)
-
+        $("#formvitalsign").find("input, textarea").prop("disabled", false)
+        $("#formvitalsign").find("#total_score").html("")
+        $("#formvitalsign").find("span.h6").html("")
         var bodyId = ''
 
         const date = new Date();
@@ -35,6 +37,7 @@
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         $("#avtbody_id").val(bodyId)
         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
+        $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#avtbed_id").val()
         $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
@@ -102,60 +105,106 @@
     }
 
     function vitalsignInput(prop) {
-        var value = $(prop).val()
-        value = (Number(value.replace(/[^\d+(\.\d{1,2})$]/g, '')).toFixed(2))
+        var value = prop.value.trim();
+        var id = prop.id;
+        var name = prop.name;
+        var data;
+        var totalScore = [];
 
-        console.log(prop.id)
-
-        if (prop.id == "avtweight") {
-            // Number(GetText( )) < 50 and Number(GetText( )) > 10
-            if (value < 10)
-                value = 10.00
-
-            if (value > 50)
-                value = 50.00
-        }
-        if (prop.id == "avttension_upper") {
-            // Number(GetText()) < 250 and Number(GetText()) > 50
-            if (value < 50)
-                value = 50.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "avttnadi") {
-            //Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "avtweight") {
-            // Number(GetText( )) < 500
-            if (value > 500)
-                value = 500.00
-        }
-        if (prop.id == "avtheight") {
-            // Number(GetText( )) between 30 and 250
-            if (value < 30)
-                value = 30.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "avttension_below") {
-            // Number(GetText( )) between 0 and 300
-            if (value < 0)
-                value = 0.00
-
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "avttension_below") {
-            // Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
+        if (isNaN(value) || value === "") {
+            value = 0;
+        } else {
+            value = parseFloat(value);
         }
 
-        $(prop).val(value)
+
+        switch (name) {
+            case "nadi":
+                data = getAdultScore('nadi', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "temperature":
+                data = getAdultScore('suhu', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "saturasi":
+                data = getAdultScore('saturasi', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "nafas":
+                data = getAdultScore('pernapasan', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "oxygen_usage":
+                data = getAdultScore('oksigen', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "weight":
+                if (value < 10) {
+                    value = 10.00;
+                } else if (value > 250) {
+                    value = 250.00;
+                } else {
+                    value = value.toFixed(2);
+                }
+                break;
+            case "tension_upper":
+                if (value < 50) {
+                    value = 50.00;
+                } else if (value > 250) {
+                    value = 250.00;
+                }
+                data = getAdultScore('darah', value);
+                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+                break;
+            case "height":
+                if (value > 250) {
+                    value = 250;
+                }
+                break;
+            case "tension_below":
+                if (value < 0) {
+                    value = 0.00;
+                } else if (value > 300) {
+                    value = 300.00;
+                }
+                break;
+            default:
+                break;
+        }
+
+        prop.value = value;
+
+        document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
+    }
+
+    function setBadge(propId, badgeId, className, textContent) {
+        var badge = document.getElementById(badgeId);
+        if (badge) {
+            if (className == 'bg-light') {
+                badge.className = 'badge-score h6 badge position-absolute top-50 start-100 translate-middle text-dark border border-1 border-dark ' + className;
+                badge.textContent = textContent;
+            } else {
+                badge.className = 'badge-score h6 badge position-absolute top-50 start-100 translate-middle ' + className;
+                badge.textContent = textContent;
+            }
+        }
+    }
+
+    function sumTextContentFromClass(className) {
+        var elements = document.getElementsByClassName(className);
+        var totalSum = 0;
+
+        for (var i = 0; i < elements.length; i++) {
+            var text = elements[i].textContent.trim();
+            var value = parseFloat(text);
+
+            if (!isNaN(value)) {
+                totalSum += value;
+            }
+        }
+
+        return totalSum;
     }
 
     function disableVitalSign() {
@@ -171,10 +220,13 @@
         $("#avtnafas").prop("disabled", true)
         $("#avtarm_diameter").prop("disabled", true)
         $("#avtanamnase").prop("disabled", true)
+        $("#avtoxygen_usage").prop("disabled", true)
+        $("#avtvs_status_id").prop("disabled", true)
         $("#avtpemeriksaan").prop("disabled", true)
         $("#avtteraphy_desc").prop("disabled", true)
         $("#avtdescription").prop("disabled", true)
         $("#avtclinic_id").prop("disabled", true)
+        $("#avttrans_id").prop("disabled", true) //==new
         $("#avtclass_room_id").prop("disabled", true)
         $("#avtbed_id").prop("disabled", true)
         $("#avtkeluar_id").prop("disabled", true)
@@ -208,11 +260,14 @@
         $("#avtsaturasi").prop("disabled", false)
         $("#avtnafas").prop("disabled", false)
         $("#avtarm_diameter").prop("disabled", false)
+        $("#avtoxygen_usage").prop("disabled", false)
+        $("#avtvs_status_id").prop("disabled", false)
         $("#avtanamnase").prop("disabled", false)
         $("#avtpemeriksaan").prop("disabled", false)
         $("#avtteraphy_desc").prop("disabled", false)
         $("#avtdescription").prop("disabled", false)
         $("#avtclinic_id").prop("disabled", false)
+        $("#avttrans_id").prop("disabled", false) //==new
         $("#avtclass_room_id").prop("disabled", false)
         $("#avtbed_id").prop("disabled", false)
         $("#avtkeluar_id").prop("disabled", false)
@@ -294,10 +349,13 @@
             $("#avtnafas").val(examselect.nafas)
             $("#avtarm_diameter").val(examselect.arm_diameter)
             $("#avtanamnase").val(examselect.anamnase)
+            $("#avtoxygen_usage").val(examselect.oxygen_usage)
+            $("#avtvs_status_id").val(examselect.vs_status_id)
             $("#avtpemeriksaan").val(examselect.pemeriksaan)
             $("#avtteraphy_desc").val(examselect.teraphy_desc)
             $("#avtdescription").val(examselect.description)
             $("#avtclinic_id").val(examselect.clinic_id)
+            $("#avttrans_id").val(examselect.trans_id) //==new
             $("#avtclass_room_id").val(examselect.class_room_id)
             $("#avtbed_id").val(examselect.bed_id)
             $("#avtkeluar_id").val(examselect.keluar_id)
@@ -321,6 +379,7 @@
 
         if (typeof $("#avtbody_id").val() !== 'undefined' || $("#avtbody_id").val() == "") {
             $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
+            $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
             $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
             $("#avtbed_id").val()
             $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
@@ -348,7 +407,7 @@
         e.preventDefault();
         clicked_submit_btn.html('<i class="spinner-border spinner-border-sm"></i>')
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/editExam',
+            url: '<?php echo base_url(); ?>admin/rm/Assessment/saveExaminationInfo', //==new
             type: "POST",
             data: new FormData(this),
             dataType: 'json',
@@ -359,14 +418,18 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
+                console.log(data.status);
                 if (data.status == "fail") {
                     var message = "";
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    // errorMsg(message);
+                    errorSwal(message)
+
                 } else {
-                    successMsg(data.message);
+                    // successMsg(data.message);
+                    successSwal(data.message)
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
                     $("#formvitalsignedit").toggle()
@@ -397,7 +460,6 @@
             processData: false,
             success: function(data) {
                 vitalsign = data.examInfo
-
                 $("#vitalSignBody").html("")
                 vitalsign.forEach((element, key) => {
                     examselect = vitalsign[key];
@@ -444,6 +506,8 @@
         $("#avtnafas").val(examselect.nafas)
         $("#avtno_registraiton").val(examselect.no_registraiton)
         $("#avtorg_unit_code").val(examselect.org_unit_code)
+        $("#avtoxygen_usage").val(examselect.oxygen_usage)
+        $("#avtvs_status_id").val(examselect.vs_status_id)
         $("#avtpemeriksaan").val(examselect.pemeriksaan)
         $("#avtpetugas").val(examselect.petugas)
         $("#avtsaturasi").val(examselect.saturasi)
@@ -462,7 +526,7 @@
         $("#avtpasien_diagnosa_id").val(examselect.pasien_diagnosa_id)
         $("#avtno_registration").val(examselect.no_registration)
         $("#avtvisit_id").val(examselect.visit_id)
-        $("#avttrans_id").val(examselect.trans_id)
+        $("#avttrans_id").val(examselect.trans_id) //==new
         $("#avtbill_id").val(examselect.bill_id)
         $("#avtclass_room_id").val(examselect.class_room_id)
         $("#avtbed_id").val(examselect.bed_id)
@@ -471,6 +535,7 @@
         $("#avtkeluar_id").val(examselect.keluar_id)
         $("#avtimt_score").val(examselect.imt_score)
         $("#avtimt_desc").val(examselect.imt_desc)
+        $("#avtoxygen_usage").val(examselect.oxygen_usage)
         $("#avtpemeriksaan").val(examselect.pemeriksaan)
         $("#avtmedical_treatment").val(examselect.medical_treatment)
         $("#avtmodified_date").val(examselect.modified_date)
@@ -504,9 +569,27 @@
         $("#avtsaturasi").val(examselect.saturasi)
         $("#avtnafas").val(examselect.nafas)
         $("#avtarm_diameter").val(examselect.arm_diameter)
+        $("#avtoxygen_usage").val(examselect.oxygen_usage)
+        $("#avtvs_status_id").val(examselect.vs_status_id)
         $("#avtpemeriksaan").val(examselect.pemeriksaan)
 
-        $("#avtvs_status_id").val(examselect.vs_status_id)
+        //=new
+        data1 = getAdultScore('nadi', examselect.nadi);
+        data2 = getAdultScore('suhu', examselect.temperature);
+        data3 = getAdultScore('saturasi', examselect.saturasi);
+        data4 = getAdultScore('pernapasan', examselect.nafas);
+        data5 = getAdultScore('oksigen', examselect.oxygen_usage);
+        data6 = getAdultScore('darah', examselect.tension_upper);
+        setBadge('avtnadi', 'badge-avtnadi', 'bg-' + data1.color, data1.score);
+        setBadge('avttemperature', 'badge-avttemperature', 'bg-' + data2.color, data2.score);
+        setBadge('avtsaturasi', 'badge-avtsaturasi', 'bg-' + data3.color, data3.score);
+        setBadge('avtnafas', 'badge-avtnafas', 'bg-' + data4.color, data4.score);
+        setBadge('avtoxygen_usage', 'badge-avtoxygen_usage', 'bg-' + data5.color, data5.score);
+        setBadge('avttension_upper', 'badge-avttension_upper', 'bg-' + data6.color, data6.score);
+
+        let totalSkor = data1.score + data2.score + data3.score + data4.score + data5.score + data6.score;
+        document.getElementById('total_score').textContent = 'Total Skor: ' + totalSkor;
+        //endofnew
 
         // $("#cpptModal").modal("show")
         // $("#formsaveavtbtnid").show()

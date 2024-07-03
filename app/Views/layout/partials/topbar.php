@@ -32,7 +32,8 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </div> -->
 
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn">
-                <i class="mdi mdi-menu color-white"></i>
+                <i class="fa fa-heartbeat color-white"></i>
+                <!-- <i class="mdi mdi-menu color-white"></i> -->
             </button>
 
             <div class="d-flex justify-content-center align-items-center text-white">

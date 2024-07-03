@@ -199,15 +199,21 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                $("#gcsBody").html(loadingScreen())
+            },
             success: function(data) {
                 gcsAll = data.gcs
-
-                $.each(gcsAll, function(key, value) {
-                    addRowgcs(value, key)
-                })
+                $("#gcsBody").html("")
+                if (gcsAll.length > 0)
+                    $.each(gcsAll, function(key, value) {
+                        addRowgcs(value, key)
+                    })
+                else
+                    $("#gcsBody").html(tempTablesNull())
             },
             error: function() {
-
+                $("#gcsBody").html(tempTablesNull())
             }
         });
     }

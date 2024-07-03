@@ -704,7 +704,7 @@
                 } else {
                     successMsg(data.message);
 
-                    $("#formaddarm").find(".btn-save").each(function() {
+                    $("#formaddarm").find(".btn-save:visible").each(function() {
                         $(this).trigger("click")
                     })
                     disableARM()
@@ -981,39 +981,114 @@
             '<div class="accordion-body text-muted">' +
             '<h5>Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></h5>' +
             `<div class="row mb-4">
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="armweight" placeholder="" value="" class="form-control"></div>
-                </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="armheight" placeholder="" value="" class="form-control"></div>
-                </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="armtemperature" placeholder="" value="" class="form-control"></div>
-                </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="armnadi" placeholder="" value="" class="form-control"></div>
-                </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>T.Darah(mmHg)</label>
-                        <div class="col-sm-12" style="display: flex;  align-items: center;">
-                            <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="armtension_upper" placeholder="" value="" class="form-control">
-                            <h4>/</h4>
-                            <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="armtension_below" placeholder="" value="" class="form-control">
+                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>BB(Kg)</label>
+                        <div class=" position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="armweight" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-bb"></span>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="armsaturasi" placeholder="" value="" class="form-control"></div>
+                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Tinggi(cm)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="height" id="armheight" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armheight"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="armnafas" placeholder="" value="" class="form-control"></div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Suhu(°C)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="armtemperature" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armtemperature"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-xs-6 col-sm-4 col-md-2 mt-2">
-                    <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="armarm_diameter" placeholder="" value="" class="form-control"></div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                    <div class="form-group">
+                        <label>Nadi(/menit)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="armnadi" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armnadi"></span>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group"><label>T.Darah(mmHg)</label>
+                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                            <div class="position-relative">
+                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="armtension_upper" placeholder="" value="" class="form-control">
+                                <span class="h6" id="badge-armtension_upper"></span>
+                            </div>
+                            <h4 class="mx-2">/</h4>
+                            <div class="position-relative">
+                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="armtension_below" placeholder="" value="" class="form-control">
+                                <span class="h6" id="badge-armtension_below"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Saturasi(SpO2%)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="armsaturasi" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armsaturasi"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Nafas/RR(/menit)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="armnafas" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armnafas"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Diameter Lengan(cm)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="armarm_diameter" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armarm_diameter"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Penggunaan Oksigen (L/mnt)</label>
+                        <div class="position-relative">
+                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="armoxygen_usage" placeholder="" value="" class="form-control">
+                            <span class="h6" id="badge-armoxygen_usage"></span>
+                        </div>
+                    </div>
+                </div>
+                <!--==new -->
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Jenis EWS</label>
+                        <select class="form-select" name="vs_status_id" id="armvs_status_id">
+                            <option selected>-- pilih --</option>
+                            <option value="1">Dewasa</option>
+                            <option value="4">Anak</option>
+                            <option value="5">Neonatus</option>
+                        </select>
+                    </div>
+                </div>
+                <!--==endofnew -->
                 <div class="col-sm-12 mt-2">
-                    <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                 </div>
+                <!-- <div class="col-sm-12">
+                    <div class="mb-4">
+                        <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                    </div>
+                </div> -->
             </div>` +
             '</div>' +
             '</div>' +
@@ -1284,26 +1359,6 @@
                                 <div class="form-group">
                                     <label for="arminstruction" class="mb-4 badge bg-primary">Rencana Instruksi </label>
                                     <textarea id="arminstruction" name="instruction" rows="2" class="form-control " autocomplete="off"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="mb-4">
-                                <div class="staff-members">
-                                    <div class="table tablecustom-responsive">
-                                        <table id="tableprocedure" class="table table-borderedcustom table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                            <?php if (true) { ?>
-                                                <thead>
-                                                    <th colspan="2">Prosedur (ICD IX)</th>
-                                                </thead>
-                                                <tbody id="bodyProcMedis">
-                                                </tbody>
-                                            <?php }   ?>
-                                        </table>
-                                    </div>
-                                    <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="addprocedure" onclick="addRowProcMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Prosedur</span></button>
-                                    </div>
                                 </div>
                             </div>
                         </div>

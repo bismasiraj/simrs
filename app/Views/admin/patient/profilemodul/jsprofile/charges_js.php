@@ -67,7 +67,6 @@
         return components.join(",");
     }
 
-
     function isnullcheck(parameter) {
         return parameter == null ? 0 : (parameter)
     }
@@ -92,7 +91,20 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                $("#labChargesBody").html(loadingScreen())
+                $("#radChargesBody").html(loadingScreen())
+                $("#fisioChargesBody").html(loadingScreen())
+                $("#billPoliChargesBody").html(loadingScreen())
+                $("#chargesBody").html(loadingScreen())
+            },
             success: function(data) {
+
+                $("#labChargesBody").html("")
+                $("#radChargesBody").html("")
+                $("#fisioChargesBody").html("")
+                $("#billPoliChargesBody").html("")
+                $("#chargesBody").html("")
                 billJson = data
 
                 total = 0;

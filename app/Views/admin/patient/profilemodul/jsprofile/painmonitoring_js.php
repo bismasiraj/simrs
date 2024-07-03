@@ -231,7 +231,11 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                $("#painBody").html(loadingScreen())
+            },
             success: function(data) {
+                $("#painBody").html("")
                 painMonitoring = data.painMonitoring
                 painMonitoringDetil = data.painDetil
                 painIntervensi = data.painIntervensi
@@ -241,7 +245,7 @@
                 })
             },
             error: function() {
-
+                $("#painBody").html(tempTablesNull())
             }
         });
     }

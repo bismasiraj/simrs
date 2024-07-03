@@ -1158,7 +1158,7 @@ class Assessment extends BaseController
 
         $db = db_connect();
         $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
-        weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, saturasi
+        ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi
         from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
         left join employee_all ea on pd.employee_id = ea.employee_id 
         left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id' and pd.diag_cat = '$diag_cat'")->getResultArray());
@@ -1638,8 +1638,25 @@ class Assessment extends BaseController
         $visit_id = $body['visit_id'];
         $no_registration = $body['nomor'];
 
+        // return json_encode($no_registration);
         $db = db_connect();
-        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
+        $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname 
+        from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id 
+        left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' 
+        and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
+
+        $selectex = $this->lowerKey($db->query("
+        select ex.*, 
+        c.name_of_clinic, 
+        ea.fullname,
+        gcs.GCS_DESC
+        from examination_info ex 
+        left join employee_all ea on ex.employee_id = ea.employee_id 
+        left join clinic c on ex.clinic_id = c.clinic_id 
+        left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
+        where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' 
+        order by examination_date desc
+        ")->getResultArray()); //havin
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -1664,13 +1681,17 @@ class Assessment extends BaseController
         //     }
         // }
 
-        return json_encode([
+        // return json_encode([
+        //     'examInfo' => $selectex,
+        //     'pasienHistory' => $selecthistory,
+        //     // 'papsienDiagnosas' => $selectdiagnosas,
+        //     // 'pasienProcedures' => $selectprocedures,
+        //     // 'lokalis' => $selectlokalis
+        // ]);
+        return $this->response->setJSON([
             'examInfo' => $selectex,
             'pasienHistory' => $selecthistory,
-            // 'papsienDiagnosas' => $selectdiagnosas,
-            // 'pasienProcedures' => $selectprocedures,
-            // 'lokalis' => $selectlokalis
-        ]);
+        ]); //havin
     }
 
     public function savePernapasan()
@@ -3100,63 +3121,62 @@ class Assessment extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
         $body = $this->request->getPost();
-        $data = [];
+        $dataexam = [];
         foreach ($body as $key => $value) {
             ${$key} = $value;
             if (!(is_null(${$key}) || ${$key} == ''))
-                $data[$key] = $value;
+                $dataexam[$key] = $value;
             if (isset($examination_date))
-                $data['examination_date'] = str_replace("T", " ", $examination_date);
-            if (isset($temperature))
-                $data['temperature'] = (float)$data['temperature'];
+                $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($temperature) && $temperature != '')
+                $dataexam['temperature'] = (float)$dataexam['temperature'];
             else
-                $data['temperature'] = 0;
+                $dataexam['temperature'] = null;
 
-            if (isset($tension_upper))
-                $data['tension_upper'] = (float)$data['tension_upper'];
+            if (isset($tension_upper) && $tension_upper != '')
+                $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
             else
-                $data['tension_upper'] = 0;
+                $dataexam['tension_upper'] = null;
 
-            if (isset($tension_below))
-                $data['tension_below'] = (float)$data['tension_below'];
+            if (isset($tension_below) && $tension_below != '')
+                $dataexam['tension_below'] = (float)$dataexam['tension_below'];
             else
-                $data['tension_upper'] = 0;
+                $dataexam['tension_below'] = null;
 
-            if (isset($nadi))
-                $data['nadi'] = (float)$data['nadi'];
+            if (isset($nadi) && $nadi != '')
+                $dataexam['nadi'] = (float)$dataexam['nadi'];
             else
-                $data['nadi'] = 0;
+                $dataexam['nadi'] = null;
 
-            if (isset($nafas))
-                $data['nafas'] = (float)$data['nafas'];
+            if (isset($nafas) && $nafas != '')
+                $dataexam['nafas'] = (float)$dataexam['nafas'];
             else
-                $data['nafas'] = 0;
+                $dataexam['nafas'] = null;
 
-            if (isset($weight))
-                $data['weight'] = (float)$data['weight'];
+            if (isset($weight) && $weight != '')
+                $dataexam['weight'] = (float)$dataexam['weight'];
             else
-                $data['weight'] = 0;
+                $dataexam['weight'] = null;
 
-            if (isset($height))
-                $data['height'] = (float)$data['height'];
+            if (isset($height) && $height != '')
+                $dataexam['height'] = (float)$dataexam['height'];
             else
-                $data['height'] = 0;
+                $dataexam['height'] = null;
 
-            if (isset($arm_diameter))
-                $data['arm_diameter'] = (float)$data['arm_diameter'];
+            if (isset($arm_diameter) && $arm_diameter != '')
+                $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
             else
-                $data['arm_diameter'] = 0;
+                $dataexam['arm_diameter'] = null;
 
-            if (isset($saturasi))
-                $data['saturasi'] = (int)$data['saturasi'];
+            if (isset($saturasi) && $saturasi != '')
+                $dataexam['saturasi'] = (int)$dataexam['saturasi'];
             else
-                $data['saturasi'] = 0;
+                $dataexam['saturasi'] = null;
         }
 
         $ex = new ExaminationModel();
-        $ex->save($data);
+        $ex->save($dataexam);
 
-        // return json_encode($valid_user);
         $pasienHistory = new PasienHistoryModel();
 
         $db = db_connect();
@@ -3221,7 +3241,7 @@ class Assessment extends BaseController
 
 
 
-        return json_encode($data);
+        return json_encode($dataexam);
     }
     public function checkpass()
     {

@@ -25,16 +25,6 @@
     })
 </script>
 <script type='text/javascript'>
-    function formatCurrency(total) {
-        //Seperates the components of the number
-        var components = total.toFixed(2).toString().split(".");
-        //Comma-fies the first part
-        components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //Combines the two sections
-        return components.join(",");
-    }
-
-
     function isnullcheck(parameter) {
         return parameter == null ? 0 : (parameter)
     }

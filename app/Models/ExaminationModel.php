@@ -46,6 +46,7 @@ class ExaminationModel extends Model
         "saturasi",
         "arm_diameter",
         "anamnase",
+        "oxygen_usage",
         "alo_anamnase",
         "pemeriksaan",
         "teraphy_desc",
@@ -72,10 +73,7 @@ class ExaminationModel extends Model
         "account_id",
         "kesadaran",
         "isvalid",
-        'vs_status_id',
-        'valid_date',
-        'valid_user',
-        'valid_pasien'
+        'vs_status_id'
     ];
 
     protected $useTimestamps = true;

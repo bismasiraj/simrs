@@ -22,7 +22,7 @@ $permission = user()->getPermissions();
 
 
 
-<div class="tab-pane" id="infConsent" role="tabpanel">
+<div class="tab-pane" id="odd" role="tabpanel">
   <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-12 border-r">
       <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -31,30 +31,36 @@ $permission = user()->getPermissions();
       ?>
     </div><!--./col-lg-6-->
     <div class="col-lg-9 col-md-9 col-xs-12">
-      <div class="row mt-4">
-
-      </div>
       <div class="accordion mt-4">
-        <div class="row mt-4">
-          <div id="arpAddDocument" class="box-tab-tools text-center">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create-modal" id="btn-create"><i class=" fa fa-plus"></i> Tambah Dokumen</button>
-          </div>
-        </div>
         <div class="panel-group" id="tableInfCon">
-          <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Informed Consent</h3>
-          <table class="table table-bordered table-hover table-centered" style="text-align: center">
-            <thead class="table-primary">
-              <tr>
-                <th scope="col">No</th>
-                <th scope="col">Dokumen</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody id="bodydata" class="table-group-divider">
+          <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14" style="display: flex; justify-content: space-between; align-items: center;">
+            ODD
+            <a href="<?= base_url() . '/admin/rm/lainnya/pengobatan/' . base64_encode(json_encode($visit)); ?>" target="_blank">
+              <button type="button" class="btn btn-sm btn-secondary" id="cetak">Cetak</button></a>
+          </h3>
+          <form>
+            <table class="table table-bordered table-hover table-centered" style="text-align: center" id="tablesOdd">
+              <thead class="table-primary">
+                <tr>
+                  <th scope="col">Nama Obat</th>
+                  <th scope="col"></th>
+                  <th scope="col">Tanggal Diberikan</th>
+                  <th scope="col">Jumlah Resep</th>
+                  <th scope="col">Jumlah Diberikan</th>
+                  <th scope="col">Aturan Pakai</th>
+                </tr>
+              </thead>
 
-            </tbody>
-          </table>
+              <tbody id="bodydataOdd" class="table-group-divider">
+                <!-- Isi tabel disini -->
+              </tbody>
+            </table>
+            <div>
+              <button type="button" class="btn btn-sm btn-primary" id="save-tabelsOdd">Perbarui</button>
+            </div>
+          </form>
         </div>
+
       </div>
     </div>
   </div>
@@ -108,13 +114,3 @@ $permission = user()->getPermissions();
     </div>
   </div>
 </div>
-
-
-<?php echo view('admin/patient/profilemodul/jsprofile/informconsent_js', [
-  'title' => 'Test',
-  'visit' => $visit,
-  'aParent' => $aParent,
-  'aType' => $aType,
-  'aParameter' => $aParameter,
-  'aValue' => $aValue,
-]) ?>

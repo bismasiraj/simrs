@@ -22,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -36,9 +38,6 @@
             font-size: 12px;
         }
 
-        @page {
-            size: A4;
-        }
 
         body {
             width: 21cm;
@@ -76,42 +75,14 @@
                 <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
             </div>
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
-            <?php csrf_field(); ?>
             <div class="row">
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                    <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <!-- <h3>Surakarta</h3> -->
+                    <p><?= @$kop['contact_address']?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -126,58 +97,59 @@
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_gender']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <?php if (!empty($visit['date_of_birth'])) : ?>
+                                <p class="m-0 mt-1 p-0"><?=date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?></p>
+                            <?php else : ?>
+                                <p class="m-0 mt-1 p-0">-</p>
+                            <?php endif; ?>
                         </td>
-                        <td colspan="2">
+                        <td class="p-1" colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['contact_address']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime( @$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
+                        <td class="p-1">
+                            <b>Bangsal/ Kamar</b>
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['bed_id'] === 0 ? "":@$visit['bed_id']; ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -196,26 +168,11 @@
                         <td>Tanda Tangan Staff</td>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td>
-                            edukasi ranap
-                            <input type="text" class="form-control" id="" name="">
-                            edukasi dpjp
-                            <input type="text" class="form-control" id="" name="">
-                        </td>
-                        <td></td>
-                        <td>
-                            <div id="qrcode"></div>
-                        </td>
-                        <td></td>
-                        <td>
-                            <div id="qrcode1"></div>
-                        </td>
-                    </tr>
+                <tbody id="edukasi-tables">
+                    
                 </tbody>
             </table>
+            <div id="datetime-now"></div>
         </form>
     </div>
 
@@ -226,80 +183,72 @@
 
 </body>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: 'a',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: 'a',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
-<script>
     $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+        dataRender()
     })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
+    const dataRender = ()=>{
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult=[]
+        let data = <?php echo $dataJson; ?>;
+   
 
-    })
+        data?.map((e,index)=>{
+            dataResult +=`<tr>
+                            <td>${moment(e?.date, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
+                            <td>${e?.education}</td>
+                            <td>${!e?.family_name ? (e?.family_relation === "tidak ada" ? '<?php echo @$visit["name_of_pasien"]; ?>' : e?.family_relation) : e?.family_name }</td>
+                            <td><div id="qrcode-keluarga-${index + 1}" style="display: flex; justify-content: center;"></div></td>
+                            <td>${!e?.staff ? "":e?.staff}</td>
+                            <td><div id="qrcode-${index + 1}" style="display: flex; justify-content: center;"></div></td>
+                        </tr>`
+        })
+
+        $("#edukasi-tables").html(dataResult)
+
+        data?.forEach((e,index) => {
+            let qrcodeFamily = new QRCode(document.getElementById(`qrcode-keluarga-${index + 1}`), {
+                text: !e?.family_name ? "" :e?.family_name,
+                width: 50,
+                height: 50,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
+            });
+
+            let qrcodeStaff = new QRCode(document.getElementById(`qrcode-${index + 1}`), {
+                text: !e?.staff ? "" :e?.staff,
+                width: 50,
+                height: 50,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // Tingkat koreksi tinggi
+            });
+        });
+
+    }
 </script>
 <style>
     @media print {
         @page {
             margin: none;
             scale: 85;
+            size: A4 landscape; 
+            width: auto;
+        }
+        body {
+            width: auto; 
+            height: auto; 
+            margin: 0;
+            font-size: 12px;
+        }
+        .logo-ci4 {
+            display: none;
         }
 
         .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
+            width: 100%;
+            margin: 0 auto; 
         }
     }
 </style>

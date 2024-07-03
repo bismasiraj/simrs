@@ -323,11 +323,22 @@
     }
 
     function appendDiagnosaPerawat(accordionId, bodyId, exam) {
+        $title = 'Diagnosa Perawat Assessment Keperawatan Umum ' + exam.examination_date
+
+        if (exam.vs_status_id == '1') {
+            $title = 'Diagnosa Perawat Assessment Keperawatan Dewasa ' + exam.examination_date
+        } else if (exam.vs_status_id == '4') {
+            $title = 'Diagnosa Perawat Assessment Keperawatan Neonatus ' + exam.examination_date
+        } else if (exam.vs_status_id == '5') {
+            $title = 'Diagnosa Perawat Assessment Keperawatan Anak ' + exam.examination_date
+        } else if (exam.vs_status_id == '2' || exam.vs_status_id == '7') {
+            $title = 'Diagnosa Perawat CPPT ' + exam.examination_date
+        }
         var accordionContent = `
         <div id="adiagpGroup` + bodyId + `" class="accordion-item">
             <h2 class="accordion-header" id="headingDiagGroup` + bodyId + `">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat` + bodyId + `" aria-expanded="false" aria-controls="collapseDiagnosaPerawat` + bodyId + `">
-                    <b>Diagnosa Perawat Assessment Keperawatan</b>
+                    <b>${$title}</b>
                 </button>
             </h2>
             <div id="collapseDiagnosaPerawat` + bodyId + `" class="accordion-collapse collapse" aria-labelledby="headingDiagGroup` + bodyId + `" data-bs-parent="#accordionDiagnosaPerawat" style="">

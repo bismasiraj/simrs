@@ -206,7 +206,7 @@ class PasienVisitationModel extends Model
                     MONTH(VISIT_DATE),
                     DAY(visit_date),
                     c.NAME_OF_CLINIC')
-                ->select('top(200) count(visit_id) as JML,
+                ->select('top(50) count(visit_id) as JML,
                     YEAR(VISIT_DATE) as YEAR,
                     RIGHT(MONTH(VISIT_DATE)+100, 2) MONTH,
                     RIGHT(DAY(VISIT_DATE)+100, 2) DAY,
@@ -223,7 +223,7 @@ class PasienVisitationModel extends Model
 
             $db = db_connect('default');
             $builder = $db->table('pv');
-            $builder = $builder->select("CASE PV.NO_REGISTRATION WHEN '000000'THEN PV.DIANTAR_OLEH ELSE PV.NAME_OF_PASIEN END AS NAME_OF_PASIEN,   
+            $builder = $builder->select("top(100) CASE PV.NO_REGISTRATION WHEN '000000'THEN PV.DIANTAR_OLEH ELSE PV.NAME_OF_PASIEN END AS NAME_OF_PASIEN,   
             PV.NO_REGISTRATION,    
             PV.ORG_UNIT_CODE,
             pV.DATE_OF_BIRTH AS date_of_birth, 

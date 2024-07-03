@@ -102,6 +102,12 @@ $group = user()->getRoles();
                                 <div class="col-md-4">
                                     <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id5" value="5"><label class="form-check-label" for="arpvs_status_id5">Anak</label></div>
                                 </div>
+                                <!-- <div class="col-md-3">
+                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id2" value="2"><label class="form-check-label" for="acpptvs_status_id2" checked>SOAP</label></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id7" value="7"><label class="form-check-label" for="acpptvs_status_id7">SBAR</label></div>
+                                </div> -->
                             </div>
                             <div class="row">
                                 <div class="col-sm-4 col-xs-12">
@@ -184,39 +190,114 @@ $group = user()->getRoles();
                                             <div class="accordion-body text-muted">
                                                 <div class="row">
                                                     <div class="row mb-4">
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
-                                                                    <h4>/</h4>
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="arpweight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-bb"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="arpheight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arpheight"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="arptemperature" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arptemperature"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arparm_diameter" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="arpnadi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arpnadi"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="arptension_upper" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-arptension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="arptension_below" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-arptension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="arpsaturasi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arpsaturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="arpnafas" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arpnafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="arp_diameter" id="arparp_diameter" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arparp_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="arpoxygen_usage" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-arpoxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--==new -->
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="arpvs_status_id">
+                                                                    <option selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!--==endofnew -->
                                                         <div class="col-sm-12 mt-2">
-                                                            <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
+                                                        <!-- <div class="col-sm-12">
+                                                        <div class="mb-4">
+                                                            <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div>
+                                                    </div> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -459,7 +540,7 @@ $group = user()->getRoles();
                                                         <div id="bodyStabilitasPerawat">
                                                         </div>
                                                         <div id="bodyStabilitasPerawatAddBtn" class="col-md-12 text-center">
-                                                            <a onclick="addStabilitas(1,1, 'arpbody_id','bodyStabilitasPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                            <a onclick="addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                         </div>
                                                     </div>
                                                 </div>

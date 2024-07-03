@@ -26,23 +26,11 @@
     })
 </script>
 <script type='text/javascript'>
-    function formatCurrency(total) {
-        //Seperates the components of the number
-        var components = total.toFixed(2).toString().split(".");
-        //Comma-fies the first part
-        components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //Combines the two sections
-        return components.join(",");
-    }
-
-
     function isnullcheck(parameter) {
         return parameter == null ? 0 : (parameter)
     }
 
     function getTreatResultList(nomor, visit) {
-
-
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/getTreatResultList',
             type: "POST",
@@ -53,15 +41,19 @@
             dataType: 'json',
             contentType: false,
             cache: false,
+            beforeSend: function() {
+                $("#radBody").html(loadingScreen())
+            },
             processData: false,
             success: function(data) {
+                $("#radBody").html("")
                 mrJson = data
 
                 mrJson.forEach((element, key) => {
 
                     $("#radBody").append($("<tr>")
                         .append($("<td>").append($("<p>").html(mrJson[key].pickup_date)))
-                        .append($("<td>").append($("<p>").html(mrJson[key].tarif_name)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)).append($("<p>").html(mrJson[key].diagnosa_id + '-' + mrJson[key].diagnosa_desc)))
+                        .append($("<td>").append($("<p>").html(mrJson[key].tarif_name)).append($("<p>").html(mrJson[key].pemeriksaan)).append($("<p>").html(mrJson[key].pemeriksaan_02)).append($("<p>").html(mrJson[key].pemeriksaan_03)))
                         // .append($("<td>").html('<?= $visit['name_of_clinic']; ?>'))
                         .append($("<td>").append($("<p>").html(mrJson[key].teraphy_desc)).append($("<p>").html(mrJson[key].instruction)))
                         .append($("<td>").html(mrJson[key].result_value))

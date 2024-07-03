@@ -400,10 +400,10 @@
     let result = []
     data.data.map((item, index) => {
         result += `<tr>
-                        <td class="text-left p-2 fit align-middle">${index+1}</td> 
-                        <td class="text-left p-2 fit align-middle">${item.value_desc}</td> 
-                        <td class="text-left p-2 fit align-middle isi-informasi">${item.value_info}</td> 
-                        <td class="text-left p-2 fit align-middle tanda"><div id="qrcode-${item.value_id}"></div></td> 
+                        <td class="text-left p-2 fit">${index+1}</td> 
+                        <td class="text-left p-2 fit">${item.value_desc}</td> 
+                        <td class="text-left p-2 fit isi-informasi">${item.value_info}</td> 
+                        <td class="text-left p-2 fit tanda"><div id="qrcode-${item.value_id}"></div></td> 
                     </tr>`
     })
     $("#data-js").html(result)

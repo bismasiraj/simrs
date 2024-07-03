@@ -49,7 +49,6 @@ $permission = user()->getPermissions();
                     </tr>
                 </thead>
                 <tbody id="gcsBody">
-
                 </tbody>
             </table>
         </div>

@@ -30,33 +30,33 @@
         getAssessmentKeperawatan()
     })
 
-    $("#cpptweight").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cpptheight").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cppttemperature").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cpptnadi").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cppttension_upper").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cppttension_below").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cpptsaturasi").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cpptnafas").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
-    $("#cpptarm_diameter").keydown(function(e) {
-        !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    });
+    // $("#cpptweight").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cpptheight").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cppttemperature").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cpptnadi").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cppttension_upper").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cppttension_below").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cpptsaturasi").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cpptnafas").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
+    // $("#cpptarm_diameter").keydown(function(e) {
+    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
+    // });
 
     function cpptInput(prop) {
         var value = $(prop).val()
@@ -333,20 +333,16 @@
         $("#cpptpetugas").val('<?= user()->getFullname(); ?>')
     }
 
-    cpptjson.forEach((element, key) => {
-        examselect = cpptjson[key];
-        addRowCPPT(examselect, key)
-    });
+
 
     function editCppt(key) {
         var examselect = examForassessment[key];
 
-        console.log(examselect)
         $.each(examselect, function(key, value) {
             $("#acppt" + key).val(value)
         })
-        var editor = tinymce.get('acpptinstruction')
-        editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
+        // var editor = tinymce.get('acpptinstruction')
+        // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
         $("#cpptModal").modal("show")
         $("#acpptDocument").find("input, select, textarea").prop("disabled", false)
@@ -357,47 +353,6 @@
         $("#formeditacpptid").hide()
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")
-        if (examselect.petugas == '<?= user()->getFullname(); ?>') {
-            // alert("Tidak dapat meengubah inputan CPPT milik dokter/petugas lain")
-        } else {
-
-            // $("#cpptageday").val(examselect.ageday)
-            // $("#cpptagemonth").val(examselect.agemonth)
-            // $("#cpptageyear").val(examselect.ageyear)
-            // $("#cpptanamnase").val(examselect.anamnase)
-            // $("#cpptarm_diameter").val(examselect.arm_diameter)
-            // $("#cpptbed_id").val(examselect.bed_id)
-            // $("#cpptbody_id").val(examselect.body_id)
-            // $("#cpptclass_room_id").val(examselect.class_room_id)
-            // $("#cpptclinic_id").val(examselect.clinic_id)
-            // $("#cpptdescription").val(examselect.description)
-            // $("#cpptdoctor").val(examselect.doctor)
-            // $("#cpptemployee_id").val(examselect.employee_id)
-            // $("#cpptexamination_date").val(examselect.examination_date)
-            // $("#cpptgender").val(examselect.gender)
-            // $("#cpptheight").val(examselect.height)
-            // $("#cpptinstruction").val(examselect.instruction)
-            // $("#cpptisrj").val(examselect.isrj)
-            // $("#cpptkal_id").val(examselect.kal_id)
-            // $("#cpptkeluar_id").val(examselect.keluar_id)
-            // $("#cpptnadi").val(examselect.nadi)
-            // $("#cpptnafas").val(examselect.nafas)
-            // $("#cpptno_registraiton").val(examselect.no_registraiton)
-            // $("#cpptorg_unit_code").val(examselect.org_unit_code)
-            // $("#cpptpemeriksaan").val(examselect.pemeriksaan)
-            // $("#cpptpetugas").val(examselect.petugas)
-            // $("#cpptsaturasi").val(examselect.saturasi)
-            // $("#cpptstatus_pasien_id").val(examselect.status_pasien_id)
-            // $("#cppttemperature").val(examselect.temperature)
-            // $("#cppttension_below").val(examselect.tension_below)
-            // $("#cppttension_upper").val(examselect.tension_upper)
-            // $("#cpptteraphy_desc").val(examselect.teraphy_desc)
-            // $("#cppttheaddress").val(examselect.theaddress)
-            // $("#cppttheid").val(examselect.pasien_id)
-            // $("#cpptthename").val(examselect.diantar_oleh)
-            // $("#cpptvisit_id").val(examselect.visit_id)
-            // $("#cpptweight").val(examselect.weight)
-        }
     }
 
     function copyCppt(key) {
@@ -725,8 +680,6 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                // $("#formsavearpbtn").hide()
-                // $("#formeditarp").show()
                 var isNewDocument = 0
                 $.each(examForassessment, function(key, value) {
                     if (value.body_id == data.body_id) {
@@ -736,6 +689,14 @@
                 })
                 if (isNewDocument != 1)
                     examForassessment.push(data)
+
+                $("#cpptBody").html("")
+                examForassessment.forEach((element, key) => {
+                    if (element.vs_status_id == '2' || element.vs_status_id == '7') {
+                        examselect = examForassessment[key];
+                        addRowCPPT(examselect, key)
+                    }
+                });
                 disableacppt()
             },
             error: function(xhr) { // if error occured

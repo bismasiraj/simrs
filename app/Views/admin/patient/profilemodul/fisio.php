@@ -29,18 +29,6 @@ $permissions = user()->getPermissions();
             ]); ?>
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div id="listRequestfisio" class="row">
-
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div id="fisioiologiAdd" class="box-tab-tools text-center">
-                        <a data-toggle="modal" onclick="requestfisio()" class="btn btn-primary btn-lg" id="addfisioBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat fisioiologi Online</a>
-                    </div>
-                </div>
-            </div>
             <div class="table-responsive mt-4 mb-4">
                 <table class="table table-striped table-hover">
                     <thead class="table-primary" style="text-align: center;">

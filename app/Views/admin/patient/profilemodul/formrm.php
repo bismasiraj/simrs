@@ -317,6 +317,20 @@ $permission = user()->getPermissions();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script type="text/javascript">
+    let res = <?= json_encode($aValue); ?>;
+
+    let aValue = res.filter(item => item?.p_type === "GEN0012");
+    let combinedData = {
+        aValue: aValue,
+        visit: <?= json_encode($visit); ?>
+    };
+
+    let jsonData = JSON.stringify(combinedData);
+
+    let base64Data = btoa(jsonData);
+    let baseUrl = '<?= base_url() ?>';
+    let url = baseUrl + '/admin/rm/keperawatan/transfer_internal/' + base64Data + '/' + $("#arpbody_id").val();
+
     $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
     $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
     $('#medisListLink').append('<li class="list-group-item"><a href="<?= base_url() . 'admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
@@ -363,7 +377,8 @@ $permission = user()->getPermissions();
     $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/persetujuan_umum/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '" target="_blank">Persetujuan Umum (General Concert)</a></li>')
     $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
     $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/sdki/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '" target="_blank">SDKI SLKI SIKI</a></li>')
-    $('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '" target="_blank">Transfer Internal</a></li>')
+    //$('#keperawatanListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '" target="_blank">Transfer Internal</a></li>')
+    $('#keperawatanListLink').append('<li class="list-group-item"><a href="' + url + '" target="_blank">Transfer Internal</a></li>');
 </script>
 <script type="text/javascript">
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
@@ -416,10 +431,12 @@ $permission = user()->getPermissions();
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/susu_formula/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Surat Persetujuan Pemberian Susu Formula</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/fisioterapi/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Surat Pengantar Fisioterapi</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/konsultasi/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Surat Perintah Konsultasi</a></li>')
-    $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/pengobatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Daftar Pengobatan</a></li>')
+    // $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/pengobatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Daftar Pengobatan</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/bedah_umum/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Assessmen Bedah Umum Rawat Inap</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/nadi_suhu/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Lembar Nadi dan Suhu</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/persalinan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Laporan Persalinan</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/sedasi/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Assessmen Pra Anastesi Sedasi</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/surat_lahir/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Surat Keterangan Lahir</a></li>')
+    $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/laboratorium_cetak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Laboratorium</a></li>')
+    $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/radiologi_cetak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Radiologi</a></li>')
 </script>

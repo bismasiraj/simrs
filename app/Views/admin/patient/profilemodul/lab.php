@@ -111,9 +111,6 @@ $permissions = user()->getPermissions();
                                 </tr>
                             </thead>
                             <tbody id="labChargesBody" class="table-group-divider">
-                                <?php
-                                $total = 0;
-                                ?>
                             </tbody>
                         </table>
                         <div class="panel-footer text-end mb-4">

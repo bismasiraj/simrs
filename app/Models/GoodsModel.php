@@ -37,7 +37,9 @@ class GoodsModel extends Model
         $select = $this->join('setting s', '1 = 1', 'inner')
             ->like('name', $brand)
             ->where('isalkes <> 1')
+            ->where('isalkes <> 100')
             ->where('isactive', '1')
+            ->where('code_5 <> \'%\'')
             ->select('GOODS.NAME, goods.net_price AS SELL_PRICE,    
                     100 AS STOCKnya,GOODS.OTHER_CODE,size_kemasan,
                     GOODS.BRAND_ID,SIZE_GOODS, goods.measure_id, goods.measure_id2,goods.measure_id3,

@@ -47,12 +47,6 @@ $permission = user()->getPermissions();
 
                 </thead>
                 <tbody id="cpptBody">
-                    <?php
-                    $total = 0;
-
-                    ?>
-
-
                 </tbody>
 
             </table>
@@ -224,7 +218,7 @@ $permission = user()->getPermissions();
                                             <div class="accordion-body text-muted">
                                                 <div id="groupVitalSignCppt" class="row">
                                                     <div class="row mb-4">
-                                                        <div class="col-sm-2 mt-2">
+                                                        <!-- <div class="col-sm-2 mt-2">
                                                             <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="acpptweight" placeholder="" value="" class="form-control" required></div>
                                                         </div>
                                                         <div class="col-sm-2 mt-2">
@@ -256,6 +250,96 @@ $permission = user()->getPermissions();
                                                         </div>
                                                         <div class="col-sm-12 mt-2">
                                                             <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div> -->
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="acpptweight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-bb"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="acpptheight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptheight"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="acppttemperature" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acppttemperature"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="acpptnadi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptnadi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="acppttension_upper" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-acppttension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="acppttension_below" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-acppttension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="acpptsaturasi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptsaturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="acpptnafas" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptnafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="acpptarm_diameter" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptarm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="acpptoxygen_usage" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-acpptoxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -461,485 +545,9 @@ $permission = user()->getPermissions();
                             <?php
                                 }
                             } ?>
-                            <div id="acpptTindakanKolaboratif_Group" class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawat">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawat" aria-expanded="true" aria-controls="collapseTindakanPerawat">
-                                        <b>TINDAKAN KOLABORATIF</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawat" class="accordion-collapse collapse" aria-labelledby="tindakanPerawat" data-bs-parent="#accodrionCPPT" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatCppt" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatCppt", 1, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
 
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
 
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatCppt" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawatCppt" class="table-group-divider">
-                                                                        <?php
-                                                                        $total = 0;
-                                                                        ?>
-                                                                    </tbody>
-                                                                    <tfoot class="table-group-divider">
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-6"></div>
-                                                                                    <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                        <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                    </label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="acpptTindakanMandiri_Group" class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawatMandiri">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatMandiri" aria-expanded="true" aria-controls="collapseTindakanPerawatMandiri">
-                                        <b>TINDAKAN MANDIRI</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawatMandiri" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatMandiri" data-bs-parent="#accodrionCPPT" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatMandiriCppt" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatMandiriCppt", 2, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
 
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
-
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatMandiriCppt" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawatMandiriCppt" class="table-group-divider">
-                                                                        <?php
-                                                                        $total = 0;
-                                                                        ?>
-                                                                    </tbody>
-                                                                    <tfoot class="table-group-divider">
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-6"></div>
-                                                                                    <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="tagihan_total" name="tagihan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="subsidi_total" name="subsidi_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="potongan_total" name="potongan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembulatan_total" name="pembulatan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pelunasan_total" name="pelunasan_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="pembayaran_total" name="pembayaran_total" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="totalnya" class="col-sm-4 col-form-label text-end">
-                                                                                        <h3><?php echo "Tagihan" . " : " . $currency_symbol . ""; ?></h3>
-                                                                                    </label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control border border-primary border-3 text-end" id="totalnya" name="totalnya" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td colspan='11' class="align_right">
-                                                                                <div class="row">
-                                                                                    <div class="col-sm-5"></div>
-                                                                                    <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>
-                                                                                    <div class="col-sm-3">
-                                                                                        <input type="text" class="form-control text-end" id="inacbg" name="inacbg" placeholder="" disabled></input>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                        </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="acpptImplementasi_Group" class="accordion-item">
-                                <h2 class="accordion-header" id="tindakanPerawatImplementasi">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTindakanPerawatImplementasi" aria-expanded="true" aria-controls="collapseTindakanPerawatImplementasi">
-                                        <b>IMPLEMENTASI KEPERAWATAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseTindakanPerawatImplementasi" class="accordion-collapse collapse" aria-labelledby="tindakanPerawatImplementasi" data-bs-parent="#accodrionCPPT" style="">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <form id="form1" action="" method="post" class="">
-                                                    <div class="box-body row mt-4">
-                                                        <input type="hidden" name="ci_csrf_token" value="">
-                                                        <div class="col-sm-12 col-md-12 mb-4">
-                                                            <div class="row">
-                                                                <div class="col-md-8"><select id="searchTarifPerawatImplementasiCppt" class="form-control" style="width: 100%"></select></div>
-                                                                <div class="col-md-4">
-                                                                    <div class="box-tab-tools">
-                                                                        <a data-toggle="modal" onclick='addBillChargePerawat("searchTarifPerawatImplementasiCppt", 3, 1)' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php if (isset($permissions['tindakanpoli']['c'])) {
-                                                                if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-                                                                        <div class="col-md-4">
-                                                                            <div class="box-tab-tools">
-                                                                                <a data-toggle="modal" onclick='addBillChargePerawat("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php }
-                                                            } ?>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                                <div class="table-responsive">
-                                                    <style>
-                                                        th {
-                                                            width: 200px;
-                                                        }
-
-                                                        #chargesBody td {
-                                                            text-align: center;
-                                                        }
-
-                                                        #chargesBody p {
-                                                            color: cadetblue;
-                                                        }
-                                                    </style>
-                                                    <div class="table-rep-plugin">
-                                                        <div class="table-responsive mb-0">
-                                                            <form id="formchargesBodyPerawatImplementasiCppt" action="" method="post" class="">
-                                                                <table class="table table-sm table-hover">
-                                                                    <thead class="table-primary" style="text-align: center;">
-                                                                        <tr>
-                                                                            <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center">
-                                                                            <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
-                                                                            <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                                                            <th class="text-center" rowspan="2"></th class="text-center">
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody id="chargesBodyPerawatImplementasiCppt" class="table-group-divider">
-                                                                    </tbody>
-                                                                </table>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="cetakprintKeperawatan">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseprintKeperawatan" aria-expanded="true" aria-controls="collapseprintKeperawatan">
-                                        <b>CETAK KEPERAWATAN</b>
-                                    </button>
-                                </h2>
-                                <div id="collapseprintKeperawatan" class="accordion-collapse collapse" aria-labelledby="printKeperawatan" data-bs-parent="#accodrionCPPT">
-                                    <div class="accordion-body text-muted">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <ul id="keperawatanListLinkAll" class="list-group list-group-flush">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="col-md-12">
                             <hr>

@@ -237,6 +237,9 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                $("#fallBody").html(loadingScreen())
+            },
             success: function(data) {
                 fallRisk = data.fallRisk
                 fallRiskDetail = data.fallRiskDetail
@@ -246,7 +249,7 @@
                 })
             },
             error: function() {
-
+                $("#fallBody").html(tempTablesNull())
             }
         });
     }

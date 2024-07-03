@@ -112,8 +112,9 @@ $currency_symbol = 'Rp. ';
                                         <li class="nav-item"><a id="vitalsignTab" class="nav-link border-bottom" href="#vitalsignmodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Vital Sign</a></li>
                                         <li class="nav-item"><a id="transferTab" class="nav-link border-bottom" href="#transfer" data-bs-toggle="tab" aria-expanded="true" role="tab">Transfer Internal</a></li>
                                         <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
-                                        <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li>
+                                        <!-- <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li> -->
                                         <li class="nav-item"><a id="informconcentTab" class="nav-link border-bottom" href="#infConsent" data-bs-toggle="tab" aria-expanded="true" role="tab">Inform Concent</a></li>
+                                        <li class="nav-item"><a id="oddTap" class="nav-link border-bottom" href="#odd" data-bs-toggle="tab" aria-expanded="true" role="tab">ODD</a></li>
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height" id="overview">
@@ -723,21 +724,22 @@ $currency_symbol = 'Rp. ';
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/informconsent', [
                                             'title' => '',
-                                            'orgunit' => $orgunit,
-                                            'statusPasien' => $statusPasien,
-                                            'reason' => $reason,
-                                            'isattended' => $isattended,
-                                            'inasisPoli' => $inasisPoli,
-                                            'inasisFaskes' => $inasisFaskes,
                                             'visit' => $visit,
-                                            'exam' => $exam,
-                                            'pd' => $pasienDiagnosa,
-                                            'suffer' => $suffer,
-                                            'diagCat' => $diagCat,
-                                            'employee' => $employee,
-                                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
-                                        ]); ?>
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+
+
+                                        <?php echo view('admin/patient/profilemodul/odd', [
+                                            'title' => '',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
                                     </div>
                                 </div>
                             </div>
@@ -1161,6 +1163,50 @@ $currency_symbol = 'Rp. ';
     }
 </script>
 
+<?php echo view('admin/patient/profilemodul/jsprofile/assessmentmedis_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue,
+    'mappingAssessment' => $mappingAssessment
+]); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue,
+    'mappingAssessment' => $mappingAssessment
+]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/charges_js', [
     'title' => '',
     'orgunit' => $orgunit,
@@ -1404,50 +1450,6 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
-<?php echo view('admin/patient/profilemodul/jsprofile/assessmentmedis_js', [
-    'title' => '',
-    'orgunit' => $orgunit,
-    'statusPasien' => $statusPasien,
-    'reason' => $reason,
-    'isattended' => $isattended,
-    'inasisPoli' => $inasisPoli,
-    'inasisFaskes' => $inasisFaskes,
-    'visit' => $visit,
-    'exam' => $exam,
-    'pd' => $pasienDiagnosa,
-    'suffer' => $suffer,
-    'diagCat' => $diagCat,
-    'employee' => $employee,
-    'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa,
-    'aParent' => $aParent,
-    'aType' => $aType,
-    'aParameter' => $aParameter,
-    'aValue' => $aValue,
-    'mappingAssessment' => $mappingAssessment
-]); ?>
-<?php echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
-    'title' => '',
-    'orgunit' => $orgunit,
-    'statusPasien' => $statusPasien,
-    'reason' => $reason,
-    'isattended' => $isattended,
-    'inasisPoli' => $inasisPoli,
-    'inasisFaskes' => $inasisFaskes,
-    'visit' => $visit,
-    'exam' => $exam,
-    'pd' => $pasienDiagnosa,
-    'suffer' => $suffer,
-    'diagCat' => $diagCat,
-    'employee' => $employee,
-    'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa,
-    'aParent' => $aParent,
-    'aType' => $aType,
-    'aParameter' => $aParameter,
-    'aValue' => $aValue,
-    'mappingAssessment' => $mappingAssessment
-]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/vitalsign_js', [
     'title' => '',
     'orgunit' => $orgunit,
@@ -1466,23 +1468,6 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
 <?php echo view('admin/patient/profilemodul/jsprofile/transfer_js', [
-    'title' => '',
-    'orgunit' => $orgunit,
-    'statusPasien' => $statusPasien,
-    'reason' => $reason,
-    'isattended' => $isattended,
-    'inasisPoli' => $inasisPoli,
-    'inasisFaskes' => $inasisFaskes,
-    'visit' => $visit,
-    'exam' => $exam,
-    'pd' => $pasienDiagnosa,
-    'suffer' => $suffer,
-    'diagCat' => $diagCat,
-    'employee' => $employee,
-    'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa
-]); ?>
-<?php echo view('admin/patient/profilemodul/jsprofile/eklaim_js', [
     'title' => '',
     'orgunit' => $orgunit,
     'statusPasien' => $statusPasien,
@@ -1568,5 +1553,20 @@ $currency_symbol = 'Rp. ';
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
     'pasienDiagnosa' => $pasienDiagnosa
 ]); ?>
-<?php echo view('admin/patient/profilemodul/jsprofile/calibs_js'); ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/odd_js', [
+    'title' => 'Test',
+    'visit' => $visit,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue,
+]) ?>
+<?php echo view('admin/patient/profilemodul/jsprofile/informconsent_js', [
+    'title' => 'Test',
+    'visit' => $visit,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue,
+]) ?>
 <?php $this->endSection() ?>

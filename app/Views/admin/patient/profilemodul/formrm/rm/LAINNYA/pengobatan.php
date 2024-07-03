@@ -22,6 +22,8 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -109,9 +111,9 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
+                    <!-- <h3>Surakarta</h3> -->
+                    <p><?= @$kop['contact_address'] ?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -126,58 +128,59 @@
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_gender']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <?php if (!empty($visit['date_of_birth'])) : ?>
+                                <p class="m-0 mt-1 p-0"><?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?></p>
+                            <?php else : ?>
+                                <p class="m-0 mt-1 p-0">-</p>
+                            <?php endif; ?>
                         </td>
-                        <td colspan="2">
+                        <td class="p-1" colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['contact_address']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime(@$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
+                        <td class="p-1">
+                            <b>Bangsal/ Kamar</b>
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="bed" name="bed" value="">
+                            <div><?= @$visit['bed_id'] === 0 ? "" : @$visit['bed_id']; ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -196,7 +199,7 @@
                         <td>Tanggal Pemberian Obat</td>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="data-tables">
                     <tr>
                         <td>Piracetam Injeksi</td>
                         <td>3 gr/6 jam</td>
@@ -253,6 +256,8 @@
                     </tr>
                 </tbody>
             </table>
+            <div id="datetime-now"></div>
+
         </form>
     </div>
 
@@ -264,54 +269,47 @@
 </body>
 <script>
     $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
+
+        renderTables()
 
     })
+
+    const renderTables = () => {
+        <?php $dataJson = json_encode($data); ?>
+        let dataResult = []
+        let data = <?php echo $dataJson; ?>;
+
+        if (data.length > 1) {
+            data.map((e) => {
+                dataResult += `<tr>
+                            <td>${e.nama_obat}</td>
+                            <td>${e.aturan_pakai}</td>
+                            <td>${!e.module_id ? "":e.module_id}</td>
+                            <td>${!e.received_date? "": moment(e.received_date).format("DD-MM-YYYY HH:mm")}</td>
+                        </tr>`
+            })
+        } else {
+            dataResult = `<tr style="height: 200px;">
+                            <td colspan="4">
+                               <center> 
+                                   <h3>Data Kosong</h3>
+                               </center>
+                            </td>
+                        </tr>`
+        }
+
+
+        $("#data-tables").html(dataResult)
+
+
+    }
 </script>
 <style>
     @media print {
         @page {
-            margin: 0;
-            scale: 80;
+            margin: none;
+            scale: 85;
         }
 
         .container {

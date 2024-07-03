@@ -140,14 +140,14 @@ $permissions = user()->getPermissions();
                 </style>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div id="eresepBtnGroupss" class="row">
+                        <div id="eresepBtnGroupssssss" class="row">
                             <div class="col-md-6">
-                                <div id="eresepAdd" class="box-tab-tools text-end">
+                                <div id="eresepAddsss" class="box-tab-tools text-end">
                                     <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div id="eresepRAdd" class="box-tab-tools text-start" style="">
+                                <div id="eresepRAddsss" class="box-tab-tools text-start" style="">
                                     <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
                                 </div>
                             </div>
@@ -178,6 +178,9 @@ $permissions = user()->getPermissions();
                                     <th class="text-center" style="width: 12,5%;"></th class="text-center">
                                 </tr>
                             </thead>
+                            <tbody id="ereseploadingspace">
+
+                            </tbody>
                         </table>
                         <div id="eresepBody">
                         </div>

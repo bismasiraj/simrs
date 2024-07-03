@@ -897,7 +897,7 @@ This Function is used to Add Patient
         $clinic = $this->lowerKey($clinicModel->findAll());
 
         $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->findAll());
+        $employee = $this->lowerKey($employeeModel->getEmployee());
 
         $classModel = new ClassModel();
         $class = $this->lowerKey($classModel->findAll());
@@ -1093,7 +1093,7 @@ This Function is used to Add Patient
         $clinic = $this->lowerKey($clinicModel->findAll());
 
         $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->findAll());
+        $employee = $this->lowerKey($employeeModel->getEmployee());
 
         $classModel = new ClassModel();
         $class = $this->lowerKey($classModel->findAll());
@@ -1873,6 +1873,17 @@ This Function is used to Add Patient
         foreach ($specialist as $key => $value) {
             $visit['specialist_type_id'] = $value['specialist_type_id'];
         }
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $visit['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
         $mapAssessment = $this->lowerKey($db->query("select m.*, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
         inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID;")->getResultArray());
         // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
@@ -2203,6 +2214,19 @@ This Function is used to Add Patient
         foreach ($specialist as $key => $value) {
             $visit['specialist_type_id'] = $value['specialist_type_id'];
         }
+        // return json_encode($ta['employee_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $ta['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
+
         $mapAssessment = $this->lowerKey($db->query("select m.*, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
         inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID;")->getResultArray());
         // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
@@ -2510,6 +2534,9 @@ This Function is used to Add Patient
     public function editExam()
     {
         // dd($this->request->is('post'));
+        // echo '<pre>';
+        // var_dump($_POST['body_id']);
+        // die();
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -2560,6 +2587,7 @@ This Function is used to Add Patient
         $nafas = $this->request->getPost('nafas');
         $arm_diameter = $this->request->getPost('arm_diameter');
         $anamnase = $this->request->getPost('anamnase');
+        $oxygen_usage = $this->request->getPost('oxygen_usage');
         $pemeriksaan = $this->request->getPost('pemeriksaan');
         $teraphy_desc = $this->request->getPost('teraphy_desc');
         $description = $this->request->getPost('description');
@@ -2644,7 +2672,10 @@ This Function is used to Add Patient
         // return json_encode($kalurahan);
         $id = $this->request->getPost('body_id');
 
-
+        // echo '<pre>';
+        // var_dump($_POST['body_id']);
+        // var_dump($id);
+        // die();
 
 
 
@@ -2658,7 +2689,7 @@ This Function is used to Add Patient
                 'no_registration' => $no_registration,
                 'body_id' => $id,
                 'petugas' => $petugas,
-                'examination_date' => $examination_date,
+                // 'examination_date' => $examination_date,
                 'weight' => (float)$weight,
                 'height' => (float)$height,
                 'temperature' => (float)$temperature,
@@ -2669,6 +2700,7 @@ This Function is used to Add Patient
                 'nafas' => (float)$nafas,
                 'arm_diameter' => (float)$arm_diameter,
                 'anamnase' => $anamnase,
+                'oxygen_usage' => (float)$oxygen_usage,
                 'pemeriksaan' => $pemeriksaan,
                 'teraphy_desc' => $teraphy_desc,
                 'description' => $description,
@@ -2691,6 +2723,10 @@ This Function is used to Add Patient
                 'instruction' => $instruction
             ];
             $result = $examModel->insert($data);
+            // echo '<pre>';
+            // echo "insert <br>";
+            // var_dump($result);
+            // die();
             $message = "tambah pemeriksaan fisik berhasil";
             $type = 'insert';
         } else {
@@ -2700,7 +2736,7 @@ This Function is used to Add Patient
                 'no_registration' => $no_registration,
                 'body_id' => $id,
                 'petugas' => $petugas,
-                'examination_date' => $examination_date,
+                // 'examination_date' => $examination_date, havin
                 'weight' => (float)$weight,
                 'height' => (float)$height,
                 'temperature' => (float)$temperature,
@@ -2711,6 +2747,7 @@ This Function is used to Add Patient
                 'nafas' => (float)$nafas,
                 'arm_diameter' => (float)$arm_diameter,
                 'anamnase' => $anamnase,
+                'oxygen_usage' => (float)$oxygen_usage,
                 'pemeriksaan' => $pemeriksaan,
                 'teraphy_desc' => $teraphy_desc,
                 'description' => $description,
@@ -2733,6 +2770,10 @@ This Function is used to Add Patient
                 'instruction' => $instruction
             ];
             $result = $examModel->update($id, $data);
+            // echo '<pre>';
+            // echo "update <br>";
+            // var_dump($result);
+            // die();
             $message = "update pemeriksaan fisik berhasil";
             $type = "update";
         }
@@ -5152,30 +5193,34 @@ This Function is used to Add Patient
         $db = new ClinicModel();
         $clinic = $this->lowerKey($db->findAll());
         $db = new EmployeeAllModel();
-        $employee = $this->lowerKey($db->findAll());
+        $employee = $this->lowerKey($db->getEmployee());
+
+        // return json_encode($select);
 
 
         foreach ($select as $key => $value) {
-            if ($select[$key]['isrj'] == 1) {
-                foreach ($employee as $key1 => $value1) {
-                    if ($employee[$key1]['employee_id'] == $select[$key]['employee_id']) {
-                        $select[$key]['fullname'] = $employee[$key1]['fullname'];
-                        // break;
-                    }
-                }
-                foreach ($clinic as $key1 => $value1) {
-                    if ($clinic[$key1]['clinic_id'] == $select[$key]['clinic_id_from']) {
-                        $select[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
-                        // break;
-                    }
-                }
-                if ($select[$key]['visit_id'] == $visitId) {
-                    $obat[] = $select[$key];
-                } else {
-                    $historyObat[] = $select[$key];
-                    $visitHistory[$select[$key]['visit_id']] = ' <i class="far fa-caret-square-down"></i> (' . substr($select[$key]['treat_date'], 0, 10) . ") " . $select[$key]['fullname'] . ' => ' . $select[$key]['name_of_clinic'];
+            $select[$key]['fullname'] = '';
+            foreach ($employee as $key1 => $value1) {
+                if ($employee[$key1]['employee_id'] == $select[$key]['employee_id']) {
+                    $select[$key]['fullname'] = $employee[$key1]['fullname'];
+                    // break;
                 }
             }
+            $select[$key]['name_of_clinic'] = '';
+            foreach ($clinic as $key1 => $value1) {
+                if ($clinic[$key1]['clinic_id'] == $select[$key]['clinic_id_from']) {
+                    $select[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
+                    // break;
+                }
+            }
+            if ($select[$key]['visit_id'] == $visitId) {
+                $obat[] = $select[$key];
+            } else {
+                $historyObat[] = $select[$key];
+                $visitHistory[$select[$key]['visit_id']] = ' <i class="far fa-caret-square-down"></i> (' . substr($select[$key]['treat_date'], 0, 10) . ") " . $select[$key]['fullname'] . ' => ' . $select[$key]['name_of_clinic'];
+            }
+            // if ($select[$key]['isrj'] == 1) {
+            // }
         }
 
         $dt = '';

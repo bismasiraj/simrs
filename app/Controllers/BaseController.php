@@ -685,7 +685,7 @@ abstract class BaseController extends Controller
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             INNER JOIN PASIEN_VISITATION pv ON pd.VISIT_ID = pv.VISIT_ID
-        , pasien p 
+            , pasien p 
             where 
             pd.PASIEN_DIAGNOSA_ID = '$diagnosa_id'
             and PD.VISIT_ID =  '$visit_id'

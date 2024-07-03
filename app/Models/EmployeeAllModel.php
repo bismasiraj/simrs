@@ -29,7 +29,9 @@ class EmployeeAllModel extends Model
     {
         $employeeModel = new EmployeeAllModel();
         // $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id, sspractitioner_id")->where('SPECIALIST_TYPE_ID is not null')->findAll();
-        $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id, sspractitioner_id")->findAll();
+        $employee = $employeeModel->select("replace(fullname,'''','') as FULLNAME, , EMPLOYEE_ID, dpjp, specialist_type_id, sspractitioner_id")
+            ->where("specialist_type_id is not null")
+            ->findAll();
         return $employee;
     }
 }

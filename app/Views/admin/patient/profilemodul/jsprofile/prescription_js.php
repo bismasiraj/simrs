@@ -66,16 +66,6 @@
 
 
 <script type='text/javascript'>
-    function formatCurrency(total) {
-        //Seperates the components of the number
-        var components = total.toFixed(2).toString().split(".");
-        //Comma-fies the first part
-        components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //Combines the two sections
-        return components.join(",");
-    }
-
-
     function isnullcheck(parameter) {
         return parameter == null ? 0 : (parameter)
     }
@@ -96,8 +86,12 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                $("#ereseploadingspace").html(loadingScreen())
+            },
             success: function(data) {
                 signaParam = data.signa;
+                $("#ereseploadingspace").html("")
 
                 $("#resepno").append($('<option>').val('%').text('Semua'));
 
@@ -657,8 +651,8 @@
                     <tr>
                         <th class="text-center" style="width: 5%;"></th class="text-center">
                         <th class="text-center" style="width: 30%;"></th class="text-center">
-                        <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
-                        <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                        <th class="text-center" colspan="2" style="width: 20%;"></th class="text-center">
+                        <th class="text-center" colspan="5" style="width: 30%;"></th class="text-center">
                         <th class="text-center" style="width: auto;"></th class="text-center">
                         <th class="text-center" style="width: auto;"></th class="text-center">
                     </tr>
@@ -1142,8 +1136,8 @@
                             <tr>
                                 <th class="text-center" style="width: 5%;"></th class="text-center">
                                 <th class="text-center" style="width: 30%;"></th class="text-center">
-                                <th class="text-center" colspan="2" style="width: 10%;"></th class="text-center">
-                                <th class="text-center" colspan="5" style="width: 40%;"></th class="text-center">
+                                <th class="text-center" colspan="2" style="width: 20%;"></th class="text-center">
+                                <th class="text-center" colspan="5" style="width: 30%;"></th class="text-center">
                                 <th class="text-center" style="width: auto;"></th class="text-center">
                                 <th class="text-center" style="width: auto;"></th class="text-center">
                             </tr>

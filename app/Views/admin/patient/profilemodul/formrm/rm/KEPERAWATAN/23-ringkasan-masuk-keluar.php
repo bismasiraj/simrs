@@ -18,6 +18,8 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -72,42 +74,15 @@
                 <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
             </div>
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
-            <?php csrf_field(); ?>
+            
             <div class="row">
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                     <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <!-- <h3>Surakarta</h3> -->
+                    <p><?= @$kop['contact_address']?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -122,86 +97,87 @@
             <table class="table table-bordered">
                 <tbody>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_gender']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <?php if (!empty($visit['date_of_birth'])) : ?>
+                                <p class="m-0 mt-1 p-0"><?=date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?></p>
+                            <?php else : ?>
+                                <p class="m-0 mt-1 p-0">-</p>
+                            <?php endif; ?>
                         </td>
-                        <td colspan="2">
+                        <td class="p-1" colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['contact_address']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Agama</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['nama_agama']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Status Pernikahan</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['pernikahan_desc']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Pendidikan</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['pendidikan_desc']; ?> </p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Golongan Darah</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['gol'] === 0 ? "":@$pasien['gol']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Kewarganegaraan</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['warganegara_desc']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Pekerjaan</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <p class="m-0 mt-1 p-0"><?= @$pasien['pekerjaan_desc']; ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
+                            <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
+                            <p class="m-0 mt-1 p-0"> <?= date('d-m-Y H:i', strtotime( @$visit['visit_datetime'])) ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="p-1">
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
+                        <td class="p-1">
+                            <b>Bangsal/ Kamar</b>
+                            <div><?= @$visit['name_of_class']; ?></div>
                         </td>
-                        <td>
+                        <td class="p-1">
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['bed_id'] === 0 ? "":@$visit['bed_id']; ?></div>
                         </td>
                     </tr>
                 </tbody>
@@ -214,37 +190,37 @@
                     <tr>
                         <td>
                             <b>Asal Pasien</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['visitor_address'] ?></div>
                         </td>
                         <td>
                             <b>Pengirim Pasien</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['diantar_oleh'] ?></div>
                         </td>
                         <td>
                             <b>Keluarga Dekat Pasien</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div ></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$visit['visit_date'] ?></div>
                         </td>
                         <td>
                             <b>Tanggal Keluar</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div> <?= !@$visit['exit_date'] ? "-":@$visit['exit_date'] ?></div>
                         </td>
                         <td rowspan="3">
                             <b>Catatan</b>
-                            <textarea type="text" class="form-control" id="" name=""></textarea>
+                            <div ></div>
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
                             <b>Diagnosis (ICD-10)</b>
                             <div class="container px-3">
-                                <ul>
-                                    <li></li>
+                                <ul id="diagnosis-data">
+                                    
                                 </ul>
                             </div>
                         </td>
@@ -252,31 +228,36 @@
                     <tr>
                         <td colspan="2">
                             <b>Procedure (ICD-9-CM)</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div class="container px-3">
+                                <ul id="procedure-data">
+                                    
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Status Pulang</b>
-                            <input type="text" class="form-control" id="" name="">
+                           <div><?= @$status['nama']  ?></div>
                         </td>
                         <td>
                             <b>Kondisi Pulang</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$kondisi['cara_keluar']  ?></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tindakan Operasi</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$tindakan[0]['operasi']  ?></div>
                         </td>
                         <td>
                             <b>Riwayat Imunisasi</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <div><?= @$riwayat[0]['riwayat_imunisasi']?></div>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <div id="datetime-now"></div>
         </form>
     </div>
 
@@ -289,48 +270,35 @@
 
 <script>
     $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
+        Procedure()
+        Diagnosis()
+        $("#datetime-now").html(`<em>Dicetak pada Tanggal ${moment(new Date()).format("DD-MM-YYYY HH:mm")}</em>`)
 
     })
+
+    const Procedure =()=>{
+        <?php $dataJson = json_encode( $prod); ?>
+        let dataResult=[]
+        let data = <?php echo $dataJson; ?>;
+
+        data.map(e=>{
+            dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
+        })
+        $("#procedure-data").html(dataResult)
+
+    }
+
+    const Diagnosis =()=>{
+        <?php $dataJson = json_encode( $diag); ?>
+        let dataResult=[]
+        let data = <?php echo $dataJson; ?>;
+
+        data.map(e=>{
+            dataResult += `<li>${e.diagnosa_id} - ${e.diagnosa_name}</li>`
+        })
+        $("#diagnosis-data").html(dataResult)
+    }
+  
 </script>
 <style>
     @media print {

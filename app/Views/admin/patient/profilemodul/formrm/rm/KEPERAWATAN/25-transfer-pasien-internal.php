@@ -110,9 +110,9 @@
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                    <h3><?= @$kop['name_of_org_unit']?></h3>
+                    <!-- <h3>Surakarta</h3> -->
+                    <p><?= @$kop['contact_address']?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -856,7 +856,7 @@
     }
 </style>
 <script type="text/javascript">
-    // window.print();
+    window.print();
 </script>
 
 </html>
