@@ -322,23 +322,23 @@
         $("#formDiagPerawatCetakBtn" + bodyId).show()
     }
 
-    function appendDiagnosaPerawat(accordionId, bodyId, exam) {
-        $title = 'Diagnosa Perawat Assessment Keperawatan Umum ' + exam.examination_date
+    const appendDiagnosaPerawat = (accordionId, bodyId, exam) => {
+        let title = 'Diagnosa Perawat Assessment Keperawatan Umum ' + exam.examination_date
 
         if (exam.vs_status_id == '1') {
-            $title = 'Diagnosa Perawat Assessment Keperawatan Dewasa ' + exam.examination_date
+            title = 'Diagnosa Perawat Assessment Keperawatan Dewasa ' + exam.examination_date
         } else if (exam.vs_status_id == '4') {
-            $title = 'Diagnosa Perawat Assessment Keperawatan Neonatus ' + exam.examination_date
+            title = 'Diagnosa Perawat Assessment Keperawatan Neonatus ' + exam.examination_date
         } else if (exam.vs_status_id == '5') {
-            $title = 'Diagnosa Perawat Assessment Keperawatan Anak ' + exam.examination_date
+            title = 'Diagnosa Perawat Assessment Keperawatan Anak ' + exam.examination_date
         } else if (exam.vs_status_id == '2' || exam.vs_status_id == '7') {
-            $title = 'Diagnosa Perawat CPPT ' + exam.examination_date
+            title = 'Diagnosa Perawat CPPT ' + exam.examination_date
         }
         var accordionContent = `
         <div id="adiagpGroup` + bodyId + `" class="accordion-item">
             <h2 class="accordion-header" id="headingDiagGroup` + bodyId + `">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat` + bodyId + `" aria-expanded="false" aria-controls="collapseDiagnosaPerawat` + bodyId + `">
-                    <b>${$title}</b>
+                    <b>${title}</b>
                 </button>
             </h2>
             <div id="collapseDiagnosaPerawat` + bodyId + `" class="accordion-collapse collapse" aria-labelledby="headingDiagGroup` + bodyId + `" data-bs-parent="#accordionDiagnosaPerawat" style="">
@@ -396,14 +396,14 @@
                                         <div class="table tablecustom-responsive">
                                             <table id="tableDiagnosaPerawatMedis` + bodyId + `" class="table">
                                                 <thead>
-                                                    <th class="text-center" style="width: 100%">DiagnosaPerawat</th>
+                                                    <th class="text-center" style="width: 100%" colspan="2">DiagnosaPerawat</th>
                                                 </thead>
                                                 <tbody id="bodyDiagPerawat` + bodyId + `">
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div class="box-tab-tools" style="text-align: center;">
-                                            <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                            <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -481,31 +481,9 @@
     }
 </script>
 <script>
-    function addRowDiagPerawat(container, bodyId, diag_id = null, diag_name = null) {
-        diagIndex++;
-        $("#" + container + bodyId)
-            .append($('<tr id="adiagpdiag' + diagIndex + '">')
-                // .append($('<td>').html(diagIndex + "."))
-                .append($('<td>')
-                    .append('<select id="adiagpdiagnosan_id' + diagIndex + '" class="form-control" name="diagnosan_id[]" onfocus="removetextdiagperawat(\'' + diagIndex + '\')" onchange="selectedDiagNursePerawat(\'' + diagIndex + '\')" style="width: 100%"></select>')
-                    .append('<input id="adiagpdiag_notes' + diagIndex + '" name="diag_notes[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
-                )
-                .append("<td><a href='#' onclick='$(\"#adiagpdiag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
-            );
 
-        initializeDiagPerawatSelect2("adiagpdiagnosan_id" + diagIndex, diag_id, diag_name)
-    }
 
-    function selectedDiagNursePerawat(index) {
-        var diagname = $("#adiagpdiagnosan_id" + index).text()
-        if (typeof diagname !== 'undefined') {
-            $("#adiagpdiag_notes" + index).val(diagname)
-        }
-    }
 
-    function removetextdiagperawat(index) {
-        $("#adiagpdiagnosan_id" + index).text("")
-    }
 </script>
 
 <script>
@@ -522,6 +500,9 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function() {
+                getLoadingscreen("contentDiagnosa", "loadContentDiagnosa")
+            },
             success: function(data) {
                 $("#accordionDiagnosa").html("")
                 $("#accordionDiagnosaPerawat").html("")

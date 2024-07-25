@@ -20,9 +20,9 @@ class odd extends \App\Controllers\BaseController
         $request = service('request');
         $formData = $request->getJSON(true);
 
-        $formData['visit_id'] = '2024052721452002230C3';
+        // $formData['visit_id'] = '2024052721452002230C3';
         $model = new OddModel();
-        $data = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->findAll());
+        $data = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->where('treat_date between getdate() and dateadd(hour,24,getdate()) ')->findAll());
 
         return $this->response->setJSON($data);
     }

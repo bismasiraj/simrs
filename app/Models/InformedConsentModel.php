@@ -4,12 +4,12 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class InformConsernModel extends Model
+class InformedConsentModel extends Model
 {
     protected $table      = 'assessment_informed_concent';
     protected $primaryKey = 'body_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

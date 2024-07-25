@@ -76,31 +76,31 @@
                 <tr>
                     <td style="width: 50%;">
                         <b>No. RM / Nama Pasien / Jenis Kelamin</b>
-                        <p class="p-1"><?= $info['no_rm'] . ' / ' . $info['nama'] . ' / ' . $info['jeniskel']  ?></p>
+                        <p class="p-1"><?= $info['no_registration'] . ' / ' . $info['diantar_oleh'] . ' / ' . $info['name_of_gender']  ?></p>
                     </td>
                     <td style="width: 50%;">
                         <b>Tanggal Masuk</b>
-                        <p class="p-1"><?= tanggal_indo(date('Y-m-d')) ?></p>
+                        <p class="p-1"><?= tanggal_indo($visit['visit_date']) ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td style="width: 50%;">
                         <b>Tanggal Lahir (Umur)</b>
-                        <p class="p-1"><?= tanggal_indo($info['date_of_birth']) . ' (' . @$info['umur'] . ')'; ?></p>
+                        <p class="p-1"><?= tanggal_indo(substr($info['date_of_birth'], 0, 10)) . " ({$info['ageyear']} Th {$info['agemonth']} Bln {$info['ageday']} Hr)"; ?></p>
                     </td>
                     <td style="width: 50%;">
                         <b>No. Episode</b>
-                        <p class="p-1"><?= @$info['no_episode']; ?></p>
+                        <p class="p-1"><?= @$info['visit_id']; ?></p>
                     </td>
                 </tr>
                 <tr>
                     <td style="width: 50%;">
                         <b>Alamat</b>
-                        <p class="p-1"><?= @$info['alamat']; ?></p>
+                        <p class="p-1"><?= @$info['visitor_address']; ?></p>
                     </td>
                     <td style="width: 50%;">
                         <b>DPJP / Department</b>
-                        <p class="p-1"><?= @$info['departmen']; ?></p>
+                        <p class="p-1"><?= @$info['fullname']; ?> <?= @$info['name_of_clinic']; ?></p>
                     </td>
                 </tr>
             </tbody>

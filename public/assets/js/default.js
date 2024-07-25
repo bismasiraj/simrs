@@ -1,19 +1,19 @@
 function successMsg(msg) {
-  $("#successToastBody").html(msg)
-  $("#successToastHeader").html("Berhasil")
-  $("#successToast").toast("show")
+  $("#successToastBody").html(msg);
+  $("#successToastHeader").html("Berhasil");
+  $("#successToast").toast("show");
 }
 function errorMsg(msg) {
-  $("#warningToastBody").html(msg)
-  $("#warningToastHeader").html("Gagal")
-  $("#warningToast").toast("show")
+  $("#warningToastBody").html(msg);
+  $("#warningToastHeader").html("Gagal");
+  $("#warningToast").toast("show");
 }
 function holdModal(modalId) {
-  console.log("#" + modalId)
-  $('#' + modalId).modal({
-    backdrop: 'static',
+  console.log("#" + modalId);
+  $("#" + modalId).modal({
+    backdrop: "static",
     keyboard: false,
-    show: true
+    show: true,
   });
 }
 function datediff(first, second) {
@@ -24,25 +24,26 @@ function successSwal(msg) {
   swal.fire({
     // title: 'Success',
     text: msg,
-    icon: 'success',
+    icon: "success",
     timer: 3000,
     showConfirmButton: false,
-    showCancelButton: false
+    showCancelButton: false,
   });
 }
 
 function errorSwal(msg) {
   Swal.fire({
-    icon: 'error',
-    title: 'Gagal',
+    icon: "error",
+    title: "Gagal",
     text: msg,
     timer: 5000,
-    showConfirmButton: false
+    showConfirmButton: false,
   });
 }
 
+// template laod 1
 function loadingScreen() {
-  return template = `<tr id="loadingRow">
+  return (template = `<tr id="loadingRow">
                       <td colspan="10">
                           <div class="preload d-flex align-items-center justify-content-center">
                               <div class="spinner">
@@ -53,23 +54,18 @@ function loadingScreen() {
                               </div>
                           </div>
                       </td>
-                  </tr>`;
-
+                  </tr>`);
 }
-
 
 function tempTablesNull() {
-  return template = `<tr style="height: 200px;">
-                      <td colspan="20" class="text-center">
+  return (template = `<tr style="height: 200px;">
+                      <td colspan="20">
                           <h3>Data Kosong</h3>
                       </td>
-                  </tr>`
+                  </tr>`);
 }
 
-
-
-let BASE_URL = `/`
-
+let BASE_URL = `/`;
 
 function getData(response, url, beforesend) {
   $.ajax({
@@ -86,9 +82,8 @@ function getData(response, url, beforesend) {
       }
     },
     error: (err) => {
-      errorSwal(err)
+      errorSwal(err);
       console.log("Ajax process Failed", err);
-
     },
   });
 }
@@ -252,11 +247,30 @@ function postData(data, url, response, beforesend) {
     error: (err) => {
       errorSwal(err.status);
       // errorCallbackMethod(err);
-
     },
   });
 }
+function postDataForm(data, url, response, beforesend) {
+  $.ajax({
+    xhrFields: { withCredentials: true },
+    type: "POST",
+    contentType: "application/json",
+    url: BASE_URL + url,
+    data: data,
+    beforeSend: beforesend,
+    success: (res) => {
+      response(res);
 
+      if ($("#sidebar") && $("#sidebar").length > 0) {
+        setContentHeight();
+      }
+    },
+    error: (err) => {
+      errorSwal(err.status);
+      // errorCallbackMethod(err);
+    },
+  });
+}
 
 // beforecreate: function postSyncData(data, url, response, beforesend) {
 function postSyncData(data, url, response, beforesend) {
@@ -396,8 +410,7 @@ const postDataState = (data, url, response, beforesend, abort) => {
         setContentHeight();
       }
     },
-    error: (err) =>
-      errorSwal(err.status)
+    error: (err) => errorSwal(err.status),
     // errorCallbackMethod(err),
   });
 };
@@ -418,6 +431,7 @@ function putData(data, url, response, beforesend) {
       }
     },
     error: (err) => {
+      errorSwal(err);
       console.log("Ajax process Failed", err);
       if (err.status === 401) {
         loginExpired();
@@ -491,88 +505,89 @@ const errorFunction = (jqXHR) => {
           Oops ! <br />
         </span>
         <h1>Error ${jqXHR.status}</h1>
-        ${jqXHR.status === 400
-      ? "Bad Request"
-      : jqXHR.status === 401
-        ? "Unauthorized"
-        : jqXHR.status === 402
-          ? "Payment Required"
-          : jqXHR.status === 403
+        ${
+          jqXHR.status === 400
+            ? "Bad Request"
+            : jqXHR.status === 401
+            ? "Unauthorized"
+            : jqXHR.status === 402
+            ? "Payment Required"
+            : jqXHR.status === 403
             ? "Forbidden"
             : jqXHR.status === 404
-              ? "Not Found"
-              : jqXHR.status === 405
-                ? "Method Not Allowed"
-                : jqXHR.status === 406
-                  ? "Not Acceptable"
-                  : jqXHR.status === 407
-                    ? "Proxy Authentication Required"
-                    : jqXHR.status === 408
-                      ? "Request Timeout"
-                      : jqXHR.status === 409
-                        ? "Conflict"
-                        : jqXHR.status === 410
-                          ? "Gone"
-                          : jqXHR.status === 411
-                            ? "Length Required"
-                            : jqXHR.status === 412
-                              ? "Precondition Failed"
-                              : jqXHR.status === 413
-                                ? "Payload Too Large"
-                                : jqXHR.status === 414
-                                  ? "URI Too Long"
-                                  : jqXHR.status === 415
-                                    ? "Unsupported Media Type"
-                                    : jqXHR.status === 416
-                                      ? "Requested Range Not Satisfiable"
-                                      : jqXHR.status === 417
-                                        ? "Expectation Failed"
-                                        : jqXHR.status === 418
-                                          ? "I'm a teapot"
-                                          : jqXHR.status === 421
-                                            ? "Misdirected Request"
-                                            : jqXHR.status === 422
-                                              ? "Unprocessable Entity"
-                                              : jqXHR.status === 423
-                                                ? "Locked"
-                                                : jqXHR.status === 424
-                                                  ? "Failed Dependency"
-                                                  : jqXHR.status === 425
-                                                    ? "Too Early"
-                                                    : jqXHR.status === 426
-                                                      ? "Upgrade Required"
-                                                      : jqXHR.status === 428
-                                                        ? "Precondition Required"
-                                                        : jqXHR.status === 429
-                                                          ? "Too Many Requests"
-                                                          : jqXHR.status === 431
-                                                            ? "Request Header Fields Too Large"
-                                                            : jqXHR.status === 451
-                                                              ? "Unavailable For Legal Reasons"
-                                                              : jqXHR.status === 500
-                                                                ? "Internal Server Error"
-                                                                : jqXHR.status === 501
-                                                                  ? "Not Implemented"
-                                                                  : jqXHR.status === 502
-                                                                    ? "Bad Gateway"
-                                                                    : jqXHR.status === 503
-                                                                      ? "Service Unavailable"
-                                                                      : jqXHR.status === 504
-                                                                        ? "Gateway Time-Out"
-                                                                        : jqXHR.status === 505
-                                                                          ? "HTTP Version Not Supported"
-                                                                          : jqXHR.status === 506
-                                                                            ? "Variant Also Negotiates"
-                                                                            : jqXHR.status === 507
-                                                                              ? "Insufficient Storage"
-                                                                              : jqXHR.status === 508
-                                                                                ? "Loop Detected"
-                                                                                : jqXHR.status === 510
-                                                                                  ? "Not Extended"
-                                                                                  : jqXHR.status === 511
-                                                                                    ? "Network Authentication Required"
-                                                                                    : "Something Wrong"
-    }
+            ? "Not Found"
+            : jqXHR.status === 405
+            ? "Method Not Allowed"
+            : jqXHR.status === 406
+            ? "Not Acceptable"
+            : jqXHR.status === 407
+            ? "Proxy Authentication Required"
+            : jqXHR.status === 408
+            ? "Request Timeout"
+            : jqXHR.status === 409
+            ? "Conflict"
+            : jqXHR.status === 410
+            ? "Gone"
+            : jqXHR.status === 411
+            ? "Length Required"
+            : jqXHR.status === 412
+            ? "Precondition Failed"
+            : jqXHR.status === 413
+            ? "Payload Too Large"
+            : jqXHR.status === 414
+            ? "URI Too Long"
+            : jqXHR.status === 415
+            ? "Unsupported Media Type"
+            : jqXHR.status === 416
+            ? "Requested Range Not Satisfiable"
+            : jqXHR.status === 417
+            ? "Expectation Failed"
+            : jqXHR.status === 418
+            ? "I'm a teapot"
+            : jqXHR.status === 421
+            ? "Misdirected Request"
+            : jqXHR.status === 422
+            ? "Unprocessable Entity"
+            : jqXHR.status === 423
+            ? "Locked"
+            : jqXHR.status === 424
+            ? "Failed Dependency"
+            : jqXHR.status === 425
+            ? "Too Early"
+            : jqXHR.status === 426
+            ? "Upgrade Required"
+            : jqXHR.status === 428
+            ? "Precondition Required"
+            : jqXHR.status === 429
+            ? "Too Many Requests"
+            : jqXHR.status === 431
+            ? "Request Header Fields Too Large"
+            : jqXHR.status === 451
+            ? "Unavailable For Legal Reasons"
+            : jqXHR.status === 500
+            ? "Internal Server Error"
+            : jqXHR.status === 501
+            ? "Not Implemented"
+            : jqXHR.status === 502
+            ? "Bad Gateway"
+            : jqXHR.status === 503
+            ? "Service Unavailable"
+            : jqXHR.status === 504
+            ? "Gateway Time-Out"
+            : jqXHR.status === 505
+            ? "HTTP Version Not Supported"
+            : jqXHR.status === 506
+            ? "Variant Also Negotiates"
+            : jqXHR.status === 507
+            ? "Insufficient Storage"
+            : jqXHR.status === 508
+            ? "Loop Detected"
+            : jqXHR.status === 510
+            ? "Not Extended"
+            : jqXHR.status === 511
+            ? "Network Authentication Required"
+            : "Something Wrong"
+        }
                             <br />
         <a href="#" class="text-primary" onclick="window.location.reload()">refresh page</a>
       </div>
@@ -593,10 +608,9 @@ const errorCallbackMethod = (err) => {
     console.log("Internal server error", err);
     setTimeout(() => {
       loadingDialogClose();
-      errorSwal(`Internal server error \nStatus: ${err.status}`)
+      errorSwal(`Internal server error \nStatus: ${err.status}`);
       alert(`Internal server error \nStatus: ${err.status}`);
     }, 2010);
-
   } else if (err.status === 401) {
     loginExpired();
   } else if ([501, 503].indexOf(err.status) !== -1) {
@@ -614,10 +628,10 @@ const errorCallbackMethod = (err) => {
         loadingDialogClose();
         alert(
           err.responseJSON.error.code +
-          " - " +
-          err.responseJSON.error.message +
-          "\nStatus: " +
-          err.status
+            " - " +
+            err.responseJSON.error.message +
+            "\nStatus: " +
+            err.status
         );
       }, 2010);
     } else {
@@ -656,6 +670,35 @@ const errorCallbackMethod = (err) => {
 };
 
 // ?-------------------
+// template laod 2
+function loadingScreenRound() {
+  return `<tr id="loadingRow">
+                      <td colspan="10">
+                          <div class="preload d-flex align-items-center justify-content-center">
+                             <div class="arc"></div>
+                          </div>
+                      </td>
+                  </tr>`;
+}
+
+// loading screan
+function getLoadingscreen(val, load) {
+  $(`#${val}`).hide();
+  $(`#${load}`).show();
+  // $(`#${load}`).html(loadingScreenRound());
+  $(`#${load}`).html(loadingScreen());
+
+  setTimeout(function () {
+    $(`#${load}`).hide();
+    $(`#${val}`).show();
+  }, 3000);
+}
+
+function getLoadingGlobalServices(val) {
+  $(`#${val}`).html(loadingScreen());
+}
+
+// ?-------------------
 
 function evaluateScore(inputValue, type, value) {
   if (inputValue === 1) {
@@ -671,589 +714,638 @@ function evaluateScore(inputValue, type, value) {
 }
 
 function getAdultScore(type, value) {
-
   switch (type) {
     // === PERNAPASAN === //
-    case 'pernapasan':
+    case "pernapasan":
       if (value <= 8) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 9 && value <= 11) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 12 && value <= 20) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 21 && value <= 24) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 25) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
 
     // === SATURASI === //
-    case 'saturasi':
+    case "saturasi":
       if (value <= 91) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 92 && value <= 93) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 94 && value <= 95) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 96) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
 
       break;
 
     // === SATURASI 2=== //
-    case 'saturasi2':
+    case "saturasi2":
       if (value <= 83) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 84 && value <= 85) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 86 && value <= 87) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 88 && value <= 92) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 93 && value <= 94) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 95 && value <= 96) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 97) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
 
       break;
 
-
     // === OKSIGEN === //
-    case 'oksigen':
+    case "oksigen":
       if (value) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
-      break
+      break;
 
     // === TEKANAN DARAH === //
-    case 'darah':
+    case "darah":
       if (value <= 70) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 71 && value <= 80) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 81 && value <= 100) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 101 && value <= 160) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 161 && value <= 200) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 201 && value <= 219) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 220) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
-      break
+      break;
 
     // === NADI === //
-    case 'nadi':
+    case "nadi":
       if (value <= 40) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 41 && value <= 50) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 51 && value <= 90) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 91 && value <= 110) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 111 && value <= 130) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 131) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
 
       break;
 
     // === TINGKAT KESADARAN === //
-    case 'kesadaran':
-      if (value === 'Compos Mentis') {
+    case "kesadaran":
+      if (value === "Compos Mentis") {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
-      } else if (value === 'Apatis' || value === 'Samnolen' || value === 'Delirium' || value === 'Sopor' || value === 'Comma') {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (
+        value === "Apatis" ||
+        value === "Samnolen" ||
+        value === "Delirium" ||
+        value === "Sopor" ||
+        value === "Comma"
+      ) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
-      break
+      break;
 
     // === SUHU / TEMPERATUR === //
-    case 'suhu':
+    case "suhu":
       if (value <= 35.0) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 35.1 && value <= 36.0) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 36.1 && value <= 38.0) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 38.1 && value <= 39.0) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 39.1) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       }
       break;
   }
 }
 
 function getNeonatalScore(type, value) {
-
   switch (type) {
     // === SPO2 === //
-    case 'saturasi':
+    case "saturasi":
       if (value <= 85) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
       break;
 
     // === SATURASI 2=== //
-    case 'saturasi2':
+    case "saturasi2":
       if (value <= 83) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 84 && value <= 85) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 86 && value <= 87) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 88 && value <= 92) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 93 && value <= 94) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 95 && value <= 96) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 97) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
 
       break;
 
-
     // === PERNAPASAN === //
-    case 'pernapasan':
+    case "pernapasan":
       if (value < 30) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 30 && value <= 60) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 61 && value <= 80) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value > 80) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
     // === TEKANAN DARAH === //
-    case 'darah':
+    case "darah":
       if (value <= 70) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 71 && value <= 80) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 81 && value <= 100) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 101 && value <= 160) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 161 && value <= 200) {
         return {
-          'score': 1,
-          'color': 'success',
-          'colorPicker': '#198754',
-        }
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
       } else if (value >= 201 && value <= 219) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 220) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
-      break
-
+      break;
 
     // === NADI === //
-    case 'nadi':
+    case "nadi":
       if (value < 100) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 100 && value <= 119) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 120 && value <= 160) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 161 && value <= 180) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 180) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
 
     // === SUHU / TEMPERATUR === //
-    case 'suhu':
+    case "suhu":
       if (value <= 35.5) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else if (value >= 35.6 && value <= 37.5) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else if (value >= 37.6 && value <= 37.9) {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       } else if (value >= 38.0) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
 
     // === OKSIGEN === //
-    case 'oksigen':
+    case "oksigen":
       if (value) {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
       } else {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
-      break
+      break;
 
     // === TINGKAT KESADARAN === //
-    case 'kesadaran':
-      if (value === 'Compos Mentis') {
+    case "kesadaran":
+      if (value === "Compos Mentis") {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
-      } else if (value === 'Apatis' || value === 'Samnolen' || value === 'Delirium' || value === 'Sopor' || value === 'Comma') {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (
+        value === "Apatis" ||
+        value === "Samnolen" ||
+        value === "Delirium" ||
+        value === "Sopor" ||
+        value === "Comma"
+      ) {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       } else {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
       }
-      break
+      break;
 
     // === NEURO === //
-    case 'neuro':
-      if (value === 'Aktf') {
+    case "neuro":
+      if (value === "Aktf") {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
-      } else if (value === 'Tidak Aktf') {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value === "Tidak Aktf") {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
-      } else if (value === 'Letargi') {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value === "Letargi") {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
-      } else if (value === 'Kejang') {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value === "Kejang") {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
-
 
     // === WARNA KULIT === //
-    case 'kulit':
-      if (value === 'Pink') {
+    case "kulit":
+      if (value === "Pink") {
         return {
-          'score': 0,
-          'color': 'light',
-          'colorPicker': '#f8f9fa',
-        }
-      } else if (value === 'Pucat') {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value === "Pucat") {
         return {
-          'score': 2,
-          'color': 'warning',
-          'colorPicker': '#ffc107',
-        }
-      } else if (value === 'Slanosis') {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value === "Slanosis") {
         return {
-          'score': 3,
-          'color': 'danger',
-          'colorPicker': '#dc3545',
-        }
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
       }
       break;
-
   }
+}
+const errorStatusCode = {
+  504: (response, textStatus, thrown) => {
+    $("#beforesend-animations").html(`
+      <div
+        class="preload d-flex align-items-center justify-content-center"
+        style="position: absolute;
+        height: 280px;
+        width: 55vw;
+        background: transparent;
+        z-index: 99;"
+      >
+        <div class="text-center p-5 border">
+          <div class="text-center text-primary mt-3 px-5">
+            <span class="font-weight-bold">
+              Oops ! <br />
+            </span>
+            <h1>Error ${thrown.status}</h1>
+            Gateway Time-Out <br />
+            <a href="#" class="text-primary" onclick="window.location.reload()">
+              refresh page
+            </a>
+          </div>
+        </div>
+      </div>`);
+  },
+};
+function makeid(length) {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
+function get_bodyid() {
+  const date = new Date();
+  let bodyId = date.toISOString().substring(0, 23);
+  bodyId = bodyId.replace(/[-:.T]/g, "") + makeid(3);
+  return bodyId;
 }

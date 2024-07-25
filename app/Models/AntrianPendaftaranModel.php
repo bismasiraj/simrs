@@ -8,7 +8,7 @@ class AntrianPendaftaranModel extends Model
 {
     protected $table      = 'antrian_pendaftaran';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

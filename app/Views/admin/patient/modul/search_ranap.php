@@ -24,7 +24,7 @@
                         <?php $cliniclist = array();
                         foreach ($clinic as $key => $value) {
                             if ($clinic[$key]['stype_id'] == '3') {
-                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                $cliniclist[$clinic[$key]['name_of_clinic']] = $clinic[$key]['name_of_clinic'];
                             }
                         }
                         asort($cliniclist);
@@ -32,6 +32,11 @@
                         <?php foreach ($cliniclist as $key => $value) { ?>
                             <option value="<?= $key; ?>"><?= $value; ?></option>
                         <?php } ?>
+                        <?php if ($giTipe == '6') {
+                        ?>
+                            <option value="P002">Kamar Operasi</option>
+                        <?php
+                        } ?>
                     </select>
                 </div>
                 <span class="text-danger" id="error_search_type"></span>

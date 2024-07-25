@@ -10,7 +10,7 @@ class GoodsModel extends Model
     protected $table      = 'goods';
     protected $primaryKey = 'brand_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

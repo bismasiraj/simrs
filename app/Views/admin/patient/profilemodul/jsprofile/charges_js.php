@@ -255,7 +255,7 @@
                     //     .append('<input name="thename[]" id="athename' + key + '" type="hidden" value="' + billJson[key].thename + '" class="form-control" />')
                     //     .append('<input name="theaddress[]" id="atheaddress' + key + '" type="hidden" value="' + billJson[key].theaddress + '" class="form-control" />')
                     //     .append('<input name="status_pasien_id[]" id="astatus_pasien_id' + key + '" type="hidden" value="' + billJson[key].status_pasien_id + '" class="form-control" />')
-                    //     .append('<input name="isRJ[]" id="aisRJ' + key + '" type="hidden" value="' + billJson[key].isRJ + '" class="form-control" />')
+                    //     .append('<input name="isrj[]" id="aisrj' + key + '" type="hidden" value="' + billJson[key].isrj + '" class="form-control" />')
                     //     .append('<input name="gender[]" id="agender' + key + '" type="hidden" value="' + billJson[key].gender + '" class="form-control" />')
                     //     .append('<input name="ageyear[]" id="aageyear' + key + '" type="hidden" value="' + billJson[key].ageyear + '" class="form-control" />')
                     //     .append('<input name="agemonth[]" id="aagemonth' + key + '" type="hidden" value="' + billJson[key].agemonth + '" class="form-control" />')
@@ -447,7 +447,7 @@
             .append('<input name="thename[]" id="athename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
             .append('<input name="theaddress[]" id="atheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
             .append('<input name="status_pasien_id[]" id="astatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isRJ[]" id="aisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="isrj[]" id="aisrj' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
             .append('<input name="gender[]" id="agender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
             .append('<input name="ageyear[]" id="aageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
             .append('<input name="agemonth[]" id="aagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
@@ -573,7 +573,7 @@
                 'thename': $("#" + identifier + "thename" + key).val(),
                 'theaddress': $("#" + identifier + "theaddress" + key).val(),
                 'status_pasien_id': $("#" + identifier + "status_pasien_id" + key).val(),
-                'isRJ': $("#" + identifier + "isRJ" + key).val(),
+                'isrj': $("#" + identifier + "isrj" + key).val(),
                 'gender': $("#" + identifier + "gender" + key).val(),
                 'ageyear': $("#" + identifier + "ageyear" + key).val(),
                 'agemonth': $("#" + identifier + "agemonth" + key).val(),
@@ -611,7 +611,7 @@
             cache: false,
             processData: false,
             success: function(data) {
-
+                successSwal('Data berhasil disimpan')
                 $("#" + identifier + "quantity" + key).prop("readonly", true)
                 $("#" + identifier + "simpanBillBtn" + key).hide()
                 $("#" + identifier + "editDeleteCharge" + key).show()
@@ -626,8 +626,8 @@
 
                 // });
             },
-            error: function() {
-
+            error: function(e) {
+                errorSwal(e)
             }
         });
     }
@@ -681,7 +681,7 @@
             .append('<input name="thename[]" id="' + identifier + 'thename' + counter + '" type="hidden" value="' + billJson[key].thename + '" class="form-control" />')
             .append('<input name="theaddress[]" id="' + identifier + 'theaddress' + counter + '" type="hidden" value="' + billJson[key].theaddress + '" class="form-control" />')
             .append('<input name="status_pasien_id[]" id="' + identifier + 'status_pasien_id' + counter + '" type="hidden" value="' + billJson[key].status_pasien_id + '" class="form-control" />')
-            .append('<input name="isRJ[]" id="' + identifier + 'isRJ' + counter + '" type="hidden" value="' + billJson[key].isRJ + '" class="form-control" />')
+            .append('<input name="isrj[]" id="' + identifier + 'isrj' + counter + '" type="hidden" value="' + billJson[key].isrj + '" class="form-control" />')
             .append('<input name="gender[]" id="' + identifier + 'gender' + counter + '" type="hidden" value="' + billJson[key].gender + '" class="form-control" />')
             .append('<input name="ageyear[]" id="' + identifier + 'ageyear' + counter + '" type="hidden" value="' + billJson[key].ageyear + '" class="form-control" />')
             .append('<input name="agemonth[]" id="' + identifier + 'agemonth' + counter + '" type="hidden" value="' + billJson[key].agemonth + '" class="form-control" />')

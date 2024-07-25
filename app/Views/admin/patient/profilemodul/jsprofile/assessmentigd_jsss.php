@@ -1,10 +1,10 @@
-<?php
-$aValueParent = array();
-foreach ($aValue as $key => $value) {
-    $aValueParent[$value['parameter_id']]['parameter_id'] = $value['parameter_id'];
-    $aValueParent[$value['parameter_id']]['p_type'] = $value['p_type'];
-}
-?>
+<!-- <?php
+        $aValueParent = array();
+        foreach ($aValue as $key => $value) {
+            $aValueParent[$value['parameter_id']]['parameter_id'] = $value['parameter_id'];
+            $aValueParent[$value['parameter_id']]['p_type'] = $value['p_type'];
+        }
+        ?>
 <script type="text/javascript">
     var mrJson;
     var tagihan = 0.0;
@@ -8558,4 +8558,4 @@ foreach ($aValue as $key => $value) {
         //     }
         // });
     }
-</script>
+</script> -->

@@ -328,8 +328,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         text: 'sa',
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
@@ -338,8 +338,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode1"), {
         text: 'sa',
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction

@@ -27,7 +27,6 @@
 
     function setDataVitalSign() {
         $("#formvitalsign").find("input, textarea").val(null)
-        $("#formvitalsign").find("input, textarea").prop("disabled", false)
         $("#formvitalsign").find("#total_score").html("")
         $("#formvitalsign").find("span.h6").html("")
         var bodyId = ''
@@ -37,7 +36,7 @@
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
         $("#avtbody_id").val(bodyId)
         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
-        $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
+        $("#avttrans_id").val('<?= $visit['trans_id']; ?>')
         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#avtbed_id").val()
         $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
@@ -57,7 +56,19 @@
         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
         $("#avtageday").val('<?= $visit['ageday']; ?>')
         $("#avtexamination_date").val(get_date())
-        $("#avtvs_status_id").val(8)
+
+        //havin
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#avtvs_status_id").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#avtvs_status_id").prop("selectedIndex", 1);
+        } else {
+            $("#avtvs_status_id").prop("selectedIndex", 2);
+        }
     }
 
     function addRowVitalSign(examselect, key) {
@@ -458,6 +469,9 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function(e) {
+                getLoadingscreen("contentVitalSign", "loadContentVitalSign")
+            },
             success: function(data) {
                 vitalsign = data.examInfo
                 $("#vitalSignBody").html("")

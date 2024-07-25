@@ -30,16 +30,16 @@ $permissions = user()->getPermissions();
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-sm-12">
             <div class="row mt-4">
-                <div class="col-md-12">
+                <!-- <div class="col-md-12">
                     <div id="listRequestRad" class="row">
 
                     </div>
-                </div>
-                <div class="col-md-12">
+                </div> -->
+                <!-- <div class="col-md-12">
                     <div id="radiologiAdd" class="box-tab-tools text-center">
                         <a data-toggle="modal" onclick="requestRad()" class="btn btn-primary btn-lg" id="addRadBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Radiologi Online</a>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="table-responsive mt-4 mb-4">
                 <table class="table table-striped table-hover">
@@ -113,7 +113,7 @@ $permissions = user()->getPermissions();
                     </table>
                     <div class="panel-footer text-end mb-4">
                         <button type="button" id="formSaveBillRadBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                        <button type="button" id="formEditBillRadBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                        <!-- <button type="button" id="formEditBillRadBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
                         <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                         <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                     </div>

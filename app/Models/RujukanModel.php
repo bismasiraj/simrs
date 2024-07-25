@@ -9,7 +9,7 @@ class RujukanModel extends Model
     protected $table      = 'RUJUKAN';
     protected $primaryKey = 'rujukan_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

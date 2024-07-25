@@ -31,7 +31,7 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li> -->
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter', 'perawat'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
                             <i class="fas fa-ambulance"></i>
@@ -57,6 +57,20 @@ $basecontroller->checkMenuActive('register');
                     <li class="<?= $basecontroller->checkMenuActive('ranap'); ?> ">
                         <a href="<?php echo base_url() ?>admin/patient/ranap">
                             <i class="mdi mdi-bed" aria-hidden="true"></i> <span> <?php echo lang('Word.ipd_in_patient'); ?></span>
+                        </a>
+                    </li>
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'vk'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
+                        <a href="<?php echo base_url(); ?>admin/patient/bidan">
+                            <i class="mdi mdi-baby-face-outline"></i> <span> Kebidanan</span>
+                        </a>
+                    </li>
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'ibs'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
+                        <a href="<?php echo base_url(); ?>admin/patient/kamaroperasi">
+                            <i class="mdi mdi-knife"></i> <span> Kamar Operasi</span>
                         </a>
                     </li>
                 <?php } ?>

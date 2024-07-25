@@ -214,6 +214,9 @@ $permission = user()->getPermissions();
                         </div>
                     </div>
                 </div>
+                <div class="d-flex mb-3">
+                    <a href="<?= base_url(); ?>/admin/rm/keperawatan/implementasi/<?= base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
+                </div>
             </div><!--./row-->
         </div>
     </div><!--./row-->

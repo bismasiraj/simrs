@@ -9,7 +9,7 @@ class RMJ21Model extends Model
     protected $table      = 'hosnic_emr_rj_asmed_anak';
     protected $primaryKey = 'body_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -1730,9 +1730,9 @@ class medis extends \App\Controllers\BaseController
         }
     }
 
-    public function rawat_jalan($visit, $vactination_id = null)
+
+    public function rawat_jalan($visit, $vactination_id = null, $title = "Asesmen Medis IGD Rawat Jalan")
     {
-        $title = "Asesmen Medis IGD Rawat Jalan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -1840,8 +1840,8 @@ class medis extends \App\Controllers\BaseController
             LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
            , pasien p 
             where 
-            pd.PASIEN_DIAGNOSA_ID = '20240614173754692'
-            and PD.VISIT_ID =  '202406140643270000A44'
+            pd.PASIEN_DIAGNOSA_ID = '$vactination_id'
+            and PD.VISIT_ID =  '{$visit['visit_id']}'
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -1891,23 +1891,25 @@ class medis extends \App\Controllers\BaseController
             PD.STANDING_ORDER, 
             PD.DOCTOR")->getResultArray());
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
 
             $selectlokalis = $this->lowerKey($db->query(
                 "
                 select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 3"
+                where document_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 3"
             )->getResultArray());
 
             $selectlokalis2 = $this->lowerKey($db->query(
                 "
                 select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 2"
+                where document_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 2"
             )->getResultArray());
 
-            $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
+            // $selectinfo = $this->query_template_info($db, $visit['visit_id'], $vactination_id);
+            $selectinfo = $visit;
+            // return json_encode($selectinfo);
 
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
@@ -1952,23 +1954,22 @@ class medis extends \App\Controllers\BaseController
                             , 1, 1, '') as varchar(4000) ),
                     LAB_RESULT as prosedur_lab,RO_RESULT as radiologi,TERAPHY_DESC as farmasi
                 from pasien_diagnosa pd 
-                where NO_REGISTRATION = '041171' 
-                and visit_id  ='202405131504360057D88' 
+                where NO_REGISTRATION = '{$visit['no_registration']}'
                 and (CLASS_ROOM_ID is null 
                 or CLASS_ROOM_ID = '')
                 "
             )->getResultArray());
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
 
-            $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
+            $selectinfo = $visit;
+            return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "organization" => $selectorganization,
+                "info" => $selectinfo
+            ]);
             if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo
-                ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
                     "visit" => $visit,
@@ -2121,16 +2122,47 @@ class medis extends \App\Controllers\BaseController
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
             PD.DOCTOR")->getResultArray());
+
+            $selectlokalis2 = $this->lowerKey($db->query(
+                "
+                select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                where body_id = '20240614173754692' AND assessment_lokalis.VALUE_SCORE = 2"
+            )->getResultArray());
+            $selectrecipe = $this->lowerKey($db->query(
+                "
+                SELECT
+                    DESCRIPTION AS RESEP,
+                    ATURANMINUM2 AS SIGNATURA,
+                    MAX(TREAT_DATE) AS tanggal_selesai,
+                    MIN(TREAT_DATE) AS tanggal_mulai
+
+                FROM PASIEN_PRESCRIPTION_DETAIL
+                WHERE VISIT_ID = '202404241151300470C77'
+                GROUP BY DESCRIPTION, ATURANMINUM2, TREAT_DATE
+                "
+            )->getResultArray());
+
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectinfo = $visit;
+            // $selectinfo = $this->query_template_info($db, '2024052400101208008C3', '202405262033530190C16');
+
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/16-resume-medis.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "val" => $select[0]
+                    "val" => $select[0],
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo,
+                    "lokalis2" => $selectlokalis2,
+                    "recipe" => $selectrecipe
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/16-resume-medis.php", [
                     "visit" => $visit,
-                    'title' => $title
+                    'title' => $title,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo,
                 ]);
             }
         }

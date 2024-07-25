@@ -24,49 +24,49 @@
         <tr>
             <td class="p-1" style="width:33.3%">
                 <b>Nomor RM</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['no_rm']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['no_registration']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Nama Pasien</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['nama']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['diantar_oleh']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Jenis Kelamin</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['jeniskel']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['name_of_gender']; ?></p>
             </td>
         </tr>
         <tr>
             <td class="p-1" style="width:33.3%">
                 <b>Tanggal Lahir (Usia)</b>
-                <p class="m-0 mt-1 p-0"><?= tanggal_indo($info['date_of_birth']) . ' (' . @$info['umur'] . ')'; ?></p>
+                <p class="m-0 mt-1 p-0"><?= tanggal_indo(substr($info['date_of_birth'], 0, 10)) . " ({$info['ageyear']} Th {$info['agemonth']} Bln {$info['ageday']} Hr)"; ?></p>
 
             </td>
             <td class="p-1" style="width:66.3%" colspan="2">
                 <b>Alamat Pasien</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['alamat']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['visitor_address']; ?></p>
             </td>
         </tr>
         <tr>
             <td class="p-1" style="width:33.3%">
                 <b>DPJP</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['dpjp']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['fullname']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Department</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['departmen']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['name_of_clinic']; ?></p>
             </td class="p-1">
             <td class="p-1" style="width:33.3%">
                 <b>Tanggal Masuk</b>
-                <p class="m-0 mt-1 p-0"><?= tanggal_indo(date('Y-m-d')) ?></p>
+                <p class="m-0 mt-1 p-0"><?= tanggal_indo($info['visit_date']) ?></p>
             </td>
         </tr>
 
         <!-- jika pasien rawat inap -->
-        <?php if(!empty($info['class_room_id'])): ?>
+        <?php if (!empty($info['class_room_id'])) : ?>
             <tr>
                 <td class="p-1">
                     <b>Kelas</b>
-                    <p class="m-0 mt-1 p-0"><?= @$info['kelas']; ?></p>
+                    <p class="m-0 mt-1 p-0"><?= @$info['name_of_class']; ?></p>
                 </td>
                 <td class="p-1">
                     <b>Bangsal/Kamar</b>

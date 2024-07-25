@@ -267,6 +267,9 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function(e) {
+                getLoadingscreen("contentOrderGizi", "loadContentOrderGizi")
+            },
             success: function(data) {
                 orderGiziAll = data.orderGizi
 

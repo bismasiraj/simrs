@@ -10,7 +10,7 @@ class GenerateIdModel extends Model
     protected $table      = 'generate_id';
     protected $primaryKey = 'treat_date';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

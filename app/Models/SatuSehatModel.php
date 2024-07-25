@@ -9,7 +9,7 @@ class SatuSehatModel extends Model
     protected $table      = 'satu_sehat';
     protected $primaryKey = 'trans_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

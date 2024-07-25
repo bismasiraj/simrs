@@ -316,13 +316,17 @@ class User extends Entity
 
     public function getEmployeeData()
     {
-        $model = model(EmployeeAllModel::class)->select('*')->find(user()->employee_id);
-        // return user()->employee_id;
-        $result = array();
-        foreach ($model as $key1 => $value1) {
-            $result[strtolower($key1)] = $value1;
+        if (!is_null(user()->employee_id)) {
+            $model = model(EmployeeAllModel::class)->select('*')->find(user()->employee_id);
+            // return user()->employee_id;
+            $result = array();
+            foreach ($model as $key1 => $value1) {
+                $result[strtolower($key1)] = $value1;
+            }
+            return $result;
+        } else {
+            return [];
         }
-        return $result;
     }
 
     /**

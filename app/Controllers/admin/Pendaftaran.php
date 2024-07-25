@@ -573,6 +573,20 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         return json_encode($response);
     }
+    public function getSep($sep)
+    {
+        $method = 'GET';
+        $url = $this->baseurlvclaim . '/SEP/' . $sep;
+
+        // return json_encode($url);
+
+        $ws_data = array();
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+
+        return json_encode($response);
+    }
     public function insertSep()
     {
         if (!$this->request->is('post')) {
@@ -619,10 +633,15 @@ class Pendaftaran extends \App\Controllers\BaseController
             $body['diagAwal'] = 'E10';
         }
         $body['noTelp'] = '081379131123';
+        $body['ppkPelayanan'] = '0171R020';
+        $body['ppkRujukan'] = '0171R020';
+        $body['dpjpLayan'] = '143675';
+        $body['noKartu'] = '0002044148275';
+
 
 
         // $headers = $this->AuthBridging();
-        // return json_encode($headers);
+        // return json_encode($body);
 
 
 
@@ -634,6 +653,76 @@ class Pendaftaran extends \App\Controllers\BaseController
 
         $ws_data['request']['t_sep'] = $body;
         $postdata = json_encode($ws_data);
+
+        $postdata = '{
+    "request": {
+        "t_sep": {
+            "noKartu": "0002036877197",
+            "tglSep": "2024-07-04",
+            "ppkPelayanan": "0171R020",
+            "jnsPelayanan": "2",
+            "klsRawat": {
+                "klsRawatHak": "3",
+                "klsRawatNaik": "",
+                "pembiayaan": "",
+                "penanggungjawab": "Pribadi"
+            },
+            "noMR": "071570",
+            "rujukan": {
+                "tglRujukan": "2024-07-04",
+                "noRujukan": "",
+                "asalRujukan": "2",
+                "ppkRujukan": "0171R020"
+            },
+            "catatan": "-",
+            "diagAwal": "A84.1",
+            "poli": {
+                "tujuan": "IGD",
+                "eksekutif": "0"
+            },
+            "cob": {
+                "cob": "0"
+            },
+            "katarak": {
+                "katarak": "0"
+            },
+            "jaminan": {
+                "lakaLantas": "0",
+                "noLP": "",
+                "penjamin": {
+                    "penjamin": "",
+                    "tglKejadian": "2024-07-04",
+                    "keterangan": "-",
+                    "suplesi": {
+                        "suplesi": "0",
+                        "noSepSuplesi": "",
+                        "lokasiLaka": {
+                            "kdPropinsi": "",
+                            "kdKabupaten": "",
+                            "kdKecamatan": ""
+                        }
+                    }
+                }
+            },
+            "tujuanKunj": "0",
+            "flagProcedure": "",
+            "kdPenunjang": "",
+            "assesmentPel": "",
+            "skdp": {
+                "noSurat": "",
+                "kodeDPJP": ""
+            },
+            "dpjpLayan": "143675",
+            "noTelp": "081271714652",
+            "user": "usi"
+        }
+    }
+}';
+
+        // $header = $this->AuthBridging('vclaim');
+        // array_push($header, "Content-type:Application/x-www-form-urlencoded");
+        // return
+        //     json_encode($header);
         // return $postdata;
 
 

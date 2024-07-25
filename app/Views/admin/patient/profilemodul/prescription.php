@@ -38,7 +38,7 @@ $permissions = user()->getPermissions();
                 </div>
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
-                    <div class="col-sm-6 col-md-3">
+                    <!-- <div class="col-sm-6 col-md-3">
                         <div class="mb-4">
                             <div class="form-group">
                                 <label>Poli/Bangsal</label><small class="req"> *</small>
@@ -57,9 +57,9 @@ $permissions = user()->getPermissions();
                             </div>
                             <span class="text-danger" id="error_search_type"></span>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="col-sm-6 col-md-3">
+                    <!-- <div class="col-sm-6 col-md-3">
                         <div class="mb-4">
                             <div class="form-group">
                                 <label>Relasi</label>
@@ -74,7 +74,7 @@ $permissions = user()->getPermissions();
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-sm-6 col-md-3" style="display: none;">
                         <div class="mb-4">
                             <div class="form-group">
@@ -99,9 +99,11 @@ $permissions = user()->getPermissions();
                         <div class="mb-4">
                             <div class="form-group">
                                 <label>Jenis Resep</label>
-                                <select name="jenisresep" id="jenisresep" class="form-control" onchange="filteredResep(this.value)">
+                                <select name="jenisresep" id="jenisresep" class="form-control">
                                     <option value="1">E-Resep</option>
                                     <option value="7">ODD</option>
+                                    <option value="8">Medical Item</option>
+                                    <option value="0">Alkes/BMHP</option>
                                 </select>
                             </div>
                         </div>
@@ -140,33 +142,35 @@ $permissions = user()->getPermissions();
                 </style>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div id="eresepBtnGroupssssss" class="row">
+                        <div id="eresepBtnGroup" class="row">
                             <div class="col-md-6">
-                                <div id="eresepAddsss" class="box-tab-tools text-end">
-                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Non Racikan</a>
+                                <div id="eresepAddR" class="box-tab-tools text-end">
+                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div id="eresepRAddsss" class="box-tab-tools text-start" style="">
-                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> BUAT E-RESEP Racikan</a>
+                                <div id="eresepRAddNR" class="box-tab-tools text-start" style="">
+                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
                                 </div>
                             </div>
                         </div>
                 <?php }
                 } ?>
+                <div id="medItemBtnGroup" class="row">
+                    <div class="col-md-12">
+                        <div id="eresepAdds" class="box-tab-tools text-center">
+                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                        </div>
+                    </div>
+                </div>
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
-                        <div id="medItemBtnGroup" class="row">
-                            <div class="col-md-12">
-                                <div id="eresepAdd" class="box-tab-tools text-center">
-                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
-                                </div>
-                            </div>
-                        </div>
+
                 <?php }
                 } ?>
                 <div class="box-tab-tools">
                     <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">
+                        <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
                         <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
                             <thead class="table-primary" style="text-align: center;">
                                 <tr>
@@ -185,8 +189,9 @@ $permissions = user()->getPermissions();
                         <div id="eresepBody">
                         </div>
                         <div class="panel-footer text-end mb-4">
-                            <button type="submit" id="formaddprescrbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>History</span></button>
+                            <button type="submit" id="formAddPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Edit</span></button>
+                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light"><i class="fa fa-history"></i> <span>History</span></button>
                         </div>
                     </form>
                 </div>

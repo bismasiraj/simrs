@@ -76,6 +76,30 @@
             margin-bottom: -.5px;
             /* Adjust margin to make borders overlap */
         }
+
+        .border-custom {
+            border-bottom: .5px solid #dee2e6;
+            border-right: .5px solid #dee2e6;
+            border-left: .5px solid #dee2e6;
+            border-top: none;
+            box-sizing: border-box;
+        }
+
+        .border-custom:first-child {
+            border-right: .5px solid #dee2e6;
+            border-left: .5px solid #dee2e6;
+            border-bottom: none;
+            border-top: .5px solid #dee2e6;
+            box-sizing: border-box;
+        }
+
+        .border-custom:last-child {
+            border-right: .5px solid #dee2e6;
+            border-left: .5px solid #dee2e6;
+            border-top: none;
+            border-bottom: .5px solid #dee2e6;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 
@@ -336,10 +360,11 @@
                 <tr>
                     <td class="p-1" style="width: 50%;">
                         <p class="m-0 mt-1 p-0"><?= @$val['pain_score'] == '0' ? 'Tidak ada nyeri' : ''; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['pain_desc']; ?></p>
                     </td>
                     <td class="p-1" style="width: 50%;">
                         <b>Penjelasan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['fall_desc']; ?></p>
                         <b>Tipe Resiko Jatuh</b>
                         <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
                     </td>
@@ -347,64 +372,24 @@
             </tbody>
         </table>
 
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th class="p1" rowspan="8">
-                        <b>Luka Operasi</b> <br>
-                        <b>Deskripsi Nyeri</b> <br>
-                        <b>Hipo/Hipertermi</b> <br>
-                    </th>
-                    <th class="p1">
-                        <b>Usia</b>
-                        <p class="m-0 mt-1 p-0"></p>
-                    </th>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Jenis Kelamin</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Diagnosis</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Ganguan Kognitif</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Faktor Lingkungan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Respon terhadap Pembedahan/Sedasi/Anestesi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Respon terhadap Penggunaan medikamentosa</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" style="width: 50%;">
-                        <b>Humpty Dumpty Score</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['fall_score'] == '0' ? 'Tidak ada resiko jatuh' : ''; ?></p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
+        <div class="d-flex flex-wrap mb-3">
+            <div class="p-2" style="width: 50%; border: .5px solid #dee2e6; border-right:none; box-sizing:border-box;">
+                <b>Luka Operasi</b> <br>
+                <b>Deskripsi Nyeri</b> <br>
+                <b>Hipo/Hipertermi</b>
+            </div>
+            <div style="width: 50%;">
+                <?php foreach ($hipertensi as $key => $hiper) : ?>
+                    <div class="d-flex  border-custom">
+                        <div style="width: 100%;" class="p-1">
+                            <b><?= $hiper['parameter_desc'] ?></b>
+                            <p class="m-0 mt-1 p-0"><?= (@$hiper['value_score'] != '0' ? @$hiper['value_desc'] : '-'); ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
         <div class="row">
             <h5 class="text-start">Aktivitas Dan Latihan</h5>
         </div>
@@ -463,9 +448,13 @@
                     }
                     ?>
                 <?php endforeach ?>
-                <tr>
-                    <th colspan="4">Total Skor <?= $activity[0]['total_dependency'] ?></th>
-                </tr>
+                <?php if (isset($activity[0])) {
+                ?>
+                    <tr>
+                        <th colspan="4">Total Skor <?= $activity[0]['total_dependency'] ?></th>
+                    </tr>
+                <?php
+                } ?>
             </tbody>
         </table>
 
@@ -613,7 +602,7 @@
         <div class="d-flex flex-wrap mb-3">
             <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
                 <b>Jenis Kelamin</b>
-                <p class="m-0 mt-1 p-0"><?= $val['jeniskel']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$info['jeniskel']; ?></p>
             </div>
             <?php foreach ($reproduksi as $key => $repro) : ?>
                 <div class="col-6 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
@@ -638,6 +627,11 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
+                    <?php
+                    if (isset($pediatri[0])) {
+                        $pediatri = $pediatri[0];
+                    }
+                    ?>
                     <td class="p-1" width="33.3%">
                         <b>Lama Kehamilan</b>
                         <p class="m-0 mt-1 p-0"><?= @$pediatri['lema_kehamilan']; ?></p>
@@ -763,13 +757,13 @@
                 <tr>
                     <td class="p-1">
                         <b>Tingkat Ketergantungan ADL</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Gangguan Pemenuhan Kebutuhan Aktifitas</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
                     </td>
                 </tr>
             </tbody>
@@ -783,19 +777,19 @@
                 <tr>
                     <td class="p-1">
                         <b>Nama Diagnosis</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Bersihan Jalan Nafas Tidak Efektif</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
                     </td>
                 </tr>
                 <tr>
                     <td class="p-1">
                         <b>Pola Nafas Tidak Efektif</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_bawah']; ?></p>
+                        <p class="m-0 mt-1 p-0"></p>
                     </td>
                 </tr>
             </tbody>

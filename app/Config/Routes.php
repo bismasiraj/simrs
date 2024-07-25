@@ -30,7 +30,7 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Admin\Admin::index');
+$routes->get('/', 'Admin\Patient::rajal');
 $routes->get('lang/{locale}', 'Language::index');
 
 $routes->group("api/satusehat", ['filter' => 'satuSehatFilter'], function ($routes) {

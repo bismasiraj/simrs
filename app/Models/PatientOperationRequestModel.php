@@ -1,0 +1,431 @@
+<?php
+
+namespace App\Models;
+
+use CodeIgniter\Model;
+
+class PatientOperationRequestModel extends Model
+{
+    protected $table      = 'PASIEN_OPERASI';
+    protected $primaryKey = 'vactination_id';
+
+    protected $useAutoIncrement = false;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'vactination_id',
+        'org_unit_code',
+        'no_registration',
+        'visit_id',
+        'bill_id',
+        'trans_id',
+        'clinic_id',
+        'validation',
+        'terlayani',
+        'employee_id',
+        'patient_category_id',
+        'vactination_date',
+        'description',
+        'modified_date',
+        'modified_by',
+        'modified_from',
+        'thename',
+        'theaddress',
+        'theid',
+        'isrj',
+        'ageyear',
+        'agemonth',
+        'ageday',
+        'status_pasien_id',
+        'gender',
+        'doctor',
+        'kal_id',
+        'class_room_id',
+        'bed_id',
+        'keluar_id',
+        'rooms_id',
+        'operation_type',
+        'anestesi_type',
+        'diagnosa_pra',
+        'diagnosa_pasca',
+        'start_operation',
+        'end_operation',
+        'start_anestesi',
+        'end_anestesi',
+        'result_id',
+        'tarif_id',
+        'dr_opr',
+        'dr_opr1',
+        'dr_opr2',
+        'dr_anes',
+        'perawat',
+        'penata_anes',
+        'perawat1',
+        'perawat2',
+        'koef_dokter',
+        'koef_anestesi',
+        'koef_ruang',
+        'koef_asisten',
+        'koef_alat',
+        'transaksi',
+        'kode_operasi',
+        'operation_desc',
+        'bleeding',
+        'mplant',
+        'komplikasi',
+        'special_desc',
+        'patologi_date',
+        'patologi_desc',
+        'patologi_label',
+        'diag_sync',
+        'clinic_id_from',
+        'diagnosa_desc'
+
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentOperationModel extends Model
+{
+    protected $table      = 'assessment_operation';
+    protected $primaryKey = 'body_id';
+
+    protected $useAutoIncrement = false;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'status_mental',
+        'helping_tools',
+        'operation_type_before',
+        'operation_time_before',
+        'operation_placebefore',
+        'iv_line',
+        'iv_line_ke',
+        'operation_desc',
+        'time_out',
+        'instrument_availability',
+        'implant_availability',
+        'start_operation',
+        'end_operation',
+        'do_operation',
+        'operation_type',
+        'type_of_anesthesia',
+        'consiousness_level',
+        'emotional_state',
+        'intra_vena',
+        'operation_supervision',
+        'operation_position',
+        'operation_hand',
+        'operation_tools',
+        'urinary_catheter',
+        'skin_preparation',
+        'diathermy_usage',
+        'dispersive_electrode',
+        'condition_before',
+        'condition_after',
+        'heater_unit',
+        'cooler_unit',
+        'wound_irigation',
+        'irigation_water',
+        'sodium_chloride',
+        'others_pra',
+        'operator_tools',
+        'bandage',
+        'histology',
+        'culture',
+        'frozen_section',
+        'sitology',
+        'others_pra2',
+        'total_tissue',
+        'post_op',
+        'transport',
+        'transport_time',
+        'post_general_condition',
+        'post_consousness_level',
+        'breath_way',
+        'breath',
+        'oxygen_treatment',
+        'skin_come',
+        'skin_out',
+        'patient_position',
+        'nurse_notification',
+        'nurse_arrived',
+        'xray',
+
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class OperationTeamModel extends Model
+{
+    protected $table      = 'operation_team';
+    protected $primaryKey = 'OPERATION_ID';
+
+    protected $useAutoIncrement = true;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'org_unit_code',
+        'OPERATION_ID',
+        'EMPLOYEE_ID',
+        'TASK_ID',
+        'TARIF_ID',
+        'DESCRIPTION',
+        'DOCTOR',
+        'ONCALL',
+        'COEFFICIENT'
+    ];
+
+    // Dates
+    // protected $useTimestamps = true;
+    // protected $dateFormat    = 'datetime';
+    // protected $createdField  = 'modified_date';
+    // protected $updatedField  = 'modified_date';
+    // protected $deletedField  = 'deleted_at';
+}
+
+class PatientOperationCheck extends Model
+{
+    protected $table      = 'ASSESSMENT_OPERATION_CHECK';
+    protected $primaryKey = 'body_id';
+
+    protected $useAutoIncrement = false;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'patient_wristband',
+        'operation_location',
+        'operation_procedure',
+        'surgical_concent',
+        'signed_spot',
+        'anesthesia_machine',
+        'oxymeter',
+        'isalergy',
+        'breathing_dificulty',
+        'blood_loss_risk',
+        'signin_time',
+        'introducing_onself',
+        'patient_identity',
+        'timeout_procedure',
+        'inicision_location',
+        'right_eye',
+        'left_eye',
+        'other_location',
+        'prophypaltic_antibiotic',
+        'antibiotic_name',
+        'antibiotic_dose',
+        'unexpected_incident',
+        'operation_length',
+        'blood_loss',
+        'consideration',
+        'cvc',
+        'issteril',
+        'problematic_tools',
+        'negative_diathermy',
+        'suchtion',
+        'photo_shown',
+        'timeout_time',
+        'procedure_name',
+        'instrument',
+        'speciment',
+        'isproblematic_tools',
+        'main_problem',
+        'signout_time'
+    ];
+
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentAnesthesiaChecklist extends Model
+{
+    protected $table = 'ASSESSMENT_ANESTHESI_CHECKLIST';
+    protected $primaryKey = 'body_id';
+
+    protected $useAutoIncrement = false;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'anesthesia_machine_on',
+        'oxygen_tube',
+        'flow_meter',
+        'power_on',
+        'circuit_leakage',
+        'volatil',
+        'face_mask',
+        'laringoskop',
+        'ett_lma',
+        'stylet',
+        'spuit_cuff',
+        'ekg_cable',
+        'nibp_connection',
+        'stetoscope',
+        'suction_tube',
+        'bandage',
+        'nasal_cannula',
+        'intravenous_line',
+        'spuit_size',
+        'epinefrin',
+        'atropin',
+        'sedative',
+        'opioid',
+        'muscle_relaxant',
+        'intravena_fluid',
+        'other_fluid'
+    ];
+}
+
+class AssessmentInstrumentModel extends Model
+{
+    protected $table = 'ASSESSMENT_INSTRUMENT';
+    protected $primaryKey = 'body_id';
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'brand_id',
+        'brand_name',
+        'quantity_before',
+        'quantity_intra',
+        'quantity_additional',
+        'quantity_after'
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentPraOperasi extends Model
+{
+    protected $table = 'ASSESSMENT_OPERATION_PRA';
+    protected $primaryKey = 'body_id';
+
+    protected $useAutoIncrement = false;
+
+    protected $returnType     = 'array';
+    protected $useSoftDeletes = false;
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'identity_wristband',
+        'denturers',
+        'softlens',
+        'lipstick_nailpolish',
+        'accessories',
+        'hearing',
+        'haid',
+        'cought',
+        'cought_practice',
+        'relactation_practice',
+        'skern',
+        'oral_hygyene',
+        'neck_fixation',
+        'lavemen',
+        'broomstick',
+        'fasting',
+        'intravenous_infusion',
+        'dc',
+        'ngt',
+        'wsd',
+        'drainage',
+        'other_checklist'
+    ];
+
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentOperationPostModel extends Model
+{
+    protected $table = 'ASSESSMENT_OPERATION_POST';
+    protected $primaryKey = 'body_id';
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'infusion',
+        'transfusion',
+        'fasting_until',
+        'drink_little',
+        'free_drink',
+        'eat',
+        'drain_every',
+        'dc_every',
+        'maag_tube',
+        'position',
+        'instruction'
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}

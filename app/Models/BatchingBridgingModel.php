@@ -9,7 +9,7 @@ class BatchingBridgingModel extends Model
     protected $table      = 'batching_bridging';
     protected $primaryKey = 'trans_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

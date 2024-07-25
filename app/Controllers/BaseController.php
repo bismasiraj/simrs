@@ -107,17 +107,21 @@ abstract class BaseController extends Controller
     }
     function lowerKey($array)
     {
-        $result = array();
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $key1 => $value1) {
-                    $result[strtolower($key)][strtolower($key1)] = $value1;
+        if (is_array($array)) {
+            $result = array();
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $key1 => $value1) {
+                        $result[strtolower($key)][strtolower($key1)] = $value1;
+                    }
+                } else {
+                    $result[strtolower($key)] = $value;
                 }
-            } else {
-                $result[strtolower($key)] = $value;
             }
+            return $result;
+        } else {
+            return [];
         }
-        return $result;
     }
     function lowerKeyOne($array)
     {
@@ -170,20 +174,19 @@ abstract class BaseController extends Controller
         $return = json_decode(($return), true);
         return $return;
     }
-    protected function AuthBridging()
+    protected function AuthBridging($thetype = 'antrol')
     {
         $pdo = db_connect();
 
-
-        // //WATES
-        // $consId = '30659';
-        // $consSecret = 'rsud766wates38';
-        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
-
-        //BENGKULU
-        $consId = '16957';
-        $consSecret = '7dK0AAC16B';
-        $userKey = '6a7b82093922c4fafd211cfed64e82d9';
+        if ($thetype == 'antrol') { //antrol
+            $consId = '16957';
+            $consSecret = '7dK0AAC16B';
+            $userKey = '6a7b82093922c4fafd211cfed64e82d9';
+        } else if ($thetype = 'vclaim') {
+            $consId = '16957';
+            $consSecret = '7dK0AAC16B';
+            $userKey = '667fedd9bbe6b6865fdc8abb7fd50848';
+        }
 
 
 
@@ -213,6 +216,7 @@ abstract class BaseController extends Controller
 
         return ($headers);
     }
+
     protected function SendBridging($url, $method, $postdata, $headers)
     {
         // Gunakan curl untuk mengakses/merequest alamat api
@@ -288,7 +292,8 @@ abstract class BaseController extends Controller
 
         // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
         // $method = 'POST';
-        $headers = $this->AuthBridging();
+        $headers = $this->AuthBridging('vclaim');
+        array_push($headers, "Content-type:Application/x-www-form-urlencoded");
 
         $postdata = ($data);
         array_push($headers, 'Content-length' . strlen($postdata));

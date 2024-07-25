@@ -9,7 +9,7 @@ class OddModel extends Model
     protected $table      = 'pasien_prescription_detail';
     protected $primaryKey = 'bill_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -20,46 +20,45 @@ $permission = user()->getPermissions();
     }
 </style> -->
 
-
-
 <div class="tab-pane" id="infConsent" role="tabpanel">
   <div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-12 border-r">
-      <?php echo view('admin/patient/profilemodul/profilebiodata', [
-        'visit' => $visit,
-      ]);
-      ?>
-    </div><!--./col-lg-6-->
-    <div class="col-lg-9 col-md-9 col-xs-12">
-      <div class="row mt-4">
-
-      </div>
-      <div class="accordion mt-4">
-        <div class="row mt-4">
-          <div id="arpAddDocument" class="box-tab-tools text-center">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create-modal" id="btn-create"><i class=" fa fa-plus"></i> Tambah Dokumen</button>
-          </div>
+    <div id="load-content-inf" class="col-12 center-spinner"></div>
+    <div id="contentToHide" class="col-12">
+      <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+          <?php echo view('admin/patient/profilemodul/profilebiodata', [
+            'visit' => $visit,
+          ]); ?>
         </div>
-        <div class="panel-group" id="tableInfCon">
-          <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Informed Consent</h3>
-          <table class="table table-bordered table-hover table-centered" style="text-align: center">
-            <thead class="table-primary">
-              <tr>
-                <th scope="col">No</th>
-                <th scope="col">Dokumen</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody id="bodydata" class="table-group-divider">
+        <div class="col-lg-9 col-md-9 col-xs-12">
+          <div class="accordion mt-4">
+            <center>
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create-modal" id="btn-create">+ Tambah Dokumen</button>
+            </center>
+            <div class="panel-group" id="tableInfCon">
+              <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Informed Consent</h3>
+              <table class="table table-bordered table-hover table-centered" style="text-align: center">
+                <thead class="table-primary">
+                  <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Dokumen</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="bodydata" class="table-group-divider">
 
-            </tbody>
-          </table>
+                  <tr>
+                    <td colspan="3">Data Kosong</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 <!-- Modal Create -->
 <div class="modal fade modal-xl" id="create-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -110,7 +109,7 @@ $permission = user()->getPermissions();
 </div>
 
 
-<?php echo view('admin/patient/profilemodul/jsprofile/informconsent_js', [
+<?php echo view('admin/patient/profilemodul/jsprofile/informedConsent_js', [
   'title' => 'Test',
   'visit' => $visit,
   'aParent' => $aParent,

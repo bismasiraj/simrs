@@ -18,6 +18,9 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <script src="<?= base_url('assets/js/default.js') ?>"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
@@ -69,170 +72,131 @@
 
 <body>
     <div class="container-fluid mt-5">
-        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
-            <div style="display: none;">
-                <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
-                <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
-                <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
+        <div class="row">
+            <div class="col-auto" align="center">
+                <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
             </div>
+            <div class="col mt-2" align="center">
+                <h3><?= @$kop['name_of_org_unit'] ?></h3>
+                <!-- <h3>Surakarta</h3> -->
+                <p><?= @$kop['contact_address'] ?></p>
+            </div>
+            <div class="col-auto" align="center">
+                <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+            </div>
+        </div>
+        <div class="row">
+            <h3 class="text-center content-title" id="content-title">Surat Pengantar Pemeriksaan Fisioterapi</h3>
+        </div>
+        <div class="row">
+            <h5 class="text-start">Informasi Pasien</h5>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>
+                        <b>Nomor RM</b>
+                        <div id="no_registration" name="no_registration"></div>
+                    </td>
+                    <td>
+                        <b>Nama Pasien</b>
+                        <div id="thename" name="thename" class="thename"></div>
+                    </td>
+                    <td>
+                        <b>Jenis Kelamin</b>
+                        <div name="gender" id="gender">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Tanggal Lahir (Usia)</b>
+                        <div id="patient_age" name="patient_age"></div>
+                    </td>
+                    <td colspan="2">
+                        <b>Alamat Pasien</b>
+                        <div id="theaddress" name="theaddress" class="theaddress"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>DPJP</b>
+                        <div id="doctor" name="doctor"></div>
+                    </td>
+                    <td>
+                        <b>Department</b>
+                        <div id="clinic_id" name="clinic_id"></div>
+                    </td>
+                    <td>
+                        <b>Tanggal Masuk</b>
+                        <div id="examination_date" name="examination_date"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col text-center">
+                <h3><b><u id="content-title" class="content-title"></u></b></h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Dengan hormat, <br>
+                Bersama ini kami kirimkan pasien :
+            </div>
+        </div>
+        <div class="row">
+            <label for="sa" class="col-sm-2 col-form-label">Nama pasien</label>
+            <label for="sa" class="col-sm-auto col-form-label">:</label>
+            <div class="col pt-2">
+                <div id="thename" name="thename" class="thename"></div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="sa" class="col-sm-2 col-form-label">Umur</label>
+            <label for="sa" class="col-sm-auto col-form-label">:</label>
+            <div class="col pt-2">
+                <div id="age" name="age" class="age"></div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="sa" class="col-sm-2 col-form-label">No. Register</label>
+            <label for="sa" class="col-sm-auto col-form-label">:</label>
+            <div class="col pt-2">
+                <div id="no_Register" name="no_Register"></div>
+            </div>
+        </div>
+        <div class="row">
+            <label for="sa" class="col-sm-2 col-form-label">Alamat</label>
+            <label for="sa" class="col-sm-auto col-form-label">:</label>
+            <div class="col pt-2">
+                <div id="theaddress" name="theaddress" class="theaddress"></div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <label for="sa" class="col-sm-2 col-form-label">Diagnosis sementara</label>
+            <label for="sa" class="col-sm-auto col-form-label">:</label>
+            <div class="col pt-2">
+                <div id="diagnosa_sementara" name="diagnosa_sementara"></div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                Mohon dapat diberikan tindakan / pemeriksaan : <br>
+                <span id="hasil-tindakan"></span>
+                Catatan:<span id="catatan"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-auto" align="center">
+                <div><span id="name-rs"></span><br>Dokter</div>
+                <div class="mb-1">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
+        </div>
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
-            <?php csrf_field(); ?>
-            <div class="row">
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                </div>
-                <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
-                </div>
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-                </div>
-            </div>
-            <div class="row">
-                <h3 class="text-center">Surat Pengantar Pemeriksaan Fisioterapi</h3>
-            </div>
-            <div class="row">
-                <h5 class="text-start">Informasi Pasien</h5>
-            </div>
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td>
-                            <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
-                        </td>
-                        <td>
-                            <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
-                        </td>
-                        <td>
-                            <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
-                        </td>
-                        <td colspan="2">
-                            <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
-                        </td>
-                        <td>
-                            <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
-                        </td>
-                        <td>
-                            <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col text-center">
-                    <h3><b><u>Surat Pengantar Pemeriksaan Fisioterapi</u></b></h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    Dengan hormat, <br>
-                    Bersama ini kami kirimkan pasien :
-                </div>
-            </div>
-            <div class="row">
-                <label for="sa" class="col-sm-2 col-form-label">Nama pasien</label>
-                <label for="sa" class="col-sm-auto col-form-label">:</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="sa" name="sa" value="">
-                </div>
-            </div>
-            <div class="row">
-                <label for="sa" class="col-sm-2 col-form-label">Umur</label>
-                <label for="sa" class="col-sm-auto col-form-label">:</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="sa" name="sa" value="">
-                </div>
-            </div>
-            <div class="row">
-                <label for="sa" class="col-sm-2 col-form-label">No. Register</label>
-                <label for="sa" class="col-sm-auto col-form-label">:</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="sa" name="sa" value="">
-                </div>
-            </div>
-            <div class="row">
-                <label for="sa" class="col-sm-2 col-form-label">Alamat</label>
-                <label for="sa" class="col-sm-auto col-form-label">:</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="sa" name="sa" value="">
-                </div>
-            </div>
-            <div class="row mb-2">
-                <label for="sa" class="col-sm-2 col-form-label">Diagnosis sementara</label>
-                <label for="sa" class="col-sm-auto col-form-label">:</label>
-                <div class="col">
-                    <input type="text" class="form-control" id="sa" name="sa" value="">
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col">
-                    Mohon dapat diberikan tindakan / pemeriksaan : <br>
-                    1. INFRA RED - REHAB MEDIK <br>
-                    2. TENS - REHAB MEDIK <br>
-                    Atas perhatian dan kerjasamanya kami ucapkan terima kasih. <br>
-                    Catatan:
-                </div>
-            </div>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col-auto" align="center">
-                    <div>RS PKU Muhammadiyah Sampangan Surakarta <br>Dokter</div>
-                    <div class="mb-1">
-                        <div id="qrcode"></div>
-                    </div>
-                </div>
-            </div>
-        </form>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -242,75 +206,90 @@
 
 </body>
 <script>
+
+</script>
+<script>
+    $(document).ready(function() {
+        let visit = <?= json_encode($visit) ?>;
+        let aValue = <?= json_encode($aValue) ?>;
+        let kop = <?= json_encode($kop) ?>;
+
+        $("#name-rs").html(kop?.name_of_org_unit)
+
+
+        const body_id = "202407081107530267EB3"; // bawa bodyIdnya 
+        aValue.forEach(item => {
+            if (item.value_score === 10) {
+                item.value_info = item.value_info.replace('$body_id', body_id);
+            }
+            item.value_desc = item.value_desc;
+        });
+
+        postData(aValue, 'admin/rm/lainnya/getDataAllLabRad', (res) => {
+            dataResultFisioterapiApi({
+                result: res?.data
+            });
+
+        }, () => {
+
+        });
+
+        // Render informasi pasien dan judul konten
+        $("#no_registration").html(visit?.no_registration);
+        $(".thename").html(visit?.diantar_oleh);
+        $("#gender").html(visit?.gendername);
+        $("#patient_age").html(visit?.org_unit_code);
+        $(".theaddress").html(visit?.visitor_address);
+        $("#doctor").html(visit?.employee_id);
+        $("#clinic_id").html(visit?.clinic_id);
+        $("#examination_date").html(moment(new Date()).format("YYYY-MM-DD HH:mm"));
+        $("#age").html(visit?.age);
+
+        $(".content-title").html(aValue[0]?.value_info);
+
+
+        setTimeout(function() {
+            window.print();
+        }, 1000);
+    });
+
+    const dataResultFisioterapiApi = (data) => {
+        $("#no_Register").html(data.result[0].query_results[0].body_id);
+        $("#diagnosa_sementara").html(data.result[1].query_results[0].diagnosa_desc);
+        $("#catatan").html(data.result[3].query_results[0].descriptions);
+
+        let resultTindakan = '';
+        data.result[2].query_results.forEach((item, index) => {
+            resultTindakan += `<p>${index + 1}. ${item?.treatment}</p>`;
+        });
+
+        $("#hasil-tindakan").html(resultTindakan);
+    };
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         text: 'sa',
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
     });
 </script>
-<script>
-    $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
 
-    })
-</script>
 <style>
     @media print {
-        @page {
-            margin: 0;
-            scale: 80;
-        }
+        @media print {
+            @page {
+                margin: none;
+                scale: 85;
+            }
 
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
+            .container {
+                width: 210mm;
+                /* Sesuaikan dengan lebar kertas A4 */
+            }
         }
     }
 </style>
-<script type="text/javascript">
-    window.print();
-</script>
+
 
 </html>

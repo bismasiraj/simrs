@@ -9,7 +9,7 @@ class EmployeeAllModel extends Model
     protected $table      = 'employee_all';
     protected $primaryKey = 'employee_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

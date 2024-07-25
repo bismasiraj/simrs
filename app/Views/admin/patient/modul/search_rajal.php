@@ -5,7 +5,7 @@ $permissions = user()->getPermissions();
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -23,13 +23,13 @@ $permissions = user()->getPermissions();
                     <input type="hidden" name="ci_csrf_token" value="">
                     <div class="col-sm-6 col-md-2">
                         <div class="form-group">
-                            <label>Poli</label><small class="req"> *</small>
+                            <label>Pelayanan</label><small class="req"> *</small>
                             <select id="klinikrajal" class="form-control" name="klinik" onchange="showdate(this.value)" autocomplete="off">
                                 <option value="%">Semua</option>
                                 <?php if (is_null(user()->employee_id)) { ?>
                                 <?php } ?>
                                 <?php $cliniclist = array();
-                                if ($giTipe != 2 && $giTipe != 5) {
+                                if ($giTipe != 2 && $giTipe != 5 && $giTipe != 6) {
                                     foreach ($clinic as $key => $value) {
                                         if ($clinic[$key]['stype_id'] == '1')
                                             $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];

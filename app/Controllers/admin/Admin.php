@@ -48,7 +48,7 @@ class Admin extends \App\Controllers\BaseController
     }
     public function index()
     {
-        // return $this->rajal();
+        // return 'asdf';
 
         // dd(!is_null(user()->employee_id) && user()->employee_id != '');
         if (!is_null(user()->employee_id) && user()->employee_id != '') {

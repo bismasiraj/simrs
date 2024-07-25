@@ -9,7 +9,7 @@ class ClinicModel extends Model
     protected $table      = 'clinic';
     protected $primaryKey = 'clinic_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

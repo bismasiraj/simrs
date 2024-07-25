@@ -14,7 +14,9 @@
     <link href="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
     <!-- <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet"> -->
     <script src="<?php echo base_url(); ?>assets/libs/tinymce/tinymce.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 
     <!-- Bootstrap-wysihtml5 CSS -->
@@ -23,7 +25,9 @@
             font-weight: 400;
         }
     </style>
-
+    <script>
+        var formattedDate = moment().format('YYYY-MM-DDTHH:mm'); // Adjust format as needed
+    </script>
 </head>
 
 <body data-sidebar="dark">

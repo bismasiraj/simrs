@@ -194,7 +194,7 @@
         $("#formcpptsubmit").toggle()
         $("#formcpptedit").toggle()
     }
-    $("#acpptvs_status_id2").on("click", function() {
+    $("#acpptvs_status_id2").on("change", function() {
         $("#groupRiwayatCppt").show()
         $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
         $("#groupVitalSignCppt").show()
@@ -205,7 +205,7 @@
         $("#cpptPlanningTitle").html("PLANNING (P)")
         // $("#acpptvs_status_id2").is("checked", function() {})
     })
-    $("#acpptvs_status_id7").on("click", function() {
+    $("#acpptvs_status_id7").on("change", function() {
         $("#groupRiwayatCppt").hide()
         $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", true)
         $("#groupVitalSignCppt").hide()
@@ -257,7 +257,7 @@
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
-                    .append($("<td colspan='5'>").html(examselect.description))
+                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>P</b>"))
@@ -343,8 +343,8 @@
         })
         // var editor = tinymce.get('acpptinstruction')
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
-        $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
-        $("#cpptModal").modal("show")
+        $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true).trigger("change");
+
         $("#acpptDocument").find("input, select, textarea").prop("disabled", false)
 
         $("#bodyFallRiskCppt").html("")
@@ -453,7 +453,7 @@
 
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
 
-        $("#cpptModal").modal("show")
+
         $("#formsaveacpptbtnid").show()
         $("#formeditacpptid").hide()
     }
@@ -587,7 +587,7 @@
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Keperawatan IGD Anak</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/igd_dewasa/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Keperawatan IGD Dewasa</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/monitoring_nyeri/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Monitoring Nyeri</a></li>')
-        $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/resiko_jatuh/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Monitoring Resiko Jatuh</a></li>')
+        // $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/resiko_jatuh/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Monitoring Resiko Jatuh</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/persetujuan_umum/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Persetujuan Umum (General Concert)</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/sdki/' . base64_encode(json_encode($visit)); ?>/' + $("#acpptbody_id").val() + '" target="_blank">SDKI SLKI SIKI</a></li>')
@@ -599,7 +599,7 @@
         $("#acpptDocument").show()
         enableacppt()
         fillRiwayatAcppt()
-        $("#cpptModal").modal("show")
+
     }
 </script>
 <script>
@@ -621,6 +621,9 @@
         $("#formaddacppt textarea").prop("disabled", true)
         $("#formaddacppt select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
+    }
+    const signacppt = () => {
+        addSignUser("formaddacppt", "acppt", "acpptbody_id", "formsaveacpptbtnid", 1, 1, 1, "CPPT")
     }
 
     function fillRiwayatAcppt() {

@@ -1,24 +1,3 @@
-<?php
-$currency_symbol = "Rp. ";
-$permission = user()->getPermissions();
-?>
-
-<style>
-    table.table-fit {
-        width: auto !important;
-        table-layout: auto !important;
-    }
-
-    table.table-fit thead th,
-    table.table-fit tfoot th {
-        width: auto !important;
-    }
-
-    table.table-fit tbody td,
-    table.table-fit tfoot td {
-        width: auto !important;
-    }
-</style>
 <div class="tab-pane" id="pain" role="tabpanel">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12 border-r">
@@ -53,6 +32,9 @@ $permission = user()->getPermissions();
 
                 </tbody>
             </table>
+            <div class="d-flex mb-3">
+                <a href="<?= base_url(); ?>/admin/rm/keperawatan/monitoring_nyeri/<?= base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
+            </div>
         </div>
     </div><!--./row-->
 </div>

@@ -1,20 +1,29 @@
 <script>
-    function addSignUser(container, buttonId, formid) {
-        $("#signvalid_date").val(container + "valid_date")
-        $("#signvalid_user").val(container + "valid_user")
-        $("#signvalid_pasien").val(container + "valid_pasien")
-        $("#signtombolsave").val(buttonId)
-        $("#signform").val(formid)
-
-        $("#digitalSignModal").modal("show")
-    }
     $("#digitalSignForm").on('submit', (function(e) {
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
+        let clicked_submit_btn = $(this).closest('form').find(':submit');
+        let formData = new FormData(this)
+        let formDataObject = {};
+        formData.forEach(function(value, key) {
+            formDataObject[key] = value
+        });
+        let docData = new FormData(document.getElementById($("#signform").val()))
+        let docDataObject = {};
+        docData.forEach(function(value, key) {
+            docDataObject[key] = value
+        });
+        // let data = [];
+        var data = {
+            signData: formDataObject,
+            docData: docDataObject
+        };
+        console.log(data)
+        coba = data
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/checkpass',
+            url: '<?php echo base_url(); ?>signature/postingSignedDocs',
             type: "POST",
-            data: new FormData(this),
+            // data: [docData, formData],
+            data: JSON.stringify(data),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -68,5 +77,26 @@
         } else {
             $("#" + formId + ' .btn-edit').show()
         }
+    }
+</script>
+
+<script>
+    const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title) => {
+        if (user_type == 1) {
+            $("#signvalid_date").val(container + "valid_date")
+            $("#signvalid_user").val(container + "valid_user")
+            $("#signvalid_pasien").val(container + "valid_pasien")
+            $("#signtombolsave").val(buttonId)
+            $("#signform").val(formId)
+            $("#signcontainer").val(container)
+            $("#signdocs_type").val(docs_type)
+            $("#signsign_id").val($("#" + primaryKey).val())
+            $("#signuser_type").val(user_type)
+            $("#signsign_ke").val(sign_ke)
+            $("#signtitle").val(title)
+            $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+        }
+
+        $("#digitalSignModal").modal("show")
     }
 </script>

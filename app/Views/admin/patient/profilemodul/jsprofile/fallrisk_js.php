@@ -241,6 +241,7 @@
                 $("#fallBody").html(loadingScreen())
             },
             success: function(data) {
+                $("#fallBody").html("")
                 fallRisk = data.fallRisk
                 fallRiskDetail = data.fallRiskDetail
 

@@ -9,7 +9,7 @@ class BloodModel extends Model
     protected $table      = 'BLOOD_TYPE';
     protected $primaryKey = 'blood_type_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

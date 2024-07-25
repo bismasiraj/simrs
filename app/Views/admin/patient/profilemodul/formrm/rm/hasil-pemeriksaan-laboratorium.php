@@ -100,7 +100,6 @@
                 </div>
             </div>
             <br>
-
             <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
             <div class="row">
                 <h6 class="text-center pt-2"><?= $title; ?></h6>
@@ -407,6 +406,14 @@
         .container {
             width: 100%;
             /* Sesuaikan dengan lebar kertas A4 */
+        }
+
+        td {
+            background-color: inherit;
+            color: inherit;
+            border: inherit;
+            padding: inherit;
+            text-align: inherit;
         }
 
     }

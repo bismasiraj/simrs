@@ -9,7 +9,7 @@ class BedsModel extends Model
     protected $table      = 'beds';
     protected $primaryKey = 'class_room_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

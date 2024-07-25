@@ -69,34 +69,34 @@
     function getListRequestRad(nomor, visit) {
 
 
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestRad',
-            type: "POST",
-            data: JSON.stringify({
-                'nomor': nomor,
-                'visit': visit
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
+        // $.ajax({
+        //     url: '<?php echo base_url(); ?>admin/rekammedis/getListRequestRad',
+        //     type: "POST",
+        //     data: JSON.stringify({
+        //         'nomor': nomor,
+        //         'visit': visit
+        //     }),
+        //     dataType: 'json',
+        //     contentType: false,
+        //     cache: false,
+        //     processData: false,
+        //     success: function(data) {
 
 
-                hasilradJson = data
+        //         hasilradJson = data
 
-                $("#listRequestRad").html("")
+        //         $("#listRequestRad").html("")
 
 
-                hasilradJson.forEach((element, key) => {
-                    console.log(element)
-                    $("#listRequestRad").append('<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Radiologi </h3> <p> Tanggal ' + element.vactination_date + ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getRadOnlineRequest/' + btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id + '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
-                });
-            },
-            error: function() {
+        //         hasilradJson.forEach((element, key) => {
+        //             console.log(element)
+        //             $("#listRequestRad").append('<div class="col-md-3"> <div class = "card bg-light border border-1 rounded-4 m-4" ><div class = "card-body" ><h3> Periksa Radiologi </h3> <p> Tanggal ' + element.vactination_date + ' </p> <div class = "text-end" ><a class = "btn btn-secondary" href="<?= base_url(); ?>/admin/rekammedis/getRadOnlineRequest/' + btoa('<?= json_encode($visit); ?>') + '/' + element.vactination_id + '" target="_blank"> Lihat </a> </div> </div> </div> </div>')
+        //         });
+        //     },
+        //     error: function() {
 
-            }
-        });
+        //     }
+        // });
     }
 
     function requestRad() {
@@ -164,7 +164,7 @@
             .append('<input name="thename[]" id="aradthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
             .append('<input name="theaddress[]" id="aradtheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
             .append('<input name="status_pasien_id[]" id="aradstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isRJ[]" id="aradisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="isrj[]" id="aradisrj' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
             .append('<input name="gender[]" id="aradgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
             .append('<input name="ageyear[]" id="aradageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
             .append('<input name="agemonth[]" id="aradagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
@@ -225,7 +225,7 @@
             .append('<input name="employee_id[]" id="arademployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
             .append('<input name="doctor[]" id="araddoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="aradamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="aradnota_no' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="nota_no[]" id="aradnota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
             .append('<input name="profesi[]" id="aradprofesi' + key + '" type="hidden" value="" class="form-control" />')
             .append('<input name="tagihan[]" id="aradtagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#aradquantity" + key).val() + '" class="form-control" />')
             .append('<input name="treatment_plafond[]" id="aradtreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')

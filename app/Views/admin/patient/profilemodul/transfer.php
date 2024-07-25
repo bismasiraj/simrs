@@ -75,7 +75,7 @@ $permission = user()->getPermissions();
                     <input type="hidden" id="atransferdocument_id2" name="document_id2">
                     <input type="hidden" id="atransferclinic_id" name="clinic_id">
                     <input type="hidden" id="atransferclinic_id_to" name="clinic_id_to">
-                    <input type="hidden" id="atransferisinternal" name="isinternal">
+                    <!-- <input type="hidden" id="atransferisinternal" name="isinternal"> -->
 
                     <div class="row">
                         <div class="col-sm-4 col-xs-12">
@@ -96,6 +96,20 @@ $permission = user()->getPermissions();
                                         <?php } else { ?>
                                             <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
                                         <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-3">
+                            <div class="mb-3">
+                                <div id="atransferisinternal" class="form-group">
+                                    <label>Follow Up</label>
+                                    <select name="rencanatl" id="arrencanatl" onchange="tindakLanjut()" class="form-control ">
+                                        <?php foreach ($followup as $key => $value) {
+                                        ?>
+                                            <option value="<?= $value['follow_up']; ?>"><?= $value['followup']; ?></option>
+                                        <?php
+                                        } ?>
                                     </select>
                                 </div>
                             </div>
@@ -191,10 +205,10 @@ $permission = user()->getPermissions();
                                             <div class="form-group">
                                                 <label for="atransfer1employee_id">Dokter</label>
                                                 <select name="employee_id" id="atransfer1employee_id" type="hidden" class="form-control ">
+                                                    <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
+                                                    <option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>
                                                     <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                        <option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>
                                                     <?php } else { ?>
-                                                        <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
@@ -253,38 +267,108 @@ $permission = user()->getPermissions();
                                             <div class="accordion-body text-muted">
                                                 <div id="groupVitalSigntransferAsal" class="row">
                                                     <div class="row mb-4">
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer1weight" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer1height" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer1temperature" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer1nadi" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer1tension_upper" placeholder="" value="" class="form-control">
-                                                                    <h4>/</h4>
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer1tension_below" placeholder="" value="" class="form-control">
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer1weight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-bb"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer1saturasi" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer1height" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1height"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer1nafas" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer1temperature" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1temperature"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="atransfer1arm_diameter" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer1nadi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1nadi"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer1tension_upper" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-atransfer1tension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer1tension_below" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-atransfer1tension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer1saturasi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1saturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer1nafas" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1nafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="atransfer1arm_diameter" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1arm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer1oxygen_usage" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer1oxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--==new -->
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!--==endofnew -->
                                                         <div class="col-sm-12 mt-2">
-                                                            <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="atransfer1pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer1pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -556,38 +640,108 @@ $permission = user()->getPermissions();
                                             <div class="accordion-body text-muted">
                                                 <div id="groupVitalSigntransferTujuan" class="row">
                                                     <div class="row mb-4">
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>BB(Kg)</label><input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer2weight" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Tinggi(cm)</label><input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer2height" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Suhu(°C)</label><input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer2temperature" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nadi(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer2nadi" placeholder="" value="" class="form-control"></div>
-                                                        </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                <div class="col-sm-12" style="display: flex;  align-items: center;">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer2tension_upper" placeholder="" value="" class="form-control">
-                                                                    <h4>/</h4>
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer2tension_below" placeholder="" value="" class="form-control">
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer2weight" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-bb"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Saturasi(SpO2%)</label><input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer2saturasi" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer2height" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2height"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Nafas/RR(/menit)</label><input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer2nafas" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer2temperature" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2temperature"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-2 mt-2">
-                                                            <div class="form-group"><label>Diameter Lengan(cm)</label><input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="atransfer2arm_diameter" placeholder="" value="" class="form-control"></div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer2nadi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2nadi"></span>
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer2tension_upper" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-atransfer2tension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer2tension_below" placeholder="" value="" class="form-control">
+                                                                        <span class="h6" id="badge-atransfer2tension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer2saturasi" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2saturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer2nafas" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2nafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="atransfer2arm_diameter" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2arm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer2oxygen_usage" placeholder="" value="" class="form-control">
+                                                                    <span class="h6" id="badge-atransfer2oxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--==new -->
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer2vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <!--==endofnew -->
                                                         <div class="col-sm-12 mt-2">
-                                                            <div class="form-group"><label>Pemeriksaan Fisik Tambahan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
                                                     </div>
                                                 </div>

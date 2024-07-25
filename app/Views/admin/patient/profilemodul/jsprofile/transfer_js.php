@@ -155,7 +155,8 @@
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
                 .append($("<td rowspan='3'>").html('<button type="button" onclick="copytransfer(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                    '<button type="button" onclick="editCpptTransfer(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+                    '<button type="button" onclick="editCpptTransfer(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>' +
+                    '<button type="button" onclick="cetakCpptTransfer(' + key + ')" class="btn btn-light" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Cetak</i></button>'))
                 .append($("<td rowspan='3'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
             .append($("<tr>")
@@ -553,6 +554,7 @@
     }
 
     function editCpptTransfer(key) {
+        setDatatransfer()
         var transferselect = transfer[key];
 
         $.each(transferselect, function(keyt, value) {
@@ -564,29 +566,34 @@
         })
         $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
         $.each(examForassessment, function(key, value) {
-            if (value.body_id == examselect.document_id) {
+            if (value.body_id == transferselect.document_id) {
                 exam1 = value
-            } else if (value.body_id == examselect.document_id2) {
+            } else if (value.body_id == transferselect.document_id2) {
                 exam2 = value
             }
         })
-        $.each(exam1, function(keyt, value) {
-            if (keyt == 'employee_id') {
-                $("#atransfer1employee_id").html("")
-                $("#atransfer1employee_id").append(new Option(exam1.fullname, value.employee_id))
-            }
-            $("#atransfer1" + keyt).val(value)
-            $("#atransfer1" + keyt).prop("disabled", false)
-        })
-        $.each(exam2, function(keyt, value) {
-            if (keyt == 'employee_id') {
-                $("#atransfer2employee_id").html("")
-                $("#atransfer2employee_id").append(new Option(exam2.fullname, exam2.employee_id))
-            }
-            $("#atransfer2" + keyt).val(value)
-            $("#atransfer2" + keyt).prop("disabled", false)
-        })
-
+        if (typeof(exam1.body_id) !== 'undefined')
+            $.each(exam1, function(keyt, value) {
+                if (keyt == 'employee_id') {
+                    $("#atransfer1employee_id").html("")
+                    $("#atransfer1employee_id").append(new Option(exam1.fullname, value.employee_id))
+                }
+                $("#atransfer1" + keyt).val(value)
+                $("#atransfer1" + keyt).prop("disabled", false)
+            })
+        if (typeof(exam2.body_id) !== 'undefined')
+            $.each(exam2, function(keyt, value) {
+                if (keyt == 'employee_id') {
+                    $("#atransfer2employee_id").html("")
+                    $("#atransfer2employee_id").append(new Option(exam2.fullname, exam2.employee_id))
+                }
+                $("#atransfer2" + keyt).val(value)
+                $("#atransfer2" + keyt).prop("disabled", false)
+            })
+        if (typeof(transferselect.document_id1) !== 'undefined')
+            $("#atransferbody_id1").val(transferselect.document_id1)
+        if (typeof(transferselect.document_id2) !== 'undefined')
+            $("#atransferbody_id2").val(transferselect.document_id2)
         getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
         // addDerajatStabilitas(1, 0, "atransferbody_id", "transferDerajatBody")
 
@@ -596,6 +603,13 @@
         enabletransfer2()
 
         $("#transferModal").modal('show')
+    }
+
+    function cetakCpptTransfer(key) {
+        var transferselect = transfer[key];
+
+        var win = window.open('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id, '_blank');
+
     }
 </script>
 

@@ -22,7 +22,15 @@ $permissions = user()->getPermissions();
         $("#form1btn").html('<i class="spinner-border spinner-border-sm"></i>')
         // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getopddatatable',
+            <?php if ($gsPoli == 'P004') {
+            ?>
+                url: '<?php echo base_url(); ?>admin/patient/getopddatatable/bidan',
+            <?php
+            } else {
+            ?>
+                url: '<?php echo base_url(); ?>admin/patient/getopddatatable',
+            <?php
+            } ?>
             type: "POST",
             data: new FormData(this),
             dataType: 'json',

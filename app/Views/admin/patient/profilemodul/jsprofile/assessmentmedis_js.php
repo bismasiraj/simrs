@@ -41,6 +41,7 @@
             $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
         $("#formaddarmbtn").trigger("click")
+        appendCetakMedis(accMedisName)
         // appendRtlAccordion(accMedisName);
 
 
@@ -70,25 +71,9 @@
         generateLokalis()
         $("#formaddarmbtn").trigger("click")
         $("#armdiag_cat").val(1)
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Anak</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_bedah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Bedah</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Dalam</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kebidanan/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kebidanan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_kulit_kelamin/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Kulit Kelamin</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_mata/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan Mata</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ralan_tht/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ralan THT</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Anak</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_dalam/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Dalam</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_kebidanan/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Kebidanan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_neonatal/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Neonatal</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/ranap_paru/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Ranap Paru</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_inap/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Assessmen Medis Rawat Inap</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/reconsialisasi/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Reconsialisasi Obat</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Resume Medis</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_diagnosis/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Keterangan Diagnosis</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_bpjs/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Kontrol Pasien BPJS</a></li>')
-        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/surat_perintah/' . base64_encode(json_encode($visit)); ?>/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Surat Perintah Rawat Inap</a></li>')
+        appendCetakMedis(accMedisName)
+
+        appendRtlAccordion(accordionId)
     })
 </script>
 
@@ -302,9 +287,11 @@
                                 );
         ?>
                             var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
+                            if (canvasId) {
+                                const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
 
-                            $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
+                                $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
+                            }
 
         <?php
                             }
@@ -449,8 +436,13 @@
 
     function fillRiwayat() {
         $.each(riwayatAll, function(key, value) {
-            $("#armGEN0009" + value.value_id).val(value.histories)
-            $("#armGEN0009" + value.value_id).prop("disabled", true)
+            if ($("#armGEN0009" + value.value_id).is(":checkbox")) {
+                $("#armGEN0009" + value.value_id).prop("checked", true)
+                $("#armGEN0009" + value.value_id).prop("disabled", true)
+            } else {
+                $("#armGEN0009" + value.value_id).val(value.histories)
+                $("#armGEN0009" + value.value_id).prop("disabled", true)
+            }
         })
     }
 
@@ -675,14 +667,21 @@
 
 <script type="text/javascript">
     $("#formsavearmbtn").on('click', (function(e) {
+        alert("berhasil")
+
         saveCanvasData()
+        alert("berhasil1")
+
         if ($("#armbody_id").val() == '') {
             if ($("#armweight").val() != '') {
                 $("#armbody_id").val(get_bodyid())
             }
         }
+        alert("berhasil2")
+
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
+        alert("berhasil3")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/addAssessmentMedis',
             type: "POST",
@@ -727,10 +726,14 @@
         initialAddArm()
     })
     $("#formcetakarm").on("click", function() {
-        var visit = <?= json_encode($visit); ?>;
-        var encodedVisit = btoa(JSON.stringify(visit));
+        // var visit = <?= json_encode($visit); ?>;
+        // var encodedVisit = btoa(JSON.stringify(visit));
         var title = $("#armTitle").html()
-        var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
+        if ($("#armdiag_cat").val() == 1) {
+            var url = "<?= base_url('admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
+        } else {
+            var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
+        }
         window.open(url, '_blank');
     })
 </script>
@@ -832,6 +835,9 @@
             contentType: false,
             cache: false,
             processData: false,
+            beforeSend: function(e) {
+                getLoadingscreen("contentAssessmentMedis", "loadContentAssessmentMedis")
+            },
             success: function(data) {
                 pasienDiagnosaAll = data.pasienDiagnosa
                 riwayatAll = data.pasienHistory
@@ -929,8 +935,6 @@
         $("#armPenunjang_Group").hide()
         $("#armProcedures_Group").hide()
         $("#armRtl_Group").hide()
-        $("#arpEdukasiIntegrasi_Group").hide()
-        $("#arpEdukasiForm_Group").hide()
         <?php foreach ($mappingAssessment as $key => $value) {
         ?>
             $("#<?= $value['id']; ?>").show()
@@ -1073,7 +1077,7 @@
                     <div class="form-group">
                         <label>Jenis EWS</label>
                         <select class="form-select" name="vs_status_id" id="armvs_status_id">
-                            <option selected>-- pilih --</option>
+                            <option value="" selected>-- pilih --</option>
                             <option value="1">Dewasa</option>
                             <option value="4">Anak</option>
                             <option value="5">Neonatus</option>
@@ -1126,7 +1130,7 @@
             '<div id="collapseRiwayatMedis" class="accordion-collapse collapse" aria-labelledby="headingRiwayatMedis" data-bs-parent="#accordionAssessmentMedis" style="">' +
             '<div class="accordion-body text-muted">' +
             '<div class="row">' +
-            '<div class="col-sm-6 col-xs-12">' +
+            '<div class="col-sm-12 col-xs-12">' +
             '<div class="mb-3">' +
             '<div class="form-group">' +
             '<label for="armdescription">Riwayat Penyakit Sekarang</label>' +
@@ -1136,17 +1140,28 @@
             '</div>' +
             <?php foreach ($aValue as $key => $value) {
                 if ($value['p_type'] == 'GEN0009') {
+                    if ($value['value_score'] == '4') {
             ?> '<div class="col-sm-6 col-xs-12">' +
-                    '<div class="mb-3">' +
-                    '<div class="form-group">' +
-                    '<label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>' +
-                    '<textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-            <?php
-                }
-            } ?> '</div>' +
+                        '<div class="mb-3">' +
+                        '<div class="form-group">' +
+                        '<label for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>' +
+                        '<textarea id="arm<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                    <?php
+                    } else if ($value['value_score'] == '2') {
+                    ?> `<div class="col-sm-6 col-xs-12">
+                            <div class="form-check mb-3">
+                                <input id="arm<?= $value['p_type'] . $value['value_id']; ?>" class="form-check-input" type="checkbox" name="<?= $value['value_id']; ?>" value="1">
+                                <label class="form-check-label" for="arm<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
+                            </div>
+                        </div>` +
+                    <?php
+                    }
+                    ?> <?php
+                    }
+                } ?> '</div>' +
             '</div>' +
             '</div>' +
             '</div>'
@@ -1552,7 +1567,7 @@
                                 <div class="mb-3">
                                     <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
                                         <div class="select2-full-width" style="width:100%">
-                                            <select class="form-control  patient_list_ajax" name='dirujukke' id="armdirujukke" style="width: 100%">
+                                            <select class="form-control patient_list_ajax" name='dirujukke' id="armdirujukke" style="width: 100%">
                                             </select>
                                         </div>
                                     </div>
@@ -2255,5 +2270,33 @@
         //         $("#cetakarm").css("display", "block");
         //     }
         // });
+    }
+
+    function appendCetakMedis(accordionId) {
+        var accordionContent = `
+            <div id="" class="accordion-item">
+                <h2 class="accordion-header" id="painMonitoringMedis">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
+                        <b>REPORTING</b>
+                    </button>
+                </h2>
+                <div id="collapsepainMonitoringMedis" class="accordion-collapse collapse" aria-labelledby="painMonitoringMedis" data-bs-parent="#accordionAssessmentMedis" style="">
+                    <div class="accordion-body text-muted">
+                        <div class="row">
+                            <ul id="medisListLinkAll" class="list-group list-group-flush">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        appendAccordionItem(accordionId, accordionContent);
+        $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/profile/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Profile Ringkas Medis Rawat Jalan</a></li>')
+        // $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ringkasan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '" target="_blank">Ringkasan Masuk Keluar Pasien</a></li>')
+        if ($("#armdiag_cat").val() == 1) {
+            $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/resume_medis/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '/' + title + '" target="_blank">Resume Medis</a></li>')
+        } else {
+            $('#medisListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val() + '/' + title + '" target="_blank">Assessment Medis</a></li>')
+        }
     }
 </script>

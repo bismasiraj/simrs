@@ -6,6 +6,8 @@ $this->extend('layout/basiclayout', [
 $rajalTipe = [1, 2, 0, 73, 50, 5];
 $ranapTipe = [3, 2, 0, 73, 50, 5];
 $permissions = user()->getPermissions();
+$session = session();
+$gsPoli = $session->gsPoli;
 // dd($giTipe);
 ?>
 <?php $this->section('topbar') ?>
@@ -77,6 +79,11 @@ $currency_symbol = 'Rp. ';
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
                                     </li>
                                 <?php } ?>
+                                <?php if ($gsPoli == 'P002') { ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#operasi" type="button" role="tab" aria-controls="operasi" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Jadwal Operasi</button>
+                                    </li>
+                                <?php } ?>
 
                             </ul>
                             <div class="tab-content">
@@ -107,7 +114,33 @@ $currency_symbol = 'Rp. ';
                                     ]);
                                 }
                                 ?>
-
+                                <?php
+                                if ($gsPoli == 'P002') {
+                                    echo view('admin/patient/modul/search_operasi', [
+                                        'giTipe' => $giTipe,
+                                        // 'search_text' => $search_text,
+                                        'orgunit' => $orgunit,
+                                        'img_time' => $img_time,
+                                        'coverage' => $coverage,
+                                        'status' => $status,
+                                        'jenis' => $jenis,
+                                        'kelas' => $kelas,
+                                        'kalurahan' => $kalurahan,
+                                        'kecamatan' => $kecamatan,
+                                        'kota' => $kota,
+                                        'prov' => $prov,
+                                        'statusPasien' => $statusPasien,
+                                        'payor' => $payor,
+                                        'education' => $education,
+                                        'marital' => $marital,
+                                        'agama' => $agama,
+                                        'job' => $job,
+                                        'blood' => $blood,
+                                        'family' => $family,
+                                        'gender' => $gender
+                                    ]);
+                                }
+                                ?>
                                 <?php if (in_array($giTipe, $rajalTipe)) {
                                     echo view('admin/patient/modul/search_rajal', [
                                         'giTipe' => $giTipe,
@@ -668,6 +701,42 @@ if ($giTipe == 0 || $giTipe == '5') {
 ?>
 <?php if (in_array($giTipe, $rajalTipe)) {
     echo view('admin/patient/modul/search_rajal_js', [
+        'giTipe' => $giTipe,
+        'rajalTipe' => $rajalTipe,
+        'title' => '',
+        'orgunit' => $orgunit,
+        'img_time' => $img_time,
+        'clinic' => $clinic,
+        'dokter' => $dokter,
+        'coverage' => $coverage,
+        'status' => $status,
+        'jenis' => $jenis,
+        'kelas' => $kelas,
+        'kalurahan' => $kalurahan,
+        'kecamatan' => $kecamatan,
+        'kota' => $kota,
+        'prov' => $prov,
+        'statusPasien' => $statusPasien,
+        'payor' => $payor,
+        'education' => $education,
+        'marital' => $marital,
+        'agama' => $agama,
+        'job' => $job,
+        'blood' => $blood,
+        'family' => $family,
+        'gender' => $gender,
+        'way' => $way,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        // 'diagnosa' => $diagnosa,
+        'dpjp' => $dpjp
+    ]);
+}
+?>
+<?php if ($gsPoli == 'P002') {
+    echo view('admin/patient/modul/search_operasi_js', [
         'giTipe' => $giTipe,
         'rajalTipe' => $rajalTipe,
         'title' => '',

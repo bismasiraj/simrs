@@ -1,3 +1,8 @@
+<?php
+// echo "<pre>";
+// var_dump($val);
+// die();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -69,452 +74,323 @@
 
 <body>
     <div class="container-fluid mt-5">
-        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
-            <div style="display: none;">
-                <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
-                <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
-                <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
-            </div>
+        <!-- template header -->
+        <?= view("admin/patient/profilemodul/formrm/rm/template_header.php"); ?>
+        <!-- end of template header -->
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
-            <?php csrf_field(); ?>
-            <div class="row">
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                </div>
-                <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
-                </div>
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-                </div>
-            </div>
-            <div class="row">
-                <h4 class="text-center"><?= $title; ?></h4>
-            </div>
-            <div class="row">
-                <h5 class="text-start">Informasi Pasien</h5>
-            </div>
-            <table class="table table-bordered">
-                <tbody>
+        <div class="row">
+            <h4>Laporan Persalinan</h4>
+        </div>
+        <table class="table table-bordered">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+        <div class="row">
+            <h4>Ikhtisar Persalinan</h4>
+        </div>
+        <table class="table table-bordered mb-2">
+            <tr>
+                <td>
+                    <b>Rupture</b>
+
+                </td>
+                <td>
+                    <b>Waktu</b>
+
+                </td>
+                <td>
+                    <b>Warna</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Tekanan Darah</b>
+
+                </td>
+                <td>
+                    <b>Nadi</b>
+
+                </td>
+                <td>
+                    <b>Suhu</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Freq. Pernapasan</b>
+
+                </td>
+                <td>
+                    <b>Berat Badan</b>
+
+                </td>
+                <td>
+                    <b>Tinggi Badan</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Tinggi Fundus Uteri</b>
+
+                </td>
+                <td>
+                    <b>Kontraks Uterus</b>
+
+                </td>
+                <td>
+                    <b></b>
+
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered mb-2">
+            <tr>
+                <td colspan="2">
+                    <b>Pendarahan</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Kala I</b>
+
+                </td>
+                <td>
+                    <b>Kala II</b>
+
+                </td>
+                <td>
+                    <b>Kala III</b>
+
+                </td>
+                <td>
+                    <b>Kala IV</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <b>Placenta</b>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Lahir</b>
+
+                </td>
+                <td>
+                    <b>Keadaan Lahir</b>
+
+                </td>
+                <td>
+                    <b>Berat</b>
+
+                </td>
+                <td>
+                    <b>Bentuk</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Tali Pusat</b>
+
+                </td>
+                <td>
+                    <b>Selaput Ketuban</b>
+
+                </td>
+                <td>
+                    <b>Kotiledon</b>
+
+                </td>
+                <td>
+                    <b>Insersio</b>
+
+                </td>
+            </tr>
+        </table>
+        <div class="row">
+            <h4>Keadaan Anak Lahir</h4>
+        </div>
+        <table class="table table-bordered mb-2">
+            <tr>
+                <th colspan="3">Anak Ke-1</th>
+            </tr>
+            <tr>
+                <td>
+                    <b>Waktu Lahir</b>
+
+                </td>
+                <td>
+                    <b>Jenis Patrus</b>
+
+                </td>
+                <td>
+                    <b>Indikasi</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Lahir</b>
+
+                </td>
+                <td>
+                    <b>Jenis Kelamin</b>
+
+                </td>
+                <td>
+                    <b>BB / PB</b>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Lingkar Kepala</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_kepala']) ? '-' : @$neonatus['lingkar_kepala']; ?></p>
+                </td>
+                <td>
+                    <b>Lingkar Dada</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_dada']) ? '-' : @$neonatus['lingkar_dada']; ?></p>
+                </td>
+                <td>
+                    <b>SpO2</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['spo2']) ? '-' : @$neonatus['spo2']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Tekanan Darah</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_kepala']) ? '-' : @$neonatus['lingkar_kepala']; ?></p>
+                </td>
+                <td>
+                    <b>Nadi</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_kepala']) ? '-' : @$neonatus['lingkar_kepala']; ?></p>
+                </td>
+                <td>
+                    <b>Suhu</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_kepala']) ? '-' : @$neonatus['lingkar_kepala']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Respiration Rate</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['lingkar_kepala']) ? '-' : @$neonatus['lingkar_kepala']; ?></p>
+                </td>
+                <td>
+                    <b>Kesan Umum</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['keadaan_umum']) ? '-' : @$neonatus['keadaan_umum']; ?></p>
+                </td>
+                <td>
+                    <b>Pergerakan</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['pergerakan']) ? '-' : @$neonatus['pergerakan']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Warna Kulit</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['warna_kulit']) ? '-' : @$neonatus['warna_kulit']; ?></p>
+                </td>
+                <td>
+                    <b>Turgor</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['turgor']) ? '-' : @$neonatus['turgor']; ?></p>
+                </td>
+                <td>
+                    <b>Tonus</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['tonus']) ? '-' : @$neonatus['tonus']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Suara</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['suara']) ? '-' : @$neonatus['suara']; ?></p>
+                </td>
+                <td>
+                    <b>Reflek Moro</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['reflek_moro']) ? '-' : @$neonatus['reflek_moro']; ?></p>
+                </td>
+                <td>
+                    <b>Reflek Menghisap</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['reflek_menghisap']) ? '-' : @$neonatus['reflek_menghisap']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Memegang</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['memegang']) ? '-' : @$neonatus['memegang']; ?></p>
+                </td>
+                <td>
+                    <b>Tonus Leher</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['tonus_leher']) ? '-' : @$neonatus['tonus_leher']; ?></p>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <b>Resusitasi</b>
+                    <p class="m-0 mt-1 p-0"><?= empty(@$neonatus['resusitasi']) ? '-' : @$neonatus['resusitasi']; ?></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Kelainan Kongenital</b>
+
+                </td>
+                <td>
+                    <b>Sebab bayi lahir mati/lahir lalu meninggal</b>
+
+                </td>
+            </tr>
+        </table>
+
+        <div class="row">
+            <h5 class="text-start">Apgar Score</h5>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td class="p-1" width="25%"></td>
+                    <?php foreach ($apgarWaktu as $key => $waktu) : ?>
+                        <th class="p-1" width="25%"><?= $waktu['p_description'] ?></th>
+                    <?php endforeach ?>
+                </tr>
+                <?php $totalSkor = 0; ?>
+                <?php foreach ($apgarData as $key => $row) : ?>
                     <tr>
-                        <td>
-                            <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
-                        </td>
-                        <td>
-                            <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
-                        </td>
-                        <td>
-                            <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
-                        </td>
+                        <th class="p-1" width="25%"><?= $row['parameter_desc'] ?></th>
+                        <td class="p-1" width="25%"><?= '(' . $row['value_score_1'] . ') ' . $row['menit_1'] ?></td>
+                        <td class="p-1" width="25%"><?= '(' . $row['value_score_5'] . ') ' . $row['menit_5'] ?></td>
+                        <td class="p-1" width="25%"><?= '(' . $row['value_score_10'] . ') ' . $row['menit_10'] ?></td>
                     </tr>
-                    <tr>
-                        <td>
-                            <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
-                        </td>
-                        <td colspan="2">
-                            <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
-                        </td>
-                        <td>
-                            <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
-                        </td>
-                        <td>
-                            <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Kelas</b>
-                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
-                        </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
-                        </td>
-                        <td>
-                            <b>Bed</b>
-                            <input type="text" class="form-control" id="bed" name="bed" value="">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <h4>Laporan Persalinan</h4>
-            </div>
-            <table class="table table-bordered">
+                    <?php $totalSkor += $row['value_score_1'] + $row['value_score_5'] + $row['value_score_10']; ?>
+                <?php endforeach ?>
                 <tr>
-                    <td></td>
+                    <th class="p-1" width="25%">Total Skor</th>
+                    <th class="p-1 text-center" width="75%" colspan="3"><?= $totalSkor ?></th>
                 </tr>
-            </table>
-            <div class="row">
-                <h4>Ikhtisar Persalinan</h4>
-            </div>
-            <table class="table table-bordered mb-2">
-                <tr>
-                    <td>
-                        <b>Rupture</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Waktu</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Warna</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Tekanan Darah</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Nadi</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Suhu</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Freq. Pernapasan</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Berat Badan</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Tinggi Badan</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Tinggi Fundus Uteri</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kontraks Uterus</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b></b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-            </table>
-            <table class="table table-bordered mb-2">
-                <tr>
-                    <td colspan="2">
-                        <b>Pendarahan</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Kala I</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kala II</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kala III</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kala IV</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <b>Placenta</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Lahir</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Keadaan Lahir</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Berat</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Bentuk</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Tali Pusat</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Selaput Ketuban</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kotiledon</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Insersio</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-            </table>
-            <div class="row">
-                <h4>Keadaan Anak Lahir</h4>
-            </div>
-            <table class="table table-bordered mb-2">
-                <tr>
-                    <td>Anak Ke-1</td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Waktu Lahir</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Jenis Patrus</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Indikasi</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Lahir</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Jenis Kelamin</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>BB / PB</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Lingkar Kepala</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Lingkar Dada</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>SpO2</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Tekanan Darah</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Nadi</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Suhu</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Respiration Rate</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Kesan Umum</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Pergerakan</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Warna Kulit</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Turgor</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Tonus</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Suara</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Reflek Moro</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Reflek Menghisap</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Memegang</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Tonus Leher</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <b>Resusitasi</b>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Kelainan Kongenital</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                    <td>
-                        <b>Sebab bayi lahir mati/lahir lalu meninggal</b>
-                        <input type="text" class="form-control" name="sa" id="sa">
-                    </td>
-                </tr>
-            </table>
-            <div class="row">
-                <h4>Apgar Score</h4>
-            </div>
-            <table class="table table-bordered">
-                <thead class="fw-bold">
-                    <tr>
-                        <td></td>
-                        <td>1 Menit</td>
-                        <td>5 Menit</td>
-                        <td>10 Menit</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="fw-bold">Denyut Jantung</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Pernafasan</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Tonus Otot</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Peka Rangsang</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Warna</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">Total Skor</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col-auto" align="center">
-                    <div>Dokter</div>
-                    <div class="mb-1">
-                        <div id="qrcode"></div>
-                    </div>
-                </div>
-                <div class="col"></div>
-                <div class="col-auto" align="center">
-                    <div>Bidan</div>
-                    <div class="mb-1">
-                        <div id="qrcode1"></div>
-                    </div>
+            </tbody>
+        </table>
+
+
+        <div class="row">
+            <div class="col-auto" align="center">
+                <div>Dokter</div>
+                <div class="mb-1">
+                    <div id="qrcode"></div>
                 </div>
             </div>
-        </form>
+            <div class="col"></div>
+            <div class="col-auto" align="center">
+                <div>Bidan</div>
+                <div class="mb-1">
+                    <div id="qrcode1"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -543,51 +419,7 @@
         correctLevel: QRCode.CorrectLevel.H // High error correction
     });
 </script>
-<script>
-    $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
 
-    })
-</script>
 <style>
     @media print {
         @page {

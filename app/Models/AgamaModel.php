@@ -9,7 +9,7 @@ class AgamaModel extends Model
     protected $table      = 'agama';
     protected $primaryKey = 'kode_agama';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

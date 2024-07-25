@@ -9,7 +9,7 @@ class FallRiskDetailModel extends Model
     protected $table      = 'assessment_fall_risk_detail';
     protected $primaryKey = 'body_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

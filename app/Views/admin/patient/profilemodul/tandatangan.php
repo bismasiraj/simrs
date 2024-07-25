@@ -11,16 +11,23 @@
                 </div>
             </div><!--./modal-header-->
             <div id="" class="modal-body pt0 pb0">
-                <form id="digitalSignForm" action="<?= url_to('login') ?>" method="post">
+                <form id="digitalSignForm" action="" method="post">
                     <?= csrf_field() ?>
                     <input type="hidden" name="valid_date" id="signvalid_date">
                     <input type="hidden" name="valid_user" id="signvalid_user">
                     <input type="hidden" name="valid_pasien" id="signvalid_pasien">
                     <input type="hidden" name="tombolsave" id="signtombolsave">
-                    <input type="hidden" name="tombolform" id="signform">
+                    <input type="hidden" name="formId" id="signform">
+                    <input type="hidden" name="container" id="signcontainer">
+                    <input type="hidden" name="docs_type" id="signdocs_type">
+                    <input type="hidden" name="sign_id" id="signsign_id">
+                    <input type="hidden" name="user_type" id="signuser_type">
+                    <input type="hidden" name="sign_ke" id="signsign_ke">
+                    <input type="hidden" name="title" id="signtitle">
+                    <input type="hidden" name="sign_path" id="signsign_path">
                     <div class="form-group">
-                        <label for="login"><?= lang('Auth.emailOrUsername') ?></label>
-                        <input type="text" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="login" placeholder="<?= lang('Auth.emailOrUsername') ?>">
+                        <label for="user_id"><?= lang('Auth.emailOrUsername') ?></label>
+                        <input type="text" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="user_id" placeholder="<?= lang('Auth.emailOrUsername') ?>">
                         <div class="invalid-feedback">
                             <?= session('errors.login') ?>
                         </div>

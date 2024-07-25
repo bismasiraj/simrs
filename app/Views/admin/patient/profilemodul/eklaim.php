@@ -921,7 +921,7 @@ $permission = user()->getPermissions();
                                         <tr>
                                             <td style="text-align:right;">Prosedur Non Bedah</td>
                                             <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="prosedur_non_bedah" id="ekprosedur_non_bedah" onkeydown="kp_chg_billing(this,event);"></td>
-                                            <td style="text-align:right;">Prosedur Non Bedah</td>
+                                            <td style="text-align:right;">Prosedur Bedah</td>
                                             <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="prosedur_bedah" id="ekprosedur_bedah" onkeydown="kp_chg_billing(this,event);"></td>
                                             <td style="text-align:right;">Konsultasi</td>
                                             <td style="border-left:0;"><input type="text" autocomplete="off" readonly="1" class="billing_group" onclick="_dsa(this);" style="text-align:right;width:8em;" value="0" name="konsultasi" id="ekkonsultasi" onkeydown="kp_chg_billing(this,event);"></td>

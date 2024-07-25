@@ -45,22 +45,33 @@
     var option = <?= json_encode($option); ?>;
     var optionJml = <?= json_encode($optionJml); ?>;
     var visitHistory;
-    // getResep(visit, nomor)
+
+    // $(document).ready(function() {
+    //     $("#jenisresep").val('')
+    // })
 
     $("#eresepTab").on("click", function() {
+        $("#jenisresep").val(1)
         getResep(visit, nomor)
-        $("#iseresep").val(1)
         $("#eresepTitle").html("E-Resep")
         $("#eresepBtnGroup").show()
         $("#medItemBtnGroup").hide()
 
     })
     $("#medicalitemTab").on("click", function() {
+        $("#jenisresep").val(8)
         getResep(visit, nomor)
-        $("#iseresep").val(0)
         $("#eresepTitle").html("Medical Item")
         $("#eresepBtnGroup").hide()
         $("#medItemBtnGroup").show()
+    })
+    $("#formEditPrescrBtn").on("click", function() {
+        $("#formAddPrescrBtn").show()
+        $("#formEditPrescrBtn").hide()
+        $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", false)
+    })
+    $("#jenisresep").on("change", function() {
+        getResep(visit, nomor)
     })
 </script>
 
@@ -70,8 +81,6 @@
         return parameter == null ? 0 : (parameter)
     }
 
-
-
     var obat;
 
     function getResep(visit, nomor) {
@@ -80,7 +89,8 @@
             type: "POST",
             data: JSON.stringify({
                 'visit_id': visit,
-                'nomor': nomor
+                'nomor': nomor,
+                'sold_status': $("#jenisresep").val()
             }),
             dataType: 'json',
             contentType: false,
@@ -92,6 +102,7 @@
             success: function(data) {
                 signaParam = data.signa;
                 $("#ereseploadingspace").html("")
+                $("#resepno").html("")
 
                 $("#resepno").append($('<option>').val('%').text('Semua'));
 
@@ -114,7 +125,7 @@
 
                 measureParam = data.measurement;
                 regulateParam = data.regulation;
-
+                resepDetail = []
                 if (typeof data.resepNo !== 'undefined') {
                     resepNo = data.resepNo;
 
@@ -187,20 +198,18 @@
                 filteredResep(noresepbaru)
 
                 if (isracik == 1) {
-                    addBlankLine('racikan')
-                    $("#eresepAdd").hide()
-                    $("#eresepRAdd").hide()
+                    addBlankLine('racikan', 1)
+                    // $("#eresepAdd").hide()
+                    // $("#eresepRAdd").hide()
                     $("#eresepTable").show()
                 } else {
-                    addBlankLine('nonracik')
-                    $("#eresepAdd").hide()
-                    $("#eresepRAdd").hide()
+                    addBlankLine('nonracik', 1)
+                    // $("#eresepAdd").hide()
+                    // $("#eresepRAdd").hide()
                     $("#eresepTable").show()
                 }
 
                 clicked_submit_btn.button('reset');
-
-
             },
             error: function() {
 
@@ -224,8 +233,10 @@
         if (resep_no == '%') {
             generateResep('<?= $visit['no_registration']; ?>', '<?= $visit['clinic_id']; ?>', '<?= $visit['isrj']; ?>', 0)
         } else {
-            $("#eresepAdd").hide()
-            $("#eresepRAdd").hide()
+            $("#eresepBtnGroup").hide()
+            $("#medItemBtnGroup").hide()
+            // $("#eresepAdd").hide()
+            // $("#eresepRAdd").hide()
             $("#eresepTable").show()
 
             addBlankLine('nonracik')
@@ -241,6 +252,8 @@
         if (resep_no == '%') {
             generateResep('<?= $visit['no_registration']; ?>', '<?= $visit['clinic_id']; ?>', '<?= $visit['isrj']; ?>', 1)
         } else {
+            $("#eresepBtnGroup").hide()
+            $("#medItemBtnGroup").hide()
             addBlankLine('racikan')
         }
 
@@ -452,6 +465,9 @@
                         });
                         errorMsg(message);
                     } else {
+                        $("#formAddPrescrBtn").hide()
+                        $("#formEditPrescrBtn").show()
+                        $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
                         successMsg(data.message);
 
                         $("#prescRItemBody").html("")
@@ -487,6 +503,8 @@
 <script type="text/javascript">
     function addBlankLine(obatType, resepKe = null) {
         var racikan = 0;
+        var soldstatus = $("#jenisresep").val()
+
         resep_no = $("#resepno").val()
 
         var iseresep = $("#iseresep").val()
@@ -501,14 +519,17 @@
                 theOrder = 1;
                 racikan = 1;
             }
+            if (resepKe == null) {
+                resepKe = resepOrder;
+            } else {
+                resepOrder = resepKe
+            }
         } else { //komponen
             theOrder++;
             racikan = 1;
         }
 
-        if (resepKe == null) {
-            var resepKe = resepOrder;
-        }
+
         var billId = (get_datesecond() + String(Math.floor(Math.random() * 1000))).replaceAll(' ', '').replaceAll('-', '').replaceAll(':', '');
 
         if (racikan == 1) {
@@ -591,6 +612,8 @@
             signa5Div = signa5Div + '</select>';
         }
 
+        var soldstatusarray = [1, 7, 8];
+
         var jmlBks = 0;
         var dose = 0;
         var origDose = '';
@@ -634,7 +657,6 @@
         var clinicIdFrom = '<?= $visit['clinic_id']; ?>'
         var islunas = 0
         var moduleId = '';
-        var soldstatus = $("#jenisresep").val()
         if (racikan == 1)
             var measureIdName = 'Bks';
         else
@@ -680,14 +702,14 @@
                     .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="" class="form-control medicine_name" readonly>')
                 )
             )
-            if (iseresep == 1) {
+            if (soldstatus == '1' || soldstatus == '7') {
                 $(`#${billId}`)
                     .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
                     .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                         // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                         .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                            .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
-                            .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                            .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                            .append('<button type="button" onclick="addR()" class="btn btn-warning btn-btnr" data-row-id="1" autocomplete="off">Racikan</i></button>')
                         )
                     )
                     .append($('<td>')
@@ -700,7 +722,7 @@
                     .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                         // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                         .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                            .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
+                            .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
                         )
                     )
                     .append($('<td>')
@@ -764,8 +786,8 @@
                 .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                     // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
-                        .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                        .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                        .append('<button type="button" onclick="addR()" class="btn btn-warning btn-btnr" data-row-id="1" autocomplete="off">Racikan</i></button>')
                         .append(`<button type="button" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>`)
                     )
                 )
@@ -857,7 +879,6 @@
 
 
         // .append('<hr class="hr-panel-heading hr-10">')
-        console.log(`${billId}`)
         $(`#${billId}`).append('<input name="theorder[]" id="aortheorder' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="brand_id[]" id="aorbrand_id' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="racikan[]" id="aorracikan' + billId + '" type="hidden" class="form-control" />')
@@ -979,7 +1000,7 @@
         $("#aorsold_status" + billId).val(soldstatus);
 
 
-        if (iseresep == 1) {
+        if (soldstatus == '1' || soldstatus == '7' || soldstatus == '8') {
             initializeResepSelect2('aordescription1' + billId)
             $("#aordescription" + billId).val(description)
         } else {
@@ -991,10 +1012,24 @@
 <script type="text/javascript">
     function filteredResep(resepSelected) {
         $("#eresepBody").html("")
+
         var iseresep = $("#iseresep").val()
+        var soldstatusarray = [1, 7, 8];
+        var soldstatus = $("#jenisresep").val()
 
         resepOrder = 0;
 
+        if (resepDetail.length > 0) {
+            $("#eresepBody").html("")
+            $("#formprescription").find("input, textarea, select").prop("disabled", false)
+            $("#formAddPrescrBtn").hide()
+            $("#formEditPrescrBtn").show()
+        } else {
+            $("#eresepBody").html("")
+            $("#formprescription").find("input, textarea, select").prop("disabled", false)
+            $("#formAddPrescrBtn").show()
+            $("#formEditPrescrBtn").hide()
+        }
 
         resepDetail.forEach((element, key) => {
 
@@ -1111,7 +1146,6 @@
                 var cif = resep.cif
                 var aturanminum2 = resep.aturanminum2
                 var moduleId = resep.module_id
-                var soldstatus = resep.sold_status
 
                 if (racikan == 1) {
                     measureIdName = 'Bks';
@@ -1165,14 +1199,14 @@
                             .append('<input type="text" name="" id="aormeasure_idname' + billId + '" placeholder="" value="" class="form-control medicine_name" readonly>')
                         )
                     )
-                    if (iseresep == 1) {
+                    if (soldstatus == '1' || soldstatus == '7') {
                         $(`#${billId}`)
                             .append($('<td colspan="5">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
                             .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                                 // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                                 .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                    .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
-                                    .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                                    .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                    .append('<button type="button" onclick="addR()" class="btn btn-warning btn-btnr" data-row-id="1" autocomplete="off">Racikan</i></button>')
                                 )
                             )
                             .append($('<td>')
@@ -1185,7 +1219,7 @@
                             .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                                 // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                                 .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                    .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
+                                    .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
                                 )
                             )
                             .append($('<td>')
@@ -1248,8 +1282,8 @@
                         .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
                             // .append($('<td rowspan="2">').attr("id", "tdbtnracikresep" + resepKe)
                             .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                                .append('<button type="button" onclick="addNR()" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
-                                .append('<button type="button" onclick="addR()" class="btn btn-warning" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                                .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                .append('<button type="button" onclick="addR()" class="btn btn-warning btn-btnr" data-row-id="1" autocomplete="off">Racikan</i></button>')
                                 .append(`<button type="button" onclick="addKomponen('${resepNo}', ${resepKe})" class="btn btn-info" data-row-id="1" autocomplete="off">Komponen</i></button>`)
                             )
                         )
@@ -1469,18 +1503,48 @@
                 // }
 
 
-                $("#eresepAdd").hide()
-                $("#eresepRAdd").hide()
+                // $("#eresepAdd").hide()
+                // $("#eresepRAdd").hide()
                 $("#eresepTable").show()
             }
         });
+        if (resepDetail.length > 0) {
+            $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
+        }
+        var jnsrsp = $("#jenisresep").val()
+        if ($("#eresepBody table").length == 0) {
+            console.log(soldstatusarray.includes($("#jenisresep").val()))
+            console.log('asdf')
+            if (jnsrsp == 1 || jnsrsp == 7 || jnsrsp == 8) {
+                $("#eresepBtnGroup").show()
+                $("#medItemBtnGroup").hide()
+            } else {
+                $("#eresepBtnGroup").hide()
+                $("#medItemBtnGroup").show()
+            }
+        } else {
+            console.log(soldstatusarray.includes($("#jenisresep").val()))
+            if (jnsrsp == 1 || jnsrsp == 7 || jnsrsp == 8) {
+                $("#eresepBtnGroup").show()
+                $("#medItemBtnGroup").hide()
+            } else {
+                $("#eresepBtnGroup").hide()
+                $("#medItemBtnGroup").show()
+            }
+        }
     }
 
     function removeRacik(brand) {
-
         console.log(brand)
         if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
             $("#" + brand).remove()
+            if ($("#eresepBody table").length == 0) {
+                $("#eresepBtnGroup").show()
+                $("#medItemBtnGroup").show()
+            } else {
+                $("#eresepBtnGroup").hide()
+                $("#medItemBtnGroup").hide()
+            }
         }
     }
 

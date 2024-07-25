@@ -3,18 +3,9 @@
         // getListRequestRad(nomor, visit)
         initializeSearchTarif("searchTarifbillpoli", '<?= $visit['clinic_id']; ?>');
     })
-    $("#billPoliTab").on("click", function() {
+    $("#tindakanTab").on("click", function() {
         $('#notaNoLab').html(`<option value="%">Semua</option>`)
         getBillPoli(nomor, ke, mulai, akhir, lunas, '<?= $visit['clinic_id']; ?>', rj, status, nota, trans)
-
-        // var seen = {};
-        // $('#notaNoPoli option').each(function() {
-        //     if (seen[$(this).val()]) {
-        //         $(this).remove();
-        //     } else {
-        //         seen[$(this).val()] = true;
-        //     }
-        // });
     })
     $("#formSaveBillRadBtn").on("click", function() {
         $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
@@ -158,7 +149,7 @@
             .append('<input name="employee_id[]" id="abillpoliemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
             .append('<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
             .append('<input name="amount[]" id="abillpoliamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
             .append('<input name="profesi[]" id="abillpoliprofesi' + key + '" type="hidden" value="" class="form-control" />')
             .append('<input name="tagihan[]" id="abillpolitagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#abillpoliquantity" + key).val() + '" class="form-control" />')
             .append('<input name="treatment_plafond[]" id="abillpolitreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')

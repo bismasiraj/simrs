@@ -22,24 +22,25 @@ $permissions = user()->getPermissions();
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" integrity="sha512-mR/b5Y7FRsKqrYZou7uysnOdCIJib/7r5QeJMFvLNHNhtye3xJp1TdJVPLtetkukFn227nKpXD9OjUc09lx97Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div class="tab-pane" id="orderGizi" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
-            <?php echo view('admin/patient/profilemodul/profilebiodata', [
-                'visit' => $visit,
-                'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                'pasienDiagnosa' => $pasienDiagnosa
-            ]); ?>
-        </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div id="ordergiziAdd" class="box-tab-tools text-center">
-                        <a data-toggle="modal" onclick="addOrderGizi(1, 1, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>
+        <div id="loadContentOrderGizi" class="col-12 center-spinner"></div>
+        <div id="contentOrderGizi" class="row">
+            <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+                <?php echo view('admin/patient/profilemodul/profilebiodata', [
+                    'visit' => $visit,
+                    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                    'pasienDiagnosa' => $pasienDiagnosa
+                ]); ?>
+            </div><!--./col-lg-6-->
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div id="ordergiziAdd" class="box-tab-tools text-center">
+                            <a data-toggle="modal" onclick="addOrderGizi(1, 1, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div id="orderGiziBody" class="table-rep-plugin">
-
-
+                <div id="orderGiziBody" class="table-rep-plugin">
+                </div>
             </div>
         </div>
     </div><!--./row-->

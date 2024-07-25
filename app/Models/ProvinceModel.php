@@ -9,7 +9,7 @@ class ProvinceModel extends Model
     protected $table      = 'province';
     protected $primaryKey = 'province_code';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
