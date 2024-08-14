@@ -28,13 +28,13 @@
 
                 <tr>
                     <td class="bolds">Dokter</td>
-                    <?php if (!is_null($visit['class_room_id'])) { ?>
+                    <?php if ($visit['isrj'] == '0') { ?>
                         <td id="dokter"><?php echo $visit['fullname_inap']; ?></td>
                     <?php } else { ?>
                         <td id="dokter"><?php echo $visit['fullname']; ?></td>
                     <?php } ?>
                 </tr>
-                <?php if (!is_null($visit['class_room_id'])) { ?>
+                <?php if ($visit['isrj'] == '0') { ?>
                     <tr>
                         <td class="bolds">Tanggal Masuk</td>
                         <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
@@ -51,7 +51,7 @@
                 <?php } ?>
 
                 <tr>
-                    <?php if (!is_null($visit['class_room_id'])) { ?>
+                    <?php if ($visit['isrj'] == '0' && $visit['class_room_id'] != '') { ?>
                         <td class="bolds">Bangsal</td>
                         <td id="klinik"><?php echo ($visit['name_of_class']); ?></td>
                     <?php } else { ?>

@@ -17,8 +17,6 @@
             signData: formDataObject,
             docData: docDataObject
         };
-        console.log(data)
-        coba = data
         $.ajax({
             url: '<?php echo base_url(); ?>signature/postingSignedDocs',
             type: "POST",
@@ -73,9 +71,9 @@
         var validUser = $("#" + formId + ' input[name="valid_user"]').val()
 
         if (validUser != '' && validUser != null) {
-            $("#" + formId + ' .btn-edit').hide()
+            $("#" + formId + ' .btn-edit').slideUp()
         } else {
-            $("#" + formId + ' .btn-edit').show()
+            $("#" + formId + ' .btn-edit').slideDown()
         }
     }
 </script>
@@ -98,5 +96,103 @@
         }
 
         $("#digitalSignModal").modal("show")
+    }
+    const addSignUserSatelite = (formId, container, body_id, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title) => {
+        $("#" + formId).find(".btn-edit").each(function() {
+            $(this).trigger("click")
+        })
+        if (user_type == 1) {
+            console.log(primaryKey)
+            $("#signvalid_date").val(container + "valid_date" + body_id)
+            $("#signvalid_user").val(container + "valid_user" + body_id)
+            $("#signvalid_pasien").val(container + "valid_pasien" + body_id)
+            $("#signtombolsave").val(buttonId)
+            $("#signform").val(formId)
+            $("#signcontainer").val(container)
+            $("#signdocs_type").val(docs_type)
+            $("#signsign_id").val($("#" + primaryKey).val())
+            $("#signuser_type").val(user_type)
+            $("#signsign_ke").val(sign_ke)
+            $("#signtitle").val(title)
+            $("#signsign_path").val('<?= user()->getFullname(); ?>: ' + get_date())
+        }
+
+        $("#digitalSignModal").modal("show")
+    }
+    const checkSignSignature = async (formId, primaryKey, formSaveBtn) => {
+        let docData = new FormData(document.getElementById(formId))
+        let signId = $("#" + primaryKey).val()
+        let docDataObject = {};
+        docData.forEach(function(value, key) {
+            docDataObject[key] = value
+        });
+        // let data = [];
+        var data = {
+            docData: docDataObject,
+            signId: signId
+        };
+        console.log(data)
+
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '<?php echo base_url(); ?>signature/checkSignedDocs',
+                type: "POST",
+                // data: [docData, formData],
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {},
+                success: function(result) {
+                    try {
+                        // Handle success
+                        if (result.error) {
+                            console.error('Error:', result.error);
+                        } else {
+                            $.each(result, function(key, value) {
+                                if (value.user_type == 1) {
+                                    $("#" + formId).find(".valid_user").each(function() {
+                                        $(this).val(value.sign_path)
+                                    })
+                                    console.log('Signature validity:', value.isValid);
+                                }
+                            })
+                            // $("#" + formSaveBtn).trigger("click")
+                        }
+                    } catch (e) {
+                        console.error('Invalid JSON response:', e);
+                    }
+                    resolve(result);
+
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    errorMsg(xhr);
+                },
+                complete: function() {}
+            });
+        })
+    }
+    const checkSignSignatureAsync = async (data) => {
+        $.ajax({
+            url: '<?php echo base_url(); ?>signature/checkSignedDocs',
+            type: "POST",
+            // data: [docData, formData],
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {},
+            success: function(result) {
+                return result
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                errorMsg(xhr);
+            },
+            complete: function() {}
+        });
     }
 </script>

@@ -664,8 +664,8 @@
     // }
 
     function editBiodataPasien(id = null) {
-        $("#formaddpabtn").show()
-        $("#formeditpabtn").hide()
+        $("#formaddpabtn").slideDown()
+        $("#formeditpabtn").slideUp()
         if (id != null) {
             sbio = sbioArray[id]
             editBiodata()
@@ -1007,8 +1007,8 @@
                             .prop('checked', false)
                             .prop('selected', false);
                     }
-                    $("#formaddpabtn").hide()
-                    $("#formeditpabtn").show()
+                    $("#formaddpabtn").slideUp()
+                    $("#formeditpabtn").slideDown()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");

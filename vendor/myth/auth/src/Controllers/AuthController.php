@@ -85,7 +85,7 @@ class AuthController extends Controller
 
         // Try to log them in...
         if (!$this->auth->attempt([$type => $login, 'password' => $password], $remember)) {
-            return json_encode($this->auth->error());
+            // return json_encode($this->auth->error());
             // return json_encode("asdf");
             return redirect()->back()->withInput()->with('error', $this->auth->error() ?? lang('Auth.badAttempt'));
         }

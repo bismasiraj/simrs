@@ -3,6 +3,9 @@
         initializeSearchTarif("searchTarifKolaboratif", '<?= $visit['clinic_id']; ?>')
         initializeSearchTarif("searchTarifPerawatMandiriSelf", '<?= $visit['clinic_id']; ?>')
     })
+    $("#tindakanPerawatTab").on("click", function() {
+        getTindakanPerawat()
+    })
 </script>
 <script>
     function addBillChargePerawat(container, type, flag = 1, index, tableId) {
@@ -181,8 +184,8 @@
             // $("#perawatTindakan" + key).find("input, textarea").each(function() {
             //     inputvalue[this.name] = this.value
             // })
-            var formElemet = document.getElementById("formchargesBodyPerawat");
-            var formData = new FormData(formElemet);
+            // var formElemet = document.getElementById("formchargesBodyPerawat");
+            // var formData = new FormData(formElemet);
             var inputvalue = {};
             var count = {};
 
@@ -318,8 +321,8 @@
                 processData: false,
                 success: function(data) {
 
-                    $("#simpanBillPerawatBtn" + key).hide()
-                    $("#editDeleteBillPerawat" + key).show()
+                    $("#simpanBillPerawatBtn" + key).slideUp()
+                    $("#editDeleteBillPerawat" + key).slideDown()
 
                     $("#perawatTindakan" + key).find("input, textarea").prop("disabled", true)
                     $("#atpbill_id" + key).val(data.billId)
@@ -333,8 +336,8 @@
 
         $("#editBillBtn" + key).on("click", function(e) {
             $("#perawatTindakan" + key).find("input, textarea").prop("disabled", false)
-            $("#simpanBillPerawatBtn" + key).show()
-            $("#editDeleteBillPerawat" + key).hide()
+            $("#simpanBillPerawatBtn" + key).slideDown()
+            $("#editDeleteBillPerawat" + key).slideUp()
         })
 
         $("#perawatTindakan" + key)
@@ -662,8 +665,8 @@
             $("#atptreatment_type" + key).val(billPerawat.treatment_type)
 
             $("#perawatTindakan" + key).find("input, textarea").prop("disabled", true)
-            $("#simpanBillPerawatBtn" + key).hide()
-            $("#editDeleteBillPerawat" + key).show()
+            $("#simpanBillPerawatBtn" + key).slideUp()
+            $("#editDeleteBillPerawat" + key).slideDown()
             $("#atpquantity" + key).keydown(function(e) {
                 !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
             });

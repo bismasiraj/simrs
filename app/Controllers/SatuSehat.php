@@ -29,7 +29,7 @@ class SatuSehat extends BaseController
         $this->session = session();
         $this->session->set(['selectedMenu' => '']);
     }
-    protected $orgunitcode = '3372238';
+    protected $orgunitcode = '1771014';
 
     protected $baseurloath = 'https://api-satusehat.kemkes.go.id/oauth2/v1';
     protected $baseurlfhir = 'https://api-satusehat.kemkes.go.id/fhir-r4/v1';

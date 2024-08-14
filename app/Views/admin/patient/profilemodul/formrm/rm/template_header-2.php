@@ -24,26 +24,26 @@
         <tr>
             <td class="p-1" style="width:33.3%">
                 <b>Nomor RM</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['no_rm']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Nama Pasien</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['nama']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Jenis Kelamin</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['jeniskel']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$visit['gendername']; ?></p>
             </td>
         </tr>
         <tr>
             <td class="p-1" style="width:33.3%">
                 <b>Tanggal Lahir (Usia)</b>
-                <p class="m-0 mt-1 p-0"><?= tanggal_indo($info['date_of_birth']) . ' (' . @$info['umur'] . ')'; ?></p>
+                <p class="m-0 mt-1 p-0"><?= tanggal_indo($visit['date_of_birth']) . ' (' . @$visit['age'] . ')'; ?></p>
 
             </td>
             <td class="p-1" style="width:66.3%" colspan="2">
                 <b>Alamat Pasien</b>
-                <p class="m-0 mt-1 p-0"><?= @$info['alamat']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$visit['visitor_address']; ?></p>
             </td>
         </tr>
     </tbody>

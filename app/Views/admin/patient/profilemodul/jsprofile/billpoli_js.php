@@ -61,7 +61,16 @@
             .append($("<td>").attr("id", "abillpolidisplaydiscount" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "abillpolidisplaysubsidisat" + key).html(formatCurrency(0)))
             .append($("<td>").attr("id", "abillpolidisplaysubsidi" + key).html(formatCurrency(0)))
-            .append($("<td>").append('<button id="abillpolisimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'abillpoli\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="abillpolieditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'abillpoli\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'abillpoli\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            // .append($("<td>").append('<button id="abillpolisimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'abillpoli\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="abillpolieditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-radel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-radel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'abillpoli\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'abillpoli\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>")
+                .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                    '<button id="abillpolisimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'abillpoli\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">simpan</button>' +
+                    '<button id="abillpolieditDeleteCharge' + key + '" type="button" onclick="editBillCharge(\'abillpoli\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off"  style="display: none">Edit</button>' +
+                    '<button id="delBillBtn' + key + '" type="button" onclick="delBill(\'abillpoli\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                    '</div>' +
+                    '</div>')
+            )
         )
 
 
@@ -88,7 +97,7 @@
             .append('<input name="thename[]" id="abillpolithename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
             .append('<input name="theaddress[]" id="abillpolitheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
             .append('<input name="status_pasien_id[]" id="abillpolistatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isRJ[]" id="abillpoliisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="isrj[]" id="abillpoliisrj' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
             .append('<input name="gender[]" id="abillpoligender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
             .append('<input name="ageyear[]" id="abillpoliageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
             .append('<input name="agemonth[]" id="abillpoliagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')

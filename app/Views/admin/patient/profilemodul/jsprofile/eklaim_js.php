@@ -1,16 +1,16 @@
 <script type="text/javascript">
     function showHideEklaim(param, showhide) {
         if (showhide == 1) {
-            $("." + param).show()
+            $("." + param).slideDown()
         } else if (showhide == 0) {
-            $("." + param).hide()
+            $("." + param).slideUp()
         }
     }
-    $(".upgradeClassParam").hide()
-    $(".icuParam").hide()
-    $(".apgarParam").hide()
-    $(".persalinanParam").hide()
-    $(".covidParam").hide()
+    $(".upgradeClassParam").slideUp()
+    $(".icuParam").slideUp()
+    $(".apgarParam").slideUp()
+    $(".persalinanParam").slideUp()
+    $(".covidParam").slideUp()
     var iUnuDiag = 0;
     var iUnuProc = 0;
     var iInaDiag = 0;
@@ -257,9 +257,9 @@
 
     function setEklaimData() {
         if (currentStep < 3) {
-            $("#ekfinalklaimbtn").hide()
+            $("#ekfinalklaimbtn").slideUp()
         } else {
-            $("#ekfinalklaimbtn").show()
+            $("#ekfinalklaimbtn").slideDown()
         }
 
         $("#ekcurrentStep").val(currentStep)
@@ -297,9 +297,9 @@
         $("#ekkantong_darah").val(ekkantong_darah)
         $("input[name=upgrade_class_ind][value=" + ekupgrade_class_ind + "]").prop('checked', true);
         if (ekupgrade_class_ind == '1') {
-            $(".upgradeClassParam").show()
+            $(".upgradeClassParam").slideDown()
         } else {
-            $(".upgradeClassParam").hide()
+            $(".upgradeClassParam").slideUp()
         }
         $("#ekupgrade_class_class").val(ekupgrade_class_class)
         $("#ekupgrade_class_los").val(ekupgrade_class_los)
@@ -438,9 +438,9 @@
         $("#ekkantong_darah").val(ekkantong_darah)
         $("input[name=upgrade_class_ind][value=" + ekupgrade_class_ind + "]").prop('checked', true);
         if (ekupgrade_class_ind == '1') {
-            $(".upgradeClassParam").show()
+            $(".upgradeClassParam").slideDown()
         } else {
-            $(".upgradeClassParam").hide()
+            $(".upgradeClassParam").slideUp()
         }
         $("#ekupgrade_class_class").val(ekupgrade_class_class)
         $("#ekupgrade_class_los").val(ekupgrade_class_los)
@@ -741,15 +741,15 @@
 
                     setGrouperResult(grouperResp)
                     if (currentStep == 3) {
-                        $("#ekfinalklaimbtn").show()
+                        $("#ekfinalklaimbtn").slideDown()
                     }
                     if (currentStep < 3) {
-                        $("#ekfinalklaimbtn").hide()
+                        $("#ekfinalklaimbtn").slideUp()
                     }
                     if (ekklaim_final > 1) {
-                        $("#ekformsubmit").hide()
-                        $("#ekfinalklaimbtn").hide()
-                        $("#ekeditbtn").show()
+                        $("#ekformsubmit").slideUp()
+                        $("#ekfinalklaimbtn").slideUp()
+                        $("#ekeditbtn").slideDown()
                         setEnableEklaim(true)
                     }
                     setEklaimData()
@@ -928,9 +928,9 @@
             success: function(data) {
                 setGrouperResult(data)
                 if (currentStep < 3) {
-                    $("#ekfinalklaimbtn").hide()
+                    $("#ekfinalklaimbtn").slideUp()
                 } else {
-                    $("#ekfinalklaimbtn").show()
+                    $("#ekfinalklaimbtn").slideDown()
                 }
                 clicked_submit_btn.button('reset');
                 // successMsg(data.message);
@@ -1011,9 +1011,9 @@
             },
             success: function(data) {
                 if (data.metadata.code == 200) {
-                    $("#ekeditbtn").show()
-                    $("#ekfinalklaimbtn").hide()
-                    $("#ekformsubmit").hide()
+                    $("#ekeditbtn").slideDown()
+                    $("#ekfinalklaimbtn").slideUp()
+                    $("#ekformsubmit").slideUp()
 
                     setEnableEklaim(true)
                 }
@@ -1041,9 +1041,9 @@
             processData: false,
             success: function(data) {
                 if (data.metadata.code == 200) {
-                    $("#ekeditbtn").hide()
-                    $("#ekfinalklaimbtn").show()
-                    $("#ekformsubmit").show()
+                    $("#ekeditbtn").slideUp()
+                    $("#ekfinalklaimbtn").slideDown()
+                    $("#ekformsubmit").slideDown()
                     setEnableEklaim(false)
                 }
                 $("#ekeditbtn").button('reset')

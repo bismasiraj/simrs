@@ -160,17 +160,35 @@ class RM3 extends \App\Controllers\BaseController
     }
     public function rm3_3($visit, $vactination = null)
     {
+        $title = "EARLY WARNING SCORING SYSTEM DEWASA";
         if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
             return view("admin/patient/profilemodul/formrm/rm/RM3/RM-3-3.php", [
-                "visit" => $visit
+                "visit" => $visit,
+                'title' => $title,
+                "organization" => $selectorganization,
             ]);
         }
     }
     public function rm3_4($visit, $vactination = null)
     {
+        $title = "EARLY WARNING SCORING SYSTEM ANAK";
         if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+
             return view("admin/patient/profilemodul/formrm/rm/RM3/RM-3-4.php", [
-                "visit" => $visit
+                "visit" => $visit,
+                'title' => $title,
+                "organization" => $selectorganization,
             ]);
         }
     }

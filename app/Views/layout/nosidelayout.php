@@ -17,7 +17,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     <!-- Bootstrap-wysihtml5 CSS -->
     <style>
@@ -75,7 +77,7 @@
     <script src="<?php echo base_url(); ?>assets/js/pages/form-validation.init.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet"> -->
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
 
@@ -83,6 +85,13 @@
 
     <script>
         var baseurl = "<?php echo base_url(); ?>";
+
+        $(window).on('storage', function(e) {
+            if (e.originalEvent.storageArea === localStorage && e.originalEvent.key === 'refresh') {
+                // Perform a refresh if the key 'refresh' was updated
+                location.reload();
+            }
+        });
 
         // $(document).ready(function() {
         //     $('#armstanding_order').wysihtml5();

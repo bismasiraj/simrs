@@ -316,7 +316,9 @@ class PasienVisitationModel extends Model
             pv.responpost_vklaim,
             pv.asalrujukan,
             pv.kdpoli_eks,
-              pv.diagnosa")
+              pv.diagnosa,
+              ap.status_panggil")
+                ->join("antrian_poli ap", "pv.visit_id = ap.visit_id", "left")
                 ->where("(
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
                 (PV.NO_REGISTRATION like '%$kode%' or isnull(PV.DIANTAR_OLEH,'') like '%$kode%' ) or  

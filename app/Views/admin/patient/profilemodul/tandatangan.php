@@ -1,16 +1,66 @@
+<style>
+    /* Modal overlay background */
+    .modal-backdrop {
+        z-index: 1040;
+        /* Ensure it is below the modal content */
+    }
+
+    /* Styling for the modal content */
+    .modal-content {
+        border-radius: 8px;
+        /* Rounded corners for the modal */
+        background-color: #fff;
+        /* White background for better readability */
+        padding: 1rem;
+        /* Add padding inside the modal */
+    }
+
+    /* Modal header styling */
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        /* Light border for separation */
+        padding-bottom: 1rem;
+        /* Add padding at the bottom of the header */
+    }
+
+    /* Modal body padding */
+    .modal-body {
+        padding: 1.5rem;
+        /* Increased padding for a more spacious look */
+    }
+
+    /* Add shadow to modal content */
+    .modal-content.shadow-lg {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow for a 3D effect */
+    }
+
+    /* Form control styling */
+    .form-control {
+        border-radius: 0.25rem;
+        /* Rounded corners for input fields */
+        border-color: #ced4da;
+        /* Light border color */
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        /* Border color for invalid input */
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        /* Color for invalid feedback text */
+    }
+</style>
 <div class="modal fade" id="digitalSignModal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content rounded-4">
+        <div class="modal-content rounded-4 shadow-lg">
             <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
+                <h5 class="modal-title" id="myModalLabel">Digital Signature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt-4 pb-4">
                 <form id="digitalSignForm" action="" method="post">
                     <?= csrf_field() ?>
                     <input type="hidden" name="valid_date" id="signvalid_date">
@@ -27,7 +77,7 @@
                     <input type="hidden" name="sign_path" id="signsign_path">
                     <div class="form-group">
                         <label for="user_id"><?= lang('Auth.emailOrUsername') ?></label>
-                        <input type="text" class="form-control <?php if (session('errors.login')) : ?>is-invalid<?php endif ?>" name="user_id" placeholder="<?= lang('Auth.emailOrUsername') ?>">
+                        <input type="text" class="form-control <?= session('errors.login') ? 'is-invalid' : '' ?>" name="user_id" placeholder="<?= lang('Auth.emailOrUsername') ?>">
                         <div class="invalid-feedback">
                             <?= session('errors.login') ?>
                         </div>
@@ -35,7 +85,7 @@
 
                     <div class="form-group">
                         <label for="password"><?= lang('Auth.password') ?></label>
-                        <input type="password" name="password" class="form-control  <?php if (session('errors.password')) : ?>is-invalid<?php endif ?>" placeholder="<?= lang('Auth.password') ?>">
+                        <input type="password" name="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" placeholder="<?= lang('Auth.password') ?>">
                         <div class="invalid-feedback">
                             <?= session('errors.password') ?>
                         </div>

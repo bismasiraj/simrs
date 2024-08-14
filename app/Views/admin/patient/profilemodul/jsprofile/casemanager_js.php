@@ -366,10 +366,10 @@
             <tr>
                 <td width="1%">${index + 1}</td>
                 <td>${'Dokumentasi Case Manager ' +  moment(date_modified[index]).format("DD-MM-YYYY : hh:mm")}</td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><span class="mdi mdi-magnify-plus"></span> Lihat</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><span class="mdi mdi-lead-pencil"></span> Ubah</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><span class="mdi mdi-delete"></span> Hapus</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><span class="mdi mdi-printer"></span> Print</button></td>
+                <td width="1%"><button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-search-plus"></i> Lihat</button></td>
+                <td width="1%"><button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-edit"></i> Ubah</button></td>
+                <td width="1%"><button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-trash-alt"></i> Hapus</button></td>
+                <td width="1%"><button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-print"></i> Print</button></td>
             </tr>
             `;
             }).join('');

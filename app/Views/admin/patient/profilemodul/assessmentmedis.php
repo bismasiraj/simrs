@@ -55,9 +55,9 @@ $group = user()->getRoles();
                                         <input name="tglsep" id="armtglsep" type="hidden" />
                                         <input name="kddpjp" id="armtglsep" type="hidden" />
                                         <input name="diag_cat" id="armdiag_cat" type="hidden" />
-                                        <input name="valid_date" id="armvalid_date" type="hidden" />
-                                        <input name="valid_user" id="armvalid_user" type="hidden" />
-                                        <input name="valid_pasien" id="armvalid_pasien" type="hidden" />
+                                        <input name="valid_date" class="valid_date" id="armvalid_date" type="hidden" />
+                                        <input name="valid_user" class="valid_user" id="armvalid_user" type="hidden" />
+                                        <input name="valid_pasien" class="valid_pasien" id="armvalid_pasien" type="hidden" />
                                         <input name="specialist_type_id" id="armspecialist_type_id" type="hidden" />
                                         <input name="statusantrean" id="armstatusantrean" type="hidden" value="<?= $visit['statusantrean']; ?>" />
                                         <?php csrf_field(); ?>
@@ -88,13 +88,8 @@ $group = user()->getRoles();
                                                         <div class="col-sm-4 col-xs-12">
                                                             <div class="mb-3">
                                                                 <div class="form-group">
-                                                                    <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                                        <label for="armclinic_id">Bangsal</label>
-                                                                    <?php } else { ?>
-                                                                        <label for="armclinic_id">Pelayanan</label>
-                                                                    <?php } ?>
+                                                                    <label for="armclinic_id">Pelayanan</label>
                                                                     <select name="clinic_id" id="armclinic_id" type="hidden" class="form-control ">
-                                                                        <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -104,11 +99,6 @@ $group = user()->getRoles();
                                                                 <div class="form-group">
                                                                     <label for="armemployee_id">Dokter</label>
                                                                     <select name="employee_id" id="armemployee_id" type="hidden" class="form-control ">
-                                                                        <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                                            <option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>
-                                                                        <?php } else { ?>
-                                                                            <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
-                                                                        <?php } ?>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -128,7 +118,7 @@ $group = user()->getRoles();
                                                 <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                                                 <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                                 <button type="button" id="formeditarm" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                                <button type="button" id="formsignarm" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                                <button type="button" id="formsignarm" name="signrm" onclick="signarm()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                                 <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
                                                 <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                                             </div>

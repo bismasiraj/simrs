@@ -43,10 +43,12 @@ use App\Models\Assessment\SpiritualModel;
 use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\Assessment\TriaseDetilModel;
 use App\Models\Assessment\VisionHearingModel;
+use App\Models\ClinicModel;
 use App\Models\DietInapModel;
 use App\Models\EducationModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
+use App\Models\InasisKontrolModel;
 use App\Models\NifasModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
@@ -73,6 +75,40 @@ class Assessment extends BaseController
     {
 
         return view('welcome_message');
+    }
+
+    public function getMapAssessment()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $specialist_type_id = $body['specialist_type_id'];
+
+        $db = db_connect();
+        $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        where st.specialist_type_id = '{$specialist_type_id}'
+        ;")->getResultArray());
+        // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        // inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        // inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        // inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        // where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
+        }
+        foreach ($mapAssessment as $key => $value) {
+            $mapAssessment[$key]['specialist_type_id'] = $specialist_type_id;
+        }
+
+        return json_encode($mapAssessment);
     }
     public function savePainMonitoring()
     {
@@ -1229,7 +1265,10 @@ class Assessment extends BaseController
                                                     from examination_info pd 
                                                     left join employee_all ea on pd.employee_id = ea.employee_id 
                                                     left join clinic c on pd.clinic_id = c.clinic_id where no_registration = '$no_registration' and visit_id = '$visit_id'")->getResultArray());
-
+        // return json_encode($selectexam);
+        $selectdiagnosas = [];
+        $selectprocedures = [];
+        $selectdiagnosasnurse = [];
         if (isset($selectpd[0])) {
             $primaryPD = "";
             foreach ($selectpd as $key => $value) {
@@ -1241,33 +1280,23 @@ class Assessment extends BaseController
             $selectprocedures = $this->lowerKey($db->query("select * from pasien_procedures where pasien_diagnosa_id in ($primaryPD) ")->getResultArray());
 
             $selectdiagnosasnurse = [];
-
-            if (isset($selectexam[0])) {
-                $primaryExam = "";
-                foreach ($selectexam as $key => $value) {
-                    $primaryExam .= "'" . $value['body_id'] . "',";
-                }
-                $primaryExam = substr($primaryExam, 0, -1);
-                // return ($primaryExam);
-                $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosa_nurse pdn inner join pasien_diagnosas_nurse pds on pdn.body_id = pds.body_id where pdn.document_id in ($primaryExam) ")->getResultArray());
-            }
-
-
-
-            return json_encode([
-                'pasienDiagnosa' => $selectpd,
-                'pasienDiagnosas' => $selectdiagnosas,
-                'pasienProcedures' => $selectprocedures,
-                'examInfo' => $selectexam,
-                'pasienDiagnosasNurse' => $selectdiagnosasnurse
-            ]);
-        } else {
-            return json_encode([
-                // 'papsienDiagnosas' => $selectdiagnosas,
-                // 'pasienProcedures' => $selectprocedures,
-                // 'lokalis' => $selectlokalis
-            ]);
         }
+        if (isset($selectexam[0])) {
+            $primaryExam = "";
+            foreach ($selectexam as $key => $value) {
+                $primaryExam .= "'" . $value['body_id'] . "',";
+            }
+            $primaryExam = substr($primaryExam, 0, -1);
+            // return ($primaryExam);
+            $selectdiagnosasnurse = $this->lowerKey($db->query("select * from pasien_diagnosa_nurse pdn inner join pasien_diagnosas_nurse pds on pdn.body_id = pds.body_id where pdn.document_id in ($primaryExam) ")->getResultArray());
+        }
+        return json_encode([
+            'pasienDiagnosa' => $selectpd,
+            'pasienDiagnosas' => $selectdiagnosas,
+            'pasienProcedures' => $selectprocedures,
+            'examInfo' => $selectexam,
+            'pasienDiagnosasNurse' => $selectdiagnosasnurse
+        ]);
     }
     public function saveStabilitas()
     {
@@ -2892,6 +2921,25 @@ class Assessment extends BaseController
                         'modified_by' => user()->username
                     ];
                     $fallRiskDetail->insert($data);
+                } else {
+                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where parameter_id = '{$value['parameter_id']}' and p_type = '{$value['p_type']}'")->getResultArray());
+                    // return json_encode($paramvalue);
+                    if (isset($paramvalue[0])) {
+                        $data = [
+                            'org_unit_code' => $org_unit_code,
+                            'visit_id' => $visit_id,
+                            'trans_id' => $trans_id,
+                            'body_id' => $body_id,
+                            'p_type' => $p_type,
+                            'parameter_id' => $paramvalue[0]['parameter_id'],
+                            'value_id' => $paramvalue[0]['value_id'],
+                            'value_score' => $paramvalue[0]['value_score'],
+                            'value_desc' => ${"parameter_id" . $paramvalue[0]['parameter_id']},
+                            'modified_date' => Time::now(),
+                            'modified_by' => user()->username
+                        ];
+                        $fallRiskDetail->insert($data);
+                    }
                 }
             }
         }
@@ -3115,11 +3163,27 @@ class Assessment extends BaseController
 
         $examinfo = $this->lowerKey($db->query($queryDetil)->getResultArray());
 
+        $queryVisit = "select *, c.name_of_clinic, ea.fullname from pasien_visitation ei left join clinic c on c.clinic_id = ei.clinic_id left join employee_all ea on ei.employee_id = ea.employee_id
+        where visit_id in (";
+
+        foreach ($select as $key => $value) {
+            $queryVisit .= "'" . $value['document_id'] . "',";
+        }
+        foreach ($select as $key => $value) {
+            $queryVisit .= "'" . $value['document_id2'] . "',";
+        }
+        $queryVisit = substr($queryVisit, 0, strlen($queryVisit) - 1);
+
+        $queryVisit .= ");";
+
+        $visit = $this->lowerKey($db->query($queryVisit)->getResultArray());
+
 
 
         return json_encode([
             'transfer' => $select,
-            'examinfo' => $examinfo
+            'examinfo' => $examinfo,
+            'visit' => $visit
         ]);
     }
 
@@ -3405,7 +3469,7 @@ class Assessment extends BaseController
 
         $users = new UserModel();
 
-        $select = $users->select('password_hash')->where('username', $login)->findAll();
+        $select = $users->select('password_hash')->where('username', $user_id)->findAll();
 
         // return json_encode(base64_encode(hash('sha384', $password, true)));
 
@@ -3679,7 +3743,7 @@ class Assessment extends BaseController
 
 
             $title = "Asesmen Keperawatan ";
-            if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '') {
+            if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '') && $visit['class_room_id'] != '') {
                 $title .= 'Rawat Inap ';
             } else {
                 $title .= 'Rawat Jalan ';
@@ -3755,5 +3819,472 @@ class Assessment extends BaseController
                 ]);
             }
         }
+    }
+    public function getKontrol()
+    {
+        // Check if the request method is POST
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'error' => 'Invalid request method.',
+                'status' => 405 // Method Not Allowed
+            ])->setStatusCode(405);
+        }
+
+        // Get and decode the JSON body
+        $body = $this->request->getBody();
+        $bodyArray = json_decode($body, true);
+
+        // Check if the JSON body was decoded correctly
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->response->setJSON([
+                'error' => 'Invalid JSON format.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        // Validate the presence of 'visit' and 'nosurat' in the body
+        if (!isset($bodyArray['visit']) || !isset($bodyArray['nosurat'])) {
+            return $this->response->setJSON([
+                'error' => 'Missing required parameters.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        $visit = $bodyArray['visit'];
+        $nosurat = $bodyArray['nosurat'];
+
+        // Validate 'visit' and 'nosurat' are not empty
+        if (empty($visit) || empty($nosurat)) {
+            return $this->response->setJSON([
+                'error' => 'Visit ID and No. Surat cannot be empty.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        // Initialize the model and perform the query
+        $model = new InasisKontrolModel();
+
+        // Assuming 'find' is a method that should be used with an ID,
+        // verify if 'find' is appropriate or use another method if needed.
+        $select = $this->lowerKey($model->join("clinic c", "c.kdpoli = inasis_kontrol.polikontrol_kdpoli")->where("visit_id", $visit)->where("surattype", 1)->find($nosurat));
+
+        // Check if the result was found
+        if ($select === null) {
+            return $this->response->setJSON([
+                'error' => 'No records found.',
+                'status' => 404 // Not Found
+            ])->setStatusCode(200);
+        }
+
+        // Return the result as JSON
+        return $this->response->setJSON([
+            'data' => $select,
+            'status' => 200 // OK
+        ])->setStatusCode(200);
+    }
+    public function saveSkdp()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body['request'];
+        $noskdp = $body['noSuratKontrol'];
+        $visit = $body['visit_id'];
+        $nomr = $body['no_registration'];
+        $transfer = $body['transfer'];
+        $no_registration = $body['no_registration'];
+        $visit_id = $body['visit_id'];
+        $noSuratKontrol = $body['noSuratKontrol'];
+
+        $clinic_id = $request['poliKontrol'];
+        $cModel = new ClinicModel();
+        $query = $cModel->select("kdpoli, name_of_clinic")->where('clinic_id', $clinic_id)->find($clinic_id);
+        $request['poliKontrol'] = $query['kdpoli'];
+
+        if ($request['noSEP'] != '') {
+            $ws_data = [];
+            if ($noskdp != '') {
+                $method = 'PUT';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'Update';
+                $request['noSuratKontrol'] = $noskdp;
+            } else {
+                $method = 'POST';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'insert';
+            }
+
+
+
+            $ws_data['request'] = $request;
+            $postdata = json_encode($ws_data);
+            $posting = $this->sendVclaim($url, $method, $postdata);
+            $response = $posting;
+            // $posting = ' {
+            //     "metaData": {
+            //         "code": "200",
+            //         "message": "Ok"
+            //     },
+            //     "response": {
+            //         "noSuratKontrol": "0301R0110520K000013",
+            //         "tglRencanaKontrol": "2020-05-15",
+            //         "namaDokter": "Dr. John Wick",
+            //         "noKartu": "0001328186441",
+            //         "nama": "ARIS",
+            //         "kelamin": "Laki-laki",
+            //         "tglLahir": "1947-12-31"
+            //     }
+            // }';
+            // $response = json_decode($posting, true);
+            if ($response['metaData']['code'] == '200') {
+                $ik = new InasisKontrolModel();
+                $data = [
+                    'visit_id' => $visit,
+                    'nosep' => $request['noSEP'],
+                    'surattype' => 1,
+                    'nosuratkontrol' => $response['response']['noSuratKontrol'],
+                    'tglrenckontrol' => $response['response']['tglRencanaKontrol'],
+                    'polikontrol_kdpoli' => $request['poliKontrol'],
+                    'kodedokter' => $request['kodeDokter'],
+                    'modified_by' => user()->username,
+                    'no_registration' => $nomr
+                ];
+                if ($method == 'POST') {
+                    $data['responpost'] = json_encode($response);
+                } else {
+                    $data['responput'] = json_encode($response);
+                }
+
+                // return json_encode($data);
+
+                $ik->save($data);
+            }
+        } else {
+            if ($noSuratKontrol == '') {
+                $org = new OrganizationunitModel();
+                $noSuratKontrol = $org->generateId();
+            }
+            // return json_encode($noSuratKontrol);
+
+
+            $ik = new InasisKontrolModel();
+            $ik->where("visit_id", $visit)->where("surattype", 1)->delete();
+            $data = [
+                'visit_id' => $visit,
+                'nosep' => $request['noSEP'],
+                'surattype' => 1,
+                'nosuratkontrol' => $noSuratKontrol,
+                'tglrenckontrol' => $request['tglRencanaKontrol'],
+                'polikontrol_kdpoli' => $request['poliKontrol'],
+                'kodedokter' => $request['kodeDokter'],
+                'modified_by' => user()->username,
+                'no_registration' => $nomr
+            ];
+
+            // return json_encode($data);
+
+            $ik->insert($data);
+
+            $response['metaData']['code'] = "200";
+            $response['metaData']['message'] = "200";
+            $response['response']['noSuratKontrol'] = $noSuratKontrol;
+            // return json_encode($response);
+            // $posting = '{"metaData": {"code": "200","message": "Ok"},"response": {"noSuratKontrol": "' . $noSuratKontrol . '","tglRencanaKontrol": "' . $request['tglRencanaKontrol'] . '",}}';
+            // return $posting;
+            // $response = json_decode($posting, true);
+            // return json_encode($response);
+        }
+
+        $tf = new PasienTransferModel();
+        $transfer['document_id'] = $noSuratKontrol;
+        $transfer['examination_date'] = str_replace("T", " ", $transfer['examination_date']);
+        $tf->save($transfer);
+
+
+        return json_encode($response);
+    }
+    public function deleteSkdp()
+    {
+        if (!$this->request->is('delete')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body;
+
+        $ws_data = [];
+        $method = 'DELETE';
+        $url = $this->baseurlvclaim . '/RencanaKontrol/';
+        $url .= 'Delete';
+
+
+
+        $ws_data = $request;
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        if ($response['metaData']['code'] == '200') {
+            $ik = new InasisKontrolModel();
+            $ik->delete($request['request']['t_suratkontrol']['noSuratKontrol']);
+        }
+        return json_encode($response);
+    }
+
+    public function checkSkdp()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $ik = new InasisKontrolModel();
+        $select = $ik->where('visit_id', $visit)->where('surattype', 1)->findAll();
+        $select = $this->lowerKey($select);
+
+        if (isset($select[0])) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['message'] = 'Data SKDP ditemukan';
+            $response['data'] = $select[0];
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'Data SKDP tidak ditemukan';
+        }
+        return json_encode($response);
+    }
+
+    public function getSPRI()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'error' => 'Invalid request method.',
+                'status' => 405 // Method Not Allowed
+            ])->setStatusCode(405);
+        }
+
+        // Get and decode the JSON body
+        $body = $this->request->getBody();
+        $bodyArray = json_decode($body, true);
+
+        // Check if the JSON body was decoded correctly
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->response->setJSON([
+                'error' => 'Invalid JSON format.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        // Validate the presence of 'visit' and 'nosurat' in the body
+        if (!isset($bodyArray['visit']) || !isset($bodyArray['nosurat'])) {
+            return $this->response->setJSON([
+                'error' => 'Missing required parameters.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        $visit = $bodyArray['visit'];
+        $nosurat = $bodyArray['nosurat'];
+
+        // Validate 'visit' and 'nosurat' are not empty
+        if (empty($visit) || empty($nosurat)) {
+            return $this->response->setJSON([
+                'error' => 'Visit ID and No. Surat cannot be empty.',
+                'status' => 400 // Bad Request
+            ])->setStatusCode(400);
+        }
+
+        // Initialize the model and perform the query
+        $model = new InasisKontrolModel();
+
+        // Assuming 'find' is a method that should be used with an ID,
+        // verify if 'find' is appropriate or use another method if needed.
+        $select = $this->lowerKey($model->join("clinic c", "c.kdpoli = inasis_kontrol.polikontrol_kdpoli")->where("visit_id", $visit)->where("surattype", 1)->find($nosurat));
+
+        // Check if the result was found
+        if ($select === null) {
+            return $this->response->setJSON([
+                'error' => 'No records found.',
+                'status' => 404 // Not Found
+            ])->setStatusCode(200);
+        }
+
+        // Return the result as JSON
+        return $this->response->setJSON([
+            'data' => $select,
+            'status' => 200 // OK
+        ])->setStatusCode(200);
+    }
+    public function saveSpri()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body['request'];
+        $nospri = $body['noSuratKontrol'];
+        $visit = $body['visit_id'];
+        $nomr = $body['no_registration'];
+        $noSuratKontrol = $body['noSuratKontrol'];
+
+        $ws_data = [];
+
+        $clinic_id = $request['poliKontrol'];
+        $cModel = new ClinicModel();
+        $query = $cModel->select("kdpoli, name_of_clinic")->where('clinic_id', $clinic_id)->find($clinic_id);
+        $request['poliKontrol'] = $query['kdpoli'];
+
+        if ($request['noKartu'] != '') {
+            if ($nospri != '') {
+                $method = 'PUT';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'UpdateSPRI';
+                $request['noSPRI'] = $nospri;
+            } else {
+                $method = 'POST';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'InsertSPRI';
+            }
+
+
+
+            $ws_data['request'] = $request;
+            $postdata = json_encode($ws_data);
+            $posting = $this->sendVclaim($url, $method, $postdata);
+            $response = $posting;
+            // $posting = ' {
+            //     "metaData": {
+            //         "code": "200",
+            //         "message": "Ok"
+            //     },
+            //     "response": {
+            //         "noSuratKontrol": "0301R0110520K000013",
+            //         "tglRencanaKontrol": "2020-05-15",
+            //         "namaDokter": "Dr. John Wick",
+            //         "noKartu": "0001328186441",
+            //         "nama": "ARIS",
+            //         "kelamin": "Laki-laki",
+            //         "tglLahir": "1947-12-31"
+            //     }
+            // }';
+            // $response = json_decode($posting, true);
+            if ($response['metaData']['code'] == '200') {
+                $ik = new InasisKontrolModel();
+                $data = [
+                    'visit_id' => $visit,
+                    'nosep' => $visit,
+                    'surattype' => 2,
+                    'nosuratkontrol' => $response['response']['noSPRI'],
+                    'tglrenckontrol' => $response['response']['tglRencanaKontrol'],
+                    'polikontrol_kdpoli' => $request['poliKontrol'],
+                    'kodedokter' => $request['kodeDokter'],
+                    'modified_by' => user()->username,
+                    'no_registration' => $nomr
+                ];
+                if ($method == 'POST') {
+                    $data['responpost'] = json_encode($response);
+                } else {
+                    $data['responput'] = json_encode($response);
+                }
+
+                // return json_encode($data);
+
+                $ik->save($data);
+            }
+        } else {
+            if ($noSuratKontrol == '') {
+                $org = new OrganizationunitModel();
+                $noSuratKontrol = $org->generateId();
+            }
+
+            $ik = new InasisKontrolModel();
+            $ik->where("visit_id", $visit)->where("surattype", 1)->delete();
+            $data = [
+                'visit_id' => $visit,
+                'surattype' => 2,
+                'nosuratkontrol' => $noSuratKontrol,
+                'tglrenckontrol' => $request['tglRencanaKontrol'],
+                'polikontrol_kdpoli' => $request['poliKontrol'],
+                'kodedokter' => $request['kodeDokter'],
+                'modified_by' => user()->username,
+                'no_registration' => $nomr
+            ];
+
+            // return json_encode($data);
+
+            $ik->insert($data);
+
+            $response['metaData']['code'] = "200";
+            $response['metaData']['message'] = "Success";
+            $response['response']['noSPRI'] = $noSuratKontrol;
+        }
+
+
+
+        return json_encode($response);
+    }
+    public function checkSpri()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+
+        $ik = new InasisKontrolModel();
+        $select = $ik->where('visit_id', $visit)->where('surattype', 2)->findAll();
+        $select = $this->lowerKey($select);
+
+        if (isset($select[0])) {
+            $response['metadata']['code'] = '200';
+            $response['metadata']['message'] = 'Data SPRI ditemukan';
+            $response['data'] = $select[0];
+        } else {
+            $response['metadata']['code'] = '201';
+            $response['metadata']['message'] = 'Data SPRI tidak ditemukan';
+        }
+        return json_encode($response);
+    }
+    public function deleteSpri()
+    {
+        if (!$this->request->is('delete')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $request = $body;
+
+        $ws_data = [];
+        $method = 'DELETE';
+        $url = $this->baseurlvclaim . '/RencanaKontrol/';
+        $url .= 'Delete';
+
+
+
+        $ws_data = $request;
+        $postdata = json_encode($ws_data);
+        $posting = $this->sendVclaim($url, $method, $postdata);
+        $response = $posting;
+        if ($response['metaData']['code'] == '200') {
+            $ik = new InasisKontrolModel();
+            $ik->delete($request['request']['t_suratkontrol']['noSuratKontrol']);
+        }
+        return json_encode($response);
     }
 }

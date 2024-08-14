@@ -132,23 +132,40 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-2">
+            <div class="col-sm-6 col-md-4">
                 <div class="form-group">
                     <label>Status Rawat Inap</label>
-                    <select name="keluar_id" id="icarakeluar" class="form-control">
-                        <?php foreach ($caraKeluar as $key => $value) {
-                        ?>
-                            <option value="<?= $caraKeluar[$key]['keluar_id']; ?>"><?= $caraKeluar[$key]['cara_keluar']; ?></option>
-                        <?php
-                        } ?>
-                    </select>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <select name="keluar_id" id="icarakeluar" class="form-control">
+                                <?php foreach ($caraKeluar as $key => $value) {
+                                ?>
+                                    <option value="<?= $caraKeluar[$key]['keluar_id']; ?>"><?= $caraKeluar[$key]['cara_keluar']; ?></option>
+                                <?php
+                                } ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="btnHandOver" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fas fa-hand-holding-heart"></i> Handover</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-2">
+            <!-- <div class="col-sm-6 col-md-1">
                 <div class="mt-4 text-end">
-                    <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> Cari</button>
+                    <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
                 </div>
             </div>
+            <div class="col-sm-6 col-md-1">
+                <div class="mt-4 text-end">
+                    <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Handover</button>
+                </div>
+            </div> -->
         </div>
         <!-- <div class="box-body row">
 
@@ -812,6 +829,163 @@
                     </div>
                     <div class="col-md-6">
 
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="handoverModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Rawat Inap</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="handOverDocument" class="card border-1 rounded-4 m-4" style="display: none;">
+                    <div class="card-body">
+                        <form id="formSearchHandover" action="" method="post" class="">
+                            <input type="hidden" name="ci_csrf_token" value="<?= csrf_token(); ?>">
+                            <input type="hidden" id="handorg_unit_code">
+                            <input type="hidden" id="handbody_id">
+                            <input type="hidden" id="handhandover_by">
+                            <input type="hidden" id="handhandover_date">
+                            <input type="hidden" id="handhandover_sign">
+                            <input type="hidden" id="handreceived_by">
+                            <input type="hidden" id="handreceived_date">
+                            <input type="hidden" id="handreceived_sign">
+                            <div class="box-body row mt-4 mb-4">
+                                <div class="col-sm-6 col-md-2">
+                                    <div class="form-group">
+                                        <label>Bangsal</label><small class="req"> *</small>
+                                        <select id="handclinic_id" class="form-control" name="clinic_id" onchange="setClassRoom(this.value)" autocomplete="off">
+                                            <?php $cliniclist = array();
+                                            foreach ($clinic as $key => $value) {
+                                                if ($clinic[$key]['stype_id'] == '3') {
+                                                    $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                }
+                                            }
+                                            asort($cliniclist);
+                                            ?>
+                                            <?php foreach ($cliniclist as $key => $value) { ?>
+                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                            <?php } ?>
+                                            <?php if ($giTipe == '6') {
+                                            ?>
+                                                <option value="P002">Kamar Operasi</option>
+                                            <?php
+                                            } ?>
+                                        </select>
+                                    </div>
+                                    <span class="text-danger" id="error_search_type"></span>
+                                </div>
+                                <div class="col-sm-6 col-md-4">
+                                    <div class="form-group">
+                                        <label>Ruang</label><small class="req"> *</small>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <select id="handclass_room_id" class="form-control" name="class_room_id" autocomplete="off">
+                                                    <option value="%">Semua</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button id="" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-danger" id="error_search_type"></span>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div id="groupToHandover" class="col-md-5">
+                                <table id="tableToHandover" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                                    <thead class="table-primary">
+                                        <tr style="text-align: center">
+                                            <th class="justify-content-center align-items-center">
+                                                <input id="toHandoverCheckAll" class="form-check-input" type="checkbox">
+                                                <!-- <div class="form-check mb-3">
+                                                    <label class="form-check-label" for="armGEN0009G0090501">Semua</label>
+                                                </div> -->
+                                            </th>
+                                            <th>No. MR</th>
+                                            <th>Nama</th>
+                                            <th>Alamat</th>
+                                            <th>Pelayanan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listToHandover" class="table-group-divider">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <style>
+                                .button-container {
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    height: 100%;
+                                }
+                            </style>
+                            <div id="btnTransferGRoup" class="col-md-2 button-container">
+                                <div class="btn-group-vertical">
+                                    <button class="btn btn-primary" onclick="transferToAfterHandoverAll()"> Pilih >> </button>
+                                    <button class="btn btn-danger" onclick="transferAfterToHandoverAll()">
+                                        << Batal </button>
+                                </div>
+                            </div>
+                            <div id="groupAfterHandover" class="col-md-5">
+                                <table id="tableAfterHandover" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                                    <thead class="table-primary">
+                                        <tr style="text-align: center">
+                                            <th class="justify-content-center align-items-center">
+                                                <input id="afterHandoverCheckAll" class="form-check-input" type="checkbox">
+                                                <!-- <div class="form-check mb-3">
+                                                    <label class="form-check-label" for="armGEN0009G0090501">Semua</label>
+                                                </div> -->
+                                            </th>
+                                            <th>No. MR</th>
+                                            <th>Nama</th>
+                                            <th>Alamat</th>
+                                            <th>Pelayanan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listAfterHandover" class="table-group-divider">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div><!-- row -->
+                        <div class="row">
+                            <div id="qrcodeContainer" class="text-center mt-4"></div>
+                        </div>
+                        <div class="panel-footer text-end mb-4">
+                            <button type="button" id="handSaveBtnId" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right handSaveBtnId"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button type="button" id="handEditBtnId" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right handEditBtnId"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="handSignHandoverBtnId" name="signrm" onclick="signHandover()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right handSignBtnId"><i class="fa fa-signature"></i> <span>Sign Handover</span></button>
+                            <button type="button" id="handSignReceiveBtnId" name="signrm" onclick="signReceive()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right handSignBtnId" style="display: none;"><i class="fa fa-signature"></i> <span>Sign Receive</span></button>
+                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                        </div>
+                    </div>
+                </div>
+                <div id="handOverList">
+                    <div class="col-md-12">
+                        <div id="" class="box-tab-tools text-center m-4">
+                            <a data-toggle="modal" onclick="setHandOver()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        </div>
+                        <table id="tableHandover" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                            <thead class="table-primary">
+                                <tr style="text-align: center">
+                                    <th>Tanggal</th>
+                                    <th>Nama Bangsal</th>
+                                    <th>Nama Ruang / Kode JK</th>
+                                    <th>Pemberi</th>
+                                    <th>Penerima</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="listHandover" class="table-group-divider">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -159,7 +159,7 @@ $permissions = user()->getPermissions();
         $("#ajax_load").html("<center><img src='" + base_url + "'/>");
         if (id == '') {
             $("#ajax_load").html("");
-            $("#patientDetails").hide();
+            $("#patientDetails").slideUp();
         } else {
             $.ajax({
                 url: baseurl + 'admin/patient/getpatientDetails',
@@ -171,7 +171,7 @@ $permissions = user()->getPermissions();
                 success: function(data) {
                     if (data) {
                         $("#ajax_load").html("");
-                        $("#patientDetails").show();
+                        $("#patientDetails").slideDown();
                         resetModal();
                         sbio = data
                         if (data.ismeninggal == 0) {
@@ -325,7 +325,7 @@ $permissions = user()->getPermissions();
                         $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
                     } else {
                         $("#ajax_load").html("");
-                        $("#patientDetails").hide();
+                        $("#patientDetails").slideUp();
                     }
 
                     // holdModal('rincianPasienModel');
@@ -746,7 +746,7 @@ $permissions = user()->getPermissions();
 
 
     function getHistoryRajalPasien(id) {
-        $("#loadingHistoryrajal").show()
+        $("#loadingHistoryrajal").slideDown()
         $("#loadingHistoryrajal").html('<i class="spinner-border spinner-border-sm"></i>')
         // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
         $.ajax({
@@ -765,7 +765,7 @@ $permissions = user()->getPermissions();
                     tableHistoryRajal.row.add(element).draw()
                 });
                 $("#loadingHistoryrajal").html('')
-                $("#loadingHistoryrajal").hide()
+                $("#loadingHistoryrajal").slideUp()
             },
             error: function() {
                 $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
@@ -774,7 +774,7 @@ $permissions = user()->getPermissions();
     }
 
     // function getHistoryRajalPasien(id) {
-    //     $("#loadingHistoryrajal").show()
+    //     $("#loadingHistoryrajal").slideDown()
     //     $("#loadingHistoryrajal").html('<i class="spinner-border spinner-border-sm"></i>')
     //     // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
     //     $.ajax({
@@ -793,7 +793,7 @@ $permissions = user()->getPermissions();
     //                 tableHistoryRajal.row.add(element).draw()
     //             });
     //             $("#loadingHistoryrajal").html('')
-    //             $("#loadingHistoryrajal").hide()
+    //             $("#loadingHistoryrajal").slideUp()
     //         },
     //         error: function() {
     //             $("#loadingHistoryrajal").html('<i class="fa fa-search"></i>')
@@ -973,13 +973,13 @@ $permissions = user()->getPermissions();
             var daydiff = datediff(start, end)
 
             disableFormPv()
-            $("#formaddpvbtn").hide()
+            $("#formaddpvbtn").slideUp()
             if (daydiff < 4) {
-                $("#formeditpvbtn").show()
-                $("#formdelpvbtn").show()
+                $("#formeditpvbtn").slideDown()
+                $("#formdelpvbtn").slideDown()
             } else {
-                $("#formeditpvbtn").hide()
-                $("#formdelpvbtn").hide()
+                $("#formeditpvbtn").slideUp()
+                $("#formdelpvbtn").slideUp()
             }
 
             // $("#headingKunjunganBtn").click()
@@ -1103,9 +1103,9 @@ $permissions = user()->getPermissions();
 
 
             enableFormPV()
-            $("#formaddpvbtn").show()
-            $("#formeditpvbtn").hide()
-            $("#formdelpvbtn").hide()
+            $("#formaddpvbtn").slideDown()
+            $("#formeditpvbtn").slideUp()
+            $("#formdelpvbtn").slideUp()
         }
         if (!$("#collapseKunjungan").hasClass("show")) {
             $("#headingKunjunganBtn").click()
@@ -1227,9 +1227,9 @@ $permissions = user()->getPermissions();
 
 
 
-        $("#formaddpvbtn").show()
-        $("#formeditpvbtn").hide()
-        // $("#formdelpvbtn").hide()
+        $("#formaddpvbtn").slideDown()
+        $("#formeditpvbtn").slideUp()
+        // $("#formdelpvbtn").slideUp()
     }
 
     function disableFormPv() {
@@ -1344,8 +1344,8 @@ $permissions = user()->getPermissions();
 
 
 
-        $("#formaddpvbtn").hide()
-        $("#formeditpvbtn").show()
+        $("#formaddpvbtn").slideUp()
+        $("#formeditpvbtn").slideDown()
     }
 
     function saveSkdp() {
@@ -2033,5 +2033,14 @@ $permissions = user()->getPermissions();
             url = "<?= base_url(); ?>/admin/cetak/cetakSep/" + btoa(JSON.stringify(skunj)) + "/" + btoa(JSON.stringify(sbio))
         }
         window.open(url, "_blank")
+    }
+</script>
+<script>
+    const panggilPasien = (visitId, ticketNo) => {
+        postData({
+            visit: visitId,
+        }, 'admin/patient/postingPanggilPasien', (res) => {
+            $("#antrian" + visitId).html("#" + ticketNo + ' <i class="fa fa-check-circle"></i>')
+        });
     }
 </script>

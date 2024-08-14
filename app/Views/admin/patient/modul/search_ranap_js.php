@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script type="text/javascript">
     var tableRanap = $("#tableSearchRanap").DataTable({
         dom: 'rt<"bottom"<"left-col-datatable"p><"center-col-datatable"i><"right-col-datatable"<"datatablestextshow"><"datatablesjmlshow"l><"datatablestextentries">>>'
@@ -68,7 +69,7 @@
                     errorMsg(data.metadata.message)
                 }
                 $("#formAkomodasiViewBtn").html('<i class="fa fa-save"></i> Simpan')
-                $("#formAkomodasiViewBtn").hide()
+                $("#formAkomodasiViewBtn").slideUp()
                 disableElementTA()
             },
             error: function() {
@@ -88,7 +89,7 @@
         $("#taexit_date" + key).removeAttr("readonly")
         $("#taquantity" + key).removeAttr("readonly")
         $("#takeluar_id" + key).off('mousedown')
-        $("#formAkomodasiViewBtn").show()
+        $("#formAkomodasiViewBtn").slideDown()
     }
 
     function disableElementTA(key) {
@@ -252,7 +253,7 @@
                     getRujukanInap()
                 } else {
                     $("#ajax_load").html("");
-                    $("#patientDetails").hide();
+                    $("#patientDetails").slideUp();
                 }
             },
             error: function() {
@@ -294,7 +295,7 @@
                     });
                 } else {
                     $("#ajax_load").html("");
-                    $("#patientDetails").hide();
+                    $("#patientDetails").slideUp();
                 }
             },
             error: function() {
@@ -345,9 +346,9 @@
         })
 
 
-        $("#ariclinic_idalert").hide()
-        $("#ariclass_room_idalert").hide()
-        $("#aribed_idalert").hide()
+        $("#ariclinic_idalert").slideUp()
+        $("#ariclass_room_idalert").slideUp()
+        $("#aribed_idalert").slideUp()
     }
 
     function changeClinicInap(id) {
@@ -592,21 +593,21 @@
         var aribed_id = $("#aribed_id").val()
 
         if (typeof ariclinic_id === 'undefined' || ariclinic_id == null) {
-            $("#ariclinic_idalert").show()
-            $("#ariclass_room_idalert").hide()
-            $("#aribed_idalert").hide()
+            $("#ariclinic_idalert").slideDown()
+            $("#ariclass_room_idalert").slideUp()
+            $("#aribed_idalert").slideUp()
         } else if (typeof ariclass_room_id === 'undefined' || ariclass_room_id == null) {
-            $("#ariclinic_idalert").hide()
-            $("#ariclass_room_idalert").show()
-            $("#aribed_idalert").hide()
+            $("#ariclinic_idalert").slideUp()
+            $("#ariclass_room_idalert").slideDown()
+            $("#aribed_idalert").slideUp()
         } else if (typeof aribed_id === 'undefined' || aribed_id == null) {
-            $("#ariclinic_idalert").hide()
-            $("#ariclass_room_idalert").hide()
-            $("#aribed_idalert").show()
+            $("#ariclinic_idalert").slideUp()
+            $("#ariclass_room_idalert").slideUp()
+            $("#aribed_idalert").slideDown()
         } else {
-            $("#ariclinic_idalert").hide()
-            $("#ariclass_room_idalert").hide()
-            $("#aribed_idalert").hide()
+            $("#ariclinic_idalert").slideUp()
+            $("#ariclass_room_idalert").slideUp()
+            $("#aribed_idalert").slideUp()
 
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/rawatinap/postAddAkomodasi',
@@ -1401,4 +1402,365 @@
             }
         });
     }
+</script>
+<script>
+    var coba;
+    let handoverData = [];
+    let handoverDetailData = [];
+    let toHandoverData = [];
+    let afterHandoverData = [];
+    $("#btnHandOver").on("click", function() {
+        openHandOver()
+    })
+
+    const enableHandover = () => {
+        if ($("#handhandover_by").val() == '') {
+            $("#handSignHandoverBtnId").slideDown()
+            $("#handSignReceiveBtnId").slideUp()
+
+            $("#btnTransferGRoup").slideDown()
+            $("#groupToHandover").prop("class", "col-md-5")
+            $("#groupAfterHandover").prop("class", "col-md-5")
+
+            $("#handSaveBtnId").slideDown()
+            $("#handEditBtnId").slideUp()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", false)
+        } else if ($("#handreceived_by").val() == '') {
+            $("#handSignHandoverBtnId").slideUp()
+            $("#handSignReceiveBtnId").slideDown()
+
+            $("#btnTransferGRoup").slideUp()
+            $("#groupToHandover").prop("class", "col-md-6")
+            $("#groupAfterHandover").prop("class", "col-md-6")
+
+            $("#handSaveBtnId").slideUp()
+            $("#handEditBtnId").slideUp()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", true)
+
+        } else {
+            $("#handSignHandoverBtnId").slideUp()
+            $("#handSignReceiveBtnId").slideUp()
+
+            $("#btnTransferGRoup").slideUp()
+            $("#groupToHandover").prop("class", "col-md-6")
+            $("#groupAfterHandover").prop("class", "col-md-6")
+
+            $("#handSaveBtnId").slideUp()
+            $("#handEditBtnId").slideUp()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", true)
+        }
+    }
+
+    const disableHandover = () => {
+        if ($("#handhandover_by").val() == '') {
+            $("#handSignHandoverBtnId").slideDown()
+            $("#handSignReceiveBtnId").slideUp()
+
+            $("#btnTransferGRoup").slideUp()
+            $("#groupToHandover").prop("class", "col-md-6")
+            $("#groupAfterHandover").prop("class", "col-md-6")
+
+            $("#handSaveBtnId").slideUp()
+            $("#handEditBtnId").slideDown()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", true)
+        } else if ($("#handreceived_by").val() == '') {
+            $("#handSignHandoverBtnId").slideUp()
+            $("#handSignReceiveBtnId").slideDown()
+
+            $("#btnTransferGRoup").slideUp()
+            $("#groupToHandover").prop("class", "col-md-6")
+            $("#groupAfterHandover").prop("class", "col-md-6")
+
+            $("#handSaveBtnId").slideUp()
+            $("#handEditBtnId").slideUp()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", true)
+        } else {
+            $("#handSignHandoverBtnId").slideUp()
+            $("#handSignReceiveBtnId").slideUp()
+
+            $("#btnTransferGRoup").slideUp()
+            $("#groupToHandover").prop("class", "col-md-6")
+            $("#groupAfterHandover").prop("class", "col-md-6")
+
+            $("#handSaveBtnId").slideUp()
+            $("#handEditBtnId").slideUp()
+            $("#handOverDocument").find("input, select, textarea").prop("disabled", true)
+        }
+    }
+
+    const openHandOver = async () => {
+        await getHandOver()
+        $("#handoverModal").modal("show")
+        $("#handOverDocument").hide()
+    }
+    const getHandOver = async () => {
+        postData({}, 'admin/patient/getHandOver', (res) => {
+            let data = JSON.parse(res)
+            handoverData = data.handover
+            handoverDetailData = data.handoverDetail
+            addRowHandoverHistory(handoverData)
+        });
+    }
+
+    const addRowHandoverHistory = (data) => {
+        if (data.length > 0) {
+            $.each(data, function(key, value) {
+                let clinic = <?= json_encode($clinic); ?>;
+                let classRoom = <?= json_encode($classRoom); ?>;
+                let filteredClinic = clinic.filter(item => item.clinic_id === value.clinic_id);
+                let filteredClass = classRoom.filter(item => item.class_room_id === value.class_room_id);
+                coba = filteredClinic
+                $("#listHandover").html("")
+                $("#listHandover").append(
+                    `
+                <tr>
+                    <td>${value.handover_date}</td>
+                    <td>${filteredClinic[0]?.name_of_clinic}</td>
+                    <td>${value.class_room_id == '%'? 'Semua':filteredClass[0]?.name_of_class}</td>
+                    <td>${value.handover_by}</td>
+                    <td>${value.received_by}</td>
+                    <td>
+                        <button type="button" id="handEditBtnId" name="editrm" onclick="editHandover(${key})" data-loading-text="processing" class="btn btn-secondary pull-right handEditBtnId">
+                            <i class="fa fa-edit"></i> 
+                            <span>Edit</span>
+                        </button>
+                    </td>
+                </tr>
+                `
+                )
+            })
+        }
+    }
+
+    const setHandOver = () => {
+        $("#handbody_id").val(get_bodyid())
+        $("#handclinic_id").val(null)
+        $("#handclass_room_id").val(null)
+        $("#handhandover_by").val(null)
+        $("#handhandover_date").val(null)
+        $("#handhandover_sign").val(null)
+        $("#handreceived_by").val(null)
+        $("#handreceived_date").val(null)
+        $("#handreceived_sign").val(null)
+        $("#handOverDocument").slideDown()
+        enableHandover()
+    }
+
+    const editHandover = (key) => {
+        let data = handoverData[key]
+
+        $("#handorg_unit_code").val(data.org_unit_code)
+        $("#handbody_id").val(data.body_id)
+        $("#handclinic_id").val(data.clinic_id)
+        setClassRoom(data.clinic_id)
+        $("handclass_room_id").val(data.class_room_id)
+        $("#handhandover_by").val(data.handover_by)
+        $("#handhandover_date").val(data.handover_date)
+        $("#handhandover_sign").val(data.handover_sign)
+        $("#handreceived_by").val(data.received_by)
+        $("#handreceived_date").val(data.received_date)
+        $("#handreceived_sign").val(data.received_sign)
+
+        let dataDetail = handoverDetailData.filter(item => item.body_id == data.body_id)
+        afterHandoverData = []
+        $.each(dataDetail, function(key, value) {
+            afterHandoverData.push(value.visit_id)
+        })
+
+        console.log(afterHandoverData)
+        getRanapToHandover(afterHandoverData)
+        enableHandover()
+        $("#handOverDocument").slideDown()
+    }
+
+    const setClassRoom = (value) => {
+        let classRoom = <?= json_encode($classRoom); ?>;
+
+
+        let filtered = classRoom.filter(item => item.clinic_id === value);
+
+
+        $("#handclass_room_id").html(new Option("Semua", "%", true, true))
+        $.each(filtered, function(key, value) {
+            $("#handclass_room_id").append(new Option(value.name_of_class, value.class_room_id))
+        })
+    }
+
+    const getRanapToHandover = (afterData = []) => {
+        postData({
+            clinic_id: $("#handclinic_id option:selected").text(),
+            class_room_id: $("#handclass_room_id").val()
+        }, 'admin/patient/getPasienRanapRoom', (res) => {
+            let data = JSON.parse(res)
+            toHandoverData = data
+            afterHandoverData = afterData
+            transferToAfterHandoverAll()
+        });
+    }
+
+    const saveRanapToHandover = () => {
+        postData({
+            body_id: $("#handbody_id").val(),
+            handover_by: $("#handhandover_by").val(),
+            handover_date: $("#handhandover_date").val(),
+            handover_sign: $("#handhandover_sign").val(),
+            received_by: $("#handreceived_by").val(),
+            received_date: $("#handreceived_date").val(),
+            received_sign: $("#handreceived_sign").val(),
+            clinic_id: $("#handclinic_id").val(),
+            class_room_id: $("#handclass_room_id").val(),
+            data: afterHandoverData
+        }, 'admin/patient/saveHandover', (res) => {
+            successSwal("Berhasil simpan data")
+            disableHandover()
+        });
+    }
+
+    const addRowToHandover = (data) => {
+        $("#listToHandover").html("")
+        $.each(data, function(key, value) {
+            $("#listToHandover").append(
+                `
+                <tr>
+                    <td class="d-flex justify-content-center align-items-center">
+                        <div class="form-check mb-3">
+                            <input id="tohand${value.visit_id}" class="form-check-input" type="checkbox" name="${value.visit_id}" value="${value.visit_id}">
+                        </div>
+                    </td>
+                    <td>${value.no_registration}</td>
+                    <td>${value.name_of_pasien}</td>
+                    <td>${value.contact_address}</td>
+                    <td>${value.name_of_clinic}</td>
+                </tr>
+                `
+            )
+        })
+    }
+
+    const checkAllToHandover = (bool) => {
+        if (bool) {
+            $('#listToHandover input[type="checkbox"]').prop('checked', true)
+        } else {
+            $('#listToHandover input[type="checkbox"]').prop('checked', false)
+        }
+    }
+
+    const transferToAfterHandoverAll = () => {
+        $('#listToHandover input[type="checkbox"]:checked').each(function() {
+            afterHandoverData.push(this.value)
+        })
+        const afterHandoverIds = new Set(afterHandoverData.map(item => item));
+        let filteredTo = toHandoverData.filter(item => !afterHandoverIds.has(item.visit_id))
+        let filteredAfter = toHandoverData.filter(item => afterHandoverIds.has(item.visit_id))
+
+        addRowToHandover(filteredTo)
+        addRowAfterHandover(filteredAfter)
+        $("#toHandoverCheckAll").prop("checked", false)
+    }
+
+    const signHandover = () => {
+        enableHandover()
+        $("#digitalSignForm").on("submit", function(e) {
+            e.preventDefault()
+            let data = new FormData(this)
+            postDataForm(data, 'admin/rm/assessment/checkpass', (res) => {
+                if (res) {
+                    $("#handhandover_by").val("<?= user()->username; ?>")
+                    $("#handhandover_date").val(get_date())
+                    $("#handhandover_sign").val("<?= user()->username; ?>" + get_date())
+                    $("#handSaveBtnId").trigger("click")
+                    $("#digitalSignModal").modal("hide")
+                } else {
+                    errorSwal("Username atau password anda salah")
+                }
+            });
+        })
+        $("#digitalSignModal").modal("show")
+    }
+
+    const signReceive = () => {
+        enableHandover()
+        $("#digitalSignForm").on("submit", function(e) {
+            e.preventDefault()
+            let data = new FormData(this)
+            postDataForm(data, 'admin/rm/assessment/checkpass', (res) => {
+                if (res) {
+                    $("#handreceived_by").val("<?= user()->username; ?>")
+                    $("#handreceived_date").val(get_date())
+                    $("#handreceived_sign").val("<?= user()->username; ?>" + get_date())
+                    $("#handSaveBtnId").trigger("click")
+                    $("#digitalSignModal").modal("hide")
+                } else {
+                    errorSwal("Username atau password anda salah")
+                }
+            });
+        })
+        $("#digitalSignModal").modal("show")
+    }
+
+    $("#toHandoverCheckAll").on("change", function(e) {
+        checkAllToHandover($(this).prop("checked"))
+    })
+
+    $("#formSearchHandover").on("submit", function(e) {
+        e.preventDefault()
+        getRanapToHandover()
+    })
+    $("#handSaveBtnId").on("click", function() {
+        saveRanapToHandover();
+    })
+
+    $("#handSignHandoverBtnId").on("click", function() {
+        signHandover()
+    })
+    $("#handEditBtnId").on("click", function() {
+        enableHandover()
+    })
+</script>
+
+<script>
+    const addRowAfterHandover = (data) => {
+        $("#listAfterHandover").html("")
+        $.each(data, function(key, value) {
+            $("#listAfterHandover").append(
+                `
+                <tr>
+                    <td class="d-flex justify-content-center align-items-center">
+                        <div class="form-check mb-3">
+                            <input id="tohand${value.visit_id}" class="form-check-input" type="checkbox" name="${value.visit_id}" value="${value.visit_id}">
+                        </div>
+                    </td>
+                    <td>${value.no_registration}</td>
+                    <td>${value.name_of_pasien}</td>
+                    <td>${value.contact_address}</td>
+                    <td>${value.name_of_clinic}</td>
+                </tr>
+                `
+            )
+        })
+    }
+    const checkAllAfterHandover = (bool) => {
+        if (bool) {
+            $('#listAfterHandover input[type="checkbox"]').prop('checked', true)
+        } else {
+            $('#listAfterHandover input[type="checkbox"]').prop('checked', false)
+        }
+    }
+
+    const transferAfterToHandoverAll = () => {
+        $('#listAfterHandover input[type="checkbox"]:checked').each(function() {
+            afterHandoverData = afterHandoverData.filter(item => item != this.value)
+        })
+        const afterHandoverIds = new Set(afterHandoverData.map(item => item));
+        let filteredTo = toHandoverData.filter(item => !afterHandoverIds.has(item.visit_id))
+        let filteredAfter = toHandoverData.filter(item => afterHandoverIds.has(item.visit_id))
+
+        addRowToHandover(filteredTo)
+        addRowAfterHandover(filteredAfter)
+        $("#afterHandoverCheckAll").prop("checked", false)
+    }
+
+    $("#afterHandoverCheckAll").on("change", function(e) {
+        checkAllAfterHandover($(this).prop("checked"))
+    })
 </script>

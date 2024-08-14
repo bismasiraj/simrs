@@ -613,8 +613,8 @@
             success: function(data) {
                 successSwal('Data berhasil disimpan')
                 $("#" + identifier + "quantity" + key).prop("readonly", true)
-                $("#" + identifier + "simpanBillBtn" + key).hide()
-                $("#" + identifier + "editDeleteCharge" + key).show()
+                $("#" + identifier + "simpanBillBtn" + key).slideUp()
+                $("#" + identifier + "editDeleteCharge" + key).slideDown()
 
                 var billInaJson = data
 
@@ -634,8 +634,8 @@
 
     function editBillCharge(identifier, key) {
         $("#" + identifier + "quantity" + key).prop("readonly", false)
-        $("#" + identifier + "simpanBillBtn" + key).show()
-        $("#" + identifier + "editDeleteCharge" + key).hide()
+        $("#" + identifier + "simpanBillBtn" + key).slideDown()
+        $("#" + identifier + "editDeleteCharge" + key).slideUp()
     }
 
     function addRowBill(container, identifier, key, i, counter) {
@@ -655,7 +655,16 @@
             .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
             .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
             .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
-            .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            // .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+            .append($("<td>")
+                .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                    '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                    '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                    '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                    '</div>' +
+                    '</div>')
+            )
             // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
             // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
             .append('<input name="treatment[]" id="' + identifier + 'treatment' + counter + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
@@ -733,8 +742,8 @@
             // $("#alabdisplayamount_paid_plafond" + key).html(formatCurrency($("#alabamount_plafond" + key).val() * dInput))
         })
         if (container == 'chargesBody') {
-            $('#' + identifier + 'simpanBillBtn' + counter + '').hide()
-            $('#' + identifier + 'editDeleteCharge' + counter + '').hide()
+            $('#' + identifier + 'simpanBillBtn' + counter + '').slideUp()
+            $('#' + identifier + 'editDeleteCharge' + counter + '').slideUp()
         }
         if (billJson[key].clinic_id == 'P013') {
             labtagihan += parseFloat(billJson[key].tagihan)

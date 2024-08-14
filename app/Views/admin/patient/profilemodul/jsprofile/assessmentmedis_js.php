@@ -2,12 +2,13 @@
     $(document).ready(function() {
         // $("#assessmentmedisTab").trigger("click")
         // $("#assessmentmedisTab").trigger("mouseup")
-        $("#assessmentigdTab").trigger("click")
-        $("#assessmentigdTab").trigger("mouseup")
+        // $("#assessmentigdTab").trigger("click")
+        // $("#assessmentigdTab").trigger("mouseup")
     })
 </script>
 <script type='text/javascript'>
     var mapAssessment = JSON.parse('<?= json_encode($mapAssessment); ?>')
+    var canvasAssessment;
     var specialistTypeId = '<?= $visit['specialist_type_id']; ?>'
 
 
@@ -35,10 +36,11 @@
                 if ($value['doc_type'] == 1 && $value['specialist_type_id'] == $visit['specialist_type_id']) {
             ?>
                     <?= $value['doc_id']; ?>(accMedisName);
+                    console.log('<?= $value['specialist_type']; ?>')
+                    $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= $visit['isrj'] == 1 ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
             <?php
                 }
             } ?>
-            $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= is_null($visit['class_room_id']) ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
         }
         $("#formaddarmbtn").trigger("click")
         appendCetakMedis(accMedisName)
@@ -86,92 +88,173 @@
             specialistLokalis = pasienDiagnosa.specialist_type_id
         }
 
+        $.each(canvasAssessment, function(key1, value1) {
+            var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
+            var ctx = canvas.getContext('2d');
+            var drawing = false;
+            var line = []; // Store points for the current line being drawn
+            let drawingHistory = [];
+
+            var img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            function startDrawing(e) {
+                drawing = true;
+                draw(e);
+                line = []; // Clear the current line
+                line.push({
+                    x: e.offsetX,
+                    y: e.offsetY
+                }); // Add the starting point of the line
+            }
+
+            function draw(e) {
+                if (!drawing) return;
+
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = 'red';
+
+                const x = e.offsetX;
+                const y = e.offsetY;
+
+                ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                line.push({
+                    x,
+                    y
+                }); // Add the current point to the line
+            }
+
+            function stopDrawing() {
+                drawing = false;
+                ctx.beginPath();
+                drawingHistory.push(line);
+            }
+            $("#clear" + value1.value_id).on("click", function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawingHistory = []; // Clear the drawing history
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+            })
+            $("#undo" + value1.value_id).on("click", function() {
+                if (drawingHistory.length > 0) {
+                    // Remove the last line from the drawing history
+                    drawingHistory.pop();
+                    // Clear the canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // Redraw the remaining lines
+                    drawingHistory.forEach(line => {
+                        for (let i = 1; i < line.length; i++) {
+                            ctx.beginPath();
+                            ctx.moveTo(line[i - 1].x, line[i - 1].y);
+                            ctx.lineTo(line[i].x, line[i].y);
+                            ctx.stroke();
+                        }
+                    });
+                }
+            })
+        })
+
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'GEN0002') {
                 $.each(avalue, function(key1, value1) {
                     if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
                         $.each(mapAssessment, function(key2, value2) {
-                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
-                                // window[value.doc_id](accMedisName)
-                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
-                                const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
-                                var ctx = canvas.getContext('2d');
-                                var drawing = false;
-                                var line = []; // Store points for the current line being drawn
-                                let drawingHistory = [];
+                            // if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+                            //     // window[value.doc_id](accMedisName)
+                            //     var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                            //     const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
+                            //     var ctx = canvas.getContext('2d');
+                            //     var drawing = false;
+                            //     var line = []; // Store points for the current line being drawn
+                            //     let drawingHistory = [];
 
-                                var img = new Image();
-                                img.onload = function() {
-                                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                };
-                                img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+                            //     var img = new Image();
+                            //     img.onload = function() {
+                            //         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            //     };
+                            //     img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
 
-                                canvas.addEventListener('mousedown', startDrawing);
-                                canvas.addEventListener('mousemove', draw);
-                                canvas.addEventListener('mouseup', stopDrawing);
-                                canvas.addEventListener('mouseout', stopDrawing);
+                            //     canvas.addEventListener('mousedown', startDrawing);
+                            //     canvas.addEventListener('mousemove', draw);
+                            //     canvas.addEventListener('mouseup', stopDrawing);
+                            //     canvas.addEventListener('mouseout', stopDrawing);
 
-                                function startDrawing(e) {
-                                    drawing = true;
-                                    draw(e);
-                                    line = []; // Clear the current line
-                                    line.push({
-                                        x: e.offsetX,
-                                        y: e.offsetY
-                                    }); // Add the starting point of the line
-                                }
+                            //     function startDrawing(e) {
+                            //         drawing = true;
+                            //         draw(e);
+                            //         line = []; // Clear the current line
+                            //         line.push({
+                            //             x: e.offsetX,
+                            //             y: e.offsetY
+                            //         }); // Add the starting point of the line
+                            //     }
 
-                                function draw(e) {
-                                    if (!drawing) return;
+                            //     function draw(e) {
+                            //         if (!drawing) return;
 
-                                    ctx.lineWidth = 2;
-                                    ctx.lineCap = 'round';
-                                    ctx.strokeStyle = '#000';
+                            //         ctx.lineWidth = 2;
+                            //         ctx.lineCap = 'round';
+                            //         ctx.strokeStyle = '#000';
 
-                                    const x = e.offsetX;
-                                    const y = e.offsetY;
+                            //         const x = e.offsetX;
+                            //         const y = e.offsetY;
 
-                                    ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-                                    ctx.stroke();
-                                    ctx.beginPath();
-                                    ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-                                    line.push({
-                                        x,
-                                        y
-                                    }); // Add the current point to the line
-                                }
+                            //         ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                            //         ctx.stroke();
+                            //         ctx.beginPath();
+                            //         ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                            //         line.push({
+                            //             x,
+                            //             y
+                            //         }); // Add the current point to the line
+                            //     }
 
-                                function stopDrawing() {
-                                    drawing = false;
-                                    ctx.beginPath();
-                                    drawingHistory.push(line);
-                                }
-                                $("#clear" + value1.value_id).on("click", function() {
-                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                    drawingHistory = []; // Clear the drawing history
-                                    img.onload = function() {
-                                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                    };
-                                    img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
-                                })
-                                $("#undo" + value1.value_id).on("click", function() {
-                                    if (drawingHistory.length > 0) {
-                                        // Remove the last line from the drawing history
-                                        drawingHistory.pop();
-                                        // Clear the canvas
-                                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                        // Redraw the remaining lines
-                                        drawingHistory.forEach(line => {
-                                            for (let i = 1; i < line.length; i++) {
-                                                ctx.beginPath();
-                                                ctx.moveTo(line[i - 1].x, line[i - 1].y);
-                                                ctx.lineTo(line[i].x, line[i].y);
-                                                ctx.stroke();
-                                            }
-                                        });
-                                    }
-                                })
-                            }
+                            //     function stopDrawing() {
+                            //         drawing = false;
+                            //         ctx.beginPath();
+                            //         drawingHistory.push(line);
+                            //     }
+                            //     $("#clear" + value1.value_id).on("click", function() {
+                            //         ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            //         drawingHistory = []; // Clear the drawing history
+                            //         img.onload = function() {
+                            //             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            //         };
+                            //         img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
+                            //     })
+                            //     $("#undo" + value1.value_id).on("click", function() {
+                            //         if (drawingHistory.length > 0) {
+                            //             // Remove the last line from the drawing history
+                            //             drawingHistory.pop();
+                            //             // Clear the canvas
+                            //             ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            //             // Redraw the remaining lines
+                            //             drawingHistory.forEach(line => {
+                            //                 for (let i = 1; i < line.length; i++) {
+                            //                     ctx.beginPath();
+                            //                     ctx.moveTo(line[i - 1].x, line[i - 1].y);
+                            //                     ctx.lineTo(line[i].x, line[i].y);
+                            //                     ctx.stroke();
+                            //                 }
+                            //             });
+                            //         }
+                            //     })
+                            // }
                         })
                     }
                 })
@@ -274,6 +357,16 @@
 
 
     function saveCanvasData() {
+        $.each(canvasAssessment, function(key, value1) {
+            var canvasId = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            if (canvasId) {
+                let file_path = value1.value_info
+                let filePath = value1.value_info;
+                let extension = filePath.split('.').pop(); // Get extension
+                let canvasResult = canvasId.toDataURL('image/' + extension);
+                $("#lokalis" + value1.value_id).val(canvasResult);
+            }
+        })
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
@@ -286,12 +379,12 @@
                                     PATHINFO_EXTENSION
                                 );
         ?>
-                            var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            if (canvasId) {
-                                const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
+                            // var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                            // if (canvasId) {
+                            //     const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
 
-                                $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
-                            }
+                            //     $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
+                            // }
 
         <?php
                             }
@@ -321,17 +414,28 @@
 
 
         $('#armdate_of_diagnosa').val(get_date())
-        <?php if (!is_null($visit['class_room_id'])) { ?>
-            $('#armclinic_id').val('<?= $visit['class_room_id']; ?>')
-        <?php } else { ?>
-            $('#armclinic_id').val('<?= $visit['clinic_id']; ?>')
-        <?php } ?>
 
-        <?php if (!is_null($visit['class_room_id'])) { ?>
-            $('#armemployee_id').val('<?= $visit['employee_inap']; ?>')
-        <?php } else { ?>
-            $('#armemployee_id').val('<?= $visit['employee_id']; ?>')
-        <?php } ?>
+
+
+        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
+        console.log(clinicSelect)
+        $("#armclinic_id").html($('<option></option>')
+            .val(clinicSelect[0].clinic_id)
+            .text(clinicSelect[0].name_of_clinic))
+
+        <?php if ($visit['isrj'] == '0') {
+        ?>
+            $("#armemployee_id").html('<option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>')
+        <?php
+        } else {
+        ?>
+            $("#armemployee_id").html('<option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>')
+        <?php
+        } ?>
+        // $("#armemployee_id").html($('<option></option>')
+        //     .val(value)
+        //     .text(text))
+
 
         $('#armorg_unit_code').val('<?= $visit['org_unit_code']; ?>')
         $('#armvisit_id').val('<?= $visit['visit_id']; ?>')
@@ -370,29 +474,133 @@
 
         if (typeof pasienDiagnosa.description !== 'undefined') {
             disableRM()
-            $("#formaddrmbtn").hide()
-            $("#formeditrm").show()
+            $("#formaddrmbtn").slideUp()
+            $("#formeditrm").slideDown()
         }
     }
 
-    function fillDataArm(index) {
+    const fillDataArm = async (index) => {
+        let mappingOrder = [{
+                name: "appendTriaseMedis",
+                order: 1,
+                isactive: 0
+            },
+            {
+                name: "appendAnamnesisMedis",
+                order: 2,
+                isactive: 0
+            },
+            {
+                name: "appendRiwayatMedis",
+                order: 3,
+                isactive: 0
+            },
+            {
+                name: "appendVitalSignMedis",
+                order: 4,
+                isactive: 0
+            },
+            {
+                name: "appendFallRiskMedisAccordion",
+                order: 5,
+                isactive: 0
+            },
+            {
+                name: "appendGcsMedisAccordion",
+                order: 6,
+                isactive: 0
+            },
+            {
+                name: "appendPainMonitoringMedisAccordion",
+                order: 7,
+                isactive: 0
+            },
+            {
+                name: "appendOculusAccordion",
+                order: 8,
+                isactive: 0
+            },
+            {
+                name: "appendPemeriksaanFisikMedis",
+                order: 9,
+                isactive: 0
+            },
+            {
+                name: "appendLokalisAccordion",
+                order: 10,
+                isactive: 0
+            },
+            {
+                name: "appendDiagnosaAccordion",
+                order: 11,
+                isactive: 0
+            },
+            {
+                name: "appendProsedurAccordion",
+                order: 12,
+                isactive: 0
+            },
+            {
+                name: "appendPenunjangTerapi",
+                order: 13,
+                isactive: 0
+            },
+            {
+                name: "appendFormEdukasi",
+                order: 14,
+                isactive: 0
+            },
+            {
+                name: "appendRtlAccordion",
+                order: 15,
+                isactive: 0
+            },
+        ]
         pasienDiagnosa = pasienDiagnosaAll[index]
 
         var accMedisName = "accordionAssessmentMedis"
 
         var titlerj = '';
         if (pasienDiagnosa.class_room_id != '' && pasienDiagnosa.class_room_id != null) {
-            titlerj = ' RAWAT JALAN'
+            titlerj = ' RAWAT INAP'
         } else {
             titlerj = ' RAWAT JALAN'
         }
         $("#accordionAssessmentMedis").html("")
-        $.each(mapAssessment, function(key, value) {
-            if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {
+
+        const req = await libAsyncAwaitPost({
+                specialist_type_id: pasienDiagnosa.specialist_type_id
+            },
+            "admin/rm/assessment/getMapAssessment"
+        );
+        let mappingContentMap = JSON.parse(req);
+
+        const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
+
+        // Update `mappingContentMap` based on `mappingOrder`
+        const updatedMappingContentMap = mappingContentMap.map(item => {
+            // Find the corresponding item in `mappingOrder` based on `doc_id`
+            const orderItem = mappingOrderMap.get(item.doc_id);
+            if (orderItem) {
+                return {
+                    ...item,
+                    theorder: orderItem.order
+                };
+            }
+            return item;
+        });
+
+        const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
+
+
+        $.each(sortedMappingContentMap, function(key, value) {
+            if (value.doc_type == 1) {
                 window[value.doc_id](accMedisName)
                 $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
             }
+            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
         })
+
 
         if (pasienDiagnosa.diag_cat == 1) {
             $("#armTitle").html("RESUME MEDIS")
@@ -400,37 +608,57 @@
         if ('<?= $visit['clinic_id']; ?>' == 'P012') {
             $("#armTitle").html("ASESMEN MEDIS INSTALASI GAWAT DARURAT")
         }
-        disableARM()
+
+
 
         $.each(pasienDiagnosa, function(key, value) {
             $("#arm" + key).val(value)
-            $("#arm" + key).prop("disabled", true)
+            // $("#arm" + key).prop("disabled", true)
         })
-        $("#armclinic_id").html('<option value="' + pasienDiagnosa.clinic_id + '">' + pasienDiagnosa.name_of_clinic + '</option>')
-        $("#armemployee_id").html('<option value="' + pasienDiagnosa.employee_id + '">' + pasienDiagnosa.fullname + '</option>')
+        await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn")
+
+        if (pasienDiagnosa.clinic_id == null || pasienDiagnosa.clinic_id == '') {
+            $("#armclinic_id").html('<option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>')
+        } else {
+            $("#armclinic_id").html('<option value="' + pasienDiagnosa.clinic_id + '">' + pasienDiagnosa.name_of_clinic + '</option>')
+        }
+        if (pasienDiagnosa.employee_id == null || pasienDiagnosa.employee_id == '') {
+            <?php if ($visit['isrj'] == '0') {
+            ?>
+                $("#armemployee_id").html('<option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>')
+            <?php
+            } else {
+            ?>
+                $("#armemployee_id").html('<option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>')
+            <?php
+            } ?>
+        } else {
+            $("#armemployee_id").html('<option value="' + pasienDiagnosa.employee_id + '">' + pasienDiagnosa.fullname + '</option>')
+        }
         $("#armdiag_cat").val(pasienDiagnosa.diag_cat)
 
-        fillPemeriksaanFisik(pasienDiagnosa.pasien_diagnosa_id)
 
         displayTableAssessmentMedis(index)
-
-        getTriage(pasienDiagnosa.pasien_diagnosa_id, "bodyTriageMedis")
-        getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+        if (pasienDiagnosa.clinic_id == 'P012') {
+            getTriage(pasienDiagnosa.pasien_diagnosa_id, "bodyTriageMedis")
+        }
+        fillRiwayat()
+        // getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
         getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
         getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
         getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
         getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
         getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
         getEducationForm(pasienDiagnosa.pasien_diagnosa_id, "bodyEducationFormMedis")
+        fillPemeriksaanFisik(pasienDiagnosa.pasien_diagnosa_id)
+        // $("#formsavearmbtn").slideUp()
+        // $("#formeditarm").slideDown()
 
-        // $("#formsavearmbtn").hide()
-        // $("#formeditarm").show()
 
-
+        disableARM()
         if (typeof pasienDiagnosa.description !== 'undefined') {
-            disableARM()
-            // $("#formaddrmbtn").hide()
-            // $("#formeditrm").show()
+            // $("#formaddrmbtn").slideUp()
+            // $("#formeditrm").slideDown()
         }
     }
 
@@ -457,10 +685,10 @@
                     $("#lokalis" + value.value_id + "desc").val(value.value_desc)
                     var canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + value.value_id);
                     const canvasDataInput = document.getElementById('lokalis' + value.value_id);
-                    var context = canvas.getContext('2d');
+                    var context = canvas?.getContext('2d');
                     const img = new Image();
                     img.onload = function() {
-                        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        context.drawImage(img, 0, 0, canvas?.width, canvas?.height);
                     };
                     img.src = "data:image/png;base64," + value.filedata64;
                 }
@@ -469,8 +697,8 @@
     }
 
     function enableARM() {
-        $("#formsavearmbtn").show()
-        $("#formeditarm").hide()
+        $("#formsavearmbtn").slideDown()
+        $("#formeditarm").slideUp()
         $("#formaddarm input").prop("disabled", false)
         $("#formaddarm textarea").prop("disabled", false)
         $("#formaddarm select").prop("disabled", false)
@@ -482,14 +710,14 @@
     }
 
     function disableARM() {
-        $("#formsavearmbtn").hide()
-        $("#formeditarm").show()
+        $("#formsavearmbtn").slideUp()
+        $("#formeditarm").slideDown()
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
-            $("#formeditarm").hide()
-            $("#formsignarm").hide()
+            $("#formeditarm").slideUp()
+            $("#formsignarm").slideUp()
         }
         disableCanvasLokalis()
     }
@@ -501,21 +729,25 @@
         } else {
             specialistLokalis = pasienDiagnosa.specialist_type_id
         }
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == 'GEN0002') {
-                $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
-                        $.each(mapAssessment, function(key2, value2) {
-                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
-                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
-                                canvas.style.pointerEvents = 'auto';
-                            }
-                        })
-                    }
-                })
-            }
-
+        $.each(canvasAssessment, function(key, value1) {
+            var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            canvas.style.pointerEvents = 'auto';
         })
+        // $.each(aparameter, function(key, value) {
+        //     if (value.p_type == 'GEN0002') {
+        //         $.each(avalue, function(key1, value1) {
+        //             if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+        //                 $.each(mapAssessment, function(key2, value2) {
+        //                     if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
+        //                         var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+        //                         canvas.style.pointerEvents = 'auto';
+        //                     }
+        //                 })
+        //             }
+        //         })
+        //     }
+
+        // })
         <?php foreach ($aParameter as $key => $value) {
             if ($value['p_type'] == 'GEN0002')
                 foreach ($aValue as $key1 => $value1) {
@@ -544,26 +776,19 @@
         } else {
             specialistLokalis = pasienDiagnosa.specialist_type_id
         }
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == 'GEN0002') {
-                $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
-                        $.each(mapAssessment, function(key2, value2) {
-                            if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
-                                var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
-                                // var canvas = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                                canvas.style.pointerEvents = 'none';
-                            }
-                        })
-                    }
-                })
+        $.each(canvasAssessment, function(key, value1) {
+            var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+            if (canvas) {
+                canvas.style.pointerEvents = 'none';
+            } else {
+                console.error('Element not found:', 'canvas' + value1.p_type + value1.parameter_id + value1.value_id);
             }
-
         })
+
     }
 
     function copyPeriksaFisik() {
-        <?php if (!is_null($visit['class_room_id'])) {
+        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
         ?>
             $("#copyVitalSignModal").modal('show')
         <?php
@@ -667,17 +892,17 @@
 
 <script type="text/javascript">
     $("#formsavearmbtn").on('click', (function(e) {
-        alert("berhasil")
+        // alert("berhasil")
 
         saveCanvasData()
-        alert("berhasil1")
+        // alert("berhasil1")
 
         if ($("#armbody_id").val() == '') {
             if ($("#armweight").val() != '') {
                 $("#armbody_id").val(get_bodyid())
             }
         }
-        alert("berhasil2")
+        // alert("berhasil2")
 
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
@@ -701,7 +926,7 @@
                     });
                     errorMsg(message);
                 } else {
-                    successMsg(data.message);
+                    successSwal(data.message);
 
                     $("#formaddarm").find(".btn-save:visible").each(function() {
                         $(this).trigger("click")
@@ -738,6 +963,10 @@
     })
 </script>
 <script type="text/javascript">
+    const signarm = () => {
+        addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formaddarmbtn", 2, 1, 1, $("#armTitle").html())
+    }
+
     function signRM() {
         $("#formeditarm").trigger("click")
         addSignUser("arm", "formsavearmbtn", "formaddarm")
@@ -848,8 +1077,7 @@
                 if (pasienDiagnosaAll.length > 0) {
                     fillDataArm(pasienDiagnosaAll.length - 1)
                     fillRiwayat()
-                    disableARM()
-                    $("#formaddarmbtn").hide()
+                    $("#formaddarmbtn").slideUp()
                 }
             },
             error: function() {
@@ -860,56 +1088,6 @@
 </script>
 
 <script type="text/javascript">
-    function displayTableAssessmentKeperawatanForVitalSign() {
-        $("#copyListVitalSignModal").html("")
-        $.each(examForassessment, function(key, value) {
-            var pd = examForassessment[key]
-            if (value.body_id == $("#armbody_id")) {
-                $("#copyListVitalSignModal").append($("<tr>")
-                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
-                    .append($("<td>").append($("<b>").html(value.petugas_id)))
-                    .append($("<td>").append($("<b>").html(value.weight)))
-                    .append($("<td>").append($("<b>").html(value.height)))
-                    .append($("<td>").append($("<b>").html(value.temperature)))
-                    .append($("<td>").append($("<b>").html(value.nadi)))
-                    .append($("<td>").append($("<b>").html(value.tension_upper)))
-                    .append($("<td>").append($("<b>").html(value.tension_below)))
-                    .append($("<td>").append($("<b>").html(value.saturasi)))
-                    .append($("<td>").append($("<b>").html(value.nafas)))
-                    .append($("<td>").append($("<b>").html(value.arm_diameter)))
-                    .append($("<td>").append($("<b>").append($('<button class="btn btn-success" onclick="fillVitalSignMedis(' + key + ')">').html("Copy"))))
-                )
-                $("#copyListVitalSignModal").append($("<tr>")
-                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
-                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.fullname)))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                )
-                $('html, body').animate({
-                    scrollTop: 0
-                }, 800);
-            } else {
-                $("#copyListVitalSignModal").append($("<tr>")
-                    .append($("<td>"))
-                    .append($("<td>").html(value.examination_date))
-                    .append($("<td>").html(value.petugas_id))
-                    .append($("<td>").html(value.weight))
-                    .append($("<td>").html(value.height))
-                    .append($("<td>").html(value.temperature))
-                    .append($("<td>").html(value.nadi))
-                    .append($("<td>").html(value.tension_upper))
-                    .append($("<td>").html(value.tension_below))
-                    .append($("<td>").html(value.saturasi))
-                    .append($("<td>").html(value.nafas))
-                    .append($("<td>").html(value.arm_diameter))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillVitalSignMedis(' + key + ')">').html("Copy")))
-                )
-            }
-        })
-    }
-
     function fillVitalSignMedis(index) {
         var ex = examForassessment[index]
         $("#armpemeriksaan").val('BB: ' + ex.weight + 'Kg; TB: ' + ex.height + 'cm; ' +
@@ -926,18 +1104,18 @@
 </script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#armGcs_Group").hide()
-        $("#armFallRisk_Group").hide()
-        $("#armLokalis_Group").hide()
-        $("#armProcedures_Group").hide()
-        $("#vitalsign").hide()
-        $("#armDiagnosas_Group").hide()
-        $("#armPenunjang_Group").hide()
-        $("#armProcedures_Group").hide()
-        $("#armRtl_Group").hide()
+        $("#armGcs_Group").slideUp()
+        $("#armFallRisk_Group").slideUp()
+        $("#armLokalis_Group").slideUp()
+        $("#armProcedures_Group").slideUp()
+        $("#vitalsign").slideUp()
+        $("#armDiagnosas_Group").slideUp()
+        $("#armPenunjang_Group").slideUp()
+        $("#armProcedures_Group").slideUp()
+        $("#armRtl_Group").slideUp()
         <?php foreach ($mappingAssessment as $key => $value) {
         ?>
-            $("#<?= $value['id']; ?>").show()
+            $("#<?= $value['id']; ?>").slideDown()
         <?php
         } ?>
     })
@@ -1436,6 +1614,7 @@
 
 
     function appendLokalisAccordion(accordionId) {
+        canvasAssessment = []
         var specialistLokalis = '';
         if (typeof(pasienDiagnosa.specialist_type_id) === 'undefined') {
             specialistLokalis = '<?= $visit['specialist_type_id']; ?>'
@@ -1480,6 +1659,14 @@
                                         </div>
                                     </div>
                                 </div>`
+                                canvasAssessment.push({
+                                    p_type: value1.p_type,
+                                    parameter_id: value1.parameter_id,
+                                    value_id: value1.value_id,
+                                    value_info: value1.value_info,
+                                    canvas: `canvas` + value1.p_type + value1.parameter_id + value1.value_id,
+                                    lokalis: 'lokalis' + value1.value_id
+                                })
                             }
                         })
                     }

@@ -1,3 +1,8 @@
+<?php
+// echo "<pre>";
+// var_dump($val);
+// die();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -9,427 +14,153 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <title>DIAGNOSA DEFISIT PERAWATAN DIRI</title>
+    <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
-
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <script src="<?= base_url('/assets/js/default.js') ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <style>
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
+
+        @page {
+            size: A4;
+        }
+
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
 <body>
-
     <div class="container-fluid mt-5">
-        <form action="<?= site_url('#') ?>" method="post" autocomplete="off">
-            <?php csrf_field(); ?>
-            <h6 align="right">RM 3.4</h6>
-            <table class="table table-bordered mb-0" style="border: 1px solid black">
+        <div class="row mb-5">
+            <div class="col-2 d-flex">
+                <img class="mt-2 mx-auto" src="<?= base_url('assets/img/logo.png') ?>" style="width: 110px; height: 110px;">
+            </div>
+            <div class="col-6">
+                <h3><?= @$organization['name_of_org_unit'] ?></h3>
+                <h5><?= strtoupper(@$organization['kota']) ?></h5>
+                <b><?= @$organization['contact_address'] ?></b>
+                <br>
+                <b><?= 'Telp ' . @$organization['phone'] . ' Fax: ' . @$organization['fax'] ?></b>
+            </div>
+            <div class="col-4">
+                <div class="border border-1 d-flex justify-content-center align-items-center" style="height: 100px;">
+                    <span>Label Identitas Pasien</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <h4 class="text-center"><?= $title; ?></h4>
+        </div>
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok')); ?>
+        <table class="table table-bordered">
+            <tbody>
                 <tr>
-                    <td align="center">
-                        <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                        <p class="mt-2">Sehat-Amanah <br> Tanggung Jawab-Islami</p>
+                    <td class="p-1">
+                        <b>Nomor RM</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['no_registration']; ?></p>
                     </td>
-                    <td>
-                        <h5 class="mt-4">RS. PKU MUHAMMADIYAH SAMPANGAN</h5>
-                        <p>Semanggi RT 002 / RW 020 Pasar Kliwon, Surakarta <br> Telp 0271-633894 Fax. : 0271-630229 <br> Jawa Tengah 57117</p>
+                    <td class="p-1">
+                        <b>Nama Pasien</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
                     </td>
-                    <td>
-                        <div class="col-md-12 align-items-center">
-                            <div class="container mt-1" style="border:1px solid black; padding-top:70px; height:160px; border-radius: 10px">
-                                <p class="text-center">Label Identitas Pasien</p>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <h5 class="text-center">EARLY WARNING SCORING SYSTEM (ANAK)</h5>
-                    </td>
-                </tr>
-            </table>
-            <table class="table table-bordered mb-0 mt-0 fw-bold" style="border: 1px solid black">
-                <tr>
-                    <td colspan="2" width="60%">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <strong><label>Tanggal</label></strong>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="date" name="v_01" id="v_01">
-                            </div>
-                        </div>
-                    </td>
-                    <td width="25%"></td>
-                    <td width="15%" class="text-center"><strong>SKOR</strong></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <label>Jam</label>
-                            </div>
-                            <div class="col-md-10">
-                                <input class="form-control" type="time" name="v_02" id="v_02">
-                            </div>
-                        </div>
-                    </td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td rowspan="4" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Laju Respirasi / menit</td>
-                    <td class="bg-info"> > 25 </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_01" id="t_01_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>21-25 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_01" id="t_01_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td>12-20 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_01" id="t_01_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td> ˂ 12</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_01" id="t_01_3" value="3">
-                    </td>
-                    <td class="text-center">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="4" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Saturasi <br><br><br><br><br> Suplemen O2</td>
-                    <td>> 95</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_02" id="t_02_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td>92-95 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_02" id="t_02_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">˂ 92</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_02" id="t_02_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>%</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_02" id="t_02_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="4" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Suhu(°C)</td>
-                    <td class="bg-info">> 37.7 </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_03" id="t_03_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>37.3 – 37.7</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_03" id="t_03_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td>36.1 – 37.2 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_03" id="t_03_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">˂ 36</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_03" id="t_03_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="5" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Tekanan darah Sistolik (mmHg)</td>
-                    <td class="bg-info">> 160 </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_04" id="t_04_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>151-160 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_04" id="t_04_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td>141-150 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_04" id="t_04_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td>90-140</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_04" id="t_04_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">˂ 90</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_04" id="t_04_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="4" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Tekanan darah Diastolik (mmHg)</td>
-                    <td class="bg-info">> 110 </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_05" id="t_05_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>101-160 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_05" id="t_05_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td>90-100 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_05" id="t_05_1" value="1">
-                    </td>
-                    <td class="text-center">1</td>
-                </tr>
-                <tr>
-                    <td>˂ 90</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_05" id="t_05_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="6" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Laju Jantung /menit</td>
-                    <td class="bg-info">> 120 </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td>111-120 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td>101-110 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_1" value="1">
-                    </td>
-                    <td class="text-center">1</td>
-                </tr>
-                <tr>
-                    <td>61-100 </td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_0" value="0">
-                    </td>
-                    <td class="text-center">0</td>
-                </tr>
-                <tr>
-                    <td>50-60</td>
-                    <td class="text-center" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_2" value="2">
-                    </td>
-                    <td class="text-center">2</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">˂ 50</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_06" id="t_06_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="2" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Kesadaran</td>
-                    <td class="">Sadar </td>
-                    <td class="text-center " style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_07" id="t_07_0" value="0">
-                    </td>
-                    <td class="text-center ">0</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">Nyeri/ verbal Unrespon</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_07" id="t_07_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="2" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Nyeri (tidak termasuk his)</td>
-                    <td class="">Normal </td>
-                    <td class="text-center " style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_08" id="t_08_0" value="0">
-                    </td>
-                    <td class="text-center ">0</td>
-                </tr>
-                <tr>
-                    <td class="">Abnormal </td>
-                    <td class="text-center " style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_08" id="t_08_3" value="3">
-                    </td>
-                    <td class="text-center ">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="2" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Discharge /Lokia</td>
-                    <td class="">Normal </td>
-                    <td class="text-center " style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_09" id="t_09_0" value="0">
-                    </td>
-                    <td class="text-center ">0</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">Abnormal </td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_09" id="t_09_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td rowspan="2" class="bg-warning text-center" width="15%" style="vertical-align: middle;">Proteinuria (perhari)</td>
-                    <td class="">+</td>
-                    <td class="text-center " style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_010" id="t_010_2" value="2">
-                    </td>
-                    <td class="text-center ">2</td>
-                </tr>
-                <tr>
-                    <td class="bg-info">++</td>
-                    <td class="text-center bg-info" style="vertical-align: middle;">
-                        <input type="radio" class="form-check-input" name="t_010" id="t_010_3" value="3">
-                    </td>
-                    <td class="text-center bg-info">3</td>
-                </tr>
-                <tr>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="text-center">TOTAL SKOR</td>
-                    <td></td>
-                    <td>
-                        <input class="form-control" type="text" name="t_011" id="t_011" readonly>
+                    <td class="p-1">
+                        <b>Jenis Kelamin</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_gender']; ?></p>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="text-center">SKALA NYERI (0 - 10)</td>
-                    <td colspan="2">
-                        <div class="container">
-                            <input type="range" id="t_012" name="t_012" min="0" max="10" list="markers" value="0" style="width: 100%;" />
-                            <datalist id="markers">
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                            </datalist>
-                        </div>
+                    <td class="p-1">
+                        <b>Tanggal Lahir (Usia)</b>
+                        <?php if (!empty($visit['date_of_birth'])) : ?>
+                            <p class="m-0 mt-1 p-0"><?= date('d/m/Y', strtotime($visit['date_of_birth'])) . ' (' . @$visit['age'] . ')'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0">-</p>
+                        <?php endif; ?>
+                    </td>
+                    <td class="p-1" colspan="2">
+                        <b>Alamat Pasien</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['contact_address']; ?></p>
                     </td>
                 </tr>
-                <table class="table table-bordered mb-2 mt-0 fw-bold" style="border: 1px solid black">
-                    <tr>
-                        <td class="text-center" style="background-color: yellowgreen; width:25%; vertical-align: middle;">
-                            Skor 0
-                        </td>
-                        <td>
-                            Kondisi pasien stabil dan sesuai dengan perawatan di bangsal umum, Frekuensi monitoring per 4-6 jam </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center" style="background-color: yellow; vertical-align: middle;">Skor 1-4 </td>
-                        <td>
-                            Assessment segera oleh perawat senior, respon segera, maks 5 menit, eskalasi perawatan dan frekuensi monitoring per 4-6 jam, Jika diperlukan assessment oleh dokter jaga bangsal
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center bg-warning" style="vertical-align: middle;">
-                            Skor 5-6
-                        </td>
-                        <td>
-                            Assessment segera oleh dokter jaga (respon segera, maks 5 menit), konsultasi DPJP dan spesialis terkait, eksalasi perawatan dan monitoring tiap jam, pertimbangkan perawatan dengan monitoring yang sesuai. </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center bg-danger" style="vertical-align: middle;">
-                            Skor 7 Atau Lebih
-                        </td>
-                        <td>
-                            Resusitasi dan monitoring secara kontinyu oleh dokter jaga dan perawat senior, Aktivasi code blue kegawatan medis, respon Tim Code Blue Sekunder segera, maksimal 10 menit, Informasikan dan konsultasikan ke DPJP. </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center bg-primary" style="vertical-align: middle;">
-                            Henti Napas/Jantung
-                        </td>
-                        <td>
-                            Lakukan RJP oleh petugas/tim primer, aktivasi code blue henti jantung, respon Tim Code Blue Sekunder segera, maksimal 5 menit, informasikan dan konsultasikan DPJP. </td>
-                    </tr>
-                </table>
-        </form>
+                <tr>
+                    <td class="p-1">
+                        <b>DPJP</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['sspractitioner_name']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Department</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_clinic']; ?></p>
+                    </td>
+                    <td class="p-1">
+                        <b>Tanggal Masuk</b>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['visit_datetime'] ?></p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered mb-2">
+            <thead>
+                <tr>
+                    <th style="width: 30%; text-align: center;">Tanggal / Jam</th>
+                    <th style="width: 10%; text-align: center;">SpO2</th>
+                    <th style="width: 10%; text-align: center;">Pernapasan</th>
+                    <th style="width: 10%; text-align: center;">Nadi</th>
+                    <th style="width: 10%; text-align: center;">Suhu</th>
+                    <th style="width: 10%; text-align: center;">Neuro</th>
+                    <th style="width: 10%; text-align: center;">Warna Kulit</th>
+                    <th style="width: 10%; text-align: center;">Total Score</th>
+                </tr>
+            </thead>
+        </table>
+        <table class="table table-bordered mb-2">
+            <tbody id="vitalSignBody">
+
+            </tbody>
+        </table>
+
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
@@ -438,5 +169,134 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
+<script>
+    $(document).ready(function() {
+        getVitalSign()
+    })
+
+    function vitalsignInput(prop) {
+        var value = prop.textContent.trim();
+        var data_tipe = prop.data_type;
+        var data;
+        // console.log(prop);
+        if (isNaN(value) || value === "") {
+            value = 0;
+        } else {
+            value = parseFloat(value);
+        }
+
+        switch (data_tipe) {
+            case "avtnadi":
+                data = getNeonatalScore(prop.data_type, value);
+                prop.textContent = data.score;
+                console.log(data.score);
+                break;
+            case "avttemperature":
+                data = getNeonatalScore(prop.data_type, value);
+                prop.textContent = data.score;
+                break;
+            case "avtsaturasi":
+                data = getNeonatalScore(prop.data_type, value);
+                prop.textContent = data.score;
+                break;
+            case "avtnafas":
+                data = getNeonatalScore(prop.data_type, value);
+                prop.textContent = data.score;
+                break;
+            case "avttension_upper":
+                data = getNeonatalScore(prop.data_type, value);
+                prop.textContent = data.score;
+                break;
+            default:
+                break;
+        }
+
+        // Update total score after setting the score
+        document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
+    }
+
+
+    const getVitalSign = () => {
+        let pasien = <?= json_encode($visit); ?>;
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': pasien?.visit_id,
+                'nomor': pasien?.no_registration
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                addRowVitalSign(data.examInfo)
+
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    const addRowVitalSign = (data) => {
+        let resultTables = []
+
+        data.map(item => {
+            let score = 0;
+            score += getNeonatalScore("pernapasan", item?.nafas).score + getNeonatalScore("saturasi", item?.saturasi).score + getNeonatalScore("oksigen", item?.oxygen_usage).score + getNeonatalScore("darah", item?.tension_upper).score + getNeonatalScore("nadi", item?.nadi).score + getNeonatalScore("kesadaran", item?.gcs_desc).score + getNeonatalScore("suhu", item?.temperature).score;
+            resultTables += `
+            <tr>
+                <th style="width: 30%; vertical-align:middle; text-align: center;" rowspan="2">${moment(item?.examination_date).format('DD MMM YYYY, HH:mm')}</th>
+                <td style="width: 10%; text-align: center;">${item?.saturasi}</td>
+                <td style="width: 10%; text-align: center;">${item?.oxygen_usage === null ? "":item?.oxygen_usage}</td>
+                <td style="width: 10%; text-align: center;">${item?.tension_upper}/${item?.tension_below}</td>
+                <td style="width: 10%; text-align: center;">${item?.nadi}</td>
+                <td style="width: 10%; text-align: center;">${item?.gcs_desc === null ? "":item?.gcs_desc}</td>
+                <td style="width: 10%; text-align: center;">${item?.temperature}</td>
+                <th style="width: 10%; vertical-align:middle; text-align: center;" rowspan="2">${score}</th>
+            </tr>
+            <tr>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("saturasi", item?.saturasi).colorPicker}">${getNeonatalScore("saturasi", item?.saturasi).score}</td>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("oksigen", item?.oxygen_usage === null ?"":item?.oxygen_usage).colorPicker}">${getNeonatalScore("oksigen", item?.oxygen_usage === null ?"":item?.oxygen_usage).score}</td>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("darah", item?.tension_upper).colorPicker}">${getNeonatalScore("nadi", item?.tension_upper).score}</td>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("nadi", item?.nadi).colorPicker}">${getNeonatalScore("nadi", item?.nadi).score}</td>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("kesadaran", item?.gcs_desc).colorPicker}">${getNeonatalScore("kesadaran", item?.gcs_desc).score}</td>
+                <td class="score_${item.body_id}" style="width: 10%; text-align: center; background:${getNeonatalScore("suhu", item?.temperature).colorPicker}">${getNeonatalScore("suhu", item?.temperature).score}</td>
+            </tr>
+            `
+        })
+        $("#vitalSignBody").html(resultTables)
+        window.print();
+
+
+    }
+</script>
+
+
+<style>
+    @media print {
+        @page {
+            margin: none;
+            size: landscape;
+
+        }
+
+        .container-fluid {
+            width: 100%;
+            /* Set to 100% for full width */
+        }
+
+        body {
+            margin: 0;
+            font-size: 12px;
+            width: auto;
+            height: auto;
+        }
+
+    }
+</style>
+
 
 </html>

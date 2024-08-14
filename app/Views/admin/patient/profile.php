@@ -28,7 +28,7 @@ $menu = [
     'rekammedis' => 1,
     'tindakan' => 1,
     'charges' => 1,
-    'rm' => 0,
+    'rm' => 1,
     'pain' => 1,
     'fall' => 1,
     'gcs' => 1,
@@ -36,7 +36,7 @@ $menu = [
     'diagnosa' => 1,
     'ordergizi' => 1,
     'vitalsign' => 1,
-    'transfer' => 0,
+    'transfer' => 1,
     'tindakanperawat' => 1,
     'informedconcent' => 0,
     'odd' => 0,
@@ -84,6 +84,10 @@ $currency_symbol = 'Rp. ';
         min-width: 120px;
         height: 100%;
     }
+
+    .select2-container--default .select2-dropdown {
+        z-index: 1050;
+    }
 </style>
 <div class="content-wrapper">
     <section>
@@ -95,7 +99,7 @@ $currency_symbol = 'Rp. ';
                             <div class="card-body">
                                 <div class="nav-tabs-custom">
                                     <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                        <li class="nav-item"><a id="overviewTab" class="nav-link border-bottom active" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab">Profil</a></li>
+                                        <li class="nav-item active"><a id="overviewTab" class="nav-link border-bottom active" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab">Profil</a></li>
                                         <!-- <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li> -->
                                         <?php if ($menu['assessmentmedis'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
@@ -192,7 +196,7 @@ $currency_symbol = 'Rp. ';
                                         } ?>
                                         <?php if ($menu['tindakanperawat'] == 1) {
                                         ?>
-                                            <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Perawat</a></li>
+                                            <li class="nav-item"><a id="tindakanPerawatTab" class="nav-link border-bottom" href="#tindakanperawat" data-bs-toggle="tab" aria-expanded="true" role="tab">Implementasi</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['informedconcent'] == 1) {
@@ -237,8 +241,8 @@ $currency_symbol = 'Rp. ';
                                         <?php
                                         } ?>
                                     </ul>
-                                    <div class="tab-content active">
-                                        <div class="tab-pane tab-content-height" id="overview">
+                                    <div class="tab-content">
+                                        <div class="tab-pane tab-content-height active show" id="overview">
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-3 col-sm-12 border-r">
                                                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
@@ -1262,6 +1266,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeSearchTarif(theid, clinicIdTarif) {
         $("#" + theid).select2({
             placeholder: "Input Tarif",
+            dropdownParent: $(this).parent(),
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getTarif',
                 type: "post",
@@ -1344,9 +1349,16 @@ echo view('admin/patient/modal/hasilRad', [
 
     }
 
-    function initializeDiagSelect2(theid, initialvalue = null, initialname = null, initialcat = null) {
+    function initializeDiagSelect2(theid, initialvalue = null, initialname = null, initialcat = null, modalParent = null) {
+        let modalParentId;
+        if (modalParent == null) {
+            modallParentId = $(this).parent()
+        } else {
+            modalParentId = $("#" + modalParent)
+        }
         $("#" + theid).select2({
             placeholder: "Input Diagnosa",
+            dropdownParent: modalParentId,
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
                 type: "post",
@@ -1377,6 +1389,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeProcSelect2(theid, initialvalue = null, initialname = null, initialcat = null) {
         $("#" + theid).select2({
             placeholder: "Input Prosedur",
+            dropdownParent: $(this).parent(),
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getProcedureListAjax',
                 type: "post",

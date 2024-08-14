@@ -70,39 +70,7 @@
 <body>
     <div class="container-fluid mt-5">
         <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
-            <div style="display: none;">
-                <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
-                <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
-                <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
-            </div>
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
             <?php csrf_field(); ?>
             <div class="row">
                 <div class="col-auto" align="center">
@@ -111,7 +79,8 @@
                 <div class="col mt-2" align="center">
                     <h3>RS PKU Muhammadiyah Sampangan</h3>
                     <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK
+                        No.449/0238/P-02/IORS/II/2018</p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -128,56 +97,53 @@
                     <tr>
                         <td>
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                            <div class="form-control" id="no_registration" name="no_registration"></div>
                         </td>
                         <td>
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
+                            <div class="form-control" id="thename" name="thename"></div>
                         </td>
                         <td>
                             <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
+                            <div class="form-control" id="gender" name="gender"></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <div class="form-control" id="patient_age" name="patient_age"></div>
                         </td>
                         <td colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <div class="form-control" id="theaddress" name="theaddress"></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
+                            <div class="form-control" id="doctor" name="doctor"> </div>
                         </td>
                         <td>
                             <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
+                            <div class="form-control" id="clinic_id" name="clinic_id"> </div>
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
+                            <div class="form-control" id="examination_date" name="examination_date"> </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
+                            <div class="form-control" id="kelas" name="kelas"> </div>
                         </td>
                         <td>
                             <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
+                            <div class="form-control" id="bangsal" name="bangsal"> </div>
                         </td>
                         <td>
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="bed" name="bed" value="">
+                            <div class="form-control" id="bed" name="bed"> </div>
                         </td>
                     </tr>
                 </tbody>
@@ -189,73 +155,73 @@
                 <tr>
                     <td>
                         <b>Hilangnya Gigi</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="losing_teeth"></div>
                     </td>
                     <td>
                         <b>Masalah Mobilisasi Leher</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="neck_problem"></div>
                     </td>
                     <td>
                         <b>Leher Pendek</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="short_neck"></div>
                     </td>
                     <td>
                         <b>Batuk</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="cough"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Sesak Nafas</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="dispnea"></div>
                     </td>
                     <td>
                         <b>Barusaja Menderita Infeksi Saluran Nafas</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="ispa"></div>
                     </td>
                     <td>
                         <b>Periode Menstruasi Tidak Normal</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="abnormal_menstruation"></div>
                     </td>
                     <td>
                         <b>Stroke</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="stroke"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Sakit Dada</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="chest_pain"></div>
                     </td>
                     <td>
                         <b>Denyut Jantung Tidak Normal</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="aritmia"></div>
                     </td>
                     <td>
                         <b>Muntah</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="vomitus"></div>
                     </td>
                     <td>
                         <b>Susah Kencing</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="urinary_retention"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Kejang</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="seizure"></div>
                     </td>
                     <td>
                         <b>Sedang Hamil</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="pregnant"></div>
                     </td>
                     <td>
                         <b>Pingsan</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="syncope"></div>
                     </td>
                     <td>
                         <b>Obesitas</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="obesity"></div>
                     </td>
                 </tr>
             </table>
@@ -269,43 +235,43 @@
                 <tr>
                     <td>
                         <b>Tekanan Darah</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="tension_upper"></div>
                     </td>
                     <td>
                         <b>Denyut Nadi</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="nadi"></div>
                     </td>
                     <td>
                         <b>Suhu Tubuh</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="temperature"></div>
                     </td>
                     <td>
                         <b>Respiration Rate</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="nafas"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Berat Badan</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="weight"></div>
                     </td>
                     <td>
                         <b>Tinggi Badan</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="height"></div>
                     </td>
                     <td>
                         <b>SpO2</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="saturasi"></div>
                     </td>
                     <td>
                         <b>BMI</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="bmi"></div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4">
                         <b>Keadaan Umum</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="pemeriksaan"></div>
                     </td>
                 </tr>
             </table>
@@ -420,17 +386,17 @@
                 <tr>
                     <td colspan="2">
                         <b>Gigi Palsu</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="denture"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Mallampati</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="mallampati"></div>
                     </td>
                     <td>
                         <b>Kriteria ASA</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="asa_class"></div>
                     </td>
                 </tr>
             </table>
@@ -452,7 +418,7 @@
                 <tr>
                     <td>
                         <b>Asesmen</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="anesthesia_assessment"></div>
                     </td>
                 </tr>
             </table>
@@ -463,33 +429,33 @@
                 <tr>
                     <td>
                         <b>Sedasi</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="sedation"></div>
                     </td>
                     <td>
                         <b>GA</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="general_anesthesia"></div>
                     </td>
                     <td>
                         <b>Regional Spinal</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="regional_spinal"></div>
                     </td>
                     <td>
                         <b>Regional Epidural</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="regional_epidural"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Regional Kaudal</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="regional_kaudal"></div>
                     </td>
                     <td>
                         <b>Regional Block Perifer</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="regional_blokperifer"></div>
                     </td>
                     <td>
                         <b>Lain-lain</b>
-                        <input type="text" class="form-control" id="sa" name="sa">
+                        <div class="form-control" id="others_anesthesia"></div>
                     </td>
                 </tr>
             </table>
@@ -520,7 +486,8 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 <script>
@@ -535,48 +502,103 @@
 </script>
 <script>
     $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok')); ?>
 
-    })
+        let visitAll = <?= json_encode($visit) ?>;
+        let valSelect = <?= json_encode($val) ?>;
+        let option = <?= json_encode($option) ?>;
+        let examination = <?= json_encode($examination) ?>;
+
+        console.log(valSelect);
+
+
+
+        const visit = {
+            no_registration: "<?= $visit['no_registration']; ?>",
+            clinic_id: visitAll?.name_of_clinic_from,
+            class_room_id: "<?= $visit['class_room_id']; ?>",
+            in_date: "<?= $visit['in_date']; ?>",
+            exit_date: "<?= $visit['exit_date']; ?>",
+            keluar_id: "<?= $visit['keluar_id']; ?>",
+            examination_date: "<?= $dt->format('Y-m-d H:i:s'); ?>",
+            employee_id: "<?= $visit['employee_id']; ?>",
+            description: "<?= $visit['description']; ?>",
+            modified_date: "<?= $dt->format('Y-m-d H:i:s'); ?>",
+            modified_by: "<?= user()->username; ?>",
+            modified_from: "<?= $visit['clinic_id']; ?>",
+            status_pasien_id: "<?= $visit['status_pasien_id']; ?>",
+            ageyear: "<?= $visit['ageyear']; ?>",
+            agemonth: "<?= $visit['agemonth']; ?>",
+            ageday: "<?= $visit['ageday']; ?>",
+            thename: "<?= $visit['diantar_oleh']; ?>",
+            theaddress: "<?= $visit['visitor_address']; ?>",
+            theid: "<?= $visit['pasien_id']; ?>",
+            isrj: "<?= $visit['isrj']; ?>",
+            gender: visitAll?.gendername,
+            doctor: visitAll?.fullname ?? visitAll?.doctor,
+            kal_id: "<?= $visit['kal_id']; ?>",
+            petugas_id: "<?= user()->username; ?>",
+            petugas: "<?= user()->fullname; ?>",
+            account_id: "<?= $visit['account_id']; ?>",
+            patient_age: `${visitAll?.age} (${visitAll?.ageyear})`,
+            kelas: visitAll?.ageyear,
+            bangsal: visitAll?.ageyear,
+            bed: visitAll?.ageyear,
+        };
+
+        for (const key in visit) {
+
+            if (visit.hasOwnProperty(key)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.innerHTML = visit[key];
+                } else {
+
+                }
+            }
+        }
+
+        const setElementHTML = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = value;
+            }
+        };
+
+
+        for (const key in valSelect) {
+            if (valSelect.hasOwnProperty(key)) {
+                const value = valSelect[key];
+                const matchedOption = option?.find(opt => opt?.value_id === value);
+
+                if (matchedOption) {
+
+                    setElementHTML(key, matchedOption?.value_desc);
+                } else {
+                    setElementHTML(key, value);
+                }
+            }
+        }
+
+        if (examination.hasOwnProperty('weight') && examination.hasOwnProperty('height')) {
+            const weight = parseFloat(examination['weight']);
+            const height = parseFloat(examination['height']);
+            if (!isNaN(weight) && !isNaN(height) && height > 0) {
+                const bmi = (weight * 10000 / (height * height)).toFixed(2);
+                setElementHTML('bmi', bmi);
+            }
+        }
+
+        for (const key in examination) {
+            if (examination.hasOwnProperty(key)) {
+                setElementHTML(key, examination[key]);
+            }
+        }
+
+
+
+
+    });
 </script>
 <style>
     @media print {

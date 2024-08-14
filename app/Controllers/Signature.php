@@ -167,7 +167,18 @@ class Signature extends BaseController
                 }
             }
         }
+        if (isset($dataDoc['valid_user'])) {
+            unset($dataDoc['valid_user']);
+        }
+        if (isset($dataDoc['valid_pasien'])) {
+            unset($dataDoc['valid_pasien']);
+        }
+        if (isset($dataDoc['valid_date'])) {
+            unset($dataDoc['valid_date']);
+        }
+        ksort($dataDoc);
 
+        // return json_encode($dataDoc);
         // Validate login and password
         $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
 
@@ -190,5 +201,105 @@ class Signature extends BaseController
 
         // Return error or checkpass result
         return json_encode(['error' => 'Login failed or invalid credentials']);
+    }
+
+    public function checkSignedDocs()
+    {
+        // Ensure the request is a POST request
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', 'Invalid request type');
+        }
+
+        // Get JSON body from request
+        $body = $this->request->getBody();
+        $jsonData = json_decode($body, true);
+
+        // Check if JSON decoding was successful
+        if ($jsonData === null && json_last_error() !== JSON_ERROR_NONE) {
+            return json_encode(['error' => 'Invalid JSON data']);
+        }
+
+        // Check if signId is set
+        if (!isset($jsonData['signId'])) {
+            return json_encode(['error' => 'Missing signId']);
+        }
+
+        $signId = $jsonData['signId'];
+
+        // Initialize empty arrays for formData and docData
+        $dataForm = [];
+        $dataDoc = [];
+
+        // Process signData
+        if (isset($jsonData["signData"]) && is_array($jsonData["signData"])) {
+            foreach ($jsonData["signData"] as $key => $value) {
+                if (!is_null($value) && $value !== '') {
+                    $dataForm[strtolower($key)] = $value;
+                }
+            }
+        }
+
+        // Process docData
+        if (isset($jsonData["docData"]) && is_array($jsonData["docData"])) {
+            foreach ($jsonData["docData"] as $key => $value) {
+                if (!is_null($value) && $value !== '') {
+                    $dataDoc[strtolower($key)] = $value;
+                }
+            }
+        }
+
+        if (isset($dataDoc['valid_user'])) {
+            unset($dataDoc['valid_user']);
+        }
+        if (isset($dataDoc['valid_pasien'])) {
+            unset($dataDoc['valid_pasien']);
+        }
+        if (isset($dataDoc['valid_date'])) {
+            unset($dataDoc['valid_date']);
+        }
+        ksort($dataDoc);
+
+        // return json_encode($dataDoc);
+
+        // Validate login and password (assumed to be a placeholder)
+        $checkpass = true;
+
+        if ($checkpass) {
+            // Initialize RsaEncryptionHelper
+            $rsaHelper = new RsaEncryptionHelper();
+            $publicKey = $rsaHelper->getPublicKey();
+
+            // Check if DocsSignedModel is available and handle errors if not
+
+            $docModel = new DocsSignedModel();
+
+            // Check if find method exists
+            if (!method_exists($docModel, 'find')) {
+                return json_encode(['error' => 'Method find not found in DocsSignedModel']);
+            }
+
+            // Find the document by signId
+            $select = $this->lowerKey($docModel->where("sign_id", $signId)->findAll());
+
+            $result = [];
+            foreach ($select as $key => $value) {
+                // Check if the necessary data is present
+
+                $signedData = $value['sign'];
+
+                // Verify the signature
+                $isValid = $rsaHelper->verifySignature(json_encode($dataDoc), $signedData, $publicKey);
+                $result[$key]['isvalid'] = $isValid;
+                $result[$key]['user_type'] = $value['user_type'];
+                $result[$key]['doc_date'] = $value['doc_date'];
+                $result[$key]['user_id'] = $value['user_id'];
+                $result[$key]['sign_path'] = $value['sign_path'];
+            }
+
+
+            return json_encode($result);
+        }
+
+        return json_encode(['error' => 'Authentication failed']);
     }
 }

@@ -16,7 +16,7 @@ use PhpParser\Node\Expr\Cast\Array_;
 
 class Pendaftaran extends \App\Controllers\BaseController
 {
-    private $baseurlvclaim = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev';
+    // private $baseurlvclaim = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev';
     // private $baseurlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest';
     //
     public function getSinglePV()

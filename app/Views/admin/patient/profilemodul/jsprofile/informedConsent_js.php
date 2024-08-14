@@ -195,19 +195,19 @@
 
             if (props?.action === "detail") {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentHide() + dataHtml);
+                    $("#content-param").html(contentslideUp() + dataHtml);
 
                     return Promise.resolve();
                 });
             } else if (props?.action === "edit") {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentHide() + dataHtml);
+                    $("#content-param").html(contentslideUp() + dataHtml);
 
                     return Promise.resolve();
                 });
             } else {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentHide() + dataHtml);
+                    $("#content-param").html(contentslideUp() + dataHtml);
 
                     tinymce.remove('textarea.tinymce-init');
 

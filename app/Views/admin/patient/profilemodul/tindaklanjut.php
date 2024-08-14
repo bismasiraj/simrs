@@ -223,17 +223,213 @@ $permission = user()->getPermissions();
                                             });
                                         });
                                     </script>
-
                                 </table>
                             </div><!--./col-lg-7-->
                         </div><!--./row-->
-                        <!-- <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="examination_date">Tgl Periksa</label>
-                                <input type='text' name="examination_date" class="form-control" id='examination_date' />
+                        <div class="row">
+                            <div class="col-sm-4 col-md-3">
+                                <div class="mb-3">
+                                    <div id="arrujukan_group" class="form-group">
+                                        <label>Rencana Tindak Lanjut</label>
+                                        <select name="rencanatl" id="arrencanatl" onchange="tindakLanjut()" class="form-control ">
+                                            <option value="1">Diperbolehkan Pulang</option>
+                                            <option value="2">Pemeriksaan Penunjang</option>
+                                            <option value="3">Dirujuk ke</option>
+                                            <option value="4">Kontrol Kembali</option>
+                                            <option value="5">Rawat Inap</option>
+                                            <option value="6">Rujuk Internal Antar Poli</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="col-sm-4 col-md-3">
+                                <div class="mb-3">
+                                    <div id="artiperujukan_group" class="form-group" style="display: none">
+                                        <label>Tipe Rujukan</label>
+                                        <select name="tiperujukan" id="artiperujukan" onchange="tindakLanjut()" class="form-control ">
+                                            <option value="1">Penuh</option>
+                                            <option value="2">Parsial</option>
+                                            <option value="3">PRB</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ardirujukkegroup" class="col-sm-4 col-md-3" style="display: none">
+                                <div class="mb-3">
+                                    <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
+                                        <div class="select2-full-width" style="width:100%">
+                                            <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke" style="width: 100%">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="artgl_kontrolgroup" class="col-sm-4 col-md-3" style="display: none">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label>Tanggal Kontrol</label>
+                                        <div class="input-group" id="artglkontrol">
+                                            <input id="artgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
 
-                        </div> -->
+                                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-3" style="display: none">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label>Ke Poli</label>
+                                        <select name="kdpoli_kontrol" id="arkdpoli_kontrol" class="form-control ">
+                                            <?php $cliniclist = array();
+                                            foreach ($clinic as $key => $value) {
+                                                if ($clinic[$key]['stype_id'] == '1') {
+                                                    $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                }
+                                            }
+                                            asort($cliniclist);
+                                            ?>
+                                            <?php foreach ($cliniclist as $key => $value) { ?>
+                                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ardescriptiongroup" class="col-sm-8 col-md-3" style="display: none">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="pwd">Alasan/Ket</label>
+                                        <textarea id="arprocedure_05" name="procedure_05" rows="1" class="form-control " autocomplete="off"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4 mb-4">
+                            <div id="arskdpgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan SKDP</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor SKDP</label>
+                                                    <input id="arskdp" name="skdp" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addskdp" onclick="postKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleteskdp" onclick="deleteKontrol(1)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="arsprigroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan SPRI</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor SPRI</label>
+                                                    <input id="arspri" name="spri" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addspri" onclick="postKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deletespri" onclick="deleteKontrol(2)" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="arrujukaneksternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan Rujukan Eksternal</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-12 col-md-12">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Nomor Rujukan</label>
+                                                    <input id="arnorujukan" name="norujukan" placeholder="" type="text" class="form-control " value="" readonly>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="arrujukaninternalgroup" class="col-sm-12 col-md-6 col-lg-6" style="display: none">
+                                <div class="mb-4">
+                                    <h3>Pembuatan Rujukan Internal</h3>
+                                    <div class="staff-members">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Tanggal Rencana</label>
+                                                    <input id="rujintvisitdate" name=" rujintvisitdate" type="date" class="form-control" placeholder="yyyy-mm-dd" value="<?= date('Y-m-d'); ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Poli Tujuan</label>
+                                                    <select name='rujintclinicid' id="rujintclinicid" class="form-control select2 act" style="width:100%">
+                                                        <?php $cliniclist = array();
+                                                        foreach ($clinic as $key => $value) {
+                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                            }
+                                                        }
+                                                        asort($cliniclist);
+                                                        ?>
+                                                        <?php foreach ($cliniclist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select> <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="mb-3">
+                                                <div class="form-group">
+                                                    <label>Dokter Tujuan</label>
+                                                    <select name='rujintemployeeid' id="rujintemployeeid" class="form-control select2 act" style="width:100%">
+                                                        <?php $dokterlist = array();
+                                                        foreach ($dokter as $key => $value) {
+                                                            if ($key == 'P003') {
+                                                                foreach ($value as $key1 => $value1) {
+                                                                    $dokterlist[$key1] = $value1;
+                                                                }
+                                                            }
+                                                        }
+                                                        asort($dokterlist);
+                                                        ?>
+                                                        <?php foreach ($dokterlist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                    <span class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="box-tab-tools" style="text-align: center;">
+                                            <button type="button" id="addnorujukan" onclick="postRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="button" id="deleterujukan" onclick="deleteRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-sm-6" style="display: none;">
                             <div class="form-group"><label>Perawat</label><input type="text" name="petugas" id="aepetugas" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
                         </div>

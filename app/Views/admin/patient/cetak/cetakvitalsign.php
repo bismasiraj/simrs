@@ -253,6 +253,8 @@
             cache: false,
             processData: false,
             success: function(data) {
+
+                console.log(data.examInfo);
                 addRowVitalSign(data.examInfo)
 
                 vitalsign = data.examInfo
@@ -275,11 +277,14 @@
             case 5:
                 return 'Anak'
                 break;
+            case 10:
+                return 'Obsetric'
+                break;
             default:
                 return '-'
                 break;
         }
-    }
+    } // update 30/07
 
     const addRowVitalSign = (data) => {
         let resultTables = []

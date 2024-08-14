@@ -162,70 +162,70 @@
     // $("#cpptTab").on("click", function() {
     //     $("#arpTitle").html("CPPT")
     //     $("#arpanamnase_label").html("Subyektif (S)")
-    //     $("#collapseRiwayat").hide()
-    //     $("#groupRiwayat").hide()
-    //     // $("#subjectiveGroupHeader").show()
-    //     $("#objectiveGroupHeader").show()
-    //     $("#arpFallRisk_Group").show()
-    //     $("#arpPainMonitoring_Group").hide()
-    //     $("#arpTriage_Group").hide()
-    //     $("#arpApgar_Group").hide()
-    //     $("#arpGizi_Group").hide()
-    //     $("#arpAdl_Group").hide()
-    //     $("#arpDekubitus_Group").hide()
-    //     $("#arpStabilitas_Group").hide()
-    //     $("#arpEdukasiIntegrasi_Group").hide()
-    //     $("#arpEdukasiForm_Group").hide()
-    //     $("#arpGcs_Group").show()
-    //     $("#arpIntegumen_Group").hide()
-    //     $("#arpNeurosensoris_Group").hide()
-    //     $("#arpPencernaan_Group").hide()
-    //     $("#arpPerkemihan_Group").hide()
-    //     $("#arpPernapasan_Group").hide()
-    //     $("#arpPsikologi_Group").hide()
-    //     $("#arpSeksual_Group").hide()
-    //     $("#arpSirkulasi_Group").hide()
-    //     $("#arpSocial_Group").hide()
-    //     $("#arpHearing_Group").hide()
-    //     $("#arpSleeping_Group").hide()
-    //     $("#arpTindakanKolaboratif_Group").show()
-    //     $("#arpTindakanMandiri_Group").show()
-    //     $("#arpImplementasi_Group").hide()
+    //     $("#collapseRiwayat").slideUp()
+    //     $("#groupRiwayat").slideUp()
+    //     // $("#subjectiveGroupHeader").slideDown()
+    //     $("#objectiveGroupHeader").slideDown()
+    //     $("#arpFallRisk_Group").slideDown()
+    //     $("#arpPainMonitoring_Group").slideUp()
+    //     $("#arpTriage_Group").slideUp()
+    //     $("#arpApgar_Group").slideUp()
+    //     $("#arpGizi_Group").slideUp()
+    //     $("#arpAdl_Group").slideUp()
+    //     $("#arpDekubitus_Group").slideUp()
+    //     $("#arpStabilitas_Group").slideUp()
+    //     $("#arpEdukasiIntegrasi_Group").slideUp()
+    //     $("#arpEdukasiForm_Group").slideUp()
+    //     $("#arpGcs_Group").slideDown()
+    //     $("#arpIntegumen_Group").slideUp()
+    //     $("#arpNeurosensoris_Group").slideUp()
+    //     $("#arpPencernaan_Group").slideUp()
+    //     $("#arpPerkemihan_Group").slideUp()
+    //     $("#arpPernapasan_Group").slideUp()
+    //     $("#arpPsikologi_Group").slideUp()
+    //     $("#arpSeksual_Group").slideUp()
+    //     $("#arpSirkulasi_Group").slideUp()
+    //     $("#arpSocial_Group").slideUp()
+    //     $("#arpHearing_Group").slideUp()
+    //     $("#arpSleeping_Group").slideUp()
+    //     $("#arpTindakanKolaboratif_Group").slideDown()
+    //     $("#arpTindakanMandiri_Group").slideDown()
+    //     $("#arpImplementasi_Group").slideUp()
     // })
     $("#assessmentigdTab").on("mouseup", function() {
         $("#arpTitle").html("Asesmen Keperawatan")
 
         $("#arpanamnase_label").html("Subyektif (S)")
-        $("#collapseRiwayat").show()
-        $("#groupRiwayat").show()
-        // $("#subjectiveGroupHeader").show()
-        $("#objectiveGroupHeader").show()
-        $("#arpFallRisk_Group").show()
-        $("#arpPainMonitoring_Group").show()
-        $("#arpTriage_Group").show()
+        $("#collapseRiwayat").slideDown()
+        $("#groupRiwayat").slideDown()
+        // $("#subjectiveGroupHeader").slideDown()
+        $("#objectiveGroupHeader").slideDown()
+        $("#arpFallRisk_Group").slideDown()
+        $("#arpPainMonitoring_Group").slideDown()
+        $("#arpTriage_Group").slideDown()
         $("#bodyTriagePerawat").html("")
-        $("#arpApgar_Group").show()
-        $("#arpGizi_Group").show()
-        $("#arpAdl_Group").show()
-        $("#arpDekubitus_Group").show()
-        $("#arpStabilitas_Group").show()
-        $("#arpEdukasiIntegrasi_Group").show()
-        $("#arpEdukasiForm_Group").show()
-        $("#arpGcs_Group").show()
-        $("#arpIntegumen_Group").show()
-        $("#arpNeurosensoris_Group").show()
-        $("#arpPencernaan_Group").show()
-        $("#arpPerkemihan_Group").show()
-        $("#arpPernapasan_Group").show()
-        $("#arpPsikologi_Group").show()
-        $("#arpSeksual_Group").show()
-        $("#arpSirkulasi_Group").show()
-        $("#arpSocial_Group").show()
-        $("#arpHearing_Group").show()
-        $("#arpSleeping_Group").show()
-        $("#arpTindakanKolaboratif_Group").show()
-        $("#arpTindakanMandiri_Group").show()
-        $("#arpImplementasi_Group").show()
+        $("#arpApgar_Group").slideDown()
+        $("#arpGizi_Group").slideDown()
+        $("#arpAdl_Group").slideDown()
+        $("#arpDekubitus_Group").slideDown()
+        $("#arpStabilitas_Group").slideDown()
+        $("#arpEdukasiIntegrasi_Group").slideDown()
+        $("#arpEdukasiForm_Group").slideDown()
+        $("#arpGcs_Group").slideDown()
+        $("#arpIntegumen_Group").slideDown()
+        $("#arpNeurosensoris_Group").slideDown()
+        $("#arpPencernaan_Group").slideDown()
+        $("#arpPerkemihan_Group").slideDown()
+        $("#arpPernapasan_Group").slideDown()
+        $("#arpPsikologi_Group").slideDown()
+        $("#arpSeksual_Group").slideDown()
+        $("#arpSirkulasi_Group").slideDown()
+        $("#arpSocial_Group").slideDown()
+        $("#arpHearing_Group").slideDown()
+        $("#arpSleeping_Group").slideDown()
+        $("#arpTindakanKolaboratif_Group").slideDown()
+        $("#arpTindakanMandiri_Group").slideDown()
+        $("#arpImplementasi_Group").slideDown()
 
         initialAddArp()
         generateSatelite()
@@ -260,8 +260,8 @@
             },
             success: function(data) {
                 getAssessmentKeperawatan()
-                // // $("#formsavearpbtn").hide()
-                // // $("#formeditarp").show()
+                // // $("#formsavearpbtn").slideUp()
+                // // $("#formeditarp").slideDown()
                 // var isNewDocument = 0
                 // $.each(examForassessment, function(key, value) {
                 //     if (value.body_id == data.body_id) {
@@ -336,8 +336,8 @@
 
                     displayTableAssessmentKeperawatan(examForassessment.length - 1)
                     displayTableAssessmentKeperawatanForVitalSign();
-                    $("#arpAddDocument").hide()
-                    $("#arpDocument").show()
+                    $("#arpAddDocument").slideUp()
+                    $("#arpDocument").slideDown()
                 }
                 $.each(examForassessment, function(key, value) {
                     var vsStatusId = [1, 4, 5];
@@ -372,12 +372,12 @@
         $("#arpno_registration").val('<?= $visit['no_registration']; ?>')
         $("#arpvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#arpbill_id").val(null)
-        <?php if (!is_null($visit['class_room_id'])) { ?>
+        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
             $('#arpclinic_id').val('<?= $visit['class_room_id']; ?>')
         <?php } else { ?>
             $('#arpclinic_id').val('<?= $visit['clinic_id']; ?>')
         <?php } ?>
-        <?php if (!is_null($visit['class_room_id'])) { ?>
+        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
             $('#arpemployee_id').val('<?= $visit['employee_inap']; ?>')
         <?php } else { ?>
             $('#arpemployee_id').val('<?= $visit['employee_id']; ?>')
@@ -436,8 +436,8 @@
 
         $("#arpisvalid").val(0)
 
-        $("#arpAddDocument").hide()
-        $("#arpDocument").show()
+        $("#arpAddDocument").slideUp()
+        $("#arpDocument").slideDown()
         enableARP()
         fillRiwayatArp()
         generateSatelite()
@@ -545,9 +545,9 @@
     }
 
     function enableARP() {
-        $("#formsavearpbtnid").show()
-        $("#formeditarpid").hide()
-        // $(".formsignarp").show()
+        $("#formsavearpbtnid").slideDown()
+        $("#formeditarpid").slideUp()
+        // $(".formsignarp").slideDown()
         $("#formaddarp input").prop("disabled", false)
         $("#formaddarp textarea").prop("disabled", false)
         $("#formaddarp select").prop("disabled", false)
@@ -558,16 +558,16 @@
     }
 
     function disableARP() {
-        $("#formsavearpbtnid").hide()
-        $("#formeditarpid").show()
-        // $(".formsignarp").hide()
+        $("#formsavearpbtnid").slideUp()
+        $("#formeditarpid").slideDown()
+        // $(".formsignarp").slideUp()
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)
         $("#formaddarp select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
         if ($("#arpvalid_user").val() != '' && $("#arpvalid_user").val() != null) {
-            $("#formeditarpid").hide()
-            $("#formsignarpid").hide()
+            $("#formeditarpid").slideUp()
+            $("#formsignarpid").slideUp()
             $("#formaddarp").find(".btn-add-doc").remove()
         }
     }
@@ -660,13 +660,13 @@
 </script>
 <script type='text/javascript'>
     $("#formeditfallriskbtn").on("click", function() {
-        $("#formeditfallriskbtn").hide()
-        $("#formsavefallriskbtn").show()
+        $("#formeditfallriskbtn").slideUp()
+        $("#formsavefallriskbtn").slideDown()
         $("#formfallrisk").find("iput, select, textarea").prop("disabled", true)
     })
     $("#formeditfallriskbtnmedis").on("click", function() {
-        $("#formeditfallriskbtnmedis").hide()
-        $("#formsavefallriskbtnmedis").show()
+        $("#formeditfallriskbtnmedis").slideUp()
+        $("#formsavefallriskbtnmedis").slideDown()
         $("#formfallriskmedis").find("iput, select, textarea").prop("disabled", true)
     })
 
@@ -744,8 +744,8 @@
                 )
 
                 $("#formPainMonitoringEditBtn" + bodyId).on("click", function() {
-                    $("#formPainMonitoringSaveBtn" + bodyId).show()
-                    $("#formPainMonitoringEditBtn" + bodyId).hide()
+                    $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
+                    $("#formPainMonitoringEditBtn" + bodyId).slideUp()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
                 })
 
@@ -789,8 +789,8 @@
                             // $('#formPainMonitoring' + bodyId + ' input[type="radio"]:not(:checked)').prop("disabled", true)
                             // $('#formPainMonitoring' + bodyId + ' input[type="datetime-local"]').prop("readonly", true)
                             // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
-                            $("#formPainMonitoringSaveBtn" + bodyId).hide()
-                            $("#formPainMonitoringEditBtn" + bodyId).show()
+                            $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
+                            $("#formPainMonitoringEditBtn" + bodyId).slideDown()
                             $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                             clicked_submit_btn.button('reset');
@@ -808,14 +808,14 @@
                     });
                 }));
                 $("#formPainMonitoringEdit" + bodyId).on("click", function() {
-                    $("#formPainMonitoringSaveBtn" + bodyId).show()
-                    $("#formPainMonitoringEdit" + bodyId).hide()
+                    $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
+                    $("#formPainMonitoringEdit" + bodyId).slideUp()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
                 })
 
                 if (flag == 1) {
-                    $("#formPainMonitoringSaveBtn" + bodyId).show()
-                    $("#formPainMonitoringEditBtn" + bodyId).hide()
+                    $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
+                    $("#formPainMonitoringEditBtn" + bodyId).slideUp()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
                 } else {
                     var maindataset = painMonitoring[index]
@@ -823,8 +823,8 @@
                     $.each(maindataset, function(key, value) {
                         $("#ases022" + key + bodyId).val(value)
                     })
-                    $("#formPainMonitoringSaveBtn" + bodyId).hide()
-                    $("#formPainMonitoringEditBtn" + bodyId).show()
+                    $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
+                    $("#formPainMonitoringEditBtn" + bodyId).slideDown()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                     $.each(painMonitoringDetil, function(key, value) {
@@ -1430,8 +1430,8 @@
                 )
 
                 $("#formTriageEditBtn" + bodyId).on("click", function() {
-                    $("#formTriageSaveBtn" + bodyId).show()
-                    $("#formTriageEditBtn" + bodyId).hide()
+                    $("#formTriageSaveBtn" + bodyId).slideDown()
+                    $("#formTriageEditBtn" + bodyId).slideUp()
                     $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", false)
                 })
 
@@ -1472,7 +1472,7 @@
                         success: function(data) {
                             $('#formTriage' + bodyId).find("input, select, textarea").prop("disabled", true)
                             $('#formTriage' + bodyId + ' input[type="datetime-local"]').prop("readonly", true)
-                            $("#formTriageSaveBtn" + bodyId).hide()
+                            $("#formTriageSaveBtn" + bodyId).slideUp()
                             checkSign("formTriage" + bodyId)
                         },
                         error: function(xhr) { // if error occured
@@ -1488,8 +1488,8 @@
 
 
                 if (flag == 1) {
-                    $("#formTriageSaveBtn" + bodyId).show()
-                    $("#formTriageEditBtn" + bodyId).hide()
+                    $("#formTriageSaveBtn" + bodyId).slideDown()
+                    $("#formTriageEditBtn" + bodyId).slideUp()
                     $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", false)
 
                 } else {
@@ -1499,8 +1499,8 @@
                         $("#triage" + key + bodyId).val(value)
                     })
                     $.each(triageDetil, function(key, value) {
-                        $("#formTriageSaveBtn" + bodyId).hide()
-                        $("#formTriageEditBtn" + bodyId).show()
+                        $("#formTriageSaveBtn" + bodyId).slideUp()
+                        $("#formTriageEditBtn" + bodyId).slideDown()
 
                         if (value.p_type == 'GEN0008' && value.body_id == bodyId) {
                             $('#aParamTriage' + bodyId).val(triage[index].p_type)
@@ -1745,8 +1745,8 @@
                 )
 
                 $("#formApgarEditBtn" + bodyId).on("click", function() {
-                    $("#formApgarSaveBtn" + bodyId).show()
-                    $("#formApgarEditBtn" + bodyId).hide()
+                    $("#formApgarSaveBtn" + bodyId).slideDown()
+                    $("#formApgarEditBtn" + bodyId).slideUp()
                     $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", false)
                 })
 
@@ -1785,8 +1785,8 @@
                             clicked_submit_btn.button('loading');
                         },
                         success: function(data) {
-                            $("#formApgarSaveBtn" + bodyId).hide()
-                            $("#formApgarEditBtn" + bodyId).show()
+                            $("#formApgarSaveBtn" + bodyId).slideUp()
+                            $("#formApgarEditBtn" + bodyId).slideDown()
                             $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", true)
                             clicked_submit_btn.button('reset');
                             checkSign("formApgar" + bodyId)
@@ -1805,8 +1805,8 @@
 
 
                 if (flag == 1) {
-                    $("#formApgarSaveBtn" + bodyId).show()
-                    $("#formApgarEditBtn" + bodyId).hide()
+                    $("#formApgarSaveBtn" + bodyId).slideDown()
+                    $("#formApgarEditBtn" + bodyId).slideUp()
                     $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", false)
                 } else {
                     var maindataset = apgar[index]
@@ -1814,8 +1814,8 @@
                     $.each(maindataset, function(key, value) {
                         $("#apgar" + key + bodyId).val(value)
                     })
-                    $("#formApgarSaveBtn" + bodyId).hide()
-                    $("#formApgarEditBtn" + bodyId).show()
+                    $("#formApgarSaveBtn" + bodyId).slideUp()
+                    $("#formApgarEditBtn" + bodyId).slideDown()
                     $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", true)
 
                     $.each(apgarDetil, function(key, value) {
@@ -2009,8 +2009,8 @@
 
 
         $("#formStabilitasEditBtn" + bodyId).on("click", function() {
-            $("#formStabilitasSaveBtn" + bodyId).show()
-            $("#formStabilitasEditBtn" + bodyId).hide()
+            $("#formStabilitasSaveBtn" + bodyId).slideDown()
+            $("#formStabilitasEditBtn" + bodyId).slideUp()
             $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
         $("#formStabilitas" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
@@ -2066,8 +2066,8 @@
 
 
         if (flag == 1) {
-            $("#formStabilitasSaveBtn" + bodyId).show()
-            $("#formStabilitasEditBtn" + bodyId).hide()
+            $("#formStabilitasSaveBtn" + bodyId).slideDown()
+            $("#formStabilitasEditBtn" + bodyId).slideUp()
             $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
             var maindataset = painMonitoring[index]
@@ -2075,8 +2075,8 @@
             $.each(maindataset, function(key, value) {
                 $("#stabilitas" + key + bodyId).val(value)
             })
-            $("#formStabilitasSaveBtn" + bodyId).hide()
-            $("#formStabilitasEditBtn" + bodyId).show()
+            $("#formStabilitasSaveBtn" + bodyId).slideUp()
+            $("#formStabilitasEditBtn" + bodyId).slideDown()
             $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", true)
 
             $.each(stabilitasDetail, function(key, value) {
@@ -2286,8 +2286,8 @@
         )
 
         $("#formPernapasanEditBtn" + bodyId).on("click", function() {
-            $("#formPernapasanSaveBtn" + bodyId).show()
-            $("#formPernapasanEditBtn" + bodyId).hide()
+            $("#formPernapasanSaveBtn" + bodyId).slideDown()
+            $("#formPernapasanEditBtn" + bodyId).slideUp()
             $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         $("#ASES04105" + bodyId).keydown(function(e) {
@@ -2305,9 +2305,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -2343,8 +2343,8 @@
                     $('#formPernapasan' + bodyId + ' select').prop("disabled", true)
                     $('#formPernapasan' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formPernapasanSaveBtn" + bodyId).hide()
-                    $("#formPernapasanEditBtn" + bodyId).show()
+                    $("#formPernapasanSaveBtn" + bodyId).slideUp()
+                    $("#formPernapasanEditBtn" + bodyId).slideDown()
                     $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", true)
 
                     checkSign("formPernapasan" + bodyId)
@@ -2372,8 +2372,8 @@
         });
 
         if (flag == 1) {
-            $("#formPernapasanSaveBtn" + bodyId).show()
-            $("#formPernapasanEditBtn" + bodyId).hide()
+            $("#formPernapasanSaveBtn" + bodyId).slideDown()
+            $("#formPernapasanEditBtn" + bodyId).slideUp()
             $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var maindataset = napas[index]
@@ -2397,7 +2397,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES041' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(napas.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -2407,8 +2407,8 @@
                     }
                 }
             } ?>
-            $("#formPernapasanSaveBtn" + bodyId).hide()
-            $("#formPernapasanEditBtn" + bodyId).show()
+            $("#formPernapasanSaveBtn" + bodyId).slideUp()
+            $("#formPernapasanEditBtn" + bodyId).slideDown()
             $("#formPernapasan" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formPernapasan" + bodyId)
 
@@ -2524,8 +2524,8 @@
 
 
         $("#formFallRiskEditBtn" + bodyId).on("click", function() {
-            $("#formFallRiskSaveBtn" + bodyId).show()
-            $("#formFallRiskEditBtn" + bodyId).hide()
+            $("#formFallRiskSaveBtn" + bodyId).slideDown()
+            $("#formFallRiskEditBtn" + bodyId).slideUp()
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
@@ -2562,8 +2562,8 @@
                 success: function(data) {
                     $('#formFallRisk' + bodyId + ' select').prop("disabled", true)
                     $('#formFallRisk' + bodyId + ' input').prop("disabled", true)
-                    $("#formFallRiskSaveBtn" + bodyId).hide()
-                    $("#formFallRiskEditBtn" + bodyId).show()
+                    $("#formFallRiskSaveBtn" + bodyId).slideUp()
+                    $("#formFallRiskEditBtn" + bodyId).slideDown()
                     clicked_submit_btn.button('reset');
                     checkSign("formFallRisk" + bodyId)
 
@@ -2579,8 +2579,8 @@
             });
         }));
         if (flag == 1) {
-            $("#formFallRiskSaveBtn" + bodyId).show()
-            $("#formFallRiskEditBtn" + bodyId).hide()
+            $("#formFallRiskSaveBtn" + bodyId).slideDown()
+            $("#formFallRiskEditBtn" + bodyId).slideUp()
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var maindataset = fallRisk[index]
@@ -2606,8 +2606,8 @@
                 }
             })
 
-            $("#formFallRiskSaveBtn" + bodyId).hide()
-            $("#formFallRiskEditBtn" + bodyId).show()
+            $("#formFallRiskSaveBtn" + bodyId).slideUp()
+            $("#formFallRiskEditBtn" + bodyId).slideDown()
             $("#formFallRisk" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formFallRisk" + bodyId)
         }
@@ -2864,12 +2864,12 @@
             if ($value1['p_type'] == 'ASES039' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -2877,8 +2877,8 @@
         } ?>
 
         $("#formSirkulasiEditBtn" + bodyId).on("click", function() {
-            $("#formSirkulasiSaveBtn" + bodyId).show()
-            $("#formSirkulasiEditBtn" + bodyId).hide()
+            $("#formSirkulasiSaveBtn" + bodyId).slideDown()
+            $("#formSirkulasiEditBtn" + bodyId).slideUp()
             $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
@@ -2919,8 +2919,8 @@
                     // $('#formSirkulasi' + bodyId + ' select').prop("disabled", true)
                     // $('#formSirkulasi' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formSirkulasiSaveBtn" + bodyId).hide()
-                    $("#formSirkulasiEditBtn" + bodyId).show()
+                    $("#formSirkulasiSaveBtn" + bodyId).slideUp()
+                    $("#formSirkulasiEditBtn" + bodyId).slideDown()
                     $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
                     checkSign("formSirkulasi" + bodyId)
 
@@ -2938,8 +2938,8 @@
 
 
         if (flag == 1) {
-            $("#formSirkulasiSaveBtn" + bodyId).show()
-            $("#formSirkulasiEditBtn" + bodyId).hide()
+            $("#formSirkulasiSaveBtn" + bodyId).slideDown()
+            $("#formSirkulasiEditBtn" + bodyId).slideUp()
             $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
@@ -2948,8 +2948,8 @@
             $.each(maindataset, function(key, value) {
                 $("#sirkulasi" + key + bodyId).val(value)
             })
-            $("#formSirkulasiSaveBtn" + bodyId).hide()
-            $("#formSirkulasiEditBtn" + bodyId).show()
+            $("#formSirkulasiSaveBtn" + bodyId).slideUp()
+            $("#formSirkulasiEditBtn" + bodyId).slideDown()
             $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
             var sirkulasi = sirkulasiAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -2967,7 +2967,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES039' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(sirkulasi.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -3140,9 +3140,9 @@
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -3177,8 +3177,8 @@
                 success: function(data) {
                     $("#formNeurosensoris" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formNeurosensorisSaveBtn" + bodyId).hide()
-                    $("#formNeurosensorisEditBtn" + bodyId).show()
+                    $("#formNeurosensorisSaveBtn" + bodyId).slideUp()
+                    $("#formNeurosensorisEditBtn" + bodyId).slideDown()
                     checkSign("formNeurosensoris" + bodyId)
 
                 },
@@ -3193,8 +3193,8 @@
             });
         }));
         $("#formNeurosensorisEditBtn" + bodyId).on("click", function() {
-            $("#formNeurosensorisSaveBtn" + bodyId).show()
-            $("#formNeurosensorisEditBtn" + bodyId).hide()
+            $("#formNeurosensorisSaveBtn" + bodyId).slideDown()
+            $("#formNeurosensorisEditBtn" + bodyId).slideUp()
             $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
@@ -3205,8 +3205,8 @@
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
         if (flag == 1) {
-            $("#formNeurosensorisSaveBtn" + bodyId).show()
-            $("#formNeurosensorisEditBtn" + bodyId).hide()
+            $("#formNeurosensorisSaveBtn" + bodyId).slideDown()
+            $("#formNeurosensorisEditBtn" + bodyId).slideUp()
             $("#formNeurosensoris" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var maindataset = neuroAll[index]
@@ -3215,8 +3215,8 @@
                 $("#neurosensoris" + key + bodyId).val(value)
             })
 
-            $("#formNeurosensorisSaveBtn" + bodyId).hide()
-            $("#formNeurosensorisEditBtn" + bodyId).show()
+            $("#formNeurosensorisSaveBtn" + bodyId).slideUp()
+            $("#formNeurosensorisEditBtn" + bodyId).slideDown()
 
             var neuro = neuroAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -3234,7 +3234,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES038' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(neuro.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -3416,12 +3416,12 @@
             if ($value1['p_type'] == 'ASES045' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -3457,8 +3457,8 @@
                 success: function(data) {
                     $('#formAnak' + bodyId).find("input,select,textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formAnakSaveBtn" + bodyId).hide()
-                    $("formAnakEditBtn" + bodyId).show()
+                    $("#formAnakSaveBtn" + bodyId).slideUp()
+                    $("formAnakEditBtn" + bodyId).slideDown()
                     checkSign("formAnak" + bodyId)
 
                 },
@@ -3477,13 +3477,13 @@
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
         $("#formAnakEditBtn" + bodyId).on("click", function() {
-            $("#formAnakSaveBtn" + bodyId).show()
-            $("#formAnakEditBtn" + bodyId).hide()
+            $("#formAnakSaveBtn" + bodyId).slideDown()
+            $("#formAnakEditBtn" + bodyId).slideUp()
             $("#formAnak" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         if (flag == 1) {
-            $("#formAnakSaveBtn" + bodyId).show()
-            $("formAnakEditBtn" + bodyId).hide()
+            $("#formAnakSaveBtn" + bodyId).slideDown()
+            $("formAnakEditBtn" + bodyId).slideUp()
         } else {
 
             var maindataset = anakAll[index]
@@ -3507,7 +3507,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES045' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(anak.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -3517,8 +3517,8 @@
                     }
                 }
             } ?>
-            $("#formAnakSaveBtn" + bodyId).hide()
-            $("formAnakEditBtn" + bodyId).show()
+            $("#formAnakSaveBtn" + bodyId).slideUp()
+            $("formAnakEditBtn" + bodyId).slideDown()
             $("#formAnak" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formAnak" + bodyId)
 
@@ -3697,12 +3697,12 @@
             if ($value1['p_type'] == 'ASES050' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -3738,8 +3738,8 @@
                 success: function(data) {
                     $('#formNeonatus' + bodyId).find("input,select,textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formNeonatusSaveBtn" + bodyId).hide()
-                    $("formNeonatusEditBtn" + bodyId).show()
+                    $("#formNeonatusSaveBtn" + bodyId).slideUp()
+                    $("formNeonatusEditBtn" + bodyId).slideDown()
                     checkSign("formNeonatus" + bodyId)
 
                 },
@@ -3758,13 +3758,13 @@
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
         $("#formNeonatusEditBtn" + bodyId).on("click", function() {
-            $("#formNeonatusSaveBtn" + bodyId).show()
-            $("#formNeonatusEditBtn" + bodyId).hide()
+            $("#formNeonatusSaveBtn" + bodyId).slideDown()
+            $("#formNeonatusEditBtn" + bodyId).slideUp()
             $("#formNeonatus" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         if (flag == 1) {
-            $("#formNeonatusSaveBtn" + bodyId).show()
-            $("formNeonatusEditBtn" + bodyId).hide()
+            $("#formNeonatusSaveBtn" + bodyId).slideDown()
+            $("formNeonatusEditBtn" + bodyId).slideUp()
         } else {
 
             var maindataset = neonatusAll[index]
@@ -3788,7 +3788,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES050' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(neonatus.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -3798,8 +3798,8 @@
                     }
                 }
             } ?>
-            $("#formNeonatusSaveBtn" + bodyId).hide()
-            $("formNeonatusEditBtn" + bodyId).show()
+            $("#formNeonatusSaveBtn" + bodyId).slideUp()
+            $("formNeonatusEditBtn" + bodyId).slideDown()
             $("#formNeonatus" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formNeonatus" + bodyId)
 
@@ -3971,12 +3971,12 @@
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES016' && $value1['value_score'] == '99') {
         ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -4012,8 +4012,8 @@
                 success: function(data) {
                     $('#formADL' + bodyId + ' select').prop("disabled", true)
                     $('#formADL' + bodyId + ' input').prop("disabled", true)
-                    $("#formADLSave" + bodyId).hide()
-                    $("#formADLEdit" + bodyId).show()
+                    $("#formADLSave" + bodyId).slideUp()
+                    $("#formADLEdit" + bodyId).slideDown()
                     clicked_submit_btn.button('reset');
                     checkSign("formADL" + bodyId)
 
@@ -4029,8 +4029,8 @@
             });
         }));
         $("#formADLEdit" + bodyId).on("click", function() {
-            $("#formADLSave" + bodyId).show()
-            $("#formADLEdit" + bodyId).hide()
+            $("#formADLSave" + bodyId).slideDown()
+            $("#formADLEdit" + bodyId).slideUp()
             $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
         $("#formADL" + bodyId).find("select").on("change", function(e) {
@@ -4053,8 +4053,8 @@
         })
 
         if (flag == 1) {
-            $("#formADLSave" + bodyId).show()
-            $("#formADLEdit" + bodyId).hide()
+            $("#formADLSave" + bodyId).slideDown()
+            $("#formADLEdit" + bodyId).slideUp()
             $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
 
@@ -4080,7 +4080,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES016' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?>' + bodyId).val(adl.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -4103,8 +4103,8 @@
 
             $("#total_dependency" + bodyId).html("")
             $("#total_dependency" + bodyId).append($('<option value="' + totalScoreAdl + '">' + scoreAdlName + '</option>'))
-            $("#formADLSave" + bodyId).show()
-            $("#formADLEdit" + bodyId).hide()
+            $("#formADLSave" + bodyId).slideDown()
+            $("#formADLEdit" + bodyId).slideUp()
             $("#formADL" + bodyId).find("input, textarea, select").prop("disabled", true)
             checkSign("formADL" + bodyId)
         }
@@ -4272,9 +4272,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -4312,8 +4312,8 @@
                     $('#formDekubitus' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
 
-                    $("#formDekubitusSaveBtn" + bodyId).hide()
-                    $("#formDekubitusEditBtn" + bodyId).show()
+                    $("#formDekubitusSaveBtn" + bodyId).slideUp()
+                    $("#formDekubitusEditBtn" + bodyId).slideDown()
                     $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", true)
                     checkSign("formDekubitus" + bodyId)
 
@@ -4331,14 +4331,14 @@
 
 
         $("#formDekubitusEditBtn" + bodyId).on("click", function() {
-            $("#formDekubitusSaveBtn" + bodyId).show()
-            $("#formDekubitusEditBtn" + bodyId).hide()
+            $("#formDekubitusSaveBtn" + bodyId).slideDown()
+            $("#formDekubitusEditBtn" + bodyId).slideUp()
             $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
         if (flag == 1) {
-            $("#formDekubitusSaveBtn" + bodyId).show()
-            $("#formDekubitusEditBtn" + bodyId).hide()
+            $("#formDekubitusSaveBtn" + bodyId).slideDown()
+            $("#formDekubitusEditBtn" + bodyId).slideUp()
         } else {
 
             var maindataset = dekubitusAll[index]
@@ -4363,7 +4363,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES047' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -4374,8 +4374,8 @@
                 }
             } ?>
             $("#formDekubitus" + bodyId).find("input, select, textarea").prop("disabled", true)
-            $("#formDekubitusSaveBtn" + bodyId).hide()
-            $("#formDekubitusEditBtn" + bodyId).show()
+            $("#formDekubitusSaveBtn" + bodyId).slideUp()
+            $("#formDekubitusEditBtn" + bodyId).slideDown()
             checkSign("formDekubitus" + bodyId)
         }
         index++
@@ -4532,17 +4532,17 @@
         )
         $("#formPencernaanEditBtn").on("click", function() {
             $("#formPencernaan" + body).find("input, textarea, select").prop("disabled", false)
-            $("#formPencernaanSaveBtn" + bodyId).show()
-            $("#formPencernaanEditBtn" + bodyId).hide()
+            $("#formPencernaanSaveBtn" + bodyId).slideDown()
+            $("#formPencernaanEditBtn" + bodyId).slideUp()
         })
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'ASES040' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -4576,8 +4576,8 @@
                 },
                 success: function(data) {
                     $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
-                    $("#formPencernaanSaveBtn" + bodyId).hide()
-                    $("#formPencernaanEditBtn" + bodyId).show()
+                    $("#formPencernaanSaveBtn" + bodyId).slideUp()
+                    $("#formPencernaanEditBtn" + bodyId).slideDown()
                     clicked_submit_btn.button('reset');
                     checkSign("formPencernaan" + bodyId)
 
@@ -4593,16 +4593,16 @@
             });
         }));
         $("#formPencernaanEditBtn" + bodyId).on("click", function() {
-            $("#formPencernaanSaveBtn" + bodyId).show()
-            $("#formPencernaanEditBtn" + bodyId).hide()
+            $("#formPencernaanSaveBtn" + bodyId).slideDown()
+            $("#formPencernaanEditBtn" + bodyId).slideUp()
             $("#formPencernaan" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
 
         if (flag == 1) {
             $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", false)
-            $("#formPencernaanSaveBtn" + bodyId).show()
-            $("#formPencernaanEditBtn" + bodyId).hide()
+            $("#formPencernaanSaveBtn" + bodyId).slideDown()
+            $("#formPencernaanEditBtn" + bodyId).slideUp()
         } else {
 
             var maindataset = digestAll[index]
@@ -4627,7 +4627,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES040' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -4638,8 +4638,8 @@
                 }
             } ?>
             $("#formPencernaan" + bodyId).find("input, textarea, select").prop("disabled", true)
-            $("#formPencernaanSaveBtn" + bodyId).hide()
-            $("#formPencernaanEditBtn" + bodyId).show()
+            $("#formPencernaanSaveBtn" + bodyId).slideUp()
+            $("#formPencernaanEditBtn" + bodyId).slideDown()
             checkSign("formPencernaan" + bodyId)
         }
         index++
@@ -4810,12 +4810,12 @@
             <?php foreach ($aValue as $key1 => $value1) {
                 if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
             ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                         if ($(this).is(":checked")) {
-                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                         } else {
-                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                         }
                     }); <?php
                     }
@@ -4835,8 +4835,8 @@
 
             $("#formPerkemihanEditBtn" + bodyId).on("click", function() {
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
-                $("#formPerkemihanSaveBtn" + bodyId).show()
-                $("#formPerkemihanEditBtn" + bodyId).hide()
+                $("#formPerkemihanSaveBtn" + bodyId).slideDown()
+                $("#formPerkemihanEditBtn" + bodyId).slideUp()
             })
 
             $("#formPerkemihan" + bodyId).on('submit', (function(e) {
@@ -4855,8 +4855,8 @@
                     },
                     success: function(data) {
                         $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
-                        $("#formPerkemihanSaveBtn" + bodyId).hide()
-                        $("#formPerkemihanEditBtn" + bodyId).show()
+                        $("#formPerkemihanSaveBtn" + bodyId).slideUp()
+                        $("#formPerkemihanEditBtn" + bodyId).slideDown()
                         clicked_submit_btn.button('reset');
                         checkSign("formPerkemihan" + bodyId)
 
@@ -4875,8 +4875,8 @@
 
             if (flag == 1) {
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
-                $("#formPerkemihanSaveBtn" + bodyId).show()
-                $("#formPerkemihanEditBtn" + bodyId).hide()
+                $("#formPerkemihanSaveBtn" + bodyId).slideDown()
+                $("#formPerkemihanEditBtn" + bodyId).slideUp()
 
             } else {
                 var maindataset = perkemihanAll[index]
@@ -4900,7 +4900,7 @@
                                 <?php foreach ($aValue as $key1 => $value1) {
                                     if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
                                 ?>
-                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value1['value_info']); ?>)
                                 <?php
                                     }
@@ -4911,8 +4911,8 @@
                     }
                 } ?>
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
-                $("#formPerkemihanSaveBtn" + bodyId).hide()
-                $("#formPerkemihanEditBtn" + bodyId).show()
+                $("#formPerkemihanSaveBtn" + bodyId).slideUp()
+                $("#formPerkemihanEditBtn" + bodyId).slideDown()
                 checkSign("formPerkemihan" + bodyId)
             }
             index++
@@ -5084,8 +5084,8 @@
 
 
         $("#formPsikologiEditBtn" + bodyId).on("click", function() {
-            $("#formPsikologiSaveBtn" + bodyId).show()
-            $("#formPsikologiEditBtn" + bodyId).hide()
+            $("#formPsikologiSaveBtn" + bodyId).slideDown()
+            $("#formPsikologiEditBtn" + bodyId).slideUp()
             $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
@@ -5094,9 +5094,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -5130,8 +5130,8 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formPsikologiSaveBtn" + bodyId).hide()
-                    $("#formPsikologiEditBtn" + bodyId).show()
+                    $("#formPsikologiSaveBtn" + bodyId).slideUp()
+                    $("#formPsikologiEditBtn" + bodyId).slideDown()
                     $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", true)
 
                     clicked_submit_btn.button('reset');
@@ -5151,8 +5151,8 @@
 
 
         if (flag == 1) {
-            $("#formPsikologiSaveBtn" + bodyId).show()
-            $("#formPsikologiEditBtn" + bodyId).hide()
+            $("#formPsikologiSaveBtn" + bodyId).slideDown()
+            $("#formPsikologiEditBtn" + bodyId).slideUp()
             $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
 
@@ -5177,7 +5177,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES035' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(psikologi.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -5193,8 +5193,8 @@
                 }
             })
 
-            $("#formPsikologiSaveBtn" + bodyId).hide()
-            $("#formPsikologiEditBtn" + bodyId).show()
+            $("#formPsikologiSaveBtn" + bodyId).slideUp()
+            $("#formPsikologiEditBtn" + bodyId).slideDown()
             $("#formPsikologi" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formPsikologi" + bodyId)
 
@@ -5351,8 +5351,8 @@
         )
 
         $("#formSeksualEditBtn" + bodyId).on("click", function() {
-            $("#formSeksualSaveBtn" + bodyId).show()
-            $("#formSeksualEditBtn" + bodyId).hide()
+            $("#formSeksualSaveBtn" + bodyId).slideDown()
+            $("#formSeksualEditBtn" + bodyId).slideUp()
             $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
@@ -5368,9 +5368,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -5404,8 +5404,8 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formSeksualSaveBtn" + bodyId).hide()
-                    $("#formSeksualEditBtn" + bodyId).show()
+                    $("#formSeksualSaveBtn" + bodyId).slideUp()
+                    $("#formSeksualEditBtn" + bodyId).slideDown()
                     $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                     checkSign("formSeksual" + bodyId)
@@ -5424,8 +5424,8 @@
 
 
         if (flag == 1) {
-            $("#formSeksualSaveBtn" + bodyId).show()
-            $("#formSeksualEditBtn" + bodyId).hide()
+            $("#formSeksualSaveBtn" + bodyId).slideDown()
+            $("#formSeksualEditBtn" + bodyId).slideUp()
             $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var maindataset = seksualAll[index]
@@ -5449,7 +5449,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES043' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -5459,8 +5459,8 @@
                     }
                 }
             } ?>
-            $("#formSeksualSaveBtn" + bodyId).hide()
-            $("#formSeksualEditBtn" + bodyId).show()
+            $("#formSeksualSaveBtn" + bodyId).slideUp()
+            $("#formSeksualEditBtn" + bodyId).slideDown()
             $("#formSeksual" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formSeksual" + bodyId)
 
@@ -5620,17 +5620,17 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
             }
         } ?>
         $("#formSocialEditBtn" + bodyId).on("click", function() {
-            $("#formSocialSaveBtn" + bodyId).show()
-            $("#formSocialEditBtn" + bodyId).hide()
+            $("#formSocialSaveBtn" + bodyId).slideDown()
+            $("#formSocialEditBtn" + bodyId).slideUp()
             $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
         $("#formSocial" + bodyId).append('<input name="org_unit_code" id="socialorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
@@ -5659,8 +5659,8 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formSocialSaveBtn" + bodyId).hide()
-                    $("#formSocialEditBtn" + bodyId).show()
+                    $("#formSocialSaveBtn" + bodyId).slideUp()
+                    $("#formSocialEditBtn" + bodyId).slideDown()
                     $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
                     clicked_submit_btn.button('reset');
                     checkSign("formSocial" + bodyId)
@@ -5679,8 +5679,8 @@
 
 
         if (flag == 1) {
-            $("#formSocialSaveBtn" + bodyId).show()
-            $("#formSocialEditBtn" + bodyId).hide()
+            $("#formSocialSaveBtn" + bodyId).slideDown()
+            $("#formSocialEditBtn" + bodyId).slideUp()
             $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
@@ -5705,7 +5705,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES037' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -5715,8 +5715,8 @@
                     }
                 }
             } ?>
-            $("#formSocialSaveBtn" + bodyId).hide()
-            $("#formSocialEditBtn" + bodyId).show()
+            $("#formSocialSaveBtn" + bodyId).slideUp()
+            $("#formSocialEditBtn" + bodyId).slideDown()
             $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
             checkSign("formSocial" + bodyId)
         }
@@ -5878,9 +5878,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -5888,8 +5888,8 @@
         } ?>
 
         $("#formHearing" + bodyId).on("click", function() {
-            $("#formHearingSaveBtn" + bodyId).show()
-            $("#formHearingEditBtn" + bodyId).hide()
+            $("#formHearingSaveBtn" + bodyId).slideDown()
+            $("#formHearingEditBtn" + bodyId).slideUp()
             $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
@@ -5922,8 +5922,8 @@
                     $('#formHearing' + bodyId + ' select').prop("disabled", true)
                     $('#formHearing' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formHearingSaveBtn" + bodyId).hide()
-                    $("#formHearingEditBtn" + bodyId).show()
+                    $("#formHearingSaveBtn" + bodyId).slideUp()
+                    $("#formHearingEditBtn" + bodyId).slideDown()
                     $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                     checkSign("formHearing" + bodyId)
@@ -5942,8 +5942,8 @@
 
 
         if (flag == 1) {
-            $("#formHearingSaveBtn" + bodyId).show()
-            $("#formHearingEditBtn" + bodyId).hide()
+            $("#formHearingSaveBtn" + bodyId).slideDown()
+            $("#formHearingEditBtn" + bodyId).slideUp()
             $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
             var maindataset = hearingAll[index]
@@ -5951,8 +5951,8 @@
             $.each(maindataset, function(key, value) {
                 $("#hearing" + key + bodyId).val(value)
             })
-            $("#formHearingSaveBtn" + bodyId).hide()
-            $("#formHearingEditBtn" + bodyId).show()
+            $("#formHearingSaveBtn" + bodyId).slideUp()
+            $("#formHearingEditBtn" + bodyId).slideDown()
             $("#formHearing" + bodyId).find("input, textarea, select").prop("disabled", true)
 
             var digest = hearingAll[index];
@@ -5971,7 +5971,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES044' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -6138,9 +6138,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -6148,8 +6148,8 @@
         } ?>
 
         $("#formSleepingEditBtn" + bodyId).on("click", function() {
-            $("#formSleepingSaveBtn" + bodyId).show()
-            $("#formSleepingEditBtn" + bodyId).hide()
+            $("#formSleepingSaveBtn" + bodyId).slideDown()
+            $("#formSleepingEditBtn" + bodyId).slideUp()
             $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
@@ -6182,8 +6182,8 @@
                     $('#formSleeping' + bodyId + ' select').prop("disabled", true)
                     $('#formSleeping' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formSleepingSaveBtn" + bodyId).hide()
-                    $("#formSleepingEditBtn" + bodyId).show()
+                    $("#formSleepingSaveBtn" + bodyId).slideUp()
+                    $("#formSleepingEditBtn" + bodyId).slideDown()
                     $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                     checkSign("formSleeping" + bodyId)
@@ -6202,8 +6202,8 @@
 
 
         if (flag == 1) {
-            $("#formSleepingSaveBtn" + bodyId).show()
-            $("#formSleepingEditBtn" + bodyId).hide()
+            $("#formSleepingSaveBtn" + bodyId).slideDown()
+            $("#formSleepingEditBtn" + bodyId).slideUp()
             $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", false)
 
         } else {
@@ -6212,8 +6212,8 @@
             $.each(maindataset, function(key, value) {
                 $("#sleeping" + key + bodyId).val(value)
             })
-            $("#formSleepingSaveBtn" + bodyId).hide()
-            $("#formSleepingEditBtn" + bodyId).show()
+            $("#formSleepingSaveBtn" + bodyId).slideUp()
+            $("#formSleepingEditBtn" + bodyId).slideDown()
             $("#formSleeping" + bodyId).find("input, textarea, select").prop("disabled", true)
 
             var sleeping = sleepingAll[index];
@@ -6232,7 +6232,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES046' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(digest.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -6558,9 +6558,9 @@
         // GIZI011	30.00	200.00	Obesitas II
         $("#gizimalnutrition" + bodyId).on("change", function() {
             if ($("#gizimalnutrition" + bodyId).is(":checked")) {
-                $("#rowmalnutritiondetail" + bodyId).show()
+                $("#rowmalnutritiondetail" + bodyId).slideDown()
             } else {
-                $("#rowmalnutritiondetail" + bodyId).hide()
+                $("#rowmalnutritiondetail" + bodyId).slideUp()
             }
         })
 
@@ -6596,8 +6596,8 @@
         })
 
         $("#formGiziEditBtn" + bodyId).on("click", function() {
-            $("#formGiziSaveBtn" + bodyId).show()
-            $("#formGiziEditBtn" + bodyId).hide()
+            $("#formGiziSaveBtn" + bodyId).slideDown()
+            $("#formGiziEditBtn" + bodyId).slideUp()
             $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
@@ -6639,9 +6639,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -6684,8 +6684,8 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formGiziSaveBtn" + bodyId).hide()
-                    $("#formGiziEditBtn" + bodyId).show()
+                    $("#formGiziSaveBtn" + bodyId).slideUp()
+                    $("#formGiziEditBtn" + bodyId).slideDown()
 
                     $('#formGizi' + bodyId + ' select').prop("disabled", true)
                     $('#formGizi' + bodyId + ' input').prop("disabled", true)
@@ -6706,8 +6706,8 @@
 
 
         if (flag == 1) {
-            $("#formGiziSaveBtn" + bodyId).show()
-            $("#formGiziEditBtn" + bodyId).hide()
+            $("#formGiziSaveBtn" + bodyId).slideDown()
+            $("#formGiziEditBtn" + bodyId).slideUp()
             $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", false)
         } else {
             var maindataset = giziAll[index]
@@ -6725,7 +6725,7 @@
                 $("#gizioperation_elder" + bodyId).prop("checked", true)
             if (gizi.malnutrition == 1) {
                 $("#gizimalnutrition" + bodyId).prop("checked", true)
-                $("#rowmalnutritiondetail" + bodyId).show()
+                $("#rowmalnutritiondetail" + bodyId).slideDown()
             }
             $("#giziage_cat" + bodyId).val(gizi.age_cat)
             $("#giziweight" + bodyId).val(gizi.weight)
@@ -6777,8 +6777,8 @@
                 //     $("#gizi" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
                 // }
             })
-            $("#formGiziSaveBtn" + bodyId).hide()
-            $("#formGiziEditBtn" + bodyId).show()
+            $("#formGiziSaveBtn" + bodyId).slideUp()
+            $("#formGiziEditBtn" + bodyId).slideDown()
             $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", true)
             checkSign("formGizi" + bodyId)
         }
@@ -7045,12 +7045,12 @@
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == 'GEN0013 ' && $value1['value_score'] == '99') {
         ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -7093,8 +7093,8 @@
                     $('#formEducationForm' + bodyId + ' select').prop("disabled", true)
                     $('#formEducationForm' + bodyId + ' input').prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formEducationFormSaveBtn" + bodyId).hide()
-                    $("#formEducationFormEditBtn" + bodyId).show()
+                    $("#formEducationFormSaveBtn" + bodyId).slideUp()
+                    $("#formEducationFormEditBtn" + bodyId).slideDown()
                     $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", true)
 
                     checkSign("formEducationForm" + bodyId)
@@ -7114,15 +7114,15 @@
 
 
         $("#formEducationFormEditBtn" + bodyId).on("click", function() {
-            $("#formEducationFormSaveBtn" + bodyId).show()
-            $("#formEducationFormEditBtn" + bodyId).hide()
+            $("#formEducationFormSaveBtn" + bodyId).slideDown()
+            $("#formEducationFormEditBtn" + bodyId).slideUp()
             $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
 
 
         if (flag == 1) {
-            $("#formEducationFormSaveBtn" + bodyId).show()
-            $("#formEducationFormEditBtn" + bodyId).hide()
+            $("#formEducationFormSaveBtn" + bodyId).slideDown()
+            $("#formEducationFormEditBtn" + bodyId).slideUp()
             $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", false)
 
             tinymce.init({
@@ -7250,7 +7250,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'GEN0013 ' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(EducationForm.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -7260,8 +7260,8 @@
                     }
                 }
             } ?>
-            $("#formEducationFormSaveBtn" + bodyId).hide()
-            $("#formEducationFormEditBtn" + bodyId).show()
+            $("#formEducationFormSaveBtn" + bodyId).slideUp()
+            $("#formEducationFormEditBtn" + bodyId).slideDown()
             $("#formEducationForm" + bodyId).find("input, select, textarea").prop("disabled", true)
 
             checkSign("formEducationForm" + bodyId)
@@ -7572,19 +7572,19 @@
 
 
         $("#formEducationIntegrationEditBtn" + bodyId).on("click", function() {
-            $("#formEducationIntegrationSaveBtn" + bodyId).show()
-            $("#formEducationIntegrationEditBtn" + bodyId).hide()
+            $("#formEducationIntegrationSaveBtn" + bodyId).slideDown()
+            $("#formEducationIntegrationEditBtn" + bodyId).slideUp()
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         <?php foreach ($aValue as $key1 => $value1) {
             if ($value1['p_type'] == $ptype && $value1['value_score'] == '99') {
         ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -7638,8 +7638,8 @@
 
 
         if (flag == 1) {
-            $("#formEducationIntegrationSaveBtn" + bodyId).show()
-            $("#formEducationIntegrationEditBtn" + bodyId).hide()
+            $("#formEducationIntegrationSaveBtn" + bodyId).slideDown()
+            $("#formEducationIntegrationEditBtn" + bodyId).slideUp()
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
 
         } else {
@@ -7696,8 +7696,8 @@
                     addRowEducationIntegrationProvision(value)
                 }
             })
-            $("#formEducationIntegrationSaveBtn" + bodyId).hide()
-            $("#formEducationIntegrationEditBtn" + bodyId).show()
+            $("#formEducationIntegrationSaveBtn" + bodyId).slideUp()
+            $("#formEducationIntegrationEditBtn" + bodyId).slideDown()
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", true)
 
             checkSign("formEducationIntegration" + bodyId)
@@ -8085,8 +8085,8 @@
         })
 
         $("#formGcsEditBtn" + bodyId).on("click", function() {
-            $("#formGcsSaveBtn" + bodyId).show()
-            $("#formGcsEditBtn" + bodyId).hide()
+            $("#formGcsSaveBtn" + bodyId).slideDown()
+            $("#formGcsEditBtn" + bodyId).slideUp()
             $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
 
@@ -8095,9 +8095,9 @@
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '').slideUp()
                     }
                 });
         <?php
@@ -8131,8 +8131,8 @@
                     clicked_submit_btn.button('loading');
                 },
                 success: function(data) {
-                    $("#formGcsSaveBtn" + bodyId).hide()
-                    $("#formGcsEditBtn" + bodyId).show()
+                    $("#formGcsSaveBtn" + bodyId).slideUp()
+                    $("#formGcsEditBtn" + bodyId).slideDown()
                     $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
 
                     clicked_submit_btn.button('reset');
@@ -8151,8 +8151,8 @@
 
 
         if (flag == 1) {
-            $("#formGcsSaveBtn" + bodyId).show()
-            $("#formGcsEditBtn" + bodyId).hide()
+            $("#formGcsSaveBtn" + bodyId).slideDown()
+            $("#formGcsEditBtn" + bodyId).slideUp()
             $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
 
@@ -8177,7 +8177,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'GEN0011' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(gcs.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -8196,8 +8196,8 @@
             })
 
 
-            $("#formGcsSaveBtn" + bodyId).hide()
-            $("#formGcsEditBtn" + bodyId).show()
+            $("#formGcsSaveBtn" + bodyId).slideUp()
+            $("#formGcsEditBtn" + bodyId).slideDown()
             $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formGcs" + bodyId)
 
@@ -8418,13 +8418,13 @@
             if ($value1['p_type'] == 'ASES036' && $value1['value_score'] == '99') {
         ?>
                 $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
 
                     if ($(this).is(":checked")) {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                     } else {
                         console.log($(this).val())
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
                     }
                 });
         <?php
@@ -8455,8 +8455,8 @@
                 success: function(data) {
                     $('#formIntegumen' + bodyId).find("input,select,textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
-                    $("#formIntegumenSaveBtn" + bodyId).hide()
-                    $("formIntegumenEditBtn" + bodyId).show()
+                    $("#formIntegumenSaveBtn" + bodyId).slideUp()
+                    $("formIntegumenEditBtn" + bodyId).slideDown()
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
@@ -8473,13 +8473,13 @@
             !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
         });
         $("#formIntegumenEditBtn" + bodyId).on("click", function() {
-            $("#formIntegumenSaveBtn" + bodyId).show()
-            $("#formIntegumenEditBtn" + bodyId).hide()
+            $("#formIntegumenSaveBtn" + bodyId).slideDown()
+            $("#formIntegumenEditBtn" + bodyId).slideUp()
             $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", false)
         })
         if (flag == 1) {
-            $("#formIntegumenSaveBtn" + bodyId).show()
-            $("formIntegumenEditBtn" + bodyId).hide()
+            $("#formIntegumenSaveBtn" + bodyId).slideDown()
+            $("formIntegumenEditBtn" + bodyId).slideUp()
         } else {
             var integumen = integumenAll[index];
             <?php foreach ($aParameter as $key => $value) {
@@ -8497,7 +8497,7 @@
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES036' && $value1['value_score'] == '99') {
                             ?>
-                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
+                                    $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
                                     $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(integumen.<?= strtolower($value1['value_info']); ?>)
                             <?php
                                 }
@@ -8507,8 +8507,8 @@
                     }
                 }
             } ?>
-            $("#formIntegumenSaveBtn" + bodyId).hide()
-            $("formIntegumenEditBtn" + bodyId).show()
+            $("#formIntegumenSaveBtn" + bodyId).slideUp()
+            $("formIntegumenEditBtn" + bodyId).slideDown()
             $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
         index++

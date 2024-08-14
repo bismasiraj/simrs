@@ -44,7 +44,7 @@
         <?php
         } ?>
 
-        $("#atransferisinternal_group").prop("readonly", false)
+
         $("#atransferisinternal").val(1).trigger("change")
 
 
@@ -87,28 +87,13 @@
         } ?>
     }
 
-    const editDataTindakLanjut = async (key) => {
-        $("#formaddatransfer").find("input, textarea").val(null)
-        $("#atransferisinternal_group").prop("readonly", true)
+    const editDataTindakLanjut = (key) => {
         var transferselect = transfer[key];
         $.each(transferselect, function(keyt, valuet) {
-            $("#atransfer" + keyt).val(valuet).trigger("change")
+            $("#atransfer" + keyt).val(valuet)
         })
         $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
         $("#contentTindakLanjut").slideDown()
-        await checkSignSignature("formaddatransfer", "atransferbody_id", "formsaveatransferbtnid")
-
-        if ($("#atransfervalid_user").val() != '' && $("#atransfervalid_user").val() != null) {
-            $("#formsaveatransferbtnid").slideUp()
-            $("#formeditatransferid").slideUp()
-            $("#formsignatransferid").slideUp()
-            $("#formaddatransfer").find("input, select, textarea").prop("disabled", true)
-        } else {
-            $("#formsaveatransferbtnid").slideUp()
-            $("#formeditatransferid").slideDown()
-            $("#formsignatransferid").slideDown()
-            $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
-        }
     }
 
     const openTindakLanjutModal = async () => {
@@ -116,75 +101,50 @@
 
         $("#formopenmodaltransferid").html('<i class="spinner-border spinner-border-sm"></i>')
 
-        $("#atransferrujukaninternalgroup").hide()
-        $("#atransferrujukaninternalgroup").find("input, select, textarea").val(null)
-        $("#atransferrujukaneksternalgroups").hide()
-        $("#atransferrujukaneksternalgroups").find("input, select, textarea").val(null)
-        $("#atransfersprigroup").hide()
-        $("#atransfersprigroup").find("input, select, textarea").val(null)
-        $("#atransferskdpgroup").hide()
-        $("#atransferskdpgroup").find("input, select, textarea").val(null)
-        $("#atransfertransferinternalgroup").hide()
-        $("#atransfertransferinternalgroup").find("input, select, textarea").val(null)
         if (isinternal == 10) {
-            $("#atransferservice_needs_group").slideUp()
+            // let bodyId1 = $("atransferdocument_id").val();
+            // let bodyId2 = $("atransferdocument_id2").val();
+            // bodyId1 = $("#atransferdocument_id").val()
+            // bodyId2 = $("#atransferdocument_id2").val()
+
             setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id2").val())
-        } else if (isinternal == 3) {
+        }
+        if (isinternal == 3) {
             let visitselected = {};
             $.each(visitTransfer, function(key, value) {
                 if (value.visit_id == $("#atransferdocument_id").val()) {
                     visitselected = value
                 }
             })
-            $("#atransferservice_needs_group").slideUp()
+            console.log(visitselected.visit_date)
             await setDataRujukInternal(visitselected)
-        } else if (isinternal == 2) {
-            $("#atransferservice_needs_group").slideUp()
+        }
+        if (isinternal == 2) {
             await setDataRujukEksternal()
-        } else if (isinternal == 4) {
-            $("#atransferservice_needs_group").slideUp()
+        }
+        if (isinternal == 4) {
             await setDataSkdp()
-        } else if (isinternal == 5) {
-            $("#atransferservice_needs_group").slideDown()
+        }
+        if (isinternal == 5) {
             await setDataSpri()
-        } else {
-            $("#atransferservice_needs_group").slideUp()
         }
         $("#formopenmodaltransferid").html('<i class="fa fa-plus"></i> <span>Detail</span>')
     }
 
     const disableTindakLanjut = () => {
         $("#formaddatransfer").find("input, select, textarea").prop("disabled", true)
-        $("#atransferisinternal_group").prop("readonly", true)
 
         $("#formtransfersubmit").slideUp()
         $("#formtransferedit").slideDown()
-        if ($("#atransfervalid_user").val() != '' && $("#atransfervalid_user").val() != null) {
-            $("#formsaveatransferbtnid").slideUp()
-            $("#formeditatransferid").slideUp()
-            $("#formsignatransferid").slideUp()
-            $("#formaddatransfer").find("input, select, textarea").prop("disabled", true)
-        } else {
-            $("#formsaveatransferbtnid").slideUp()
-            $("#formeditatransferid").slideDown()
-            $("#formsignatransferid").slideDown()
-            $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
-        }
     }
 
     const enableTindakLanjut = () => {
         $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
 
-
-        $("#formsaveatransferbtnid").slideDown()
-        $("#formeditatransferid").slideUp()
-        $("#formsignatransferid").slideUp()
-        $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
+        $("#formtransfersubmit").slideDown()
+        $("#formtransferedit").slideUp()
     }
 
-    const signTindakLanjut = () => {
-        addSignUser("formaddatransfer", "atransfer", "atransferbody_id", "formsaveatransferbtnid", 7, 1, 1, $("#atransferisinternal option:selected").text())
-    }
     //ini untuk save tindak lanjut
     $("#formaddatransfer").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -225,8 +185,10 @@
                 // } else {
                 //     successMsg(data.message);
                 // }
-                disableTindakLanjut()
-                clicked_submit_btn.html("save");
+                $("#formaddatransfer").find("input, textarea, select").prop("disabled", true)
+                $("#formtransfersubmit").toggle()
+                $("#formtransferedit").toggle()
+                clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             error: function(xhr) { // if error occured
                 errorMsg("Error occured.please try again");
@@ -236,26 +198,6 @@
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             }
         });
-        let isinternal = $("#atransferisinternal").val()
-        if (isinternal == 10) {
-            setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id2").val())
-            $("#atransfertransferinternalgroup").find(".btn-save").each(function() {
-                $(this).trigger("click")
-            })
-        }
-        if (isinternal == 3) {
-            postRujukInternal()
-        }
-        if (isinternal == 2) {
-            postRujukan()
-        }
-        if (isinternal == 4) {
-            saveSkdp()
-        }
-        if (isinternal == 5) {
-            saveSpri()
-        }
-
     }));
     //ini untuk edit tindak lanjut
     $("#formeditatransferid").on("click", function() {
@@ -522,7 +464,7 @@
         getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
 
 
-        $("#atransfertransferinternalgroup").slideDown()
+        $("#transferModal").modal("show")
 
         enableTindakLanjut()
     }
@@ -817,7 +759,7 @@
             $("#rujintclinicid").val(data.clinic_id)
             $("#rujintemployeeid").val(data.employee_id)
         }
-        $("#atransferrujukaninternalgroup").slideDown()
+        $("#rujukInternalModal").modal("show")
     }
 
     function postRujukInternal() {
@@ -937,7 +879,7 @@
             $("#skdptglkontrol").val(req.data.tglrenckontrol)
             $("#skdpnosurat").val(req.data.nosuratkontrol)
         }
-        $("#atransferskdpgroup").slideDown()
+        $("#skdpModal").modal("show")
     }
 
     const getSKDP = () => {
@@ -1182,7 +1124,7 @@
             $("#spritglkontrol").val(req?.data?.tglrenckontrol)
             $("#sprinosurat").val(req?.data?.nosuratkontrol)
         }
-        $("#atransfersprigroup").slideDown()
+        $("#spriModal").modal("show")
     }
 
     const getSPRI = () => {
@@ -1385,6 +1327,7 @@
     $(document).ready(function() {
         $('#ardirujukke').select2({
             placeholder: "Input PPK Rujukan",
+            dropdownParent: $("#rujukEksternalModal"),
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getPPKRujukan',
                 type: "post",
@@ -1408,7 +1351,7 @@
     const setDataRujukEksternal = async (data = null) => {
         let diag_id = null
         let diag_name = null
-        initializeDiagSelect2("ardiag_id1", diag_id, diag_name, null, "atransferrujukaneksternalgroups")
+        initializeDiagSelect2("ardiag_id1", diag_id, diag_name, null, "rujukEksternalModal")
         const req = await libAsyncAwaitPost({
                 visit: '<?= $visit['visit_id']; ?>'
             },
@@ -1416,7 +1359,7 @@
         );
 
         // coba = JSON.parse(req)
-        if (req.length > 0) {
+        if (req) {
             let datarujukan = JSON.parse(req)
             $("#arnorujukan").val(datarujukan?.nokunjungan)
 
@@ -1432,7 +1375,7 @@
         }
 
 
-        $("#atransferrujukaneksternalgroups").slideDown()
+        $("#rujukEksternalModal").modal("show")
     }
 
     function postRujukan() {

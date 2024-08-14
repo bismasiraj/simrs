@@ -12,6 +12,7 @@ use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\I18n\Time;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use LZCompressor\LZString;
 
@@ -42,6 +43,7 @@ abstract class BaseController extends Controller
      * @var array
      */
     protected $helpers = ['url', 'auth'];
+    protected $baseurlvclaim = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev';
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -717,5 +719,23 @@ abstract class BaseController extends Controller
         )->getRow());
 
         return $info;
+    }
+    public function get_bodyid()
+    {
+        $date = new DateTime();
+        $bodyId = $date->format('YmdHisv'); // Format: YYYYMMDDHHMMSSmmm
+        $bodyId .= $this->makeid(3); // Append a random string of length 3
+        return $bodyId;
+    }
+
+    public function makeid($length)
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $charactersLength = strlen($characters);
+        $result = '';
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $result;
     }
 }

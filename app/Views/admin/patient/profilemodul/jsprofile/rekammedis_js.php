@@ -106,8 +106,8 @@
 
         if (typeof pasienDiagnosa.description !== 'undefined') {
             disableRM()
-            $("#formaddrmbtn").hide()
-            $("#formeditrm").show()
+            $("#formaddrmbtn").slideUp()
+            $("#formeditrm").slideDown()
         }
 
 
@@ -258,31 +258,7 @@
         });
     }
 
-    $("#rujintclinicid").on("click", function() {
-        $("#rujintemployeeid").html("");
-        console.log($("#rujintclinicid").val())
-        var clinicSelected = $("#rujintclinicid").val();
-        // dokterdpjp.forEach((value, key) => {
-        //     if (value[0] == clinicSelected) {
-        //         $("#rujintemployeeid").append(new Option(value[2], value[1]));
-        //     }
-        // })
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rekammedis/getdokterrujukan',
-            type: "POST",
-            data: {
-                clinicSelected: clinicSelected,
-                rujintvisitdate: $("#rujintvisitdate").val(),
-            },
-            dataType: 'json',
-            success: function(data) {
-                $("#rujintemployeeid").html("")
-                data.forEach((element, key) => {
-                    $("#rujintemployeeid").append(new Option(element.fullname, element.employee_id));
-                })
-            }
-        })
-    });
+
 
     function postRujukInternal() {
         var visitJson = JSON.parse('<?= json_encode($visit); ?>');

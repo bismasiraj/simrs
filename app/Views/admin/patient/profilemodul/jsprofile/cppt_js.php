@@ -1,3 +1,9 @@
+<?php
+
+$permissions = user()->getPermissions();
+$group = user()->getRoles();
+
+?>
 <script type='text/javascript'>
     var mrJson;
     var tagihan = 0.0;
@@ -10,53 +16,11 @@
     var lastOrder = 0;
     var cpptjson = [];
     cpptjson = <?= json_encode($exam); ?>;
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-        // $("#examination_date").val(get_date())
-        // setDataCPPT()
-    })
+
+
     $("#cpptTab").on("click", function() {
         getAssessmentKeperawatan()
     })
-
-    // $("#cpptweight").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cpptheight").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cppttemperature").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cpptnadi").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cppttension_upper").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cppttension_below").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cpptsaturasi").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cpptnafas").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
-    // $("#cpptarm_diameter").keydown(function(e) {
-    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault()
-    // });
 
     function cpptInput(prop) {
         var value = $(prop).val()
@@ -195,22 +159,22 @@
         $("#formcpptedit").toggle()
     }
     $("#acpptvs_status_id2").on("change", function() {
-        $("#groupRiwayatCppt").show()
+        $("#groupRiwayatCppt").slideDown()
         $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
-        $("#groupVitalSignCppt").show()
+        $("#groupVitalSignCppt").slideDown()
         $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", false)
-        $("#groupDiagnosaPerawatCppt").show()
+        $("#groupDiagnosaPerawatCppt").slideDown()
         $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
         $("#cpptObyektifTitle").html("OBYEKTIF (O)")
         $("#cpptPlanningTitle").html("PLANNING (P)")
         // $("#acpptvs_status_id2").is("checked", function() {})
     })
     $("#acpptvs_status_id7").on("change", function() {
-        $("#groupRiwayatCppt").hide()
-        $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", true)
-        $("#groupVitalSignCppt").hide()
-        $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", true)
-        $("#groupDiagnosaPerawatCppt").hide()
+        // $("#groupRiwayatCppt").slideUp()
+        // $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", true)
+        // $("#groupVitalSignCppt").slideUp()
+        // $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", true)
+        // $("#groupDiagnosaPerawatCppt").slideUp()
         $("#cpptSubyektifTitle").html("SITUATION (S)")
         $("#cpptObyektifTitle").html("BACKGROUND (B)")
         $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
@@ -280,7 +244,7 @@
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>B</b>"))
-                    .append($("<td colspan='5'>").html(examselect.alo_anamnase))
+                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
@@ -335,7 +299,7 @@
 
 
 
-    function editCppt(key) {
+    const editCppt = async (key) => {
         var examselect = examForassessment[key];
 
         $.each(examselect, function(key, value) {
@@ -345,14 +309,24 @@
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true).trigger("change");
 
-        $("#acpptDocument").find("input, select, textarea").prop("disabled", false)
+
+
 
         $("#bodyFallRiskCppt").html("")
         $("#bodyGcsCppt").html("")
-        $("#formsaveacpptbtnid").show()
-        $("#formeditacpptid").hide()
+        $("#formsaveacpptbtnid").slideDown()
+        $("#formeditacpptid").slideUp()
+
+        await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
+
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")
+
+        disableacppt()
+
+        $("#cpptDivForm").slideDown()
+
+
     }
 
     function copyCppt(key) {
@@ -454,8 +428,8 @@
         $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
 
 
-        $("#formsaveacpptbtnid").show()
-        $("#formeditacpptid").hide()
+        $("#formsaveacpptbtnid").slideDown()
+        $("#formeditacpptid").slideUp()
     }
 
     $("#formcppt").on('submit', (function(e) {
@@ -514,17 +488,18 @@
 
 <script>
     function initialAddacppt() {
-
-
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
         $("#formaddacppt").find("input, textarea").val(null)
+        $("#bodyFallRiskCppt").html("")
+        $("#bodyGcsCppt").html("")
+        $("#bodyDiagPerawatCppt").html("")
 
         $("#acpptvs_status_id2").val("2")
         $("#acpptvs_status_id7").val("7")
-        $("#acpptvs_status_id2").prop("checked", true)
+        $("#acpptvs_status_id2").prop("checked", true).trigger("change")
         $("#acpptbody_id").val(bodyId)
         $("#acpptorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
         $("#acpptpasien_diagnosa_id").val(null)
@@ -532,12 +507,12 @@
         $("#acpptno_registration").val('<?= $visit['no_registration']; ?>')
         $("#acpptvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#acpptbill_id").val(null)
-        <?php if (!is_null($visit['class_room_id'])) { ?>
+        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
             $('#acpptclinic_id').val('<?= $visit['class_room_id']; ?>')
         <?php } else { ?>
             $('#acpptclinic_id').val('<?= $visit['clinic_id']; ?>')
         <?php } ?>
-        <?php if (!is_null($visit['class_room_id'])) { ?>
+        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
             $('#acpptemployee_id').val('<?= $visit['employee_inap']; ?>')
         <?php } else { ?>
             $('#acpptemployee_id').val('<?= $visit['employee_id']; ?>')
@@ -564,6 +539,7 @@
         $("#acpptkal_id").val('<?= $visit['kal_id']; ?>')
         $("#acpptpetugas_id").val('<?= user()->username; ?>')
         $("#acpptpetugas").val('<?= user()->getFullname(); ?>')
+        $("#acpptaccount_id").val(<?= isset($group[11]) ? 3 : 4 ?>)
 
         $('#keperawatanListLinkAll').html("")
 
@@ -595,18 +571,21 @@
 
         $("#acpptisvalid").val(0)
 
-        $("#acpptAddDocument").hide()
-        $("#acpptDocument").show()
+        $("#acpptAddDocument").slideUp()
+        $("#cpptDivForm").slideDown()
         enableacppt()
         fillRiwayatAcppt()
+    }
 
+    const hideCppt = () => {
+        $("#cpptDivForm").slideUp()
     }
 </script>
 <script>
     function enableacppt() {
-        $("#formsaveacpptbtnid").show()
-        $("#formeditacpptid").hide()
-        $("#formsignacpptid").hide()
+        $("#formsaveacpptbtnid").slideDown()
+        $("#formeditacpptid").slideUp()
+        $("#formsignacpptid").slideDown()
         $("#formaddacppt input").prop("disabled", false)
         $("#formaddacppt textarea").prop("disabled", false)
         $("#formaddacppt select").prop("disabled", false)
@@ -614,15 +593,25 @@
     }
 
     function disableacppt() {
-        $("#formsaveacpptbtnid").hide()
-        $("#formeditacpptid").show()
-        $("#formsignacpptid").show()
+
+        if ($("#acpptvalid_user").val() == '') {
+            $("#formsaveacpptbtnid").slideUp()
+            $("#formeditacpptid").slideDown()
+            $("#formsignacpptid").slideUp()
+        } else {
+            $("#formsaveacpptbtnid").slideUp()
+            $("#formeditacpptid").slideUp()
+            $("#formsignacpptid").slideUp()
+        }
+
         $("#formaddacppt input").prop("disabled", true)
         $("#formaddacppt textarea").prop("disabled", true)
         $("#formaddacppt select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
     }
     const signacppt = () => {
+        $("#bodyFallRiskCppt").find("button.btn-save:not([disabled])").trigger("click")
+        $("#bodyGcsCppt").find("button.btn-save:not([disabled])").trigger("click")
         addSignUser("formaddacppt", "acppt", "acpptbody_id", "formsaveacpptbtnid", 1, 1, 1, "CPPT")
     }
 
@@ -633,7 +622,7 @@
         })
     }
 
-    function fillDataAcppt(index) {
+    const fillDataAcppt = async (index) => {
         var ex = examForassessment[index]
         $.each(ex, function(key, value) {
             $("#acppt" + key).val(value)
@@ -642,26 +631,30 @@
         $("#acpptclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
         $("#acpptemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
 
-        getPainMonitoring(ex.body_id)
-        getTriage(ex.body_id, "bodyTriage")
-        getApgar(ex.body_id)
-        getStabilitas(ex.body_id)
-        getPernapasan(ex.body_id)
-        getSirkulasi(ex.body_id)
-        getNeurosensoris(ex.body_id)
-        getIntegumen(ex.body_id)
-        getADL(ex.body_id)
-        getPencernaan(ex.body_id)
-        getDekubitus(ex.body_id)
-        getPsikologi(ex.body_id)
-        getPerkemihan(ex.body_id)
-        getSeksual(ex.body_id)
-        getSocial(ex.body_id)
-        getGizi(ex.body_id)
-        getEducationForm(ex.body_id)
-        getEducationIntegration(ex.body_id)
-        getHearing(ex.body_id)
-        getSleeping(ex.body_id)
+        await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
+
+        getFallRisk(examselect.body_id, "bodyFallRiskCppt")
+        getGcs(examselect.body_id, "bodyGcsCppt")
+        // getPainMonitoring(ex.body_id)
+        // getTriage(ex.body_id, "bodyTriage")
+        // getApgar(ex.body_id)
+        // getStabilitas(ex.body_id)
+        // getPernapasan(ex.body_id)
+        // getSirkulasi(ex.body_id)
+        // getNeurosensoris(ex.body_id)
+        // getIntegumen(ex.body_id)
+        // getADL(ex.body_id)
+        // getPencernaan(ex.body_id)
+        // getDekubitus(ex.body_id)
+        // getPsikologi(ex.body_id)
+        // getPerkemihan(ex.body_id)
+        // getSeksual(ex.body_id)
+        // getSocial(ex.body_id)
+        // getGizi(ex.body_id)
+        // getEducationForm(ex.body_id)
+        // getEducationIntegration(ex.body_id)
+        // getHearing(ex.body_id)
+        // getSleeping(ex.body_id)
         disableARP()
     }
 </script>
@@ -695,7 +688,7 @@
 
                 $("#cpptBody").html("")
                 examForassessment.forEach((element, key) => {
-                    if (element.vs_status_id == '2' || element.vs_status_id == '7') {
+                    if (element.account_id == '3' || element.account_id == '4') {
                         examselect = examForassessment[key];
                         addRowCPPT(examselect, key)
                     }

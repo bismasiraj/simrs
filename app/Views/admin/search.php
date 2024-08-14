@@ -717,11 +717,11 @@ $currency_symbol = 'Rp. ';
 <script type="text/javascript">
     function showdate(value) {
         if (value == 'period') {
-            $('#fromdate').show();
-            $('#todate').show();
+            $('#fromdate').slideDown();
+            $('#todate').slideDown();
         } else {
-            $('#fromdate').hide();
-            $('#todate').hide();
+            $('#fromdate').slideUp();
+            $('#todate').slideUp();
         }
     }
 

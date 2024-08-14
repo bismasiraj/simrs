@@ -144,22 +144,18 @@ class lainnya extends \App\Controllers\BaseController
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
-            $db = db_connect();  ///bawa parameter_id untuk aValue
-            $aValue = $this->lowerKey($db->query("SELECT * FROM assessment_parameter_value WHERE p_type='GEN0018' AND parameter_id = 'SPP_P016'")->getResultArray());
-            $kopprintData = $this->kopprint();
-            if (isset($aValue)) {
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/fisioterapi.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "aValue" => $aValue,
-                    'kop' => $kopprintData[0],
+                    "val" => $select
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/fisioterapi.php", [
                     "visit" => $visit,
-                    'title' => $title,
-                    "aValue" => $aValue,
-                    'kop' => $kopprintData[0],
+                    'title' => $title
                 ]);
             }
         }
@@ -397,7 +393,6 @@ class lainnya extends \App\Controllers\BaseController
             }
         }
     }
-
     public function persalinan($visit, $vactination_id = null)
     {
         $title = "Laporan Persalinan";
@@ -422,8 +417,8 @@ class lainnya extends \App\Controllers\BaseController
             left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
            , pasien p 
             where 
-            pd.PASIEN_DIAGNOSA_ID = '$vactination_id'
-            and PD.VISIT_ID =  '{$visit['visit_id']}'
+            pd.PASIEN_DIAGNOSA_ID = '2024050311063402401BC'
+            and PD.VISIT_ID =  '202404241151300470C77'
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -490,8 +485,8 @@ class lainnya extends \App\Controllers\BaseController
                "
             )->getResultArray());
 
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
-            $selectinfo = $visit;
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectinfo = $this->query_template_info($db, '2024052400101208008C3', '202405262033530190C16');
 
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/persalinan.php", [
@@ -521,21 +516,31 @@ class lainnya extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            $select = $this->lowerKey($db->query("select * from assessment_anesthesia where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+            $val = isset($select[0]) ? $select[0] : [];
+            $option = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER_VALUE where P_TYPE ='OPRS006'")->getResultArray());
+            $examination = $this->lowerKey($db->query("select * from EXAMINATION_INFO where visit_id = '202406231817490203553' and pasien_diagnosa_id = '20240724122815041WTM'")->getFirstRow());
+            $lokalis = $this->lowerKey($db->query("select * from ASSESSMENT_LOKALIS where visit_id = '202406231817490203553' and pasien_diagnosa_id = '20240724122815041WTM'")->getFirstRow());
+
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/sedasi.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "val" => $select
+                    "val" => $val,
+                    "option" => $option,
+                    "examination" => $examination
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/sedasi.php", [
                     "visit" => $visit,
-                    'title' => $title
+                    'title' => $title,
+                    "val" => $val,
+                    "option" => $option,
+                    "examination" => $examination
                 ]);
             }
         }
-    }
+    } //new Update 31/07
     public function surat_lahir($visit, $vactination_id = null)
     {
         $title = "Surat Keterangan Lahir";
@@ -651,36 +656,5 @@ class lainnya extends \App\Controllers\BaseController
                 ]);
             }
         }
-    }
-    public function getDataAllLabRad()
-    {
-        $request = service('request');
-        $data = $request->getJSON(true);
-
-        if (empty($data) || !is_array($data)) {
-            return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid request data']);
-        }
-
-        $db = db_connect();
-        $results = [];
-
-        foreach ($data as $item) {
-            if ($item['value_score'] == 10) {
-                $query = $item['value_info'];
-                $value_desc = $item['value_desc'];
-                try {
-                    $queryResult = $this->lowerKey($db->query($query)->getResultArray());
-                    $results[] = [
-                        'query' => $query,
-                        'value_desc' => $value_desc,
-                        'query_results' => $this->lowerKey($queryResult)
-                    ];
-                } catch (\Exception $e) {
-                    return $this->response->setStatusCode(500)->setJSON(['error' => 'Database query failed', 'details' => $e->getMessage()]);
-                }
-            }
-        }
-
-        return $this->response->setJSON(['status' => 'success', 'data' => $results]);
     }
 }

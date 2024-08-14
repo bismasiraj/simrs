@@ -116,7 +116,7 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-                    <div class="accordion-item">
+                    <!-- <div class="accordion-item">
                         <h2 class="accordion-header" id="lainnya">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapselainnya" aria-expanded="true" aria-controls="collapselainnya">
                                 <b>LAIN-LAIN</b>
@@ -134,7 +134,7 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

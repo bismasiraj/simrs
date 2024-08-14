@@ -254,14 +254,17 @@ function postDataForm(data, url, response, beforesend) {
   $.ajax({
     xhrFields: { withCredentials: true },
     type: "POST",
-    contentType: "application/json",
+    contentType: false, // Important for FormData
+    processData: false, // Important for FormData
+    dataType: "json",
+    cache: false,
     url: BASE_URL + url,
     data: data,
     beforeSend: beforesend,
     success: (res) => {
       response(res);
 
-      if ($("#sidebar") && $("#sidebar").length > 0) {
+      if ($("#sidebar").length > 0) {
         setContentHeight();
       }
     },
@@ -707,12 +710,272 @@ function evaluateScore(inputValue, type, value) {
   } else if (inputValue === 4) {
     // Use getAdultScore
     return getNeonatalScore(type, value);
+  } else if (inputValue === 10) {
+    // Use getAdultScore
+    return getObsetricScore(type, value);
   } else {
     // Handle invalid or other cases if needed
     return getAdultScore(type, value);
   }
-}
+} //new 30/07
 
+function getObsetricScore(type, value) {
+  switch (type) {
+    // === SPO2 === //
+    case "saturasi":
+      if (value <= 91) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 92 && value <= 95) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 96) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      }
+      break;
+    // === SATURASI 2=== //
+    case "saturasi2":
+      if (value <= 83) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 84 && value <= 85) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 86 && value <= 87) {
+        return {
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      } else if (value >= 88 && value <= 92) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 93 && value <= 94) {
+        return {
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      } else if (value >= 95 && value <= 96) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 97) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      }
+
+      break;
+
+    // === PERNAPASAN === //
+    case "pernapasan":
+      if (value < 12) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 12 && value <= 20) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 21 && value <= 25) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value > 25) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      }
+      break;
+    // === TEKANAN DARAH === //
+    case "darah":
+      if (value < 90) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 90 && value <= 140) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 141 && value <= 150) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 151 && value <= 160) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value > 160) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      }
+      break;
+
+    // === NADI === //
+    case "nadi":
+      if (value < 50) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 50 && value <= 60) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 61 && value <= 100) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 101 && value <= 110) {
+        return {
+          score: 1,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      } else if (value >= 180) {
+      } else if (value >= 111 && value <= 120) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 120) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      }
+      break;
+
+    // === SUHU / TEMPERATUR === //
+    case "suhu":
+      if (value <= 35) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value >= 37.3 && value <= 37.7) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value >= 36.1 && value <= 37.2) {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (value >= 37.6) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      }
+      break;
+
+    // === TINGKAT KESADARAN === //
+    case "kesadaran":
+      if (value === "Sadar") {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      } else if (
+        value === "Nyeri" ||
+        value === "Verbal" ||
+        value === "Unrespon"
+      ) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      }
+      break;
+
+    // === OKSIGEN === //
+    case "oksigen":
+      if (value) {
+        return {
+          score: 2,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else {
+        return {
+          score: 0,
+          color: "light",
+          colorPicker: "#f8f9fa",
+        };
+      }
+      break;
+  }
+} //new 30/07
 function getAdultScore(type, value) {
   switch (type) {
     // === PERNAPASAN === //
@@ -1331,6 +1594,14 @@ const errorStatusCode = {
       </div>`);
   },
 };
+
+function get_bodyid() {
+  const date = new Date();
+  let bodyId = date.toISOString().substring(0, 23);
+  bodyId = bodyId.replace(/[-:.T]/g, "") + makeid(3);
+  return bodyId;
+}
+
 function makeid(length) {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -1343,9 +1614,142 @@ function makeid(length) {
   return result;
 }
 
-function get_bodyid() {
-  const date = new Date();
-  let bodyId = date.toISOString().substring(0, 23);
-  bodyId = bodyId.replace(/[-:.T]/g, "") + makeid(3);
-  return bodyId;
+function setBadge(propId, badgeId, className, textContent) {
+  var badge = document.getElementById(badgeId);
+  if (badge) {
+    if (className == "bg-light") {
+      badge.className =
+        "badge-score h6 badge position-absolute top-50 start-100 translate-middle text-dark border border-1 border-dark " +
+        className;
+      badge.textContent = textContent;
+    } else {
+      badge.className =
+        "badge-score h6 badge position-absolute top-50 start-100 translate-middle " +
+        className;
+      badge.textContent = textContent;
+    }
+  }
+}
+
+function sumTextContentFromClass(className) {
+  var elements = document.getElementsByClassName(className);
+  var totalSum = 0;
+
+  for (var i = 0; i < elements.length; i++) {
+    var text = elements[i].textContent.trim();
+    var value = parseFloat(text);
+
+    if (!isNaN(value)) {
+      totalSum += value;
+    }
+  }
+
+  return totalSum;
+}
+
+function vitalsignInput(prop) {
+  var value = prop.value.trim();
+  var id = prop.id;
+  var name = prop.name; //+ (prop.uniq_name ? prop.uniq_name : ""); //=new
+  var data;
+  var totalScore = [];
+
+  if (isNaN(value) || value === "") {
+    value = 0;
+  } else {
+    value = parseFloat(value);
+  }
+
+  let scoreFunction;
+  if (prop.type == 1) {
+    scoreFunction = getAdultScore;
+  } else if (prop.type == 5) {
+    scoreFunction = getNeonatalScore;
+  } else if (prop.type == 10) {
+    scoreFunction = getObsetricScore;
+  } else {
+    scoreFunction = getAdultScore;
+  }
+
+  switch (true) {
+    case name.startsWith("nadi"):
+      data = scoreFunction("nadi", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("temperature"):
+      data = scoreFunction("suhu", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("saturasi"):
+      data = scoreFunction("saturasi", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("nafas"):
+      data = scoreFunction("pernapasan", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("oxygen_usage"):
+      data = scoreFunction("oksigen", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("weight"):
+      if (value < 0) {
+        value = 0.0;
+      } else if (value > 300) {
+        value = 300.0;
+      } else {
+        value = value.toFixed(2);
+      }
+      break;
+    case name.startsWith("tension_upper"):
+      if (value < 50) {
+        value = 50.0;
+      } else if (value > 250) {
+        value = 250.0;
+      }
+      data = scoreFunction("darah", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("tension_below"):
+      if (value < 0) {
+        value = 0.0;
+      } else if (value > 300) {
+        value = 300.0;
+      }
+      break;
+    case name.includes("height"):
+      if (value > 250) {
+        value = 250;
+      }
+      // Additional processing if required for height-related cases
+      break;
+    default:
+      // Optionally handle unknown cases or log an error
+      console.warn("Unhandled case:", name);
+      break;
+  }
+
+  prop.value = value;
+
+  // document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
+}
+
+function changeEwsParam(className) {
+  var optionSelected = $("option:selected", this);
+  $(".className").each((index, each) => {
+    $(each).change((element) => {
+      vitalsignInput({
+        value: $(each).val(),
+        name: $(each).attr("name"),
+        id: $(each).attr("id"),
+        type: optionSelected.val(),
+      });
+    });
+    vitalsignInput({
+      value: $(each).val(),
+      name: $(each).attr("name"),
+      id: $(each).attr("id"),
+      type: optionSelected.val(),
+    });
+  });
 }

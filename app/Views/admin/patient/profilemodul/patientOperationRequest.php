@@ -71,6 +71,10 @@ $permission = user()->getPermissions();
                                     <li class="nav-item">
                                         <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Informasi Post Operasi</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Laporan
+                                            Anesthesi & Sedasi</a>
+                                    </li>
                                 </ul>
                                 <div class="tab-content mt-3">
 
@@ -127,6 +131,14 @@ $permission = user()->getPermissions();
                                     ]) ?>
 
 
+                                    <?php echo view('admin/patient/profilemodul/operasi/laporan-anesthesi.php', [
+                                        'title' => 'Test',
+                                        'visit' => $visit,
+                                        'aParent' => $aParent,
+                                        'aType' => $aType,
+                                        'aParameter' => $aParameter,
+                                        'aValue' => $aValue,
+                                    ]) ?>
 
 
                                 </div>

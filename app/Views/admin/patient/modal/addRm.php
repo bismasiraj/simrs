@@ -201,71 +201,71 @@
         $("#currentHistory").html(text);
     }
 
-    function tindakLanjut() {
-        var tindakLanjutType = $("#armrencanatl").val()
-        if (tindakLanjutType == '1') {
-            $("#armdirujukkegroup").hide()
-            $("#armtgl_kontrolgroup").hide()
-            $("#armkdpoli_kontrolgroup").hide()
-            $("#armdescriptiongroup").hide()
-            $("#armskdpgroup").hide()
-            $("#armsprigroup").hide()
-            $("#armrujukaneksternalgroup").hide()
-            $("#armtiperujukan_group").hide()
-            $("#armrujukaninternalgroup").hide()
-        } else if (tindakLanjutType == '2') {
-            $("#armdirujukkegroup").hide()
-            $("#armtgl_kontrolgroup").hide()
-            $("#armkdpoli_kontrolgroup").hide()
-            $("#armdescriptiongroup").hide()
-            $("#armskdpgroup").hide()
-            $("#armsprigroup").hide()
-            $("#armrujukaneksternalgroup").hide()
-            $("#armtiperujukan_group").hide()
-            $("#armrujukaninternalgroup").hide()
-        } else if (tindakLanjutType == '3') {
-            $("#armdirujukkegroup").show()
-            $("#armtgl_kontrolgroup").show()
-            $("#armkdpoli_kontrolgroup").show()
-            $("#armdescriptiongroup").show()
-            $("#armskdpgroup").hide()
-            $("#armsprigroup").hide()
-            $("#armrujukaneksternalgroup").show()
-            $("#armtiperujukan_group").show()
-            getRujukan()
-            $("#arrujukaninternalgroup").hide()
-        } else if (tindakLanjutType == '4') {
-            $("#armdirujukkegroup").hide()
-            $("#armtgl_kontrolgroup").show()
-            $("#armkdpoli_kontrolgroup").show()
-            $("#armdescriptiongroup").show()
-            $("#armskdpgroup").show()
-            $("#armsprigroup").hide()
-            $("#armrujukaneksternalgroup").hide()
-            $("#armtiperujukan_group").hide()
-            $("#armrujukaninternalgroup").hide()
-        } else if (tindakLanjutType == '5') {
-            $("#armdirujukkegroup").hide()
-            $("#armtgl_kontrolgroup").show()
-            $("#armkdpoli_kontrolgroup").hide()
-            $("#armdescriptiongroup").show()
-            $("#armskdpgroup").hide()
-            $("#armsprigroup").show()
-            $("#armrujukaneksternalgroup").hide()
-            $("#armtiperujukan_group").hide()
-            $("#armrujukaninternalgroup").hide()
-        } else if (tindakLanjutType == '6') {
-            $("#armdirujukkegroup").hide()
-            $("#armtgl_kontrolgroup").hide()
-            $("#armkdpoli_kontrolgroup").hide()
-            $("#armdescriptiongroup").hide()
-            $("#armskdpgroup").hide()
-            $("#armsprigroup").hide()
-            $("#armrujukaneksternalgroup").hide()
-            $("#armtiperujukan_group").hide()
-            $("#armrujukaninternalgroup").show()
-        }
-    }
+    // function tindakLanjut() {
+    //     var tindakLanjutType = $("#armrencanatl").val()
+    //     if (tindakLanjutType == '1') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '2') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '3') {
+    //         $("#armdirujukkegroup").slideDown()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideDown()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideDown()
+    //         $("#armtiperujukan_group").slideDown()
+    //         getRujukan()
+    //         $("#arrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '4') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideDown()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideDown()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '5') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideDown()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '6') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideDown()
+    //     }
+    // }
 
     $("#formaddrm").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -293,9 +293,9 @@
                     pasienDiagnosa = data.data
                     modalAddRm()
                     disableRM()
-                    $("#formaddrmbtn").hide()
-                    $("#formeditrm").show()
-                    $("#postingSS").show()
+                    $("#formaddrmbtn").slideUp()
+                    $("#formeditrm").slideDown()
+                    $("#postingSS").slideDown()
                     $(".rmdescription").val(pasienDiagnosa.description)
                     executeWaktuUpdate()
 
@@ -309,7 +309,7 @@
                     $(".rmpemeriksaan_05").html($("#arpemeriksaan_05").val())
                     $(".rmteraphy_desc").html($("#arteraphy_desc").val())
                     $(".rminstruction").html($("#arinstruction").val())
-                    $(".profileRM").show()
+                    $(".profileRM").slideDown()
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -427,129 +427,6 @@
         })
     }
 
-    function postRujukan() {
-        var clicked_submit_btn = $("#addnorujukan")
-
-
-
-        var rujvisit = '<?= $visit['visit_id']; ?>'
-        var rujrujukanNosep = '<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>'
-        var rujnoRujukan = $("#arnorujukan").val()
-        var rujtglRujukan = '<?= $visit['visit_date']; ?>'
-        var rujtglRencanaKunjungan = $("#artgl_kontrol").val()
-        if (rujtglRencanaKunjungan == '' || rujtglRencanaKunjungan == null) {
-            alert('Tanggal Rencana Rujukan harus diisi')
-            return '';
-        }
-        var rujppkdirujuk = $("#ardirujukke").val()
-        if (rujppkdirujuk == '' || rujppkdirujuk == null) {
-            alert('kolom "Dirujuk Ke" tidak boleh kosong')
-            return '';
-        }
-        var rujppkname = $("#ardirujukke").find(":selected").data()
-        if (typeof rujppkname !== 'undefined') {
-            var rujppkdirujukName = rujppkname.data.text
-        }
-        var rujjnsPelayanan = '<?= is_null($visit['class_room_id']) ? '1' : '2'; ?>'
-        var rujcatatan = $("#arprocedure_05").val()
-        var rujdiagRujukan = $("#diag_id1").val()
-        if (rujdiagRujukan == '' || rujdiagRujukan == null) {
-            alert('Harus sudah mengisi diagnosa utama')
-            return '';
-        }
-        var rujdiagname = $("#diag_id1").find(":selected").data()
-        if (typeof rujdiagname !== 'undefined') {
-            var rujdiagRujukanName = rujdiagname.data.text
-        }
-        var rujtipeRujukan = $("#artiperujukan").val()
-        var rujpoliRujukan = $("#arkdpoli_kontrol").val()
-        if (rujpoliRujukan == '' || rujpoliRujukan == null) {
-            alert('Poli rujukan harus diisi')
-            return '';
-        }
-        var rujsex = '<?= $visit['gender']; ?>'
-        var rujnama = '<?= $visit['diantar_oleh']; ?>'
-        var rujnokartu = '<?= $visit['pasien_id']; ?>'
-        var rujnorm = '<?= $visit['no_registration']; ?>'
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/postRujukan',
-            type: "POST",
-            data: JSON.stringify({
-                'nosep': rujrujukanNosep,
-                'norujukan': rujnoRujukan,
-                'tglRujukan': rujtglRujukan,
-                'tglRencanaKunjungan': rujtglRencanaKunjungan,
-                'ppkdirujuk': rujppkdirujuk,
-                'jnsPelayanan': rujjnsPelayanan,
-                'catatan': rujcatatan,
-                'diagRujukan': rujdiagRujukan,
-                'tipeRujukan': rujtipeRujukan,
-                'poliRujukan': rujpoliRujukan,
-                'visit': rujvisit,
-                'ppkdirujukName': rujppkdirujukName,
-                'diagRujukanName': rujdiagRujukanName,
-                'sex': rujsex,
-                'nama': rujnama,
-                'nokartu': rujnokartu,
-                'nomr': rujnorm
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data.metaData.code == '200') {
-                    var noRujukan = data.response.rujukan.noRujukan
-                    $("#arnorujukan").val(noRujukan);
-                    $("#arnorujukan").prop("disabled", true);
-                }
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
-    }
-
-    function deleteRujukan() {
-        var clicked_submit_btn = $("#deleterujukan")
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/deleteRujukan',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': '<?= $visit['visit_id']; ?>',
-                'noRujukan': $("#arnorujukan").val(),
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data.metaData.code == '200') {
-                    $("#arnorujukan").val("");
-                }
-
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        })
-    }
-
     function modalDiagnosa() {
         holdModal('addDiagModal');
     }
@@ -603,9 +480,9 @@
     }
 
     function editRM() {
-        $("#formaddrmbtn").show()
-        $("#formeditrm").hide()
-        $("#postingSS").hide()
+        $("#formaddrmbtn").slideDown()
+        $("#formeditrm").slideUp()
+        $("#postingSS").slideUp()
         enableRM()
     }
 

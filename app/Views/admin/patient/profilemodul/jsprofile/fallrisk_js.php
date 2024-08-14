@@ -68,32 +68,31 @@
                 }
             }
         })
-        if (fallselect.valid_user === null) {
-            $("#fallBody").append($("<tr>")
-                .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
-                .append($("<td>").html(fallselect.modified_by))
-                .append($("<td>").html(type))
-                .append($("<td>").html(p1))
-                .append($("<td>").html(p2))
-                .append($("<td>").html(p3))
-                .append($("<td>").html(p4))
-                .append($("<td>").html(p5))
-                .append($("<td>").html('<button type="button" onclick="editfall(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + fallselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
-            )
-        } else {
-            $("#fallBody").append($("<tr>")
-                .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
-                .append($("<td>").html(fallselect.modified_by))
-                .append($("<td>").html(type))
-                .append($("<td>").html(p1))
-                .append($("<td>").html(p2))
-                .append($("<td>").html(p3))
-                .append($("<td>").html(p4))
-                .append($("<td>").html(p5))
-                .append($("<td colspan=\"2\">"))
-            )
-        }
+        $("#fallBody").append($("<tr>")
+            .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
+            .append($("<td>").html(fallselect.modified_by))
+            .append($("<td>").html(type))
+            .append($("<td>").html(p1))
+            .append($("<td>").html(p2))
+            .append($("<td>").html(p3))
+            .append($("<td>").html(p4))
+            .append($("<td>").html(p5))
+            .append($("<td>").html('<button type="button" onclick="editfall(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+            .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + fallselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+        )
+        // if (fallselect.valid_user === null) {} else {
+        //     $("#fallBody").append($("<tr>")
+        //         .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").html(fallselect.modified_by))
+        //         .append($("<td>").html(type))
+        //         .append($("<td>").html(p1))
+        //         .append($("<td>").html(p2))
+        //         .append($("<td>").html(p3))
+        //         .append($("<td>").html(p4))
+        //         .append($("<td>").html(p5))
+        //         .append($("<td colspan=\"2\">"))
+        //     )
+        // }
     }
 
     falljson.forEach((element, key) => {
@@ -110,7 +109,7 @@
         $("#afallDocument").html("")
         addFallRisk(0, key, 'FallRisk', 'afallDocument')
         $("#fallModal").modal("show")
-        $("#afallDocument").find("input, select, textarea").prop("disabled", false)
+        // $("#afallDocument").find("input, select, textarea").prop("disabled", false)
     }
 
     function copyfall(key) {
@@ -209,8 +208,8 @@
         $("#afallvs_status_id" + examselect.vs_status_id).prop("checked", true)
 
         $("#fallModal").modal("show")
-        $("#formsaveafallbtnid").show()
-        $("#formeditafallid").hide()
+        $("#formsaveafallbtnid").slideDown()
+        $("#formeditafallid").slideUp()
     }
 </script>
 

@@ -78,8 +78,8 @@ $group = user()->getRoles();
                             <input type="hidden" id="arpaccount_id" name="account_id">
                             <input type="hidden" id="arpkesadaran" name="kesadaran">
                             <input type="hidden" id="arpisvalid" name="isvalid">
-                            <input type="hidden" id="arpvalid_date" name="valid_date" value="">
-                            <input type="hidden" id="arpvalid_user" name="valid_user" value="">
+                            <input type="hidden" id="arpvalid_date" name="valid_date" class="valid_date" value="">
+                            <input type="hidden" id="arpvalid_user" name="valid_user" class="valid_user" value="">
                             <?php csrf_field(); ?>
                             <div class="row">
                                 <h3 id="arpTitle">Assessment Keperawatan</h3>
@@ -93,14 +93,17 @@ $group = user()->getRoles();
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id1" value="1"><label class="form-check-label" for="arpvs_status_id1" checked>Dewasa</label></div>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-check mb-3"><input onclick="filterVsStatusId(this.value)" class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id1" value="1"><label class="form-check-label" for="arpvs_status_id1" checked>Dewasa</label></div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id4" value="4"><label class="form-check-label" for="arpvs_status_id4">Neonatus</label></div>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-check mb-3"><input onclick="filterVsStatusId(this.value)" class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id4" value="4"><label class="form-check-label" for="arpvs_status_id4">Neonatus</label></div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id5" value="5"><label class="form-check-label" for="arpvs_status_id5">Anak</label></div>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-check mb-3"><input onclick="filterVsStatusId(this.value)" class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id5" value="5"><label class="form-check-label" for="arpvs_status_id5">Anak</label></div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <div class="form-check mb-3"><input onclick="filterVsStatusId(this.value)" class="form-check-input" type="radio" name="vs_status_id" id="arpvs_status_id10" value="10"><label class="form-check-label" for="arpvs_status_id10">Obsetric</label></div>
                                     </div>
                                     <!-- <div class="col-md-3">
                                         <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id2" value="2"><label class="form-check-label" for="acpptvs_status_id2" checked>SOAP</label></div>
@@ -123,11 +126,6 @@ $group = user()->getRoles();
                                             <div class="form-group">
                                                 <label for="arpclinic_id">Poli</label>
                                                 <select name="clinic_id" id="arpclinic_id" type="hidden" class="form-control ">
-                                                    <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                        <option value="<?= $visit['class_room_id']; ?>"><?= $visit['name_of_class']; ?></option>
-                                                    <?php } else { ?>
-                                                        <option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>
-                                                    <?php } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -137,11 +135,6 @@ $group = user()->getRoles();
                                             <div class="form-group">
                                                 <label for="arpemployee_id">Dokter</label>
                                                 <select name="employee_id" id="arpemployee_id" type="hidden" class="form-control ">
-                                                    <?php if (!is_null($visit['class_room_id'])) { ?>
-                                                        <option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>
-                                                    <?php } else { ?>
-                                                        <option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>
-                                                    <?php } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -202,6 +195,17 @@ $group = user()->getRoles();
                                                 <div class="accordion-body text-muted">
                                                     <div class="row">
                                                         <div class="row mb-4">
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Jenis EWS</label>
+                                                                    <select class="form-select" name="vs_status_id" id="arpvs_status_id">
+                                                                        <option value="" selected>-- pilih --</option>
+                                                                        <option value="1">Dewasa</option>
+                                                                        <option value="4">Anak</option>
+                                                                        <option value="5">Neonatus</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>BB(Kg)</label>
@@ -290,17 +294,6 @@ $group = user()->getRoles();
                                                                 </div>
                                                             </div>
                                                             <!--==new -->
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Jenis EWS</label>
-                                                                    <select class="form-select" name="vs_status_id" id="arpvs_status_id">
-                                                                        <option value="" selected>-- pilih --</option>
-                                                                        <option value="1">Dewasa</option>
-                                                                        <option value="4">Anak</option>
-                                                                        <option value="5">Neonatus</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
                                                             <!--==endofnew -->
                                                             <div class="col-sm-12 mt-2">
                                                                 <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>

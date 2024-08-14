@@ -2,10 +2,9 @@
     var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
+    var visit = '<?= $visit['visit_id']; ?>'
+    var nomor = '<?= $visit['no_registration']; ?>';
 
-    $("#vitalsignTab").on("click", function() {
-        getVitalSign()
-    })
     $(document).ready(function(e) {
         var nomor = '<?= $visit['no_registration']; ?>';
         var ke = '%'
@@ -23,6 +22,27 @@
         // setDataVitalSign()
     })
 
+    $("#vitalsignTab").on("click", function() {
+        getVitalSign()
+    })
+    $("#avtvs_status_id").on("change", function() {
+        changeEwsParam("vitalsignclass")
+        var optionSelected = $("option:selected", this);
+        $('.vitalsignclass').each((index, each) => {
+            $(each).change(element => {
+                vitalsignInput({
+                    value: $(each).val(),
+                    name: $(each).attr('name'),
+                    type: optionSelected.val()
+                })
+            })
+            vitalsignInput({
+                value: $(each).val(),
+                name: $(each).attr('name'),
+                type: optionSelected.val()
+            })
+        });
+    })
 
 
     function setDataVitalSign() {
@@ -56,6 +76,7 @@
         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
         $("#avtageday").val('<?= $visit['ageday']; ?>')
         $("#avtexamination_date").val(get_date())
+        $("#avtaccount_id").val(5)
 
         //havin
         var ageYear = <?= $visit['ageyear']; ?>;
@@ -115,108 +136,165 @@
             )
     }
 
-    function vitalsignInput(prop) {
-        var value = prop.value.trim();
-        var id = prop.id;
-        var name = prop.name;
-        var data;
-        var totalScore = [];
+    // function vitalsignInput(prop) {
+    //     var value = prop.value.trim();
+    //     var name = 'avt' + prop.name; //=new
+    //     var data;
+    //     var totalScore = [];
 
-        if (isNaN(value) || value === "") {
-            value = 0;
-        } else {
-            value = parseFloat(value);
-        }
+    //     if (isNaN(value) || value === "") {
+    //         value = 0;
+    //     } else {
+    //         value = parseFloat(value);
+    //     }
+
+    //     let scoreFunction;
+    //     if (prop.type == 1) {
+    //         scoreFunction = getAdultScore;
+    //     } else if (prop.type == 5) {
+    //         scoreFunction = getNeonatalScore;
+    //     } else if (prop.type == 10) {
+    //         scoreFunction = getObsetricScore;
+    //     } else {
+    //         scoreFunction = getAdultScore;
+    //     }
+
+    //     switch (name) {
+    //         case "avtnadi":
+    //             data = scoreFunction('nadi', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avttemperature":
+    //             data = scoreFunction('suhu', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avtsaturasi":
+    //             data = scoreFunction('saturasi', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avtnafas":
+    //             data = scoreFunction('pernapasan', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avtoxygen_usage":
+    //             data = scoreFunction('oksigen', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avtweight":
+    //             if (value > 300) {
+    //                 value = 300.00;
+    //             } else {
+    //                 value = value.toFixed(2);
+    //             }
+    //             break;
+    //         case "avttension_upper":
+    //             if (value < 50) {
+    //                 value = 50.00;
+    //             } else if (value > 250) {
+    //                 value = 250.00;
+    //             }
+    //             data = scoreFunction('darah', value);
+    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "avtheight":
+    //             if (value > 250) {
+    //                 value = 250;
+    //             }
+    //             break;
+    //         case "avttension_below":
+    //             if (value < 0) {
+    //                 value = 0.00;
+    //             } else if (value > 300) {
+    //                 value = 300.00;
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
+
+    //     prop.value = value;
+
+    //     document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
+    // }
+
+    // function vitalsignInput(prop) {
+    //     var value = prop.value.trim();
+    //     var id = prop.id
+    //     var name = prop.name; //=new
+    //     var data;
+    //     var totalScore = [];
+
+    //     if (isNaN(value) || value === "") {
+    //         value = 0;
+    //     } else {
+    //         value = parseFloat(value);
+    //     }
+
+    //     let scoreFunction;
+    //     if (prop.type == 1) {
+    //         scoreFunction = getAdultScore;
+    //     } else {
+    //         scoreFunction = getNeonatalScore;
+    //     }
+    //     switch (name) {
+    //         case "nadi":
+    //             data = scoreFunction('nadi', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "temperature":
+    //             data = scoreFunction('suhu', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "saturasi":
+    //             data = scoreFunction('saturasi', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "nafas":
+    //             data = scoreFunction('pernapasan', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "oxygen_usage":
+    //             data = scoreFunction('oksigen', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "weight":
+    //             if (value > 300) {
+    //                 value = 300.00;
+    //             } else {
+    //                 value = value.toFixed(2);
+    //             }
+    //             break;
+    //         case "tension_upper":
+    //             if (value < 50) {
+    //                 value = 50.00;
+    //             } else if (value > 250) {
+    //                 value = 250.00;
+    //             }
+    //             data = scoreFunction('darah', value);
+    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
+    //             break;
+    //         case "height":
+    //             if (value > 250) {
+    //                 value = 250;
+    //             }
+    //             break;
+    //         case "tension_below":
+    //             if (value < 0) {
+    //                 value = 0.00;
+    //             } else if (value > 300) {
+    //                 value = 300.00;
+    //             }
+    //             break;
+    //         default:
+    //             break;
+    //     }
+
+    //     prop.value = value;
+
+    //     document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
+    // }
 
 
-        switch (name) {
-            case "nadi":
-                data = getAdultScore('nadi', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "temperature":
-                data = getAdultScore('suhu', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "saturasi":
-                data = getAdultScore('saturasi', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "nafas":
-                data = getAdultScore('pernapasan', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "oxygen_usage":
-                data = getAdultScore('oksigen', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "weight":
-                if (value < 10) {
-                    value = 10.00;
-                } else if (value > 250) {
-                    value = 250.00;
-                } else {
-                    value = value.toFixed(2);
-                }
-                break;
-            case "tension_upper":
-                if (value < 50) {
-                    value = 50.00;
-                } else if (value > 250) {
-                    value = 250.00;
-                }
-                data = getAdultScore('darah', value);
-                setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-                break;
-            case "height":
-                if (value > 250) {
-                    value = 250;
-                }
-                break;
-            case "tension_below":
-                if (value < 0) {
-                    value = 0.00;
-                } else if (value > 300) {
-                    value = 300.00;
-                }
-                break;
-            default:
-                break;
-        }
-
-        prop.value = value;
-
-        document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
-    }
-
-    function setBadge(propId, badgeId, className, textContent) {
-        var badge = document.getElementById(badgeId);
-        if (badge) {
-            if (className == 'bg-light') {
-                badge.className = 'badge-score h6 badge position-absolute top-50 start-100 translate-middle text-dark border border-1 border-dark ' + className;
-                badge.textContent = textContent;
-            } else {
-                badge.className = 'badge-score h6 badge position-absolute top-50 start-100 translate-middle ' + className;
-                badge.textContent = textContent;
-            }
-        }
-    }
-
-    function sumTextContentFromClass(className) {
-        var elements = document.getElementsByClassName(className);
-        var totalSum = 0;
-
-        for (var i = 0; i < elements.length; i++) {
-            var text = elements[i].textContent.trim();
-            var value = parseFloat(text);
-
-            if (!isNaN(value)) {
-                totalSum += value;
-            }
-        }
-
-        return totalSum;
-    }
 
     function disableVitalSign() {
         $("#avtexamination_date").prop("disabled", true)
@@ -429,7 +507,6 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                console.log(data.status);
                 if (data.status == "fail") {
                     var message = "";
                     $.each(data.error, function(index, value) {
@@ -437,13 +514,14 @@
                     });
                     // errorMsg(message);
                     errorSwal(message)
-
+                    getVitalSign()
                 } else {
                     // successMsg(data.message);
                     successSwal(data.message)
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
                     $("#formvitalsignedit").toggle()
+                    getVitalSign()
                 }
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
@@ -469,16 +547,21 @@
             contentType: false,
             cache: false,
             processData: false,
-            beforeSend: function(e) {
+            beforeSend: function() {
                 getLoadingscreen("contentVitalSign", "loadContentVitalSign")
             },
             success: function(data) {
+                $("#vitalSignBody").html(tempTablesNull())
                 vitalsign = data.examInfo
-                $("#vitalSignBody").html("")
-                vitalsign.forEach((element, key) => {
-                    examselect = vitalsign[key];
-                    addRowVitalSign(examselect, key)
-                });
+                if (vitalsign.length > 0) {
+                    $("#vitalSignBody").html("")
+                    vitalsign.forEach((element, key) => {
+                        examselect = vitalsign[key];
+                        addRowVitalSign(examselect, key)
+                    });
+                } else {
+                    $("#vitalSignBody").html(tempTablesNull())
+                }
             },
             error: function() {
 
@@ -664,5 +747,55 @@
             // $("#cpptvisit_id").val(examselect.visit_id)
             // $("#cpptweight").val(examselect.weight)
         }
+    }
+
+    function displayTableAssessmentKeperawatanForVitalSign() {
+        $("#copyListVitalSignModal").html("")
+        $.each(examForassessment, function(key, value) {
+            var pd = examForassessment[key]
+            if (value.body_id == $("#armbody_id")) {
+                $("#copyListVitalSignModal").append($("<tr>")
+                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
+                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(value.petugas_id)))
+                    .append($("<td>").append($("<b>").html(value.weight)))
+                    .append($("<td>").append($("<b>").html(value.height)))
+                    .append($("<td>").append($("<b>").html(value.temperature)))
+                    .append($("<td>").append($("<b>").html(value.nadi)))
+                    .append($("<td>").append($("<b>").html(value.tension_upper)))
+                    .append($("<td>").append($("<b>").html(value.tension_below)))
+                    .append($("<td>").append($("<b>").html(value.saturasi)))
+                    .append($("<td>").append($("<b>").html(value.nafas)))
+                    .append($("<td>").append($("<b>").html(value.arm_diameter)))
+                    .append($("<td>").append($("<b>").append($('<button class="btn btn-success" onclick="fillVitalSignMedis(' + key + ')">').html("Copy"))))
+                )
+                $("#copyListVitalSignModal").append($("<tr>")
+                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
+                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                    .append($("<td>").append($("<b>").html(value.fullname)))
+                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
+                )
+                $('html, body').animate({
+                    scrollTop: 0
+                }, 800);
+            } else {
+                $("#copyListVitalSignModal").append($("<tr>")
+                    .append($("<td>"))
+                    .append($("<td>").html(value.examination_date))
+                    .append($("<td>").html(value.petugas_id))
+                    .append($("<td>").html(value.weight))
+                    .append($("<td>").html(value.height))
+                    .append($("<td>").html(value.temperature))
+                    .append($("<td>").html(value.nadi))
+                    .append($("<td>").html(value.tension_upper))
+                    .append($("<td>").html(value.tension_below))
+                    .append($("<td>").html(value.saturasi))
+                    .append($("<td>").html(value.nafas))
+                    .append($("<td>").html(value.arm_diameter))
+                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillVitalSignMedis(' + key + ')">').html("Copy")))
+                )
+            }
+        })
     }
 </script>

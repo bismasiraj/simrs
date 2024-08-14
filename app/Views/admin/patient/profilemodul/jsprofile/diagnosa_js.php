@@ -7,21 +7,21 @@
 </script>
 <script>
     function disableArmDiag(bodyId) {
-        $("#formaddarm" + bodyId).find("input, textarea, select").prop("disabled", true)
+        $("#formAddDiagnosa" + bodyId).find("input, textarea, select").prop("disabled", true)
 
-        $("#formsavearmbtn" + bodyId).hide()
-        $("#formeditarm" + bodyId).show()
-        $("#formsignarm" + bodyId).hide()
-        $("#formcetakarm" + bodyId).hide()
+        $("#formAddDiagnosaSaveBtn" + bodyId).slideUp()
+        $("#formeditarm" + bodyId).slideDown()
+        $("#formsignarm" + bodyId).slideUp()
+        $("#formcetakarm" + bodyId).slideUp()
     }
 
     function enableArmDiag(bodyId) {
-        $("#formaddarm" + bodyId).find("input, textarea, select").prop("disabled", false)
+        $("#formAddDiagnosa" + bodyId).find("input, textarea, select").prop("disabled", false)
 
-        $("#formsavearmbtn" + bodyId).show()
-        $("#formeditarm" + bodyId).hide()
-        $("#formsignarm" + bodyId).show()
-        $("#formcetakarm" + bodyId).show()
+        $("#formAddDiagnosaSaveBtn" + bodyId).slideDown()
+        $("#formeditarm" + bodyId).slideUp()
+        $("#formsignarm" + bodyId).slideDown()
+        $("#formcetakarm" + bodyId).slideDown()
     }
 
     function appendDiagnosa(accordionId, bodyId, pasienDiagnosa) {
@@ -47,7 +47,7 @@
             </h2>
             <div id="collapseDiagnosaPerawat` + bodyId + `" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaMedis` + bodyId + `" data-bs-parent="#accordionDiagnosa" style="">
                 <div class="accordion-body text-muted">
-                    <form id="formaddarm` + bodyId + `">
+                    <form id="formAddDiagnosa` + bodyId + `">
                         <input type="hidden" id="adiagpasien_diagnosa_id` + bodyId + `" name="pasien_diagnosa_id"/>
                         <div class="row">
                             <div class="col-sm-2 col-xs-12">
@@ -66,7 +66,7 @@
                             <div class="col-sm-4 col-xs-12">
                                 <div class="mb-3">
                                     <div class="form-group">
-                                        <?php if (!is_null($visit['class_room_id'])) { ?>
+                                        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                                             <label for="adiagclinic_id` + bodyId + `">Bangsal</label>
                                         <?php } else { ?>
                                             <label for="adiagclinic_id` + bodyId + `">Poli</label>
@@ -149,7 +149,7 @@
                         </div>
                         <div class="row mb-2">
                             <div class="panel-footer text-end mb-4">
-                                <button type="button" id="formsavearmbtn` + bodyId + `" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                <button type="button" id="formAddDiagnosaSaveBtn` + bodyId + `" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                 <button type="button" id="formeditarm` + bodyId + `" name="editrm" onclick="enableArmDiag('` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                 <button type="button" id="formsignarm` + bodyId + `" name="signrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                 <button type="button" id="formcetakarm` + bodyId + `" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
@@ -181,13 +181,13 @@
             }
         })
 
-        $("#formsavearmbtn" + bodyId).on('click', (function(e) {
+        $("#formAddDiagnosaSaveBtn" + bodyId).on('click', (function(e) {
             let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/rm/assessment/addAssessmentMedisDiagnosa',
                 type: "POST",
-                data: new FormData(document.getElementById("formaddarm" + bodyId)),
+                data: new FormData(document.getElementById("formAddDiagnosa" + bodyId)),
                 dataType: 'json',
                 contentType: false,
                 cache: false,
@@ -307,19 +307,19 @@
     function disableArpDiag(bodyId) {
         $("#formDiagPerawat" + bodyId).find("input, textarea, select").prop("disabled", true)
 
-        $("#formDiagPerawatSaveBtn" + bodyId).hide()
-        $("#formDiagPerawatEditBtn" + bodyId).show()
-        $("#formDiagPerawatSignBtn" + bodyId).hide()
-        $("#formDiagPerawatCetakBtn" + bodyId).hide()
+        $("#formDiagPerawatSaveBtn" + bodyId).slideUp()
+        $("#formDiagPerawatEditBtn" + bodyId).slideDown()
+        $("#formDiagPerawatSignBtn" + bodyId).slideUp()
+        $("#formDiagPerawatCetakBtn" + bodyId).slideUp()
     }
 
     function enableArpDiag(bodyId) {
         $("#formDiagPerawat" + bodyId).find("input, textarea, select").prop("disabled", false)
 
-        $("#formDiagPerawatSaveBtn" + bodyId).show()
-        $("#formDiagPerawatEditBtn" + bodyId).hide()
-        $("#formDiagPerawatSignBtn" + bodyId).show()
-        $("#formDiagPerawatCetakBtn" + bodyId).show()
+        $("#formDiagPerawatSaveBtn" + bodyId).slideDown()
+        $("#formDiagPerawatEditBtn" + bodyId).slideUp()
+        $("#formDiagPerawatSignBtn" + bodyId).slideDown()
+        $("#formDiagPerawatCetakBtn" + bodyId).slideDown()
     }
 
     const appendDiagnosaPerawat = (accordionId, bodyId, exam) => {
@@ -369,7 +369,7 @@
                                 <div class="col-sm-4 col-xs-12">
                                     <div class="mb-3">
                                         <div class="form-group">
-                                            <?php if (!is_null($visit['class_room_id'])) { ?>
+                                            <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                                                 <label for="adiagpclinic_id` + bodyId + `">Bangsal</label>
                                             <?php } else { ?>
                                                 <label for="adiagpclinic_id` + bodyId + `">Poli</label>

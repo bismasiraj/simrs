@@ -872,12 +872,7 @@ $permissions = user()->getPermissions();
                                             <div id="collapseSpri" class="accordion-collapse collapse" aria-labelledby="headingSpri" data-bs-parent="#accordionPv">
                                                 <div class="accordion-body text-muted">
                                                     <div class="row">
-                                                        <div class="col-sm-12 col-xs-12 mt-4">
-                                                            <div>
-                                                                <h3>Rencana SPRI</h3>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                                             <div class="form-group"><label for="sprikddpjp">Dokter</label>
                                                                 <div>
                                                                     <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
@@ -904,7 +899,7 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-xs-4 mb-3">
+                                                        <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                                             <div class="form-group"><label for="sprikdpoli">Poli Kontrol</label>
                                                                 <div>
                                                                     <select name="sprikdpoli" id="sprikdpoli" class="form-control" style="width:100%">
@@ -927,12 +922,12 @@ $permissions = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 mb-3">
+                                                        <div class="col-sm-12 col-md-4 mb-3">
                                                             <div class="form-group"><label for="spritglkontrol">Tgl Rencana Kontrol</label>
                                                                 <input type='date' name="spritglkontrol" class="form-control" id='spritglkontrol' />
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-3 mb-3">
+                                                        <div class="col-sm-3 col-md-4 mb-3">
                                                             <div class="form-group"><label for="sprinosurat">No SPRI</label>
                                                                 <input type='text' name="sprinosurat" class="form-control" id='sprinosurat' />
                                                             </div>

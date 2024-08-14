@@ -108,6 +108,7 @@ class AssessmentOperationModel extends Model
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id', //new
         'examination_date',
         'modified_by',
         'modified_date',
@@ -212,7 +213,7 @@ class OperationTeamModel extends Model
 class PatientOperationCheck extends Model
 {
     protected $table      = 'ASSESSMENT_OPERATION_CHECK';
-    protected $primaryKey = 'body_id';
+    protected $primaryKey = 'document_id';
 
     protected $useAutoIncrement = false;
 
@@ -224,6 +225,7 @@ class PatientOperationCheck extends Model
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id',
         'examination_date',
         'modified_by',
         'modified_date',
@@ -290,6 +292,7 @@ class AssessmentAnesthesiaChecklist extends Model
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id',
         'anesthesia_machine_on',
         'oxygen_tube',
         'flow_meter',
@@ -322,12 +325,13 @@ class AssessmentAnesthesiaChecklist extends Model
 class AssessmentInstrumentModel extends Model
 {
     protected $table = 'ASSESSMENT_INSTRUMENT';
-    protected $primaryKey = 'body_id';
+    protected $primaryKey = 'brand_id';
     protected $allowedFields = [
         'org_unit_code',
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id',
         'examination_date',
         'modified_by',
         'modified_date',
@@ -406,6 +410,7 @@ class AssessmentOperationPostModel extends Model
         'visit_id',
         'trans_id',
         'body_id',
+        'document_id',
         'examination_date',
         'modified_by',
         'modified_date',
@@ -421,6 +426,127 @@ class AssessmentOperationPostModel extends Model
         'position',
         'instruction'
     ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentOperationDrainModel extends Model
+{
+    protected $table = 'ASSESSMENT_OPERATION_DRAIN';
+    protected $primaryKey = 'document_id';
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'document_id',
+        'drain_id',
+        'drain_type',
+        'drain_kinds',
+        'size',
+        'description'
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentAnesthesiaModel extends Model
+{
+    protected $table = 'assessment_anesthesia';
+    protected $primaryKey = 'body_id';
+    protected $allowedFields = [
+        'org_unit_code', 'visit_id', 'trans_id', 'body_id',
+        'examination_date', 'modified_by', 'modified_date',
+        'start_operation', 'end_operation', 'start_anesthesia', 'end_anesthesia', 'rooms_id', 'losing_teeth', 'neck_problem',
+        'short_neck', 'cough', 'dispnea', 'ispa', 'abnormal_menstruation',
+        'stroke', 'chest_pain', 'aritmia', 'vomitus', 'urinary_retention',
+        'seizure', 'pregnant', 'syncope', 'obesity', 'system_description', 'denture',
+        'mallampati', 'asa_class', 'anesthesia_assessment', 'sedation', 'general_anesthesia',
+        'regional_spinal', 'regional_epidural', 'regional_kaudal', 'regional_blokperifer', 'others_anesthesia',
+        'inpatient', 'outpatient', 'intensive_care', 'anesthesia_preparation', 'document_id', 'bleeding_amount', 'urine_amount'
+
+    ];
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentAnesthesiaPostModel extends Model
+{
+    protected $table = 'assessment_anesthesia_post';
+    protected $primaryKey = 'body_id';
+    protected $allowedFields = [
+        'org_unit_code',
+        'visit_id',
+        'trans_id',
+        'body_id',
+        'document_id',
+        'examination_date',
+        'modified_by',
+        'modified_date',
+        'infus',
+        'infus_volume',
+        'transfusion',
+        'fasting',
+        'meal',
+        'mealtime',
+        'respiratory_interval',
+        'postan_position',
+        'oxygen',
+        'oxygen_method',
+        'vomitus_medicine',
+        'bp_medicine',
+        'postan_plan'
+    ];
+
+
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'modified_date';
+    protected $updatedField  = 'modified_date';
+    protected $deletedField  = 'deleted_at';
+}
+
+class AssessmentAnesthesiaRecoveryModel extends Model
+{
+    protected $table = 'assessment_anesthesia_recovery';
+    protected $primaryKey = 'body_id';
+    protected $allowedFields = [
+        'org_unit_code',      // ORG_UNIT_CODE
+        'visit_id',           // VISIT_ID
+        'trans_id',           // TRANS_ID
+        'body_id',            // BODY_ID
+        'document_id',        // DOCUMENT_ID
+        'p_type',             // P_TYPE
+        'parameter_id',       // PARAMETER_ID
+        'value_score',        // VALUE_SCORE
+        'value_desc',         // VALUE_DESC
+        'observation_date',   // OBSERVATION_DATE
+        'modified_date',      // MODIFIED_DATE
+        'modified_by',        // MODIFIED_BY
+        'value_id'            // VALUE_ID
+    ];
+
+
 
     // Dates
     protected $useTimestamps = true;

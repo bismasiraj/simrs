@@ -123,63 +123,6 @@
             )
     }
 
-    function vitalsignInput(prop) {
-        var value = $(prop).val()
-        value = (Number(value.replace(/[^\d+(\.\d{1,2})$]/g, '')).toFixed(2))
-
-        console.log(prop.id)
-
-        if (prop.id == "cppttemperature") {
-            // Number(GetText( )) < 50 and Number(GetText( )) > 10
-            if (value < 10)
-                value = 10.00
-
-            if (value > 50)
-                value = 50.00
-        }
-        if (prop.id == "aetension_upper") {
-            // Number(GetText()) < 250 and Number(GetText()) > 50
-            if (value < 50)
-                value = 50.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "aetnadi") {
-            //Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "aeweight") {
-            // Number(GetText( )) < 500
-            if (value > 500)
-                value = 500.00
-        }
-        if (prop.id == "aeheight") {
-            // Number(GetText( )) between 30 and 250
-            if (value < 30)
-                value = 30.00
-
-            if (value > 250)
-                value = 250.00
-        }
-        if (prop.id == "aetension_below") {
-            // Number(GetText( )) between 0 and 300
-            if (value < 0)
-                value = 0.00
-
-            if (value > 300)
-                value = 300.00
-        }
-        if (prop.id == "aetension_below") {
-            // Number(GetText( )) < 300 
-            if (value > 300)
-                value = 300.00
-        }
-
-        $(prop).val(value)
-    }
-
     function disableVitalSign() {
         $("#aeexamination_date").prop("disabled", true)
         $("#aepetugas").prop("disabled", true)

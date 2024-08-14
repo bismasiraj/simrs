@@ -24,7 +24,7 @@
             <?php
             }
         }
-        if (!is_null($visit['class_room_id'])) {
+        if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
             if ($employee[$key]['employee_id'] == $visit['employee_inap']) {
             ?>
                 var specialist = "<?= $employee[$key]['specialist_type_id']; ?>";
@@ -34,7 +34,6 @@
         }
     } ?>
 
-    var clinicPres = <?= json_encode($clinic); ?>;
     <?php
     $option = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     $optionJml = [0, 1, 2, 3, 4, 5, '1/2', '1/4', '1/3', '3/4'];
@@ -54,20 +53,20 @@
         $("#jenisresep").val(1)
         getResep(visit, nomor)
         $("#eresepTitle").html("E-Resep")
-        $("#eresepBtnGroup").show()
-        $("#medItemBtnGroup").hide()
+        $("#eresepBtnGroup").slideDown()
+        $("#medItemBtnGroup").slideUp()
 
     })
     $("#medicalitemTab").on("click", function() {
         $("#jenisresep").val(8)
         getResep(visit, nomor)
         $("#eresepTitle").html("Medical Item")
-        $("#eresepBtnGroup").hide()
-        $("#medItemBtnGroup").show()
+        $("#eresepBtnGroup").slideUp()
+        $("#medItemBtnGroup").slideDown()
     })
     $("#formEditPrescrBtn").on("click", function() {
-        $("#formAddPrescrBtn").show()
-        $("#formEditPrescrBtn").hide()
+        $("#formAddPrescrBtn").slideDown()
+        $("#formEditPrescrBtn").slideUp()
         $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", false)
     })
     $("#jenisresep").on("change", function() {
@@ -199,14 +198,14 @@
 
                 if (isracik == 1) {
                     addBlankLine('racikan', 1)
-                    // $("#eresepAdd").hide()
-                    // $("#eresepRAdd").hide()
-                    $("#eresepTable").show()
+                    // $("#eresepAdd").slideUp()
+                    // $("#eresepRAdd").slideUp()
+                    $("#eresepTable").slideDown()
                 } else {
                     addBlankLine('nonracik', 1)
-                    // $("#eresepAdd").hide()
-                    // $("#eresepRAdd").hide()
-                    $("#eresepTable").show()
+                    // $("#eresepAdd").slideUp()
+                    // $("#eresepRAdd").slideUp()
+                    $("#eresepTable").slideDown()
                 }
 
                 clicked_submit_btn.button('reset');
@@ -233,11 +232,11 @@
         if (resep_no == '%') {
             generateResep('<?= $visit['no_registration']; ?>', '<?= $visit['clinic_id']; ?>', '<?= $visit['isrj']; ?>', 0)
         } else {
-            $("#eresepBtnGroup").hide()
-            $("#medItemBtnGroup").hide()
-            // $("#eresepAdd").hide()
-            // $("#eresepRAdd").hide()
-            $("#eresepTable").show()
+            $("#eresepBtnGroup").slideUp()
+            $("#medItemBtnGroup").slideUp()
+            // $("#eresepAdd").slideUp()
+            // $("#eresepRAdd").slideUp()
+            $("#eresepTable").slideDown()
 
             addBlankLine('nonracik')
         }
@@ -252,8 +251,8 @@
         if (resep_no == '%') {
             generateResep('<?= $visit['no_registration']; ?>', '<?= $visit['clinic_id']; ?>', '<?= $visit['isrj']; ?>', 1)
         } else {
-            $("#eresepBtnGroup").hide()
-            $("#medItemBtnGroup").hide()
+            $("#eresepBtnGroup").slideUp()
+            $("#medItemBtnGroup").slideUp()
             addBlankLine('racikan')
         }
 
@@ -465,8 +464,8 @@
                         });
                         errorMsg(message);
                     } else {
-                        $("#formAddPrescrBtn").hide()
-                        $("#formEditPrescrBtn").show()
+                        $("#formAddPrescrBtn").slideUp()
+                        $("#formEditPrescrBtn").slideDown()
                         $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
                         successMsg(data.message);
 
@@ -1022,13 +1021,13 @@
         if (resepDetail.length > 0) {
             $("#eresepBody").html("")
             $("#formprescription").find("input, textarea, select").prop("disabled", false)
-            $("#formAddPrescrBtn").hide()
-            $("#formEditPrescrBtn").show()
+            $("#formAddPrescrBtn").slideUp()
+            $("#formEditPrescrBtn").slideDown()
         } else {
             $("#eresepBody").html("")
             $("#formprescription").find("input, textarea, select").prop("disabled", false)
-            $("#formAddPrescrBtn").show()
-            $("#formEditPrescrBtn").hide()
+            $("#formAddPrescrBtn").slideDown()
+            $("#formEditPrescrBtn").slideUp()
         }
 
         resepDetail.forEach((element, key) => {
@@ -1503,9 +1502,9 @@
                 // }
 
 
-                // $("#eresepAdd").hide()
-                // $("#eresepRAdd").hide()
-                $("#eresepTable").show()
+                // $("#eresepAdd").slideUp()
+                // $("#eresepRAdd").slideUp()
+                $("#eresepTable").slideDown()
             }
         });
         if (resepDetail.length > 0) {
@@ -1516,20 +1515,20 @@
             console.log(soldstatusarray.includes($("#jenisresep").val()))
             console.log('asdf')
             if (jnsrsp == 1 || jnsrsp == 7 || jnsrsp == 8) {
-                $("#eresepBtnGroup").show()
-                $("#medItemBtnGroup").hide()
+                $("#eresepBtnGroup").slideDown()
+                $("#medItemBtnGroup").slideUp()
             } else {
-                $("#eresepBtnGroup").hide()
-                $("#medItemBtnGroup").show()
+                $("#eresepBtnGroup").slideUp()
+                $("#medItemBtnGroup").slideDown()
             }
         } else {
             console.log(soldstatusarray.includes($("#jenisresep").val()))
             if (jnsrsp == 1 || jnsrsp == 7 || jnsrsp == 8) {
-                $("#eresepBtnGroup").show()
-                $("#medItemBtnGroup").hide()
+                $("#eresepBtnGroup").slideDown()
+                $("#medItemBtnGroup").slideUp()
             } else {
-                $("#eresepBtnGroup").hide()
-                $("#medItemBtnGroup").show()
+                $("#eresepBtnGroup").slideUp()
+                $("#medItemBtnGroup").slideDown()
             }
         }
     }
@@ -1539,11 +1538,11 @@
         if (confirm('Apakah anda yakin akan menghapus item ini?') == true) {
             $("#" + brand).remove()
             if ($("#eresepBody table").length == 0) {
-                $("#eresepBtnGroup").show()
-                $("#medItemBtnGroup").show()
+                $("#eresepBtnGroup").slideDown()
+                $("#medItemBtnGroup").slideDown()
             } else {
-                $("#eresepBtnGroup").hide()
-                $("#medItemBtnGroup").hide()
+                $("#eresepBtnGroup").slideUp()
+                $("#medItemBtnGroup").slideUp()
             }
         }
     }

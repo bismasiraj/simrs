@@ -226,7 +226,12 @@ $currency_symbol = 'Rp. ';
         </div>
     </section>
 </div>
-
+<?php
+// if ($giTipe == 3 || $giTipe == 2 || $giTipe == 0 || $giTipe == 73 || $giTipe == 50 || $giTipe == 5) {
+if (in_array($giTipe, $ranapTipe)) {
+    // if (in_array($giTipe, $ranapTipe)) {
+    echo view('admin/patient/profilemodul/tandatangan', []);
+} ?>
 <?php $this->endSection() ?>
 <?php $this->section('jsContent') ?>
 <script src="<?php echo base_url(); ?>assets/js/jquery.validate.min.js"></script>
@@ -459,7 +464,7 @@ $currency_symbol = 'Rp. ';
 
 
     function resetModal() {
-        // $("#patientDetails").hide();
+        // $("#patientDetails").slideUp();
         $('#patientDetails').find('td').each(function() {
             var patientDataId = $(this).attr('id');
             if (!(typeof patientDataId == "undefined")) {
@@ -500,7 +505,7 @@ $currency_symbol = 'Rp. ';
         $("#ajax_load").html("<center><img src='" + base_url + "'/>");
         if (id == '') {
             $("#ajax_load").html("");
-            $("#patientDetails").hide();
+            $("#patientDetails").slideUp();
         } else {
             $.ajax({
                 url: baseurl + 'admin/patient/getpatientDetails',
@@ -512,7 +517,7 @@ $currency_symbol = 'Rp. ';
                 success: function(data) {
                     if (data) {
                         $("#ajax_load").html("");
-                        $("#patientDetails").show();
+                        $("#patientDetails").slideDown();
                         resetModal();
                         skunj = data
                         if (data.ismeninggal == 0) {
@@ -660,7 +665,7 @@ $currency_symbol = 'Rp. ';
                         $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
                     } else {
                         $("#ajax_load").html("");
-                        $("#patientDetails").hide();
+                        $("#patientDetails").slideUp();
                     }
 
                     // holdModal('myModal');

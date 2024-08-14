@@ -96,7 +96,7 @@
 
                         addRowDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat, data[key].suffer_type);
 
-                        <?php if (!is_null($visit['class_room_id'])) { ?>
+                        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                             addUnuDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                             addInaDiag(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                         <?php } else { ?>
@@ -130,7 +130,7 @@
 
                         addRowProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat, data[key].suffer_type);
 
-                        <?php if (!is_null($visit['class_room_id'])) { ?>
+                        <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
                             addUnuProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                             addInaProc(data[key].diagnosa_id, data[key].diagnosa_name, data[key].diag_cat)
                         <?php } else { ?>

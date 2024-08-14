@@ -90,23 +90,23 @@
         $("#formPersalinanEditBtn").on("click", function(e) {
             e.preventDefault()
             $("#formPersalinan").find("input, select, textarea").prop("disabled", false)
-            $("#formPersalinanSaveBtn").show()
-            $("#formPersalinanEditBtn").hide()
-            $("#formPersalinanSignBtn").hide()
-            $("#formPersalinanCetakBtn").hide()
+            $("#formPersalinanSaveBtn").slideDown()
+            $("#formPersalinanEditBtn").slideUp()
+            $("#formPersalinanSignBtn").slideUp()
+            $("#formPersalinanCetakBtn").slideUp()
         })
     }
     const disablePersalinan = () => {
         $("#formPersalinan").find("input, select, textarea").prop("disabled", true)
-        $("#formPersalinanSaveBtn").hide()
+        $("#formPersalinanSaveBtn").slideUp()
         if ($("#prslvalid_user").val() == '') {
-            $("#formPersalinanEditBtn").show()
-            $("#formPersalinanSignBtn").show()
-            $("#formPersalinanCetakBtn").show()
+            $("#formPersalinanEditBtn").slideDown()
+            $("#formPersalinanSignBtn").slideDown()
+            $("#formPersalinanCetakBtn").slideDown()
         } else {
-            $("#formPersalinanEditBtn").hide()
-            $("#formPersalinanSignBtn").hide()
-            $("#formPersalinanCetakBtn").hide()
+            $("#formPersalinanEditBtn").slideUp()
+            $("#formPersalinanSignBtn").slideUp()
+            $("#formPersalinanCetakBtn").slideUp()
         }
     }
 </script>

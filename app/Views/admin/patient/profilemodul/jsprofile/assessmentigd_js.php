@@ -6,59 +6,6 @@ foreach ($aValue as $key => $value) {
 }
 ?>
 <script type="text/javascript">
-    var mrJson;
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
-    var examForassessment = <?= json_encode($exam); ?>;
-    var avalue = <?= json_encode($aValue); ?>;
-    var aparameter = <?= json_encode($aParameter); ?>;
-    var atype = <?= json_encode($aType); ?>;
-    var avalueparent = <?= json_encode($aValueParent); ?>;
-    var fallRiskScore = Array();
-    var painMonitoring;
-    var painMonitoringDetil;
-    var painIntervensi;
-    var triage;
-    var triageDetil;
-    var apgar;
-    var apgarDetil;
-    var stabilitas;
-    var stabilitasDetail;
-    var tPerawat;
-    var tPerawatAll;
-    var napas;
-    var fallRisk;
-    var fallRiskDetail;
-    var sirkulasiAll;
-    var neuroAll;
-    var integumenAll;
-    var anakAll;
-    var adlAll;
-    var digestAll;
-    var perkemihanAll;
-    var seksualAll;
-    var sleepingAll;
-    var hearingAll;
-    var socialAll;
-    var psikologiAll;
-    var psikologiDetailAll;
-    var dekubitusAll;
-    var giziAll;
-    var giziDetailAll;
-    var educationFormAll;
-    var educationIntegrationAll;
-    var educationIntegrationDetailAll;
-    var educationIntegrationPlanAll = [];
-    var educationIntegrationProvisionAll = [];
-    var tarifData = []
-    var addUnuDiag;
-    var addUnuProc;
     $(document).ready(function(e) {
         const nomor = '<?= $visit['no_registration']; ?>';
         const ke = '%'
@@ -143,70 +90,70 @@ foreach ($aValue as $key => $value) {
     // $("#cpptTab").on("click", function() {
     //     $("#arpTitle").html("CPPT")
     //     $("#arpanamnase_label").html("Subyektif (S)")
-    //     $("#collapseRiwayat").hide()
-    //     $("#groupRiwayat").hide()
-    //     // $("#subjectiveGroupHeader").show()
-    //     $("#objectiveGroupHeader").show()
-    //     $("#arpFallRisk_Group").show()
-    //     $("#arpPainMonitoring_Group").hide()
-    //     $("#arpTriage_Group").hide()
-    //     $("#arpApgar_Group").hide()
-    //     $("#arpGizi_Group").hide()
-    //     $("#arpAdl_Group").hide()
-    //     $("#arpDekubitus_Group").hide()
-    //     $("#arpStabilitas_Group").hide()
-    //     $("#arpEdukasiIntegrasi_Group").hide()
-    //     $("#arpEdukasiForm_Group").hide()
-    //     $("#arpGcs_Group").show()
-    //     $("#arpIntegumen_Group").hide()
-    //     $("#arpNeurosensoris_Group").hide()
-    //     $("#arpPencernaan_Group").hide()
-    //     $("#arpPerkemihan_Group").hide()
-    //     $("#arpPernapasan_Group").hide()
-    //     $("#arpPsikologi_Group").hide()
-    //     $("#arpSeksual_Group").hide()
-    //     $("#arpSirkulasi_Group").hide()
-    //     $("#arpSocial_Group").hide()
-    //     $("#arpHearing_Group").hide()
-    //     $("#arpSleeping_Group").hide()
-    //     $("#arpTindakanKolaboratif_Group").show()
-    //     $("#arpTindakanMandiri_Group").show()
-    //     $("#arpImplementasi_Group").hide()
+    //     $("#collapseRiwayat").slideUp()
+    //     $("#groupRiwayat").slideUp()
+    //     // $("#subjectiveGroupHeader").slideDown()
+    //     $("#objectiveGroupHeader").slideDown()
+    //     $("#arpFallRisk_Group").slideDown()
+    //     $("#arpPainMonitoring_Group").slideUp()
+    //     $("#arpTriage_Group").slideUp()
+    //     $("#arpApgar_Group").slideUp()
+    //     $("#arpGizi_Group").slideUp()
+    //     $("#arpAdl_Group").slideUp()
+    //     $("#arpDekubitus_Group").slideUp()
+    //     $("#arpStabilitas_Group").slideUp()
+    //     $("#arpEdukasiIntegrasi_Group").slideUp()
+    //     $("#arpEdukasiForm_Group").slideUp()
+    //     $("#arpGcs_Group").slideDown()
+    //     $("#arpIntegumen_Group").slideUp()
+    //     $("#arpNeurosensoris_Group").slideUp()
+    //     $("#arpPencernaan_Group").slideUp()
+    //     $("#arpPerkemihan_Group").slideUp()
+    //     $("#arpPernapasan_Group").slideUp()
+    //     $("#arpPsikologi_Group").slideUp()
+    //     $("#arpSeksual_Group").slideUp()
+    //     $("#arpSirkulasi_Group").slideUp()
+    //     $("#arpSocial_Group").slideUp()
+    //     $("#arpHearing_Group").slideUp()
+    //     $("#arpSleeping_Group").slideUp()
+    //     $("#arpTindakanKolaboratif_Group").slideDown()
+    //     $("#arpTindakanMandiri_Group").slideDown()
+    //     $("#arpImplementasi_Group").slideUp()
     // })
     $("#assessmentigdTab").on("mouseup", function() {
         $("#arpTitle").html("Asesmen Keperawatan")
 
         $("#arpanamnase_label").html("Subyektif (S)")
-        $("#collapseRiwayat").show()
-        $("#groupRiwayat").show()
-        // $("#subjectiveGroupHeader").show()
-        $("#objectiveGroupHeader").show()
-        $("#arpFallRisk_Group").show()
-        $("#arpPainMonitoring_Group").show()
-        $("#arpTriage_Group").show()
+        $("#collapseRiwayat").slideDown()
+        $("#groupRiwayat").slideDown()
+        // $("#subjectiveGroupHeader").slideDown()
+        $("#objectiveGroupHeader").slideDown()
+        $("#arpFallRisk_Group").slideDown()
+        $("#arpPainMonitoring_Group").slideDown()
+        $("#arpTriage_Group").slideDown()
         $("#bodyTriagePerawat").html("")
-        $("#arpApgar_Group").show()
-        $("#arpGizi_Group").show()
-        $("#arpAdl_Group").show()
-        $("#arpDekubitus_Group").show()
-        $("#arpStabilitas_Group").show()
-        $("#arpEdukasiIntegrasi_Group").show()
-        $("#arpEdukasiForm_Group").show()
-        $("#arpGcs_Group").show()
-        $("#arpIntegumen_Group").show()
-        $("#arpNeurosensoris_Group").show()
-        $("#arpPencernaan_Group").show()
-        $("#arpPerkemihan_Group").show()
-        $("#arpPernapasan_Group").show()
-        $("#arpPsikologi_Group").show()
-        $("#arpSeksual_Group").show()
-        $("#arpSirkulasi_Group").show()
-        $("#arpSocial_Group").show()
-        $("#arpHearing_Group").show()
-        $("#arpSleeping_Group").show()
-        $("#arpTindakanKolaboratif_Group").show()
-        $("#arpTindakanMandiri_Group").show()
-        $("#arpImplementasi_Group").show()
+        $("#arpApgar_Group").slideDown()
+        $("#arpGizi_Group").slideDown()
+        $("#arpAdl_Group").slideDown()
+        $("#arpDekubitus_Group").slideDown()
+        $("#arpStabilitas_Group").slideDown()
+        $("#arpEdukasiIntegrasi_Group").slideDown()
+        $("#arpEdukasiForm_Group").slideDown()
+        $("#arpGcs_Group").slideDown()
+        $("#arpIntegumen_Group").slideDown()
+        $("#arpNeurosensoris_Group").slideDown()
+        $("#arpPencernaan_Group").slideDown()
+        $("#arpPerkemihan_Group").slideDown()
+        $("#arpPernapasan_Group").slideDown()
+        $("#arpPsikologi_Group").slideDown()
+        $("#arpSeksual_Group").slideDown()
+        $("#arpSirkulasi_Group").slideDown()
+        $("#arpSocial_Group").slideDown()
+        $("#arpHearing_Group").slideDown()
+        $("#arpSleeping_Group").slideDown()
+        $("#arpTindakanKolaboratif_Group").slideDown()
+        $("#arpTindakanMandiri_Group").slideDown()
+        $("#arpImplementasi_Group").slideDown()
 
         initialAddArp()
         generateSatelite()
@@ -235,8 +182,8 @@ foreach ($aValue as $key => $value) {
             },
             success: function(data) {
                 getAssessmentKeperawatan()
-                // // $("#formsavearpbtn").hide()
-                // // $("#formeditarp").show()
+                // // $("#formsavearpbtn").slideUp()
+                // // $("#formeditarp").slideDown()
                 // var isNewDocument = 0
                 // $.each(examForassessment, function(key, value) {
                 //     if (value.body_id == data.body_id) {
@@ -258,6 +205,22 @@ foreach ($aValue as $key => $value) {
             }
         });
     }));
+
+    const filterVsStatusId = (value) => {
+        if (value == 1) {
+            $("#arpApgar_Group").slideUp()
+            $("#arpAnak_Group").slideUp()
+        } else if (value == 4) {
+            $("#arpApgar_Group").slideDown()
+            $("#arpAnak_Group").slideDown()
+        } else if (value == 5) {
+            $("#arpApgar_Group").slideUp()
+            $("#arpAnak_Group").slideDown()
+        } else if (value == 10) {
+            $("#arpApgar_Group").slideUp()
+            $("#arpAnak_Group").slideUp()
+        }
+    }
 
     function generateSatelite() {
         $("#bodyFallRiskPerawat").html("")
@@ -295,6 +258,7 @@ foreach ($aValue as $key => $value) {
             contentType: false,
             cache: false,
             beforeSend: function() {
+                $("#cpptDivForm").hide()
                 getLoadingscreen("contentCppt", "loadContentCppt")
                 getLoadingscreen("contentAssessmentPerawat", "loadContentAssessmentPerawat")
                 $("#cpptBody").html(loadingScreen())
@@ -308,14 +272,7 @@ foreach ($aValue as $key => $value) {
                 riwayatAll = data.pasienHistory
 
                 examSelected = [];
-                if (examForassessment.length > 0) {
-                    // fillDataArp(examForassessment.length - 1)
 
-                    displayTableAssessmentKeperawatan(examForassessment.length - 1)
-                    displayTableAssessmentKeperawatanForVitalSign();
-                    $("#arpAddDocument").hide()
-                    $("#arpDocument").show()
-                }
                 // $.each(examForassessment, function(key, value) {
                 var vsStatusId = [1, 4, 5];
 
@@ -327,9 +284,17 @@ foreach ($aValue as $key => $value) {
                 // fillDataArp(examForassessment.length)
 
 
-                let examFiltered145 = examForassessment.filter(item => vsStatusId.includes(item.vs_status_id))
-                fillDataArp(examFiltered145.length - 1)
-                disableARP()
+                let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
+                if (examFiltered145.length > 0) {
+                    fillDataArp(examFiltered145.length - 1)
+                    $("#arpAddDocument").slideUp()
+                    $("#arpDocument").slideDown()
+                }
+
+                if (examForassessment.length > 0) {
+                    displayTableAssessmentKeperawatan();
+                    displayTableAssessmentKeperawatanForVitalSign();
+                }
 
 
                 fillRiwayatArp()
@@ -358,16 +323,25 @@ foreach ($aValue as $key => $value) {
         $("#arpno_registration").val('<?= $visit['no_registration']; ?>')
         $("#arpvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#arpbill_id").val(null)
-        <?php if (!is_null($visit['class_room_id'])) { ?>
-            $('#arpclinic_id').val('<?= $visit['class_room_id']; ?>')
+        <?php if ($visit['isrj'] == 0) { ?>
+            // $('#arpclinic_id').val('<?= $visit['class_room_id']; ?>')
         <?php } else { ?>
-            $('#arpclinic_id').val('<?= $visit['clinic_id']; ?>')
+            // $('#arpclinic_id').val('<?= $visit['clinic_id']; ?>')
         <?php } ?>
-        <?php if (!is_null($visit['class_room_id'])) { ?>
-            $('#arpemployee_id').val('<?= $visit['employee_inap']; ?>')
-        <?php } else { ?>
-            $('#arpemployee_id').val('<?= $visit['employee_id']; ?>')
-        <?php } ?>
+        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
+        $("#arpclinic_id").html($('<option></option>')
+            .val(clinicSelect[0].clinic_id)
+            .text(clinicSelect[0].name_of_clinic))
+
+        <?php if ($visit['isrj'] == '0') {
+        ?>
+            $("#arpemployee_id").html('<option value="<?= $visit['employee_inap']; ?>"><?= $visit['fullname_inap']; ?></option>')
+        <?php
+        } else {
+        ?>
+            $("#arpemployee_id").html('<option value="<?= $visit['employee_id']; ?>"><?= $visit['fullname']; ?></option>')
+        <?php
+        } ?>
         $("#arpclass_room_id").val('<?= $visit['class_room_id']; ?>')
         $("#arpbed_id").val('<?= $visit['bed_id']; ?>')
         $("#arpin_date").val('<?= $visit['in_date']; ?>')
@@ -384,12 +358,13 @@ foreach ($aValue as $key => $value) {
         $("#arpthename").val('<?= $visit['diantar_oleh']; ?>')
         $("#arptheaddress").val('<?= $visit['visitor_address']; ?>')
         $("#arptheid").val('<?= $visit['pasien_id']; ?>')
-        $("#arpisrj").val('<?= is_null($visit['class_room_id']) ? 1 : 0; ?>')
+        $("#arpisrj").val('<?= $visit['isrj']; ?>')
         $("#arpgender").val('<?= $visit['gender']; ?>')
         $("#arpdoctor").val('<?= $visit['fullname']; ?>')
         $("#arpkal_id").val('<?= $visit['kal_id']; ?>')
         $("#arppetugas_id").val('<?= user()->username; ?>')
         $("#arppetugas").val('<?= user()->getFullname(); ?>')
+        $("#arpaccount_id").val(2)
         // $("#arpvs_status_id").val(1)
 
         $('#keperawatanListLinkAll').html("")
@@ -422,64 +397,94 @@ foreach ($aValue as $key => $value) {
 
         $("#arpisvalid").val(0)
 
-        $("#arpAddDocument").hide()
-        $("#arpDocument").show()
+        $("#arpAddDocument").slideUp()
+        $("#arpDocument").slideDown()
         enableARP()
         fillRiwayatArp()
         generateSatelite()
     }
 
-    function fillDataArp(index) {
+    const fillDataArp = async (index) => {
         var ex = examForassessment[index]
         $.each(ex, function(key, value) {
             $("#arp" + key).val(value)
-            $("#arp" + key).prop("disabled", true)
         })
-        $("#arpclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
+        let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
+        $("#arpclinic_id").html($('<option></option>')
+            .val(clinicSelect[0].clinic_id)
+            .text(clinicSelect[0].name_of_clinic))
         $("#arpemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
         $("#arpvs_status_id" + ex.vs_status_id).prop("checked", true)
 
-        getFallRisk(ex.body_id)
-        getPainMonitoring(ex.body_id)
-        getTriage(ex.body_id, "bodyTriage")
-        getGcs(ex.body_id, "bodyGcsPerawat")
-        getApgar(ex.body_id)
-        getStabilitas(ex.body_id)
-        getPernapasan(ex.body_id)
-        getSirkulasi(ex.body_id)
-        getNeurosensoris(ex.body_id)
-        getIntegumen(ex.body_id)
-        getADL(ex.body_id)
-        getPencernaan(ex.body_id)
-        getDekubitus(ex.body_id)
-        getPsikologi(ex.body_id)
-        getPerkemihan(ex.body_id)
-        getSeksual(ex.body_id)
-        getSocial(ex.body_id)
-        getGizi(ex.body_id)
-        getEducationForm(ex.body_id)
-        getEducationIntegration(ex.body_id)
-        getHearing(ex.body_id)
-        getSleeping(ex.body_id)
+        await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid")
+
         disableARP()
+
+        // getFallRisk(ex.body_id)
+        // getPainMonitoring(ex.body_id)
+        // getTriage(ex.body_id, "bodyTriage")
+        // getGcs(ex.body_id, "bodyGcsPerawat")
+        // getApgar(ex.body_id)
+        // getStabilitas(ex.body_id)
+        // getPernapasan(ex.body_id)
+        // getSirkulasi(ex.body_id)
+        // getNeurosensoris(ex.body_id)
+        // getIntegumen(ex.body_id)
+        // getADL(ex.body_id)
+        // getPencernaan(ex.body_id)
+        // getDekubitus(ex.body_id)
+        // getPsikologi(ex.body_id)
+        // getPerkemihan(ex.body_id)
+        // getSeksual(ex.body_id)
+        // getSocial(ex.body_id)
+        // getGizi(ex.body_id)
+        // getEducationForm(ex.body_id)
+        // getEducationIntegration(ex.body_id)
+        // getHearing(ex.body_id)
+        // getSleeping(ex.body_id)
+
     }
 
     function fillRiwayatArp() {
         $.each(riwayatAll, function(key, value) {
             if ($("#arpGEN0009" + value.value_id).is(":checkbox")) {
                 $("#arpGEN0009" + value.value_id).prop("checked", true)
-                $("#arpGEN0009" + value.value_id).prop("disabled", true)
+                // $("#arpGEN0009" + value.value_id).prop("disabled", true)
             } else {
                 $("#arpGEN0009" + value.value_id).val(value.histories)
-                $("#arpGEN0009" + value.value_id).prop("disabled", true)
+                // $("#arpGEN0009" + value.value_id).prop("disabled", true)
             }
         })
     }
 
-    function signArp() {
+    const signArp = async () => {
         $("#formeditarpid").trigger("click")
-
-        addSignUser("arp", "formsavearpbtnid", "formaddarp")
+        //const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title)
+        let titlenya = $("#arpTitle").html()
+        let titlerj = ''
+        let titlejenis = ''
+        if ($("#arpisrj") == 0) {
+            titlerj = ' Rawat Inap';
+        } else {
+            titlerj = ' Rawat Jalan'
+        }
+        switch ($('#formaddarp input[name="vs_status_id"]:checked').val()) {
+            case 1:
+                titlejenis = ' Dewasa'
+                break;
+            case 4:
+                titlejenis = ' Neonatus'
+                break;
+            case 5:
+                titlejenis = ' Anak'
+                break;
+            case 10:
+                titlejenis = ' Obsetric'
+                break;
+            default:
+                break;
+        }
+        await addSignUser("formaddarp", "arp", "arpbody_id", "formsavearpbtnid", 3, 1, 1, $("#arpTitle").html() + titlejenis + titlerj)
     }
 
     function displayTableAssessmentKeperawatan(index) {
@@ -540,7 +545,7 @@ foreach ($aValue as $key => $value) {
         // coba = examfiltered27
         $.each(examForassessment, function(key, value) {
             console.log(key)
-            if (value.vs_status_id == 2 || value.vs_status_id == 7) {
+            if (value.account_id == 3 || value.account_id == 4) {
                 let pd = examForassessment[key]
                 addRowCPPT(value, key)
             }
@@ -548,9 +553,9 @@ foreach ($aValue as $key => $value) {
     }
 
     function enableARP() {
-        $("#formsavearpbtnid").show()
-        $("#formeditarpid").hide()
-        // $(".formsignarp").show()
+        $("#formsavearpbtnid").slideDown()
+        $("#formeditarpid").slideUp()
+        // $(".formsignarp").slideDown()
         $("#formaddarp input").prop("disabled", false)
         $("#formaddarp textarea").prop("disabled", false)
         $("#formaddarp select").prop("disabled", false)
@@ -560,20 +565,23 @@ foreach ($aValue as $key => $value) {
         })
     }
 
-    function disableARP() {
-        $("#formsavearpbtnid").hide()
-        $("#formeditarpid").show()
-        // $(".formsignarp").hide()
+    const disableARP = () => {
+        console.log("bisma")
+        $("#formsavearpbtnid").slideUp()
+        $("#formeditarpid").slideDown()
+        // $(".formsignarp").slideUp()
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)
         $("#formaddarp select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
-        if ($("#arpvalid_user").val() != '' && $("#arpvalid_user").val() != null) {
-            $("#formeditarpid").hide()
-            $("#formsignarpid").hide()
+        if ($("#arpvalid_user").val() != '') {
+            $("#formaddarpbtnid").slideUp()
+            $("#formeditarpid").slideUp()
+            $("#formsignarpid").slideUp()
             $("#formaddarp").find(".btn-add-doc").remove()
         }
     }
+
     $(".formaddarpbtn").on("mouseup", function() {
         initialAddArp()
     })
@@ -637,6 +645,9 @@ foreach ($aValue as $key => $value) {
         }
         if ($("#arpvs_status_id5").prop("checked")) {
             titlekeperawatan = 'Anak'
+        }
+        if ($("#arpvs_status_id10").prop("checked")) {
+            titlekeperawatan = 'Obsetric'
         }
 
         var win = window.open('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan, '_blank');

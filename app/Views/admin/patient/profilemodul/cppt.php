@@ -32,10 +32,13 @@ $permission = user()->getPermissions();
                     ]); ?>
                 </div><!--./col-lg-6-->
                 <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
-                    <div class="card border-1 rounded-4 m-4 p-4">
+                    <div id="cpptDivForm" class="card border-1 rounded-4 p-4" style="display: none">
                         <div class="card-body">
+                            <div class="col-md-12 text-end">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="hideCppt()"></button>
+                            </div>
                             <div class="row">
-                                <div id="acpptDocument" class="border-1 rounded-4 mb-4 p-4" style="">
+                                <div id="acpptDocument" class="border-1 rounded-4" style="">
                                     <div class="">
                                         <form id="formaddacppt" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                                             <input type="hidden" id="acpptbody_id" name="body_id">
@@ -73,6 +76,8 @@ $permission = user()->getPermissions();
                                             <input type="hidden" id="acpptaccount_id" name="account_id">
                                             <input type="hidden" id="acpptkesadaran" name="kesadaran">
                                             <input type="hidden" id="acpptisvalid" name="isvalid">
+                                            <input type="hidden" id="acpptvalid_user" class="valid_user" name="valid_user">
+                                            <input type="hidden" id="acpptvalid_pasien" class="valid_pasien" name="valid_pasien">
                                             <div class="row">
                                                 <h3 id="acpptTitle">CPPT</h3>
                                                 <hr>
@@ -98,6 +103,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label for="acpptexamination_date">Tanggal Assessmennt</label>
                                                                 <input name="examination_date" id="acpptexamination_date" type="datetime-local" class="form-control" />
+                                                                <!-- <input class="form-control datetime-input" type="datetime-local" id="" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], " YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : '' }"> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -106,7 +112,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label for="acpptclinic_id">Pelayanan</label>
                                                                 <select name="clinic_id" id="acpptclinic_id" type="hidden" class="form-control ">
-                                                                    <?php if (!is_null($visit['class_room_id'])) {
+                                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
                                                                         $selectedClinic = $visit['class_room_id'];
                                                                     } else {
                                                                         $selectedClinic = $visit['clinic_id'];
@@ -129,7 +135,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label for="acpptemployee_id">Dokter</label>
                                                                 <select name="employee_id" id="acpptemployee_id" type="hidden" class="form-control ">
-                                                                    <?php if (!is_null($visit['class_room_id'])) {
+                                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
                                                                         $dokterselected = $visit['employee_inap'];
                                                                     } else {
                                                                         $dokterselected = $visit['employee_id'];
@@ -144,10 +150,10 @@ $permission = user()->getPermissions();
                                                                     <?php
                                                                     } ?>
                                                                 </select>
-                                                                <script>
+                                                                <!-- <script>
                                                                     // Set the formatted date to the input field
                                                                     document.getElementById('acpptemployee_id').value = formattedDate;
-                                                                </script>
+                                                                </script> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -269,6 +275,36 @@ $permission = user()->getPermissions();
                                                                         </div>
                                                                         <div class="col-sm-12 mt-2">
                                                                             <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                                        </div>
+                                                                        <div class="col-12 mt-4">
+                                                                            <h4><b>Resiko Jatuh</b></h4>
+                                                                            <hr>
+                                                                            <div class="col-md-12">
+                                                                                <div id="bodyFallRiskCppt">
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-md-12">
+                                                                                        <div id="addFallRiskButton" class="box-tab-tools text-center">
+                                                                                            <a onclick="addFallRisk(1,0,'acpptbody_id', 'bodyFallRiskCppt')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-12 mt-4">
+                                                                            <h4><b>GCS</b></h4>
+                                                                            <hr>
+                                                                            <div class="col-md-12">
+                                                                                <div id="bodyGcsCppt">
+                                                                                </div>
+                                                                                <div class="row mb-4">
+                                                                                    <div class="col-md-12">
+                                                                                        <div id="bodyGcsCpptAddBtn" class="box-tab-tools text-center">
+                                                                                            <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="bodyGcsCpptAddBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -399,7 +435,7 @@ $permission = user()->getPermissions();
                                         <div class="accordion" id="accodrionCPPT">
                                             <?php foreach ($aParent as $key => $value) { ?>
                                                 <?php if ($value['parent_id'] == '001') { ?>
-                                                    <div id="acpptFallRisk_Group" class="accordion-item">
+                                                    <!-- <div id="acpptFallRisk_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="FallRiskMedis">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskMedis" aria-expanded="true" aria-controls="collapseFallRiskMedis">
                                                                 <b>RESIKO JATUH</b>
@@ -424,7 +460,7 @@ $permission = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                             <?php }
                                             } ?>
                                             <?php foreach ($aType as $key => $value) {
@@ -442,7 +478,7 @@ $permission = user()->getPermissions();
                                                 <?php
                                                 } else if ($value['p_type'] == 'GEN0011') {
                                                 ?>
-                                                    <div id="acpptGcs_Group" class="accordion-item">
+                                                    <!-- <div id="acpptGcs_Group" class="accordion-item">
                                                         <h2 class="accordion-header" id="headingGcs">
                                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGcs" aria-expanded="false" aria-controls="collapseGcs">
                                                                 <b>GLASGOW COMA SCALE (GCS)</b>
@@ -465,7 +501,7 @@ $permission = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                             <?php
                                                 }
                                             } ?>

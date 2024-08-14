@@ -42,7 +42,8 @@ class PasienTransferModel extends Model
         'modified_by',
         'valid_date',
         'valid_user',
-        'valid_pasien'
+        'valid_pasien',
+        'service_needs'
     ];
 
     protected $useTimestamps = true;

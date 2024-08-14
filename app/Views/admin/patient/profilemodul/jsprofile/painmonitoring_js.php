@@ -62,32 +62,44 @@
             }
         })
         $("#painBody").append($("<tr>"))
-        if (painselect.valid_user === null) {
-            $("#painBody").append($("<tr>")
-                .append($("<td>").append((painselect.examination_date).substring(0, 16)))
-                .append($("<td>").html(painselect.modified_by))
-                .append($("<td>").html(type))
-                .append($("<td>").html(p))
-                .append($("<td>").html(q))
-                .append($("<td>").html(r))
-                .append($("<td>").html(s))
-                .append($("<td>").html(t))
-                .append($("<td>").html('<button type="button" onclick="editpain(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + painselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
-            )
-        } else {
-            $("#painBody").append($("<tr>")
-                .append($("<td>").append((painselect.examination_date).substring(0, 16)))
-                .append($("<td>").html(painselect.modified_by))
-                .append($("<td>").html(type))
-                .append($("<td>").html(p))
-                .append($("<td>").html(q))
-                .append($("<td>").html(r))
-                .append($("<td>").html(s))
-                .append($("<td>").html(t))
-                .append($("<td colspan=\"2\">"))
-            )
-        }
+        $("#painBody").append($("<tr>")
+            .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+            .append($("<td>").html(painselect.modified_by))
+            .append($("<td>").html(type))
+            .append($("<td>").html(p))
+            .append($("<td>").html(q))
+            .append($("<td>").html(r))
+            .append($("<td>").html(s))
+            .append($("<td>").html(t))
+            .append($("<td>").html('<button type="button" onclick="editpain(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+            .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + painselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+        )
+        // if (painselect.valid_user === null) {
+        //     $("#painBody").append($("<tr>")
+        //         .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").html(painselect.modified_by))
+        //         .append($("<td>").html(type))
+        //         .append($("<td>").html(p))
+        //         .append($("<td>").html(q))
+        //         .append($("<td>").html(r))
+        //         .append($("<td>").html(s))
+        //         .append($("<td>").html(t))
+        //         .append($("<td>").html('<button type="button" onclick="editpain(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+        //         .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + painselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+        //     )
+        // } else {
+        //     $("#painBody").append($("<tr>")
+        //         .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").html(painselect.modified_by))
+        //         .append($("<td>").html(type))
+        //         .append($("<td>").html(p))
+        //         .append($("<td>").html(q))
+        //         .append($("<td>").html(r))
+        //         .append($("<td>").html(s))
+        //         .append($("<td>").html(t))
+        //         .append($("<td colspan=\"2\">"))
+        //     )
+        // }
     }
 
     painjson.forEach((element, key) => {
@@ -203,8 +215,8 @@
         $("#apainvs_status_id" + examselect.vs_status_id).prop("checked", true)
 
         $("#painModal").modal("show")
-        $("#formsaveapainbtnid").show()
-        $("#formeditapainid").hide()
+        $("#formsaveapainbtnid").slideDown()
+        $("#formeditapainid").slideUp()
     }
 </script>
 
