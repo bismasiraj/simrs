@@ -57,7 +57,8 @@ $permission = user()->getPermissions();
                                 <div class="mb-3">
                                     <div class="form-group">
                                         <label for="atransferexamination_date">Tanggal Dokumen</label>
-                                        <input name="examination_date" id="atransferexamination_date" type="datetime-local" class="form-control" />
+                                        <input id="flatatransferexamination_date" type="text" class="form-control datetimeflatpickr" />
+                                        <input name="examination_date" id="atransferexamination_date" type="hidden" class="form-control" />
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +131,8 @@ $permission = user()->getPermissions();
                                         <div class="mb-3">
                                             <div class="form-group">
                                                 <label>Tanggal Rencana</label>
-                                                <input id="rujintvisitdate" name=" rujintvisitdate" type="datetime-local" class="form-control" placeholder="yyyy-mm-dd" value="<?= date('Y-m-d'); ?>">
+                                                <input id="flatrujintvisitdate" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                                <input id="rujintvisitdate" name=" rujintvisitdate" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
                                             </div>
                                         </div>
                                     </div>
@@ -174,8 +176,8 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center; display: none;">
-                                        <button type="button" id="addnorujukan" onclick="postRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                        <button type="button" id="deleterujukan" onclick="deleteRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                                        <button type="button" id="addRujukInternalBtn" onclick="postRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                        <button type="button" id="addRujukInternalDelete" onclick="deleteRujukInternal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -468,7 +470,6 @@ $permission = user()->getPermissions();
                                     <input type="hidden" id="atransfer1keluar_id" name="keluar_id">
                                     <input type="hidden" id="atransfer1imt_score" name="imt_score">
                                     <input type="hidden" id="atransfer1imt_desc" name="imt_desc">
-                                    <input type="hidden" id="atransfer1pemeriksaan" name="pemeriksaan">
                                     <input type="hidden" id="atransfer1medical_treatment" name="medical_treatment">
                                     <input type="hidden" id="atransfer1modified_date" name="modified_date">
                                     <input type="hidden" id="atransfer1modified_by" name="modified_by">
@@ -489,7 +490,6 @@ $permission = user()->getPermissions();
                                     <input type="hidden" id="atransfer1account_id" name="account_id">
                                     <input type="hidden" id="atransfer1kesadaran" name="kesadaran">
                                     <input type="hidden" id="atransfer1isvalid" name="isvalid">
-                                    <input type="hidden" id="atransfer1vs_status_id" name="vs_status_id">
                                     <div class="row">
                                         <h3 id="atransfer1Title">CPPT Asal</h3>
                                         <hr>
@@ -507,7 +507,8 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer1examination_date">Tanggal Assessmennt</label>
-                                                        <input name="examination_date" id="atransfer1examination_date" type="datetime-local" class="form-control" />
+                                                        <input id="flatatransfer1examination_date" type="text" class="form-control datetimeflatpickr" required />
+                                                        <input name="examination_date" id="atransfer1examination_date" type="hidden" class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -515,7 +516,7 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer1clinic_id">Ruangan</label>
-                                                        <select name="clinic_id" id="atransfer1clinic_id" type="hidden" class="form-control ">
+                                                        <select name="clinic_id" id="atransfer1clinic_id" type="hidden" class="form-control" required>
                                                             <?php foreach ($clinic as $key => $value)
                                                                 if ($value['stype_id'] == 3) {
                                                             ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
@@ -528,7 +529,7 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer1employee_id">Dokter</label>
-                                                        <select name="employee_id" id="atransfer1employee_id" type="hidden" class="form-control ">
+                                                        <select name="employee_id" id="atransfer1employee_id" type="hidden" class="form-control" required>
                                                             <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
                                                                 $dokterselected = $visit['employee_inap'];
                                                             } else {
@@ -552,56 +553,44 @@ $permission = user()->getPermissions();
                                         <div class="accordion" id="accordionTranferAsal">
                                             <!-- Subyektif -->
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingSubyektif">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubyektif" aria-expanded="false" aria-controls="collapseSubyektif">
+                                                <h2 class="accordion-header" id="atransfer1headingSubyektif">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseSubyektif" aria-expanded="false" aria-controls="atransfer1collapseSubyektif">
                                                         <b id="transferAsalSubyektifTitle">SUBYEKTIF (S)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="headingSubyektif" data-bs-parent="#accordionTranferAsal" style="">
+                                                <div id="atransfer1collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="atransfer1headingSubyektif" data-bs-parent="#accordionTranferAsal" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
                                                                 <div class="form-group"><label id="atransfer1anamnase_label">Keluhan Utama</label><textarea name="anamnase" id="atransfer1anamnase" placeholder="" value="" class="form-control"></textarea></div>
                                                             </div>
                                                         </div>
-                                                        <div id="groupRiwayattransferAsal" class="row" style="display: none;">
-                                                            <div class="col-sm-6 col-xs-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label for="atransfer1description">Riwayat Penyakit Sekarang</label>
-                                                                        <textarea id="atransfer1description" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php foreach ($aValue as $key => $value) {
-                                                                if ($value['p_type'] == 'GEN0009') {
-                                                            ?>
-                                                                    <div class="col-sm-6 col-xs-12">
-                                                                        <div class="mb-3">
-                                                                            <div class="form-group">
-                                                                                <label for="atransfer1<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                <textarea id="atransfer1<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php
-                                                                }
-                                                            } ?>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <!-- Obyektif -->
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingVitalSign">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                                <h2 class="accordion-header" id="atransfer1headingVitalSign">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
                                                         <b id="transferAsalObyektifTitle">OBYEKTIF (O)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionTranferAsal" style="">
+                                                <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer1headingVitalSign" data-bs-parent="#accordionTranferAsal" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupVitalSigntransferAsal" class="row">
                                                             <div class="row mb-4">
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Jenis EWS</label>
+                                                                        <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
+                                                                            <option value="" selected>-- pilih --</option>
+                                                                            <option value="1">Dewasa</option>
+                                                                            <option value="4">Anak</option>
+                                                                            <option value="5">Neonatus</option>
+                                                                            <option value="10">Obsetric</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>BB(Kg)</label>
@@ -692,13 +681,13 @@ $permission = user()->getPermissions();
                                                                 <!--==new -->
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
-                                                                        <label>Jenis EWS</label>
-                                                                        <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
-                                                                            <option value="" selected>-- pilih --</option>
-                                                                            <option value="1">Dewasa</option>
-                                                                            <option value="4">Anak</option>
-                                                                            <option value="5">Neonatus</option>
+                                                                        <label>Kesadaran</label>
+                                                                        <select class="form-select" name="awareness" id="atransfer1awareness" onchange="vitalsignInput(this)">
+                                                                            <option value="0">Sadar</option>
+                                                                            <option value="3">Nyeri</option>
+                                                                            <option value="10">Unrespon</option>
                                                                         </select>
+                                                                        <span class="h6" id="badge-atransfer1awareness"></span>
                                                                     </div>
                                                                 </div>
                                                                 <!--==endofnew -->
@@ -706,6 +695,7 @@ $permission = user()->getPermissions();
                                                                     <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer1pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                                 </div>
                                                             </div>
+                                                            <span id="atransfer1total_score"></span>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -717,12 +707,12 @@ $permission = user()->getPermissions();
                                             </div>
                                             <!-- Assessment -->
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingDiagnosaPerawat">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat" aria-expanded="false" aria-controls="collapseDiagnosaPerawat">
+                                                <h2 class="accordion-header" id="atransfer1headingDiagnosaPerawat">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer1collapseDiagnosaPerawat">
                                                         <b id="transferAsalAssessmentTitle">ASESMEN (A)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaPerawat" data-bs-parent="#accordionTranferAsal">
+                                                <div id="atransfer1collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="atransfer1headingDiagnosaPerawat" data-bs-parent="#accordionTranferAsal">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupDiagnosaPerawattransferAsal" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
                                                             <div class="col-sm-12 col-md-12 col-lg-12">
@@ -740,7 +730,7 @@ $permission = user()->getPermissions();
                                                                             </table>
                                                                         </div>
                                                                         <div class="box-tab-tools" style="text-align: center;">
-                                                                            <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                            <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -756,12 +746,12 @@ $permission = user()->getPermissions();
                                             </div>
                                             <!-- Prosedur -->
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingPlanning">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePlanning" aria-expanded="false" aria-controls="collapsePlanning">
+                                                <h2 class="accordion-header" id="atransfer1headingPlanning">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapsePlanning" aria-expanded="false" aria-controls="atransfer1collapsePlanning">
                                                         <b id="transferAsalPlanningTitle">PLANNING (P)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapsePlanning" class="accordion-collapse collapse" aria-labelledby="headingPlanning" data-bs-parent="#accordionTranferAsal">
+                                                <div id="atransfer1collapsePlanning" class="accordion-collapse collapse" aria-labelledby="atransfer1headingPlanning" data-bs-parent="#accordionTranferAsal">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -825,7 +815,7 @@ $permission = user()->getPermissions();
                                             <hr>
                                         </div><!--./col-md-12-->
                                         <div class="panel-footer text-end mb-4">
-                                            <button type="submit" id="formSaveatransfer1btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer1btn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                            <button type="submit" id="formsaveatransfer1btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer1btn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formeditatransfer1id" name="editrm" onclick="enabletransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer1 btn-edit"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formsignatransfer1id" name="signrm" onclick="signatransfer1()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer1 btn-sign"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
@@ -852,7 +842,6 @@ $permission = user()->getPermissions();
                                     <input type="hidden" id="atransfer2keluar_id" name="keluar_id">
                                     <input type="hidden" id="atransfer2imt_score" name="imt_score">
                                     <input type="hidden" id="atransfer2imt_desc" name="imt_desc">
-                                    <input type="hidden" id="atransfer2pemeriksaan" name="pemeriksaan">
                                     <input type="hidden" id="atransfer2medical_treatment" name="medical_treatment">
                                     <input type="hidden" id="atransfer2modified_date" name="modified_date">
                                     <input type="hidden" id="atransfer2modified_by" name="modified_by">
@@ -873,7 +862,6 @@ $permission = user()->getPermissions();
                                     <input type="hidden" id="atransfer2account_id" name="account_id">
                                     <input type="hidden" id="atransfer2kesadaran" name="kesadaran">
                                     <input type="hidden" id="atransfer2isvalid" name="isvalid">
-                                    <input type="hidden" id="atransfer2vs_status_id" name="vs_status_id">
                                     <div class="row">
                                         <h3 id="atransfer2Title">CPPT Tujuan</h3>
                                         <hr>
@@ -891,7 +879,8 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer2examination_date">Tanggal Assessmennt</label>
-                                                        <input name="examination_date" id="atransfer2examination_date" type="datetime-local" class="form-control" />
+                                                        <input id="flatatransfer2examination_date" type="text" class="form-control datetimeflatpickr" required />
+                                                        <input name="examination_date" id="atransfer2examination_date" type="hidden" class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -899,7 +888,7 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer2clinic_id">Ruangan</label>
-                                                        <select name="clinic_id" id="atransfer2clinic_id" type="hidden" class="form-control ">
+                                                        <select name="clinic_id" id="atransfer2clinic_id" type="hidden" class="form-control " required>
                                                             <?php foreach ($clinic as $key => $value)
                                                                 if ($value['stype_id'] == 3) {
                                                             ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
@@ -912,7 +901,7 @@ $permission = user()->getPermissions();
                                                 <div class="mb-3">
                                                     <div class="form-group">
                                                         <label for="atransfer2employee_id">Dokter</label>
-                                                        <select name="employee_id" id="atransfer2employee_id" type="hidden" class="form-control ">
+                                                        <select name="employee_id" id="atransfer2employee_id" type="hidden" class="form-control " required>
                                                             <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
                                                                 $dokterselected = $visit['employee_inap'];
                                                             } else {
@@ -935,52 +924,28 @@ $permission = user()->getPermissions();
                                         <!-- <h4 id="assessmentGroupHeader">A:</h4> -->
                                         <div class="accordion" id="accordionTranferTujuan">
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingSubyektif">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubyektif" aria-expanded="false" aria-controls="collapseSubyektif">
+                                                <h2 class="accordion-header" id="atransfer2headingSubyektif">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseSubyektif" aria-expanded="false" aria-controls="atransfer2collapseSubyektif">
                                                         <b id="transferTujuanSubyektifTitle">SUBYEKTIF (S)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="headingSubyektif" data-bs-parent="#accordionTranferTujuan" style="">
+                                                <div id="atransfer2collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="atransfer2headingSubyektif" data-bs-parent="#accordionTranferTujuan" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
                                                                 <div class="form-group"><label id="atransfer2anamnase_label">Keluhan Utama</label><textarea name="anamnase" id="atransfer2anamnase" placeholder="" value="" class="form-control"></textarea></div>
                                                             </div>
                                                         </div>
-                                                        <div id="groupRiwayattransferTujuan" class="row" style="display: none;">
-                                                            <div class="col-sm-6 col-xs-12">
-                                                                <div class="mb-3">
-                                                                    <div class="form-group">
-                                                                        <label for="atransfer2description">Riwayat Penyakit Sekarang</label>
-                                                                        <textarea id="atransfer2description" name="description" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <?php foreach ($aValue as $key => $value) {
-                                                                if ($value['p_type'] == 'GEN0009') {
-                                                            ?>
-                                                                    <div class="col-sm-6 col-xs-12">
-                                                                        <div class="mb-3">
-                                                                            <div class="form-group">
-                                                                                <label for="atransfer2<?= $value['p_type'] . $value['value_id']; ?>"><?= $value['value_desc']; ?></label>
-                                                                                <textarea id="atransfer2<?= $value['p_type'] . $value['value_id']; ?>" name="<?= $value['value_id']; ?>" rows="2" class="form-control " autocomplete="off"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                            <?php
-                                                                }
-                                                            } ?>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingVitalSign">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                                <h2 class="accordion-header" id="atransfer2headingVitalSign">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
                                                         <b id="transferTujuanObyektifTitle">OBYEKTIF (O)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionTranferTujuan" style="">
+                                                <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer2headingVitalSign" data-bs-parent="#accordionTranferTujuan" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupVitalSigntransferTujuan" class="row">
                                                             <div class="row mb-4">
@@ -992,6 +957,7 @@ $permission = user()->getPermissions();
                                                                             <option value="1">Dewasa</option>
                                                                             <option value="4">Anak</option>
                                                                             <option value="5">Neonatus</option>
+                                                                            <option value="10">Obsetric</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -1082,10 +1048,22 @@ $permission = user()->getPermissions();
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Kesadaran</label>
+                                                                        <select class="form-select" name="awareness" id="atransfer2awareness" onchange="vitalsignInput(this)">
+                                                                            <option value="0">Sadar</option>
+                                                                            <option value="3">Nyeri</option>
+                                                                            <option value="10">Unrespon</option>
+                                                                        </select>
+                                                                        <span class="h6" id="badge-atransfer2awareness"></span>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="col-sm-12 mt-2">
                                                                     <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                                 </div>
                                                             </div>
+                                                            <span id="atransfer2total_score"></span>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -1096,12 +1074,12 @@ $permission = user()->getPermissions();
                                                 </div>
                                             </div>
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingDiagnosaPerawat">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiagnosaPerawat" aria-expanded="false" aria-controls="collapseDiagnosaPerawat">
+                                                <h2 class="accordion-header" id="atransfer2headingDiagnosaPerawat">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer2collapseDiagnosaPerawat">
                                                         <b id="transferTujuanAssessmentTitle">ASESMEN (A)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="headingDiagnosaPerawat" data-bs-parent="#accordionTranferTujuan">
+                                                <div id="atransfer2collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="atransfer2headingDiagnosaPerawat" data-bs-parent="#accordionTranferTujuan">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupDiagnosaPerawattransferTujuan" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
                                                             <div class="col-sm-12 col-md-12 col-lg-12">
@@ -1119,7 +1097,7 @@ $permission = user()->getPermissions();
                                                                             </table>
                                                                         </div>
                                                                         <div class="box-tab-tools" style="text-align: center;">
-                                                                            <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferTujuan', '', null, null, 'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                            <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferTujuan', '', null, null, 'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1134,12 +1112,12 @@ $permission = user()->getPermissions();
                                                 </div>
                                             </div>
                                             <div class="accordion-item">
-                                                <h2 class="accordion-header" id="headingPlanning">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePlanning" aria-expanded="false" aria-controls="collapsePlanning">
+                                                <h2 class="accordion-header" id="atransfer2headingPlanning">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapsePlanning" aria-expanded="false" aria-controls="atransfer2collapsePlanning">
                                                         <b id="transferTujuanPlanningTitle">PLANNING (P)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="collapsePlanning" class="accordion-collapse collapse" aria-labelledby="headingPlanning" data-bs-parent="#accordionTranferTujuan">
+                                                <div id="atransfer2collapsePlanning" class="accordion-collapse collapse" aria-labelledby="atransfer2headingPlanning" data-bs-parent="#accordionTranferTujuan">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -1215,8 +1193,8 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div>
-            <div id="" class="box-tab-tools text-center m-4">
-                <a data-toggle="modal" onclick="setDataTindakLanjut()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+            <div class="box-tab-tools text-center m-4">
+                <a data-toggle="modal" onclick="setDataTindakLanjut()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
             <h3>History Tindak Lanjut</h3>
             <table class="table table-striped table-hover">
@@ -1235,354 +1213,4 @@ $permission = user()->getPermissions();
             </table>
         </div>
     </div><!--./row-->
-</div>
-<!-- Rujuk Internal -->
-<div class="modal fade" id="rujukInternalModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
-
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Rujuk Eksternal -->
-<div class="modal fade" id="rujukEksternalModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick=""></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
-                <div id="atransferrujukaneksternalgroups" class="row">
-                    <h3>Pembuatan Rujukan Eksternal</h3>
-                    <hr>
-                    <div class="col-sm-12 col-md-12">
-                        <div class="mb-3">
-                            <div class="form-group">
-                                <label>Nomor Rujukan</label>
-                                <input id="arnorujukan" name="norujukan" placeholder="" type="text" class="form-control " value="" readonly>
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="ardirujukkegroup" class="col-sm-12 col-md-8">
-                        <div class="mb-3">
-                            <div class="form-group"><label for="diag_awal">Dirujuk Ke</label>
-                                <div class="select2-full-width" style="width:100%">
-                                    <select class="form-control  patient_list_ajax" name='dirujukke' id="ardirujukke" style="width: 100%">
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="arperujukan_group" class="col-sm-4 col-md-4">
-                        <div class="mb-3">
-                            <div class="form-group">
-                                <label>Tipe Rujukan</label>
-                                <select name="tiperujukan" id="artiperujukan" class="form-control ">
-                                    <option value="1">Penuh</option>
-                                    <option value="2">Parsial</option>
-                                    <option value="3">PRB</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="artgl_kontrolgroup" class="col-sm-4 col-md-4">
-                        <div class="mb-3">
-                            <div class="form-group">
-                                <label>Tanggal Kontrol</label>
-                                <div class="input-group" id="artglkontrol">
-                                    <input id="artgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
-
-                                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="arkdpoli_kontrolgroup" class="col-sm-4 col-md-4">
-                        <div class="mb-3">
-                            <div class="form-group">
-                                <label>Ke Poli</label>
-                                <select name="kdpoli_kontrol" id="arkdpoli_kontrol" class="form-control ">
-                                    <?php $cliniclist = array();
-                                    foreach ($clinic as $key => $value) {
-                                        if ($clinic[$key]['stype_id'] == '1') {
-                                            $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
-                                        }
-                                    }
-                                    asort($cliniclist);
-                                    ?>
-                                    <?php foreach ($cliniclist as $key => $value) { ?>
-                                        <option value="<?= $key; ?>"><?= $value; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="ardiag_id1roup" class="col-sm-4 col-md-4">
-                        <div class="mb-3">
-                            <div class="form-group"><label for="diag_id1">Diagnosa</label>
-                                <div class="select2-full-width" style="width:100%">
-                                    <select class="form-control  patient_list_ajax" name='diag_id1' id="ardiag_id1" style="width: 100%">
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-tab-tools" style="text-align: center;">
-                        <button type="button" id="addnorujukan" onclick="postRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                        <button type="button" id="deleterujukan" onclick="deleteRujukan()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-trash"></i> <span>Delete</span></button>
-                    </div>
-                    <div class="mb-4">
-                        <div class="staff-members">
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- SPRI -->
-<div class="modal fade" id="spriModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
-                <div id="atransfersprigroup" class="row">
-                    <div class="col-sm-12 col-xs-12 col-md-12">
-                        <div>
-                            <h3>Rencana SPRI</h3>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="col-sm-12 col-xs-12 col-md-12 mb-3">
-                        <div class="form-group"><label for="sprinosurat">No SPRI</label>
-                            <input type='text' name="sprinosurat" class="form-control" id='sprinosurat' readonly />
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
-                        <div class="form-group"><label for="sprikddpjp">Dokter</label>
-                            <div>
-                                <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
-                                    <?php foreach ($employee as $key => $value) {
-                                    ?>
-                                        <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
-                                    <?php
-                                    } ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
-                        <div class="form-group"><label for="sprikdpoli">Specialist</label>
-                            <div>
-                                <select name="sprikdpoli" id="sprikdpoli" class="form-control" style="width:100%">
-                                    <?php
-                                    $clinicList = array();
-                                    foreach ($clinic as $key => $value) {
-                                        if ($value['stype_id'] == '1') {
-                                            $clinicList[$value['clinic_id']] = $value['name_of_clinic'];
-                                    ?>
-                                    <?php
-                                        }
-                                    }
-                                    asort($clinicList); ?>
-                                    <?php foreach ($clinicList as $key => $value) {
-                                    ?>
-                                        <option value="<?= $key; ?>"><?= $value; ?></option>
-                                    <?php
-                                    } ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
-                        <div class="form-group"><label for="spritglkontrol">Tgl Rencana Ranap</label>
-                            <input type='date' name="spritglkontrol" class="form-control" id='spritglkontrol' />
-                        </div>
-                    </div>
-                    <div class="row mt-3 mb-3">
-                        <div class="col-sm-4 col-xs-12">
-                            <div class="col-sm-12 col-xs-12">
-                                <div class="button-items">
-                                    <div class="d-grid">
-                                        <button id="saveSpriBtn" type="button" onclick="saveSpri()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i>
-                                            <span>Simpan</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-xs-12">
-                            <div class="col-sm-12 col-xs-12">
-                                <div class="button-items">
-                                    <div class="d-grid">
-                                        <button id="checkSpriBtn" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-xs-12">
-                            <div class="col-sm-12 col-xs-12">
-                                <div class="button-items">
-                                    <div class="d-grid">
-                                        <button id="deleteSpriBtn" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- SKDP -->
-<div class="modal fade" id="skdpModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
-                <div class="row mb-4">
-                    <div id="atransferskdpgroup" class="col-12">
-                        <div class="mb-4">
-                            <h3>Pembuatan SKDP</h3>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-12 col-md-12 col-xs-12 mb-3">
-                                    <div class="form-group"><label for="skdpnosurat">No SKDP</label>
-                                        <input type='text' name="skdpnosurat" class="form-control" id='skdpnosurat' readonly />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-lg-4 mb-3">
-                                    <div class="form-group"><label for="skdpnosep">No SEP</label>
-                                        <input type='text' name="skdpnosep" class="form-control" id='skdpnosep' value="<?= is_null($visit['class_room_id']) ? $visit['no_skp'] : $visit['no_skpinap']; ?>" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-xs-4 mb-3">
-                                    <div class="form-group"><label for="skdpkddpjp">Dokter</label>
-                                        <div>
-                                            <select name="skdpkddpjp" id="skdpkddpjp" class="form-control" style="width:100%">
-                                                <?php foreach ($employee as $key => $value) {
-                                                ?>
-                                                    <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
-                                                <?php
-                                                } ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-xs-4 mb-3">
-                                    <div class="form-group"><label for="skdpkdpoli">Pelayanan</label>
-                                        <div>
-                                            <select name="skdpkdpoli" id="skdpkdpoli" class="form-control" style="width:100%">
-                                                <?php
-                                                $clinicList = array();
-                                                foreach ($clinic as $key => $value) {
-                                                    if ($value['stype_id'] == '1') {
-                                                        $clinicList[$value['clinic_id']] = $value['name_of_clinic'];
-                                                ?>
-                                                <?php
-                                                    }
-                                                }
-                                                asort($clinicList); ?>
-                                                <?php foreach ($clinicList as $key => $value) {
-                                                ?>
-                                                    <option value="<?= $key; ?>"><?= $value; ?></option>
-                                                <?php
-                                                } ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-xs-4 mb-3">
-                                    <div class="form-group"><label for="skdptglkontrol">Tgl Rencana Kontrol</label>
-                                        <input type='date' name="skdptglkontrol" class="form-control" id='skdptglkontrol' />
-                                    </div>
-                                </div>
-                                <div class="row mt-3 mb-3">
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="col-sm-12 col-xs-12">
-                                            <div class="button-items">
-                                                <div class="d-grid">
-                                                    <button id="saveSkdpBtn" type="button" onclick="saveSkdp()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Simpan</span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="col-sm-12 col-xs-12">
-                                            <div class="button-items">
-                                                <div class="d-grid">
-                                                    <button id="checkSkdpBtn" type="button" onclick="checkSkdp()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SKDP</span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4 col-xs-12">
-                                        <div class="col-sm-12 col-xs-12">
-                                            <div class="button-items">
-                                                <div class="d-grid">
-                                                    <button id="deleteSkdpBtn" type="button" onclick="deleteSkdp()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SKDP</span></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Transfer Internal -->
-<div class="modal fade" id="transferModal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-        </div>
-    </div>
 </div>

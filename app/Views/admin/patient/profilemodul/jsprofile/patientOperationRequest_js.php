@@ -3307,7 +3307,7 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button"  name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                                 <div class="row mb-4">
@@ -3325,7 +3325,7 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button"  name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                             </div>

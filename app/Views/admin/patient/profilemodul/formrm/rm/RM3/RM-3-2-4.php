@@ -124,7 +124,7 @@
                             </div>
                         </td>
                         <td>
-                            <div class="mb-1">Setelah dilakukan tindakan keperawatan <br>selama <input type="text" id="" name="" style="width: 50px"> 24 jam.<br> dengan kriteria hasil :</div>
+                            <div class="mb-1">Setelah dilakukan tindakan keperawatan <br>selama <input type="text" name="" style="width: 50px"> 24 jam.<br> dengan kriteria hasil :</div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="" id="t_04">
                                 <label class="form-check-label" for="t_04"> Keseimbangan asal basa (AGD) dan elektrolit :</label>

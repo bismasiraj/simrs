@@ -294,7 +294,7 @@
                 <tr>
                     <td>
                         <b>Keadaan Umum</b>
-                        <input type="text" class="form-control" id="" name="" value="">
+                        <input type="text" class="form-control" name="" value="">
                     </td>
                 </tr>
             </tbody>
@@ -331,7 +331,7 @@
                 <tr>
                     <td colspan="2">
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" id="" name=""></textarea>
+                        <textarea type="text" class="form-control" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -345,7 +345,7 @@
                     </td>
                     <td>
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" id="" name=""></textarea>
+                        <textarea type="text" class="form-control" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -359,7 +359,7 @@
                     </td>
                     <td>
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" id="" name=""></textarea>
+                        <textarea type="text" class="form-control" name=""></textarea>
                     </td>
                 </tr>
             </tbody>

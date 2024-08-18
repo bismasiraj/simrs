@@ -149,7 +149,7 @@
                         </td>
                         <td>
                             <b>No. Episode</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                     </tr>
                     <tr>

@@ -314,7 +314,7 @@
                                             <label for="">Riwayat Sosial Ekonomi/Lingkungan</label>
                                         </div>
                                         <div class="col-md-5">
-                                            <input type="text" class="form-control" id="" name="" style="width: 700px">
+                                            <input type="text" class="form-control" name="" style="width: 700px">
                                         </div>
                                     </div>
                                 </div>
@@ -340,7 +340,7 @@
                             <label><b>Pemeriksaan Fisik :</b></label>
                             <div class="mb-3">
                                 <div>
-                                    <textarea class="form-control" id="" name="" rows="4" cols="7"></textarea>
+                                    <textarea class="form-control" name="" rows="4" cols="7"></textarea>
                                 </div>
                             </div>
                         </td>
@@ -352,7 +352,7 @@
                             <label><b>Pemeriksaan Penunjang :</b></label>
                             <div class="mb-3">
                                 <div>
-                                    <textarea class="form-control" id="" name="" rows="4" cols="7"></textarea>
+                                    <textarea class="form-control" name="" rows="4" cols="7"></textarea>
                                 </div>
                             </div>
                         </td>
@@ -364,7 +364,7 @@
                             <label><b>Diagnosis Kerja :</b></label>
                             <div class="mb-3">
                                 <div>
-                                    <textarea class="form-control" id="" name="" rows="4" cols="7"></textarea>
+                                    <textarea class="form-control" name="" rows="4" cols="7"></textarea>
                                 </div>
                             </div>
                         </td>
@@ -376,7 +376,7 @@
                             <label><b>Terapi :</b></label>
                             <div class="mb-3">
                                 <div>
-                                    <textarea class="form-control" id="" name="" rows="4" cols="7"></textarea>
+                                    <textarea class="form-control" name="" rows="4" cols="7"></textarea>
                                 </div>
                             </div>
                         </td>
@@ -469,22 +469,22 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_cm" value="0">
                                     <label class="form-check-label" for="t_028_cm">RS</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_apatis" value="1">
                                     <label class="form-check-label" for="t_028_apatis">Dokter Keluarga</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_somno" value="1">
                                     <label class="form-check-label" for="t_028_somno">Puskesmas</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_sopor" value="1">
                                     <label class="form-check-label" for="t_028_sopor">Dokter</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_coma" value="1">

@@ -169,15 +169,15 @@
                     <tr>
                         <td>
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                         <td>
                             <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                         <td>
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                     </tr>
                 </tbody>
@@ -189,11 +189,11 @@
                 <tr>
                     <td>
                         <b>Tanggal</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                     <td>
                         <b>Jenis Antropometri</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
             </table>
@@ -201,26 +201,26 @@
                 <tr>
                     <td width="50%">
                         <b>Kategori Usia</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                     <td rowspan="4"></td>
                 </tr>
                 <tr>
                     <td>
                         <b>BB</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>TB</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>BMI</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
             </table>
@@ -228,23 +228,23 @@
                 <tr>
                     <td colspan="2">
                         <b>Biokimia</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <b>Vital Sign & Keadaan Umum</b>
-                        <textarea type="text" class="form-control" id="" name=""></textarea>
+                        <textarea type="text" class="form-control" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Alergi Makanan</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                     <td>
                         <b>Pola Makan</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
@@ -298,7 +298,7 @@
                 <tr>
                     <td>
                         <b>Diagnosis Gizi (ICD-10)</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                         <div class="row">
                             <div class="col"></div>
                             <div class="col-auto" align="center">
@@ -318,7 +318,7 @@
                 <tr>
                     <td>
                         <b>Diagnosis Gizi (ICD-10)</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
@@ -384,7 +384,7 @@
                 <tr>
                     <td>
                         <b>Monitoring dan Evaluasi</b>
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
             </table>

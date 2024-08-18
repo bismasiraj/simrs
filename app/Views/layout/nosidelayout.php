@@ -11,25 +11,30 @@
     ?>
     <link href="<?php echo base_url(); ?>assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <!-- <link href="<?php echo base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.min.css">
     <!-- <link href="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet"> -->
     <script src="<?php echo base_url(); ?>assets/libs/tinymce/tinymce.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/quill/quill.snow.css" />
+    <script src="<?php echo base_url(); ?>assets/libs/quill/quill.js"></script>
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.min.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> -->
 
     <!-- Bootstrap-wysihtml5 CSS -->
     <style>
         body {
             font-weight: 400;
         }
+
+        .custom-success-swal {
+            background-color: #f8d7da;
+            /* Your desired background color */
+            color: #721c24;
+            /* Text color for better contrast */
+        }
     </style>
-    <script>
-        var formattedDate = moment().format('YYYY-MM-DDTHH:mm'); // Adjust format as needed
-    </script>
 </head>
 
 <body data-sidebar="dark">
@@ -70,19 +75,59 @@
     <!-- Bootstrap-wysihtml5 JavaScript -->
 
     <script src="<?php echo base_url(); ?>assets/libs/select2/js/select2.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <!-- <script src="<?php echo base_url(); ?>assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script> -->
 
     <!-- <script src="<?php echo base_url(); ?>assets/libs/parsleyjs/parsley.min.js"></script> -->
 
     <script src="<?php echo base_url(); ?>assets/js/pages/form-validation.init.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/libs/sweetalert/sweetalert.min.js"></script>
     <!-- <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet"> -->
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
 
     <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
 
+    <script src="<?php echo base_url(); ?>assets/libs/sweetalert/sweetalert.min.js"></script>
+
+    <script src="<?php echo base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+
+    <script src="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.js"></script>
+    <script>
+        // Initialize Flatpickr
+        flatpickr(".dateflatpickr", {
+            enableTime: false,
+            dateFormat: "d/m/Y"
+        });
+        $(".dateflatpickr").on("change", function() {
+            console.log($(this).attr("id"))
+            let theid = $(this).attr("id")
+            let thevalue = $(this).val()
+            let formattedDate = moment(thevalue, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            $("input[name='" + theid + "']").val(formattedDate)
+        })
+        $(".dateflatpickr").prop("readonly", false)
+        $(".dateflatpickr").val(nowdate).trigger("change")
+
+
+
+        flatpickr(".datetimeflatpickr", {
+            enableTime: true,
+            dateFormat: "d/m/Y H:i", // Display format
+            time_24hr: true, // 24-hour time format
+            minuteIncrement: 1
+        });
+        $(".datetimeflatpickr").prop("readonly", false)
+        $(".datetimeflatpickr").on("change", function() {
+            console.log($(this).attr("id"))
+            let theid = $(this).attr("id")
+            theid = theid.replace("flat", "")
+            let thevalue = $(this).val()
+            let formattedDate = moment(thevalue, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DD HH:mm');
+            $("#" + theid).val(formattedDate)
+        })
+        $(".datetimeflatpickr").val(nowtime).trigger("change")
+    </script>
     <script>
         var baseurl = "<?php echo base_url(); ?>";
 

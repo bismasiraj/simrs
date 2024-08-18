@@ -119,31 +119,31 @@
                             <div class="row mb-1">
                                 <div class="col-sm-auto col-form-label">No RM :</div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="" name="">
+                                    <input type="text" class="form-control" name="">
                                 </div>
                             </div>
                             <div class="row mb-1">
                                 <div class="col-sm-auto col-form-label">Nama Pasien :</div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="" name="">
+                                    <input type="text" class="form-control" name="">
                                 </div>
                             </div>
                             <div class="row mb-1">
                                 <div class="col-sm-auto col-form-label">NIK :</div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="" name="">
+                                    <input type="text" class="form-control" name="">
                                 </div>
                             </div>
                             <div class="row mb-1">
                                 <div class="col-sm-auto col-form-label">Alamat :</div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="" name="">
+                                    <input type="text" class="form-control" name="">
                                 </div>
                             </div>
                             <div class="row mb-1">
                                 <div class="col-sm-auto col-form-label">Jenkel :</div>
                                 <div class="col">
-                                    <input type="text" class="form-control" id="" name="">
+                                    <input type="text" class="form-control" name="">
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
                         <div class="row">
                             <div class="col-sm-auto col-form-label">Pengirim :</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -171,7 +171,7 @@
                         <div class="row">
                             <div class="col-sm-auto col-form-label"><b>PEMERIKSAAN JARINGAN TUBUH :</b></div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -181,13 +181,13 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">Jaringan Tubuh Ini Didapat Dengan Eksisi Percobaan / Biopsi / Kerokan / Operasi / Otopsi / :</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">Sebanyak :</div>
                             <div class="col-sm-1">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                             <div class="col-sm-auto col-form-label">Botol Kontainer</div>
                         </div>
@@ -198,7 +198,7 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">Berasal dari Alat / Organ :</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -208,7 +208,7 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">Difiksasi Dalam : Larutan Formalin 10% /</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -218,7 +218,7 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label"><b>KETERANGAN KLINIK :</b></div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -230,19 +230,19 @@
                 </tr>
                 <tr>
                     <td>
-                        <textarea class="form-control" name="" id=""></textarea>
+                        <textarea class="form-control" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         Diagnosa Klinik :
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
                     <td>
                         Terhadap Penderita Ini Belum / Telah Pernah Dilakukan Pemeriksaan Patologi / Sitologi Yaitu Di
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" name="">
                     </td>
                 </tr>
                 <tr>
@@ -250,15 +250,15 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">No :</div>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                             <div class="col-sm-auto col-form-label">Tanggal :</div>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                             <div class="col-sm-auto col-form-label">Diagnosa :</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -269,14 +269,14 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">VIP / I / II / III Sebanyak @ Rp</div>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div> X
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                             <div class="col-sm-auto col-form-label">(Jumlah Bahan Jaringan) = Rp</div>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -286,7 +286,7 @@
                         <div class="row mb-1">
                             <div class="col-sm-auto col-form-label">Dikirim Langsung / Tagihan / Lewat</div>
                             <div class="col">
-                                <input type="text" class="form-control" id="" name="">
+                                <input type="text" class="form-control" name="">
                             </div>
                         </div>
                     </td>
@@ -303,7 +303,7 @@
                                     <tr align="center">
                                         <td>
                                             <div id="qrcode"></div><br>
-                                            <input type="text" class="form-control" id="" name="">
+                                            <input type="text" class="form-control" name="">
                                         </td>
                                     </tr>
                                 </table>

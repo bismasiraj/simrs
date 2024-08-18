@@ -77,7 +77,7 @@
                     <input type="hidden" name="sign_path" id="signsign_path">
                     <div class="form-group">
                         <label for="user_id"><?= lang('Auth.emailOrUsername') ?></label>
-                        <input type="text" class="form-control <?= session('errors.login') ? 'is-invalid' : '' ?>" name="user_id" placeholder="<?= lang('Auth.emailOrUsername') ?>">
+                        <input id="user_id" type="text" class="form-control <?= session('errors.login') ? 'is-invalid' : '' ?>" name="user_id" placeholder="<?= lang('Auth.emailOrUsername') ?>">
                         <div class="invalid-feedback">
                             <?= session('errors.login') ?>
                         </div>
@@ -85,7 +85,7 @@
 
                     <div class="form-group">
                         <label for="password"><?= lang('Auth.password') ?></label>
-                        <input type="password" name="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" placeholder="<?= lang('Auth.password') ?>">
+                        <input id="password" type="password" name="password" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" placeholder="<?= lang('Auth.password') ?>">
                         <div class="invalid-feedback">
                             <?= session('errors.password') ?>
                         </div>

@@ -28,6 +28,9 @@ function successSwal(msg) {
     timer: 3000,
     showConfirmButton: false,
     showCancelButton: false,
+    customClass: {
+      container: "custom-success-swal",
+    },
   });
 }
 
@@ -270,7 +273,6 @@ function postDataForm(data, url, response, beforesend) {
     },
     error: (err) => {
       errorSwal(err.status);
-      // errorCallbackMethod(err);
     },
   });
 }
@@ -974,6 +976,26 @@ function getObsetricScore(type, value) {
         };
       }
       break;
+    case "awareness":
+      if (value == 10) {
+        return {
+          score: 10,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value == 3) {
+        return {
+          score: 3,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 0) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
   }
 } //new 30/07
 function getAdultScore(type, value) {
@@ -1260,6 +1282,26 @@ function getAdultScore(type, value) {
         };
       }
       break;
+    case "awareness":
+      if (value == 10) {
+        return {
+          score: 10,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value == 3) {
+        return {
+          score: 3,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 0) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
   }
 }
 
@@ -1566,6 +1608,26 @@ function getNeonatalScore(type, value) {
         };
       }
       break;
+    case "awareness":
+      if (value == 10) {
+        return {
+          score: 10,
+          color: "danger",
+          colorPicker: "#dc3545",
+        };
+      } else if (value == 3) {
+        return {
+          score: 3,
+          color: "warning",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 0) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
   }
 }
 const errorStatusCode = {
@@ -1651,6 +1713,7 @@ function vitalsignInput(prop) {
   var value = prop.value.trim();
   var id = prop.id;
   var name = prop.name; //+ (prop.uniq_name ? prop.uniq_name : ""); //=new
+  var identifier = id.replace(name, "");
   var data;
   var totalScore = [];
 
@@ -1659,13 +1722,16 @@ function vitalsignInput(prop) {
   } else {
     value = parseFloat(value);
   }
+  let ewsId = $("#" + id)
+    .closest("form")
+    .find('input[name="vs_status_id"]');
 
   let scoreFunction;
-  if (prop.type == 1) {
+  if (ewsId.val() == 1) {
     scoreFunction = getAdultScore;
-  } else if (prop.type == 5) {
+  } else if (ewsId.val() == 5) {
     scoreFunction = getNeonatalScore;
-  } else if (prop.type == 10) {
+  } else if (ewsId.val() == 10) {
     scoreFunction = getObsetricScore;
   } else {
     scoreFunction = getAdultScore;
@@ -1690,6 +1756,10 @@ function vitalsignInput(prop) {
       break;
     case name.startsWith("oxygen_usage"):
       data = scoreFunction("oksigen", value);
+      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      break;
+    case name.startsWith("awareness"):
+      data = scoreFunction("awareness", value);
       setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
       break;
     case name.startsWith("weight"):
@@ -1730,6 +1800,23 @@ function vitalsignInput(prop) {
   }
 
   prop.value = value;
+  data1 = scoreFunction("nadi", $("#" + identifier + "nadi").val());
+  data2 = scoreFunction("suhu", $("#" + identifier + "temperature").val());
+  data3 = scoreFunction("saturasi", $("#" + identifier + "saturasi").val());
+  data4 = scoreFunction("pernapasan", $("#" + identifier + "nafas").val());
+  data5 = scoreFunction("oksigen", $("#" + identifier + "oxygen_usage").val());
+  data6 = scoreFunction("darah", $("#" + identifier + "tension_upper").val());
+  data7 = scoreFunction("awareness", $("#" + identifier + "awareness").val());
+
+  let totalSkor =
+    data1?.score +
+    data2?.score +
+    data3?.score +
+    data4?.score +
+    data5?.score +
+    data6?.score +
+    data7?.score;
+  $("#" + identifier + "total_score").html("Total Skor: " + totalSkor);
 
   // document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
 }
@@ -1752,4 +1839,51 @@ function changeEwsParam(className) {
       type: optionSelected.val(),
     });
   });
+}
+
+function datetimepickerbyid(flatid) {
+  flatpickr("#" + flatid, {
+    enableTime: true,
+    dateFormat: "d/m/Y H:i", // Display format
+    time_24hr: true, // 24-hour time format
+    minuteIncrement: 1,
+  });
+  $("#" + flatid).prop("readonly", false);
+  $("#" + flatid).on("change", function () {
+    let theid = flatid.replace("flat", "");
+    let thevalue = $(this).val();
+    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+      "YYYY-MM-DD HH:mm"
+    );
+    $("#" + theid)
+      .val(formattedDate)
+      .trigger("change");
+  });
+  $("#" + flatid)
+    .val(nowtime)
+    .trigger("change");
+}
+function formatedDatetimeFlat(thedatetime) {
+  let formatedDate = moment(thedatetime).format("DD/MM/YYYY HH:mm");
+  return formatedDate;
+}
+function originalFormatedDatetimeFlat(thedatetime) {
+  let formatedDate = moment(thedatetime, "DD/MM/YYYY HH:mm").format(
+    "YYYY-MM-DD HH:mm"
+  );
+  return formatedDate;
+}
+
+const nowtime = moment().format("DD/MM/YYYY HH:mm");
+const nowdate = moment().format("DD/MM/YYYY");
+
+function removeById(id) {
+  $("#" + id).remove();
+}
+function removeByClass(className) {
+  $("." + className).remove();
+}
+
+function triggerRefresh() {
+  localStorage.setItem("refresh", new Date().toISOString());
 }

@@ -18,7 +18,6 @@
                     <input name="theorder" id="atheorder" type="hidden" class="form-control" />
                     <input name="visit_id" id="akunjungan" type="hidden" class="form-control" />
                     <input name="org_unit_code" id="aorg_unit_code" type="hidden" class="form-control" />
-                    <input name="class_id_plafond" id="aclass_id_plafond" type="hidden" class="form-control" />
                     <input name="payor_id" id="apayor_id" type="hidden" class="form-control" />
                     <input name="karyawan" id="akaryawan" type="hidden" class="form-control" />
                     <input name="theid" id="atheid" type="hidden" class="form-control" />
@@ -31,7 +30,6 @@
                     <input name="agemonth" id="aagemonth" type="hidden" class="form-control" />
                     <input name="ageday" id="aageday" type="hidden" class="form-control" />
                     <input name="kal_id" id="akal_id" type="hidden" class="form-control" />
-                    <input name="karyawan" id="akaryawan" type="hidden" class="form-control" />
 
                     <input name="class_room_ID" id="aclass_room_ID" type="hidden" class="form-control" />
                     <input name="bed_id" id="abed_id" type="hidden" class="form-control" />
@@ -164,15 +162,10 @@
                         </div>
                     </div><!--./row-->
                     <div class="pull-right">
-                        <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
+                        <button type="submit" id="formaddbillbtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
                     </div>
                 </form>
             </div>
-            <!-- <div class="modal-footer">
-                <div class="pull-right">
-                    <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
-                </div>
-            </div> -->
         </div>
     </div>
 </div>

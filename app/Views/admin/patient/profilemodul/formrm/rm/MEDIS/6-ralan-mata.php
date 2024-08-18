@@ -302,7 +302,7 @@
                 <tr>
                     <td>
                         <b>Keadaan Umum</b>
-                        <input type="text" class="form-control" id="" name="" value="">
+                        <input type="text" class="form-control" name="" value="">
                     </td>
                 </tr>
             </tbody>

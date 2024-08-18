@@ -52,7 +52,7 @@ $this->extend('admin/patient/profilemodul/formrm/rm/MEDIS/0-ranap-template.php',
         <tr>
             <td>
                 <b>Keadaan Umum</b>
-                <input type="text" class="form-control" id="" name="" value="">
+                <input type="text" class="form-control" name="" value="">
             </td>
         </tr>
     </tbody>
@@ -69,7 +69,7 @@ $this->extend('admin/patient/profilemodul/formrm/rm/MEDIS/0-ranap-template.php',
                         <b>Kasus Hamil</b>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" id="" name="" value="">
+                        <input type="text" class="form-control" name="" value="">
                     </div>
                 </div>
             </td>
@@ -77,11 +77,11 @@ $this->extend('admin/patient/profilemodul/formrm/rm/MEDIS/0-ranap-template.php',
         <tr>
             <td style="width: 80%;">
                 <b>Kasus Obstetri</b>
-                <input type="text" class="form-control" id="" name="" value="">
+                <input type="text" class="form-control" name="" value="">
             </td>
             <td>
                 <b>Status Ginekologi</b>
-                <input type="text" class="form-control" id="" name="" value="">
+                <input type="text" class="form-control" name="" value="">
             </td>
         </tr>
     </tbody>

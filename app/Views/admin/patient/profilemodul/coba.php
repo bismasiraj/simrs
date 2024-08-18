@@ -226,7 +226,7 @@ $permission = user()->getPermissions();
                                             <div class="mb-3 form-check">
                                                 <input for="perempuan" type="checkbox" class="form-check-input" id="t_14">
                                                 <label class="form-check-label" name="t_14">Lain-lain :</label>
-                                                <input type="text" name="" id="">
+                                                <input type="text" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@ $permission = user()->getPermissions();
                                             <div class="mb-3 form-check">
                                                 <input for="laki" type="checkbox" class="form-check-input" id="t_18">
                                                 <label class="form-check-label" name="t_18">Lain-Lain : </label>
-                                                <input type="text" name="" id="">
+                                                <input type="text" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -304,7 +304,7 @@ $permission = user()->getPermissions();
                                             <div class="mb-3 form-check">
                                                 <input for="laki" type="checkbox" class="form-check-input" id="t_28">
                                                 <label class="form-check-label" name="t_28">Lain-lain : </label>
-                                                <input type="text" name="" id="">
+                                                <input type="text" name="">
                                             </div>
                                         </div>
                                     </div>
@@ -344,7 +344,7 @@ $permission = user()->getPermissions();
                                             <div class="mb-3 form-check">
                                                 <input for="laki" type="checkbox" class="form-check-input" id="t_35">
                                                 <label class="form-check-label" name="t_35">Lain-lain : </label>
-                                                <input type="text" name="" id="">
+                                                <input type="text" name="">
                                             </div>
                                         </div>
                                     </div>

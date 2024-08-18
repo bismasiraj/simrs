@@ -40,7 +40,7 @@
         var t = '';
 
         $.each(painMonitoringDetil, function(key, value) {
-            if (value.body_id == painselect.body_id) {
+            if (value.body_id == painselect.body_id && value.p_type == 'ASES021') {
                 if (value.parameter_id == '01') {
                     type = value.value_desc
                 }

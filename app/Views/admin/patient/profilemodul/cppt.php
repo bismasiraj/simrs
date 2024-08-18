@@ -55,7 +55,6 @@ $permission = user()->getPermissions();
                                             <input type="hidden" id="acpptkeluar_id" name="keluar_id">
                                             <input type="hidden" id="acpptimt_score" name="imt_score">
                                             <input type="hidden" id="acpptimt_desc" name="imt_desc">
-                                            <input type="hidden" id="acpptpemeriksaan" name="pemeriksaan">
                                             <input type="hidden" id="acpptmedical_treatment" name="medical_treatment">
                                             <input type="hidden" id="acpptmodified_date" name="modified_date">
                                             <input type="hidden" id="acpptmodified_by" name="modified_by">
@@ -73,7 +72,7 @@ $permission = user()->getPermissions();
                                             <input type="hidden" id="acpptkal_id" name="kal_id">
                                             <input type="hidden" id="acpptpetugas_id" name="petugas_id">
                                             <input type="hidden" id="acpptpetugas" name="petugas">
-                                            <input type="hidden" id="acpptaccount_id" name="account_id">
+                                            <!-- <input type="hidden" id="acpptaccount_id" name="account_id"> -->
                                             <input type="hidden" id="acpptkesadaran" name="kesadaran">
                                             <input type="hidden" id="acpptisvalid" name="isvalid">
                                             <input type="hidden" id="acpptvalid_user" class="valid_user" name="valid_user">
@@ -91,10 +90,10 @@ $permission = user()->getPermissions();
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-3">
-                                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id2" value="2"><label class="form-check-label" for="acpptvs_status_id2" checked>SOAP</label></div>
+                                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="account_id" id="acpptaccount_id3" value="3"><label class="form-check-label" for="acpptaccount_id3" checked>SOAP</label></div>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="vs_status_id" id="acpptvs_status_id7" value="7"><label class="form-check-label" for="acpptvs_status_id7">SBAR</label></div>
+                                                        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="account_id" id="acpptaccount_id4" value="4"><label class="form-check-label" for="acpptaccount_id4">SBAR</label></div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -102,8 +101,9 @@ $permission = user()->getPermissions();
                                                         <div class="mb-3">
                                                             <div class="form-group">
                                                                 <label for="acpptexamination_date">Tanggal Assessmennt</label>
-                                                                <input name="examination_date" id="acpptexamination_date" type="datetime-local" class="form-control" />
-                                                                <!-- <input class="form-control datetime-input" type="datetime-local" id="" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], " YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : '' }"> -->
+                                                                <input name="" id="flatacpptexamination_date" type="text" class="form-control datetimeflatpickr" />
+                                                                <input name="examination_date" id="acpptexamination_date" type="hidden" />
+                                                                <!-- <input class="form-control datetime-input" type="datetime-local"  name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], " YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : '' }"> -->
                                                             </div>
                                                         </div>
                                                     </div>
@@ -112,7 +112,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label for="acpptclinic_id">Pelayanan</label>
                                                                 <select name="clinic_id" id="acpptclinic_id" type="hidden" class="form-control ">
-                                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+                                                                    <?php if ($visit['isrj'] == 1) {
                                                                         $selectedClinic = $visit['class_room_id'];
                                                                     } else {
                                                                         $selectedClinic = $visit['clinic_id'];
@@ -177,15 +177,27 @@ $permission = user()->getPermissions();
                                                         </div>
                                                     </div>
                                                     <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingVitalSign">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                                        <h2 class="accordion-header" id="acpptheadingVitalSign">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#acpptcollapseVitalSign" aria-expanded="false" aria-controls="acpptcollapseVitalSign">
                                                                 <b id="cpptObyektifTitle">OBYEKTIF (O)</b>
                                                             </button>
                                                         </h2>
-                                                        <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionSOAP" style="">
+                                                        <div id="acpptcollapseVitalSign" class="accordion-collapse collapse" aria-labelledby="acpptheadingVitalSign" data-bs-parent="#accordionSOAP" style="">
                                                             <div class="accordion-body text-muted">
                                                                 <div id="groupVitalSignCppt" class="row">
                                                                     <div class="row mb-4">
+                                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                            <div class="form-group">
+                                                                                <label>Jenis EWS</label>
+                                                                                <select class="form-select" name="vs_status_id" id="acpptvs_status_id">
+                                                                                    <option value="" selected>-- pilih --</option>
+                                                                                    <option value="1">Dewasa</option>
+                                                                                    <option value="4">Anak</option>
+                                                                                    <option value="5">Neonatus</option>
+                                                                                    <option value="10">Obsetric</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
                                                                         <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                                                             <div class="form-group">
                                                                                 <label>BB(Kg)</label>
@@ -273,6 +285,17 @@ $permission = user()->getPermissions();
                                                                                 </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                            <div class="form-group">
+                                                                                <label>Kesadaran</label>
+                                                                                <select class="form-select" name="awareness" id="acpptawareness" onchange="vitalsignInput(this)">
+                                                                                    <option value="0">Sadar</option>
+                                                                                    <option value="3">Nyeri</option>
+                                                                                    <option value="10">Unrespon</option>
+                                                                                </select>
+                                                                                <span class="h6" id="badge-acpptawareness"></span>
+                                                                            </div>
+                                                                        </div>
                                                                         <div class="col-sm-12 mt-2">
                                                                             <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                                         </div>
@@ -285,7 +308,7 @@ $permission = user()->getPermissions();
                                                                                 <div class="row mb-4">
                                                                                     <div class="col-md-12">
                                                                                         <div id="addFallRiskButton" class="box-tab-tools text-center">
-                                                                                            <a onclick="addFallRisk(1,0,'acpptbody_id', 'bodyFallRiskCppt')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                            <a onclick="addFallRisk(1,0,'acpptbody_id', 'bodyFallRiskCppt')" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -300,13 +323,14 @@ $permission = user()->getPermissions();
                                                                                 <div class="row mb-4">
                                                                                     <div class="col-md-12">
                                                                                         <div id="bodyGcsCpptAddBtn" class="box-tab-tools text-center">
-                                                                                            <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="bodyGcsCpptAddBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                            <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="bodyGcsCpptAddBtn btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                    <span id="acppttotal_score"></span>
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-12 mt-2">
@@ -340,7 +364,7 @@ $permission = user()->getPermissions();
                                                                                     </table>
                                                                                 </div>
                                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawatCppt', '')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
+                                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawatCppt', '')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -348,7 +372,7 @@ $permission = user()->getPermissions();
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-sm-12 mt-2">
-                                                                        <div class="form-group"><label id="acpptteraphy_desc_label">Catatan Asesmen</label><textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control"></textarea></div>
+                                                                        <div class="form-group"><label id="acpptteraphy_desc_label">Catatan Asesmenen</label><textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control"></textarea></div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -364,57 +388,57 @@ $permission = user()->getPermissions();
                                                             <div class="accordion-body text-muted">
                                                                 <div class="row">
                                                                     <div class="col-sm-12 mt-2">
-                                                                        <div class="form-group"><label id="acpptinstruction_label">Catatan Planning</label><textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control"></textarea></div>
+                                                                        <div class="form-group"><label id="acpptinstruction_label">Catatan Planning</label><textarea name="instruction" id="acpptinstruction" placeholder="" value="" class="form-control" row="4"></textarea></div>
                                                                     </div>
                                                                 </div>
                                                                 <script>
-                                                                    tinymce.init({
-                                                                        selector: "#acpptinstruction",
-                                                                        height: 300,
-                                                                        plugins: [
-                                                                            "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                                                                            "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                                                                            "save table contextmenu directionality emoticons template paste textcolor",
-                                                                        ],
-                                                                        toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                                                                        style_formats: [{
-                                                                                title: "Bold text",
-                                                                                inline: "b"
-                                                                            },
-                                                                            {
-                                                                                title: "Red text",
-                                                                                inline: "span",
-                                                                                styles: {
-                                                                                    color: "#ff0000"
-                                                                                }
-                                                                            },
-                                                                            {
-                                                                                title: "Red header",
-                                                                                block: "h1",
-                                                                                styles: {
-                                                                                    color: "#ff0000"
-                                                                                }
-                                                                            },
-                                                                            {
-                                                                                title: "Example 1",
-                                                                                inline: "span",
-                                                                                classes: "example1"
-                                                                            },
-                                                                            {
-                                                                                title: "Example 2",
-                                                                                inline: "span",
-                                                                                classes: "example2"
-                                                                            },
-                                                                            {
-                                                                                title: "Table styles"
-                                                                            },
-                                                                            {
-                                                                                title: "Table row 1",
-                                                                                selector: "tr",
-                                                                                classes: "tablerow1"
-                                                                            },
-                                                                        ],
-                                                                    });
+                                                                    // tinymce.init({
+                                                                    //     selector: "#acpptinstruction",
+                                                                    //     height: 300,
+                                                                    //     plugins: [
+                                                                    //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
+                                                                    //         "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                                                                    //         "save table contextmenu directionality emoticons template paste textcolor",
+                                                                    //     ],
+                                                                    //     toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+                                                                    //     style_formats: [{
+                                                                    //             title: "Bold text",
+                                                                    //             inline: "b"
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Red text",
+                                                                    //             inline: "span",
+                                                                    //             styles: {
+                                                                    //                 color: "#ff0000"
+                                                                    //             }
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Red header",
+                                                                    //             block: "h1",
+                                                                    //             styles: {
+                                                                    //                 color: "#ff0000"
+                                                                    //             }
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Example 1",
+                                                                    //             inline: "span",
+                                                                    //             classes: "example1"
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Example 2",
+                                                                    //             inline: "span",
+                                                                    //             classes: "example2"
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Table styles"
+                                                                    //         },
+                                                                    //         {
+                                                                    //             title: "Table row 1",
+                                                                    //             selector: "tr",
+                                                                    //             classes: "tablerow1"
+                                                                    //         },
+                                                                    //     ],
+                                                                    // });
                                                                 </script>
                                                             </div>
                                                         </div>
@@ -444,7 +468,7 @@ $permission = user()->getPermissions();
                                                         <div id="collapseFallRiskMedis" class="accordion-collapse collapse" aria-labelledby="FallRiskMedis" data-bs-parent="#accordionAssessmentMedis" style="">
                                                             <div class="accordion-body text-muted">
                                                                 <div class="row">
-                                                                    <form id="" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                                    <form  accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                                                                         <div class="col-md-12">
                                                                             <div id="bodyFallRiskCppt">
                                                                             </div>
@@ -520,8 +544,8 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-                    <div id="" class="box-tab-tools text-center">
-                        <a data-toggle="modal" onclick="initialAddacppt()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                    <div class="box-tab-tools text-center">
+                        <a data-toggle="modal" onclick="initialAddacppt()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                     </div>
                     <h3>Histori CPPT</h3>
                     <table class="table table-striped table-hover">

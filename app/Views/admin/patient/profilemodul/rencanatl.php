@@ -182,7 +182,7 @@ $permission = user()->getPermissions();
                                                                 </table>
                                                             </div>
                                                             <div class="box-tab-tools" style="text-align: center;">
-                                                                <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                <button type="button" name="adddiagnosa" onclick="addRowDiag()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                             </div>
                                                         </div>
                                                     </div>

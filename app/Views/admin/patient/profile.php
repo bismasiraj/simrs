@@ -1266,7 +1266,6 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeSearchTarif(theid, clinicIdTarif) {
         $("#" + theid).select2({
             placeholder: "Input Tarif",
-            dropdownParent: $(this).parent(),
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getTarif',
                 type: "post",

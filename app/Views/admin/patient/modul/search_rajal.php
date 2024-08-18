@@ -124,27 +124,28 @@ $permissions = user()->getPermissions();
                     <div class="col-sm-2">
                         <div class="form-group">
                             <label>Nama / Nomor</label>
-                            <input type="text" name="norm" id="nama" placeholder="Nama/No.RM/No.SEP/No.BPJS" value="" class="form-control">
+                            <input type="text" name="norm" id="nama" placeholder="Nama/No.RM/No.SEP/No.BPJS" value="" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-sm-2" style="display: none;">
                         <div class="form-group">
                             <label>No Kartu/ SEP</label>
-                            <input type="text" name="nokartu" id="nama" placeholder="" value="" class="form-control">
+                            <input type="text" name="nokartu" id="nama" placeholder="" value="" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-sm-2" style="display: none;">
                         <div class="form-group">
                             <label>Alamat</label>
-                            <input type="text" name="address" id="nama" placeholder="" value="" class="form-control">
+                            <input type="text" name="address" id="nama" placeholder="" value="" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-2">
                         <div class="mb-3">
                             <label>Tanggal Awal</label>
                             <div>
-                                <div class="input-group" id="mulai">
-                                    <input name="mulai" type="date" class="form-control" value="<?= date('Y-m-d'); ?>">
+                                <div class="input-group">
+                                    <input id="mulai" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <input type="hidden" id="searchmulai" name="mulai">
 
                                     <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
 
@@ -158,8 +159,9 @@ $permissions = user()->getPermissions();
                         <div class="mb-3">
                             <label>Tanggal Akhir</label>
                             <div>
-                                <div class="input-group" id="akhir">
-                                    <input name="akhir" type="date" class="form-control" value="<?= date('Y-m-d'); ?>">
+                                <div class="input-group">
+                                    <input id="akhir" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <input type="hidden" id="searchakhir" name="akhir">
 
 
                                     <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
@@ -996,7 +998,7 @@ $permissions = user()->getPermissions();
                                                                 <div class="col-sm-12 col-xs-12">
                                                                     <div class="button-items">
                                                                         <div class="d-grid">
-                                                                            <button id="" type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
+                                                                            <button  type="button" onclick="checkSpri()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Check SPRI</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1005,7 +1007,7 @@ $permissions = user()->getPermissions();
                                                                 <div class="col-sm-12 col-xs-12">
                                                                     <div class="button-items">
                                                                         <div class="d-grid">
-                                                                            <button id="" type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
+                                                                            <button  type="button" onclick="deleteSpri()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SPRI</span></button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1121,19 +1123,19 @@ $permissions = user()->getPermissions();
                                                             <button type="button" class="btn btn-secondary form-control" id="cetakAntrianBtn" onclick="cetak(1)">Antrian</button>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 mb-3">
-                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(2)">Form RM</button>
+                                                            <button type="button" class="btn btn-secondary form-control" onclick="cetak(2)">Form RM</button>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 mb-3">
-                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(3)">Tagihan</button>
+                                                            <button type="button" class="btn btn-secondary form-control" onclick="cetak(3)">Tagihan</button>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 mb-3">
-                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(4)">Gelang</button>
+                                                            <button type="button" class="btn btn-secondary form-control" onclick="cetak(4)">Gelang</button>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 mb-3">
-                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(5)">Label Pasien</button>
+                                                            <button type="button" class="btn btn-secondary form-control" onclick="cetak(5)">Label Pasien</button>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 mb-3">
-                                                            <button type="button" class="btn btn-secondary form-control" id="" onclick="cetak(6)">SEP</button>
+                                                            <button type="button" class="btn btn-secondary form-control" onclick="cetak(6)">SEP</button>
                                                         </div>
                                                     </div>
                                                 </div>

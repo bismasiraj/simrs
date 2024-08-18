@@ -945,8 +945,8 @@
                         '<td colspan="5">' +
                         '<div class="row mb-4">' +
                         '<div class="col-md-12">' +
-                        '<div id="" class="box-tab-tools text-center">' +
-                        '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', 0, 1)" class="btn btn-primary btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
+                        '<div  class="box-tab-tools text-center">' +
+                        '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', 0, 1)" class="btn btn-primary btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -1128,8 +1128,8 @@
                     '<td colspan="5">' +
                     '<div class="row mb-4">' +
                     '<div class="col-md-12">' +
-                    '<div id="" class="box-tab-tools text-center">' +
-                    '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + lastIndex + ',1)" class="btn btn-primary btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
+                    '<div  class="box-tab-tools text-center">' +
+                    '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + lastIndex + ',1)" class="btn btn-primary btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -7519,7 +7519,7 @@
                                 .append($('<tbody id="educationIntegrationLanguageBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7538,7 +7538,7 @@
                                 .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7557,7 +7557,7 @@
                                 .append($('<tbody id="educationIntegrationLanguageProvisionBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append('<div class="panel-footer text-end mb-4">' +

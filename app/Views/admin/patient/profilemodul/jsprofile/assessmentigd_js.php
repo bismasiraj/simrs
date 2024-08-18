@@ -347,7 +347,7 @@ foreach ($aValue as $key => $value) {
         $("#arpin_date").val('<?= $visit['in_date']; ?>')
         $("#arpexit_date").val('<?= $visit['exit_date']; ?>')
         $("#arpkeluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#arpexamination_date").val(get_date())
+        $("#flatarpexamination_date").val(nowtime).trigger("change")
         $("#arpmodified_date").val(get_date())
         $("#arpmodified_by").val('<?= user()->username; ?>')
         $("#arpmodified_from").val('<?= $visit['clinic_id']; ?>')
@@ -397,6 +397,9 @@ foreach ($aValue as $key => $value) {
 
         $("#arpisvalid").val(0)
 
+        $("#arpcollapseVitalSign").find("#arptotal_score").html("")
+        $("#arpcollapseVitalSign").find("span.h6").html("")
+
         $("#arpAddDocument").slideUp()
         $("#arpDocument").slideDown()
         enableARP()
@@ -415,6 +418,9 @@ foreach ($aValue as $key => $value) {
             .text(clinicSelect[0].name_of_clinic))
         $("#arpemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
         $("#arpvs_status_id" + ex.vs_status_id).prop("checked", true)
+        // let formattedValue = moment(ex.examination_date).format('DD/MM/YYYY HH:mm');
+        $("#arpcollapseVitalSign").find("input, select").trigger("change")
+        $("#flatarpexamination_date").val(formatedDatetimeFlat(ex.examination_date)).trigger("change")
 
         await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid")
 
@@ -560,19 +566,20 @@ foreach ($aValue as $key => $value) {
         $("#formaddarp textarea").prop("disabled", false)
         $("#formaddarp select").prop("disabled", false)
         $("#vitalSignPerawat").find("button").click()
+        $("#formaddarp").find(".btn-to-hide").slideDown()
         $("#formaddarp").find(".btn-edit").each(function() {
             $(this).trigger("click")
         })
     }
 
     const disableARP = () => {
-        console.log("bisma")
         $("#formsavearpbtnid").slideUp()
         $("#formeditarpid").slideDown()
         // $(".formsignarp").slideUp()
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)
         $("#formaddarp select").prop("disabled", true)
+        $("#formaddarp").find(".btn-to-hide").slideUp()
         $("#vitalSignPerawat").find("button").click()
         if ($("#arpvalid_user").val() != '') {
             $("#formaddarpbtnid").slideUp()

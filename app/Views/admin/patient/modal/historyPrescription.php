@@ -27,7 +27,7 @@
                                 </div>
                             </div><!--./box-footer-->
                         </div>
-                        <div id=""></div>
+                        <div></div>
                         <div class="modal-footer">
                         </div>
                     </div>

@@ -53,7 +53,7 @@ $group = user()->getRoles();
                                         <input name="ageday" id="armageday" type="hidden" />
                                         <input name="nosep" id="armnosep" type="hidden" />
                                         <input name="tglsep" id="armtglsep" type="hidden" />
-                                        <input name="kddpjp" id="armtglsep" type="hidden" />
+                                        <input name="kddpjp" id="armkddpjp" type="hidden" />
                                         <input name="diag_cat" id="armdiag_cat" type="hidden" />
                                         <input name="valid_date" class="valid_date" id="armvalid_date" type="hidden" />
                                         <input name="valid_user" class="valid_user" id="armvalid_user" type="hidden" />
@@ -81,7 +81,8 @@ $group = user()->getRoles();
                                                             <div class="mb-3">
                                                                 <div class="form-group">
                                                                     <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
-                                                                    <input name="date_of_diagnosa" id="armdate_of_diagnosa" type="datetime-local" class="form-control" value="<?php date('Y/m/d H:i:s'); ?>" />
+                                                                    <input id="flatarmdate_of_diagnosa" type="text" class="form-control datetimeflatpickr" />
+                                                                    <input id="armdate_of_diagnosa" type="hidden" id="searchmulai" name="date_of_diagnosa">
                                                                 </div>
                                                             </div>
                                                         </div>

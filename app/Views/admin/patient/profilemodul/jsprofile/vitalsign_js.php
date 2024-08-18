@@ -2,25 +2,7 @@
     var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
-    var visit = '<?= $visit['visit_id']; ?>'
-    var nomor = '<?= $visit['no_registration']; ?>';
 
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-        $("#avtexamination_date").val(get_date())
-        // setDataVitalSign()
-    })
 
     $("#vitalsignTab").on("click", function() {
         getVitalSign()
@@ -47,7 +29,7 @@
 
     function setDataVitalSign() {
         $("#formvitalsign").find("input, textarea").val(null)
-        $("#formvitalsign").find("#total_score").html("")
+        $("#formvitalsign").find("#avttotal_score").html("")
         $("#formvitalsign").find("span.h6").html("")
         var bodyId = ''
 
@@ -75,7 +57,7 @@
         $("#avtageyear").val('<?= $visit['ageyear']; ?>')
         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
         $("#avtageday").val('<?= $visit['ageday']; ?>')
-        $("#avtexamination_date").val(get_date())
+        $("#flatavtexamination_date").val(nowtime).trigger("change")
         $("#avtaccount_id").val(5)
 
         //havin
@@ -90,21 +72,23 @@
         } else {
             $("#avtvs_status_id").prop("selectedIndex", 2);
         }
+        enableVitalSign()
+        $("#vitalSignDocument").slideDown()
     }
 
     function addRowVitalSign(examselect, key) {
         $("#vitalSignBody").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td rowspan='7'>").html(examselect.petugas))
+                .append($("<td rowspan='2'>").append(formatedDatetimeFlat(examselect.examination_date)))
+                .append($("<td rowspan='2'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
                 .append($("<td>").html('<b>Nadi</b>'))
                 .append($("<td>").html('<b>Nafas/RR</b>'))
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="copyVitalSign(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                    '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="copyVitalSign(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                    '<button type="button" onclick="editCpptVitalSign(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
+                .append($("<td rowspan='2'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
             .append($("<tr>")
                 .append($("<td>").html(''))
@@ -114,26 +98,26 @@
                 .append($("<td>").html(examselect.temperature + '/°C'))
                 .append($("<td>").html(examselect.saturasi + '/SpO2%'))
             )
-            .append($("<tr>")
-                .append($("<td>").html("<b>S</b>"))
-                .append($("<td colspan='5'>").html(examselect.anamnase))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>O</b>"))
-                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>A</b>"))
-                .append($("<td colspan='5'>").html(examselect.description))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("<b>P</b>"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
-            .append($("<tr>")
-                .append($("<td>").html("Instruksi"))
-                .append($("<td colspan='5'>").html(examselect.instruction))
-            )
+        // .append($("<tr>")
+        //     .append($("<td>").html("<b>S</b>"))
+        //     .append($("<td colspan='5'>").html(examselect.anamnase))
+        // )
+        // .append($("<tr>")
+        //     .append($("<td>").html("<b>O</b>"))
+        //     .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+        // )
+        // .append($("<tr>")
+        //     .append($("<td>").html("<b>A</b>"))
+        //     .append($("<td colspan='5'>").html(examselect.description))
+        // )
+        // .append($("<tr>")
+        //     .append($("<td>").html("<b>P</b>"))
+        //     .append($("<td colspan='5'>").html(examselect.instruction))
+        // )
+        // .append($("<tr>")
+        //     .append($("<td>").html("Instruksi"))
+        //     .append($("<td colspan='5'>").html(examselect.instruction))
+        // )
     }
 
     // function vitalsignInput(prop) {
@@ -335,6 +319,9 @@
         $("#avtagemonth").prop("disabled", true)
         $("#avtageday").prop("disabled", true)
         $("#avtinstruction").prop("disabled", true)
+
+        $("#formvitalsignsubmit").hide()
+        $("#formvitalsignedit").show()
     }
 
     function enableVitalSign() {
@@ -377,8 +364,8 @@
         $("#avtageday").prop("disabled", false)
         $("#avtinstruction").prop("disabled", false)
 
-        $("#formvitalsignsubmit").toggle()
-        $("#formvitalsignedit").toggle()
+        $("#formvitalsignsubmit").show()
+        $("#formvitalsignedit").hide()
     }
 
     var vitalsigndesc = []
@@ -396,101 +383,101 @@
         addRowVitalSign(examselect, key)
     });
 
-    vitalsign.forEach((element, key) => {
-        examselect = vitalsign[key];
+    // vitalsign.forEach((element, key) => {
+    //     examselect = vitalsign[key];
 
-        if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
+    //     if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
 
-            disableVitalSign()
-            $("#formvitalsignsubmit").hide()
-            $("#formvitalsignedit").show()
+    //         disableVitalSign()
+    //         $("#formvitalsignsubmit").hide()
+    //         $("#formvitalsignedit").show()
 
-            $("#avtclinic_id").val(examselect.clinic_id)
-            $("#avtclass_room_id").val(examselect.class_room_id)
-            $("#avtbed_id").val(examselect.bed_id)
-            $("#avtkeluar_id").val(examselect.keluar_id)
-            $("#avtemployee_id").val(examselect.employee_id)
-            $("#avtno_registration").val(examselect.no_registration)
-            $("#avtvisit_id").val(examselect.visit_id)
-            $("#avtorg_unit_code").val(examselect.org_unit_code)
-            $("#avtdoctor").val(examselect.fullname)
-            $("#avtkal_id").val(examselect.kal_id)
-            $("#avttheid").val(examselect.pasien_id)
-            $("#avtthename").val(examselect.diantar_oleh)
-            $("#avttheaddress").val(examselect.visitor_address)
-            $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
-            $("#avtisrj").val(examselect.isrj)
-            $("#avtgender").val(examselect.gender)
-            $("#avtageyear").val(examselect.ageyear)
-            $("#avtagemonth").val(examselect.agemonth)
-            $("#avtageday").val(examselect.ageday)
-            $("#avtbody_id").val(examselect.body_id)
+    //         $("#avtclinic_id").val(examselect.clinic_id)
+    //         $("#avtclass_room_id").val(examselect.class_room_id)
+    //         $("#avtbed_id").val(examselect.bed_id)
+    //         $("#avtkeluar_id").val(examselect.keluar_id)
+    //         $("#avtemployee_id").val(examselect.employee_id)
+    //         $("#avtno_registration").val(examselect.no_registration)
+    //         $("#avtvisit_id").val(examselect.visit_id)
+    //         $("#avtorg_unit_code").val(examselect.org_unit_code)
+    //         $("#avtdoctor").val(examselect.fullname)
+    //         $("#avtkal_id").val(examselect.kal_id)
+    //         $("#avttheid").val(examselect.pasien_id)
+    //         $("#avtthename").val(examselect.diantar_oleh)
+    //         $("#avttheaddress").val(examselect.visitor_address)
+    //         $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
+    //         $("#avtisrj").val(examselect.isrj)
+    //         $("#avtgender").val(examselect.gender)
+    //         $("#avtageyear").val(examselect.ageyear)
+    //         $("#avtagemonth").val(examselect.agemonth)
+    //         $("#avtageday").val(examselect.ageday)
+    //         $("#avtbody_id").val(examselect.body_id)
 
-            $("#avtexamination_date").val(examselect.examination_date)
-            $("#avtpetugas").val(examselect.petugas)
-            $("#avtweight").val(examselect.weight)
-            $("#avtheight").val(examselect.height)
-            $("#avttemperature").val(examselect.temperature)
-            $("#avtnadi").val(examselect.nadi)
-            $("#avttension_upper").val(examselect.tension_upper)
-            $("#avttension_below").val(examselect.tension_below)
-            $("#avtsaturasi").val(examselect.saturasi)
-            $("#avtnafas").val(examselect.nafas)
-            $("#avtarm_diameter").val(examselect.arm_diameter)
-            $("#avtanamnase").val(examselect.anamnase)
-            $("#avtoxygen_usage").val(examselect.oxygen_usage)
-            $("#avtvs_status_id").val(examselect.vs_status_id)
-            $("#avtpemeriksaan").val(examselect.pemeriksaan)
-            $("#avtteraphy_desc").val(examselect.teraphy_desc)
-            $("#avtdescription").val(examselect.description)
-            $("#avtclinic_id").val(examselect.clinic_id)
-            $("#avttrans_id").val(examselect.trans_id) //==new
-            $("#avtclass_room_id").val(examselect.class_room_id)
-            $("#avtbed_id").val(examselect.bed_id)
-            $("#avtkeluar_id").val(examselect.keluar_id)
-            $("#avtemployee_id").val(examselect.employee_id)
-            $("#avtno_registraiton").val(examselect.no_registraiton)
-            $("#avtvisit_id").val(examselect.visit_id)
-            $("#avtorg_unit_code").val(examselect.org_unit_code)
-            $("#avtdoctor").val(examselect.doctor)
-            $("#avtkal_id").val(examselect.kal_id)
-            $("#avttheid").val(examselect.theid)
-            $("#avtthename").val(examselect.thename)
-            $("#avttheaddress").val(examselect.theaddress)
-            $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
-            $("#avtisrj").val(examselect.isrj)
-            $("#avtgender").val(examselect.gender)
-            $("#avtageyear").val(examselect.ageyear)
-            $("#avtagemonth").val(examselect.agemonth)
-            $("#avtageday").val(examselect.ageday)
-            $("#avtinstruction").val(examselect.instruction)
-        }
+    //         $("#flatavtexamination_date").val(formatedDatetimeFlat(examselect.examination_date)).trigger("change")
+    //         $("#avtpetugas").val(examselect.petugas)
+    //         $("#avtweight").val(examselect.weight)
+    //         $("#avtheight").val(examselect.height)
+    //         $("#avttemperature").val(examselect.temperature)
+    //         $("#avtnadi").val(examselect.nadi)
+    //         $("#avttension_upper").val(examselect.tension_upper)
+    //         $("#avttension_below").val(examselect.tension_below)
+    //         $("#avtsaturasi").val(examselect.saturasi)
+    //         $("#avtnafas").val(examselect.nafas)
+    //         $("#avtarm_diameter").val(examselect.arm_diameter)
+    //         $("#avtanamnase").val(examselect.anamnase)
+    //         $("#avtoxygen_usage").val(examselect.oxygen_usage)
+    //         $("#avtvs_status_id").val(examselect.vs_status_id)
+    //         $("#avtpemeriksaan").val(examselect.pemeriksaan)
+    //         $("#avtteraphy_desc").val(examselect.teraphy_desc)
+    //         $("#avtdescription").val(examselect.description)
+    //         $("#avtclinic_id").val(examselect.clinic_id)
+    //         $("#avttrans_id").val(examselect.trans_id) //==new
+    //         $("#avtclass_room_id").val(examselect.class_room_id)
+    //         $("#avtbed_id").val(examselect.bed_id)
+    //         $("#avtkeluar_id").val(examselect.keluar_id)
+    //         $("#avtemployee_id").val(examselect.employee_id)
+    //         $("#avtno_registraiton").val(examselect.no_registraiton)
+    //         $("#avtvisit_id").val(examselect.visit_id)
+    //         $("#avtorg_unit_code").val(examselect.org_unit_code)
+    //         $("#avtdoctor").val(examselect.doctor)
+    //         $("#avtkal_id").val(examselect.kal_id)
+    //         $("#avttheid").val(examselect.theid)
+    //         $("#avtthename").val(examselect.thename)
+    //         $("#avttheaddress").val(examselect.theaddress)
+    //         $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
+    //         $("#avtisrj").val(examselect.isrj)
+    //         $("#avtgender").val(examselect.gender)
+    //         $("#avtageyear").val(examselect.ageyear)
+    //         $("#avtagemonth").val(examselect.agemonth)
+    //         $("#avtageday").val(examselect.ageday)
+    //         $("#avtinstruction").val(examselect.instruction)
+    //     }
 
-        if (typeof $("#avtbody_id").val() !== 'undefined' || $("#avtbody_id").val() == "") {
-            $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
-            $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
-            $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
-            $("#avtbed_id").val()
-            $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
-            $("#avtemployee_id").val('<?= $visit['employee_id']; ?>')
-            $("#avtno_registration").val('<?= $visit['no_registration']; ?>')
-            $("#avtvisit_id").val('<?= $visit['visit_id']; ?>')
-            $("#avtorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
-            $("#avtdoctor").val('<?= $visit['fullname']; ?>')
-            $("#avtkal_id").val('<?= $visit['kal_id']; ?>')
-            $("#avttheid").val('<?= $visit['pasien_id']; ?>')
-            $("#avtthename").val('<?= $visit['diantar_oleh']; ?>')
-            $("#avttheaddress").val('<?= $visit['visitor_address']; ?>')
-            $("#avtstatus_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
-            $("#avtisrj").val('<?= $visit['isrj']; ?>')
-            $("#avtgender").val('<?= $visit['gender']; ?>')
-            $("#avtageyear").val('<?= $visit['ageyear']; ?>')
-            $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
-            $("#avtageday").val('<?= $visit['ageday']; ?>')
+    //     if (typeof $("#avtbody_id").val() !== 'undefined' || $("#avtbody_id").val() == "") {
+    //         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
+    //         $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
+    //         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
+    //         $("#avtbed_id").val()
+    //         $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
+    //         $("#avtemployee_id").val('<?= $visit['employee_id']; ?>')
+    //         $("#avtno_registration").val('<?= $visit['no_registration']; ?>')
+    //         $("#avtvisit_id").val('<?= $visit['visit_id']; ?>')
+    //         $("#avtorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
+    //         $("#avtdoctor").val('<?= $visit['fullname']; ?>')
+    //         $("#avtkal_id").val('<?= $visit['kal_id']; ?>')
+    //         $("#avttheid").val('<?= $visit['pasien_id']; ?>')
+    //         $("#avtthename").val('<?= $visit['diantar_oleh']; ?>')
+    //         $("#avttheaddress").val('<?= $visit['visitor_address']; ?>')
+    //         $("#avtstatus_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
+    //         $("#avtisrj").val('<?= $visit['isrj']; ?>')
+    //         $("#avtgender").val('<?= $visit['gender']; ?>')
+    //         $("#avtageyear").val('<?= $visit['ageyear']; ?>')
+    //         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
+    //         $("#avtageday").val('<?= $visit['ageday']; ?>')
 
 
-        }
-    });
+    //     }
+    // });
     $("#formvitalsign").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
@@ -517,7 +504,7 @@
                     getVitalSign()
                 } else {
                     // successMsg(data.message);
-                    successSwal(data.message)
+                    successSwal("Berhasil Simpan Data")
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
                     $("#formvitalsignedit").toggle()
@@ -536,6 +523,7 @@
     }));
 
     function getVitalSign() {
+        $("#vitalSignDocument").slideUp()
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
             type: "POST",
@@ -592,7 +580,7 @@
         $("#avtdescription").val(examselect.description)
         $("#avtdoctor").val(examselect.doctor)
         $("#avtemployee_id").val(examselect.employee_id)
-        $("#avtexamination_date").val(get_date())
+        $("flatavtexamination_date").val(nowtime).trigger("change")
         $("#avtgender").val(examselect.gender)
         $("#avtheight").val(examselect.height)
         $("#avtinstruction").val(examselect.instruction)
@@ -657,35 +645,31 @@
 
         $("#avtanamnase").val(examselect.anamnase)
         $("#avtdescription").val(examselect.description)
-        $("#avtweight").val(examselect.weight)
-        $("#avtheight").val(examselect.height)
-        $("#avttemperature").val(examselect.temperature)
-        $("#avtnadi").val(examselect.nadi)
-        $("#avttension_upper").val(examselect.tension_upper)
-        $("#avttension_lower").val(examselect.tension_lower)
-        $("#avtsaturasi").val(examselect.saturasi)
-        $("#avtnafas").val(examselect.nafas)
-        $("#avtarm_diameter").val(examselect.arm_diameter)
-        $("#avtoxygen_usage").val(examselect.oxygen_usage)
-        $("#avtvs_status_id").val(examselect.vs_status_id)
-        $("#avtpemeriksaan").val(examselect.pemeriksaan)
+        $("#avtweight").val(examselect.weight).trigger("change")
+        $("#avtheight").val(examselect.height).trigger("change")
+        $("#avttemperature").val(examselect.temperature).trigger("change")
+        $("#avtnadi").val(examselect.nadi).trigger("change")
+        $("#avttension_upper").val(examselect.tension_upper).trigger("change")
+        $("#avttension_lower").val(examselect.tension_lower).trigger("change")
+        $("#avtsaturasi").val(examselect.saturasi).trigger("change")
+        $("#avtnafas").val(examselect.nafas).trigger("change")
+        $("#avtarm_diameter").val(examselect.arm_diameter).trigger("change")
+        $("#avtoxygen_usage").val(examselect.oxygen_usage).trigger("change")
+        $("#avtvs_status_id").val(examselect.vs_status_id).trigger("change")
+        $("#avtpemeriksaan").val(examselect.pemeriksaan).trigger("change")
 
+        $("#vitalSignDocument").slideDown()
+        enableVitalSign()
         //=new
-        data1 = getAdultScore('nadi', examselect.nadi);
-        data2 = getAdultScore('suhu', examselect.temperature);
-        data3 = getAdultScore('saturasi', examselect.saturasi);
-        data4 = getAdultScore('pernapasan', examselect.nafas);
-        data5 = getAdultScore('oksigen', examselect.oxygen_usage);
-        data6 = getAdultScore('darah', examselect.tension_upper);
-        setBadge('avtnadi', 'badge-avtnadi', 'bg-' + data1.color, data1.score);
-        setBadge('avttemperature', 'badge-avttemperature', 'bg-' + data2.color, data2.score);
-        setBadge('avtsaturasi', 'badge-avtsaturasi', 'bg-' + data3.color, data3.score);
-        setBadge('avtnafas', 'badge-avtnafas', 'bg-' + data4.color, data4.score);
-        setBadge('avtoxygen_usage', 'badge-avtoxygen_usage', 'bg-' + data5.color, data5.score);
-        setBadge('avttension_upper', 'badge-avttension_upper', 'bg-' + data6.color, data6.score);
+        // data1 = getAdultScore('nadi', examselect.nadi);
+        // data2 = getAdultScore('suhu', examselect.temperature);
+        // data3 = getAdultScore('saturasi', examselect.saturasi);
+        // data4 = getAdultScore('pernapasan', examselect.nafas);
+        // data5 = getAdultScore('oksigen', examselect.oxygen_usage);
+        // data6 = getAdultScore('darah', examselect.tension_upper);
 
-        let totalSkor = data1.score + data2.score + data3.score + data4.score + data5.score + data6.score;
-        document.getElementById('total_score').textContent = 'Total Skor: ' + totalSkor;
+        // let totalSkor = data1.score + data2.score + data3.score + data4.score + data5.score + data6.score;
+        // document.getElementById('total_score').textContent = 'Total Skor: ' + totalSkor;
         //endofnew
 
         // $("#cpptModal").modal("show")
@@ -697,13 +681,15 @@
         var examselect = vitalsign[key];
 
         $.each(examselect, function(key, value) {
-            $("#avt" + key).val(value)
+            $("#avt" + key).val(value).trigger("change")
         })
         // $("#avtvs_status_id" + examselect.vs_status_id).prop("checked", true)
         // $("#cpptModal").modal("show")
         $("#avtDocument").find("input, select, textarea").prop("disabled", false)
         $("#formsaveavtbtnid").show()
         $("#formeditavtid").hide()
+        $("#vitalSignDocument").slideDown()
+        enableVitalSign()
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")
         if (examselect.petugas == '<?= user()->getFullname(); ?>') {
@@ -756,7 +742,7 @@
             if (value.body_id == $("#armbody_id")) {
                 $("#copyListVitalSignModal").append($("<tr>")
                     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
                     .append($("<td>").append($("<b>").html(value.petugas_id)))
                     .append($("<td>").append($("<b>").html(value.weight)))
                     .append($("<td>").append($("<b>").html(value.height)))
@@ -771,7 +757,7 @@
                 )
                 $("#copyListVitalSignModal").append($("<tr>")
                     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
                     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                     .append($("<td>").append($("<b>").html(value.fullname)))
                     .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
@@ -782,7 +768,7 @@
             } else {
                 $("#copyListVitalSignModal").append($("<tr>")
                     .append($("<td>"))
-                    .append($("<td>").html(value.examination_date))
+                    .append($("<td>").html(formatedDatetimeFlat(value.examination_date)))
                     .append($("<td>").html(value.petugas_id))
                     .append($("<td>").html(value.weight))
                     .append($("<td>").html(value.height))

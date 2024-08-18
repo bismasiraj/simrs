@@ -127,8 +127,8 @@ $permission = user()->getPermissions();
                     </form>
                 </div>
             </div>
-            <div id="" class="box-tab-tools text-center m-4">
-                <a data-toggle="modal" onclick="setDataTindakLanjut()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+            <div class="box-tab-tools text-center m-4">
+                <a data-toggle="modal" onclick="setDataTindakLanjut()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
             <h3>History Tindak Lanjut</h3>
             <table class="table table-striped table-hover">
@@ -161,7 +161,7 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
                 <div id="atransferrujukaninternalgroup" class="col-sm-12 col-md-12 col-lg-12">
                     <div class="mb-4">
                         <h3>Pembuatan Rujukan Internal</h3>
@@ -237,7 +237,7 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
                 <div id="atransferrujukaneksternalgroups" class="row">
                     <h3>Pembuatan Rujukan Eksternal</h3>
                     <hr>
@@ -342,7 +342,7 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-sm-12 col-xs-12 col-md-12">
                         <div>
@@ -444,9 +444,9 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
                 <div class="row mb-4">
-                    <div id="" class="col-12">
+                    <div class="col-12">
                         <div class="mb-4">
                             <h3>Pembuatan SKDP</h3>
                             <hr>
@@ -552,7 +552,7 @@ $permission = user()->getPermissions();
                     </div>
                 </div>
             </div><!--./modal-header-->
-            <div id="" class="modal-body pt0 pb0">
+            <div class="modal-body pt0 pb0">
                 <div id="transferDerajatBody">
                 </div>
                 <div id="transferDerajatBodyAddBtn" class="col-md-12 text-center">
@@ -577,7 +577,6 @@ $permission = user()->getPermissions();
                             <input type="hidden" id="atransfer1keluar_id" name="keluar_id">
                             <input type="hidden" id="atransfer1imt_score" name="imt_score">
                             <input type="hidden" id="atransfer1imt_desc" name="imt_desc">
-                            <input type="hidden" id="atransfer1pemeriksaan" name="pemeriksaan">
                             <input type="hidden" id="atransfer1medical_treatment" name="medical_treatment">
                             <input type="hidden" id="atransfer1modified_date" name="modified_date">
                             <input type="hidden" id="atransfer1modified_by" name="modified_by">
@@ -702,15 +701,27 @@ $permission = user()->getPermissions();
                                     </div>
                                     <!-- Obyektif -->
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingVitalSign">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                        <h2 class="accordion-header" id="atransfer1headingVitalSign">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
                                                 <b id="transferAsalObyektifTitle">OBYEKTIF (O)</b>
                                             </button>
                                         </h2>
-                                        <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionTranferAsal" style="">
+                                        <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer1headingVitalSign" data-bs-parent="#accordionTranferAsal" style="">
                                             <div class="accordion-body text-muted">
                                                 <div id="groupVitalSigntransferAsal" class="row">
                                                     <div class="row mb-4">
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                    <option value="10">Obsetric</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>BB(Kg)</label>
@@ -801,13 +812,13 @@ $permission = user()->getPermissions();
                                                         <!--==new -->
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
-                                                                <label>Jenis EWS</label>
-                                                                <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
-                                                                    <option value="" selected>-- pilih --</option>
-                                                                    <option value="1">Dewasa</option>
-                                                                    <option value="4">Anak</option>
-                                                                    <option value="5">Neonatus</option>
+                                                                <label>Kesadaran</label>
+                                                                <select class="form-select" name="awareness" id="atransfer1awareness" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Sadar</option>
+                                                                    <option value="3">Nyeri</option>
+                                                                    <option value="10">Unrespon</option>
                                                                 </select>
+                                                                <span class="h6" id="badge-atransfer1awareness"></span>
                                                             </div>
                                                         </div>
                                                         <!--==endofnew -->
@@ -849,7 +860,7 @@ $permission = user()->getPermissions();
                                                                     </table>
                                                                 </div>
                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -961,7 +972,6 @@ $permission = user()->getPermissions();
                             <input type="hidden" id="atransfer2keluar_id" name="keluar_id">
                             <input type="hidden" id="atransfer2imt_score" name="imt_score">
                             <input type="hidden" id="atransfer2imt_desc" name="imt_desc">
-                            <input type="hidden" id="atransfer2pemeriksaan" name="pemeriksaan">
                             <input type="hidden" id="atransfer2medical_treatment" name="medical_treatment">
                             <input type="hidden" id="atransfer2modified_date" name="modified_date">
                             <input type="hidden" id="atransfer2modified_by" name="modified_by">
@@ -1084,12 +1094,12 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingVitalSign">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                        <h2 class="accordion-header" id="atransfer2headingVitalSign">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
                                                 <b id="transferTujuanObyektifTitle">OBYEKTIF (O)</b>
                                             </button>
                                         </h2>
-                                        <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionTranferTujuan" style="">
+                                        <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer2headingVitalSign" data-bs-parent="#accordionTranferTujuan" style="">
                                             <div class="accordion-body text-muted">
                                                 <div id="groupVitalSigntransferTujuan" class="row">
                                                     <div class="row mb-4">
@@ -1101,6 +1111,7 @@ $permission = user()->getPermissions();
                                                                     <option value="1">Dewasa</option>
                                                                     <option value="4">Anak</option>
                                                                     <option value="5">Neonatus</option>
+                                                                    <option value="10">Obsetric</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -1191,6 +1202,17 @@ $permission = user()->getPermissions();
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Kesadaran</label>
+                                                                <select class="form-select" name="awareness" id="atransfer2awareness" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Sadar</option>
+                                                                    <option value="3">Nyeri</option>
+                                                                    <option value="10">Unrespon</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-atransfer2awareness"></span>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-sm-12 mt-2">
                                                             <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
@@ -1228,7 +1250,7 @@ $permission = user()->getPermissions();
                                                                     </table>
                                                                 </div>
                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferTujuan', '', null, null, 'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferTujuan', '', null, null, 'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>

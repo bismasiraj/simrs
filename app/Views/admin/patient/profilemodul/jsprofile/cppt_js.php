@@ -116,6 +116,8 @@ $group = user()->getRoles();
         $("#cpptagemonth").prop("disabled", true)
         $("#cpptageday").prop("disabled", true)
         $("#cpptinstruction").prop("disabled", true)
+
+        $("#formaddacppt").find(".btn-to-hide").slideUp()
     }
 
     function enablecpptjson() {
@@ -154,11 +156,12 @@ $group = user()->getRoles();
         $("#cpptagemonth").prop("disabled", false)
         $("#cpptageday").prop("disabled", false)
         $("#cpptinstruction").prop("disabled", false)
+        $("#formaddacppt").find(".btn-to-hide").slideDown()
 
         $("#formcpptsubmit").toggle()
         $("#formcpptedit").toggle()
     }
-    $("#acpptvs_status_id2").on("change", function() {
+    $("#acpptaccount_id3").on("change", function() {
         $("#groupRiwayatCppt").slideDown()
         $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
         $("#groupVitalSignCppt").slideDown()
@@ -167,9 +170,9 @@ $group = user()->getRoles();
         $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
         $("#cpptObyektifTitle").html("OBYEKTIF (O)")
         $("#cpptPlanningTitle").html("PLANNING (P)")
-        // $("#acpptvs_status_id2").is("checked", function() {})
+        // $("#acpptaccount_id3").is("checked", function() {})
     })
-    $("#acpptvs_status_id7").on("change", function() {
+    $("#acpptaccount_id4").on("change", function() {
         // $("#groupRiwayatCppt").slideUp()
         // $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", true)
         // $("#groupVitalSignCppt").slideUp()
@@ -178,11 +181,11 @@ $group = user()->getRoles();
         $("#cpptSubyektifTitle").html("SITUATION (S)")
         $("#cpptObyektifTitle").html("BACKGROUND (B)")
         $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
-        // $("#acpptvs_status_id2").is("checked", function() {})
+        // $("#acpptaccount_id4").is("checked", function() {})
     })
 
     function addRowCPPT(examselect, key) {
-        if (examselect.vs_status_id == "2") {
+        if (examselect.account_id == "3") {
             $("#cpptBody").append($("<tr>")
                     .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
                     .append($("<td rowspan='7'>").html(examselect.petugas))
@@ -209,7 +212,7 @@ $group = user()->getRoles();
 
         }
 
-        if (examselect.vs_status_id == "2") {
+        if (examselect.account_id == "3") {
             $("#cpptBody")
                 .append($("<tr>")
                     .append($("<td>").html("<b>S</b>"))
@@ -307,9 +310,9 @@ $group = user()->getRoles();
         })
         // var editor = tinymce.get('acpptinstruction')
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
-        $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true).trigger("change");
+        $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change");
 
-
+        $("#acpptcollapseVitalSign").find("input, select").trigger("change")
 
 
         $("#bodyFallRiskCppt").html("")
@@ -421,11 +424,12 @@ $group = user()->getRoles();
         $("#acpptnafas").val(examselect.nafas)
         $("#acpptarm_diameter").val(examselect.arm_diameter)
         $("#acpptpemeriksaan").val(examselect.pemeriksaan)
+        $("#acpptvs_status_id").val(examselect.vs_status_id)
 
         var editor = tinymce.get('acpptinstruction')
         editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
 
-        $("#acpptvs_status_id" + examselect.vs_status_id).prop("checked", true)
+        $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change") //bisma
 
 
         $("#formsaveacpptbtnid").slideDown()
@@ -497,9 +501,9 @@ $group = user()->getRoles();
         $("#bodyGcsCppt").html("")
         $("#bodyDiagPerawatCppt").html("")
 
-        $("#acpptvs_status_id2").val("2")
-        $("#acpptvs_status_id7").val("7")
-        $("#acpptvs_status_id2").prop("checked", true).trigger("change")
+        $("#acpptaccount_id3").val("3")
+        $("#acpptaccount_id4").val("4")
+        $("#acpptaccount_id3").prop("checked", true).trigger("change")
         $("#acpptbody_id").val(bodyId)
         $("#acpptorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
         $("#acpptpasien_diagnosa_id").val(null)
@@ -522,7 +526,7 @@ $group = user()->getRoles();
         $("#acpptin_date").val('<?= $visit['in_date']; ?>')
         $("#acpptexit_date").val('<?= $visit['exit_date']; ?>')
         $("#acpptkeluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#acpptexamination_date").val(get_date())
+        $("#flatacpptexamination_date").val(nowtime).trigger("change")
         $("#acpptmodified_date").val(get_date())
         $("#acpptmodified_by").val('<?= user()->username; ?>')
         $("#acpptmodified_from").val('<?= $visit['clinic_id']; ?>')
@@ -540,6 +544,9 @@ $group = user()->getRoles();
         $("#acpptpetugas_id").val('<?= user()->username; ?>')
         $("#acpptpetugas").val('<?= user()->getFullname(); ?>')
         $("#acpptaccount_id").val(<?= isset($group[11]) ? 3 : 4 ?>)
+
+        $("#acpptcollapseVitalSign").find("#acppttotal_score").html("")
+        $("#acpptcollapseVitalSign").find("span.h6").html("")
 
         $('#keperawatanListLinkAll').html("")
 
@@ -630,6 +637,7 @@ $group = user()->getRoles();
         })
         $("#acpptclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
         $("#acpptemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
+        $("#flatacpptexamination_date").val(formatedDatetimeFlat(ex.examination_date))
 
         await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
 

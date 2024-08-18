@@ -1493,6 +1493,7 @@
         $("#handoverModal").modal("show")
         $("#handOverDocument").hide()
     }
+
     const getHandOver = async () => {
         postData({}, 'admin/patient/getHandOver', (res) => {
             let data = JSON.parse(res)
@@ -1592,6 +1593,7 @@
             class_room_id: $("#handclass_room_id").val()
         }, 'admin/patient/getPasienRanapRoom', (res) => {
             let data = JSON.parse(res)
+            toHandoverData = []
             toHandoverData = data
             afterHandoverData = afterData
             transferToAfterHandoverAll()
@@ -1599,7 +1601,7 @@
     }
 
     const saveRanapToHandover = () => {
-        postData({
+        let data = {
             body_id: $("#handbody_id").val(),
             handover_by: $("#handhandover_by").val(),
             handover_date: $("#handhandover_date").val(),
@@ -1610,12 +1612,15 @@
             clinic_id: $("#handclinic_id").val(),
             class_room_id: $("#handclass_room_id").val(),
             data: afterHandoverData
-        }, 'admin/patient/saveHandover', (res) => {
+        };
+        postData(data, 'admin/patient/saveHandover', (res) => {
             successSwal("Berhasil simpan data")
             disableHandover()
+            getHandOver()
         });
     }
-
+</script>
+<script>
     const addRowToHandover = (data) => {
         $("#listToHandover").html("")
         $.each(data, function(key, value) {
@@ -1665,29 +1670,9 @@
             let data = new FormData(this)
             postDataForm(data, 'admin/rm/assessment/checkpass', (res) => {
                 if (res) {
-                    $("#handhandover_by").val("<?= user()->username; ?>")
+                    $("#handhandover_by").val($("#user_id").val())
                     $("#handhandover_date").val(get_date())
-                    $("#handhandover_sign").val("<?= user()->username; ?>" + get_date())
-                    $("#handSaveBtnId").trigger("click")
-                    $("#digitalSignModal").modal("hide")
-                } else {
-                    errorSwal("Username atau password anda salah")
-                }
-            });
-        })
-        $("#digitalSignModal").modal("show")
-    }
-
-    const signReceive = () => {
-        enableHandover()
-        $("#digitalSignForm").on("submit", function(e) {
-            e.preventDefault()
-            let data = new FormData(this)
-            postDataForm(data, 'admin/rm/assessment/checkpass', (res) => {
-                if (res) {
-                    $("#handreceived_by").val("<?= user()->username; ?>")
-                    $("#handreceived_date").val(get_date())
-                    $("#handreceived_sign").val("<?= user()->username; ?>" + get_date())
+                    $("#handhandover_sign").val($("#user_id").val() + get_date())
                     $("#handSaveBtnId").trigger("click")
                     $("#digitalSignModal").modal("hide")
                 } else {
@@ -1739,6 +1724,7 @@
             )
         })
     }
+
     const checkAllAfterHandover = (bool) => {
         if (bool) {
             $('#listAfterHandover input[type="checkbox"]').prop('checked', true)
@@ -1758,6 +1744,26 @@
         addRowToHandover(filteredTo)
         addRowAfterHandover(filteredAfter)
         $("#afterHandoverCheckAll").prop("checked", false)
+    }
+
+    const signReceive = () => {
+        enableHandover()
+        $("#digitalSignForm").on("submit", function(e) {
+            e.preventDefault()
+            let data = new FormData(this)
+            postDataForm(data, 'admin/rm/assessment/checkpass', (res) => {
+                if (res) {
+                    $("#handreceived_by").val($("#user_id").val())
+                    $("#handreceived_date").val(get_date())
+                    $("#handreceived_sign").val($("#user_id").val() + get_date())
+                    $("#handSaveBtnId").trigger("click")
+                    $("#digitalSignModal").modal("hide")
+                } else {
+                    errorSwal("Username atau password anda salah")
+                }
+            });
+        })
+        $("#digitalSignModal").modal("show")
     }
 
     $("#afterHandoverCheckAll").on("change", function(e) {

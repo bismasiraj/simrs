@@ -89,7 +89,7 @@ $this->extend('admin/patient/profilemodul/formrm/rm/KEPERAWATAN/0-ranap-template
         </tr>
         <tr>
             <td rowspan="2">
-                <textarea type="text" class="form-control" name="" id=""></textarea>
+                <textarea type="text" class="form-control" name=""></textarea>
                 <b>Alat Ukur Nyeri</b>
                 <input type="text" class="form-control" id="sa" name="sa" value="">
             </td>

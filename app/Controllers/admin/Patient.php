@@ -5670,7 +5670,7 @@ This Function is used to Add Patient
                             </div>
                         </div>';
             //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            //     $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
+            //     $dt = $dt . '<table  class="table table-borderedcustom table-bordered table-hover">
             //     <thead style="text-align: center;">
             //     <tr>
             //         <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">

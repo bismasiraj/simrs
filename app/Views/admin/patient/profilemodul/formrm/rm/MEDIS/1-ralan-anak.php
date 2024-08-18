@@ -390,13 +390,13 @@
                 <tr>
                     <td>
                         <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-                        <div id="" name="" class="h6"></div>
+                        <div name="" class="h6"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Materi Edukasi:</b>
-                        <div id="" name="" class="h6"></div>
+                        <div name="" class="h6"></div>
                     </td>
                 </tr>
             </tbody>

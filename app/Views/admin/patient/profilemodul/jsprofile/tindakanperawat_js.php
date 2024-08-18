@@ -98,7 +98,7 @@
             }
             $("#perawatTindakan" + key)
                 .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-                .append($("<td>").attr("id", "treat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+                .append($("<td>").attr("id", "treat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
                 .append($("<td>")
                     .append('<textarea type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
                 )
@@ -122,7 +122,7 @@
             }
             $("#perawatTindakan" + key)
                 .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html('<?= $visit['fullname']; ?>')))
-                .append($("<td>").attr("id", "treat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+                .append($("<td>").attr("id", "treat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
                 .append($("<td>")
                     .append('<textarea type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
                 )

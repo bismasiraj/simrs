@@ -34,7 +34,7 @@ $group = user()->getRoles();
             </div><!--./col-lg-6-->
             <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
                 <div id="arpAddDocument" class="box-tab-tools text-center">
-                    <a data-toggle="modal" onclick="initialAddArp()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                    <a data-toggle="modal" onclick="initialAddArp()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                 </div>
                 <div id="arpDocument" class="card border-1 rounded-4 p-4" style="display: none">
                     <form id="formaddarp" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
@@ -55,7 +55,6 @@ $group = user()->getRoles();
                             <input type="hidden" id="arpimt_score" name="imt_score">
                             <input type="hidden" id="arpimt_desc" name="imt_desc">
                             <input type="hidden" id="arpalo_anamnase" name="alo_anamnase">
-                            <input type="hidden" id="arppemeriksaan" name="pemeriksaan">
                             <input type="hidden" id="arpteraphy_desc" name="teraphy_desc">
                             <input type="hidden" id="arpinstruction" name="instruction">
                             <input type="hidden" id="arpmedical_treatment" name="medical_treatment">
@@ -117,7 +116,8 @@ $group = user()->getRoles();
                                         <div class="mb-3">
                                             <div class="form-group">
                                                 <label for="arpexamination_date">Tanggal Assessmennt</label>
-                                                <input name="examination_date" id="arpexamination_date" type="datetime-local" class="form-control" />
+                                                <input id="flatarpexamination_date" type="hidden" class="form-control datetimeflatpickr" />
+                                                <input name="examination_date" id="arpexamination_date" type="hidden" />
                                             </div>
                                         </div>
                                     </div>
@@ -186,12 +186,12 @@ $group = user()->getRoles();
                                 <div class="accordion" id="accodrionExamInfo">
                                     <div class="accordion-item">
                                         <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingVitalSign">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign">
+                                            <h2 class="accordion-header" id="arpheadingVitalSign">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#arpcollapseVitalSign" aria-expanded="false" aria-controls="arpcollapseVitalSign">
                                                     <b>VITAL SIGN</b>
                                                 </button>
                                             </h2>
-                                            <div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accodrionExamInfo" style="">
+                                            <div id="arpcollapseVitalSign" class="accordion-collapse collapse" aria-labelledby="arpheadingVitalSign" data-bs-parent="#accodrionExamInfo" style="">
                                                 <div class="accordion-body text-muted">
                                                     <div class="row">
                                                         <div class="row mb-4">
@@ -203,6 +203,7 @@ $group = user()->getRoles();
                                                                         <option value="1">Dewasa</option>
                                                                         <option value="4">Anak</option>
                                                                         <option value="5">Neonatus</option>
+                                                                        <option value="10">Obsetric</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -293,17 +294,25 @@ $group = user()->getRoles();
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Kesadaran</label>
+                                                                    <select class="form-select" name="awareness" id="arpawareness" onchange="vitalsignInput(this)">
+                                                                        <option value="0">Sadar</option>
+                                                                        <option value="3">Nyeri</option>
+                                                                        <option value="10">Unrespon</option>
+                                                                    </select>
+                                                                    <span class="h6" id="badge-arpawareness"></span>
+                                                                </div>
+                                                            </div>
                                                             <!--==new -->
                                                             <!--==endofnew -->
                                                             <div class="col-sm-12 mt-2">
                                                                 <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                             </div>
-                                                            <!-- <div class="col-sm-12">
-                                                            <div class="mb-4">
-                                                                <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="arppemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div> -->
                                                         </div>
+                                                        <span id="arptotal_score"></span>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -336,7 +345,7 @@ $group = user()->getRoles();
                                                                     </table>
                                                                 </div>
                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -375,7 +384,7 @@ $group = user()->getRoles();
                                                                 <div id="bodyFallRiskPerawat">
                                                                 </div>
                                                                 <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                    <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -399,7 +408,7 @@ $group = user()->getRoles();
                                                                 <div id="bodyPainMonitoringPerawat">
                                                                 </div>
                                                                 <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                    <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -424,7 +433,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="bodyTriagePerawatAddBtn" class="box-tab-tools text-center">
-                                                                        <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -448,7 +457,7 @@ $group = user()->getRoles();
                                                             <div id="bodyApgarPerawat">
                                                             </div>
                                                             <div id="bodyApgarPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -470,7 +479,7 @@ $group = user()->getRoles();
                                                         <div class="col-md-12">
                                                             <div id="bodyGiziPerawat">
                                                             </div>
-                                                            <div id="bodyGiziPerawatAddBtn" class="col-md-12 text-center"><a onclick="addGizi(1,1, 'arpbody_id','bodyGiziPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>
+                                                            <div id="bodyGiziPerawatAddBtn" class="col-md-12 text-center"><a onclick="addGizi(1,1, 'arpbody_id','bodyGiziPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -495,7 +504,7 @@ $group = user()->getRoles();
                                                             <div id="bodyADLPerawat">
                                                             </div>
                                                             <div id="bodyADLPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addADL(1,1, 'arpbody_id','bodyADLPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addADL(1,1, 'arpbody_id','bodyADLPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -518,7 +527,7 @@ $group = user()->getRoles();
                                                             <div id="bodyDekubitusPerawat">
                                                             </div>
                                                             <div id="bodyDekubitusPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addDekubitus(1,1, 'arpbody_id','bodyDekubitusPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addDekubitus(1,1, 'arpbody_id','bodyDekubitusPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -541,7 +550,7 @@ $group = user()->getRoles();
                                                             <div id="bodyStabilitasPerawat">
                                                             </div>
                                                             <div id="bodyStabilitasPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -566,7 +575,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addEducationIntegrationButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addEducationIntegration(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -591,7 +600,7 @@ $group = user()->getRoles();
                                                             <div id="bodyEducationFormPerawat">
                                                             </div>
                                                             <div id="bodyEducationFormPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addEducationForm(1,1, 'arpbody_id','bodyEducationFormPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addEducationForm(1,1, 'arpbody_id','bodyEducationFormPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -614,7 +623,7 @@ $group = user()->getRoles();
                                                             <div id="bodyGcsPerawat">
                                                             </div>
                                                             <div id="bodyGcsPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addGcs(1,0,'arpbody_id', 'bodyGcsPerawat', false)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addGcs(1,0,'arpbody_id', 'bodyGcsPerawat', false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -637,7 +646,7 @@ $group = user()->getRoles();
                                                             <div id="bodyIntegumenPerawat">
                                                             </div>
                                                             <div id="bodyIntegumenPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addIntegumen(1,1, 'arpbody_id','bodyIntegumenPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addIntegumen(1,1, 'arpbody_id','bodyIntegumenPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -660,7 +669,7 @@ $group = user()->getRoles();
                                                             <div id="bodyAnakPerawat">
                                                             </div>
                                                             <div id="bodyAnakPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addAnak(1,1, 'arpbody_id','bodyAnakPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addAnak(1,1, 'arpbody_id','bodyAnakPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -683,7 +692,7 @@ $group = user()->getRoles();
                                                             <div id="bodyNeonatusPerawat">
                                                             </div>
                                                             <div id="bodyNeonatusPerawatAddBtn" class="col-md-12 text-center">
-                                                                <a onclick="addNeonatus(1,1, 'arpbody_id','bodyNeonatusPerawat')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                <a onclick="addNeonatus(1,1, 'arpbody_id','bodyNeonatusPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -708,7 +717,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addNeurosensorisButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -735,7 +744,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPencernaanButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -762,7 +771,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPerkemihanButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -789,7 +798,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -816,7 +825,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addPsikologiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -843,7 +852,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSeksualButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -870,7 +879,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -897,7 +906,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSocialButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSocial(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -924,7 +933,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addHearingButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addHearing(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -951,7 +960,7 @@ $group = user()->getRoles();
                                                             <div class="row mb-4">
                                                                 <div class="col-md-12">
                                                                     <div id="addSleepingButton" class="box-tab-tools text-center">
-                                                                        <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                        <a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1090,37 +1099,37 @@ $group = user()->getRoles();
                                 <div class="form-group"><label for="employee_id">Pemberian Edukasi</label>
                                     <div class="row p-3">
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="1">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionPerawat" checked="" value="1">
                                             <label class="form-check-label" for="eduplan">
                                                 Perawat
                                             </label>
                                         </div>
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="2">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionDokter" checked="" value="2">
                                             <label class="form-check-label" for="eduplan">
                                                 Dokter
                                             </label>
                                         </div>
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="3">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionAhliGizi" checked="" value="3">
                                             <label class="form-check-label" for="eduplan">
                                                 Ahli Gizi
                                             </label>
                                         </div>
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="4">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionTerapis" checked="" value="4">
                                             <label class="form-check-label" for="eduplan">
                                                 Terapis
                                             </label>
                                         </div>
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provision" checked="" value="5">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaneducation_provisionBidan" checked="" value="5">
                                             <label class="form-check-label" for="eduplan">
                                                 Bidan
                                             </label>
                                         </div>
                                         <div class="col-md-2 form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaeducation_provisionn" checked="" value="6">
+                                            <input class="form-check-input" type="radio" name="education_provision" id="eduplaeducation_provisionnLainlain" checked="" value="6">
                                             <label class="form-check-label" for="eduplan">
                                                 Lain-lain
                                             </label>
@@ -1156,19 +1165,19 @@ $group = user()->getRoles();
                                 <div class="form-group"><label for="employee_id">Metode Edukasi</label>
                                     <div class="row p-3">
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodLeaflet" checked="">
                                             <label class="form-check-label" for="eduplan">
                                                 Leaflet
                                             </label>
                                         </div>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodDemonstrasi" checked="">
                                             <label class="form-check-label" for="eduplan">
                                                 Demonstrasi
                                             </label>
                                         </div>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_method" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodWawancara" checked="">
                                             <label class="form-check-label" for="eduplan">
                                                 Wawancara
                                             </label>
@@ -1186,11 +1195,6 @@ $group = user()->getRoles();
                     </div>
                 </form>
             </div>
-            <!-- <div class="modal-footer">
-                <div class="pull-right">
-                    <button type="submit" id="formaddbill" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>
-                </div>
-            </div> -->
         </div>
     </div>
 </div>

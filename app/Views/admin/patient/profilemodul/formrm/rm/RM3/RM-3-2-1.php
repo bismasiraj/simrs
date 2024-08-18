@@ -123,7 +123,7 @@
                         </td>
                         <td>
                             <div class="mb-1">Kelebihan cairan teratasi <br> dalam waktu
-                                <input type="text" id="" name="" style="width: 50px"> x 24 jam<br>Dengan kriteria hasil :
+                                <input type="text" name="" style="width: 50px"> x 24 jam<br>Dengan kriteria hasil :
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="t_04" id="t_04_perfusi">

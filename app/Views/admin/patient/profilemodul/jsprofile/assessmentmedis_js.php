@@ -413,7 +413,11 @@
         $("#formaddarm textarea").val(null)
 
 
-        $('#armdate_of_diagnosa').val(get_date())
+        $("#flatarmdate_of_diagnosa").val(nowtime).trigger("change")
+
+
+        $("#formaddarm").find("#armtotal_score").html("")
+        $("#formaddarm").find("span.h6").html("")
 
 
 
@@ -480,6 +484,7 @@
     }
 
     const fillDataArm = async (index) => {
+
         let mappingOrder = [{
                 name: "appendTriaseMedis",
                 order: 1,
@@ -615,6 +620,11 @@
             $("#arm" + key).val(value)
             // $("#arm" + key).prop("disabled", true)
         })
+
+        let formattedValue = moment(pasienDiagnosa.date_of_diagnosa).format('DD/MM/YYYY HH:mm');
+        $("#formaddarm").find("#armtotal_score").html("")
+        $("#formaddarm").find("span.h6").html("")
+        $("#flatarmdate_of_diagnosa").val(formattedValue).trigger("change")
         await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn")
 
         if (pasienDiagnosa.clinic_id == null || pasienDiagnosa.clinic_id == '') {
@@ -654,6 +664,7 @@
         // $("#formsavearmbtn").slideUp()
         // $("#formeditarm").slideDown()
 
+        $("#armcollapseVitalSign").find("input, select").trigger("change")
 
         disableARM()
         if (typeof pasienDiagnosa.description !== 'undefined') {
@@ -704,6 +715,8 @@
         $("#formaddarm select").prop("disabled", false)
         enableCanvasLokalis()
 
+        $("#formaddarm").find(".btn-to-hide").slideDown()
+
         $("#formaddarm").find(".btn-edit").each(function() {
             $(this).trigger("click")
         })
@@ -715,6 +728,8 @@
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
+
+        $("#formaddarm").find(".btn-to-hide").slideUp()
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").slideUp()
             $("#formsignarm").slideUp()
@@ -814,6 +829,8 @@
                     $("#armsaturasi").val(data.saturasi)
                     $("#armarm_diameter").val(data.arm_diameter)
                     $("#armpemeriksaan").val(data.pemeriksaan)
+                    $("#armvs_status_id").val(data.vs_status_id)
+                    $("#armawareness").val(data.awareness)
                 }
             })
         <?php
@@ -1156,13 +1173,25 @@
     function appendVitalSignMedis(accordionId) {
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
-            '<h2 class="accordion-header" id="headingVitalSign">' +
-            '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign"><b>VITAL SIGN</b></button>' +
+            '<h2 class="accordion-header" id="armheadingVitalSign">' +
+            '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#armcollapseVitalSign" aria-expanded="false" aria-controls="armcollapseVitalSign"><b>VITAL SIGN</b></button>' +
             '</h2>' +
-            '<div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionAssessmentMedis">' +
+            '<div id="armcollapseVitalSign" class="accordion-collapse collapse" aria-labelledby="armheadingVitalSign" data-bs-parent="#accordionAssessmentMedis">' +
             '<div class="accordion-body text-muted">' +
             '<h5>Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></h5>' +
-            `<div class="row mb-4">
+            `<div id="armVitalSignContent" class="row mb-4">
+                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                    <div class="form-group">
+                        <label>Jenis EWS</label>
+                        <select class="form-select" name="vs_status_id" id="armvs_status_id">
+                            <option value="" selected>-- pilih --</option>
+                            <option value="1">Dewasa</option>
+                            <option value="4">Anak</option>
+                            <option value="5">Neonatus</option>
+                            <option value="10">Obsetric</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                     <div class="form-group">
                         <label>BB(Kg)</label>
@@ -1253,13 +1282,13 @@
                 <!--==new -->
                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                     <div class="form-group">
-                        <label>Jenis EWS</label>
-                        <select class="form-select" name="vs_status_id" id="armvs_status_id">
-                            <option value="" selected>-- pilih --</option>
-                            <option value="1">Dewasa</option>
-                            <option value="4">Anak</option>
-                            <option value="5">Neonatus</option>
+                        <label>Kesadaran</label>
+                        <select class="form-select" name="awareness" id="armawareness" onchange="vitalsignInput(this)">
+                            <option value="0">Sadar</option>
+                            <option value="3">Nyeri</option>
+                            <option value="10">Unrespon</option>
                         </select>
+                        <span class="h6" id="badge-armawareness"></span>
                     </div>
                 </div>
                 <!--==endofnew -->
@@ -1271,32 +1300,13 @@
                         <div class="form-group"><label>Tanggal Periksa</label><textarea name="examination_date" id="armpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                     </div>
                 </div> -->
-            </div>` +
+            </div>
+            <span id="armtotal_score"></span>
+            ` +
             '</div>' +
             '</div>' +
             '</div>'
         )
-        // $("#" + accordionId).append(
-        //     '<div class="accordion-item">' +
-        //         '<h2 class="accordion-header" id="headingVitalSign">' +
-        //             '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVitalSign" aria-expanded="false" aria-controls="collapseVitalSign"><b>VITAL SIGN</b></button>' +
-        //         '</h2>' +
-        //             '<div id="collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="headingVitalSign" data-bs-parent="#accordionAssessmentMedis">' +
-        //                 '<div class="accordion-body text-muted">' +
-        //                 '<div class="row mb-2">' +
-        //                     '<div class="col-sm-12 col-xs-12">' +
-        //                         '<div class="mb-3">' +
-        //                             '<div class="form-group">' +
-        //                                 '<label for="armpemeriksaan">Vital Sign <a id="copyPeriksaFisikBtn" href="#" onclick="copyPeriksaFisik()">(Copy)</a></label>' +
-        //                                 '<textarea id="armpemeriksaan" name="pemeriksaan" rows="5" class="form-control " autocomplete="off"></textarea>' +
-        //                             '</div>' +
-        //                         '</div>' +
-        //                     '</div>' +
-        //                 '</div>' +
-        //             '</div>' +
-        //         '</div>' +
-        //     '</div>'
-        // )
     }
 
     function appendRiwayatMedis(accordionId) {
@@ -1478,7 +1488,7 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button"  name="adddiagnosa" onclick="addRowDiagMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -1699,8 +1709,8 @@
                             </div>
                         </div>
                         <div id="bodyGcsMedisAddBtn" class="col-md-12 text-center">
-                            <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                            <a onclick="copyGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
+                            <a onclick="addGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyGcs(1,0,'armpasien_diagnosa_id', 'bodyGcsMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>
@@ -1928,7 +1938,7 @@
             </div>
         </div>
     `;
-        appendAccordionItem(accordionId, accordionContent);
+        // appendAccordionItem(accordionId, accordionContent);
     }
 
     function appendMedisAccordion(accordionId) {
@@ -1972,8 +1982,8 @@
                             </div>
                         </div>
                         <div id="bodyFallRiskMedisAddBtn" class="col-md-12 text-center">
-                            <a onclick="addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                            <a onclick="copyFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
+                            <a onclick="addFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyFallRisk(1, 0, 'armpasien_diagnosa_id', 'bodyFallRiskMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>
@@ -2001,8 +2011,8 @@
                                 <div class="row mb-4">
                                     <div class="col-md-12">
                                         <div id="bodyTriageMedisAddBtn" class="box-tab-tools text-center">
-                                            <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                            <a onclick="copyTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
+                                            <a onclick="addTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                            <a onclick="copyTriage(1,0,'armpasien_diagnosa_id', 'bodyTriageMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2032,7 +2042,7 @@
                                 <div class="row mb-4">
                                     <div class="col-md-12">
                                         <div id="bodyEducationFormMedisAddBtn" class="box-tab-tools text-center">
-                                            <a onclick="addEducationForm(1,0,'armpasien_diagnosa_id', 'bodyEducationFormMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                            <a onclick="addEducationForm(1,0,'armpasien_diagnosa_id', 'bodyEducationFormMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                         </div>
                                     </div>
                                 </div>
@@ -2063,7 +2073,7 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div id="addSirkulasiButton" class="box-tab-tools text-center">
-                                        <a onclick="addSirkulasi(1,0,'armpasien_diagnosa_id', 'bodySirkulasiMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <a onclick="addSirkulasi(1,0,'armpasien_diagnosa_id', 'bodySirkulasiMedis')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                     </div>
                                 </div>
                             </div>
@@ -2094,7 +2104,7 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div id="addPernapasanButton" class="box-tab-tools text-center">
-                                        <a onclick="addPernapasan(1,0, 'armpasien_diagnosa_id', 'bodyPernapasanMedis')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <a onclick="addPernapasan(1,0, 'armpasien_diagnosa_id', 'bodyPernapasanMedis')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                     </div>
                                 </div>
                             </div>
@@ -2125,7 +2135,7 @@
                             <div class="row mb-4">
                                 <div class="col-md-12">
                                     <div id="addApgarButton" class="box-tab-tools text-center">
-                                        <a onclick="addApgar(1,0,\'armpasien_diagnosa_id\', \'bodyApgarMedis\')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                        <a onclick="addApgar(1,0,\'armpasien_diagnosa_id\', \'bodyApgarMedis\')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                     </div>
                                 </div>
                             </div>
@@ -2319,8 +2329,8 @@
                             </div>
                         </div>
                         <div id="bodyPainMonitoringMedisAddBtn" class="col-md-12 text-center">
-                            <a onclick="addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                            <a onclick="copyPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
+                            <a onclick="addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                            <a onclick="copyPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Copy Dokumen</a>
                         </div>
                     </div>
                 </div>
@@ -2415,13 +2425,13 @@
                                 <tr>
                                     <td>
                                         <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-                                        <div id="" name="" class="h6"></div>
+                                        <div  name="" class="h6"></div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <b>Materi Edukasi:</b>
-                                        <div id="" name="" class="h6"></div>
+                                        <div  name="" class="h6"></div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -2461,7 +2471,7 @@
 
     function appendCetakMedis(accordionId) {
         var accordionContent = `
-            <div id="" class="accordion-item">
+            <div  class="accordion-item">
                 <h2 class="accordion-header" id="painMonitoringMedis">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsepainMonitoringMedis" aria-expanded="true" aria-controls="collapsepainMonitoringMedis">
                         <b>REPORTING</b>

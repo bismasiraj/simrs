@@ -41,7 +41,7 @@ $permissions = user()->getPermissions();
 
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <form id="form1" action="" method="post" class="">
+            <form id="formSearchingTarifCharges" action="" method="post" class="">
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
                     <!-- <div class="col-sm-6 col-md-3">

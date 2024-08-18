@@ -121,7 +121,7 @@
         $("#fisioChargesBody").append($("<tr id=\"" + key + "\">")
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", "afisiodisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-            .append($("<td>").attr("id", "afisiodisplaytreat_date" + key).html(get_date().substr(0, 16)).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
+            .append($("<td>").attr("id", "afisiodisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", "afisiodisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
             .append($("<td>")

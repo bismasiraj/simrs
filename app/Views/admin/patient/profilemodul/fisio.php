@@ -52,7 +52,7 @@ $permissions = user()->getPermissions();
 
                 </table>
             </div>
-            <form id="form1" action="" method="post" class="">
+            <form id="formSearchingTarifFisio" action="" method="post" class="">
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
 

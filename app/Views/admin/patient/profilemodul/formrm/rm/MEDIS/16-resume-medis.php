@@ -205,11 +205,11 @@
                 <tr>
                     <td class="p-1">
                         <b>Diagnosis Pulang</b>
-                        <textarea type="text" class="form-control" id="" name=""><?= @$val['pdiagnosa']; ?></textarea>
+                        <textarea type="text" class="form-control" name=""><?= @$val['pdiagnosa']; ?></textarea>
                     </td>
                     <td class="p-1">
                         <b>Procedure Pulang</b>
-                        <textarea type="text" class="form-control" id="" name=""><?= @$val['pprocedures']; ?></textarea>
+                        <textarea type="text" class="form-control" name=""><?= @$val['pprocedures']; ?></textarea>
                     </td>
                 </tr>
                 <tr>

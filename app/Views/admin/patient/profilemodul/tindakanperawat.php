@@ -33,7 +33,7 @@ $permission = user()->getPermissions();
             </div><!--./col-lg-6-->
             <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
                 <div class="row">
-                    <h3 id="">Tindakan Keperawatan</h3>
+                    <h3>Tindakan Keperawatan</h3>
                     <hr>
                     <div class="col-md-12">
                         <div class="dividerhr"></div>
@@ -49,7 +49,7 @@ $permission = user()->getPermissions();
                                 <div class="accordion-body text-muted">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <form id="form1" action="" method="post" class="">
+                                            <form id="formTindakanKolaboratif" action="" method="post" class="">
                                                 <div class="box-body row mt-4">
                                                     <input type="hidden" name="ci_csrf_token" value="">
                                                     <div class="col-sm-12 col-md-12 mb-4">
@@ -136,7 +136,7 @@ $permission = user()->getPermissions();
                                 <div class="accordion-body text-muted">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <form id="form1" action="" method="post" class="">
+                                            <form id="formTindakanMandiri" action="" method="post" class="">
                                                 <div class="box-body row mt-4">
                                                     <input type="hidden" name="ci_csrf_token" value="">
                                                     <div class="col-sm-12 col-md-12 mb-4">

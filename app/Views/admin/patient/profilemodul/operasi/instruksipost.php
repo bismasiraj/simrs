@@ -303,7 +303,7 @@ $postOPv = array_filter($aValue, function ($value) {
                         <div class="form-group">
                             <label>Tanggal dan Jam Checklist</label>
                             <div class="position-relative">
-                                <input name="" id="" type="datetime-local" class="form-control" value="">
+                                <input name="" type="datetime-local" class="form-control" value="">
                             </div>
                         </div>
                     </div>

@@ -169,15 +169,15 @@
                     <tr>
                         <td>
                             <b>Kelas</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                         <td>
                             <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                         <td>
                             <b>Bed</b>
-                            <input type="text" class="form-control" id="" name="">
+                            <input type="text" class="form-control" name="">
                         </td>
                     </tr>
                 </tbody>

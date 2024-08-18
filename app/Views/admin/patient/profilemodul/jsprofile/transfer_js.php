@@ -47,6 +47,7 @@
         $("#atransferisinternal_group").prop("readonly", false)
         $("#atransferisinternal").val(1).trigger("change")
 
+        $("#flatatransferexamination_date").val(nowtime).trigger("change")
 
 
         // if (data != null) {
@@ -92,8 +93,10 @@
         $("#atransferisinternal_group").prop("readonly", true)
         var transferselect = transfer[key];
         $.each(transferselect, function(keyt, valuet) {
-            $("#atransfer" + keyt).val(valuet).trigger("change")
+            $("#atransfer" + keyt).val(valuet)
         })
+        $("#atransferisinternal").trigger("change")
+        $("#flatatransferexamination_date").val(formatedDatetimeFlat(transferselect.examination_date)).trigger("change")
         $("#formaddatransfer").find("input, select, textarea").prop("disabled", false)
         $("#contentTindakLanjut").slideDown()
         await checkSignSignature("formaddatransfer", "atransferbody_id", "formsaveatransferbtnid")
@@ -372,9 +375,9 @@
                 }
             })
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
-                .append($("<td>").html(examselect.petugas))
-                .append($("<td>").html(getFollowUpName(examselect.isinternal)))
+                .append($("<td>").append(formatedDatetimeFlat(examselect?.examination_date)))
+                .append($("<td>").html(examselect?.petugas))
+                .append($("<td>").html(getFollowUpName(examselect?.isinternal)))
                 .append($("<td colspan=\"2\">").html(visitselected?.visit_id))
                 .append($("<td colspan=\"2\">").html(visitselected?.name_of_clinic))
                 .append($("<td colspan=\"2\">").html(visitselected?.fullname))
@@ -390,7 +393,7 @@
             )
         } else if (isinternal == 2) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect?.examination_date).substring(0, 16)))
+                .append($("<td>").append(formatedDatetimeFlat(examselect?.examination_date)))
                 .append($("<td>").html(examselect?.petugas))
                 .append($("<td>").html(getFollowUpName(examselect?.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect?.org_id))
@@ -408,7 +411,7 @@
             )
         } else if (isinternal == 4) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -426,7 +429,7 @@
             )
         } else if (isinternal == 5) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -446,10 +449,12 @@
     }
 </script>
 
-<!-- TIndak Lanjut -->
+<!-- TRANSFER INTERNAL -->
 <script>
     const setDatatransfer = (bodyId1, bodyId2) => {
 
+        console.log("bodyId1: " + bodyId1)
+        console.log("bodyId2: " + bodyId2)
         $("#formaddatransfer1").find("input, textarea").val(null)
         $("#atransfer1body_id").val(bodyId1)
         $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
@@ -472,8 +477,9 @@
         $("#atransfer1agemonth").val('<?= $visit['agemonth']; ?>')
         $("#atransfer1ageday").val('<?= $visit['ageday']; ?>')
         $("#atransfer1examination_date").val(get_date())
-        $("#atransfer1vs_status_id").val(9)
-
+        $("#atransfer1vs_status_id").val(1)
+        $("#atransfer1account_id").val(3)
+        $("#flatatransfer1examination_date").val(nowtime).trigger("change")
 
 
         $("#formaddatransfer2").find("input, textarea").val(null)
@@ -498,9 +504,18 @@
         $("#atransfer2agemonth").val('<?= $visit['agemonth']; ?>')
         $("#atransfer2ageday").val('<?= $visit['ageday']; ?>')
         $("#atransfer2examination_date").val(get_date())
-        $("#atransfer2vs_status_id").val(9)
+        $("#atransfer2vs_status_id").val(1)
+        $("#atransfer2account_id").val(3)
+        $("#flatatransfer2examination_date").val(nowtime).trigger("change")
 
 
+        $("#atransfer1ollapseVitalSign").find("#atransfer1total_score").html("")
+        $("#atransfer1ollapseVitalSign").find("span.h6").html("")
+
+        $("#atransfer2collapseVitalSign").find("#atransfer2total_score").html("")
+        $("#atransfer2collapseVitalSign").find("span.h6").html("")
+
+        $("#atransfertransferinternalgroup").slideDown()
         $.each(examForassessment, function(key, value) {
             if (value.body_id == bodyId1) {
                 exam1 = value
@@ -508,24 +523,32 @@
                 exam2 = value
             }
         })
-        if (typeof(exam1.body_id) !== 'undefined')
+
+        console.log(exam1)
+        coba = exam1
+        if (typeof(exam1.body_id) !== 'undefined') {
             $.each(exam1, function(keyt, value) {
                 $("#atransfer1" + keyt).val(value)
                 $("#atransfer1" + keyt).prop("disabled", false)
             })
-        if (typeof(exam2.body_id) !== 'undefined')
+            $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
+        }
+        if (typeof(exam2.body_id) !== 'undefined') {
             $.each(exam2, function(keyt, value) {
                 $("#atransfer2" + keyt).val(value)
                 $("#atransfer2" + keyt).prop("disabled", false)
             })
+            $("#atransfer2collapseVitalSign").find("input, select").trigger("change")
+        }
 
         getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
 
 
-        $("#atransfertransferinternalgroup").slideDown()
+        // $("#atransfertransferinternalgroup").slideDown()
 
         enableTindakLanjut()
     }
+
     const copytransfer = (key) => {
         var examselect = transfer[key];
 
@@ -638,7 +661,7 @@
                 exam2 = value
             }
         })
-        if (typeof(exam1.body_id) !== 'undefined')
+        if (typeof(exam1.body_id) !== 'undefined') {
             $.each(exam1, function(keyt, value) {
                 // if (keyt == 'employee_id') {
                 //     $("#atransfer1employee_id").val(value)
@@ -646,7 +669,9 @@
                 $("#atransfer1" + keyt).val(value)
                 $("#atransfer1" + keyt).prop("disabled", false)
             })
-        if (typeof(exam2.body_id) !== 'undefined')
+            $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
+        }
+        if (typeof(exam2.body_id) !== 'undefined') {
             $.each(exam2, function(keyt, value) {
                 // if (keyt == 'employee_id') {
                 //     $("#atransfer2employee_id").val(value)
@@ -654,6 +679,8 @@
                 $("#atransfer2" + keyt).val(value)
                 $("#atransfer2" + keyt).prop("disabled", false)
             })
+            $("#atransfer2collapseVitalSign").find("input, select").trigger("change")
+        }
         if (typeof(transferselect.document_id1) !== 'undefined')
             $("#atransferbody_id1").val(transferselect.document_id1)
         if (typeof(transferselect.document_id2) !== 'undefined')
@@ -714,8 +741,7 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                disableTindakLanjut1
-                $("#formaddatransfer1").find("input, textarea, select").prop("disabled", true)
+                disableTindakLanjut1()
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");

@@ -62,7 +62,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="accordion" id="">
+                                                <div class="accordion">
                                                     <?php foreach ($persalinan as $key => $value) {
                                                     ?>
                                                         <div class="row mt-4">

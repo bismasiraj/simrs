@@ -354,22 +354,22 @@
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_cm" value="0">
                                     <label class="form-check-label" for="t_028_cm">RS</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_apatis" value="1">
                                     <label class="form-check-label" for="t_028_apatis">Dokter Keluarga</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_somno" value="1">
                                     <label class="form-check-label" for="t_028_somno">Puskesmas</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_sopor" value="1">
                                     <label class="form-check-label" for="t_028_sopor">Dokter</label>
-                                    <input type="text" id="" name="" style="width: 120px">
+                                    <input type="text" name="" style="width: 120px">
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="t_028" id="t_028_coma" value="1">
@@ -424,12 +424,12 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="t_041" id="t_041_risiko">
                                 <label class="form-check-label" for="t_041_risiko">Keluarga pasien, nama :</label>
-                                <input type="text" id="" name="" style="width: 250px">
+                                <input type="text" name="" style="width: 250px">
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="t_041" id="t_041_renal">
                                 <label class="form-check-label" for="t_041_renal">Tidak dapat memberi edukasi kepada pasien atau keluarga, Karena </label>
-                                <input type="text" id="" name="" style="width: 250px">
+                                <input type="text" name="" style="width: 250px">
                             </div>
                             <div class="mb-2">
                                 <div class="form-check">

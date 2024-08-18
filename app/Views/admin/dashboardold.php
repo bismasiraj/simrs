@@ -160,7 +160,7 @@
                             </div>
                         </div>
                         <div class="widget-chart text-center">
-                            <table id="" class="table table-striped table-bordered" style="font-size: 10px">
+                            <table class="table table-striped table-bordered" style="font-size: 10px">
                                 <thead>
                                     <tr>
                                         <th>Nama Poli</th>

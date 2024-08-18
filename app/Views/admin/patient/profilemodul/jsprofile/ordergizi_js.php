@@ -158,7 +158,10 @@
                             <tbody id="ordergizi` + counter + `" class="table-group-divider">
                                 <tr>
                                     <td rowspan="4">1.</td>
-                                    <td rowspan="4"><input type="datetime-local" class="form-control" id="orderdietdiet_date` + counter + `" value="` + get_date() + `"></td>
+                                    <td rowspan="4">
+                                    <input type="text" class="form-control" id="flatordergizidiet_date` + counter + `">
+                                    <input type="hidden" class="form-control" name="diet_date" id="ordergizidiet_date` + counter + `">
+                                    </td>
                                     <!-- <td><?= $visit['diantar_oleh']; ?></td> -->
                                     <td>Bentuk</td>
                                     <td>
@@ -199,14 +202,18 @@
                         </table>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formSaveOrderGiziBtn` + counter + `" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button type="button" id="formEditOrderGiziBtn` + counter + `" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                            <button type="button" id="formsign` + counter + `" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                            <button type="button" id="formEditOrderGiziBtn` + counter + `" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right" style="display: none;"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <button type="button" id="formDeleteOrderGiziBtn` + counter + `" name="delete" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger pull-right" style="display: none;"><i class="fa fa-trash"></i> <span>Delete</span></button>
+                            <button type="button" id="formsign` + counter + `" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right" style="display: none;"><i class="fa fa-signature"></i> <span>Sign</span></button>
                         </div>
                     </div>
                 </form>`;
 
         $("#" + container).append(content)
+
+
+
+        datetimepickerbyid("flatordergizidiet_date" + counter)
 
         $("#formGiziRequest" + counter).on("submit", function(e) {
             e.preventDefault()
@@ -219,13 +226,31 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
+                    console.log("formGiziRequest" + counter)
                     $("#formGiziRequest" + counter).find("input").prop("readonly", true)
+                    successSwal("Berhasil disimpan")
+                    $("#formSaveOrderGiziBtn" + counter).slideUp()
+                    $("#formEditOrderGiziBtn" + counter).slideDown()
+                    $("#formDeleteOrderGiziBtn" + counter).slideUp()
+                    $("#formsign" + counter).slideDown()
                 },
                 error: function() {
 
                 }
             });
         })
+
+        $("#formEditOrderGiziBtn" + counter).on("click", function() {
+            console.log("formSaveOrderGiziBtn" + counter)
+            $("#formSaveOrderGiziBtn" + counter).slideDown()
+            $("#formEditOrderGiziBtn" + counter).slideUp()
+            $("#formDeleteOrderGiziBtn" + counter).slideDown()
+            $("#formsign" + counter).slideDown()
+        })
+        $("#formDeleteOrderGiziBtn" + counter).on("click", function() {
+            deleteOrderIgizi("formGiziRequest" + counter, counter, bodyId)
+        })
+
         if (flag == 0) {
             var detailnya = orderGiziAll[counter]
             $.each(detailnya, function(key, value) {
@@ -245,13 +270,38 @@
                 }
                 $("#ordergizi" + key + counter + "display").val(bentukDesc)
             })
-            $("#ordergizi" + counter).find("input").prop("disabled", true)
+            $("#formSaveOrderGiziBtn" + counter).slideUp()
+            $("#formEditOrderGiziBtn" + counter).slideDown()
+            $("#formDeleteOrderGiziBtn" + counter).slideUp()
+            $("#formsign" + counter).slideDown()
+            $("#flatordergizidiet_date" + counter).val(formatedDatetimeFlat(detailnya.diet_date)).trigger("change")
+            $("#formGiziRequest" + counter).find("input").prop("disabled", true)
+        } else {
+            $("#formSaveOrderGiziBtn" + counter).slideDown()
+            $("#formEditOrderGiziBtn" + counter).slideUp()
+            $("#formDeleteOrderGiziBtn" + counter).slideDown()
+            $("#formsign" + counter).slideDown()
+            $("#formGiziRequest" + counter).find("input").prop("disabled", false)
         }
 
+        $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + 1 + `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`)
 
-        counter++
-        $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`)
-
+    }
+    const deleteOrderIgizi = (container, counter, bodyId) => {
+        bodyId = $("#ordergizidtype_id" + counter).val()
+        postData({
+            dtype_id: bodyId
+        }, "admin/rm/assessment/deleteOrderGizi", (res) => {
+            if (res.status == 'success') {
+                console.log(container)
+                $("#" + container).remove()
+                successSwal("Berhasil Delete")
+            } else {
+                errorSwal("Gagal Delete, silahkan hubungi Admin")
+            }
+        }, function() {
+            console.log("proses dulu")
+        })
     }
 </script>
 <script>

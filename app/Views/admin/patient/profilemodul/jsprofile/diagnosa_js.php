@@ -126,7 +126,7 @@
                                 </table>
                             </div>
                             <div class="box-tab-tools" style="text-align: center;">
-                                <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagMedis', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                <button type="button"  name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagMedis', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -403,7 +403,7 @@
                                             </table>
                                         </div>
                                         <div class="box-tab-tools" style="text-align: center;">
-                                            <button type="button" id="formdiag" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
+                                            <button type="button"  name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawat', '` + bodyId + `')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Diagnosa</span></button>
                                         </div>
                                     </div>
                                 </div>

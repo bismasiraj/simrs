@@ -890,7 +890,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
-                                                <button id="" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
+                                                <button type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
                                             </div>
                                         </div>
                                     </div>
@@ -969,8 +969,8 @@
                 </div>
                 <div id="handOverList">
                     <div class="col-md-12">
-                        <div id="" class="box-tab-tools text-center m-4">
-                            <a data-toggle="modal" onclick="setHandOver()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        <div class="box-tab-tools text-center m-4">
+                            <a data-toggle="modal" onclick="setHandOver()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                         </div>
                         <table id="tableHandover" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
                             <thead class="table-primary">

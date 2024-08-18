@@ -275,7 +275,11 @@ class Assessment extends BaseController
             }
         }
 
-        return json_encode('berhasil');
+        return $this->response->setStatusCode(200)
+            ->setJSON([
+                "code" => 200,
+                "status" => "success"
+            ]);
     }
     public function getPainMonitoring()
     {
@@ -808,6 +812,7 @@ class Assessment extends BaseController
                 "nafas" => $nafas,
                 "weight" => $weight,
                 "height" => $height,
+                "awareness" => $awareness,
                 "saturasi" => $saturasi,
                 "arm_diameter" => $arm_diameter,
                 "anamnase" => $anamnase,
@@ -1200,7 +1205,7 @@ class Assessment extends BaseController
 
         $db = db_connect();
         $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
-        ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi
+        ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
         from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
         left join employee_all ea on pd.employee_id = ea.employee_id 
         left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id' and pd.diag_cat = '$diag_cat'")->getResultArray());
@@ -3072,6 +3077,34 @@ class Assessment extends BaseController
         $model->save($data);
 
         return json_encode($data);
+    }
+    public function deleteOrderGizi()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $dtype_id = $body['dtype_id'];
+
+        $model = new DietInapModel();
+
+        $isDelete = $model->delete($dtype_id);
+
+        if ($isDelete) {
+            return $this->response->setStatusCode(200)
+                ->setJSON([
+                    "code" => 200,
+                    "status" => "success"
+                ]);
+        } else {
+            return $this->response->setStatusCode(200)
+                ->setJSON([
+                    "code" => 500,
+                    "status" => "gagal"
+                ]);
+        }
     }
     public function getOrderGizi()
     {

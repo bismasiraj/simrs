@@ -73,6 +73,7 @@ class ExaminationModel extends Model
         "account_id",
         "kesadaran",
         "isvalid",
+        'awareness',
         'vs_status_id'
     ];
 

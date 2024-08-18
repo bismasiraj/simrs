@@ -31,8 +31,8 @@ $permission = user()->getPermissions();
 
         </div><!--./col-lg-6-->
         <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
-            <div id="" class="box-tab-tools text-center">
-                <a data-toggle="modal" onclick="initialAddafall()" class="btn btn-primary btn-lg" id="" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+            <div class="box-tab-tools text-center">
+                <a data-toggle="modal" onclick="initialAddafall()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
             <h3>Histori Resiko Jatuh</h3>
             <table class="table table-striped table-hover">

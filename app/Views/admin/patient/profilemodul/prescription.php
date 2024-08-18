@@ -31,7 +31,7 @@ $permissions = user()->getPermissions();
         <div class="col-lg-9 col-md-9 col-sm-12">
             <div class="box-tab-header">
             </div>
-            <form id="form1" action="" method="post" class="">
+            <form id="formFilterResep" action="" method="post" class="">
                 <div class="row mt-4">
                     <h3 id="eresepTitle">E-Resep</h3>
                     <hr>

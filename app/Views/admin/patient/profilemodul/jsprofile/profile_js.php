@@ -73,9 +73,10 @@ foreach ($aValue as $key => $value) {
         $("#formsavefallriskbtnmedis").slideDown()
         $("#formfallriskmedis").find("iput, select, textarea").prop("disabled", true)
     })
+</script>
 
-
-
+<!-- PAIN MONITORING -->
+<script>
     const addPainMonitoring = async (flag, index, document_id, container, isaddbutton = true) => {
         <?php foreach ($aParent as $key => $value) { ?>
             <?php if ($value['parent_id'] == '002') { ?>
@@ -112,7 +113,8 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    '<input id="ases022examination_date" name="examination_date" type="datetime-local" class="form-control" value="' + get_date() + '">' +
+                    '<input id="flatases022examination_date' + bodyId + '" type="text" class="form-control datetime" value="' + nowtime + '">' +
+                    '<input id="ases022examination_date' + bodyId + '" name="examination_date" type="hidden">' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
@@ -136,7 +138,7 @@ foreach ($aValue as $key => $value) {
                     '</table>' +
                     '</div>' +
                     '<div class="panel-footer text-end mb-4">' +
-                    '<button type="submit" id="formPainMonitoringSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                    '<button style="margin-right: 10px" type="submit" id="formPainMonitoringSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
                     '<button style="margin-right: 10px" type="button" id="formPainMonitoringEditBtn' + bodyId + '" onclick="" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                     '<button style="margin-right: 10px" type="button" id="formPainMonitoringSignBtn' + bodyId + '" onclick="" name="sign" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning btn-sign"><i class="fa fa-signature"></i> <span>Sign</span></button>' +
                     '<button style="margin-right: 10px" type="button" id="formPainMonitoringCetakBtn' + bodyId + '" onclick="" name="cetak" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light"><i class="fa fa-file"></i> <span>Cetak</span></button>' +
@@ -145,6 +147,8 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '</form>'
                 )
+
+                datetimepickerbyid("flatases022examination_date" + bodyId)
 
                 $("#formPainMonitoringSignBtn" + bodyId).on("click", function() {
                     addSignUserSatelite("formPainMonitoring" + bodyId, "ases022", bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn" + bodyId, 4, 1, 1, "Monitoring Nyeri")
@@ -182,45 +186,76 @@ foreach ($aValue as $key => $value) {
 
 
                 $("#formPainMonitoring" + bodyId).on('submit', (function(e) {
-                    $("#ases022document_id" + bodyId).val($("#" + document_id).val())
-                    let clicked_submit_btn = $(this).closest('form').find(':submit');
-                    e.preventDefault();
-                    $.ajax({
-                        url: '<?php echo base_url(); ?>admin/rm/assessment/savePainMonitoring',
-                        type: "POST",
-                        data: new FormData(this),
-                        dataType: 'json',
-                        contentType: false,
-                        cache: false,
-                        processData: false,
-                        beforeSend: function() {
-                            clicked_submit_btn.button('loading');
-                        },
-                        success: function(data) {
-                            if ($("#ases022valid_user").val() == '') {
-                                $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
-                                $("#formPainMonitoringEditBtn" + bodyId).slideDown()
-                                $("#formPainMonitoringSignBtn" + bodyId).slideDown()
-                            } else {
-                                $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
-                                $("#formPainMonitoringEditBtn" + bodyId).slideUp()
-                                $("#formPainMonitoringSignBtn" + bodyId).slideUp()
-                            }
-                            $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
+                    e.preventDefault(); // Prevent default form submission
 
-                            clicked_submit_btn.button('reset');
-                            checkSign("formPainMonitoring" + bodyId)
-                            // successMsg(data.message);
-                        },
-                        error: function(xhr) { // if error occured
-                            alert("Error occured.please try again");
-                            clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
-                        },
-                        complete: function() {
-                            clicked_submit_btn.button('reset');
+                    // Prepare the submit button and form data
+                    const $form = $(this);
+                    const $submitBtn = $form.find(':submit');
+
+                    $("#ases022document_id" + bodyId).val($("#" + document_id).val())
+
+                    $submitBtn.button('loading');
+                    postDataForm(new FormData(this), 'admin/rm/assessment/savePainMonitoring', (response) => {
+                        console.log(response)
+                        if (response.status === 'success') {
+                            if ($("#ases022valid_user" + bodyId).val() == '') {
+                                $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                                $("#formPainMonitoringEditBtn" + bodyId).slideDown();
+                                $("#formPainMonitoringSignBtn" + bodyId).slideDown();
+                            } else {
+                                $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                                $("#formPainMonitoringEditBtn" + bodyId).slideUp();
+                                $("#formPainMonitoringSignBtn" + bodyId).slideUp();
+                            }
+                            // Disable the form inputs
+                            $form.find("input, textarea, select").prop("disabled", true);
+
+                            // Optionally display a success message
+                            successSwal(response.message);
+                        } else {
+                            // Handle server-side validation or other error messages
+                            errorSwal(response.message || 'An error occurred. Please try again.');
                         }
                     });
+                    // $.ajax({
+                    //     url: '<?php echo base_url(); ?>admin/rm/assessment/savePainMonitoring',
+                    //     type: "POST",
+                    //     data: new FormData(this),
+                    //     dataType: 'json',
+                    //     contentType: false,
+                    //     cache: false,
+                    //     processData: false,
+                    //     success: function(response) {
+                    //         // Handle response based on the status from the server
+                    //         if (response.status === 'success') {
+                    //             if ($("#ases022valid_user").val() == '') {
+                    //                 $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                    //                 $("#formPainMonitoringEditBtn" + bodyId).slideDown();
+                    //                 $("#formPainMonitoringSignBtn" + bodyId).slideDown();
+                    //             } else {
+                    //                 $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                    //                 $("#formPainMonitoringEditBtn" + bodyId).slideUp();
+                    //                 $("#formPainMonitoringSignBtn" + bodyId).slideUp();
+                    //             }
+                    //             // Disable the form inputs
+                    //             $form.find("input, textarea, select").prop("disabled", true);
+
+                    //             // Optionally display a success message
+                    //             successSwal(response.message);
+                    //         } else {
+                    //             // Handle server-side validation or other error messages
+                    //             errorSwal(response.message || 'An error occurred. Please try again.');
+                    //         }
+                    //     },
+                    //     error: function(xhr) { // if error occured
+                    //         alert("An error occurred. Please try again.");
+                    //         $submitBtn.button('reset');
+                    //         errorSwal(xhr);
+                    //     },
+                    //     complete: function() {
+                    //         $submitBtn.button('reset');
+                    //     }
+                    // });
                 }));
                 $("#formPainMonitoringEdit" + bodyId).on("click", function() {
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
@@ -230,6 +265,7 @@ foreach ($aValue as $key => $value) {
                 })
 
                 if (flag == 1) {
+                    $("#flatases022examination_date" + bodyId).val(nowtime).trigger("change")
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                     $("#formPainMonitoringEditBtn" + bodyId).slideUp()
 
@@ -241,15 +277,13 @@ foreach ($aValue as $key => $value) {
                     $.each(maindataset, function(key, value) {
                         $("#ases022" + key + bodyId).val(value)
                     })
-
+                    $("#flatases022examination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date)).trigger("change")
                     // $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
                     // $("#formPainMonitoringEditBtn" + bodyId).slideDown()
                     $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
-
-                    $.each(painMonitoringDetil, function(key, value) {
-
+                    let painDetilSelected = painMonitoringDetil.filter(item => item.body_id == bodyId);
+                    $.each(painDetilSelected, function(key, value) {
                         if (value.p_type == 'ASES021' && value.body_id == bodyId && value.parameter_id == '01') {
-
                             $('#atypeASES02101' + bodyId).val(value.value_id)
                             // $('#atypeASES02101' + bodyId).prop("disabled", true)
                             $("#ases022body_id" + bodyId).val(bodyId)
@@ -260,14 +294,19 @@ foreach ($aValue as $key => $value) {
                             aValueParamPain('<?= $value['parent_id']; ?>', value.p_type, bodyId, flag)
                         }
                     })
+                    let painIntervensiSelected = painIntervensi.filter(item => item.body_id == bodyId)
+                    if (painIntervensiSelected.length > 0) {
+                        $("#bodyAssessment002Intervensi" + bodyId).html("")
+                    }
                     $.each(painIntervensi, function(key1, value1) {
-                        addIntervensi('<?= $value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
+                        if (value1.body_id == bodyId)
+                            addIntervensi('<?= $value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
                     });
                     await checkSignSignature("formPainMonitoring" + bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn")
-                    if ($("#ases022valid_user").val() == '') {
-                        $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
-                        $("#formPainMonitoringEditBtn" + bodyId).slideDown()
-                        $("#formPainMonitoringSignBtn" + bodyId).slideDown()
+                    if ($("#ases022valid_user" + bodyId).val() == '') {
+                        $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
+                        $("#formPainMonitoringEditBtn" + bodyId).slideUp()
+                        $("#formPainMonitoringSignBtn" + bodyId).slideUp()
                     } else {
                         $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
                         $("#formPainMonitoringEditBtn" + bodyId).slideUp()
@@ -279,7 +318,7 @@ foreach ($aValue as $key => $value) {
         index++
 
         if (isaddbutton && $("#ases022valid_user" + bodyId).val() == '')
-            $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addPainMonitoringButton").html('<a onclick="addPainMonitoring(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#" + container + "AddBtn").html("")
     }
@@ -331,50 +370,46 @@ foreach ($aValue as $key => $value) {
             if (value.p_type == p_type) {
                 if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
                     $("#bodyAssessment002Intervensi" + body_id).append(
-                        '<thead>' +
-                        '<tr>' +
-                        '<th>Tanggal dan Jam Intervensi</th>' +
-                        '<th>Intervensi</th>' +
-                        '<th>Rute</th>' +
-                        '<th>' + value.parameter_desc + '</th>' +
-                        '<th>Re-Assessment</th>' +
-                        '</tr>' +
-                        ' </thead>' +
+                        // '<thead>' +
+                        // '<tr>' +
+                        // '<th>Tanggal dan Jam Intervensi</th>' +
+                        // '<th>Intervensi</th>' +
+                        // '<th>Rute</th>' +
+                        // '<th>' + value.parameter_desc + '</th>' +
+                        // '<th>Re-Assessment</th>' +
+                        // '</tr>' +
+                        // ' </thead>' +
 
-                        '<tr>' +
-                        '<td>' +
-                        '<input id="timeIntervensi' + body_id + '0" name="timeIntervensi[]" type="datetime-local" class="form-control" value="">' +
-                        '<input id="reassessment_date' + body_id + '0" name="reassessment_date[]" type="datetime-local" class="form-control d-none" value="">' +
-                        '</td>' +
-                        '<td>' +
-                        '<select id="intervensi' + body_id + '0" name="intervensi[]" type="text" class="form-control" value="">' +
-                        '</select>' +
-                        '</td>' +
-                        '<td>' +
-                        '<select id="rute' + body_id + '0" name="rute[]" type="text" class="form-control" value="">' +
-                        '</select>' +
-                        '</td>' +
-                        '<td>' +
-                        '<select id="painscalescore' + body_id + '0" name="painscalescore[]" type="text" class="form-control" value="">' +
-                        '</select>' +
-                        '</td>' +
-                        '<td>' +
-                        '<select id="reAssessment' + body_id + '0" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', 0, this.value)">' +
-                        // '<option value="">5 Menit</option>' +
-                        // '<option value="">30 Menit</option>' +
-                        // '<option value="">1 Jam</option>' +
-                        // '<option value="">4 Jam</option>' +
-                        // '<option value="">8 Jam</option>' +
-                        // '<option value="">Nyeri Teratasi</option>' +
-                        '</select>' +
-                        '</td>' +
-                        '</tr>' +
+                        // '<tr>' +
+                        // '<td>' +
+                        // '<input id="flattimeIntervensi' + body_id + 0 + '" + type="text" class="form-control" value="">' +
+                        // '<input id="timeIntervensi' + body_id + 0 + '" name="timeIntervensi[]" type="hidden" class="form-control" value="">' +
+                        // '<input id="reassessment_date' + body_id + 0 + '" name="reassessment_date[]" type="text" class="form-control d-none" value="">' +
+                        // '</td>' +
+                        // '<td>' +
+                        // '<select id="intervensi' + body_id + 0 + '" name="intervensi[]" type="text" class="form-control" value="">' +
+                        // '</select>' +
+                        // '</td>' +
+                        // '<td>' +
+                        // '<select id="rute' + body_id + 0 + '" name="rute[]" type="text" class="form-control" value="">' +
+                        // '</select>' +
+                        // '</td>' +
+                        // '<td>' +
+                        // '<select id="painscalescore' + body_id + 0 + '" name="painscalescore[]" type="text" class="form-control" value="">' +
+                        // '</select>' +
+                        // '</td>' +
+                        // '<td>' +
+                        // '<select id="reAssessment' + body_id + 0 + '" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + 0 + ', this.value)">' +
+                        // '</select>' +
+                        // '</td>' +
+                        // '</tr>' +
+
                         '<tr id="divBtnIntervensi' + body_id + '">' +
                         '<td colspan="5">' +
                         '<div class="row mb-4">' +
                         '<div class="col-md-12">' +
-                        '<div id="" class="box-tab-tools text-center">' +
-                        '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', 0, 1)" class="btn btn-primary btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
+                        '<div  class="box-tab-tools text-center">' +
+                        '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', 0, 1)" class="btn btn-primary btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
@@ -382,24 +417,29 @@ foreach ($aValue as $key => $value) {
                         '</tr>'
                     )
 
+                    // datetimepickerbyid('flattimeIntervensi' + body_id + 0)
 
-                    $.each(avalue, function(key1, value1) {
-                        if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                            $("#painscalescore" + body_id + '0').append(
-                                '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
-                            )
-                        }
-                    });
-                    var initialDate = new Date();
-                    // Set the initial date to two hours ahead
-                    initialDate.setHours(initialDate.getHours());
 
-                    var timeZoneOffsetMinutes = initialDate.getTimezoneOffset();
+                    // $.each(avalue, function(key1, value1) {
+                    //     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
+                    //         $("#painscalescore" + body_id + '0').append(
+                    //             '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
+                    //         )
+                    //     }
+                    // });
+                    // var initialDate = new Date();
+                    // // Set the initial date to two hours ahead
+                    // initialDate.setHours(initialDate.getHours());
 
-                    // Adjust the date to the local time zone
-                    initialDate.setMinutes(initialDate.getMinutes() - timeZoneOffsetMinutes);
-                    // Format the initial date into a string compatible with the datetime-local input
-                    var formattedInitialDate = initialDate.toISOString().slice(0, 16);
+                    // var timeZoneOffsetMinutes = initialDate.getTimezoneOffset();
+
+                    // // Adjust the date to the local time zone
+                    // initialDate.setMinutes(initialDate.getMinutes() - timeZoneOffsetMinutes);
+                    // // Format the initial date into a string compatible with the datetime-local input
+                    // var formattedInitialDate = initialDate.toISOString().slice(0, 16);
+
+
+                    addIntervensi('<?= $value['parent_id']; ?>', p_type, body_id, 0, 1)
 
                     // Set the value of the input field to the formatted initial date
                     // document.getElementById("timeIntervensi" + body_id + '0').value = formattedInitialDate;
@@ -507,15 +547,17 @@ foreach ($aValue as $key => $value) {
     }
 
     function addIntervensi(parent_id, p_type, body_id, lastIndex, flag) {
-        var beforeIndex = lastIndex
-        if (flag == 1) {
-            lastIndex++
-        }
+        // var beforeIndex = lastIndex
+        // if (flag == 1) {
+        //     lastIndex++
+        // }
+        let beforeIndex = $("#bodyAssessment002Intervensi" + body_id + " thead").length
+        indexnow = beforeIndex + 1
         $.each(aparameter, function(key, value) {
             if (value.p_type == p_type) {
                 $("#divBtnIntervensi" + body_id).remove()
                 $("#bodyAssessment002Intervensi" + body_id).append(
-                    '<thead>' +
+                    `<thead class="${parent_id + p_type + body_id + indexnow}">` +
                     '<tr>' +
                     '<th>Tanggal dan Jam Intervensi</th>' +
                     '<th>Intervensi</th>' +
@@ -524,49 +566,55 @@ foreach ($aValue as $key => $value) {
                     '<th>Re-Assessment</th>' +
                     '</tr>' +
                     ' </thead>' +
-                    '<tr>' +
+                    `<tr class="${parent_id + p_type + body_id + indexnow}">` +
                     '<td>' +
-                    '<input id="timeIntervensi' + body_id + '' + lastIndex + '" name="timeIntervensi[]" type="datetime-local" class="form-control" value="">' +
-                    '<input id="reassessment_date' + body_id + '' + lastIndex + '" name="reassessment_date[]" type="datetime-local" class="form-control d-none" value="">' +
+                    '<input id="flattimeIntervensi' + body_id + '' + indexnow + '" type="text" class="form-control">' +
+                    '<input id="timeIntervensi' + body_id + '' + indexnow + '" name="timeIntervensi[]" type="hidden">' +
+                    '<input id="flatreassessment_date' + body_id + '' + indexnow + '" type="text" class="form-control d-none">' +
+                    '<input id="reassessment_date' + body_id + '' + indexnow + '" name="reassessment_date[]" type="hidden" class="form-control">' +
                     '</td>' +
                     '<td>' +
-                    '<select id="intervensi' + body_id + '' + lastIndex + '" name="intervensi[]" type="text" class="form-control" value="">' +
+                    '<select id="intervensi' + body_id + '' + indexnow + '" name="intervensi[]" type="text" class="form-control" value="">' +
                     '</select>' +
                     '</td>' +
                     '<td>' +
-                    '<select id="rute' + body_id + '' + lastIndex + '" name="rute[]" type="text" class="form-control" value="">' +
+                    '<select id="rute' + body_id + '' + indexnow + '" name="rute[]" type="text" class="form-control" value="">' +
                     '</select>' +
                     '</td>' +
                     '<td>' +
-                    '<select id="painscalescore' + body_id + '' + lastIndex + '" name="painscalescore[]" type="text" class="form-control" value="">' +
+                    '<select id="painscalescore' + body_id + '' + indexnow + '" name="painscalescore[]" type="text" class="form-control" value="">' +
                     '</select>' +
                     '</td>' +
                     '<td>' +
-                    '<select id="reAssessment' + body_id + '' + lastIndex + '" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + lastIndex + ', this.value)">' +
+                    '<select id="reAssessment' + body_id + '' + indexnow + '" name="reAssessment[]" type="text" class="form-control" value="" onchange="setRescheduleIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + indexnow + ', this.value)">' +
                     '</select>' +
                     '</td>' +
-                    '<td>' +
-                    '<div class="form-check">' +
-                    '<input class="form-check-input" type="checkbox" id="valid' + body_id + '' + lastIndex + '" checked="" name="valid[]">' +
-                    '<label class="form-check-label" for="valid' + body_id + '' + lastIndex + '">Valid</label>' +
-                    '</div>' +
-                    '</td>' +
+                    `<td><button type="button" onclick="removeByClass('${parent_id + p_type + body_id + indexnow}')" class="btn btn-danger btn-remove-intervensi" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button></td>` +
                     '</tr>' +
                     '<tr id="divBtnIntervensi' + body_id + '">' +
                     '<td colspan="5">' +
                     '<div class="row mb-4">' +
                     '<div class="col-md-12">' +
-                    '<div id="" class="box-tab-tools text-center">' +
-                    '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + lastIndex + ',1)" class="btn btn-primary btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
+                    '<div  class="box-tab-tools text-center">' +
+                    '<a onclick="addIntervensi(\'' + parent_id + '\', \'' + p_type + '\', \'' + body_id + '\', ' + indexnow + ',1)" class="btn btn-primary btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Intervensi</a>' +
                     '</div>' +
                     '</div>' +
                     '</div>' +
                     '</td>' +
                     '</tr>'
                 )
+
+                $("#timeIntervensi" + body_id + indexnow).on("change", function() {
+                    console.log("jalan nggak ya")
+                    $("#reAssessment" + body_id + indexnow).trigger("change")
+                })
+
+                datetimepickerbyid("flattimeIntervensi" + body_id + indexnow)
+                datetimepickerbyid("flatreassessment_date" + body_id + indexnow)
+
                 $.each(avalue, function(key1, value1) {
                     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
-                        $("#painscalescore" + body_id + lastIndex).append(
+                        $("#painscalescore" + body_id + indexnow).append(
                             '<option value="' + value1.value_id + '">[' + value1.value_score + '] ' + value1.value_desc + '.</option>'
                         )
                     }
@@ -574,33 +622,55 @@ foreach ($aValue as $key => $value) {
                 // Get the value of the input field
                 var date
                 if (flag == 1) {
-                    var inputDate = document.getElementById("reassessment_date" + body_id + beforeIndex).value;
-                    date = new Date(inputDate);
-
+                    var inputDate = $("#flatreassessment_date" + body_id + beforeIndex).val();
+                    date = inputDate
                 } else {
-                    date = new Date();
+                    date = nowtime;
                 }
+
+                $.each(avalue, function(key1, value1) {
+                    if (value1.parameter_id == '01' && value1.p_type == 'GEN0005') {
+                        $("#reAssessment" + body_id + indexnow).append(
+                            '<option value="' + value1.value_score + '">' + value1.value_desc + '.</option>'
+                        )
+                    }
+                });
+
+                $.each(aparameter, function(key1, value1) {
+                    if (value1.p_type == 'GEN0003') {
+                        $("#intervensi" + body_id + indexnow).append(
+                            '<option value="' + value1.parameter_id + '">' + value1.parameter_desc + '.</option>'
+                        )
+                    }
+                });
+                $.each(aparameter, function(key1, value1) {
+                    if (value1.p_type == 'GEN0004') {
+                        $("#rute" + body_id + indexnow).append(
+                            '<option value="' + value1.parameter_id + '">' + value1.parameter_desc + '.</option>'
+                        )
+                    }
+                });
 
                 // Parse the input date string into a JavaScript Date object
 
                 // Get the local time zone offset in minutes
-                var timeZoneOffsetMinutes = date.getTimezoneOffset();
+                // var timeZoneOffsetMinutes = date.getTimezoneOffset();
 
-                // Adjust the date to the local time zone
-                date.setMinutes(date.getMinutes() - timeZoneOffsetMinutes);
+                // // Adjust the date to the local time zone
+                // date.setMinutes(date.getMinutes() - timeZoneOffsetMinutes);
 
                 // Format the date into a string compatible with the datetime-local input
-                var formattedDate = date.toISOString().slice(0, 16);
+                // var formattedDate = date.toISOString().slice(0, 16);
 
                 // Update the value of the input field with the new date
-                document.getElementById("timeIntervensi" + body_id + lastIndex).value = formattedDate
-                document.getElementById("reassessment_date" + body_id + lastIndex).value = formattedDate
+                $("#flattimeIntervensi" + body_id + indexnow).val(date).trigger("change")
+                $("#flatreassessment_date" + body_id + indexnow).val(date).trigger("change")
             }
         });
 
         $.each(avalue, function(key1, value1) {
             if (value1.parameter_id == '01' && value1.p_type == 'GEN0005') {
-                $("#reAssessment" + body_id + '' + lastIndex).append(
+                $("#reAssessment" + body_id + '' + indexnow).append(
                     '<option value="' + value1.value_score + '">' + value1.value_desc + '.</option>'
                 )
             }
@@ -608,61 +678,72 @@ foreach ($aValue as $key => $value) {
 
         $.each(aparameter, function(key1, value1) {
             if (value1.p_type == 'GEN0003') {
-                $("#intervensi" + body_id + lastIndex).append(
+                $("#intervensi" + body_id + indexnow).append(
                     '<option value="' + value1.parameter_id + '">' + value1.parameter_desc + '.</option>'
                 )
             }
         });
         $.each(aparameter, function(key1, value1) {
             if (value1.p_type == 'GEN0004') {
-                $("#rute" + body_id + lastIndex).append(
+                $("#rute" + body_id + indexnow).append(
                     '<option value="' + value1.parameter_id + '">' + value1.parameter_desc + '.</option>'
                 )
             }
         });
 
         if (flag == '0') {
+            console.log("masuk lagi nggak")
+            console.log("lastIndex: " + lastIndex)
+
             intervensiData = painIntervensi[lastIndex]
-            $("#timeIntervensi" + body_id + lastIndex).val(intervensiData.intervensi_date)
-            $("#reassessment_date" + body_id + lastIndex).val(intervensiData.reassessment_date)
-            $("#intervensi" + body_id + lastIndex).val(intervensiData.intervensi)
-            $("#rute" + body_id + lastIndex).val(intervensiData.rute)
-            $("#painscalescore" + body_id + lastIndex).val(intervensiData.value_id)
-            $("#reAssessment" + body_id + lastIndex).val(intervensiData.reassessment)
+            console.log()
+            // $("#timeIntervensi" + body_id + lastIndex).val(intervensiData.intervensi_date)
+            // $("#reassessment_date" + body_id + lastIndex).val(intervensiData.reassessment_date)
+            $("#intervensi" + body_id + indexnow).val(intervensiData.intervensi)
+            $("#rute" + body_id + indexnow).val(intervensiData.rute)
+            $("#painscalescore" + body_id + indexnow).val(intervensiData.value_id)
+            $("#reAssessment" + body_id + indexnow).val(intervensiData.reassessment)
+
+            let formatedDateIntervensi = formatedDatetimeFlat(intervensiData.intervensi_date)
+            let formatedDateReassessmentDate = formatedDatetimeFlat(intervensiData.reassessment_date)
+
+            $("#flattimeIntervensi" + body_id + indexnow).val(formatedDateIntervensi).trigger("change")
+            $("#flatreassessment_date" + body_id + indexnow).val(formatedDateReassessmentDate).trigger("change")
             if (intervensiData.valid !== null) {
-                $("#timeIntervensi" + body_id + lastIndex).prop("readonly", true)
-                $("#reassessment_date" + body_id + lastIndex).prop("readonly", true)
-                $("#intervensi" + body_id + lastIndex + " option").prop("disabled", true)
-                $("#rute" + body_id + lastIndex + " option").prop("disabled", true)
-                $("#painscalescore" + body_id + lastIndex + " option").prop("disabled", true)
-                $("#reAssessment" + body_id + lastIndex + " option").prop("disabled", true)
+                $("#timeIntervensi" + body_id + indexnow).prop("readonly", true)
+                $("#reassessment_date" + body_id + indexnow).prop("readonly", true)
+                $("#intervensi" + body_id + indexnow + " option").prop("disabled", true)
+                $("#rute" + body_id + indexnow + " option").prop("disabled", true)
+                $("#painscalescore" + body_id + indexnow + " option").prop("disabled", true)
+                $("#reAssessment" + body_id + indexnow + " option").prop("disabled", true)
             }
         }
     }
-
-
 
     function setRescheduleIntervensi(parent_id, p_type, body_id, index, thevalue) {
         // Get the value of the input field
         var inputDate = document.getElementById("timeIntervensi" + body_id + index).value;
 
+        console.log("inputDate :" + inputDate)
+        console.log("thevalue :" + thevalue)
         // Parse the input date string into a JavaScript Date object
-        var date = new Date(inputDate);
-
+        // var date = new Date(inputDate);
+        var formattedDate = moment(inputDate).add(parseInt(thevalue), 'minutes').format("DD/MM/YYYY HH:mm");
+        console.log("formattedDate :" + formattedDate)
 
         // Add two hours to the date
-        date.setMinutes(date.getMinutes() + parseInt(thevalue));
+        // date.setMinutes(date.getMinutes() + parseInt(thevalue));
         // Get the local time zone offset in minutes
-        var timeZoneOffsetMinutes = date.getTimezoneOffset();
+        // var timeZoneOffsetMinutes = date.getTimezoneOffset();
 
         // Adjust the date to the local time zone
-        date.setMinutes(date.getMinutes() - timeZoneOffsetMinutes);
+        // date.setMinutes(date.getMinutes() - timeZoneOffsetMinutes);
 
         // Format the date into a string compatible with the datetime-local input
-        var formattedDate = date.toISOString().slice(0, 16);
+        // var formattedDate = date.toISOString().slice(0, 16);
 
         // Update the value of the input field with the new date
-        document.getElementById("reassessment_date" + body_id + index).value = formattedDate
+        $("#flatreassessment_date" + body_id + index).val(formattedDate).trigger("change")
     }
 
     function getPainMonitoring(bodyId, container) {
@@ -738,6 +819,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+<!-- TRIASE -->
 <script type="text/javascript">
     function addTriage(flag, index, document_id, container, isaddbutton = true) {
         <?php foreach ($aParent as $key => $value) { ?>
@@ -947,7 +1029,7 @@ foreach ($aValue as $key => $value) {
         <?php } ?>
         index++
         if (isaddbutton && $("#triagevalid_user" + bodyId).val() == '')
-            $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'' + document_id + '\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addTriageButton").html('<a onclick="addTriage(1,' + index + ',\'' + document_id + '\', \'bodyTriageMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#" + container + "AddBtn").html("")
 
@@ -1093,8 +1175,17 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+
+<!-- APGAR -->
 <script type="text/javascript">
     function addApgar(flag, index, document_id, container, isaddbutton = true) {
+        <?php $apgarType = array_filter($aType, function ($value) {
+            return $value['parent_id'] == '005';
+        });
+        usort($apgarType, function ($a, $b) {
+            return $a['p_type'] <=> $b['p_type'];
+        });;
+        ?>
         <?php foreach ($aParent as $key => $value) { ?>
             <?php if ($value['parent_id'] == '005') { ?>
                 var bodyId = '';
@@ -1140,7 +1231,7 @@ foreach ($aValue as $key => $value) {
                     } ?> '</tr>' +
                     '</thead>' +
                     '<tbody id="bodyAssessment005' + bodyId + '">' +
-                    <?php foreach ($aType as $key1 => $value1) {
+                    <?php foreach ($apgarType as $key1 => $value1) {
                         if ($value1['parent_id'] == '005') {
                     ?> '<tr><td><?= $value1['p_description']; ?></td>' +
                             <?php
@@ -1258,7 +1349,7 @@ foreach ($aValue as $key => $value) {
         index++
 
         if (isaddbutton && $("#apgarvalid_user" + bodyId).val() == '')
-            $("#" + container + "AddBtn").html('<a onclick="addApgar(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#" + container + "AddBtn").html('<a onclick="addApgar(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#" + container + "AddBtn").html("")
 
@@ -1366,6 +1457,8 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+
+<!-- STABILITAS -->
 <script type="text/javascript">
     function addDerajatStabilitas(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
@@ -1517,7 +1610,7 @@ foreach ($aValue as $key => $value) {
         }
         index++
         if (isaddbutton && $("#ases022valid_user" + bodyId).val() == '') {
-            $("#addDerajatStabilitasButton").html('<a onclick="addDerajatStabilitas(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addDerajatStabilitasButton").html('<a onclick="addDerajatStabilitas(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         } else {
             $("#addDerajatStabilitasButton").html("")
         }
@@ -1557,7 +1650,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-
+<!-- TINDAKAN PERAWAT -->
 <script type="text/javascript">
     $(document).ready(function() {
         initializeSearchTarif("searchTarifPerawat", '<?= $visit['clinic_id']; ?>')
@@ -1597,6 +1690,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- PERNAPASAN -->
 <script type="text/javascript">
     function addPernapasan(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -1845,7 +1940,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addPernapasanButton").html('<a onclick="addPernapasan(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyPernapasanMedis\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addPernapasanButton").html('<a onclick="addPernapasan(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyPernapasanMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getPernapasan(bodyId, container) {
@@ -1880,6 +1975,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+<!-- FALL RISK -->
 <script type="text/javascript">
     const addFallRisk = async (flag, index, document_id, container, isaddbutton = true) => {
         var documentId = $("#" + document_id).val()
@@ -1902,7 +1998,8 @@ foreach ($aValue as $key => $value) {
                                 <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Tanggal:</h5>
                             </div>
                             <div class="col-md-9">
-                                <input id="examination_date` + bodyId + `" name="examination_date" type="datetime-local" class="form-control" value="2024-05-31 14:15">
+                                <input id="flatfallriskexamination_date` + bodyId + `" type="text" class="form-control">
+                                <input id="fallriskexamination_date` + bodyId + `" name="examination_date" type="hidden" class="form-control">
                             </div>
                         </div>
                         <div class="row">
@@ -1953,8 +2050,9 @@ foreach ($aValue as $key => $value) {
             </div>
         </form>
         `
-
         $("#" + container).append(fallRiskContent)
+        datetimepickerbyid("flatfallriskexamination_date" + bodyId)
+
         $("#formFallRiskSigntBtn" + bodyId).on("click", function() {
             addSignUserSatelite("formFallRisk" + bodyId, "fallrisk", bodyId, "fallriskbody_id" + bodyId, "formFallRiskSaveBtn" + bodyId, 5, 1, 1, "Resiko Jatuh")
         })
@@ -1985,39 +2083,56 @@ foreach ($aValue as $key => $value) {
             .append('<input name="valid_pasien" class="valid_pasien" id="fallriskvalid_pasien' + bodyId + '" type="hidden" />')
 
         $("#formFallRisk" + bodyId).on('submit', (function(e) {
-            $("#fallriskdocument_id" + bodyId).val($("#" + document_id).val())
-            let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
-            $.ajax({
-                url: '<?php echo base_url(); ?>admin/rm/assessment/saveFallRisk',
-                type: "POST",
-                data: new FormData(this),
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                beforeSend: function() {
-                    clicked_submit_btn.button('loading');
-                },
-                success: function(data) {
-                    $('#formFallRisk' + bodyId + ' select').prop("disabled", true)
-                    $('#formFallRisk' + bodyId + ' input').prop("disabled", true)
-                    $("#formFallRiskSaveBtn" + bodyId).slideUp()
-                    $("#formFallRiskEditBtn" + bodyId).slideDown()
-                    $("#formFallRiskSignBtn" + bodyId).slideDown()
-                    clicked_submit_btn.button('reset');
-                    checkSign("formFallRisk" + bodyId)
+            var isValid = true;
+            var errorMessages = [];
 
-                },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
-                },
-                complete: function() {
-                    clicked_submit_btn.button('reset');
+            // Iterate through each fieldset
+            $('#formFallRisk' + bodyId + ' fieldset').each(function() {
+                var groupName = $(this).find('input[type="radio"]').attr('name');
+                var isChecked = $(this).find('input[name="' + groupName + '"]:checked').length > 0;
+
+                if (!isChecked) {
+                    isValid = false;
+                    errorMessages.push('Please select an option for ' + $(this).find('legend').text());
                 }
             });
+            if (isValid) {
+                $("#fallriskdocument_id" + bodyId).val($("#" + document_id).val())
+                let clicked_submit_btn = $(this).closest('form').find(':submit');
+                $.ajax({
+                    url: '<?php echo base_url(); ?>admin/rm/assessment/saveFallRisk',
+                    type: "POST",
+                    data: new FormData(this),
+                    dataType: 'json',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function() {
+                        clicked_submit_btn.button('loading');
+                    },
+                    success: function(data) {
+                        $('#formFallRisk' + bodyId + ' select').prop("disabled", true)
+                        $('#formFallRisk' + bodyId + ' input').prop("disabled", true)
+                        $("#formFallRiskSaveBtn" + bodyId).slideUp()
+                        $("#formFallRiskEditBtn" + bodyId).slideDown()
+                        $("#formFallRiskSignBtn" + bodyId).slideDown()
+                        clicked_submit_btn.button('reset');
+                        checkSign("formFallRisk" + bodyId)
+
+                    },
+                    error: function(xhr) { // if error occured
+                        alert("Error occured.please try again");
+                        clicked_submit_btn.button('reset');
+                        errorMsg(xhr);
+                    },
+                    complete: function() {
+                        clicked_submit_btn.button('reset');
+                    }
+                });
+            } else {
+                alert("Tolong isi semua penilaian Scoring nya sampai keluar total score")
+            }
         }));
         if (flag == 1) {
             $("#formFallRiskSaveBtn" + bodyId).slideDown()
@@ -2029,6 +2144,7 @@ foreach ($aValue as $key => $value) {
             $.each(maindataset, function(key, value) {
                 $("#fallrisk" + key + bodyId).val(value)
             })
+            $("#flatfallriskexamination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date)).trigger("change")
             var fallselect = fallRisk[index];
 
             $.each(atype, function(key, value) {
@@ -2067,7 +2183,7 @@ foreach ($aValue as $key => $value) {
         index++
 
         if (isaddbutton)
-            $("#" + container + "AddBtn").html('<a onclick="addFallRisk(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#" + container + "AddBtn").html('<a onclick="addFallRisk(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#" + container + "AddBtn").html("")
     }
@@ -2082,8 +2198,8 @@ foreach ($aValue as $key => $value) {
                     '<tr>' +
                     '<td>' + counter + '.</td>' +
                     '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + ':</h6></td>' +
-                    '<td id="' + parent_id + value.p_type + value.parameter_id + bodyId + '">' +
-                    '</td>' +
+                    '<td><fieldset id="' + parent_id + value.p_type + value.parameter_id + bodyId + '">' +
+                    '</fieldset></td>' +
                     '<td><h6 id="score' + parent_id + value.p_type + value.parameter_id + bodyId + '" class="font-size-14 mb-4"></h6></td>' +
                     '</tr>'
                 )
@@ -2091,7 +2207,7 @@ foreach ($aValue as $key => $value) {
                 $.each(avalue, function(key1, value1) {
                     if (value1.parameter_id == value.parameter_id && value1.p_type == p_type) {
                         $("#" + parent_id + value.p_type + value.parameter_id + bodyId).append(
-                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ', \'' + bodyId + '\')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + bodyId + '">' + value1.value_desc + '</label></div>'
+                            '<div class="form-check mb-3"><input class="form-check-input" type="radio" name="parameter_id' + value1.parameter_id + '" id="parent_id' + parent_id + value1.value_id + bodyId + '" value="' + value1.value_id + '" onchange="aValueParamScore(\'' + parent_id + '\', \'' + p_type + '\', \'' + value1.parameter_id + '\', ' + value1.value_score + ', \'' + bodyId + '\')"><label class="form-check-label" for="parent_id' + parent_id + value1.value_id + bodyId + '" required>' + value1.value_desc + '</label></div>'
                         )
                     }
                 });
@@ -2208,6 +2324,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+<!-- SIRKULASI -->
 <script type="text/javascript">
     function addSirkulasi(flag, index, document_id, container, isaddbutton = true) {
         var bodyId = '';
@@ -2449,7 +2566,7 @@ foreach ($aValue as $key => $value) {
         }
         index++
         if (isaddbutton && $("#sirkulasivalid_user" + bodyId).val() == '')
-            $("#addSirkulasiButton").html('<a onclick="addSirkulasi(1,' + index + ',\'armpasien_diagnosa_id\', \'bodySirkulasiMedis\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addSirkulasiButton").html('<a onclick="addSirkulasi(1,' + index + ',\'armpasien_diagnosa_id\', \'bodySirkulasiMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#addSirkulasiButton").html('')
     }
@@ -2483,6 +2600,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- NEUROSENSORIS -->
 <script type="text/javascript">
     function addNeurosensoris(flag, index) {
         var bodyId = '';
@@ -2715,7 +2834,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formNeurosensoris" + bodyId)
         }
         index++
-        $("#addNeurosensorisButton").html('<a onclick="addNeurosensoris(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addNeurosensorisButton").html('<a onclick="addNeurosensoris(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getNeurosensoris(bodyId) {
@@ -2748,6 +2867,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+<!-- ANAK -->
 <script type="text/javascript">
     function addAnak(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -2991,7 +3111,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addAnakButton").html('<a onclick="addAnak(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addAnakButton").html('<a onclick="addAnak(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getAnak(bodyId, container) {
@@ -3029,6 +3149,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- NEONATUS -->
 <script type="text/javascript">
     function addNeonatus(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -3272,7 +3394,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addNeonatusButton").html('<a onclick="addNeonatus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addNeonatusButton").html('<a onclick="addNeonatus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getNeonatus(bodyId, container) {
@@ -3310,6 +3432,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- ADL -->
 <script type="text/javascript">
     function addADL(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -3577,7 +3701,7 @@ foreach ($aValue as $key => $value) {
         }
 
         index++
-        $("#addADLButton").html('<a onclick="addADL(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addADLButton").html('<a onclick="addADL(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getADL(bodyId, container) {
@@ -3615,6 +3739,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- DEKUBITUS -->
 <script type="text/javascript">
     function addDekubitus(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -3846,7 +3972,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formDekubitus" + bodyId)
         }
         index++
-        $("#addDekubitusButton").html('<a onclick="addDekubitus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addDekubitusButton").html('<a onclick="addDekubitus(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getDekubitus(bodyId, container) {
@@ -3880,6 +4006,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+<!-- PENCERNAAN -->
 <script type="text/javascript">
     function addPencernaan(flag, index) {
         var bodyId = '';
@@ -4110,7 +4237,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formPencernaan" + bodyId)
         }
         index++
-        $("#addPencernaanButton").html('<a onclick="addPencernaan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addPencernaanButton").html('<a onclick="addPencernaan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getPencernaan(bodyId) {
@@ -4142,6 +4269,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+<!-- PERKEMIHAN -->
 <script type="text/javascript">
     function addPerkemihan(flag, index) {
         var bodyId = '';
@@ -4383,7 +4512,7 @@ foreach ($aValue as $key => $value) {
                 checkSign("formPerkemihan" + bodyId)
             }
             index++
-            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         }
 
         function getPerkemihan(bodyId) {
@@ -4415,6 +4544,8 @@ foreach ($aValue as $key => $value) {
             });
         }
 </script>
+
+// PSIKOLOGI
 <script type="text/javascript">
     function addPsikologi(flag, index) {
         var bodyId = '';
@@ -4667,7 +4798,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addPsikologiButton").html('<a onclick="addPsikologi(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addPsikologiButton").html('<a onclick="addPsikologi(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getPsikologi(bodyId) {
@@ -4699,6 +4830,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// SEKSUAL
 <script type="text/javascript">
     function addSeksual(flag, index) {
         var bodyId = '';
@@ -4942,7 +5075,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addSeksualButton").html('<a onclick="addSeksual(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addSeksualButton").html('<a onclick="addSeksual(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getSeksual(bodyId) {
@@ -4973,6 +5106,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// SOCIAL
 <script type="text/javascript">
     function addSocial(flag, index) {
         var bodyId = '';
@@ -5197,7 +5332,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formSocial" + bodyId)
         }
         index++
-        $("#addSocialButton").html('<a onclick="addSocial(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addSocialButton").html('<a onclick="addSocial(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getSocial(bodyId) {
@@ -5231,6 +5366,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// HEARING
 <script type="text/javascript">
     function addHearing(flag, index) {
         var bodyId = '';
@@ -5460,7 +5597,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formHearing" + bodyId)
         }
         index++
-        $("#addHearingButton").html('<a onclick="addHearing(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addHearingButton").html('<a onclick="addHearing(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getHearing(bodyId) {
@@ -5491,6 +5628,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// SLEEPING
 <script type="text/javascript">
     function addSleeping(flag, index) {
         var bodyId = '';
@@ -5727,7 +5866,7 @@ foreach ($aValue as $key => $value) {
 
         }
         index++
-        $("#addSleepingButton").html('<a onclick="addSleeping(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addSleepingButton").html('<a onclick="addSleeping(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function getSleeping(bodyId) {
@@ -5759,6 +5898,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+// GIZI
 <script type="text/javascript">
     function addGizi(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -6264,7 +6404,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formGizi" + bodyId)
         }
         index++
-        $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function checkImt(score) {
@@ -6342,6 +6482,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
+// EDUCATION FORM
 <script type="text/javascript">
     function addEducationForm(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
@@ -6753,7 +6894,7 @@ foreach ($aValue as $key => $value) {
         }
         index++
         if (isaddbutton) {
-            $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addEducationFormButton").html('<a onclick="addEducationForm(1,' + index + ', \'' + document_id + '\',\'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         } else {
             $("#" + container + "AddBtn").html("")
         }
@@ -6794,6 +6935,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// EDUCATION INTEGRATION
 <script type="text/javascript">
     function addEducationIntegration(flag, index) {
         var bodyId = '';
@@ -7004,7 +7147,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguageBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7023,7 +7166,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7042,7 +7185,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguageProvisionBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm" id="" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append('<div class="panel-footer text-end mb-4">' +
@@ -7194,7 +7337,7 @@ foreach ($aValue as $key => $value) {
             checkSign("formEducationIntegration" + bodyId)
         }
         index++
-        $("#addEducationIntegrationButton").html('<a onclick="addEducationIntegration(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        $("#addEducationIntegrationButton").html('<a onclick="addEducationIntegration(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
     }
 
     function addEducationIntegrationLanguage(bodyId, language, isactive) {
@@ -7410,6 +7553,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// GCS
 <script type="text/javascript">
     const addGcs = async (flag, index, document_id, container, isaddbutton = true) => {
         var bodyId = '';
@@ -7432,7 +7577,8 @@ foreach ($aValue as $key => $value) {
                                 <h5 class="font-size-14 mb-4"> <i class="mdi mdi-arrow-right text-primary me-1"></i>Tanggal:</h5>
                             </div>
                             <div class="col-md-9">
-                                <input id="gcsexamination_date` + bodyId + `" name="examination_date" type="datetime-local" class="form-control" value="` + get_date() + `">
+                                <input id="flatgcsexamination_date` + bodyId + `" type="text" class="form-control">
+                                <input id="gcsexamination_date` + bodyId + `" name="examination_date" type="hidden">
                             </div>
                         </div>`)
                     .append($('<div class="mb-3 row">')
@@ -7501,6 +7647,8 @@ foreach ($aValue as $key => $value) {
                 )
             )
         )
+
+        datetimepickerbyid("flatgcsexamination_date" + bodyId)
 
         $("#GEN001101" + bodyId).on("change", function() {
             var e = ($("#GEN001101" + bodyId).val() === null) ? 0 : $("#GEN001101" + bodyId).val();
@@ -7662,6 +7810,7 @@ foreach ($aValue as $key => $value) {
             $.each(maindataset, function(key, value) {
                 $("#gcs" + key + bodyId).val(value)
             })
+            $("#flatgcsexamination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date))
             var gcs = gcsAll[index];
             <?php foreach ($aParameter as $key => $value) {
                 if ($value['p_type'] == 'GEN0011') {
@@ -7713,7 +7862,7 @@ foreach ($aValue as $key => $value) {
         }
         index++
         if (isaddbutton)
-            $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyGcsMedis\')" class="btn btn-primary btn-lg btn-add-doc" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addGcsButton").html('<a onclick="addGcs(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyGcsMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         else
             $("#" + container + "AddBtn").html("")
     }
@@ -7791,6 +7940,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// INTEGUMEN
 <script type="text/javascript">
     function addIntegumen(flag, index, document_id, container) {
         var bodyId = '';
@@ -8051,6 +8202,8 @@ foreach ($aValue as $key => $value) {
         });
     }
 </script>
+
+// DIAG NURSE
 <script>
     function addRowDiagPerawat(
         container,
