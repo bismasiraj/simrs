@@ -639,7 +639,7 @@ $group = user()->getRoles();
         $("#acpptemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
         $("#flatacpptexamination_date").val(formatedDatetimeFlat(ex.examination_date))
 
-        await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
+        await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid", 1)
 
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")

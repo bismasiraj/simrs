@@ -29,7 +29,8 @@ $permission = user()->getPermissions();
                     'pasienDiagnosaAll' => $pasienDiagnosaAll,
                     'pasienDiagnosa' => $pasienDiagnosa
                 ]); ?>
-            </div><!--./col-lg-6-->
+            </div>
+            <!--./col-lg-6-->
             <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
                 <!-- <div id="loadContentDiagnosa" class="col-12 center-spinner"></div> -->
                 <div class="card border-1 rounded-4 p-4">
@@ -42,39 +43,50 @@ $permission = user()->getPermissions();
                                         <div class="col-lg-12 col-md-12 col-sm-12">
                                             <div id="ajax_load"></div>
                                             <div class="row">
-                                                <h3>Diagnosa Klinis</h3>
+                                                <h3 id="">Diagnosa Klinis</h3>
                                                 <hr>
                                                 <div class="col-md-12">
                                                     <div class="dividerhr"></div>
-                                                </div><!--./col-md-12-->
+                                                </div>
+                                                <!--./col-md-12-->
                                                 <div class="accordion" id="accordionDiagnosa">
                                                 </div>
                                                 <div class="col-md-12">
                                                     <hr>
-                                                </div><!--./col-md-12-->
+                                                </div>
+                                                <!--./col-md-12-->
                                                 <div class="row">
                                                 </div>
-                                            </div><!--./row-->
+                                            </div>
+                                            <!--./row-->
                                             <div class="row">
-                                                <h3>Diagnosa Perawat</h3>
+                                                <h3 id="">Diagnosa Perawat</h3>
                                                 <hr>
                                                 <div class="col-md-12">
                                                     <div class="dividerhr"></div>
-                                                </div><!--./col-md-12-->
+                                                </div>
+                                                <!--./col-md-12-->
                                                 <div class="accordion" id="accordionDiagnosaPerawat">
                                                 </div>
                                                 <div class="col-md-12">
                                                     <hr>
-                                                </div><!--./col-md-12-->
+                                                </div>
+                                                <!--./col-md-12-->
                                                 <div class="row">
                                                 </div>
-                                            </div><!--./row-->
-                                        </div><!--./col-md-8-->
+                                            </div>
+                                            <!--./row-->
+                                        </div>
+                                        <!--./col-md-8-->
                                         <!-- INI HISTORY PART -->
-                                    </div><!--./col-md-4-->
-                                </div><!--./row-->
-                            </div><!--./col-md-12-->
-                        </div><!--./row-->
+                                    </div>
+                                    <!--./col-md-4-->
+                                </div>
+                                <!--./row-->
+                            </div>
+                            <!--./col-md-12-->
+                        </div>
+                        <!--./row-->
                     </div>
                 </div>
                 <!-- <h3>Histori Assessmen Medis</h3> -->
@@ -95,7 +107,8 @@ $permission = user()->getPermissions();
                 </table>
             </div>
         </div>
-    </div><!--./row-->
+    </div>
+    <!--./row-->
 </div>
 <!-- -->
 
@@ -110,11 +123,91 @@ $permission = user()->getPermissions();
                         </div>
                     </div>
                 </div>
-            </div><!--./modal-header-->
+            </div>
+            <!--./modal-header-->
             <div class="modal-body pt0 pb0">
                 <div id="agcsDocument" class="border-1 rounded-4 mb-4" style="">
 
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-xl" id="ModalAskep" tabindex="-1" aria-labelledby="ModalLabelAskep" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabelAskep">INTERVENSI KEPERAWATAN
+                    BERSIHAN JALAN NAPAS TIDAK EFEKTIF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="accordionAskep">
+
+                    <!-- Accordion Item 1 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOneAskep">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOneAskep" aria-expanded="true" aria-controls="collapseOneAskep">
+                                Diagnosis Keperawatan (SDKI)
+                            </button>
+                        </h2>
+                        <div id="collapseOneAskep" class="accordion-collapse collapse show" aria-labelledby="headingOneAskep" data-bs-parent="#accordionAskep">
+                            <div class="accordion-body">
+                                <form id="formDiagnosisAskep">
+                                    <div class="mb-3 row" id="diagnosisAskepRender">
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 2 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwoAskep">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoAskep" aria-expanded="false" aria-controls="collapseTwoAskep">
+                                Standar Luaran Keperawatan Indonesia (SLKI)
+                            </button>
+                        </h2>
+                        <div id="collapseTwoAskep" class="accordion-collapse collapse" aria-labelledby="headingTwoAskep" data-bs-parent="#accordionAskep">
+                            <div class="accordion-body">
+                                <form id="formLuaranAskep">
+
+                                    <div class="mb-3 row" id="luaranAskepRender">
+                                        <!-- <label for="luaranInput" class="form-label">Luaran</label>
+                                        <input type="text" class="form-control" id="luaranInput"> -->
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 3 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThreeAskep">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThreeAskep" aria-expanded="false" aria-controls="collapseThreeAskep">
+                                Standar Intervensi Keperawatan Indonesia (SIKI)
+                            </button>
+                        </h2>
+                        <div id="collapseThreeAskep" class="accordion-collapse collapse" aria-labelledby="headingThreeAskep" data-bs-parent="#accordionAskep">
+                            <div class="accordion-body">
+                                <form id="formIntervensiAskep">
+                                    <div class="mb-3 row" id="intervensiAskepRender">
+                                        <!-- <label for="intervensiInput" class="form-label">Intervensi</label>
+                                        <input type="text" class="form-control" id="intervensiInput"> -->
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveButtonAskep" type="button" class="btn btn-primary" disabled>Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

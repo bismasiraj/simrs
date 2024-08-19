@@ -643,7 +643,6 @@
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
             .append($("<td>").attr("id", identifier + "displaytreat_date" + counter).html(formatedDatetimeFlat(billJson[key].treat_date)).append($("<p>").html(billJson[key].name_of_clinic)))
-            // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", identifier + "displaysell_price" + counter).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
             .append($("<td>")
                 .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + counter + '" placeholder="" value="' + billJson[key].quantity + '" class="form-control" readonly>')

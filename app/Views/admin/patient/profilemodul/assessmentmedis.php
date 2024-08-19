@@ -115,6 +115,12 @@ $group = user()->getRoles();
                                                 </div><!--./row-->
                                             </div><!--./col-md-8-->
                                             <!-- INI HISTORY PART -->
+                                            <div class="row text-center">
+                                                <div class="col-sm-12 col-md-4 m-4">
+                                                    <div id="formaddarmqrcode1" class="qrcode-class"></div>
+                                                    <div id="formaddarmsigner1"></div>
+                                                </div>
+                                            </div>
                                             <div class="panel-footer text-end mb-4">
                                                 <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                                                 <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
@@ -164,7 +170,6 @@ $group = user()->getRoles();
                 </div>
             </div><!--./modal-header-->
             <div class="modal-body pt0 pb0" id="cetakarmbody">
-
             </div>
         </div>
     </div>

@@ -447,6 +447,12 @@ $permission = user()->getPermissions();
                                                 <div class="col-md-12">
                                                     <hr>
                                                 </div><!--./col-md-12-->
+                                                <div class="row text-center">
+                                                    <div class="col-sm-12 col-md-4 m-4">
+                                                        <div id="formaddacpptqrcode1" class="qrcode-class"></div>
+                                                        <div id="formaddacpptsigner1"></div>
+                                                    </div>
+                                                </div>
                                                 <div class="panel-footer text-end mb-4">
                                                     <button type="button" id="formaddacpptbtnid" name="save" data-loading-text="Tambah" class="btn btn-info pull-right formaddacpptbtn" style="display: none"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
                                                     <button type="button" id="formsaveacpptbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveacpptbtn"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>

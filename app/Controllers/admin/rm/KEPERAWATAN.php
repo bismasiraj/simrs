@@ -626,7 +626,7 @@ class keperawatan extends \App\Controllers\BaseController
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
-
+            // return json_encode($vactination_id);
             $db = db_connect();
             $select = $this->lowerKey($db->query("
                 SELECT
@@ -670,13 +670,15 @@ class keperawatan extends \App\Controllers\BaseController
                     isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
                     where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as PAIN_SCORE,
 					isnull((select top(1) ASSESSMENT_PAIN_MONITORING.DESCRIPTION from ASSESSMENT_PAIN_MONITORING
-                    where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_DESC
+                    where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
+                    ea.fullname as dokter
                 FROM EXAMINATION_INFO ei
                     left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = ei.NO_REGISTRATION
                     left outer join ASSESSMENT_GCS gcs on ei.PASIEN_DIAGNOSA_ID = gcs.DOCUMENT_ID
                     left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ei.PASIEN_DIAGNOSA_ID = EDU.DOCUMENT_ID
                     left outer join ASSESSMENT_REPRODUCTION arp on ei.PASIEN_DIAGNOSA_ID = arp.DOCUMENT_ID
                     LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
+                    left outer join employee_all ea on ea.employee_id = ei.employee_id
                 WHERE ei.VISIT_ID = '{$visit['visit_id']}' AND ei.BODY_ID = '$vactination_id'	
 
                 group by 
@@ -697,9 +699,10 @@ class keperawatan extends \App\Controllers\BaseController
                     ei.SATURASI,
                     ei.PASIEN_DIAGNOSA_ID,
                     ei.vs_status_id,
-                    ei.isrj
+                    ei.isrj,
+                    ea.fullname
 
-        ")->getResultArray());
+        ")->getRow(0, "array"));
 
             $title = "Asesmen Keperawatan ";
             if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '') {
@@ -876,44 +879,39 @@ class keperawatan extends \App\Controllers\BaseController
                 WHERE VISIT_ID = '{$visit['visit_id']}'
                 and document_id = '$vactination_id'                    
                 "
-            )->getResultArray());
+            )->getRow(0, "array"));
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
+
+            $sign = $this->checkSignDocs($vactination_id, 3);
             $selectinfo = $visit;
 
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/5-ranap-neonatus.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select[0],
-                    "neonatus" => $neonatus,
-                    "apgarWaktu" => $apgarWaktu,
-                    "apgarData" => $apgarData,
-                    "spiritual" => $spiritual,
-                    "activity" => $activity,
-                    "neurosensoris" => $neurosensoris,
-                    "circulation" => $circulation,
-                    "pencernaan" => $pencernaan,
-                    "pernapasan" => $pernapasan,
-                    "perkemihan" => $perkemihan,
-                    "hipertensi" => $hipertensi, //new
-                    "reproduksi" => $reproduksi,
-                    "thtdanmata" => $thtdanmata,
-                    "tidurdanistirahat" => $tidurdanistirahat,
-                    "dekubitus" => $dekubitus,
-                    "integumen" => $integumen,
-                    "sosialekonomi" => $sosialekonomi,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo,
-                    "pediatri" => $pediatri[0],
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/5-ranap-neonatus.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "info" => $selectinfo
-                ]);
-            }
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/5-ranap-neonatus.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "neonatus" => $neonatus,
+                "apgarWaktu" => $apgarWaktu,
+                "apgarData" => $apgarData,
+                "spiritual" => $spiritual,
+                "activity" => $activity,
+                "neurosensoris" => $neurosensoris,
+                "circulation" => $circulation,
+                "pencernaan" => $pencernaan,
+                "pernapasan" => $pernapasan,
+                "perkemihan" => $perkemihan,
+                "hipertensi" => $hipertensi, //new
+                "reproduksi" => $reproduksi,
+                "thtdanmata" => $thtdanmata,
+                "tidurdanistirahat" => $tidurdanistirahat,
+                "dekubitus" => $dekubitus,
+                "integumen" => $integumen,
+                "sosialekonomi" => $sosialekonomi,
+                "organization" => $selectorganization,
+                "info" => $selectinfo,
+                "pediatri" => $pediatri,
+                "sign" => $sign
+            ]);
         }
     }
     public function asuhan_gizi($visit, $vactination_id = null)
@@ -981,7 +979,7 @@ class keperawatan extends \App\Controllers\BaseController
             "
             )->getResultArray());
 
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
             $selectinfo = $visit;
             // $selectinfo = $this->query_template_info($db, $visit['visit_id'], '20240614173754692');
 
@@ -1051,7 +1049,7 @@ class keperawatan extends \App\Controllers\BaseController
             "
             )->getResultArray());
 
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
             $selectinfo = $visit;
 
             if (isset($select[0])) {
@@ -1568,7 +1566,7 @@ class keperawatan extends \App\Controllers\BaseController
             api.REASSESSMENT_DATE";
             $select = $this->lowerKey($db->query($query)->getResultArray());
 
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
             $selectinfo = $visit;
             return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/20-monitoring-nyeri.php", [
                 "visit" => $visit,
@@ -1602,7 +1600,7 @@ class keperawatan extends \App\Controllers\BaseController
             $select = $this->lowerKey($db->query($query)->getResultArray());
 
             // dd($select);
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
             $selectinfo = $visit;
 
             if (isset($select[0])) {

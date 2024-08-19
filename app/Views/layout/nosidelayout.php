@@ -17,6 +17,7 @@
     <script src="<?php echo base_url(); ?>assets/libs/tinymce/tinymce.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/quill/quill.snow.css" />
     <script src="<?php echo base_url(); ?>assets/libs/quill/quill.js"></script>
+    <script src="<?php echo base_url(); ?>assets/libs/qrcode/qrcode.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.min.css">
     <!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -33,6 +34,16 @@
             /* Your desired background color */
             color: #721c24;
             /* Text color for better contrast */
+        }
+
+        .qrcode-class {
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            height: 100%;
+            /* Ensure parent has height if needed */
         }
     </style>
 </head>

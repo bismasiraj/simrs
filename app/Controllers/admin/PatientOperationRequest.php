@@ -15,7 +15,7 @@ use App\Models\AssessmentAnesthesiaChecklist;
 use App\Models\AssessmentAnesthesiaPostModel;
 use App\Models\AssessmentInstrumentModel;
 use APP\Models\AssessmentPraOperasi;
-use APP\Models\BloodRequestModel;
+use App\Models\BloodRequestModel;
 
 use APP\Models\LokalisModel;
 use APP\Models\AssessmentOperationPostModel;
@@ -81,7 +81,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $getDataAssessmentAnesthesiaPostModel = new AssessmentAnesthesiaPostModel();
         $getDataAssessmentAnesthesiaRecoveryModel = new AssessmentAnesthesiaRecoveryModel();
 
-        // $dataInstrumen = $getDataInstrumenModel->where('document_id', $formData->id)->findAll() ?? [];
+        $dataInstrumen = $getDataInstrumenModel->where('document_id', $formData->id)->findAll() ?? [];
         $dataPatientOperationCheck = $getDataPatientOperationCheckModel->where('document_id', $formData->id)->first() ?? [];
         $dataAssessmentOperation = $getDataAssessmentOperationModel->where('document_id', $formData->id)->first() ?? [];
         $dataLaporanAssessmentAnestesi = $getDataLaporanAssessmentAnestesiModel->where('document_id', $formData->id)->first() ?? [];
@@ -146,7 +146,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
           GROUP BY BODY_ID, OBSERVATION_DATE;
       ")->getResultArray()); // NEW 08/08
 
-        // $dataInstrumen = $this->lowerKey($dataInstrumen);
+        $dataInstrumen = $this->lowerKey($dataInstrumen);
         $dataPatientOperationCheck = $this->lowerKey($dataPatientOperationCheck);
         $dataAssessmentOperation = $this->lowerKey($dataAssessmentOperation);
         $dataLaporanAssessmentAnestesi = $this->lowerKey($dataLaporanAssessmentAnestesi);
@@ -183,7 +183,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
 
         $responseData = [
-            // 'assessment_instrument' => $dataInstrumen,
+            'assessment_instrument' => $dataInstrumen,
             'assessment_operation_check' => $dataPatientOperationCheck,
             'assessment_operation' => $dataAssessmentOperation,
             'assessment_anesthesia' => $dataLaporanAssessmentAnestesi,
@@ -1377,7 +1377,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 'praoperasi' => $data,
                 'lokalis' => $selectlokalis,
                 'pasienDiagnosas' => $selectdiagnosas,
-                'blood' => $blood
+                // 'blood' => $blood
             ]);
         }
         return $this->response->setJSON($data);
@@ -1394,7 +1394,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         // return json_encode($body);
         // $body = json_decode($body, true);
-
 
 
         $data = [];

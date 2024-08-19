@@ -75,6 +75,13 @@ foreach ($aValue as $key => $value) {
     })
 </script>
 
+<script>
+    const changeEws = (divId) => {
+        $("#" + divId).find("input").each(
+            $(this).trigger("change")
+        )
+    }
+</script>
 <!-- PAIN MONITORING -->
 <script>
     const addPainMonitoring = async (flag, index, document_id, container, isaddbutton = true) => {
@@ -605,7 +612,6 @@ foreach ($aValue as $key => $value) {
                 )
 
                 $("#timeIntervensi" + body_id + indexnow).on("change", function() {
-                    console.log("jalan nggak ya")
                     $("#reAssessment" + body_id + indexnow).trigger("change")
                 })
 
@@ -692,11 +698,8 @@ foreach ($aValue as $key => $value) {
         });
 
         if (flag == '0') {
-            console.log("masuk lagi nggak")
-            console.log("lastIndex: " + lastIndex)
 
             intervensiData = painIntervensi[lastIndex]
-            console.log()
             // $("#timeIntervensi" + body_id + lastIndex).val(intervensiData.intervensi_date)
             // $("#reassessment_date" + body_id + lastIndex).val(intervensiData.reassessment_date)
             $("#intervensi" + body_id + indexnow).val(intervensiData.intervensi)
@@ -724,12 +727,9 @@ foreach ($aValue as $key => $value) {
         // Get the value of the input field
         var inputDate = document.getElementById("timeIntervensi" + body_id + index).value;
 
-        console.log("inputDate :" + inputDate)
-        console.log("thevalue :" + thevalue)
         // Parse the input date string into a JavaScript Date object
         // var date = new Date(inputDate);
         var formattedDate = moment(inputDate).add(parseInt(thevalue), 'minutes').format("DD/MM/YYYY HH:mm");
-        console.log("formattedDate :" + formattedDate)
 
         // Add two hours to the date
         // date.setMinutes(date.getMinutes() + parseInt(thevalue));

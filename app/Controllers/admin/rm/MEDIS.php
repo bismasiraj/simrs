@@ -2090,7 +2090,8 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC, 
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
-            PD.DOCTOR")->getResultArray());
+            PD.DOCTOR")->getRow(0, "array"));
+
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
@@ -2108,27 +2109,21 @@ class medis extends \App\Controllers\BaseController
                 where document_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 2"
             )->getResultArray());
 
-            $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
             $selectinfo = $visit;
+
+            $sign = $this->checkSignDocs($select['pasien_diagnosa_id'], 2);
+
             // return json_encode($selectorganization);
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select[0],
-                    "lokalis" => $selectlokalis,
-                    "lokalis2" => $selectlokalis2,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo
-                ]);
-            }
+            return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "lokalis" => $selectlokalis,
+                "lokalis2" => $selectlokalis2,
+                "organization" => $selectorganization,
+                "info" => $selectinfo,
+                "sign" => $sign
+            ]);
         }
     }
 

@@ -18,7 +18,7 @@
             docData: docDataObject
         };
         $.ajax({
-            url: '<?php echo base_url(); ?>signature/postingSignedDocs',
+            url: '<?php echo base_url(); ?>signature/postingSignedDocsTable',
             type: "POST",
             // data: [docData, formData],
             data: JSON.stringify(data),
@@ -79,7 +79,7 @@
 </script>
 
 <script>
-    const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title) => {
+    const addSignUser = (formId, container, primaryKey, buttonId, docs_type, user_type, sign_ke = 1, title = null) => {
         if (user_type == 1) {
             $("#signvalid_date").val(container + "valid_date")
             $("#signvalid_user").val(container + "valid_user")
@@ -119,7 +119,7 @@
 
         $("#digitalSignModal").modal("show")
     }
-    const checkSignSignature = async (formId, primaryKey, formSaveBtn) => {
+    const checkSignSignature = async (formId, primaryKey, formSaveBtn, docs_type = null) => {
         let docData = new FormData(document.getElementById(formId))
         let signId = $("#" + primaryKey).val()
         let docDataObject = {};
@@ -129,13 +129,13 @@
         // let data = [];
         var data = {
             docData: docDataObject,
-            signId: signId
+            signId: signId,
+            docs_type: docs_type
         };
-        console.log(data)
 
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: '<?php echo base_url(); ?>signature/checkSignedDocs',
+                url: '<?php echo base_url(); ?>signature/checkSignedDocsTable',
                 type: "POST",
                 // data: [docData, formData],
                 data: JSON.stringify(data),
@@ -155,6 +155,16 @@
                                     $("#" + formId).find(".valid_user").each(function() {
                                         $(this).val(value.sign_path)
                                     })
+                                    console.log("qrcode: " + "#" + formId + "qrcode" + value.user_type)
+                                    let qrcode = new QRCode(document.getElementById(formId + "qrcode" + value.user_type), {
+                                        text: value.sign_path,
+                                        width: 128,
+                                        height: 128,
+                                        colorDark: "#000000",
+                                        colorLight: "#ffffff",
+                                        correctLevel: QRCode.CorrectLevel.H
+                                    });
+                                    $("#" + formId + "signer" + value.user_type).html(value.fullname ?? value.user_id)
                                     console.log('Signature validity:', value.isValid);
                                 }
                             })
@@ -167,8 +177,7 @@
 
                 },
                 error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    errorMsg(xhr);
+                    console.log(xhr);
                 },
                 complete: function() {}
             });

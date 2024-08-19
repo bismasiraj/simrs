@@ -198,7 +198,7 @@ $group = user()->getRoles();
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Jenis EWS</label>
-                                                                    <select class="form-select" name="vs_status_id" id="arpvs_status_id">
+                                                                    <select class="form-select" name="vs_status_id" id="arpvs_status_id" disabled="true" onchange="">
                                                                         <option value="" selected>-- pilih --</option>
                                                                         <option value="1">Dewasa</option>
                                                                         <option value="4">Anak</option>
@@ -353,6 +353,12 @@ $group = user()->getRoles();
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-sm-12 col-md-4 m-4">
+                                        <div id="formaddarpqrcode1" class="qrcode-class"></div>
+                                        <div id="formaddarpsigner1"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">

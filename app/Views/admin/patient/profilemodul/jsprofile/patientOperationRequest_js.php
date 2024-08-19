@@ -1,5 +1,16 @@
+<!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
+
+<!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
 
 
 
@@ -682,11 +693,9 @@
                     if (res.respon) {
                         let result = res?.data
 
-                        getInstrumen({
-                            data: result?.assessment_instrument
-                        });
+
                         checklistKeselamatan({
-                            data: result?.assessment_operation_check
+                            data: result?.assessment_operation_check,
                         });
                         anestesi({
                             data: {
@@ -749,14 +758,16 @@
                                 ?.assessment_anesthesia_recovery,
 
                         });
-
+                        getInstrumen({
+                            data: result?.assessment_instrument
+                        });
 
                     }
                 })
 
                 postOperasi(item);
 
-
+                // appendLokalisOperation("accordionPraOperasiSurgeryBody")
                 $("#container-tab").attr("hidden", false);
                 $("#nama-tindakan-operasi").text($(this).data('treatname') + ' (' + $(this).data(
                         'date') +
@@ -764,10 +775,18 @@
                 $("#document_id_checklist_keselamatan").val($(this).data('id')); //new
                 $("#document_id_checklist_anestesi").val($(this).data('id')); //new
                 $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
+                $("#apobody_id").val($(this).data('id')); //new
+
+                assessmentPraOperasi({
+                    vactination_id: $(this).data('id')
+                })
 
 
-
-
+                cetakOperasi({
+                    vactination_id: $(this).data('id'),
+                    element_id: '#btn-print-praoperasi2',
+                    method: 'cetak_pra_operasi'
+                })
                 cetakOperasi({
                     vactination_id: $(this).data('id'),
                     element_id: '#btn-print-laporan-anesthesi',
@@ -783,6 +802,13 @@
                     element_id: '#btn-print-catatan-keperawatan',
                     method: 'cetak_catatan_keperawatan'
                 })
+                cetakOperasi({
+                    vactination_id: $(this).data('id'),
+                    element_id: '#btn-print-checklist-keselamatan',
+                    method: 'cetak_checklist_keselamatan'
+                })
+
+
             });
         }; //new update 1/08
 
@@ -2309,16 +2335,15 @@
             }
         }; // new update 31/7
 
-        const renderbodyInstrumenoprs004 = () => {
+        const renderbodyInstrumenoprs004 = (props) => {
             let hasil = '';
-
-
-            InstrumenValue.map((item, index) => {
+            InstrumenValue = props.items
+            InstrumenValue.forEach((item, index) => {
                 hasil += `<tr>
                     <td hidden><input type="number" name="brand_id[]" value="${item?.brand_id}"/></td>
                     <td>${item?.brand_name}
-                     <input type="hidden" name="document_id" id="document_id_checklist_keperawatan" value="${item?.document_id}">
-                     <input type="hidden" name="body_id_instrument" id="body_id_instrument" value="${item?.body_id}">
+                        <input type="hidden" name="document_id" id="document_id_checklist_keperawatan" value="${item?.document_id}">
+                        <input type="hidden" name="body_id_instrument" id="body_id_instrument" value="${item?.body_id}">
                     </td>
                     <td hidden><input type="text" name="brand_name[]" value="${item?.brand_name}"/></td>
                     <td>${item?.quantity_before}</td>
@@ -2327,21 +2352,22 @@
                     <td><input type="number" class="form-control quantity-intra" min="0" id="quantity_intra_${index}" name="quantity_intra[]" data-before="${item?.quantity_before}" value="${item?.quantity_intra || ''}" /></td>
                     <td><input type="number" class="form-control quantity-additional" min="0" id="quantity_additional_${index}" name="quantity_additional[]" value="${item?.quantity_additional || ''}" /></td>
                     <td><input type="number" class="form-control quantity-after" min="0" id="quantity_after_${index}" name="quantity_after[]" value="${item?.quantity_after || ''}" /></td>
-                  
+                
                     <td class="result-${index}"></td>
-            </tr>`;
+                </tr>`;
             });
+            $("#bodyInstrumenoprs004").append(hasil);
 
-            $("#bodyInstrumenoprs004").html(hasil);
 
             $("input.quantity-intra, input.quantity-additional, input.quantity-after").on('input',
                 function() {
                     updateResults();
+                    console.log('change');
                 });
 
             const updateResults = () => {
-                InstrumenValue.forEach((item, index) => {
-                    const quantityBefore = parseFloat(item?.quantity_before) || 0;
+                InstrumenValue.forEach((item2, index) => {
+                    const quantityBefore = parseFloat(item2?.quantity_before) || 0;
                     const quantityIntra = parseFloat($(`#quantity_intra_${index}`).val()) || 0;
                     const quantityAdditional = parseFloat($(`#quantity_additional_${index}`)
                             .val()) ||
@@ -3023,6 +3049,7 @@
                 <div class="col-md-12 bromage-item">
                     <div id="${newId}" class="row">
                     </div>
+                    <h3 class="badge text-bg-secondary">Skor Bromage : ${props?.data?.value_score ?? 0}</h3>
                     <div class="row pe-4 mt-2" style="box-sizing: border-box;">
                         <div class="d-flex pe-4 col-6" style="box-sizing: border-box;">
                             <button type="button" class="btn btn-danger w-100 deleteBromage"><i class="fas fa-trash-alt"></i></button>
@@ -3090,7 +3117,7 @@
 
             const calculateTotalScore = (row) => {
                 let totalScore = 0;
-                $(row).find('select[name^="parameter_oprs023_"]').each(function() {
+                $(row).find('select[name^="parameter_oprs025_"]').each(function() {
                     const selectedOption = $(this).find('option:selected');
                     const score = parseInt(selectedOption.data('score'), 10) || 0;
                     totalScore += score;
@@ -3100,6 +3127,7 @@
 
             const updateRowScoreAndStatus = (row) => {
                 let totalScore = calculateTotalScore(row);
+                console.log(totalScore);
                 row.find('.total-score-input').text(totalScore);
 
                 let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
@@ -3213,8 +3241,6 @@
                 get_data: data,
             });
 
-
-
             let catatanSignIn = `
                     <div class="container">
                         <div class="row">
@@ -3241,6 +3267,7 @@
                         </div>
                     </div>
                     `;
+
             $('#the-sign-in').html(catatanSignIn);
             $('#the-time-out').html(catatanTimeOut);
             $('#the-sign-out').html(catatanSignOut);
@@ -3307,7 +3334,7 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button"  name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                                 <div class="row mb-4">
@@ -3325,7 +3352,7 @@
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button"  name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -4421,21 +4448,25 @@
         const getInstrumen = (props) => {
             if (props.data) {
                 dataInstrumen = props?.data;
-                renderbodyInstrumenoprs004();
+                console.log(dataInstrumen);
+                renderbodyInstrumenoprs004({
+                    items: dataInstrumen
+                });
                 let tableInstrumen = $("#get-data-instrumen").html("");
                 $("#body-instrumen").html("");
 
                 dataInstrumen?.forEach((element, key) => {
                     tableInstrumen.append(
                         `<tr>
-                    <td class="text-center">${key + 1}</td>
-                    <td class="text-center">${element?.brand_name}</td>
-                    <td class="text-center">${element?.quantity_before}</td>
-                    <td class="text-center">${element?.quantity_intra}</td>
-                    <td class="text-center">${element?.quantity_additional}</td>
-                    <td class="text-center">${element?.quantity_after}</td>
-                </tr>`
+                            <td class="text-center">${key + 1}</td>
+                            <td class="text-center">${element?.brand_name}</td>
+                            <td class="text-center">${element?.quantity_before}</td>
+                            <td class="text-center">${element?.quantity_intra}</td>
+                            <td class="text-center">${element?.quantity_additional}</td>
+                            <td class="text-center">${element?.quantity_after}</td>
+                        </tr>`
                     );
+                    addRowInstrumen(element)
                 });
             }
         };
@@ -4976,6 +5007,9 @@
             $("#adiagpdiag_notes" + index).val(diagname);
         }
     }
+</script>
+<script>
+
 </script>
 <?php
 echo view('admin/patient/profilemodul/operasi/js/praoperasi_js', [

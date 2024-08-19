@@ -36,7 +36,6 @@
                 if ($value['doc_type'] == 1 && $value['specialist_type_id'] == $visit['specialist_type_id']) {
             ?>
                     <?= $value['doc_id']; ?>(accMedisName);
-                    console.log('<?= $value['specialist_type']; ?>')
                     $("#armTitle").html("ASESMEN MEDIS <?= $value['specialist_type'] ?> <?= $visit['isrj'] == 1 ? 'RAWAT JALAN' : 'RAWAT INAP'; ?>")
             <?php
                 }
@@ -422,7 +421,6 @@
 
 
         let clinicSelect = clinics.filter(item => item.clinic_id == '<?= $visit['clinic_id']; ?>')
-        console.log(clinicSelect)
         $("#armclinic_id").html($('<option></option>')
             .val(clinicSelect[0].clinic_id)
             .text(clinicSelect[0].name_of_clinic))
@@ -625,7 +623,7 @@
         $("#formaddarm").find("#armtotal_score").html("")
         $("#formaddarm").find("span.h6").html("")
         $("#flatarmdate_of_diagnosa").val(formattedValue).trigger("change")
-        await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn")
+        await checkSignSignature("formaddarm", "armpasien_diagnosa_id", "formsavearmbtn", 2)
 
         if (pasienDiagnosa.clinic_id == null || pasienDiagnosa.clinic_id == '') {
             $("#armclinic_id").html('<option value="<?= $visit['clinic_id']; ?>"><?= $visit['name_of_clinic']; ?></option>')
@@ -923,7 +921,6 @@
 
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
-        alert("berhasil3")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/addAssessmentMedis',
             type: "POST",
@@ -981,7 +978,7 @@
 </script>
 <script type="text/javascript">
     const signarm = () => {
-        addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formaddarmbtn", 2, 1, 1, $("#armTitle").html())
+        addSignUser("formaddarm", "arm", "armpasien_diagnosa_id", "formsavearmbtn", 2, 1, 1, $("#armTitle").html())
     }
 
     function signRM() {
@@ -2347,115 +2344,115 @@
 
 <script>
     function cetakAssessmentMedis() {
-        var data = `<div class="container-fluid">
-                        <div class="row">
-                            <div class="col-auto" align="center">
-                                <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                            </div>
-                            <div class="col mt-2" align="center">
-                                <h3>RS PKU Muhammadiyah Sampangan</h3>
-                                <h3>Surakarta</h3>
-                                <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
-                            </div>
-                            <div class="col-auto" align="center">
-                                <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <h4 class="text-center">` + $("#armTitle").html() + `</h4>
-                        </div>
-                        <div class="row">
-                            <h5 class="text-start">Informasi Pasien</h5>
-                        </div>
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <b>Nomor RM</b>
-                                        <div id="no_registration" name="no_registration" class="h6"><?= $visit['no_registration']; ?></div>
-                                    </td>
-                                    <td>
-                                        <b>Nama Pasien</b>
-                                        <div id="thename" name="thename" class="h6"><?= $visit['diantar_oleh']; ?></div>
-                                    </td>
-                                    <td>
-                                        <b>Jenis Kelamin</b>
-                                        <div id="thename" name="thename" class="h6"><?= $visit['gender']; ?></div>
-                                        <select name="gender" id="gender" class="form-control">
-                                            <option value="1">Laki-Laki</option>
-                                            <option value="2">Perempuan</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <b>Tanggal Lahir (Usia)</b>
-                                        <div id="patient_age" name="patient_age" class="h6"><?= $visit['date_of_birth']; ?></div>
-                                    </td>
-                                    <td colspan="2">
-                                        <b>Alamat Pasien</b>
-                                        <div id="theaddress" name="theaddress" class="h6"><?= $visit['visitor_address']; ?></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <b>DPJP</b>
-                                        <div id="doctor" name="doctor" class="h6"><?= $visit['fullname']; ?></div>
-                                    </td>
-                                    <td>
-                                        <b>Department</b>
-                                        <div id="clinic_id" name="clinic_id" class="h6"><?= $visit['name_of_clinic']; ?></div>
-                                    </td>
-                                    <td>
-                                        <b>Tanggal Masuk</b>
-                                        <div id="examination_date" name="examination_date" class="h6"><?= $visit['visit_date']; ?></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="row">
-                            <h4 class="text-start">Subjektif (S)</h4>
-                        </div>
-                        
-                        <div class="row">
-                            <h5 class="text-start">Edukasi Pasien</h5>
-                        </div>
-                        <table class="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-                                        <div  name="" class="h6"></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <b>Materi Edukasi:</b>
-                                        <div  name="" class="h6"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="row">
-                            <div class="col-auto" align="center">
-                                <div>Dokter</div>
-                                <div class="mb-1">
-                                    <div id="qrcode"></div>
-                                </div>
-                            </div>
-                            <div class="col"></div>
-                            <div class="col-auto" align="center">
-                                <div>Penerima Penjelasan</div>
-                                <div class="mb-1">
-                                    <div id="qrcode1"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+        // var data = `<div class="container-fluid">
+        //                 <div class="row">
+        //                     <div class="col-auto" align="center">
+        //                         <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
+        //                     </div>
+        //                     <div class="col mt-2" align="center">
+        //                         <h3>RS PKU Muhammadiyah Sampangan</h3>
+        //                         <h3>Surakarta</h3>
+        //                         <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+        //                     </div>
+        //                     <div class="col-auto" align="center">
+        //                         <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+        //                     </div>
+        //                 </div>
+        //                 <div class="row">
+        //                     <h4 class="text-center">` + $("#armTitle").html() + `</h4>
+        //                 </div>
+        //                 <div class="row">
+        //                     <h5 class="text-start">Informasi Pasien</h5>
+        //                 </div>
+        //                 <table class="table table-bordered">
+        //                     <tbody>
+        //                         <tr>
+        //                             <td>
+        //                                 <b>Nomor RM</b>
+        //                                 <div id="no_registration" name="no_registration" class="h6"><?= $visit['no_registration']; ?></div>
+        //                             </td>
+        //                             <td>
+        //                                 <b>Nama Pasien</b>
+        //                                 <div id="thename" name="thename" class="h6"><?= $visit['diantar_oleh']; ?></div>
+        //                             </td>
+        //                             <td>
+        //                                 <b>Jenis Kelamin</b>
+        //                                 <div id="thename" name="thename" class="h6"><?= $visit['gender']; ?></div>
+        //                                 <select name="gender" id="gender" class="form-control">
+        //                                     <option value="1">Laki-Laki</option>
+        //                                     <option value="2">Perempuan</option>
+        //                                 </select>
+        //                             </td>
+        //                         </tr>
+        //                         <tr>
+        //                             <td>
+        //                                 <b>Tanggal Lahir (Usia)</b>
+        //                                 <div id="patient_age" name="patient_age" class="h6"><?= $visit['date_of_birth']; ?></div>
+        //                             </td>
+        //                             <td colspan="2">
+        //                                 <b>Alamat Pasien</b>
+        //                                 <div id="theaddress" name="theaddress" class="h6"><?= $visit['visitor_address']; ?></div>
+        //                             </td>
+        //                         </tr>
+        //                         <tr>
+        //                             <td>
+        //                                 <b>DPJP</b>
+        //                                 <div id="doctor" name="doctor" class="h6"><?= $visit['fullname']; ?></div>
+        //                             </td>
+        //                             <td>
+        //                                 <b>Department</b>
+        //                                 <div id="clinic_id" name="clinic_id" class="h6"><?= $visit['name_of_clinic']; ?></div>
+        //                             </td>
+        //                             <td>
+        //                                 <b>Tanggal Masuk</b>
+        //                                 <div id="examination_date" name="examination_date" class="h6"><?= $visit['visit_date']; ?></div>
+        //                             </td>
+        //                         </tr>
+        //                     </tbody>
+        //                 </table>
+        //                 <div class="row">
+        //                     <h4 class="text-start">Subjektif (S)</h4>
+        //                 </div>
+
+        //                 <div class="row">
+        //                     <h5 class="text-start">Edukasi Pasien</h5>
+        //                 </div>
+        //                 <table class="table table-bordered">
+        //                     <tbody>
+        //                         <tr>
+        //                             <td>
+        //                                 <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
+        //                                 <div  name="" class="h6"></div>
+        //                             </td>
+        //                         </tr>
+        //                         <tr>
+        //                             <td>
+        //                                 <b>Materi Edukasi:</b>
+        //                                 <div  name="" class="h6"></div>
+        //                             </td>
+        //                         </tr>
+        //                     </tbody>
+        //                 </table>
+        //                 <div class="row">
+        //                     <div class="col-auto" align="center">
+        //                         <div>Dokter</div>
+        //                         <div class="mb-1">
+        //                             <div id="qrcode"></div>
+        //                         </div>
+        //                     </div>
+        //                     <div class="col"></div>
+        //                     <div class="col-auto" align="center">
+        //                         <div>Penerima Penjelasan</div>
+        //                         <div class="mb-1">
+        //                             <div id="qrcode1"></div>
+        //                         </div>
+        //                     </div>
+        //                 </div>
+        //             </div>`;
 
 
-        $("#cetakarmbody").html(data);
-        $("#cetakarm").modal("show")
+        // $("#cetakarmbody").html(data);
+        // $("#cetakarm").modal("show")
 
         // $.ajax({
         //     url: '<?= base_url() . '/admin/rm/medis/ralan_anak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armpasien_diagnosa_id").val(),

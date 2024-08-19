@@ -311,6 +311,60 @@ class Cetak extends \App\Controllers\BaseController
         }
     }
 
+    public function cetak_pra_operasi($visit, $vactination_id = null)
+    {
+        $title = "Asesmen Pra Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select assessment_operation_pra.*
+            from assessment_operation_pra 
+            where assessment_operation_pra.visit_id = '" . $visit['visit_id'] . "' and body_id = '" . $vactination_id . "'
+            ")->getResultArray());
+
+            if (!empty($select)) {
+                $selectlokalis = $this->lowerKey($db->query(
+                    "
+                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                    where body_id = '" . $vactination_id . "'"
+                )->getResultArray());
+
+                $selectDiagnosa = $this->lowerKey($db->query(
+                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select[0]['body_id'] . "' "
+                )->getResultArray());
+
+                $informasiMedis = array_slice($select[0], 8, 22);
+
+                $newData = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS001');
+            }
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+
+            if (isset($select[0])) {
+                return view("admin/patient/cetak/operasi/pra-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData,
+                    "lokalis" => $selectlokalis,
+                    "diagnosa" => $selectDiagnosa,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/pra-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
     public function cetak_laporan_anesthesi($visit, $vactination_id = null)
     {
         $title = "Laporan Anestesi/Sedasi";
@@ -335,73 +389,37 @@ class Cetak extends \App\Controllers\BaseController
             from ASSESSMENT_ANESTHESIA 
             left outer join EXAMINATION_info ei on ASSESSMENT_ANESTHESIA.BODY_ID = ei.PASIEN_DIAGNOSA_ID
             where ASSESSMENT_ANESTHESIA.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '11'
-            ")->getRow(0, 'array'));
+            ")->getResultArray());
 
-            $selectlokalis = $this->lowerKey($db->query(
-                "
-                select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
-                INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
-                where body_id = '" . $vactination_id . "' AND assessment_lokalis.VALUE_SCORE = 2"
-            )->getResultArray());
 
-            $selectDiagnosa = $this->lowerKey($db->query(
-                "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' "
-            )->getResultArray());
+            if (!empty($select)) {
+                $selectlokalis = $this->lowerKey($db->query(
+                    "
+                    select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+                    where body_id = '" . $vactination_id . "' AND assessment_lokalis.VALUE_SCORE = 2"
+                )->getResultArray());
+
+                $selectDiagnosa = $this->lowerKey($db->query(
+                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' "
+                )->getResultArray());
+
+                $informasiMedis = array_splice($select, 13, 16);
+                $keadaanUmum = array_splice($select, 14, 3);
+                $perencanaanAnestesi = array_splice($select, 15, 7);
+
+                $newData = [];
+                $newData2 = [];
+                $newData3 = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS006');
+                $newData3 = $this->ConvertValue($keadaanUmum, $newData3, 'OPRS006');
+                $newData2 = $this->ConvertValue($perencanaanAnestesi, $newData2, 'OPRS006');
+            }
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
-            $informasiMedis = array_splice($select, 13, 16);
-            $keadaanUmum = array_splice($select, 14, 3);
-            $perencanaanAnestesi = array_splice($select, 15, 7);
-
-            $newData = [];
-            $newData2 = [];
-            $newData3 = [];
-
-            foreach ($informasiMedis as $key => $value) {
-
-                $result = $this->query_getDescValue($value, 'OPRS006');
-
-
-                if ($result) {
-                    $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
-                    $valueDesc = $result['VALUE_DESC'] ?? 'Unknown Value';
-
-
-                    $newData[$parameterDesc] = $valueDesc;
-                } else {
-
-                    $newData['Not Found'] = 'Not Found';
-                }
-            }
-            foreach ($keadaanUmum as $key => $value) {
-
-                $result = $this->query_getDescValue($value, 'OPRS006');
-
-
-                if ($result) {
-                    $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
-                    $valueDesc = $result['VALUE_DESC'] ?? 'Unknown Value';
-
-
-                    $newData3[$parameterDesc] = $valueDesc;
-                } else {
-
-                    $newData3['Not Found'] = 'Not Found';
-                }
-            }
-            foreach ($perencanaanAnestesi as $key => $value) {
-                $value = $value === NULL ? "" : $value;
-                $result = $this->query_getDesc($key, 'OPRS006');
-                if ($result) {
-                    $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
-                    $newData2[$parameterDesc] = $value;
-                } else {
-                    $newData2['Not Found'] = 'Not Found';
-                }
-            }
-
-            if (isset($select)) {
+            if (isset($select[0])) {
                 return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
                     "visit" => $visit,
                     'title' => $title,
@@ -449,34 +467,164 @@ class Cetak extends \App\Controllers\BaseController
             where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '10'
             ")->getRow(0, 'array'));
 
+            if (!empty($select)) {
 
+                $selectDiagnosa = $this->lowerKey($db->query("
+                SELECT PASIEN_DIAGNOSAS_NURSE.DIAG_NOTES FROM PASIEN_DIAGNOSA_NURSE
+                INNER JOIN PASIEN_DIAGNOSAS_NURSE ON PASIEN_DIAGNOSA_NURSE.BODY_ID = PASIEN_DIAGNOSAS_NURSE.BODY_ID
+                WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray());
+
+                $selectDrain = $this->lowerKey($db->query("
+                SELECT DRAIN_TYPE,DRAIN_KINDS,SIZE,DESCRIPTION 
+                FROM ASSESSMENT_OPERATION_DRAIN WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray());
+
+
+                $aldrete = $this->lowerKey($db->query("
+                      SELECT
+                            BODY_ID, OBSERVATION_DATE,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '04' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_04,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_05,
+                            MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '05' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_05
+                        FROM ASSESSMENT_ANESTHESIA_RECOVERY
+                        INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
+                        INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+                        WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                        AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS023'
+                        GROUP BY BODY_ID, OBSERVATION_DATE;
+                ")->getResultArray());
+                $bromage = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_ANESTHESIA_RECOVERY where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and p_type = 'oprs024' ")->getResultArray());
+                $steward = $this->lowerKey($db->query("
+                    SELECT
+                        BODY_ID, OBSERVATION_DATE,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '01' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_01,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_02,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '02' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_ID ELSE '' END) AS VALUE_ID_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_DESC ELSE '' END) AS VALUE_DESC_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.VALUE_SCORE ELSE '' END) AS VALUE_SCORE_03,
+                        MAX(CASE WHEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID = '03' THEN ASSESSMENT_ANESTHESIA_RECOVERY.PARAMETER_ID ELSE '' END) AS PARAMETER_ID_03
+                    FROM ASSESSMENT_ANESTHESIA_RECOVERY
+                    INNER JOIN ASSESSMENT_PARAMETER ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER.P_TYPE
+                    INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+                    WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                    AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS025'
+                    GROUP BY BODY_ID, OBSERVATION_DATE;
+                ")->getResultArray());
+
+
+                $informasiMedis = array_slice($select, 8, 8);
+                $informasiIntra = array_slice($select, 16, 23);
+                $informasiIntra2 = array_slice($select, 39, 13);
+                $informasiPasca = array_slice($select, 51, 11);
+                $newData = [];
+                $newData2 = [];
+                $newData3 = [];
+                $newData4 = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS003');
+                $newData2 = $this->ConvertValue($informasiIntra, $newData2, 'OPRS004');
+                $newData3 = $this->ConvertValue($informasiIntra2, $newData3, 'OPRS004');
+                $newData4 = $this->ConvertValue($informasiPasca, $newData4, 'OPRS005');
+            }
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
-            $informasiMedis = array_splice($select, 9, 8);
-            $newData = [];
 
 
-            // foreach ($informasiMedis as $key => $value) {
-            //     $value = $value === NULL ? "" : $value;
-            //     $result = $this->query_getDesc($key, 'OPRS003');
-            //     if ($result) {
-            //         $parameterDesc = $result['PARAMETER_DESC'] ?? 'Unknown Parameter';
-            //         $newData[$parameterDesc] = $value;
-            //     }
-            // }
-            // array_unshift($newData, array_splice($select, 8, 1));
-            // echo '<pre>';
-            // var_dump($newData);
-            // die();
             if (isset($select)) {
                 return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
                     "informasiMedis" => $newData,
+                    "informasiIntra" => $newData2,
+                    "informasiIntra2" => $newData3,
+                    "informasiPasca" => $newData4,
+                    "diagnosas" => $selectDiagnosa,
+                    "drains" => $selectDrain,
+                    "aldrete" => $aldrete,
+                    "bromage" => $bromage,
+                    "steward" => $steward,
                     "organization" => $selectorganization
                 ]);
             } else {
                 return view("admin/patient/cetak/operasi/catatan-keperawatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_checklist_keselamatan($visit, $vactination_id = null)
+    {
+        $title = "Asesmen Pra Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select * FROM ASSESSMENT_OPERATION_CHECK
+            where ASSESSMENT_OPERATION_CHECK.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
+            ")->getRow(0, 'array'));
+
+
+            $instruments = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INSTRUMENT where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' ")->getResultArray());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+
+            $theSignIn = array_slice($select, 8, 10);
+            $theTimeOut = array_slice($select, 19, 20);
+            $theSignOut = array_slice($select, 40, 2);
+            $theSignOut2 = array_slice($select, 42, 3);
+
+            $newData = [];
+            $newData2 = [];
+            $newData3 = [];
+            $newData4 = [];
+
+
+            $newData = $this->ConvertValue($theSignIn, $newData, 'OPRS026');
+            $newData2 = $this->ConvertValue($theTimeOut, $newData2, 'OPRS027');
+            $newData3 = $this->ConvertValue($theSignOut, $newData3, 'OPRS028');
+            $newData4 = $this->ConvertValue($theSignOut2, $newData4, 'OPRS028');
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "theSignIn" => $newData,
+                    "theTimeOut" => $newData2,
+                    "theSignOut" => $newData3,
+                    "theSignOut2" => $newData4,
+                    "instruments" => $instruments,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/checklist-keselamatan.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "organization" => $selectorganization
@@ -509,12 +657,47 @@ class Cetak extends \App\Controllers\BaseController
         $results = $this->lowerKey($query->getResultArray());
         return $results; // Return results instead of JSON
     }
+    public function ConvertValue($arr_before, $arr_after, $p_type)
+    {
+        $arr_after = [];
+        foreach ($arr_before as $key => $value) {
 
+            if (preg_match('/^OP\d{6}$/', $value)) {
+                $result = $this->query_getDescValue($value, $p_type);
+                if ($result) {
+                    $parameterDesc = $result['PARAMETER_DESC'] ?? '-';
+                    $valueDesc = $result['VALUE_DESC'] ?? '-';
+                    $arr_after[$parameterDesc] = $valueDesc;
+                }
+            } else {
+                $result = $this->query_getDesc($key, $p_type);
+                $parameterDesc = $result['PARAMETER_DESC'] ?? '-';
+                $arr_after[$parameterDesc] = $value;
+                if ($result) {
+                    $parameterDesc = $result['PARAMETER_DESC'] ?? '-';
+                    $arr_after[$parameterDesc] = $value;
+                }
+            }
+        }
+
+        return $arr_after;
+    }
+    public function query_convertValue($value_id)
+    {
+        $db = db_connect();
+
+        $query = $db->query("
+            SELECT VALUE_DESC FROM ASSESSMENT_PARAMETER_VALUE WHERE VALUE_ID = '" . $value_id . "'
+        ");
+
+        $result = $query->getRowArray();
+
+        return $result;
+    }
     public function query_getDescValue($value_id, $p_type)
     {
-        $db = db_connect(); // Connect to the database
+        $db = db_connect();
 
-        // Execute the query
         $query = $db->query("
             SELECT
                 ASSESSMENT_PARAMETER.PARAMETER_DESC,
@@ -524,25 +707,20 @@ class Cetak extends \App\Controllers\BaseController
             WHERE ASSESSMENT_PARAMETER.P_TYPE = '" . $p_type . "' AND ASSESSMENT_PARAMETER_VALUE.VALUE_ID = '" . $db->escapeString($value_id) . "'
         ");
 
-        // Fetch the result as an associative array
         $result = $query->getRowArray();
 
-        // Return the result
         return $result;
     }
     public function query_getDesc($column_name, $p_type)
     {
-        $db = db_connect(); // Connect to the database
+        $db = db_connect();
 
-        // Execute the query
         $query = $db->query("
             SELECT PARAMETER_DESC FROM ASSESSMENT_PARAMETER WHERE P_TYPE = '" . $p_type . "' AND COLUMN_NAME =  '" . $db->escapeString($column_name) . "'
         ");
 
-        // Fetch the result as an associative array
         $result = $query->getRowArray();
 
-        // Return the result
         return $result;
     }
     public function cetak_checklist_anestesi($visit, $vactination_id = null)

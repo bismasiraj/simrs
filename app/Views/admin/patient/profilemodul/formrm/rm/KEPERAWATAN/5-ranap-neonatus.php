@@ -24,8 +24,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="<?= base_url('assets/libs/qrcode/qrcode.min.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <style>
         .form-control:disabled,
@@ -800,21 +799,21 @@
             <div class="col-auto" align="center">
                 <div>Semarang, <?= tanggal_indo(date('Y-m-d')); ?></div>
                 <br>
-                <div>Dokter</div>
+                <div>Perawat yang mengkaji</div>
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
-                <p class="p-0 m-0 py-1">(<?= @$val['dokter']; ?>)</p>
+                <p class="p-0 m-0 py-1" id="qrcode_name">(<?= @$val['dokter']; ?>)</p>
                 <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>
             </div>
             <div class="col"></div>
             <div class="col-auto" align="center">
                 <br><br>
-                <div>Perawat yang mengkaji</div>
+                <div></div>
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
-                <p class="p-0 m-0 py-1">(<?= @$val['nama']; ?>)</p>
+                <p class="p-0 m-0 py-1" id="qrcode_name1">(<?= @$val['nama']; ?>)</p>
             </div>
         </div>
     </div>
@@ -826,24 +825,35 @@
 
 </body>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= @$val['dpjp']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    let val = <?= json_encode($val); ?>;
+    let sign = <?= json_encode($sign); ?>;
+
+    sign = JSON.parse(sign)
 </script>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: '<?= @$val['nama']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    $.each(sign, function(key, value) {
+        if (value.user_type == 1 && value.isvalid == 1) {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+        }
+    })
 </script>
 
 <style>

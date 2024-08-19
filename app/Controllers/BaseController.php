@@ -2,7 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Helpers\RsaEncryptionHelper;
+use App\Models\DocsSignedModel;
 use App\Models\EmployeeAllModel;
+use App\Models\ExaminationModel;
+use App\Models\PasienDiagnosaModel;
 use App\Models\PasienModel;
 use App\Models\TreatmentBillModel;
 use CodeIgniter\Controller;
@@ -737,5 +741,72 @@ abstract class BaseController extends Controller
             $result .= $characters[rand(0, $charactersLength - 1)];
         }
         return $result;
+    }
+
+    public function checkSignDocs($signId, $docs_type)
+    {
+        if ($docs_type == '2') {
+            $model = new PasienDiagnosaModel();
+        } else if ($docs_type == '3') {
+            $model = new ExaminationModel();
+        }
+        // return json_encode($sign_id);
+        $select = $model->find($signId);
+        // return json_encode($sign_id);
+        if (!isset($select) || !is_array($select)) {
+            return json_encode(['error' => 'Data Tidak Ditemukan']);
+        } else {
+            $dataDoc = $this->lowerKey($select);
+        }
+
+        if (isset($dataDoc['valid_user'])) {
+            unset($dataDoc['valid_user']);
+        }
+        if (isset($dataDoc['valid_pasien'])) {
+            unset($dataDoc['valid_pasien']);
+        }
+        if (isset($dataDoc['valid_date'])) {
+            unset($dataDoc['valid_date']);
+        }
+
+        ksort($dataDoc);
+
+        $rsaHelper = new RsaEncryptionHelper();
+        $publicKey = $rsaHelper->getPublicKey();
+
+        // Check if DocsSignedModel is available and handle errors if not
+
+        $docModel = new DocsSignedModel();
+
+        // Check if find method exists
+        if (!method_exists($docModel, 'find')) {
+            return json_encode(['error' => 'Method find not found in DocsSignedModel']);
+        }
+
+        // Find the document by signId
+        $select = $this->lowerKey($docModel
+            ->select("docs_signed.*, ea.fullname")
+            ->join("users u", "u.username = docs_signed.user_id", "left")
+            ->join("employee_all ea", "ea.employee_id = u.employee_id", "left")
+            ->where("sign_id", $signId)->findAll());
+
+        $result = [];
+        foreach ($select as $key => $value) {
+            // Check if the necessary data is present
+
+            $signedData = $value['sign'];
+
+            // Verify the signature
+            $isValid = $rsaHelper->verifySignature(json_encode($dataDoc), $signedData, $publicKey);
+            $result[$key]['isvalid'] = $isValid;
+            $result[$key]['user_type'] = $value['user_type'];
+            $result[$key]['doc_date'] = $value['doc_date'];
+            $result[$key]['user_id'] = $value['user_id'];
+            $result[$key]['sign_path'] = $value['sign_path'];
+            $result[$key]['fullname'] = $value['fullname'];
+        }
+
+
+        return json_encode($result);
     }
 }

@@ -220,6 +220,7 @@ foreach ($aValue as $key => $value) {
             $("#arpApgar_Group").slideUp()
             $("#arpAnak_Group").slideUp()
         }
+        $("#arpvs_status_id").val(value)
     }
 
     function generateSatelite() {
@@ -419,10 +420,12 @@ foreach ($aValue as $key => $value) {
         $("#arpemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
         $("#arpvs_status_id" + ex.vs_status_id).prop("checked", true)
         // let formattedValue = moment(ex.examination_date).format('DD/MM/YYYY HH:mm');
-        $("#arpcollapseVitalSign").find("input, select").trigger("change")
+        $("#arpcollapseVitalSign").find("input").each(function() {
+            $(this).trigger("change")
+        })
         $("#flatarpexamination_date").val(formatedDatetimeFlat(ex.examination_date)).trigger("change")
 
-        await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid")
+        await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid", 3)
 
         disableARP()
 
@@ -507,7 +510,7 @@ foreach ($aValue as $key => $value) {
             if (key == index) {
                 $("#assessmentKeperawatanHistoryBody").append($("<tr>")
                     .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
                     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                     .append($("<td>").append($("<b>").html(value.anamnase)))
                     .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
@@ -528,7 +531,7 @@ foreach ($aValue as $key => $value) {
             } else {
                 $("#assessmentKeperawatanHistoryBody").append($("<tr>")
                     .append($("<td>"))
-                    .append($("<td>").append($("<b>").html(value.examination_date)))
+                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
                     .append($("<td>").append($("<b>").html(value.name_of_clinic)))
                     .append($("<td>").append($("<b>").html(value.anamnase)))
                     .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
@@ -550,7 +553,6 @@ foreach ($aValue as $key => $value) {
         // let examfiltered27 = examForassessment.filter(item => (item.vs_status_id == 2 || item.vs_status_id == 7))
         // coba = examfiltered27
         $.each(examForassessment, function(key, value) {
-            console.log(key)
             if (value.account_id == 3 || value.account_id == 4) {
                 let pd = examForassessment[key]
                 addRowCPPT(value, key)
