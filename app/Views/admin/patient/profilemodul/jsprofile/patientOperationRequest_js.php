@@ -807,6 +807,11 @@
                     element_id: '#btn-print-checklist-keselamatan',
                     method: 'cetak_checklist_keselamatan'
                 })
+                cetakOperasi({
+                    vactination_id: $(this).data('id'),
+                    element_id: '#btn-print-post-operasi',
+                    method: 'cetak_post_operasi'
+                })
 
 
             });
@@ -820,7 +825,8 @@
                 var idEncoded = props.vactination_id;
 
                 // Construct the URL
-                var url = '<?= base_url() . '/admin/cetak/'; ?>' + props.method + '/' + visitEncoded + '/' + idEncoded;
+                var url = '<?= base_url() . '/admin/cetak/'; ?>' + props.method + '/' + visitEncoded + '/' +
+                    idEncoded;
 
                 // Redirect to the URL
                 window.open(url, '_blank'); // Open in a new tab
@@ -2337,7 +2343,7 @@
 
         const renderbodyInstrumenoprs004 = (props) => {
             let hasil = '';
-            InstrumenValue = props.items
+            InstrumenValue = props?.items
             InstrumenValue.forEach((item, index) => {
                 hasil += `<tr>
                     <td hidden><input type="number" name="brand_id[]" value="${item?.brand_id}"/></td>
@@ -3276,6 +3282,7 @@
         //---------dddddddddddddd
         const anestesi = (props) => {
             let data = props?.data
+
             getAvalueType({
                 p_type: 'OPRS007',
                 content_id: 'checklist-anestesi-1',
@@ -3329,12 +3336,12 @@
                                                 <th class="text-center" style="width: 20%">Jenis Kasus</th>
                                                 <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
                                             </thead>
-                                            <tbody id="bodyDiagPraOperation">
+                                            <tbody id="bodyDiagPraOperation-${pasienOperasiSelected?.vactination_id}">
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button" id="formdiag2" name="adddiagnosa" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                                 <div class="row mb-4">
@@ -3347,12 +3354,13 @@
                                                 <th class="text-center" style="width: 20%">Jenis Kasus</th>
                                                 <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis</th>
                                             </thead>
-                                            <tbody id="bodyDiagPascaOperation">
+                                            <tbody id="bodyDiagPascaOperation-${pasienOperasiSelected?.vactination_id}">
+                                            
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="box-tab-tools" style="text-align: center;">
-                                        <button type="button" id="formdiag" name="adddiagnosa" onclick="addRowDiagDokter('bodyDiagPraOperation', '${data?.document_id ?? pasienOperasiSelected?.vactination_id}')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                        <button type="button" id="formdiag" name="adddiagnosa" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -3395,6 +3403,13 @@
 
 
             }, 20);
+
+            $("#formdiag2").on("click", function(e) {
+                addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id);
+            });
+            $("#formdiag").on("click", function(e) {
+                addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id);
+            });
 
             btnSaveLaporanPembedahan(pasienOperasiSelected)
         }
@@ -3447,7 +3462,7 @@
             $("#formdiag-laporan").on("click", function(e) {
                 addRowDiagDokter('bodyDiagLaporanAnesthesi-', pasienOperasiSelected?.vactination_id);
             });
-
+            console.log(pasienOperasiSelected?.vactination_id);
             getAvalueType({
                 p_type: 'OPRS006',
                 content_id: 'informasiMedis-laporan-1',
@@ -4055,10 +4070,13 @@
 
 
         const getType = (props) => {
+
+
             return new Promise((resolve) => {
                 let htmlContent = '';
                 let initializeQuill = false;
                 let isAnastesi = props?.p_type == 'OPRS007'; //new
+
 
                 let aValue = <?= json_encode($aValue) ?>;
                 // let colClass = props?.code === 4 ? 'col-12' : 'col-6';
@@ -4073,12 +4091,12 @@
                         case 3:
                             let selectOptions = '';
                             if (props?.p_type == 'OPRS024') {
-                                selectOptions = matchedData.map(item =>
+                                selectOptions = matchedData?.map(item =>
                                     `<option value="${item[valueProp]}" data-type="${item?.p_type}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" data-parameter="${item?.parameter_id}" ${props?.get_data?.value_id === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
                                 ).join('');
                             } else {
-                                selectOptions = matchedData.map(item =>
-                                    `<option value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
                                 ).join('');
                             }
                             htmlContent = `
@@ -4123,7 +4141,7 @@
                             break;
                     }
                 } else {
-                    let matchedData = aValue.filter(item => item.parameter_id === props
+                    let matchedData = aValue?.filter(item => item?.parameter_id === props
                         ?.parameter_id &&
                         item.p_type === props?.p_type);
                     let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
@@ -4133,7 +4151,7 @@
                             htmlContent = `
                                     <div class="form-check mb-0 pt-4">
                                         <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
-                                        <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] === '1' ? 'checked' : ''}>
+                                        <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
                                         <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
                                     </div>
                                 `;
@@ -4188,7 +4206,7 @@
                                         table_name: 'ASSESSMENT_PARAMETER_VALUE',
                                         column_name: 'value_desc',
                                         column_id: 'value_id',
-                                        id: props.items.type_of_anesthesia,
+                                        id: props?.items.type_of_anesthesia,
                                         element_id: props?.p_type?.toLowerCase() + '_' + props
                                             ?.parameter_id
                                     })
@@ -4489,13 +4507,13 @@
 
             let aParameter = <?= json_encode($aParameter) ?>;
 
-            let filteredData = aParameter.filter(item => item.p_type === props?.p_type);
+            let filteredData = aParameter?.filter(item => item?.p_type === props?.p_type);
 
             valueCatatan({
                 data: filteredData,
                 content_id: props?.content_id,
                 get_data: props?.get_data,
-                items: props?.items,
+                items: props?.items ?? "",
                 data_tindakan: props?.data_tindakan //new
             });
         }; // new Update 29/07
@@ -4882,7 +4900,7 @@
                     id: props?.id,
                 }, 'admin/PatientOperationRequest/getDataColumnName',
                 (res) => {
-                    if (res) {
+                    if (res && Array.isArray(res) && res.length > 0) {
                         $('#' + props?.element_id).val(res[0][props?.column_name]);
                     }
                 })

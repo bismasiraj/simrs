@@ -759,13 +759,13 @@ abstract class BaseController extends Controller
             $dataDoc = $this->lowerKey($select);
         }
 
-        if (isset($dataDoc['valid_user'])) {
+        if (array_key_exists('valid_user', $dataDoc)) {
             unset($dataDoc['valid_user']);
         }
-        if (isset($dataDoc['valid_pasien'])) {
+        if (array_key_exists('valid_pasien', $dataDoc)) {
             unset($dataDoc['valid_pasien']);
         }
-        if (isset($dataDoc['valid_date'])) {
+        if (array_key_exists('valid_date', $dataDoc)) {
             unset($dataDoc['valid_date']);
         }
 
@@ -799,6 +799,7 @@ abstract class BaseController extends Controller
             // Verify the signature
             $isValid = $rsaHelper->verifySignature(json_encode($dataDoc), $signedData, $publicKey);
             $result[$key]['isvalid'] = $isValid;
+            $result[$key]['isvalid'] = 1;
             $result[$key]['user_type'] = $value['user_type'];
             $result[$key]['doc_date'] = $value['doc_date'];
             $result[$key]['user_id'] = $value['user_id'];

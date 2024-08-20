@@ -401,12 +401,12 @@ class Cetak extends \App\Controllers\BaseController
                 )->getResultArray());
 
                 $selectDiagnosa = $this->lowerKey($db->query(
-                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' "
+                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select[0]['body_id'] . "' "
                 )->getResultArray());
 
-                $informasiMedis = array_splice($select, 13, 16);
-                $keadaanUmum = array_splice($select, 14, 3);
-                $perencanaanAnestesi = array_splice($select, 15, 7);
+                $informasiMedis = array_splice($select[0], 13, 16);
+                $keadaanUmum = array_splice($select[0], 14, 3);
+                $perencanaanAnestesi = array_splice($select[0], 15, 7);
 
                 $newData = [];
                 $newData2 = [];
@@ -433,6 +433,48 @@ class Cetak extends \App\Controllers\BaseController
                 ]);
             } else {
                 return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_post_operasi($visit, $vactination_id = null)
+    {
+        $title = "Asesmen Post Operasi";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select ASSESSMENT_OPERATION_POST.*
+            from ASSESSMENT_OPERATION_POST 
+            where ASSESSMENT_OPERATION_POST.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
+            ")->getResultArray());
+
+
+            if (!empty($select)) {
+
+                $informasiMedis = array_slice($select[0], 8, 11);
+
+                $newData = [];
+
+                $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS009');
+            }
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+
+            if (isset($select[0])) {
+                return view("admin/patient/cetak/operasi/post-operasi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "informasiMedis" => $newData,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/post-operasi.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "organization" => $selectorganization
@@ -661,7 +703,6 @@ class Cetak extends \App\Controllers\BaseController
     {
         $arr_after = [];
         foreach ($arr_before as $key => $value) {
-
             if (preg_match('/^OP\d{6}$/', $value)) {
                 $result = $this->query_getDescValue($value, $p_type);
                 if ($result) {
@@ -671,11 +712,14 @@ class Cetak extends \App\Controllers\BaseController
                 }
             } else {
                 $result = $this->query_getDesc($key, $p_type);
-                $parameterDesc = $result['PARAMETER_DESC'] ?? '-';
-                $arr_after[$parameterDesc] = $value;
                 if ($result) {
                     $parameterDesc = $result['PARAMETER_DESC'] ?? '-';
                     $arr_after[$parameterDesc] = $value;
+                } else {
+                    $result2 = $this->query_getDesc2($key, $p_type);
+
+                    $parameterDesc = $result2['PARAMETER_DESC'] ?? '-';
+                    $arr_after[$parameterDesc] = $result2['VALUE_DESC'];
                 }
             }
         }
@@ -721,6 +765,24 @@ class Cetak extends \App\Controllers\BaseController
 
         $result = $query->getRowArray();
 
+        return $result;
+    }
+    public function query_getDesc2($column_name, $p_type)
+    {
+        $db = db_connect();
+
+        // $query = $db->query("
+        //     SELECT VALUE_DESC FROM ASSESSMENT_PARAMETER_VALUE WHERE P_TYPE = '" . $p_type . "' AND VALUE_INFO =  '" . $db->escapeString($column_name) . "'
+        // ");
+
+        $query = $db->query("
+            SELECT ASSESSMENT_PARAMETER.PARAMETER_DESC, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC  FROM ASSESSMENT_PARAMETER
+            INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_PARAMETER.PARAMETER_ID = ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID AND ASSESSMENT_PARAMETER.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE
+            WHERE ASSESSMENT_PARAMETER.P_TYPE = '" . $p_type . "' AND  ASSESSMENT_PARAMETER_VALUE.VALUE_INFO = '" . $db->escapeString($column_name) . "'    
+        
+        ");
+
+        $result = $query->getRowArray();
         return $result;
     }
     public function cetak_checklist_anestesi($visit, $vactination_id = null)

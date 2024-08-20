@@ -111,7 +111,6 @@
             dateFormat: "d/m/Y"
         });
         $(".dateflatpickr").on("change", function() {
-            console.log($(this).attr("id"))
             let theid = $(this).attr("id")
             let thevalue = $(this).val()
             let formattedDate = moment(thevalue, 'DD/MM/YYYY').format('YYYY-MM-DD');

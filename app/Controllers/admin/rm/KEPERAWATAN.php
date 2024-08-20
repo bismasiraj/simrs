@@ -652,7 +652,7 @@ class keperawatan extends \App\Controllers\BaseController
                     max(case when PH.value_id = 'G0090401'  then histories else '' end ) as riwayat_obat_dikonsumsi,
                     max(case when PH.value_id = 'G0090402'  then histories else '' end ) as riwayat_kehamilan,
                     max(case when PH.value_id = 'G0090403'  then histories else '' end ) as riwayat_imunisasi,
-                    MAX(CASE WHEN EDU.INFORMATION_RECEIVER = '1' THEN 'Penerima Pasien' + ' materi edukasi : '   + edu.education_material
+                    MAX(CASE WHEN EDU.INFORMATION_RECEIVER = '1' THEN 'Penerima Pasien' + ' materi `edukasi `: '   + edu.education_material
                     else 'Kerabat Pasien dengan nama : ' + edu.family_name + ' materi edukasi : ' + edu.education_material  end ) as edukasi_pasien,
                     ei.WEIGHT as berat,
                     ei.HEIGHT as tinggi,
@@ -967,7 +967,7 @@ class keperawatan extends \App\Controllers\BaseController
                 ei.instruction as  planning,
                 ei.examination_date as tanggal_dibuat,
                 ei.valid_date as tanggal_konfirm,
-                ea.fullname as konfirm_oleh
+                case when ei.valid_user is null or ei.valid_user = '' then '' else ea.fullname end as konfirm_oleh
 
             from examination_info ei
             left outer join employee_all ea on ei.employee_id = ea.employee_id
@@ -976,6 +976,7 @@ class keperawatan extends \App\Controllers\BaseController
             where
             visit_id  = '{$visit['visit_id']}'
             and NO_REGISTRATION = '{$visit['no_registration']}'
+            and ei.account_id in ('3','4')
             "
             )->getResultArray());
 
@@ -1912,37 +1913,30 @@ class keperawatan extends \App\Controllers\BaseController
         }
     }
 
-    public function implementasi($visit, $aValue, $vactination_id = null)
+    public function implementasi($visit, $aValue = null, $vactination_id = null)
     {
         $title = "Implementasi Asuhan Keperawatan";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
+
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select treat_date as tanggal, TREATMENT as tindakan, DESCRIPTION as respons, doctor as nama 
-                                                            FROM TREATMENT_PERAWAT where TARIF_TYPE = 98 and visit_id ='{$visit['visit_id']}'")->getResultArray());
+            $select = $this->lowerKey($db->query("select treat_date as tanggal, TREATMENT as tindakan, DESCRIPTION as respons, doctor as nama, 'treatment_perawat' as type
+            FROM TREATMENT_PERAWAT where TARIF_TYPE = 98  and visit_id ='{$visit['visit_id']}'
+            union all
+            select HANDOVER_DATE as tanggal, HANDOVER_BY as tindakan, received_by as respons, ah.BODY_ID as nama, 'handover' as type
+            from ASSESSMENT_HANDOVER ah inner join ASSESSMENT_HANDOVER_DETAIL ahd on ah.BODY_ID = ahd.BODY_ID
+            where HANDOVER_BY is not null and HANDOVER_BY != ''--  and visit_id ='{$visit['visit_id']}'
+            order by tanggal;")->getResultArray());
 
             $kopprintData = $this->kopprint();
 
-            if (isset($select)) {
-
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/26-implemntasi-asuhan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    'data' => $select,
-                    'kop' => $kopprintData[0]
-
-
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/26-implemntasi-asuhan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    'kop' => $kopprintData[0]
-
-
-                ]);
-            }
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/26-implemntasi-asuhan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'data' => $select,
+                'kop' => $kopprintData[0]
+            ]);
         }
     }
 

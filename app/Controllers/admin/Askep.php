@@ -39,7 +39,7 @@ class Askep extends \App\Controllers\BaseController
                                                             .DIAGNOSAN_ID INNER JOIN ASKEP_ETIOLOGY_TYPE ON ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE = ASKEP_ETIOLOGY_TYPE
                                                             .ETIOLOGY_TYPE INNER JOIN ASKEP_CATEGORY ON ASKEP_SDKI.ASKEP_CAT = ASKEP_CATEGORY.ASKEP_CAT LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_ETIOLOGY
                                                             .DIAGNOSAN_ETIOLOGY_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL.DOCUMENT_ID = '$formData->id'
-                                                            WHERE ASKEP_SDKI.DIAGNOSAN_ID = 'D.0001'
+                                                            WHERE ASKEP_SDKI.DIAGNOSAN_ID = '$formData->diag_id'
                                                             GROUP BY ASKEP_SDKI.DIAGNOSAN_ID
                                                             , ASKEP_SDKI.DIAGNOSAN_NAME
                                                             , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY_ID
@@ -61,7 +61,7 @@ class Askep extends \App\Controllers\BaseController
                                                             .SYMPTOM_TYPE INNER JOIN ASKEP_SDKI ON ASKEP_SDKI_symptom.DIAGNOSAN_ID = ASKEP_SDKI
                                                             .DIAGNOSAN_ID LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL
                                                             .DOCUMENT_ID = '$formData->id'
-                                                            WHERE ASKEP_SDKI_symptom.DIAGNOSAN_ID = 'D.0001'
+                                                            WHERE ASKEP_SDKI_symptom.DIAGNOSAN_ID = '$formData->diag_id'
                                                             GROUP BY ASKEP_SDKI_symptom.DIAGNOSAN_ID
                                                             , ASKEP_SDKI.DIAGNOSAN_NAME
                                                             , ASKEP_SYMPTOM_TYPE.SYMPTOM_TYPE
@@ -120,7 +120,7 @@ class Askep extends \App\Controllers\BaseController
                                                     ORDER BY RESULT_DATE DESC)
                                                 )
                                     WHERE 
-                                        ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = 'D.0001'
+                                        ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$formData->diag_id'
                                     GROUP BY 
                                         ASKEP_SDKI_LUARAN.DIAGNOSAN_ID,
                                         ASKEP_SDKI_LUARAN.LUARAN_NAME,
@@ -131,8 +131,19 @@ class Askep extends \App\Controllers\BaseController
                                         ASKEP_SLKI_KRITERIA.P_TYPE;")->getResultArray();
 
 
-        $criteriaIds = array_column($queryAskepSlki, 'diag_val_id');
-        $criteriaIds = array_map('intval', $criteriaIds);
+
+        if (empty($queryAskepSlki)) {
+            $queryAskepSlkiEmpty = $db->query("
+                        select KRITERIA_ID AS diag_val_id from ASKEP_SDKI_LUARAN 
+                        INNER JOIN ASKEP_SLKI_KRITERIA ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID
+                        WHERE ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$formData->diag_id' ORDER BY diag_val_id")->getResultArray();
+            $criteriaIds = array_column($queryAskepSlkiEmpty, 'diag_val_id');
+            $criteriaIds = array_map('intval', $criteriaIds);
+        } else {
+            $criteriaIds = array_column($queryAskepSlki, 'diag_val_id');
+            $criteriaIds = array_map('intval', $criteriaIds);
+        }
+
         $queryDropdown = $db->query("SELECT 
                                         ASKEP_SLKI_KRITERIA.KRITERIA_ID,
                                         ASKEP_SLKI_KRITERIA.P_TYPE,

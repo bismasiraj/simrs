@@ -2111,9 +2111,9 @@ class medis extends \App\Controllers\BaseController
 
             $selectinfo = $visit;
 
-            $sign = $this->checkSignDocs($select['pasien_diagnosa_id'], 2);
+            $sign = $this->checkSignDocs($vactination_id, 2);
 
-            // return json_encode($selectorganization);
+            // return json_encode($vactination_id);
             return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
                 "visit" => $visit,
                 'title' => $title,
@@ -2261,8 +2261,8 @@ class medis extends \App\Controllers\BaseController
             left outer join ASSESSMENT_GCS gcs on pd.BODY_ID = gcs.DOCUMENT_ID,
             pasien p 
             where 
-            pd.PASIEN_DIAGNOSA_ID = '202405031057300447D03'
-            and PD.VISIT_ID = '202404241151300470C77' -- 
+            pd.PASIEN_DIAGNOSA_ID = '$vactination_id'
+            and PD.VISIT_ID = '" . $visit['visit_id'] . "' -- 
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -2308,7 +2308,7 @@ class medis extends \App\Controllers\BaseController
             PD.TERAPHY_DESC, 
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
-            PD.DOCTOR")->getResultArray());
+            PD.DOCTOR")->getRow(0, "array"));
 
             $selectlokalis2 = $this->lowerKey($db->query(
                 "
@@ -2332,24 +2332,20 @@ class medis extends \App\Controllers\BaseController
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
             $selectinfo = $visit;
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/16-resume-medis.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select[0],
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo,
-                    "lokalis2" => $selectlokalis2,
-                    "recipe" => $selectrecipe
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/MEDIS/16-resume-medis.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo,
-                ]);
-            }
+
+            $sign = $this->checkSignDocs($vactination_id, 2);
+
+            // return json_encode($sign);
+            return view("admin/patient/profilemodul/formrm/rm/MEDIS/16-resume-medis.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "organization" => $selectorganization,
+                "info" => $selectinfo,
+                "lokalis2" => $selectlokalis2,
+                "recipe" => $selectrecipe,
+                "sign" => $sign
+            ]);
         }
     }
     public function surat_diagnosis($visit, $vactination_id = null)

@@ -334,26 +334,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
+
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= @$val['dpjp']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+    let val = <?= json_encode($val); ?>;
+    let sign = <?= json_encode($sign); ?>;
+
+    sign = JSON.parse(sign)
+    $.each(sign, function(key, value) {
+        if (value.user_type == 1 && value.isvalid == 1) {
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
+        } else if (value.user_type == 2 && value.isvalid == 1) {
+            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
+                text: value.sign_path,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H // High error correction
+            });
+            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
+        }
+    })
 </script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: '<?= @$val['nama']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
+
 <style>
     @media print {
         @page {

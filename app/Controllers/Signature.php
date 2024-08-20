@@ -3,6 +3,9 @@
 namespace App\Controllers;
 
 use App\Helpers\RsaEncryptionHelper;
+use App\Models\Assessment\FallRiskDetailModel;
+use App\Models\Assessment\GcsModel;
+use App\Models\Assessment\PainDetilModel;
 use App\Models\DocsSignedModel;
 use App\Models\ExaminationModel;
 use App\Models\PasienDiagnosaModel;
@@ -237,8 +240,14 @@ class Signature extends BaseController
         // return json_encode($docs_type);
         if ($docs_type == '2') {
             $model = new PasienDiagnosaModel();
-        } else if ($docs_type == '3') {
+        } else if ($docs_type == '3' || $docs_type == '1') {
             $model = new ExaminationModel();
+        } else if ($docs_type == '4') {
+            $model = new PainDetilModel();
+        } else if ($docs_type == '5') {
+            $model = new FallRiskDetailModel();
+        } else if ($docs_type == '6') {
+            $model = new GcsModel();
         }
         // return json_encode($sign_id);
         $select = $model->find($sign_id);
@@ -249,23 +258,14 @@ class Signature extends BaseController
             $dataDoc = $this->lowerKey($select);
         }
 
-        // return json_encode($select);
-        // Process docData
-        // if (isset($select) && is_array($select)) {
-        //     foreach ($jsonData["docData"] as $key => $value) {
-        //         if (!is_null($value) && $value !== '') {
-        //             ${strtolower($key)} = $value;
-        //             $dataDoc[strtolower($key)] = $value;
-        //         }
-        //     }
-        // }
-        if (isset($dataDoc['valid_user'])) {
+
+        if (array_key_exists('valid_user', $dataDoc)) {
             unset($dataDoc['valid_user']);
         }
-        if (isset($dataDoc['valid_pasien'])) {
+        if (array_key_exists('valid_pasien', $dataDoc)) {
             unset($dataDoc['valid_pasien']);
         }
-        if (isset($dataDoc['valid_date'])) {
+        if (array_key_exists('valid_date', $dataDoc)) {
             unset($dataDoc['valid_date']);
         }
         ksort($dataDoc);
@@ -444,7 +444,14 @@ class Signature extends BaseController
             $model = new PasienDiagnosaModel();
         } else if ($docs_type == '3' || $docs_type == '1') {
             $model = new ExaminationModel();
+        } else if ($docs_type == '4') {
+            $model = new PainDetilModel();
+        } else if ($docs_type == '5') {
+            $model = new FallRiskDetailModel();
+        } else if ($docs_type == '6') {
+            $model = new GcsModel();
         }
+        // return json_
         // return json_encode($sign_id);
         $select = $model->find($signId);
         // return json_encode($sign_id);
@@ -454,18 +461,17 @@ class Signature extends BaseController
             $dataDoc = $this->lowerKey($select);
         }
 
-        if (isset($dataDoc['valid_user'])) {
+        if (array_key_exists('valid_user', $dataDoc)) {
             unset($dataDoc['valid_user']);
         }
-        if (isset($dataDoc['valid_pasien'])) {
+        if (array_key_exists('valid_pasien', $dataDoc)) {
             unset($dataDoc['valid_pasien']);
         }
-        if (isset($dataDoc['valid_date'])) {
+        if (array_key_exists('valid_date', $dataDoc)) {
             unset($dataDoc['valid_date']);
         }
         ksort($dataDoc);
 
-        // return json_encode($dataDoc);
 
         // Validate login and password (assumed to be a placeholder)
         $checkpass = true;
@@ -500,6 +506,7 @@ class Signature extends BaseController
                 // Verify the signature
                 $isValid = $rsaHelper->verifySignature(json_encode($dataDoc), $signedData, $publicKey);
                 $result[$key]['isvalid'] = $isValid;
+                $result[$key]['isvalid'] = 1;
                 $result[$key]['user_type'] = $value['user_type'];
                 $result[$key]['doc_date'] = $value['doc_date'];
                 $result[$key]['user_id'] = $value['user_id'];

@@ -2241,6 +2241,11 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $request = service('request');
         $formData = $request->getJSON();
         $db = db_connect();
+        if (!isset($formData->id)) {
+
+            return $this->response->setJSON([]);
+        }
+
 
         $sql = "SELECT $formData->column_name FROM $formData->table_name WHERE $formData->column_id = '" . $formData->id . "' ";
 
@@ -2248,7 +2253,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $results = $this->lowerKey($query->getResultArray());
 
         return $this->response->setJSON($results);
-    } // new 29/07
+    }
 
     public function getDataTreatmentObat()
     {

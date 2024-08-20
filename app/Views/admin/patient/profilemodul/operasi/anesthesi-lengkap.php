@@ -40,27 +40,27 @@
                                             <tr>
                                                 <td width="150px"><b>Pasien</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['name_of_pasien'] ?></span></td>
+                                                <td><span id=""><?= @$visit['name_of_pasien'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>ID (KTP)</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['account_id'] ?></span></td>
+                                                <td><span id=""><?= @$visit['account_id'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Gender</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['gendername'] ?></span></td>
+                                                <td><span id=""><?= @$visit['gendername'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Date of Birth</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['date_of_birth'] ?? '' ?></span></td>
+                                                <td><span id=""><?= @$visit['date_of_birth'] ?? '' ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Patient Age</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['age'] ?></span></td>
+                                                <td><span id=""><?= @$visit['age'] ?></span></td>
                                             </tr>
                                         </tbody>
 
@@ -73,27 +73,27 @@
                                             <tr>
                                                 <td width="150px"><b>Department</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['name_of_clinic_from'] ?></span></td>
+                                                <td><span id=""><?= @$visit['name_of_clinic_from'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Dokter DPJP</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['fullname'] ?></span></td>
+                                                <td><span id=""><?= @$visit['fullname'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Ward/Room</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['name_of_clinic'] ?></span></td>
+                                                <td><span id=""><?= @$visit['name_of_clinic'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Bed No</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['bed'] ?></span></td>
+                                                <td><span id=""><?= @$visit['bed'] ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>Room Class</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span><?= @$visit['class_id'] ?></span></td>
+                                                <td><span id=""><?= @$visit['class_id'] ?></span></td>
                                             </tr>
                                         </tbody>
 
@@ -106,7 +106,7 @@
                             </div>
                             <div class="row mb-4">
                                 <hr>
-                                <h3>
+                                <h3 id="">
                                     <b>Vital Sign</b>
                                 </h3>
                                 <div class="col-xs-6 col-sm-6 col-md-12">
@@ -249,7 +249,7 @@
                     <div class="accordion-body" id="informasiMedis-laporan-monitoring-durante">
                         <div class="row mb-4">
                             <hr>
-                            <h3>
+                            <h3 id="">
                                 <b>Vital Sign</b>
                             </h3>
                             <div class="col-xs-6 col-sm-6 col-md-12">
@@ -578,7 +578,9 @@
 
         </div>
         <div class="col-12 my-3 d-flex justify-content-end gap-2">
-            <a href="" target="_blank" class="btn btn-success"><i class="fas fa-print"></i> Cetak</a>
+            <!-- <button type="button" id="btn-print-checklist-anestesi" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak
+            </button> -->
             <button type="button" id="btn-save-laporan-anesthesiLengkap" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
         </div>
     </form>

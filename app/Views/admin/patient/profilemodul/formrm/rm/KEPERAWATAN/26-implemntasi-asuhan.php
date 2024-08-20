@@ -228,14 +228,34 @@
         <?php $dataJson = json_encode($data); ?>
         let dataResult = []
         let data = <?php echo $dataJson; ?>;
-        // console.log(data.lenght);
+        console.log(data);
         // if(data.leng)
         data.map((e) => {
-            if (e.respons === "mashookkkk") {
+
+        });
+
+        $.each(data, function(key, e) {
+            if (e.type === "handover") {
                 dataResult += `<tr>
                                         <td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
-                                        <td colspan="2">${tabelsHandover}</td>
-                                        <td></td>
+                                        <td colspan="3">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div>Pemberi</div>
+                                                    <div class="mb-1">
+                                                        <div id="qrcode${e.nama+key}"></div>
+                                                    </div>
+                                                    <p class="p-0 m-0 py-1" id="qrcode_name${e.nama+key}">${e.tindakan}</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div>Penerima</div>
+                                                    <div class="mb-1">
+                                                        <div id="qrcode1${e.nama+key}"></div>
+                                                    </div>
+                                                    <p class="p-0 m-0 py-1" id="qrcode_name1${e.nama+key}">${e.respons}</p>
+                                                </div>
+                                            </div>
+                </td>
                                     </tr>`;
             } else {
                 dataResult += `<tr><td>${moment(e?.tanggal, "YYYY-MM-DD HH:mm:ss.SSS").format("DD-MM-YYYY HH:mm")}</td>
@@ -244,28 +264,32 @@
                                 <td>${e?.nama}</td>
                             </tr>`;
             }
-
-        });
+        })
 
         $("#daftar-implemntasi-tabels").html(dataResult)
 
-        let qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: 'a',
-            width: 85,
-            height: 85,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
-        let qrcode1 = new QRCode(document.getElementById("qrcode2"), {
-            text: 'a',
-            width: 85,
-            height: 85,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
-
+        $.each(data, function(key, e) {
+            if (e.type == 'handover') {
+                var qrcode = new QRCode(document.getElementById("qrcode" + e.nama + key), {
+                    text: e?.tindakan + e?.tanggal,
+                    width: 120,
+                    height: 120,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+                $("#qrcode_name" + e.nama + key).html(`(${e?.tindakan})`)
+                var qrcode = new QRCode(document.getElementById("qrcode1" + e.nama + key), {
+                    text: e?.respons + e?.tanggal,
+                    width: 120,
+                    height: 120,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H // High error correction
+                });
+                $("#qrcode_name1" + e.nama + key).html(`(${e?.respons})`)
+            }
+        })
     }
 </script>
 

@@ -1,4 +1,6 @@
 <script>
+    // let aparameter = <?= json_encode($aParameter); ?>;
+    // let avalue = <?= json_encode($aValue); ?>;
     $(document).ready(function() {
         // appendDiagnosa(accordionId, bodyId, pasienDiagnosa)
         appendLokalisOperation("accordionPraOperasiSurgeryBody")
@@ -6,29 +8,25 @@
 </script>
 <script>
     let coba = [];
-    const appendLokalisOperation = (accordionId) => {
 
+    const appendLokalisOperation = (accordionId) => {
         var accordionContent = ``
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'OPRS002') {
                 $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
-                        value1.value_score == '3') {
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
                         accordionContent += `<div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="mb-4">
                                         <h5 class="font-size-14 mb-4 badge bg-primary">` + value1.value_desc + `:</h5>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <canvas id="canvas` + value1.p_type + value1.parameter_id + value1
-                            .value_id + `" width="450" height="450" style="border: 1px solid #000;"></canvas>
-                                                <input type="hidden" name="lokalis` + value1.value_id +
-                            `" id="lokalis` + value1.value_id + `">
+                                                <canvas id="canvas` + value1.p_type + value1.parameter_id + value1.value_id + `" width="450" height="450" style="border: 1px solid #000;"></canvas>
+                                                <input type="hidden" name="lokalis` + value1.value_id + `" id="lokalis` + value1.value_id + `">
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="lokalis` + value1.value_id + `desc">Deskripsi</label>
-                                                    <textarea name="lokalis` + value1.value_id + `desc" id="lokalis` +
-                            value1.value_id + `desc" class="form-control" cols="30" rows="10"></textarea>
+                                                    <textarea name="lokalis` + value1.value_id + `desc" id="lokalis` + value1.value_id + `desc" class="form-control" cols="30" rows="10"></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -43,7 +41,6 @@
             }
         })
         $("#" + accordionId).html(accordionContent);
-
         generateLokalisOperation()
     }
 </script>
@@ -53,10 +50,8 @@
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'OPRS002') {
                 $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
-                        value1.value_score == '3') {
-                        var canvas = document.getElementById('canvas' + value1.p_type + value1
-                            .parameter_id + value1.value_id);
+                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+                        var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
                         const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
                         var ctx = canvas.getContext('2d');
                         var drawing = false;
@@ -94,12 +89,10 @@
                             const x = e.offsetX;
                             const y = e.offsetY;
 
-                            ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY -
-                                canvas.getBoundingClientRect().top);
+                            ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
                             ctx.stroke();
                             ctx.beginPath();
-                            ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY -
-                                canvas.getBoundingClientRect().top);
+                            ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
                             line.push({
                                 x,
                                 y
@@ -117,8 +110,7 @@
                             img.onload = function() {
                                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                             };
-                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1
-                                .value_info;
+                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
                         })
                         $("#undo" + value1.value_id).on("click", function() {
                             if (drawingHistory.length > 0) {
@@ -155,8 +147,7 @@
                             PATHINFO_EXTENSION
                         );
         ?>
-                    var canvasId = document.getElementById(
-                        'canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
+                    var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
                     const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
 
                     $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
@@ -171,7 +162,6 @@
     const initiatePraOperasi = (props, res) => {
         enablePraOperasi()
         let opsSelected = props
-        // console.log(opsSelected)
 
         let bodyId = opsSelected?.vactination_id
 
@@ -212,8 +202,7 @@
 
             $.each(diagnosa, function(key, value) {
                 if (value.pasien_diagnosa_id == bodyId) {
-                    addRowDiagDokter('bodyDiagPraOperation', '', value.diagnosa_id, value.diagnosa_name, value
-                        .diag_cat, value.diag_suffer)
+                    addRowDiagDokter('bodyDiagPraOperation', '', value.diagnosa_id, value.diagnosa_name, value.diag_cat, value.diag_suffer)
                 }
             })
             $.each(blood, function(key, value) {
@@ -245,8 +234,7 @@
                     $("#lokalis" + value.value_id).val(value.value_detail)
                     $("#lokalis" + value.value_id + "desc").val(value.value_desc)
                     let valid = String(value.value_id)
-                    let canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + valid
-                        .toUpperCase());
+                    let canvas = document.getElementById('canvas' + value.p_type + value.parameter_id + valid.toUpperCase());
                     const canvasDataInput = document.getElementById('lokalis' + value.value_id);
                     let context = canvas.getContext('2d');
                     const img = new Image();
@@ -345,8 +333,7 @@
         }) ?>
         let tbody = document.getElementById(container);
         let bloodIndex = tbody.getElementsByTagName("tr").length;
-        if (bodyId == null)
-            bodyId = get_bodyid()
+        let bodyId = get_bodyid()
 
         $("#" + container)
             .append(

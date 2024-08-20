@@ -156,6 +156,7 @@
                                         $(this).val(value.sign_path)
                                     })
                                     console.log("qrcode: " + "#" + formId + "qrcode" + value.user_type)
+                                    $("#" + formId + "qrcode" + value.user_type).html("")
                                     let qrcode = new QRCode(document.getElementById(formId + "qrcode" + value.user_type), {
                                         text: value.sign_path,
                                         width: 128,

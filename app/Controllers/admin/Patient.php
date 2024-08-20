@@ -2173,9 +2173,9 @@ This Function is used to Add Patient
 
         $db = db_connect();
         $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type not in ('GEN0017') order by P_DESCRIPTION")->getResultArray());
-        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type not in ('GEN0017')")->getResultArray());
-        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type not in ('GEN0017')")->getResultArray());
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
@@ -2435,9 +2435,9 @@ This Function is used to Add Patient
         // $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'GEN%'")->getResultArray());
         $db = db_connect();
         $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type not in ('GEN0017') order by P_DESCRIPTION")->getResultArray());
-        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type not in ('GEN0017')")->getResultArray());
-        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type not in ('GEN0017')")->getResultArray());
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
@@ -2695,9 +2695,9 @@ This Function is used to Add Patient
         // $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'GEN%'")->getResultArray());
         $db = db_connect();
         $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type not in ('GEN0017') order by P_DESCRIPTION")->getResultArray());
-        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type not in ('GEN0017')")->getResultArray());
-        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type not in ('GEN0017')")->getResultArray());
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
         usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);

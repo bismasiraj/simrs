@@ -1,5 +1,7 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+<!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script> -->
+
 <script type="text/javascript">
     (function() {
         $(document).ready(function() {
@@ -8,7 +10,7 @@
             fetchEntryTypes().then(() => {
 
             }).catch((error) => {
-                console.error('Gagal mengambil data jenis entri:', error);
+                // console.error('Gagal mengambil data jenis entri:', error);
             });
 
             $("#btn-create").off().on("click", (e) => {
@@ -43,6 +45,7 @@
 
             let res = <?= json_encode($aParameter); ?>;
             let fill = res?.filter(item => item?.p_type === "GEN0017");
+
             let data = [];
             fill.map((e) => {
                 data += `<option value=${e?.parameter_id}>${e?.parameter_desc}</option>`;
@@ -84,12 +87,19 @@
 
         const getType = (props) => {
             return new Promise((resolve) => {
-                let entry = entryTypes.find(item => item.entry_id === parseInt(props.code));
                 let htmlContent = '';
+
+                let getCurrentDateTime = () => {
+                    const now = new Date();
+                    const offset = now.getTimezoneOffset();
+                    const localDate = new Date(now.getTime() - (offset * 60 * 1000));
+                    return localDate.toISOString().slice(0, 16);
+                };
 
                 if (props) {
                     if (parseInt(props.code) === 1) {
-                        htmlContent = `<input type="text" class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
+                        htmlContent =
+                            `<input type="text" class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 2) {
                         htmlContent = `<input type="checkbox" class="form-check-input" id="value_info-${props.valueId}" name="value_info-${props.valueId}" value="1">
@@ -101,18 +111,22 @@
                             score: "3",
                             vId: props?.valueId
                         }, 'admin/InformedConsent/getTablesAll', (res) => {
-                            let dataResult = `<select class="form-control" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
+                            let dataResult =
+                                `<select class="form-control" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
                             res.forEach(item => {
-                                dataResult += `<option value="${item.id}">${item.val}</option>`;
+                                dataResult +=
+                                    `<option value="${item.id}">${item.val}</option>`;
                             });
                             dataResult += `</select>`;
                             resolve(dataResult);
                         });
                     } else if (parseInt(props.code) === 4) {
-                        htmlContent = `<textarea class="form-control form-thems tinymce-init" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50" >${props.tb}   </textarea>`;
+                        htmlContent =
+                            `<textarea class="form-control form-thems tinymce-init" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50" >${props.tb}   </textarea>`;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 5) {
-                        htmlContent = `<input class="form-control datetime-input" type="datetime-local" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
+                        htmlContent =
+                            `<input class="form-control datetime-input" type="datetime-local" id="value_info-${props.valueId}" name="value_info-${props.valueId}" value="${getCurrentDateTime()}">`;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 6) {
                         htmlContent = `<div class="form-check">
@@ -156,21 +170,27 @@
                         resolve(htmlContent);
                     }
                 } else {
-                    htmlContent = `<textarea class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50"></textarea>`;
+                    htmlContent =
+                        `<textarea class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50"></textarea>`;
                     resolve(htmlContent);
                 }
             });
         };
 
+
         const actionViewParam = (props) => {
             let res = <?= json_encode($aValue); ?>;
-            let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id.replaceAll(' ', '') === props?.id_param);
-            filteredData.sort((a, b) => a.parameter_id.localeCompare(b.parameter_id));
+            let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id.replaceAll(' ',
+                    '') ===
+                props?.id_param);
 
+            filteredData.sort((a, b) => a.parameter_id.localeCompare(b.parameter_id));
+            console.log(filteredData);
             let dataHtml = '';
             let promises = [];
             filteredData.forEach((e) => {
-                if (!(e.value_score === 9 || e.value_score === 8 || !e.value_score || e.value_desc === "")) {
+                if (!(e.value_score === 9 || e.value_score === 8 || !e.value_score || e.value_desc ===
+                        "")) {
                     promises.push(getType({
                         code: e.value_score,
                         valueId: e.value_id,
@@ -195,19 +215,19 @@
 
             if (props?.action === "detail") {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentslideUp() + dataHtml);
+                    $("#content-param").html(contentHide() + dataHtml);
 
                     return Promise.resolve();
                 });
             } else if (props?.action === "edit") {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentslideUp() + dataHtml);
+                    $("#content-param").html(contentHide() + dataHtml);
 
                     return Promise.resolve();
                 });
             } else {
                 return Promise.all(promises).then((htmlContents) => {
-                    $("#content-param").html(contentslideUp() + dataHtml);
+                    $("#content-param").html(contentHide() + dataHtml);
 
                     tinymce.remove('textarea.tinymce-init');
 
@@ -261,7 +281,6 @@
             return code + randomDigits;
         };
 
-        // get data
         const getDataTable = (props) => {
             $("#informConcentTab").off().on("click", function(e) {
                 e.preventDefault();
@@ -340,12 +359,18 @@
                 $("#parameter_id").val(result.parameter_id);
 
                 let res = <?= json_encode($aValue); ?>;
-                let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id.replaceAll(' ', '').replaceAll(' ', '') === result?.parameter_id);
+                let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id
+                    .replaceAll(
+                        ' ', '').replaceAll(' ', '') === result?.parameter_id);
 
                 let promises = [];
                 filteredData.forEach(item => {
-                    if (!(item.value_score === 9 || item.value_score === 8 || !item.value_score || item.value_desc === "")) {
-                        let getResultArray = resultData.data.filter(dataItem => dataItem.p_type === "GEN0017" && dataItem.parameter_id === item.parameter_id && dataItem.value_id === item.value_id);
+                    if (!(item.value_score === 9 || item.value_score === 8 || !item.value_score ||
+                            item
+                            .value_desc === "")) {
+                        let getResultArray = resultData.data.filter(dataItem => dataItem.p_type ===
+                            "GEN0017" && dataItem.parameter_id === item.parameter_id && dataItem
+                            .value_id === item.value_id);
 
                         if (getResultArray.length > 0) {
                             if (item.value_score === 7) {
@@ -354,14 +379,16 @@
                                     valueId: item.value_id,
                                     tb: item.value_info
                                 }).then((htmlContent) => {
-                                    let container = $(`#type-container-${item.value_id}`);
+                                    let container = $(
+                                        `#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         let content = getResultArray[0].value_info;
                                         let selectVal = content;
 
-                                        $(`input[name="value_info-${item.value_id}"][value="${selectVal}"]`).prop('checked', true);
+                                        $(`input[name="value_info-${item.value_id}"][value="${selectVal}"]`)
+                                            .prop('checked', true);
                                     }
                                 }));
                             } else {
@@ -370,26 +397,18 @@
                                     valueId: item.value_id,
                                     tb: item.value_info
                                 }).then((htmlContent) => {
-                                    let container = $(`#type-container-${item.value_id}`);
+                                    let container = $(
+                                        `#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         if (item.value_score == 4) {
-                                            $(`#value_info-${item.value_id}`).addClass('tinymce');
+                                            $(`#value_info-${item.value_id}`).addClass(
+                                                'tinymce');
                                         }
 
                                         let content = getResultArray[0].value_info;
-                                        //cek jika data tidak kosong maka checked
-                                        if (getResultArray[0].value_score === 2) {
-                                            if (getResultArray[0].value_info === '1') {
-                                                $(`#value_info-${item.value_id}`).prop('checked', true);
-                                            } else {
-                                                $(`#value_info-${item.value_id}`).prop('checked', false);
-                                            }
-                                            $(`#value_info-${item.value_id}`).val('1');
-                                        } else {
-                                            $(`#value_info-${item.value_id}`).val(content);
-                                        }
+                                        $(`#value_info-${item.value_id}`).val(content);
                                     }
                                 }));
                             }
@@ -498,12 +517,18 @@
                 $("#parameter_id").val(result.parameter_id);
 
                 let res = <?= json_encode($aValue); ?>;
-                let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id.replaceAll(' ', '').replaceAll(' ', '') === result?.parameter_id);
+                let filteredData = res.filter(item => item?.p_type === "GEN0017" && item?.parameter_id
+                    .replaceAll(
+                        ' ', '').replaceAll(' ', '') === result?.parameter_id);
 
                 let promises = [];
                 filteredData.forEach(item => {
-                    if (!(item.value_score === 9 || item.value_score === 8 || !item.value_score || item.value_desc === "")) {
-                        let getResultArray = resultData.data.filter(dataItem => dataItem.p_type === "GEN0017" && dataItem.parameter_id === item.parameter_id && dataItem.value_id === item.value_id);
+                    if (!(item.value_score === 9 || item.value_score === 8 || !item.value_score ||
+                            item
+                            .value_desc === "")) {
+                        let getResultArray = resultData.data.filter(dataItem => dataItem.p_type ===
+                            "GEN0017" && dataItem.parameter_id === item.parameter_id && dataItem
+                            .value_id === item.value_id);
 
                         if (getResultArray.length > 0) {
                             if (item.value_score === 7) {
@@ -512,14 +537,16 @@
                                     valueId: item.value_id,
                                     tb: item.value_info
                                 }).then((htmlContent) => {
-                                    let container = $(`#type-container-${item.value_id}`);
+                                    let container = $(
+                                        `#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         let content = getResultArray[0].value_info;
                                         let selectVal = content;
 
-                                        $(`input[name="value_info-${item.value_id}"][value="${selectVal}"]`).prop('checked', true);
+                                        $(`input[name="value_info-${item.value_id}"][value="${selectVal}"]`)
+                                            .prop('checked', true);
                                     }
                                 }));
                             } else {
@@ -528,26 +555,18 @@
                                     valueId: item.value_id,
                                     tb: item.value_info
                                 }).then((htmlContent) => {
-                                    let container = $(`#type-container-${item.value_id}`);
+                                    let container = $(
+                                        `#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         if (item.value_score == 4) {
-                                            $(`#value_info-${item.value_id}`).addClass('tinymce');
+                                            $(`#value_info-${item.value_id}`).addClass(
+                                                'tinymce');
                                         }
 
                                         let content = getResultArray[0].value_info;
-                                        //cek jika data tidak kosong maka checked
-                                        if (getResultArray[0].value_score === 2) {
-                                            if (getResultArray[0].value_info === '1') {
-                                                $(`#value_info-${item.value_id}`).prop('checked', true);
-                                            } else {
-                                                $(`#value_info-${item.value_id}`).prop('checked', false);
-                                            }
-                                            $(`#value_info-${item.value_id}`).val('1');
-                                        } else {
-                                            $(`#value_info-${item.value_id}`).val(content);
-                                        }
+                                        $(`#value_info-${item.value_id}`).val(content);
                                     }
                                 }));
                             }
@@ -581,6 +600,7 @@
         const renderTables = (data) => {
             let res = <?= json_encode($aParameter); ?>;
             let fill = res?.filter(item => item?.p_type === "GEN0017");
+
             let groupedData = {};
             let dataResult = [];
 
@@ -605,10 +625,10 @@
                 <td>${index + 1}</td>
                 <td>${parameterDesc}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}">Lihat</button>
-                    <button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}">Ubah</button>
-                    <button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}">Hapus</button>
-                    <button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}">Print</button>
+                    <button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><ion-icon name="eye-outline"></ion-icon> Lihat</button>
+                    <button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><ion-icon name="create-outline"></ion-icon>Ubah</button>
+                    <button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><ion-icon name="trash-outline"></ion-icon> Hapus</button>
+                    <button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><ion-icon name="print-outline"></ion-icon> Print </button>
                 </td>
             </tr>
         `;
@@ -750,5 +770,5 @@
                 });
             });
         };
-    })();
+    })()
 </script>

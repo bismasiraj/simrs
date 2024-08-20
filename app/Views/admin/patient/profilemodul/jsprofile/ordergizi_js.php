@@ -143,6 +143,7 @@
                     <input type="hidden" id="ordergiziorder_date` + counter + `" name="order_date" value"` + get_date() + `">
                     <input type="hidden" id="ordergizithename` + counter + `" name="thename" value="<?= $visit['diantar_oleh']; ?>">
                     <input type="hidden" id="ordergizitheaddress` + counter + `" name="theaddress" value="<?= $visit['visitor_address']; ?>">
+                    <input type="hidden" id="ordergiziclinic_id` + counter + `" name="clinic_id" value="<?= $visit['clinic_id']; ?>">
                     <div class="table-responsive mb-4">
                         <table class="table table-sm table-hover">
                             <thead>
@@ -165,38 +166,38 @@
                                     <!-- <td><?= $visit['diantar_oleh']; ?></td> -->
                                     <td>Bentuk</td>
                                     <td>
-                                        <input type="text" id="ordergizidtype_pagi` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')">
-                                        <input type="hidden" id="ordergizidtype_pagi` + counter + `" name="dtype_pagi" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')">
+                                        <input type="text" id="ordergizidtype_pagi` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')" autocomplete="off">
+                                        <input type="hidden" id="ordergizidtype_pagi` + counter + `" name="dtype_pagi" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')" autocomplete="off">
                                     </td>
                                     <td>
-                                        <input type="text" id="ordergizidtype_siang` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')">
-                                        <input type="hidden" id="ordergizidtype_siang` + counter + `" name="dtype_siang" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')">
+                                        <input type="text" id="ordergizidtype_siang` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')" autocomplete="off">
+                                        <input type="hidden" id="ordergizidtype_siang` + counter + `" name="dtype_siang" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')" autocomplete="off">
                                     </td>
                                     <td>
-                                        <input type="text" id="ordergizidtype_malam` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')">
-                                        <input type="hidden" id="ordergizidtype_malam` + counter + `" name="dtype_malam" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')">
+                                        <input type="text" id="ordergizidtype_malam` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')" autocomplete="off">
+                                        <input type="hidden" id="ordergizidtype_malam` + counter + `" name="dtype_malam" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')" autocomplete="off">
                                     </td>
                                 </tr>
                                 <tr>
                                     <!-- <td><?= $visit['no_registration']; ?></td> -->
                                     <td>Jenis</td>
-                                    <td><input type="text" name="pantangan_pagi" id="ordergizipantangan_pagi` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_pagi` + counter + `')"></td>
-                                    <td><input type="text" name="pantangan_siang" id="ordergizipantangan_siang` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_siang` + counter + `')"></td>
-                                    <td><input type="text" name="pantangan_malam" id="ordergizipantangan_malam` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_malam` + counter + `')"></td>
+                                    <td><input type="text" name="pantangan_pagi" id="ordergizipantangan_pagi` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_pagi` + counter + `')" autocomplete="off"></td>
+                                    <td><input type="text" name="pantangan_siang" id="ordergizipantangan_siang` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_siang` + counter + `')" autocomplete="off"></td>
+                                    <td><input type="text" name="pantangan_malam" id="ordergizipantangan_malam` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_malam` + counter + `')" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <!-- <td><?= $visit['ageyear']; ?> th <?= $visit['agemonth']; ?> bln <?= $visit['ageday'] ?> hr</td> -->
                                     <td>Mineral</td>
-                                    <td><input type="text" name="dtype_iddesc" id="ordergizidtype_iddesc` + counter + `" class="form-control"></td>
-                                    <td><input type="text" name="dtype_siangdesc" id="ordergizidtype_siangdesc` + counter + `" class="form-control"></td>
-                                    <td><input type="text" name="dtype_malamdesc" id="ordergizidtype_malamdesc` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="dtype_iddesc" id="ordergizidtype_iddesc` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="dtype_siangdesc" id="ordergizidtype_siangdesc` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="dtype_malamdesc" id="ordergizidtype_malamdesc` + counter + `" class="form-control" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <!-- <td></td> -->
                                     <td>Menu penunggu</td>
-                                    <td><input type="text" name="penunggu_pagi" id="ordergizipenunggu_pagi` + counter + `" class="form-control"></td>
-                                    <td><input type="text" name="penunggu_siang" id="ordergizipenunggu_siang` + counter + `" class="form-control"></td>
-                                    <td><input type="text" name="penunggu_malam" id="ordergizipenunggu_malam` + counter + `" class="form-control"></td>
+                                    <td><input type="text" name="penunggu_pagi" id="ordergizipenunggu_pagi` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="penunggu_siang" id="ordergizipenunggu_siang` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="penunggu_malam" id="ordergizipenunggu_malam` + counter + `" class="form-control" autocomplete="off"></td>
                                 </tr>
                             </tbody>
                         </table>

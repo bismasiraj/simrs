@@ -323,7 +323,7 @@ $permission = user()->getPermissions();
                                                                                 <div class="row mb-4">
                                                                                     <div class="col-md-12">
                                                                                         <div id="bodyGcsCpptAddBtn" class="box-tab-tools text-center">
-                                                                                            <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg" id="bodyGcsCpptAddBtn btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                                            <a onclick="addGcs(1,0,'acpptbody_id', 'bodyGcsCppt')" class="btn btn-primary btn-lg btn-to-hide" id="bodyGcsCpptAddBtn btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -567,6 +567,9 @@ $permission = user()->getPermissions();
                         <tbody id="cpptBody">
                         </tbody>
                     </table>
+                    <div class="d-flex mb-3">
+                        <button id="cpptVerifyAllBtn" class="btn btn-warning w-100"><i class="fa fa-signature"></i> Verify Semua</button>
+                    </div>
                     <div class="d-flex mb-3">
                         <?php if ($visit['class_room_id'] == '') {
                         ?>

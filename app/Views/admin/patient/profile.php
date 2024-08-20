@@ -38,7 +38,7 @@ $menu = [
     'vitalsign' => 1,
     'transfer' => 1,
     'tindakanperawat' => 1,
-    'informedconcent' => 0,
+    'informedconcent' => 1,
     'odd' => 0,
     'nifas' => 0,
     'persalinan' => 0,
@@ -231,7 +231,7 @@ $currency_symbol = 'Rp. ';
                                         } ?>
                                         <?php if ($menu['patientOperationRequest'] == 1) {
                                         ?>
-                                            <li class="nav-item"><a id="patientOperationRequestTab" class="nav-link border-bottom" href="#patientOperationRequest" data-bs-toggle="tab" aria-expanded="true" role="tab">Patient Operation Request</a></li>
+                                            <li class="nav-item"><a id="patientOperationRequestTab" class="nav-link border-bottom" href="#patientOperationRequest" data-bs-toggle="tab" aria-expanded="true" role="tab">Operasi Pasien</a></li>
                                         <?php
                                         } ?>
                                         <!-- <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li> -->

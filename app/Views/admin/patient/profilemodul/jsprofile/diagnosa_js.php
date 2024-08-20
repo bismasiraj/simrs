@@ -234,6 +234,51 @@
     })()
 </script>
 <script>
+    function addRowDiagPerawat(container, bodyId, diag_id = null, diag_notes = null, exam = null) {
+        let tbody = document.getElementById(container + bodyId);
+        let diagIndex = tbody.getElementsByTagName("tr").length;
+        diagIndex = bodyId + diagIndex;
+
+
+        let $row = $('<tr id="' + container + bodyId + diagIndex + '">')
+            .append($('<td>')
+                .append('<select id="adiagpdiagnosan_id' + diagIndex +
+                    '" class="form-control" name="diagnosan_id[]" style="width: 100%"></select>')
+                .append('<input id="adiagpdiag_notes' + diagIndex +
+                    '" name="diag_notes[]" placeholder="" type="text" class="form-control block" value="' +
+                    diag_notes + '" style="display: none" />'
+                )
+
+            )
+            .append('<td><div onclick="$(\'#' + container + bodyId + diagIndex +
+                '\').remove()" class="btn closebtn btn-xs pull-right pointer" data-toggle="modal" title=""><i class="fa fa-trash"></i></div></td>'
+            )
+            // .append('<td><div onclick="$(\'#' + container + bodyId + diagIndex +
+            //     '\').remove()" class="btn closebtn btn-xs pull-right pointer" data-toggle="modal" title=""><i class="fa fa-trash"></i></div></td>'
+            // )
+            .append(`<td><button type="button" data-diag-id="${diag_id}" id="formAskepModalBtn${diag_id.replace('.', '_')}` +
+                bodyId + `" name="askep" data-loading-text="<?php echo lang('processing') ?>" class="formAskepModalBtn btn btn-sm btn-outline-dark pull-right d-flex align-items-center gap-2"><i class="fa fa-notes-medical"></i> <span> Askep</span></button> </td>`)
+
+
+        $("#" + container + bodyId).append($row);
+
+
+        initializeDiagPerawatSelect2("adiagpdiagnosan_id" + diagIndex, diag_id, diag_notes);
+
+
+        $("#adiagpdiagnosan_id" + diagIndex).on('focus', function() {
+            removetextdiag(diagIndex);
+        }).on('change', function() {
+            selectedDiagNursePerawat(diagIndex);
+        });
+
+        actionBtnModal({
+            data: `formAskepModalBtn` + diag_id.replace('.', '_'),
+            id: bodyId,
+            diag_id: diag_id,
+            exam_date: exam?.examination_date
+        })
+    } // new update 30/07
     function addRowDiagDokter(container, bodyId, diag_id = null, diag_name = null, diag_cat = null, diag_suffer = 0) {
         var tbody = document.getElementById(container + bodyId);
         var diagIndex = tbody.getElementsByTagName("tr").length;
@@ -453,11 +498,7 @@
                                         <button type="button" id="formDiagPerawatSignBtn` + bodyId + `" name="signrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
                                         <button type="button" id="formDiagPerawatCetakBtn` + bodyId +
             `" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
-                                        
-                            <!--- new 12/08 -->
-                                <button type="button" id="formAskepModalBtn` +
-            bodyId + `" name="askep" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-outline-dark pull-right"><i class="fa fa-notes-medical"></i> <span>Askep</span></button>
-                                   
+
                                     </div>
                                 </div>
                             </div>
@@ -469,11 +510,7 @@
         `;
 
         appendAccordionItem(accordionId, accordionContent);
-        actionBtnModal({
-            data: `formAskepModalBtn` + bodyId,
-            id: bodyId,
-            exam_date: exam?.examination_date
-        })
+
         $("#adiagporg_unit_code" + bodyId).val(exam.org_unit_code)
         $("#adiagpbody" + bodyId).val(exam.body_id)
         $("#adiagpexamination_date" + bodyId).val(exam.examination_date)
@@ -490,7 +527,7 @@
 
         $.each(diagPerawatAll, function(key, value) {
             if (value.document_id == exam.body_id) {
-                addRowDiagPerawat('bodyDiagPerawat', bodyId, value.diagnosan_id, value.diag_notes)
+                addRowDiagPerawat('bodyDiagPerawat', bodyId, value.diagnosan_id, value.diag_notes, exam)
             }
         })
 
@@ -586,13 +623,14 @@
         const {
             data,
             id,
+            diag_id,
             exam_date
         } = props;
         let visit = <?= json_encode($visit); ?>;
-
         $(document).off('click', `[id^=${data}]`).on('click', `[id^=${data}]`, function() {
             getDataAskepAll({
                 id: id,
+                diag_id: diag_id,
                 visit_id: visit?.visit_id,
                 exam_date: exam_date
             })
@@ -604,7 +642,7 @@
             const form = $(modalSelector).find('form');
             if (form.length) {
                 const bodyIdInput = form.find('input[name="body_id"]');
-                bodyIdInput.val(bodyId);
+                bodyIdInput.val(id);
             }
         });
 
@@ -703,6 +741,7 @@
     const getDataAskepAll = (props) => {
         postData({
                 id: props?.id,
+                diag_id: props?.diag_id,
                 visit_id: props?.visit_id,
                 date: props?.result_date,
                 dateSiki: props?.dateSiki

@@ -3,14 +3,11 @@
         <div id="accordionCatatan" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingThree1">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#flush-collapseThree1" aria-expanded="false"
-                        aria-controls="flush-collapseThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree1" aria-expanded="false" aria-controls="flush-collapseThree">
                         LAPORAN PEMBEDAHAN
                     </button>
                 </h2>
-                <div id="flush-collapseThree1" class="accordion-collapse collapse" aria-labelledby="flush-headingThree1"
-                    data-bs-parent="#accordionCatatan">
+                <div id="flush-collapseThree1" class="accordion-collapse collapse" aria-labelledby="flush-headingThree1" data-bs-parent="#accordionCatatan">
                     <div class="accordion-body" id="pembedahan-laporan">
 
                     </div>
@@ -50,36 +47,38 @@
             </div> -->
         </div>
         <div class="col-12 my-3 d-flex justify-content-end gap-2">
-            <button type="button" id="btn-save-laporan-pembedahan"
-                class="btn btn-primary btn-save-operasi">Simpan</button>
+            <!-- <button type="button" id="btn-print-checklist-anestesi" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak
+            </button> -->
+            <button type="button" id="btn-save-laporan-pembedahan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
 </div>
 
 <script>
-// $('#btn-save-catatan-keperawatan').on('click', function(e) {
-//     // Code to handle click event
+    // $('#btn-save-catatan-keperawatan').on('click', function(e) {
+    //     // Code to handle click event
 
-//     e.preventDefault();
-//     tinymce.triggerSave();
+    //     e.preventDefault();
+    //     tinymce.triggerSave();
 
-//     let formElement = $('#form-catatan-keperawatan')[0];
-//     let dataSend = new FormData(formElement);
-//     let jsonObj = {};
-//     dataSend.forEach((value, key) => {
-//         jsonObj[key] = value;
-//     });
-//     postData(jsonObj, 'admin/PatientOperationRequest/insertDataPraOprasi', (res) => {
-//         if (res.respon === true) {
-//             successSwal('Data berhasil disimpan.');
-//             $('#form-catatan-keperawatan')[0].reset();
-//             let visit_id = '<?php echo $visit['visit_id']; ?>';
-//             tinymce.remove();
-//             // getDataTables({
-//             //     visit_id: visit_id
-//             // });
-//         }
-//     });
+    //     let formElement = $('#form-catatan-keperawatan')[0];
+    //     let dataSend = new FormData(formElement);
+    //     let jsonObj = {};
+    //     dataSend.forEach((value, key) => {
+    //         jsonObj[key] = value;
+    //     });
+    //     postData(jsonObj, 'admin/PatientOperationRequest/insertDataPraOprasi', (res) => {
+    //         if (res.respon === true) {
+    //             successSwal('Data berhasil disimpan.');
+    //             $('#form-catatan-keperawatan')[0].reset();
+    //             let visit_id = '<?php echo $visit['visit_id']; ?>';
+    //             tinymce.remove();
+    //             // getDataTables({
+    //             //     visit_id: visit_id
+    //             // });
+    //         }
+    //     });
 
-// });
+    // });
 </script>

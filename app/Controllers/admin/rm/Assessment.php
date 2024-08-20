@@ -2432,6 +2432,8 @@ class Assessment extends BaseController
         $modelDetail = new EducationIntegrationDetailModel();
 
         $db = db_connect();
+
+        // return json_encode($p_type);
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = '" . $p_type . "' ")->getResultArray());
         $db->query("delete from assessment_education_integration_detail where body_id = '" . $body_id . "'");
 
@@ -2440,7 +2442,6 @@ class Assessment extends BaseController
             if ($value['p_type'] == $p_type && isset(${$value['value_info']})) {
 
                 if ($value['value_score'] == ${$value['value_info']}) {
-
                     $data1 = [
                         'org_unit_code' => $org_unit_code,
                         'visit_id' => $visit_id,
@@ -2454,13 +2455,16 @@ class Assessment extends BaseController
                         'modified_by' => user()->username,
                     ];
                     // return json_encode($data1);
-
-                    $modelDetail->insert($data1);
+                    try {
+                        $modelDetail->insert($data1);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
                 }
             }
         }
 
-        if (isset($GEN0014Bahasa)) {
+        if (isset($GEN0014Bahasa) && false) {
             foreach ($GEN0014Bahasa as $key => $value) {
                 $data1 = [
                     'org_unit_code' => $org_unit_code,
@@ -3287,6 +3291,7 @@ class Assessment extends BaseController
         $db = db_connect();
 
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
+        $db->query("delete from pasien_history where no_registration = '$no_registration'");
         $i = 0;
         foreach ($select as $key => $value) {
             if (isset(${$value['value_id']})) {
@@ -3300,8 +3305,7 @@ class Assessment extends BaseController
                     'histories' => ${$value['value_id']},
                     'modified_by' => user()->username
                 ];
-                // return json_encode($data);
-                $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
+                // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
                 $pasienHistory->insert($data);
             }
         }
@@ -3347,6 +3351,38 @@ class Assessment extends BaseController
 
 
         return json_encode($dataexam);
+    }
+    public function verifyAllCppt()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $data = $body['data'];
+        // return json_encode($data[0]);
+
+
+        if (is_array($data)) {
+            if (true) {
+                $where = '';
+                foreach ($data as $key => $value) {
+                    $where .= "'$value',";
+                }
+                $where = substr($where, 0, -1);
+                $update = [
+                    "valid_user" => user()->username,
+                    "valid_date" => new RawSql("get_date()")
+                ];
+                // return json_encode($where);
+                $db = db_connect();
+                $db->query("update examination_info
+                    set valid_user = '" . user()->username . "',
+                    valid_date = getdate()
+                    where body_id in (" . $where . ")
+                ");
+            }
+        }
+
+        return
+            $this->response->setJSON(['response' => true]);
     }
     public function getNifasAll()
     {

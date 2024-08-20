@@ -411,6 +411,7 @@
         $("#formaddarm select").val(null)
         $("#formaddarm textarea").val(null)
 
+        $("#formaddarmqrcode1").html("")
 
         $("#flatarmdate_of_diagnosa").val(nowtime).trigger("change")
 
@@ -482,7 +483,7 @@
     }
 
     const fillDataArm = async (index) => {
-
+        $("#formaddarmqrcode1").html("")
         let mappingOrder = [{
                 name: "appendTriaseMedis",
                 order: 1,
@@ -706,6 +707,7 @@
     }
 
     function enableARM() {
+        $("#formsignarm").slideDown()
         $("#formsavearmbtn").slideDown()
         $("#formeditarm").slideUp()
         $("#formaddarm input").prop("disabled", false)

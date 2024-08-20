@@ -197,7 +197,7 @@ $group = user()->getRoles();
                     .append($("<td>").html('<b>SpO2</b>'))
                     .append($("<td rowspan='7'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                         '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                    .append($("<td rowspan='7'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                    .append($("<td rowspan='7'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
                 )
                 .append($("<tr>")
                     .append($("<td>").html(''))
@@ -243,7 +243,7 @@ $group = user()->getRoles();
                     .append($("<td colspan='5'>").html(examselect.anamnase))
                     .append($("<td rowspan='5'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                         '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                    .append($("<td rowspan='5'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                    .append($("<td rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>B</b>"))
@@ -320,7 +320,7 @@ $group = user()->getRoles();
         $("#formsaveacpptbtnid").slideDown()
         $("#formeditacpptid").slideUp()
 
-        await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
+        // await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid")
 
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")
@@ -439,54 +439,59 @@ $group = user()->getRoles();
     $("#formcppt").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/editExam',
-            type: "POST",
-            data: new FormData(this),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data.status == "fail") {
-                    var message = "";
-                    $.each(data.error, function(index, value) {
-                        message += value;
-                    });
-                    errorMsg(message);
-                } else {
-                    successMsg(data.message);
-                    if (data.type == 'insert') {
-                        cpptjson.push(data.data)
-                        setDataCPPT()
-                        var len = cpptjson.length
-                        addRowCPPT(data.data, len)
-                    } else {
-                        console.log(data.type)
-                        $("#cpptBody").html("")
-                        setDataCPPT()
-                        cpptjson.forEach((element, key) => {
-                            console.log("json: " + cpptjson[key].body_id + " & data: " + data.data.body_id)
-                            if (cpptjson[key].body_id == data.data.body_id) {
-                                cpptjson[key] = data.data
-                            }
-                            addRowCPPT(data.data, key)
+
+        if ($("#acpptclinic_id").val() == null) {
+            alert("Kolom PELAYANAN tidak boleh kosong");
+        } else {
+            $.ajax({
+                url: '<?php echo base_url(); ?>admin/patient/editExam',
+                type: "POST",
+                data: new FormData(this),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    clicked_submit_btn.button('loading');
+                },
+                success: function(data) {
+                    if (data.status == "fail") {
+                        var message = "";
+                        $.each(data.error, function(index, value) {
+                            message += value;
                         });
+                        errorMsg(message);
+                    } else {
+                        successMsg(data.message);
+                        if (data.type == 'insert') {
+                            cpptjson.push(data.data)
+                            setDataCPPT()
+                            var len = cpptjson.length
+                            addRowCPPT(data.data, len)
+                        } else {
+                            console.log(data.type)
+                            $("#cpptBody").html("")
+                            setDataCPPT()
+                            cpptjson.forEach((element, key) => {
+                                console.log("json: " + cpptjson[key].body_id + " & data: " + data.data.body_id)
+                                if (cpptjson[key].body_id == data.data.body_id) {
+                                    cpptjson[key] = data.data
+                                }
+                                addRowCPPT(data.data, key)
+                            });
+                        }
                     }
+                    clicked_submit_btn.button('reset');
+                },
+                error: function(xhr) { // if error occured
+                    alert("Error occured.please try again");
+                    clicked_submit_btn.button('reset');
+                },
+                complete: function() {
+                    clicked_submit_btn.button('reset');
                 }
-                clicked_submit_btn.button('reset');
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
+            });
+        }
     }));
 </script>
 
@@ -597,6 +602,7 @@ $group = user()->getRoles();
         $("#formaddacppt textarea").prop("disabled", false)
         $("#formaddacppt select").prop("disabled", false)
         $("#vitalSignPerawat").find("button").click()
+        $("#formaddacppt .btn-to-hide").slideDown()
     }
 
     function disableacppt() {
@@ -615,6 +621,8 @@ $group = user()->getRoles();
         $("#formaddacppt textarea").prop("disabled", true)
         $("#formaddacppt select").prop("disabled", true)
         $("#vitalSignPerawat").find("button").click()
+
+        $("#formaddacppt .btn-to-hide").slideUp()
     }
     const signacppt = () => {
         $("#bodyFallRiskCppt").find("button.btn-save:not([disabled])").trigger("click")
@@ -713,4 +721,21 @@ $group = user()->getRoles();
             }
         });
     }));
+
+    $("#cpptVerifyAllBtn").on("click", function() {
+        if (confirm('Apakah anda yakin akan memverifikasi semua data ini? Data yang sudah diverifikasi sudah tidak dapat diubah.')) {
+            let data = examForassessment.filter(item => item.account_id == 3 || item.account_id == 4);
+            let dataMap = data.map(item => item.body_id)
+            console.log(dataMap)
+
+            postData({
+                data: dataMap
+            }, 'admin/rm/assessment/verifyAllCppt', (res) => {
+                getAssessmentKeperawatan()
+                if (res.respon) {
+                    console.log(res)
+                }
+            })
+        }
+    })
 </script>

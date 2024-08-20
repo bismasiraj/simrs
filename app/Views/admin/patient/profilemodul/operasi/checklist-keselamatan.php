@@ -6,7 +6,7 @@
         <input type="hidden" name="document_id" id="document_id_checklist_keselamatan">
         <input type="hidden" name="body_id" id="body_id_checklist_keselamatan">
         <input type="hidden" name="examination_date" id="examination_date_checklist_keselamatan">
-        <input type="hidden" name="modified_date" id="modified_date_checklist_keselamatan">
+        <input type="hidden" name="modified_date" id="examination_date_checklist_keselamatan">
         <input type="hidden" name="modified_by" id="modified_by_checklist_keselamatan" value="<?= user()->username; ?>">
 
 
@@ -91,7 +91,10 @@
             </div>
         </div>
         <div class="col-12 my-3 d-flex justify-content-end gap-2">
-            <button type="button" id="btn-save-checklist-keselamatan" class="btn btn-primary btn-save-operasi">Simpan</button>
+            <button type="button" id="btn-print-checklist-keselamatan" class="btn btn-success">
+                <i class="fas fa-print"></i> Cetak
+            </button>
+            <button type="button" id="btn-save-checklist-keselamatan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
 </div>

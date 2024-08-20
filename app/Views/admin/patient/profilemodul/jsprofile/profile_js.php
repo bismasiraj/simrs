@@ -19,6 +19,7 @@ foreach ($aValue as $key => $value) {
     var lastOrder = 0;
     var examForassessment = <?= json_encode($exam); ?>;
     var avalue = <?= json_encode($aValue); ?>;
+    console.log(avalue);
     var aparameter = <?= json_encode($aParameter); ?>;
     var atype = <?= json_encode($aType); ?>;
     var avalueparent = <?= json_encode($aValueParent); ?>;
@@ -144,6 +145,12 @@ foreach ($aValue as $key => $value) {
                     '</tbody>' +
                     '</table>' +
                     '</div>' +
+                    `<div class="row text-center">
+                        <div class="col-sm-12 col-md-4 m-4">
+                            <div id="formPainMonitoring${bodyId}qrcode1" class="qrcode-class"></div>
+                            <div id="formPainMonitoring${bodyId}signer1"></div>
+                        </div>
+                    </div>` +
                     '<div class="panel-footer text-end mb-4">' +
                     '<button style="margin-right: 10px" type="submit" id="formPainMonitoringSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
                     '<button style="margin-right: 10px" type="button" id="formPainMonitoringEditBtn' + bodyId + '" onclick="" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
@@ -309,7 +316,7 @@ foreach ($aValue as $key => $value) {
                         if (value1.body_id == bodyId)
                             addIntervensi('<?= $value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
                     });
-                    await checkSignSignature("formPainMonitoring" + bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn")
+                    await checkSignSignature("formPainMonitoring" + bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn", 4)
                     if ($("#ases022valid_user" + bodyId).val() == '') {
                         $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                         $("#formPainMonitoringEditBtn" + bodyId).slideUp()
@@ -318,6 +325,7 @@ foreach ($aValue as $key => $value) {
                         $("#formPainMonitoringSaveBtn" + bodyId).slideUp()
                         $("#formPainMonitoringEditBtn" + bodyId).slideUp()
                         $("#formPainMonitoringSignBtn" + bodyId).slideUp()
+                        $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", true)
                     }
                 }
             <?php } ?>
@@ -2039,10 +2047,16 @@ foreach ($aValue as $key => $value) {
                                 </tbody>
                             </table>
                         </div>
+                        <div class="row text-center">
+                            <div class="col-sm-12 col-md-4 m-4">
+                                <div id="formFallRisk${bodyId}qrcode1" class="qrcode-class"></div>
+                                <div id="formFallRisk${bodyId}signer1"></div>
+                            </div>
+                        </div>
                         <div class="panel-footer text-end mb-4">
-                            <button type="submit" id="formFallRiskSaveBtn` + bodyId + `" name="save" data-loading-text="processing" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                            <button style="margin-right: 10px;" type="submit" id="formFallRiskSaveBtn` + bodyId + `" name="save" data-loading-text="processing" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                             <button style="margin-right: 10px; ; display: none;" type="button" id="formFallRiskEditBtn` + bodyId + `" onclick="" name="edit" data-loading-text="processing" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>
-                            <button style="margin-right: 10px; ; display: none;" type="button" id="formFallRiskSigntBtn` + bodyId + `" onclick="" name="sign" data-loading-text="processing" class="btn btn-warning btn-sign"><i class="fa fa-signature"></i> <span>sign</span></button>
+                            <button style="margin-right: 10px; ; display: none;" type="button" id="formFallRiskSignBtn` + bodyId + `" onclick="" name="sign" data-loading-text="processing" class="btn btn-warning btn-sign"><i class="fa fa-signature"></i> <span>sign</span></button>
                             <button style="margin-right: 10px; ; display: none;" type="button" id="formFallRiskCetakBtn` + bodyId + `" onclick="" name="cetak" data-loading-text="processing" class="btn btn-light btn-cetak"><i class="fa fa-file"></i> <span>Cetak</span></button>
                         </div>
                     </div>
@@ -2053,7 +2067,7 @@ foreach ($aValue as $key => $value) {
         $("#" + container).append(fallRiskContent)
         datetimepickerbyid("flatfallriskexamination_date" + bodyId)
 
-        $("#formFallRiskSigntBtn" + bodyId).on("click", function() {
+        $("#formFallRiskSignBtn" + bodyId).on("click", function() {
             addSignUserSatelite("formFallRisk" + bodyId, "fallrisk", bodyId, "fallriskbody_id" + bodyId, "formFallRiskSaveBtn" + bodyId, 5, 1, 1, "Resiko Jatuh")
         })
 
@@ -2167,8 +2181,8 @@ foreach ($aValue as $key => $value) {
                     aValueParamScore('001', value.p_type, value.parameter_id, value.value_score, bodyId)
                 }
             })
-            await checkSignSignature("formFallRisk" + bodyId, "fallriskbody_id" + bodyId, "formFallRiskSaveBtn")
-            if ($("#fallriskvalid_pasien" + bodyId).val() == '') {
+            await checkSignSignature("formFallRisk" + bodyId, "fallriskbody_id" + bodyId, "formFallRiskSaveBtn", 5)
+            if ($("#fallriskvalid_user" + bodyId).val() == '') {
                 $("#formFallRiskSaveBtn" + bodyId).slideUp()
                 $("#formFallRiskEditBtn" + bodyId).slideDown()
                 $("#formFallRiskSignBtn" + bodyId).slideDown()
@@ -7638,6 +7652,12 @@ foreach ($aValue as $key => $value) {
                             )
                         )
                     )
+                    .append(`<div class="row text-center">
+                            <div class="col-sm-12 col-md-4 m-4">
+                                <div id="formGcs${bodyId}qrcode1" class="qrcode-class"></div>
+                                <div id="formGcs${bodyId}signer1"></div>
+                            </div>
+                        </div>`)
                     .append('<div class="panel-footer text-end mb-4">' +
                         '<button type="submit" id="formGcsSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
                         '<button style="margin-right: 10px" type="button" id="formGcsEditBtn' + bodyId + '" onclick="" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
@@ -7846,9 +7866,9 @@ foreach ($aValue as $key => $value) {
             })
 
 
-            await checkSignSignature("formGcs" + bodyId, "gcsbody_id" + bodyId, "formGcsSaveBtn")
+            await checkSignSignature("formGcs" + bodyId, "gcsbody_id" + bodyId, "formGcsSaveBtn", 6)
 
-            if ($("#gcsvalid_pasien" + bodyId).val() == '') {
+            if ($("#gcsvalid_user" + bodyId).val() == '') {
                 $("#formGcsSaveBtn" + bodyId).slideUp()
                 $("#formGcsEditBtn" + bodyId).slideDown()
                 $("#formGcsSignBtn" + bodyId).slideDown()
