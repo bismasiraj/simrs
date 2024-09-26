@@ -10,7 +10,7 @@ class TarifAltModel extends Model
     protected $table      = 'tarif_alt';
     // protected $primaryKey = 'brand_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

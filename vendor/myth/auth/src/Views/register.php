@@ -16,7 +16,7 @@
 
                         <div class="form-group">
                             <label for="email"><?= lang('Auth.email') ?></label>
-
+                            <input type="text" class="form-control <?php if (session('errors.username')) : ?>is-invalid<?php endif ?>" name="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>">
                             <small id="emailHelp" class="form-text text-muted"><?= lang('Auth.weNeverShare') ?></small>
                         </div>
 

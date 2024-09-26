@@ -3,6 +3,8 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AgamaModel;
+use App\Models\Assessment\DiagnosaPerawatModel;
+use App\Models\Assessment\PasienTransferModel;
 use App\Models\AssessmentModel;
 use App\Models\BloodModel;
 use App\Models\CaraKeluarModel;
@@ -10,6 +12,7 @@ use App\Models\ClassModel;
 use App\Models\ClassRoomModel;
 use App\Models\ClinicDoctorModel;
 use App\Models\ClinicModel;
+use App\Models\ClinicTypeModel;
 use App\Models\CoverageModel;
 use App\Models\DiagnosaCategoryModel;
 use App\Models\DiagnosaModel;
@@ -19,9 +22,15 @@ use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
+use App\Models\FollowUpModel;
+use App\Models\GoodGfModel;
+use App\Models\HandoverModel;
+use App\Models\TreatDocsModel;
+use CodeIgniter\Files\File;
 use App\Models\GenerateIdModel;
 use App\Models\GoodsModel;
 use App\Models\GrouperModel;
+use App\Models\HandoverDetailModel;
 use App\Models\InasisFaskesModel;
 use App\Models\InasisKontrolModel;
 use App\Models\InasisPoliModel;
@@ -39,6 +48,8 @@ use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienDiagnosasModel;
 use App\Models\PasienModel;
+use App\Models\PasienPenunjangModel;
+use App\Models\PasienPrescriptionModel;
 use App\Models\PasienProceduresModel;
 use App\Models\PasienVisitationModel;
 use App\Models\PayorModel;
@@ -60,6 +71,7 @@ use App\Models\TreatResultModel;
 use App\Models\TreatTarifModel;
 use App\Models\VisitReasonModel;
 use App\Models\VisitWayModel;
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use LZCompressor\LZString;
 
@@ -100,7 +112,7 @@ class Patient extends \App\Controllers\BaseController
         $kelas = $this->lowerKey($kelasModel->findAll());
 
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = $this->lowerKey($kalurahanModel->where("kal_id in (select kal_id from pasien group by kal_id)")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -153,8 +165,6 @@ class Patient extends \App\Controllers\BaseController
         $ckModel = new CaraKeluarModel();
         $caraKeluar = $this->lowerKey($ckModel->findAll());
 
-        // dd($reasonModel);
-
         $isattendedModel = new IsattendedsModel();
         $isattended = $this->lowerKey($isattendedModel->findAll());
 
@@ -178,6 +188,11 @@ class Patient extends \App\Controllers\BaseController
 
         $cdModel = new ClinicDoctorModel();
         $clinicDoctor = $this->lowerKey($cdModel->where('employee_id', $userEmployee)->findAll());
+        $clinicInap = array();
+
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
 
@@ -191,6 +206,9 @@ class Patient extends \App\Controllers\BaseController
             }
             $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
             unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
         }
 
         if (!is_null($userEmployee)) {
@@ -205,13 +223,17 @@ class Patient extends \App\Controllers\BaseController
                     $clinicPermission[$clinicDoctor[$key]['clinic_id']]['name_of_clinic'] = $clinicDoctor[$key]['name_of_clinic'];
                     foreach ($clinic as $ckey => $cvalue) {
                         if ($clinic[$ckey]['clinic_id'] == $clinicDoctor[$key]['clinic_id']) {
-                            $clinicPermission[$clinicDoctor[$key]['clinic_id']]['stype_id'] = $clinic[$ckey]['stype_id'];
+                            foreach ($cvalue as $ckey2 => $cvalue2) {
+                                $clinicPermission[$clinicDoctor[$key]['clinic_id']][$ckey2] = $cvalue2;
+                            }
                         }
                     }
                 }
             }
 
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -219,11 +241,6 @@ class Patient extends \App\Controllers\BaseController
                 $clinic[$i] = $clinicPermission[$key];
             }
         }
-
-
-
-
-
 
 
         return view('admin/patient/search', [
@@ -257,7 +274,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             'caraKeluar' => $caraKeluar,
             // 'diagnosa' => $diagnosa,
-            'dpjp' => $dpjp
+            'dpjp' => $dpjp,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     private function searchingTemplate($giTipe, $title)
@@ -282,8 +301,12 @@ class Patient extends \App\Controllers\BaseController
         $kelasModel = new ClassModel();
         $kelas = $this->lowerKey($kelasModel->findAll());
 
+
+        $classRoomModel = new ClassRoomModel();
+        $classRoom = $this->lowerKey($classRoomModel->findAll());
+
         $kalurahanModel = new KalurahanModel();
-        $kalurahan = $this->lowerKey($kalurahanModel->findAll());
+        $kalurahan = $this->lowerKey($kalurahanModel->where("kal_id in (select kal_id from pasien group by kal_id)")->findAll());
 
         $kecamatanModel = new KecamatanModel();
         $kecamatan = $this->lowerKey($kecamatanModel->findAll());
@@ -322,7 +345,7 @@ class Patient extends \App\Controllers\BaseController
         $gender = $this->lowerKey($genderModel->findAll());
 
         $clinicModel = new ClinicModel();
-        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5)")->findAll());
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,$giTipe)")->findAll());
 
         $scheduleModel = new ClinicDoctorModel();
         $schedule = $this->lowerKey($scheduleModel->getSchedule());
@@ -332,8 +355,6 @@ class Patient extends \App\Controllers\BaseController
 
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
-
-        // dd($reasonModel);
 
         $isattendedModel = new IsattendedsModel();
         $isattended = $this->lowerKey($isattendedModel->findAll());
@@ -353,29 +374,57 @@ class Patient extends \App\Controllers\BaseController
 
         $dokter = array();
         $dpjp = array();
+        $clinicInap = array();
 
 
-        foreach ($clinic as $key => $value) {
-            $selectDokter = array();
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
-            foreach ($schedule as $key1 => $value1) {
-                if ($clinic[$key]['clinic_id'] == $schedule[$key1]['clinic_id']) {
-                    $selectDokter[$schedule[$key1]['employee_id']] = $schedule[$key1]['fullname'];
-                }
-            }
-            $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
-            unset($selectDokter);
+        // dd($schedule);
+
+        $clinicInap = array_filter($clinic, function ($value) {
+            return $value['stype_id'] == '3';
+        });
+        $clinicInap = array_column($clinicInap, 'name_of_clinic', 'clinic_id');
+
+        // foreach ($clinic as $key => $value) {
+        //     $selectDokter = array();
+
+        //     foreach ($schedule as $key1 => $value1) {
+        //         if ($clinic[$key]['clinic_id'] == $schedule[$key1]['clinic_id']) {
+        //             $selectDokter[$schedule[$key1]['employee_id']] = $schedule[$key1]['fullname'];
+        //         }
+        //     }
+        //     $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
+        //     unset($selectDokter);
+        //     if ($value['stype_id'] == '3') {
+        //         $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+        //     }
+        // }
+        foreach ($clinic as $clinicItem) {
+            $selectDokter = array_filter($schedule, function ($scheduleItem) use ($clinicItem) {
+                return $clinicItem['clinic_id'] == $scheduleItem['clinic_id'];
+            });
+            $selectDokter = array_column($selectDokter, 'fullname', 'employee_id');
+            $dokter[$clinicItem['clinic_id']] = $selectDokter;
         }
+        $selectDokter = array_filter($schedule, function ($scheduleItem) use ($clinicItem) {
+            return 'A00' == $scheduleItem['clinic_id'];
+        });
+        $selectDokter = array_column($selectDokter, 'fullname', 'employee_id');
+        $dokter[$clinicItem['clinic_id']] = $selectDokter;
+
 
         foreach ($schedule as $key => $value) {
             if ($schedule[$key]['dpjp'] != '' && !is_null($schedule[$key]['dpjp'])) {
-                $dpjp[$schedule[$key]['employee_id']] = $schedule[$key]['dpjp'];
+                $dpjp[$schedule[$key]['employee_id']][$schedule[$key]['dpjp']] = $schedule[$key]['sspractitioner_id'];
             }
         }
 
+        asort($clinicInap);
 
-
-        // dd($schedule);
+        // dd($clinic);
+        // dd($dokter);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -388,6 +437,7 @@ class Patient extends \App\Controllers\BaseController
             'status' => $status,
             'jenis' => $jenis,
             'kelas' => $kelas,
+            'classRoom' => $classRoom,
             'kalurahan' => $kalurahan,
             'kecamatan' => $kecamatan,
             'kota' => $kota,
@@ -408,7 +458,9 @@ class Patient extends \App\Controllers\BaseController
             'inasisFaskes' => $inasisFaskes,
             // 'diagnosa' => $diagnosa,
             'dpjp' => $dpjp,
-            'caraKeluar' => $caraKeluar
+            'caraKeluar' => $caraKeluar,
+            'clinicInap' => $clinicInap,
+            'clinicType' => $clinicType
         ]);
     }
     public function getpatientDetails()
@@ -588,7 +640,7 @@ This Function is used to Add Patient
     public function addpatient()
     {
         // return $this->request->getPost('nama');
-        // if (!$this->request->is('post')) {
+        // if (!$this->request->is('post') && $this->validate(['file' => 'uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'])) {
         //     return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         // }
 
@@ -602,21 +654,15 @@ This Function is used to Add Patient
             'placebirth' => 'required',
             'datebirth' => 'required|valid_date[Y-m-d]',
             'address' => 'required',
-            'rt' => 'required|integer',
-            'rw' => 'required|integer',
             'kalurahan' => 'required|integer',
-            'phone' => 'permit_empty|integer',
             'mobile' => 'required|integer',
             'status' => 'required',
-            'edukasi' => 'required',
-            'pekerjaan' => 'required',
             'goldar' => 'required',
-            'agama' => 'required',
-            'perkawinan' => 'required',
             'gender' => 'required',
             'kk_no' => 'permit_empty|integer',
             'tmt' => 'permit_empty|valid_date[Y-m-d]',
-            'tat' => 'permit_empty|valid_date[Y-m-d]'
+            'tat' => 'permit_empty|valid_date[Y-m-d]',
+            // 'file' => 'permit_empty|uploaded[file]|mime_in[file,image/jpg,image/jpeg,image/png]|max_size[file,1024]'
         ];
 
         if (!$this->validate($rules)) {
@@ -626,9 +672,12 @@ This Function is used to Add Patient
             return json_encode($array);
         }
 
-
-        $p = new PasienModel();
-        $no_registration = $p->getNorm();
+        $no_registration = $this->request->getPost('no_registration');
+        if (!isset($no_registration) || $no_registration == '') {
+            $p = new PasienModel();
+            $no_registration = $p->getNorm();
+        }
+        // return json_encode($no_registration);
 
         $nama = $this->request->getPost('nama');
         $pasien_id = $this->request->getPost('pasien_id');
@@ -661,12 +710,33 @@ This Function is used to Add Patient
         $father = $this->request->getPost('ayah');
         $mother = $this->request->getPost('ibu');
         $spouse = $this->request->getPost('sutri');
+        $file = $this->request->getFile('file');
+        $sspasien_id = $this->request->getPost('sspasien_id');
+
 
         $orgunitcode = '1771014';
 
+        // return json_encode();
 
-        // return json_encode($kalurahan);
+        // return json_encode(base64_encode(file_get_contents($file->getTempName())));
 
+        // if (!$file->hasMoved()) {
+        //     $filepath = WRITEPATH . 'uploads/' . $file->store();
+
+        //     // $data = ['uploaded_fileinfo' => base64_encode(file_get_contents($filepath))];
+
+        //     // return json_encode($data);
+        // }
+
+        // $data = ['errors' => 'The file has already been moved.'];
+
+        // return json_encode($file);
+
+        // $db = db_connect('default');
+        // $db->simpleQuery("update pasien set ttd = " . file_get_contents($filepath) . " where no_registration = '846202'");
+
+
+        // return json_encode(base64_encode(file_get_contents($filepath)));
 
         $data = [
             'org_unit_code' => $orgunitcode,
@@ -698,22 +768,73 @@ This Function is used to Add Patient
             'family_status_id' => $family,
             'kk_no' => $kk_no,
             'tmt' => $tmt,
-            'tat' => $tat
+            'tat' => $tat,
+            'sspasien_id' => $sspasien_id,
+            'father' => $father,
+            'mother' => $mother,
+            'spouse' => $spouse
         ];
-        // $data = json_encode($data);
 
-        // return $data;
+
 
 
         $pasienModel = new PasienModel();
 
-        $pasienModel->insert($data);
+        $pasienModel->save($data);
+
+        $uploadFolder = 'uploads/doc/P000' . $no_registration;
+
+        if (!is_dir($uploadFolder)) {
+            mkdir(
+                $uploadFolder,
+                0777,
+                true
+            );
+        }
+
+        if ($file->isValid() && !$file->hasMoved()) {
+            $newName = $no_registration . $file->getName();
+            $file->move($uploadFolder, $newName);
+
+            // You can store the file path in the database if needed
+            $filePath = $uploadFolder . '/' . $newName;
+            $docModel = new TreatDocsModel();
+            $docData = [
+                'org_unit_code' => $orgunitcode,
+                'doc_id' => $no_registration,
+                'doc_ke' => 1,
+                'docfiles' => $newName,
+                'upload_by' => user()->username,
+                'modified_by' => user()->username,
+                'doc_type' => 1,
+                'clinic_id' => 'P000'
+            ];
+            $docModel->save($docData);
+
+            // Additional logic based on your application's needs
+
+            // return redirect()->to(base_url($filePath));
+        }
+
+
+
+
+        // return json_encode('asd');
+
+
+
+        // header("Content-type: image/jpeg");
+        // echo file_get_contents($filepath);
+
+        // $pasienModel->save($data);
+
+        // return json_encode(base64_encode($data['ttd']));
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
         // of specified length
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil');
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'data' => $data);
         echo json_encode($array);
     }
     public function deletePatient()
@@ -735,7 +856,7 @@ This Function is used to Add Patient
         $giTipe = 0;
         return $this->searchingTemplate($giTipe, $title);
     }
-    public function getopddatatable()
+    public function getopddatatable($searchtype = null)
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -777,8 +898,6 @@ This Function is used to Add Patient
         $nama = $kode;
         $nokartu = $kode;
 
-
-        // return json_encode($nama);
         $kunjungan = $this->lowerKey($pv->getKunjunganPoli($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
 
 
@@ -800,56 +919,81 @@ This Function is used to Add Patient
         $clinic = $this->lowerKey($clinicModel->findAll());
 
         $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->findAll());
+        $employee = $this->lowerKey($employeeModel->getEmployee());
 
         $classModel = new ClassModel();
         $class = $this->lowerKey($classModel->findAll());
 
+        $classRoomModel = new ClassRoomModel();
+        $classRoom = $this->lowerKey($classRoomModel->findAll());
 
         // dd($kunjungan);
         $dt_data     = array();
         if (!empty($kunjungan)) {
             foreach ($kunjungan as $key => $value) {
-
+                $kunjungan[$key]['way'] = '';
+                $kunjungan[$key]['name_of_status_pasien'] = '';
+                $kunjungan[$key]['name_of_gender'] = '';
+                $kunjungan[$key]['nama_agama'] = '';
+                $kunjungan[$key]['name_of_clinic'] = '';
+                $kunjungan[$key]['name_of_clinic_from'] = '';
+                $kunjungan[$key]['fullname'] = '';
+                $kunjungan[$key]['name_of_class'] = '';
+                $kunjungan[$key]['name_of_class_plafond'] = '';
                 foreach ($way as $key1 => $value1) {
                     if ($kunjungan[$key]['way_id'] == $way[$key1]['way_id']) {
-                        $kunjungan[$key]['way_id'] = $way[$key1]['way'];
+                        $kunjungan[$key]['way'] = $way[$key1]['way'];
                     }
                 }
                 foreach ($statusPasien as $key1 => $value1) {
                     if ($kunjungan[$key]['status_pasien_id'] == $statusPasien[$key1]['status_pasien_id']) {
-                        $kunjungan[$key]['status_pasien_id'] = $statusPasien[$key1]['name_of_status_pasien'];
+                        $kunjungan[$key]['name_of_status_pasien'] = $statusPasien[$key1]['name_of_status_pasien'];
                     }
                 }
                 foreach ($sex as $key1 => $value1) {
                     if ($kunjungan[$key]['gender'] == $sex[$key1]['gender']) {
-                        $kunjungan[$key]['gender'] = $sex[$key1]['name_of_gender'];
+                        $kunjungan[$key]['name_of_gender'] = $sex[$key1]['name_of_gender'];
                     }
                 }
                 foreach ($agama as $key1 => $value1) {
                     if ($kunjungan[$key]['kode_agama'] == $agama[$key1]['kode_agama']) {
-                        $kunjungan[$key]['kode_agama'] = $agama[$key1]['nama_agama'];
+                        $kunjungan[$key]['nama_agama'] = $agama[$key1]['nama_agama'];
                     }
                 }
                 foreach ($clinic as $key1 => $value1) {
                     if ($kunjungan[$key]['clinic_id'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
                     }
                     if ($kunjungan[$key]['clinic_id_from'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id_from'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
+                    }
+                }
+                if (!is_null($kunjungan[$key]['class_room_id']) && ($kunjungan[$key]['class_room_id'] != '')) {
+                    // dd($value['class_room_id']);
+                    foreach ($classRoom as $key1 => $value1) {
+                        if ($kunjungan[$key]['class_room_id'] == $classRoom[$key1]['class_room_id']) {
+                            $kunjungan[$key]['name_of_class_room'] = $classRoom[$key1]['name_of_class'];
+                            break;
+                        }
                     }
                 }
                 foreach ($employee as $key1 => $value1) {
-                    if ($kunjungan[$key]['employee_id'] == $employee[$key1]['employee_id']) {
-                        $kunjungan[$key]['employee_id'] = $employee[$key1]['fullname'];
+                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_id']) {
+                        $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
+                    }
+                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_id_from']) {
+                        $kunjungan[$key]['fullname_from'] = $employee[$key1]['fullname'];
+                    }
+                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_inap']) {
+                        $kunjungan[$key]['fullname_inap'] = $employee[$key1]['fullname'];
                     }
                 }
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
                     }
                     if ($kunjungan[$key]['class_id_plafond'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id_plafond'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
                 if ($kunjungan[$key]['locked'] == '1') {
@@ -887,35 +1031,63 @@ This Function is used to Add Patient
 
 
                 // $action = "<a href='#' onclick='getpatientData(\"" . $id . "\")' class='btn btn-default btn-xs pull-right'  data-toggle='modal' title='" . lang('show') . "'><i class='fa fa-reorder'></i></a>";
-                $action = '';
-                $action .= "<div class='btn-group' style='margin-left:2px;'>";
-                if (!empty($result[$key]['info'])) {
-                    $action .= "<a href='#' style='width: 20px;border-radius: 2px;' class='btn btn-default btn-xs'  data-toggle='dropdown' title='" . lang('show') . "'><i class='fa fa-ellipsis-v'></i></a>";
-                    $action .= "<ul class='dropdown-menu dropdown-menu2' role='menu'>";
+                // $action = '';
+                // $action .= "<div class='btn-group' style='margin-left:2px;'>";
+                // if (!empty($result[$key]['info'])) {
+                //     $action .= "<a href='#' style='width: 20px;border-radius: 2px;' class='btn btn-default btn-xs'  data-toggle='dropdown' title='" . lang('show') . "'><i class='fa fa-ellipsis-v'></i></a>";
+                //     $action .= "<ul class='dropdown-menu dropdown-menu2' role='menu'>";
 
-                    foreach ($result[$key]['info'] as $pkey => $pvalue) {
-                        $action .= "<li>" . "<a href='" . $result[$key]['url'][$pkey] . "' class='btn btn-default btn-xs'  data-toggle='' title='' target='_blank'>" . $pvalue . "</a>" . "</li>";
-                    }
-                    $action .= "</ul>";
-                }
-                $action .= "</div>";
+                //     foreach ($result[$key]['info'] as $pkey => $pvalue) {
+                //         $action .= "<li>" . "<a href='" . $result[$key]['url'][$pkey] . "' class='btn btn-default btn-xs'  data-toggle='' title='' target='_blank'>" . $pvalue . "</a>" . "</li>";
+                //     }
+                //     $action .= "</ul>";
+                // }
+                // $action .= "</div>";
 
                 $row = array();
+
+                $ranap = '';
+                if (!is_null($kunjungan[$key]['class_room_id']) && ($kunjungan[$key]['class_room_id'] != '')) {
+                    $ranap = '<h5 class="text-danger">RAWAT INAP - ' . $kunjungan[$key]['name_of_class_room'] . '</h5>';
+                }
+
+                $action = '<div class="btn-group" role="group">';
+                $action .= '<button id="btnGroupVerticalDrop' . $id . '" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Pilih <i class="mdi mdi-chevron-down"></i>
+                                                </button>';
+                $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
+                // if ($kunjungan[$key]['visit_id'] != null) {
+                //     $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
+                //     $action .= '<a onclick="getAkomodasi(\'' . $kunjungan[$key]['visit_id'] . '\')" class="dropdown-item" href="#"><i style="color: red">PASIEN SEDANG RAWAT INAP</i></a>';
+                // } else {
+                //     $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
+                //     $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Inap</a>';
+                // }
+                $action .= '<a onclick=\'panggilPasien("' . $kunjungan[$key]['visit_id'] . '", "' . $kunjungan[$key]['ticket_no'] . '")\' class="dropdown-item" href="#">Panggil Pasien</a>';
+                // $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
+                $action .= "</div>";
+                // dd($ranap);
                 //====================================
                 // $action = "<div class='rowoptionview rowview-mt-19'>";
                 // $action .= "<a href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 // $action .= "</div'>";
-                $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
-                $row[] = '<h3 style="margin: auto;
-                padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . "</h3>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['way_id'] . "</a>";
+                if ($kunjungan[$key]['status_panggil'] == '1') {
+                    $row[] = '<h4 id="antrian' . $kunjungan[$key]['visit_id'] . '" style="margin: auto;
+                    padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . ' <i class="fa fa-check-circle"></i></h4>';
+                } else {
+                    $row[] = '<h4 id="antrian' . $kunjungan[$key]['visit_id'] . '" style="margin: auto;
+                    padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . '</h4>';
+                }
+
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 $row[] = substr($kunjungan[$key]['visit_date'], 0, 10) . "<br>" . substr($kunjungan[$key]['date_of_birth'], 0, 10);
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "/" . $kunjungan[$key]['gender'] . "/" . $kunjungan[$key]['kode_agama'];
-                $row[] = "<b>" . $kunjungan[$key]['clinic_id'] . "</b><br><b>" . $kunjungan[$key]['employee_id'] . "</b><br>" . $kunjungan[$key]['class_id'];
+                $row[] = $kunjungan[$key]['name_of_status_pasien'] . "/" . $kunjungan[$key]['name_of_gender'] . "/" . $kunjungan[$key]['nama_agama'] . "<br>" . $ranap;
+                $row[] = "<b>" . $kunjungan[$key]['name_of_clinic'] . "</b><br><b>" . $kunjungan[$key]['fullname'] . "</b><br>" . $kunjungan[$key]['name_of_class'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
-                $row[] = $kunjungan[$key]['clinic_id_from'] . "<br>" . $kunjungan[$key]['class_id_plafond'] . "<br>" . $kunjungan[$key]['locked'];
+                $row[] = $kunjungan[$key]['name_of_clinic_from'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'] . "<br>" . $kunjungan[$key]['locked'];
                 $row[] = $action;
                 $dt_data[] = $row;
             }
@@ -926,6 +1098,94 @@ This Function is used to Add Patient
         );
         return json_encode($json_data);
     }
+
+    public function getoperationdatatable($searchtype = null)
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $pv = new PasienVisitationModel();
+
+        $nama = $this->request->getPost('nama');
+        $kode = $this->request->getPost('norm');
+        $alamat = $this->request->getPost('address');
+        $poli = $this->request->getPost('klinik');
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        $sudah = '%';
+        $dokter = $this->request->getPost('dokter');
+        $nokartu = $this->request->getPost('nokartu');
+
+        if (is_null($nama) || $nama == '') {
+            $nama = '%';
+        }
+        if (is_null($kode) || $kode == '') {
+            $kode = '%';
+        }
+        if (is_null($alamat) || $alamat == '') {
+            $alamat = '%';
+        }
+        if (is_null($poli) || $poli == '') {
+            $poli = '%';
+        }
+        if (is_null($sudah) || $sudah == '') {
+            $sudah = '%';
+        }
+        if (is_null($dokter) || $dokter == '') {
+            $dokter = '%';
+        }
+        if (is_null($nokartu) || $nokartu == '') {
+            $nokartu = '%';
+        }
+
+        $nama = $kode;
+        $nokartu = $kode;
+
+        $kunjungan = $this->lowerKey($pv->getKunjunganOperasi($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
+
+
+
+        // colecting parameter
+        $tarifModel = new TreatTarifModel();
+        $tarif = $this->lowerKey($tarifModel->where("LEFT(tarif_id,2) = '13'")->select("tarif_name, tarif_id")->findAll());
+
+
+        // dd($kunjungan);
+        $dt_data     = array();
+        if (!empty($kunjungan)) {
+            foreach ($kunjungan as $key => $value) {
+
+
+                $row = array();
+                //====================================
+                // $action = "<div class='rowoptionview rowview-mt-19'>";
+                // $action .= "<a href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
+                // $action .= "</div'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileoperasi/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                //==============================
+                $row[] = '<h4 style="margin: auto;
+                padding: 20px;padding-left: 10px;">' . $key + 1 . ". </h4>";
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
+                $row[] = $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bln " . $kunjungan[$key]['ageday'] . "hr";
+                $row[] = $kunjungan[$key]['name_of_clinic'];
+                $row[] = substr($kunjungan[$key]['treat_date'], 0, 16);
+                // $row[] = $kunjungan[$key]['tarif_id'];
+                $tarifid = $kunjungan[$key]['tarif_id'];
+                $row[] = array_column(array_filter($tarif, function ($value) use ($tarifid) {
+                    return $value['tarif_id'] == $tarifid;
+                }), 'tarif_name');
+                $row[] = "<b>" . $kunjungan[$key]['dr_opr'] . "</b>";
+                $row[] = '';
+                $dt_data[] = $row;
+            }
+        }
+        // return 'json_encode($kunjungan)';
+        $json_data = array(
+            "data"            => $dt_data,
+        );
+        return json_encode($json_data);
+    }
+
     public function getipddatatable()
     {
         if (!$this->request->is('post')) {
@@ -967,8 +1227,8 @@ This Function is used to Add Patient
             $nokartu = '%';
         }
 
-
         $kunjungan = $this->lowerKey($ta->getPasienRanap($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu, $keluar, $x));
+        // return json_encode($poli);
 
         // colecting parameter
         $wayModel = new VisitWayModel();
@@ -987,7 +1247,7 @@ This Function is used to Add Patient
         $clinic = $this->lowerKey($clinicModel->findAll());
 
         $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->findAll());
+        $employee = $this->lowerKey($employeeModel->getEmployee());
 
         $classModel = new ClassModel();
         $class = $this->lowerKey($classModel->findAll());
@@ -998,42 +1258,57 @@ This Function is used to Add Patient
         $payorModel = new PayorModel();
         $payor = $this->lowerKey($payorModel->findAll());
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel);
+
 
         $dt_data     = array();
         if (!empty($kunjungan)) {
             foreach ($kunjungan as $key => $value) {
+                $kunjungan[$key]['way'] = null;
+                $kunjungan[$key]['name_of_status_pasien'] = null;
+                $kunjungan[$key]['name_of_gender'] = null;
+                $kunjungan[$key]['nama_agama'] = null;
+                $kunjungan[$key]['name_of_clinic'] = null;
+                $kunjungan[$key]['name_of_clinic_from'] = null;
+                $kunjungan[$key]['fullname'] = null;
+                $kunjungan[$key]['cara_keluar'] = null;
+                $kunjungan[$key]['name_of_class'] = null;
+                $kunjungan[$key]['cara_keluar'] = null;
+                $kunjungan[$key]['name_of_class_plafond'] = null;
+                $kunjungan[$key]['payor'] = null;
 
                 foreach ($way as $key1 => $value1) {
                     if ($kunjungan[$key]['way_id'] == $way[$key1]['way_id']) {
-                        $kunjungan[$key]['way_id'] = $way[$key1]['way'];
+                        $kunjungan[$key]['way'] = $way[$key1]['way'];
                     }
                 }
                 foreach ($statusPasien as $key1 => $value1) {
                     if ($kunjungan[$key]['status_pasien_id'] == $statusPasien[$key1]['status_pasien_id']) {
-                        $kunjungan[$key]['status_pasien_id'] = $statusPasien[$key1]['name_of_status_pasien'];
+                        $kunjungan[$key]['name_of_status_pasien'] = $statusPasien[$key1]['name_of_status_pasien'];
                     }
                 }
                 foreach ($sex as $key1 => $value1) {
                     if ($kunjungan[$key]['gender'] == $sex[$key1]['gender']) {
-                        $kunjungan[$key]['gender'] = $sex[$key1]['name_of_gender'];
+                        $kunjungan[$key]['name_of_gender'] = $sex[$key1]['name_of_gender'];
                     }
                 }
                 foreach ($agama as $key1 => $value1) {
                     if ($kunjungan[$key]['kode_agama'] == $agama[$key1]['kode_agama']) {
-                        $kunjungan[$key]['kode_agama'] = $agama[$key1]['nama_agama'];
+                        $kunjungan[$key]['nama_agama'] = $agama[$key1]['nama_agama'];
                     }
                 }
                 foreach ($clinic as $key1 => $value1) {
                     if ($kunjungan[$key]['clinic_id'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
                     }
                     if ($kunjungan[$key]['clinic_id_from'] == $clinic[$key1]['clinic_id']) {
-                        $kunjungan[$key]['clinic_id_from'] = $clinic[$key1]['name_of_clinic'];
+                        $kunjungan[$key]['name_of_clinic_from'] = $clinic[$key1]['name_of_clinic'];
                     }
                 }
                 foreach ($employee as $key1 => $value1) {
                     if ($kunjungan[$key]['employee_id'] == $employee[$key1]['employee_id']) {
-                        $kunjungan[$key]['employee_id'] = $employee[$key1]['fullname'];
+                        $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
                     }
                 }
                 foreach ($caraKeluar as $key1 => $value1) {
@@ -1043,15 +1318,15 @@ This Function is used to Add Patient
                 }
                 foreach ($class as $key1 => $value1) {
                     if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
                     }
                     if ($kunjungan[$key]['class_id_plafond'] == $class[$key1]['class_id']) {
-                        $kunjungan[$key]['class_id_plafond'] = $class[$key1]['name_of_class'];
+                        $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
                 foreach ($payor as $key1 => $value1) {
                     if ($kunjungan[$key]['payor_id'] == $payor[$key1]['payor_id']) {
-                        $kunjungan[$key]['payor_id'] = $payor[$key1]['payor'];
+                        $kunjungan[$key]['payor'] = $payor[$key1]['payor'];
                     }
                 }
                 // if ($kunjungan[$key]['locked'] == '1') {
@@ -1076,19 +1351,21 @@ This Function is used to Add Patient
                 $action = "<div class='rowoptionview rowview-mt-19'>";
                 $action .= "<a href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 $action .= "</div'>";
-                $first_action = "<a target='_blank' href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " style='text-align: left !important'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
-                $row[] = '<p style="margin: auto;
-                width: 50%;
-                text-align: left;
-                padding: 10px;">' . ($key + 1) . ".</p>";
-                $row[] = $first_action . "<h4>" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</h4>" . $kunjungan[$key]['contact_address'] . "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'] . "</a>" . $action;
-                $row[] = $kunjungan[$key]['status_pasien_id'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
-                $row[] = $kunjungan[$key]['clinic_id'] .  "<br>" . $kunjungan[$key]['employee_id'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
-                $row[] = $kunjungan[$key]['clinic_id_from'] .  "<br>" . $kunjungan[$key]['keluar_id'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
+                // $row[] = '<p style="margin: auto;
+                // width: 50%;
+                // text-align: left;
+                // padding: 10px;">' . ($key + 1) . ".</p>";
+                $row[] = $kunjungan[$key]['no_registration'];
+                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>"; // . $action;
+                $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
+                $row[] = $kunjungan[$key]['name_of_status_pasien'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
+                $row[] = $kunjungan[$key]['name_of_clinic'] .  "<br>" . $kunjungan[$key]['fullname'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
+                $row[] = $kunjungan[$key]['name_of_clinic_from'] .  "<br>" . $kunjungan[$key]['cara_keluar'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = substr($kunjungan[$key]['date_of_birth'], 0, 10) . "<br>" . $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bl " . $kunjungan[$key]['ageday'] . "hr";
-                $row[] = $kunjungan[$key]['payor_id'] . "<br>" . $kunjungan[$key]['class_id'] . "<br>" . $kunjungan[$key]['class_id_plafond'];
+                $row[] = $kunjungan[$key]['payor'] . "<br>" . $kunjungan[$key]['name_of_class'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'];
                 $dt_data[] = $row;
             }
         }
@@ -1098,7 +1375,7 @@ This Function is used to Add Patient
         );
         return json_encode($json_data);
 
-        return json_encode($kunjungan);
+        // return json_encode($kunjungan);
     }
     public function getPatientListAjax()
     {
@@ -1126,6 +1403,21 @@ This Function is used to Add Patient
             if (!empty($result)) {
                 foreach ($result as $value) {
                     $data[] = array("id" => $value['diagnosa_id'], "text" => $value['name_of_diagnosa'] . " (" . $value['diagnosa_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
+    public function getDiagnosisPerawatListAjax()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        if (isset($search_term) && $search_term != '') {
+            $p = new DiagnosaPerawatModel();
+            $result = $this->lowerKey($p->getDiagnosa($search_term));
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => $value['diagnosan_id'], "text" => $value['diagnosan_name'] . " (" . $value['diagnosan_id'] . ")");
                 }
             }
             echo json_encode($data);
@@ -1186,13 +1478,35 @@ This Function is used to Add Patient
         $employee_id = $this->request->getPost('employeeId');
         if (isset($search_term) && $search_term != '') {
             $model = new GoodsModel();
-            $customObat = $this->lowerKey($model->find('00000'));
-            $customObat['name'] = $search_term;
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
             // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
+            // $result = $this->lowerKey($model->getObatAlkesDokter($search_term, $employee_id));
             $result = $this->lowerKey($model->getObatDokter($search_term, $employee_id));
             $data   = array();
             // $data[] = array("id" => '%', "text" => "Semua (%)");
-            $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
+    public function getObatAlkesListAjax()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        $employee_id = $this->request->getPost('employeeId');
+        if (isset($search_term) && $search_term != '') {
+            $model = new GoodsModel();
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
+            // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
+            $result = $this->lowerKey($model->getObatAlkesDokter($search_term, $employee_id));
+            $data   = array();
+            // $data[] = array("id" => '%', "text" => "Semua (%)");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
             if (!empty($result)) {
                 foreach ($result as $value) {
                     $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");
@@ -1217,6 +1531,22 @@ This Function is used to Add Patient
             }
             echo json_encode($data);
         }
+    }
+
+    public function getVisit()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+
+        $visitIdKonsul = $body['visitIdKonsul'];
+
+        $pv = new PasienVisitationModel();
+        $select = $pv->find($visitIdKonsul);
+
+        return json_encode($select);
     }
     public function addvisit()
     {
@@ -1283,7 +1613,6 @@ This Function is used to Add Patient
             'ageyear' => 'required',
             'kode_agama' => 'required',
             'aktif' => 'required',
-
         ];
 
         // if (!$this->validate($rules)) {
@@ -1294,17 +1623,21 @@ This Function is used to Add Patient
         // }
 
 
-        $p = new PasienModel();
-        $no_registration = $p->getNorm();
+        // $p = new PasienModel();
+        // $no_registration = $p->getNorm();
 
+        $trans_id = $this->request->getPost('trans_id');
+        $visit_id = $this->request->getPost('visit_id');
+        $ticket_no = $this->request->getPost('ticket_no');
         $clinic_id = $this->request->getPost('clinic_id');
         $employee_id = $this->request->getPost('employee_id');
+        $isrj = $this->request->getPost('isrj');
         $kddpjp = $this->request->getPost('kddpjp');
         $class_id = $this->request->getPost('class_id');
         $class_id_plafond = $this->request->getPost('class_id_plafond');
         $status_pasien_id = $this->request->getPost('status_pasien_id');
-        $visit_date = $this->request->getPost('visit_date');
-        $boooked_date = $this->request->getPost('boooked_date');
+        $visit_date = str_replace("T", " ", $this->request->getPost('visit_date'));
+        $booked_date =  str_replace("T", " ", $this->request->getPost('booked_date'));
         $kdpoli_eks = $this->request->getPost('kdpoli_eks');
         $isnew = $this->request->getPost('isnew');
         $cob = $this->request->getPost('cob');
@@ -1317,7 +1650,7 @@ This Function is used to Add Patient
         $asalrujukan = $this->request->getPost('asalrujukan');
         $norujukan = $this->request->getPost('norujukan');
         $kdpoli = $this->request->getPost('kdpoli');
-        $tanggal_rujukan = $this->request->getPost('tanggal_rujukan');
+        $tanggal_rujukan =  str_replace("T", " ", $this->request->getPost('tanggal_rujukan'));
         $ppkrujukan = $this->request->getPost('ppkrujukan');
         $diag_awal = $this->request->getPost('diag_awal');
         $conclusion = $this->request->getPost('conclusion');
@@ -1357,24 +1690,35 @@ This Function is used to Add Patient
         $tujuankunj = $this->request->getPost('tujuankunj');
         $flagprocedure = $this->request->getPost('flagprocedure');
         $kdpenunjang = $this->request->getPost('kdpenunjang');
-        $assesmenpel = $this->request->getPost('assesmenpel');
-        $valid_rm_date = $this->request->getPost('assesmenpel');
+        $assesmentpel = $this->request->getPost('assesmentpel');
+        $valid_rm_date = $this->request->getPost('valid_rm_date');
         $penjamin = $this->request->getPost('penjamin');
         $lokasilaka = $this->request->getPost('lokasilaka');
         $ispertarif = $this->request->getPost('ispertarif');
         $temptrans = $this->request->getPost('temptrans');
         $delete_sep = $this->request->getPost('delete_sep');
+        $ssencounter_id = $this->request->getPost('ssencounter_id');
+        $statusantrean = $this->request->getPost('statusantrean');
 
+
+
+        // return json_encode($generateId);
 
 
         $pv = new PasienVisitationModel();
-        $genereatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
+        $flag = 'edit';
+        if (!isset($visit_id) || $visit_id == null) {
+            $generatePv = $this->lowerKey($pv->generateId($clinic_id, $no_registration));
 
 
-        $visit_id = $genereatePv[0]['visit_id'];
-        $trans_id = $genereatePv[0]['trans_id'];
-        $ticket_no = $genereatePv[0]['ticket_no'];
-        // dd($genereatePv);
+            $visit_id = $generatePv[0]['visit_id'];
+            if (!isset($trans_id) || $trans_id == null)
+                $trans_id = $generatePv[0]['trans_id'];
+            $ticket_no = $generatePv[0]['ticket_no'];
+            $ssencounter_id = $generatePv[0]['ssencounter_id'];
+            $flag = 'tambah';
+        }
+        // return json_encode($generatePv);
 
 
         // return json_encode($kalurahan);
@@ -1388,7 +1732,7 @@ This Function is used to Add Patient
             'class_id_plafond' => $class_id_plafond,
             'status_pasien_id' => $status_pasien_id,
             'visit_date' => $visit_date,
-            'boooked_date' => $boooked_date,
+            'booked_date' => $booked_date,
             'kdpoli_eks' => $kdpoli_eks,
             'isnew' => $isnew,
             'cob' => $cob,
@@ -1439,8 +1783,17 @@ This Function is used to Add Patient
             'aktif' => $aktif,
             'visit_id' => $visit_id,
             'trans_id' => $trans_id,
-            'ticket_no' => $ticket_no
-
+            'ticket_no' => $ticket_no,
+            'backcharge' => $backcharge,
+            'valid_rm_date' => $valid_rm_date,
+            'penjamin' => $penjamin,
+            'lokasilaka' => $lokasilaka,
+            'ispertarif' => $ispertarif,
+            'temptrans' => $temptrans,
+            'delete_sep' => $delete_sep,
+            'isrj' => $isrj,
+            'ssencounter_id' => $ssencounter_id,
+            'statusantrean' => $statusantrean
         ];
         // $data = json_encode($data);
 
@@ -1448,13 +1801,82 @@ This Function is used to Add Patient
 
 
 
-        $pv->insert($data);
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah pasien berhasil', 'visit_id' => $visit_id);
+        $pv->save($data);
+
+        $generateId = $this->generateId($clinic_id, $no_registration);
+
+        $c = new ClinicModel();
+        $clinicSelect = $c->select("stype_id")->find($data['clinic_id']);
+        $liTipe = $clinicSelect['stype_id'];
+        // return json_encode($liTipe);
+
+        if ($clinic_id == 'P041' || $clinic_id == 'P061') {
+            $ttarif = $this->cekTindakanTarif(14);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+            $ttarif = $this->cekTindakanTarif(1);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        } else if ($clinic_id == 'P012') {
+            $ttarif = $this->cekTindakanTarif(13);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        } else if ($clinic_id == 'P011' || $clinic_id == 'P017' || $clinic_id == 'P029') {
+            $ttarif = $this->cekTindakanTarif(1);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        } else if ($clinic_id == 'MCU01') {
+            $ttarif = $this->cekTindakanTarif(15);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+            $ttarif = $this->cekTindakanTarif(1);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        } else if ($liTipe == '2') {
+            $ttarif = $this->cekTindakanTarif(2);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        } else {
+            $ttarif = $this->cekTindakanTarif(11);
+            // return json_encode($ttarif);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+            $ttarif = $this->cekTindakanTarif(1);
+            $this->saveTarifDaftar($data, $ttarif, $this->generateIdTgl());
+        }
+
+        $lsBaru = $this->cek_baru_lama_rs($data['no_registration'], $data['visit_date']);
+
+        if ($lsBaru == '1' && $liTipe != '2') {
+            $cekTarifBaru = $this->cek_tindakan_tarif_baru($lsBaru);
+            $this->saveTarifDaftar($data, $cekTarifBaru, $this->generateIdTgl());
+        }
+
+
+        // IF LSKLINIK =  'P041'  or LSKLINIK = 'P061' THEN 
+        // 																					save_tarif_daftar(cek_tindakan_tarif(14),lsNota)
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)
+        // 																				ELSEif LSKLINIK = 'P012' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(13),lsNota)
+        // 																				ELSEif LSKLINIK = 'P011' OR LSKLINIK = 'P017' OR LSKLINIK = 'P029' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)
+        // 																				ELSEif LSKLINIK = 'MCU01' THEN
+        // 																					save_tarif_daftar(cek_tindakan_tarif(15),lsNota)												
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota)	
+        // 																				elseif litipe = 2 then 
+        // 																						save_tarif_daftar(cek_tindakan_tarif(2),lsNota)	
+        // 																				else
+        // 																					save_tarif_daftar(cek_tindakan_tarif(11),lsNota) 
+        // 																					save_tarif_daftar(cek_tindakan_tarif(1),lsNota) 
+        // 																				end if
+
+        $array   = array('status' => 'success', 'error' => '', 'message' => $flag . ' kunjungan pasien berhasil', 'visit_id' => $visit_id, 'data' => $data);
+        echo json_encode($array);
+    }
+
+    public function deletevisit()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $visit_id = $this->request->getPost('visit_id');
+
+        $pv = new PasienVisitationModel();
+        $pv->delete($visit_id);
+
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'delete kunjungan pasien berhasil', 'visit_id' => $visit_id);
         echo json_encode($array);
     }
 
@@ -1468,13 +1890,29 @@ This Function is used to Add Patient
         return json_encode($body['klsRawat']['klsRawatHak']);
     }
 
-
-    public function profile($id)
+    public function postingPanggilPasien()
     {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
 
+        $visit = $body['visit'];
+
+        $db = db_connect();
+        $db->query("UPDATE ANTRIAN_POLI SET STATUS_PANGGIL = 1,TANGGAL_PANGGIL = GETDATE()
+                where visit_id = '$visit';");
+        return json_encode("Berhasil panggil pasien");
+    }
+    public function profile($id, $pv)
+    {
+        // dd(user()->getRoles());
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
+        // return json_encode($orgunit);
+
+        $pv = base64_decode($pv);
+        $pv = json_decode($pv, true);
+        // return $pv['visit_id'];
 
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
@@ -1506,26 +1944,10 @@ This Function is used to Add Patient
         $statusPasienModel = new StatusPasienModel();
         $statusPasien = $this->lowerKey($statusPasienModel->findAll());
 
-        // $payorModel = new PayorModel();
-        // $payor = $this->lowerKey($payorModel->findAll());
 
-        // $educationModel = new EducationModel();
-        // $education = $this->lowerKey($educationModel->findAll());
 
-        // $maritalModel = new MaritalModel();
-        // $marital = $this->lowerKey($maritalModel->findAll());
-
-        // $agamaModel = new AgamaModel();
-        // $agama = $this->lowerKey($agamaModel->findAll());
-
-        // $jobModel = new JobModel();
-        // $job = $this->lowerKey($jobModel->findAll());
-
-        // $bloodModel = new BloodModel();
-        // $blood = $this->lowerKey($bloodModel->findAll());
-
-        // $familyModel = new FamilyModel();
-        // $family = $this->lowerKey($familyModel->findAll());
+        $followupModel = new FollowUpModel();
+        $followup = $this->lowerKey($followupModel->findAll());
 
         $genderModel = new SexModel();
         $gender = $this->lowerKey($genderModel->findAll());
@@ -1546,8 +1968,6 @@ This Function is used to Add Patient
 
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
-
-        // dd($reasonModel);
 
         $isattendedModel = new IsattendedsModel();
         $isattended = $this->lowerKey($isattendedModel->findAll());
@@ -1571,13 +1991,23 @@ This Function is used to Add Patient
 
         // dd($employee);
 
-        $pv = new PasienVisitationModel();
-        $visit = $this->lowerKey($pv->find($id));
+        // $pv = new PasienVisitationModel();
+        // $visit = $this->lowerKey($pv->find($id));
+        $visit = $pv;
+        // return json_encode($visit['gender']);
+
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
-        foreach ($employee as $key => $value) {
 
+        if (is_null($visit['status_pasien_id']))
+            $visit['status_pasien_id'] = '1';
+        foreach ($statusPasien as $key => $value) {
+            if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
+                $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
+            }
+        }
+        foreach ($employee as $key => $value) {
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
                 $visit['fullname'] = $employee[$key]['fullname'];
             }
@@ -1588,10 +2018,67 @@ This Function is used to Add Patient
                 $visit['fullname_inap'] = $employee[$key]['fullname'];
             }
         }
+        if (!isset($visit['fullname'])) {
+            $visit['fullname'] = '';
+        }
         foreach ($clinic as $key => $value) {
             if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
+        }
+        $db = db_connect();
+
+        $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+        SPECIALIST_TYPE st
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        foreach ($specialist as $key => $value) {
+            $visit['specialist_type_id'] = $value['specialist_type_id'];
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+            SPECIALIST_TYPE st
+            inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+            inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+            where c.CLINIC_ID = 'P001';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $visit['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        // dd($visit['clinic_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
+        $mapAssessment = $this->lowerKey($db->query("select m.*, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID;")->getResultArray());
+        // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        // inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        // inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        // inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        // where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
+        }
+
+
+        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+
+        if (!isset($visit['name_of_clinic'])) {
+            $visit['name_of_clinic'] = '';
         }
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
@@ -1601,38 +2088,43 @@ This Function is used to Add Patient
         $visit['age'] = $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr';
 
         $visitDate = substr($visit['visit_date'], 0, 10);
+        $visit['visit_datetime'] = $visit['visit_date'];
         $visit['visit_date'] = $visitDate;
         $visitDate = substr($visit['exit_date'], 0, 10);
+        $visit['exit_datetime'] = $visit['exit_date'];
         $visit['exit_date'] = $visitDate;
 
-        $examModel = new ExaminationModel();
-        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        // $examModel = new ExaminationModel();
+        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        $exam = [];
 
-        $pdModel = new PasienDiagnosaModel();
-        $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
-        $irModel = new InasisRujukanModel();
+        // $pdModel = new PasienDiagnosaModel();
+        // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        $pasienDiagnosa = [];
+        // $irModel = new InasisRujukanModel();
         // $nmprovider = $irModel->select('nmprovider')->find($pasienDiagnosa[0]['dirujukke']);
         // $pasienDiagnosa['nmprovider'] = $nmprovider['nmprovider'];
 
         $userEmployee = user()->employee_id;
 
-        if (!is_null($visit['class_room_id'])) {
-            $visit['isrj'] = '0';
-        } else {
-            $visit['isrj'] = '1';
-        }
+        // if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+        //     $visit['isrj'] = '0';
+        // } else {
+        // }
+        $visit['isrj'] = '1';
 
         if ($visit['isrj'] == '0') {
             $classRoomModel = new ClassRoomModel();
             $classRoom = $this->lowerKey($classRoomModel->findAll());
-            // dd($classRoom);
+            dd($classRoom);
             foreach ($classRoom as $key => $value) {
                 if ($visit['class_room_id'] == $classRoom[$key]['class_room_id']) {
-                    $visit['name_of_class'] = $classRoom[$key]['name_of_class'];
+                    $visit['name_of_class_room'] = $classRoom[$key]['name_of_class'];
                     break;
                 }
             }
         }
+        // dd(($visit['class_room_id'] == ''));
 
         $scheduleModel = new ClinicDoctorModel();
         $schedule = $this->lowerKey($scheduleModel->where('employee_id', $visit['employee_id'])->findAll());
@@ -1649,15 +2141,19 @@ This Function is used to Add Patient
                     $clinicPermission[$schedule[$key]['clinic_id']]['name_of_clinic'] = $schedule[$key]['name_of_clinic'];
                     foreach ($clinic as $ckey => $cvalue) {
                         if ($clinic[$ckey]['clinic_id'] == $schedule[$key]['clinic_id']) {
-                            $clinicPermission[$schedule[$key]['clinic_id']]['stype_id'] = $clinic[$ckey]['stype_id'];
+                            foreach ($cvalue as $ckey2 => $cvalue2) {
+                                $clinicPermission[$schedule[$key]['clinic_id']][$ckey2] = $cvalue2;
+                            }
                         }
                     }
                 }
             }
 
             // dd($clinicPermission);
-
-            unset($clinic);
+            foreach ($clinicPermission as $key => $value) {
+                unset($clinic);
+            }
+            // unset($clinic);
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
@@ -1665,8 +2161,36 @@ This Function is used to Add Patient
                 $clinic[$i] = $clinicPermission[$key];
             }
         }
+        // dd($employee);
+        foreach ($employee as $key => $value) {
+            if ($employee[$key]['employee_id'] == $visit['employee_id']) {
+                $visit['sspractitioner_id'] = $value['sspractitioner_id'];
+                $visit['sspractitioner_name'] = $value['fullname'];
+            }
+        }
 
-        // dd($visit);
+        $assessmentParam = array();
+
+        $db = db_connect();
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
+
+        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+
+
+
+
+        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
+        // dd($mapAssessment);
+        // dd($visit['specialist_type_id']);
+        // dd(array_filter($mapAssessment, function ($value) use ($visit) {
+        //     return $value['doc_type'] == 1 && $value['specialist_type_id'] == $visit['specialist_type_id'];
+        // }));
+
 
         return view('admin/patient/profile', [
             'title' => '',
@@ -1697,6 +2221,7 @@ This Function is used to Add Patient
             'isattended' => $isattended,
             'inasisPoli' => $inasisPoli,
             'inasisFaskes' => $inasisFaskes,
+            'followup' => $followup,
             // 'diagnosa' => $diagnosa,
             // 'dpjp' => $dpjp,
             'visit' => $visit,
@@ -1704,87 +2229,59 @@ This Function is used to Add Patient
             'pd' => $pasienDiagnosa,
             'suffer' => $suffer,
             'diagCat' => $diagCat,
-            'employee' => $employee
+            'employee' => $employee,
+            'aParent' => $aParent,
+            'aType' => $aType,
+            'aParameter' => $aParameter,
+            'aValue' => $aValue,
+            'mappingAssessment' => $mappingAssessment,
+            // 'aParent' => [],
+            // 'aType' => [],
+            // 'aParameter' => [],
+            // 'aValue' => [],
+            // 'mappingAssessment' => [],
+            'mapAssessment' => $mapAssessment
         ]);
     }
 
-    public function profileranap($id)
+    public function profileranap($id, $ta)
     {
 
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
 
+        // dd(user()->getEmployeeData());
+
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
-        //parameter
-        // $coverageModel = new CoverageModel();
-        // $coverage = $this->lowerKey($coverageModel->findAll());
 
-        // $statusModel = new StatusPesertaModel();
-        // $status = $this->lowerKey($statusModel->findAll());
+        $ta = base64_decode($ta);
+        $ta = json_decode($ta, true);
 
-        // $jenisModel = new JenisPesertaModel();
-        // $jenis = $this->lowerKey($jenisModel->findAll());
 
-        // $kelasModel = new ClassModel();
-        // $kelas = $this->lowerKey($kelasModel->findAll());
-
-        // $kalurahanModel = new KalurahanModel();
-        // $kalurahan = $this->lowerKey($kalurahanModel->findAll());
-
-        // $kecamatanModel = new KecamatanModel();
-        // $kecamatan = $this->lowerKey($kecamatanModel->findAll());
-
-        // $kotaModel = new KotaModel();
-        // $kota = $this->lowerKey($kotaModel->findAll());
-
-        // $provModel = new ProvinceModel();
-        // $prov = $this->lowerKey($provModel->findAll());
 
         $statusPasienModel = new StatusPasienModel();
         $statusPasien = $this->lowerKey($statusPasienModel->findAll());
 
-        // $payorModel = new PayorModel();
-        // $payor = $this->lowerKey($payorModel->findAll());
 
-        // $educationModel = new EducationModel();
-        // $education = $this->lowerKey($educationModel->findAll());
 
-        // $maritalModel = new MaritalModel();
-        // $marital = $this->lowerKey($maritalModel->findAll());
-
-        // $agamaModel = new AgamaModel();
-        // $agama = $this->lowerKey($agamaModel->findAll());
-
-        // $jobModel = new JobModel();
-        // $job = $this->lowerKey($jobModel->findAll());
-
-        // $bloodModel = new BloodModel();
-        // $blood = $this->lowerKey($bloodModel->findAll());
-
-        // $familyModel = new FamilyModel();
-        // $family = $this->lowerKey($familyModel->findAll());
+        $followupModel = new FollowUpModel();
+        $followup = $this->lowerKey($followupModel->findAll());
 
         $genderModel = new SexModel();
         $gender = $this->lowerKey($genderModel->findAll());
 
         $clinicModel = new ClinicModel();
-        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5)")->findAll());
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
 
-        // $scheduleModel = new DoctorScheduleModel();
-        // $schedule = $this->lowerKey($scheduleModel->getSchedule());
 
-        // $wayModel = new VisitWayModel();
-        // $way = $this->lowerKey($wayModel->findAll());
 
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
 
         $employeeModel = new EmployeeAllModel();
         $employee = $this->lowerKey($employeeModel->getEmployee());
-
-        // dd($reasonModel);
 
         $isattendedModel = new IsattendedsModel();
         $isattended = $this->lowerKey($isattendedModel->findAll());
@@ -1803,24 +2300,30 @@ This Function is used to Add Patient
 
 
 
-        // $diagnosaModel = new DiagnosaModel();
-        // $diagnosa = $this->lowerKey($diagnosaModel->findAll());
-
-
-
         $dokter = array();
         $dpjp = array();
 
 
 
-
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
+        // $visit = $ta;
+        unset($ta['visit_date']);
+        foreach ($ta as $key => $value) {
+            $visit[$key] = $value;
+        }
+        // return json_encode($visit['class_room_id']);
 
         $visit['fullname_inap'] = '';
         $visit['fullname_from'] = '';
+        if (is_null($visit['status_pasien_id']))
+            $visit['status_pasien_id'] = '1';
+        foreach ($statusPasien as $key => $value) {
+            if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
+                $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
+            }
+        }
         foreach ($employee as $key => $value) {
-
             if ($employee[$key]['employee_id'] == $visit['employee_id']) {
                 $visit['fullname'] = $employee[$key]['fullname'];
             }
@@ -1836,6 +2339,49 @@ This Function is used to Add Patient
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
         }
+
+        $db = db_connect();
+        $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+        SPECIALIST_TYPE st
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        where ct.clinic_type = ISNULL('" . $ta['clinic_type'] . "','0');")->getResultArray());
+        foreach ($specialist as $key => $value) {
+            $visit['specialist_type_id'] = $value['specialist_type_id'];
+        }
+        // return json_encode($ta['employee_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $ta['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
+
+        $mapAssessment = $this->lowerKey($db->query("select m.*, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        where st.specialist_type_id = '{$visit['specialist_type_id']}'
+        ;")->getResultArray());
+        // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        // inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        // inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        // inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        // where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
+        }
+
+        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+        // dd($mapAssessment);
+
         foreach ($gender as $key => $value) {
             if ($gender[$key]['gender'] == $visit['gender']) {
                 $visit['gendername'] = $gender[$key]['name_of_gender'];
@@ -1848,13 +2394,276 @@ This Function is used to Add Patient
         $visitDate = substr($visit['exit_date'], 0, 10);
         $visit['exit_date'] = $visitDate;
 
-        $examModel = new ExaminationModel();
-        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        // $examModel = new ExaminationModel();
+        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        $exam = [];
 
-        $pdModel = new PasienDiagnosaModel();
-        $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        // $pdModel = new PasienDiagnosaModel();
+        // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        $pasienDiagnosa = [];
 
-        if (!is_null($visit['class_room_id'])) {
+        // if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+        //     $visit['isrj'] = '0';
+        // } else {
+        //     $visit['isrj'] = '1';
+        // }
+        $visit['isrj'] = '0';
+
+        if ($visit['isrj'] == '0') {
+            $classRoomModel = new ClassRoomModel();
+            $classRoom = $this->lowerKey($classRoomModel->findAll());
+            // dd($classRoom);
+            foreach ($classRoom as $key => $value) {
+                if ($visit['class_room_id'] == $classRoom[$key]['class_room_id']) {
+                    $visit['name_of_class'] = $classRoom[$key]['name_of_class'];
+                    break;
+                }
+            }
+        }
+
+        $scheduleModel = new ClinicDoctorModel();
+        $schedule = $this->lowerKey($scheduleModel->where('employee_id', $visit['employee_id'])->findAll());
+
+        $clinicPermission = [];
+
+        $userEmployee = user()->employee_id;
+
+        // $db = db_connect();
+        // $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        // $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type like 'GEN%' order by P_DESCRIPTION")->getResultArray());
+        // $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type like 'GEN%'")->getResultArray());
+        // $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'GEN%'")->getResultArray());
+        $db = db_connect();
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
+
+        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
+
+        // return json_encode($mappingAssessment);
+        // dd($visit['clinic_id_from']);
+        return view('admin/patient/profile', [
+            'title' => 'Profile Pasien',
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp,
+            'clinic' => $clinic,
+            'dokter' => $dokter,
+            // 'coverage' => $coverage,
+            // 'status' => $status,
+            // 'jenis' => $jenis,
+            // 'kelas' => $kelas,
+            // 'kalurahan' => $kalurahan,
+            // 'kecamatan' => $kecamatan,
+            // 'kota' => $kota,
+            // 'prov' => $prov,
+            'statusPasien' => $statusPasien,
+            'followup' => $followup,
+            // 'payor' => $payor,
+            // 'education' => $education,
+            // 'marital' => $marital,
+            // 'agama' => $agama,
+            // 'job' => $job,
+            // 'blood' => $blood,
+            // 'family' => $family,
+            'gender' => $gender,
+            // 'way' => $way,
+            'reason' => $reason,
+            'isattended' => $isattended,
+            'inasisPoli' => $inasisPoli,
+            'inasisFaskes' => $inasisFaskes,
+            // 'diagnosa' => $diagnosa,
+            'dpjp' => $dpjp,
+            'visit' => $visit,
+            'exam' => $exam,
+            'pd' => $pasienDiagnosa,
+            'suffer' => $suffer,
+            'diagCat' => $diagCat,
+            'schedule' => $schedule,
+            'employee' => $employee,
+            'aParent' => $aParent,
+            'aType' => $aType,
+            'aParameter' => $aParameter,
+            'aValue' => $aValue,
+            'mappingAssessment' => $mappingAssessment,
+            'mapAssessment' => $mapAssessment
+        ]);
+    }
+    public function profileoperasi($id, $ta)
+    {
+
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+
+        // dd(user()->getEmployeeData());
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $ta = base64_decode($ta);
+        $ta = json_decode($ta, true);
+
+        $statusPasienModel = new StatusPasienModel();
+        $statusPasien = $this->lowerKey($statusPasienModel->findAll());
+
+        $followupModel = new FollowUpModel();
+        $followup = $this->lowerKey($followupModel->findAll());
+
+        $genderModel = new SexModel();
+        $gender = $this->lowerKey($genderModel->findAll());
+
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+
+        $reasonModel = new VisitReasonModel();
+        $reason = $this->lowerKey($reasonModel->findAll());
+
+        $employeeModel = new EmployeeAllModel();
+        $employee = $this->lowerKey($employeeModel->getEmployee());
+
+        $isattendedModel = new IsattendedsModel();
+        $isattended = $this->lowerKey($isattendedModel->findAll());
+
+        $inasisPoliModel = new InasisPoliModel();
+        $inasisPoli = $this->lowerKey($inasisPoliModel->findAll());
+
+        $inasisFaskesModel = new InasisFaskesModel();
+        $inasisFaskes = $this->lowerKey($inasisFaskesModel->findAll());
+
+        $sufferModel = new SufferModel();
+        $suffer = $this->lowerKey($sufferModel->findAll());
+
+        $diagCatModel = new DiagnosaCategoryModel();
+        $diagCat = $this->lowerKey($diagCatModel->findAll());
+
+
+
+        $dokter = array();
+        $dpjp = array();
+
+
+
+        $pv = new PasienVisitationModel();
+        $visit = $this->lowerKey($pv->find($id));
+        // $visit = $ta;
+        unset($ta['visit_date']);
+        foreach ($ta as $key => $value) {
+            $visit[$key] = $value;
+        }
+
+        $visit['fullname_inap'] = '';
+        $visit['fullname_from'] = '';
+        if (is_null($visit['status_pasien_id']))
+            $visit['status_pasien_id'] = '1';
+
+        // $visit['name_of_status_pasien'] = array_column(array_filter($statusPasien, function ($value) use ($visit) {
+        //     return $value['status_pasien_id'] == $visit['status_pasien_id'];
+        // }), "name_of_status_pasien");
+        foreach ($statusPasien as $key => $value) {
+            if ($statusPasien[$key]['status_pasien_id'] == $visit['status_pasien_id']) {
+                $visit['name_of_status_pasien'] = $statusPasien[$key]['name_of_status_pasien'];
+            }
+        }
+        // $visit['fullname'] = array_column(array_filter($employee, function ($value) use ($visit) {
+        //     return $value['employee_id'] == $visit['employee_id'];
+        // }), "fullname")[0];
+
+        // $visit['fullname_from'] = array_column(array_filter($employee, function ($value) use ($visit) {
+        //     return $value['employee_id'] == $visit['employee_id_from'];
+        // }), "fullname_from")[0];
+        // $visit['fullname_inap'] = array_column(array_filter($employee, function ($value) use ($visit) {
+        //     return $value['employee_id'] == $visit['employee_inap'];
+        // }), "fullname")[0];
+
+        foreach ($employee as $key => $value) {
+
+            if ($employee[$key]['employee_id'] == $visit['employee_id']) {
+                $visit['fullname'] = $employee[$key]['fullname'];
+            }
+            if ($employee[$key]['employee_id'] == $visit['employee_id_from']) {
+                $visit['fullname_from'] = $employee[$key]['fullname'];
+            }
+            if ($employee[$key]['employee_id'] == $visit['employee_inap']) {
+                $visit['fullname_inap'] = $employee[$key]['fullname'];
+            }
+        }
+        // $visit['name_of_clinic'] = array_column(array_filter($clinic, function ($value) use ($visit) {
+        //     return $value['clinic_id'] = $visit['clinic_id'];
+        // }), "name_of_clinic");
+        foreach ($clinic as $key => $value) {
+            if ($clinic[$key]['clinic_id'] == $visit['clinic_id']) {
+                $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
+            }
+        }
+
+        $db = db_connect();
+        $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+        SPECIALIST_TYPE st
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        foreach ($specialist as $key => $value) {
+            $visit['specialist_type_id'] = $value['specialist_type_id'];
+        }
+        // return json_encode($ta['employee_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $ta['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
+
+        $mapAssessment = $this->lowerKey($db->query("select m.*, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        where st.specialist_type_id = '{$visit['specialist_type_id']}'
+        ;")->getResultArray());
+        // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+        // inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+        // inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        // inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+        // where c.CLINIC_ID = ISNULL('" . $visit['clinic_id'] . "','P001');")->getResultArray());
+        // return json_encode($mapAssessment);
+        if ($mapAssessment == []) {
+            $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, '' as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
+                inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
+                inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+                inner join clinic c on c.CLINIC_TYPE = ct.CLINIC_TYPE
+                where c.CLINIC_ID = 'P001';")->getResultArray());
+        }
+
+        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+        // dd($mapAssessment);
+
+        foreach ($gender as $key => $value) {
+            if ($gender[$key]['gender'] == $visit['gender']) {
+                $visit['gendername'] = $gender[$key]['name_of_gender'];
+            }
+        }
+        $visit['age'] = $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr';
+
+        $visitDate = substr($visit['visit_date'], 0, 10);
+        $visit['visit_date'] = $visitDate;
+        $visitDate = substr($visit['exit_date'], 0, 10);
+        $visit['exit_date'] = $visitDate;
+
+        // $examModel = new ExaminationModel();
+        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        $exam = [];
+
+        // $pdModel = new PasienDiagnosaModel();
+        // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        $pasienDiagnosa = [];
+
+        if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
             $visit['isrj'] = '0';
         } else {
             $visit['isrj'] = '1';
@@ -1879,33 +2688,23 @@ This Function is used to Add Patient
 
         $userEmployee = user()->employee_id;
 
-        // if (!is_null($userEmployee)) {
-        //     foreach ($schedule as $key => $value) {
-        //         // if ($schedule[$key]['dpjp'] != '' && !is_null($schedule[$key]['dpjp'])) {
-        //         //     $dpjp[$schedule[$key]['employee_id']] = $schedule[$key]['dpjp'];
-        //         // }
-        //         if ($schedule[$key]['employee_id'] == $userEmployee) {
-        //             $clinicPermission[$schedule[$key]['clinic_id']]['clinic_id'] = $schedule[$key]['clinic_id'];
-        //             $clinicPermission[$schedule[$key]['clinic_id']]['name_of_clinic'] = $schedule[$key]['name_of_clinic'];
-        //             foreach ($clinic as $ckey => $cvalue) {
-        //                 if ($clinic[$ckey]['clinic_id'] == $schedule[$key]['clinic_id']) {
-        //                     $clinicPermission[$schedule[$key]['clinic_id']]['stype_id'] = $clinic[$ckey]['stype_id'];
-        //                 }
-        //             }
-        //         }
-        //     }
+        // $db = db_connect();
+        // $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        // $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type like 'GEN%' order by P_DESCRIPTION")->getResultArray());
+        // $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type like 'GEN%'")->getResultArray());
+        // $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'GEN%'")->getResultArray());
+        $db = db_connect();
+        $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
-        //     // dd($clinicPermission);
+        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
-        //     unset($clinic);
-
-        //     $i = 0;
-        //     foreach ($clinicPermission as $key => $value) {
-        //         $i++;
-        //         $clinic[$i] = $clinicPermission[$key];
-        //     }
-        // }
-
+        // return json_encode($visit);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
@@ -1921,6 +2720,7 @@ This Function is used to Add Patient
             // 'kota' => $kota,
             // 'prov' => $prov,
             'statusPasien' => $statusPasien,
+            'followup' => $followup,
             // 'payor' => $payor,
             // 'education' => $education,
             // 'marital' => $marital,
@@ -1942,7 +2742,14 @@ This Function is used to Add Patient
             'suffer' => $suffer,
             'diagCat' => $diagCat,
             'schedule' => $schedule,
-            'employee' => $employee
+            'employee' => $employee,
+            'aParent' => $aParent,
+            'aType' => $aType,
+            'aParameter' => $aParameter,
+            'aValue' => $aValue,
+            'mappingAssessment' => $mappingAssessment,
+            'mapAssessment' => $mapAssessment,
+            'gsPoli' => 'P002'
         ]);
     }
 
@@ -2134,6 +2941,9 @@ This Function is used to Add Patient
     public function editExam()
     {
         // dd($this->request->is('post'));
+        // echo '<pre>';
+        // var_dump($_POST['body_id']);
+        // die();
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -2184,6 +2994,7 @@ This Function is used to Add Patient
         $nafas = $this->request->getPost('nafas');
         $arm_diameter = $this->request->getPost('arm_diameter');
         $anamnase = $this->request->getPost('anamnase');
+        $oxygen_usage = $this->request->getPost('oxygen_usage');
         $pemeriksaan = $this->request->getPost('pemeriksaan');
         $teraphy_desc = $this->request->getPost('teraphy_desc');
         $description = $this->request->getPost('description');
@@ -2268,7 +3079,10 @@ This Function is used to Add Patient
         // return json_encode($kalurahan);
         $id = $this->request->getPost('body_id');
 
-
+        // echo '<pre>';
+        // var_dump($_POST['body_id']);
+        // var_dump($id);
+        // die();
 
 
 
@@ -2282,7 +3096,7 @@ This Function is used to Add Patient
                 'no_registration' => $no_registration,
                 'body_id' => $id,
                 'petugas' => $petugas,
-                'examination_date' => $examination_date,
+                // 'examination_date' => $examination_date,
                 'weight' => (float)$weight,
                 'height' => (float)$height,
                 'temperature' => (float)$temperature,
@@ -2293,6 +3107,7 @@ This Function is used to Add Patient
                 'nafas' => (float)$nafas,
                 'arm_diameter' => (float)$arm_diameter,
                 'anamnase' => $anamnase,
+                'oxygen_usage' => (float)$oxygen_usage,
                 'pemeriksaan' => $pemeriksaan,
                 'teraphy_desc' => $teraphy_desc,
                 'description' => $description,
@@ -2315,6 +3130,10 @@ This Function is used to Add Patient
                 'instruction' => $instruction
             ];
             $result = $examModel->insert($data);
+            // echo '<pre>';
+            // echo "insert <br>";
+            // var_dump($result);
+            // die();
             $message = "tambah pemeriksaan fisik berhasil";
             $type = 'insert';
         } else {
@@ -2324,7 +3143,7 @@ This Function is used to Add Patient
                 'no_registration' => $no_registration,
                 'body_id' => $id,
                 'petugas' => $petugas,
-                'examination_date' => $examination_date,
+                // 'examination_date' => $examination_date, havin
                 'weight' => (float)$weight,
                 'height' => (float)$height,
                 'temperature' => (float)$temperature,
@@ -2335,6 +3154,7 @@ This Function is used to Add Patient
                 'nafas' => (float)$nafas,
                 'arm_diameter' => (float)$arm_diameter,
                 'anamnase' => $anamnase,
+                'oxygen_usage' => (float)$oxygen_usage,
                 'pemeriksaan' => $pemeriksaan,
                 'teraphy_desc' => $teraphy_desc,
                 'description' => $description,
@@ -2357,6 +3177,10 @@ This Function is used to Add Patient
                 'instruction' => $instruction
             ];
             $result = $examModel->update($id, $data);
+            // echo '<pre>';
+            // echo "update <br>";
+            // var_dump($result);
+            // die();
             $message = "update pemeriksaan fisik berhasil";
             $type = "update";
         }
@@ -2861,10 +3685,21 @@ This Function is used to Add Patient
 
 
         // dd(json_encode($diag_id[0]));
+        $pv = new PasienVisitationModel();
+        $kunjungan = $this->lowerKeyOne($pv->find($visit_id));
+        $p = new PasienModel();
+        $pasien = $this->lowerKeyOne($p->find($no_registration));
+        $ea = new EmployeeAllModel();
+        $employee = $this->lowerKeyOne($ea->find($employee_id));
 
 
-
-
+        $ssjson = '{
+                        "resourceType": "Bundle",
+                        "type": "transaction",
+                        "entry": [
+                        ]
+                    }';
+        $ssjson = json_decode($ssjson, true);
 
         $pd = new PasienDiagnosaModel();
 
@@ -2950,8 +3785,6 @@ This Function is used to Add Patient
         } else {
             // return json_encode($data);
             $pd->save($data);
-
-            // $mesej = 'update';
         }
 
         if (!empty($diag_id)) {
@@ -2966,8 +3799,7 @@ This Function is used to Add Patient
                 $dataDiag['diag_cat'] = $diag_cat[$key];
                 $dataDiag['suffer_type'] = $suffer_type[$key];
                 $dataDiag['modified_by'] = user_id();
-
-
+                $dataDiag['sscondition_id'] = new RawSql('newid()');
 
                 $pds->insert($dataDiag);
             }
@@ -2997,6 +3829,23 @@ This Function is used to Add Patient
         $alfa_no = substr(str_shuffle($str_result), 0, 5);
         $array   = array('status' => 'success', 'error' => '', 'message' => $mesej . ' riwayat rekam medis berhasil', 'data' => $data);
         echo json_encode($array);
+    }
+    public function getKontrol()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $visit = $body['visit'];
+        $nosurat = $body['nosurat'];
+
+        $model = new InasisKontrolModel();
+
+        $select = $model->where("visit_id", $visit)->find();
     }
     public function postKontrol()
     {
@@ -3159,10 +4008,10 @@ This Function is used to Add Patient
         $nama = $body['nama'];
         $nokartu = $body['nokartu'];
         $nomr = $body['nomr'];
+        $status_pasien_id = $body['status_pasien_id'];
+        $transfer = $body['formtransfer'];
 
-
-
-
+        // return json_encode($transfer);
 
         $cModel = new ClinicModel();
         $query = $cModel->select("kdpoli, name_of_clinic")->where('clinic_id', $clinic_id)->find($clinic_id);
@@ -3170,36 +4019,44 @@ This Function is used to Add Patient
         $poliRujukan = $query['kdpoli'];
         $poliRujukanName = $query['name_of_clinic'];
 
-        $ws_data = [];
-        if ($norujukan != '') {
-            $method = 'PUT';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
-            $url .= 'Update';
-            $ws_data['noRujukan'] = $norujukan;
-        } else {
-            $method = 'POST';
-            $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
-            $url .= 'insert';
-            $ws_data['noSep'] = $nosep;
-        }
-        $ws_data['tglRujukan'] = $tglRujukan;
-        $ws_data['tglRencanaKunjungan'] = $tglRencanaKunjungan;
-        $ws_data['ppkDirujuk'] = $ppkdirujuk;
-        $ws_data['jnsPelayanan'] = $jnsPelayanan;
-        $ws_data['catatan'] = $catatan;
-        $ws_data['diagRujukan'] = $diagRujukan;
-        $ws_data['tipeRujukan'] = $tipeRujukan;
-        $ws_data['poliRujukan'] = $poliRujukan;
-        $ws_data['user'] = user_id();
+        $inasisRujukan = new InasisRujukanModel();
 
 
 
-        $request['request']['t_rujukan'] = $ws_data;
-        $postdata = json_encode($request);
-        // return $postdata;
-        // $posting = $this->sendVclaim($url, $method, $postdata);
-        // $response = $posting;
-        $posting = ' {
+        if ($status_pasien_id == '18') {
+
+
+            $ws_data = [];
+            if ($norujukan != '') {
+                $method = 'PUT';
+                $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
+                $url .= 'Update';
+                $ws_data['noRujukan'] = $norujukan;
+            } else {
+                $method = 'POST';
+                $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/2.0/';
+                $url .= 'insert';
+                $ws_data['noSep'] = $nosep;
+            }
+            $ws_data['tglRujukan'] = $tglRujukan;
+            $ws_data['tglRencanaKunjungan'] = $tglRencanaKunjungan;
+            $ws_data['ppkDirujuk'] = $ppkdirujuk;
+            $ws_data['jnsPelayanan'] = $jnsPelayanan;
+            $ws_data['catatan'] = $catatan;
+            $ws_data['diagRujukan'] = $diagRujukan;
+            $ws_data['tipeRujukan'] = $tipeRujukan;
+            $ws_data['poliRujukan'] = $poliRujukan;
+            $ws_data['user'] = user_id();
+
+
+
+            $request['request']['t_rujukan'] = $ws_data;
+            $postdata = json_encode($request);
+
+            // return $postdata;
+            // $posting = $this->sendVclaim($url, $method, $postdata);
+            // $response = $posting;
+            $posting = ' {
                         "metaData": {
                             "code": "200",
                             "message": "OK"
@@ -3239,49 +4096,95 @@ This Function is used to Add Patient
                             }
                         }
                         }';
-        $response = json_decode($posting, true);
+            $response = json_decode($posting, true);
 
-        if (isset($response['metaData']['code'])) {
-            if ($response['metaData']['code'] == '200') {
-                $inasisRujukan = new InasisRujukanModel();
-                $norujukan = $response['response']['rujukan']['noRujukan'];
+            if (isset($response['metaData']['code'])) {
+                if ($response['metaData']['code'] == '200') {
+                    $norujukan = $response['response']['rujukan']['noRujukan'];
 
-                $data = [
-                    'visit_id' => $visit,
-                    'nosep' => $nosep,
-                    'tglsep' => $tglRujukan,
-                    'tglrujukan' => $tglRencanaKunjungan,
-                    'tiperujukan' => $tipeRujukan,
-                    'kdjnspelayanan' => $jnsPelayanan,
-                    'catatan' => $catatan,
-                    'kddiag' => $diagRujukan,
-                    'nmdiag' => $diagRujukanName,
-                    'polirujukan_kdpoli' => $poliRujukan,
-                    'polirujukan_nmpoli' => $poliRujukanName,
-                    'provrujukan_kdprovider' => $ppkdirujuk,
-                    'provrujukan_nmprovider' => $ppkdirujukName,
-                    'nokunjungan' => $norujukan,
-                    'sex' => $sex,
-                    'nama' => $nama,
-                    'nokartu' => $nokartu,
-                    'nomr' => $nomr,
-                    'modified_by' => user_id(),
-                ];
-                if ($method == 'PUT') {
-                    $data['responput'] = json_encode($response);
-                } else {
+                    $data = [
+                        'visit_id' => $visit,
+                        'nosep' => $nosep,
+                        'tglsep' => $tglRujukan,
+                        'tglrujukan' => $tglRencanaKunjungan,
+                        'tiperujukan' => $tipeRujukan,
+                        'kdjnspelayanan' => $jnsPelayanan,
+                        'catatan' => $catatan,
+                        'kddiag' => $diagRujukan,
+                        'nmdiag' => $diagRujukanName,
+                        'polirujukan_kdpoli' => $poliRujukan,
+                        'polirujukan_nmpoli' => $poliRujukanName,
+                        'provrujukan_kdprovider' => $ppkdirujuk,
+                        'provrujukan_nmprovider' => $ppkdirujukName,
+                        'nokunjungan' => $norujukan,
+                        'sex' => $sex,
+                        'nama' => $nama,
+                        'nokartu' => $nokartu,
+                        'nomr' => $nomr,
+                        'modified_by' => user_id(),
+                    ];
+                    if ($method == 'PUT') {
+                        $data['responput'] = json_encode($response);
+                    } else {
 
-                    $data['responpost'] = json_encode($response);
+                        $data['responpost'] = json_encode($response);
+                    }
+                    if ($jnsPelayanan == '1') {
+                        $data['jnspelayanan'] = 'Rawat Jalan';
+                    } else {
+                        $data['jnspelayanan'] = 'Rawat Inap';
+                    }
+                    $inasisRujukan->save($data);
                 }
-                if ($jnsPelayanan == '1') {
-                    $data['jnspelayanan'] = 'Rawat Jalan';
-                } else {
-                    $data['jnspelayanan'] = 'Rawat Inap';
-                }
-                $inasisRujukan->save($data);
             }
+        } else {
+            $orgunit = new OrganizationunitModel();
+            $norujukan = $orgunit->generateId();
+            $data = [
+                'visit_id' => $visit,
+                'nosep' => $nosep,
+                'tglsep' => $tglRujukan,
+                'tglrujukan' => $tglRencanaKunjungan,
+                'tiperujukan' => $tipeRujukan,
+                'kdjnspelayanan' => $jnsPelayanan,
+                'catatan' => $catatan,
+                'kddiag' => $diagRujukan,
+                'nmdiag' => $diagRujukanName,
+                'polirujukan_kdpoli' => $poliRujukan,
+                'polirujukan_nmpoli' => $poliRujukanName,
+                'provrujukan_kdprovider' => $ppkdirujuk,
+                'provrujukan_nmprovider' => $ppkdirujukName,
+                'nokunjungan' => $norujukan,
+                'sex' => $sex,
+                'nama' => $nama,
+                'nokartu' => $nokartu,
+                'nomr' => $nomr,
+                'modified_by' => user_id(),
+            ];
+            // if ($method == 'PUT') {
+            //     $data['responput'] = json_encode($response);
+            // } else {
+
+            //     $data['responpost'] = json_encode($response);
+            // }
+            if ($jnsPelayanan == '1') {
+                $data['jnspelayanan'] = 'Rawat Jalan';
+            } else {
+                $data['jnspelayanan'] = 'Rawat Inap';
+            }
+            $inasisRujukan->save($data);
         }
 
+        $transfer['org_id'] = $ppkdirujuk;
+        $transfer['org_name'] = $ppkdirujukName;
+        $transfer['clinic_id_to'] = $clinic_id;
+        $transfer['examination_date'] = str_replace("T", " ", $transfer['examination_date']);
+
+        $pt = new PasienTransferModel();
+        $pt->save($transfer);
+
+        $response['metaData']['code'] = '200';
+        $response['response'] = $norujukan;
         return json_encode($response);
     }
 
@@ -3330,22 +4233,70 @@ This Function is used to Add Patient
         }
         return json_encode($response);
     }
-
     public function getRujukan()
     {
+        // Check if the request method is POST
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response
+                ->setStatusCode(200) // Method Not Allowed
+                ->setJSON(['error' => 'Invalid request method. POST required.']);
         }
 
+        // Get and decode the request body
         $body = $this->request->getBody();
-        $body = json_decode($body, true);
+        $bodyArray = json_decode($body, true);
 
-        $visit = $body['visit'];
+        // Handle case where json_decode fails
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return $this->response
+                ->setStatusCode(200) // Bad Request
+                ->setJSON(['error' => 'Invalid JSON format']);
+        }
 
-        $irModel = new InasisRujukanModel();
-        $result = $this->lowerKey($irModel->where('visit_id', $visit)->find());
-        return json_encode($result);
+        // Ensure 'visit' key is present in the body
+        if (!isset($bodyArray['visit'])) {
+            return $this->response
+                ->setStatusCode(200) // Bad Request
+                ->setJSON(['error' => 'Missing visit key']);
+        }
+
+        $visit = $bodyArray['visit'];
+
+        try {
+            // Instantiate the model and perform the query
+            $irModel = new InasisRujukanModel();
+            $result = $this->lowerKey($irModel->where('visit_id', $visit)->find());
+
+            // Return JSON encoded result
+            if (empty($result)) {
+                return $this->response
+                    ->setStatusCode(200) // Not Found
+                    ->setJSON([]);
+            } else {
+                $clinic = new ClinicModel();
+                $selectclinic = $this->lowerKey($clinic->where("kdpoli", $result[0]['polirujukan_kdpoli'])->find());
+                if (!is_array($selectclinic)) {
+                    return $this->response
+                        ->setStatusCode(200) // Not Found
+                        ->setJSON([]);
+                }
+                // return json_encode($selectclinic);
+                $result[0]['clinic_id'] = $selectclinic[0]['clinic_id'];
+                return json_encode($result[0]);
+                return $this->response
+                    ->setStatusCode(200) // OK
+                    ->setJSON($result[0]);
+            }
+        } catch (\Exception $e) {
+            // Log the exception and return a user-friendly error message
+            // Consider using a logger to record the exception details
+            error_log($e->getMessage());
+            return $this->response
+                ->setStatusCode(200) // Internal Server Error
+                ->setJSON(['error' => 'An error occurred while processing your request']);
+        }
     }
+
     public function getSkdp()
     {
 
@@ -3359,6 +4310,8 @@ This Function is used to Add Patient
 
         return json_encode($response);
     }
+
+
 
     public function getDiagnosas()
     {
@@ -3496,48 +4449,48 @@ This Function is used to Add Patient
 
         $ws_query = [];
 
-        $norm = $query[0]["no_registration"];
-        $ws_query["prosedur_non_bedah"] = $query[0]["prosedur_non_bedah"];
-        $ws_query["prosedur_bedah"] = $query[0]["prosedur_bedah"];
-        $ws_query["konsultasi"] = $query[0]["konsultasi"];
-        $ws_query["tenaga_ahli"] = $query[0]["tenaga_ahli"];
-        $ws_query["keperawatan"] = $query[0]["keperawatan"];
-        $ws_query["penunjang"] = $query[0]["penunjang"];
-        $ws_query["radiologi"] = $query[0]["radiologi"];
-        $ws_query["laboratorium"] = $query[0]["laboratorium"];
-        $ws_query["pelayanan_darah"] = $query[0]["pelayanan_darah"];
-        $ws_query["rehabilitasi"] = $query[0]["rehabilitasi"];
-        $ws_query["kamar"] = $query[0]["kamar"];
-        $ws_query["rawat_intensif"] = $query[0]["rawat_intensif"];
-        $ws_query["sewa_alat"] = $query[0]["sewa_alat"];
+        if (isset($query[0]["no_registration"])) {
+            $norm = $query[0]["no_registration"];
+            $ws_query["prosedur_non_bedah"] = $query[0]["prosedur_non_bedah"];
+            $ws_query["prosedur_bedah"] = $query[0]["prosedur_bedah"];
+            $ws_query["konsultasi"] = $query[0]["konsultasi"];
+            $ws_query["tenaga_ahli"] = $query[0]["tenaga_ahli"];
+            $ws_query["keperawatan"] = $query[0]["keperawatan"];
+            $ws_query["penunjang"] = $query[0]["penunjang"];
+            $ws_query["radiologi"] = $query[0]["radiologi"];
+            $ws_query["laboratorium"] = $query[0]["laboratorium"];
+            $ws_query["pelayanan_darah"] = $query[0]["pelayanan_darah"];
+            $ws_query["rehabilitasi"] = $query[0]["rehabilitasi"];
+            $ws_query["kamar"] = $query[0]["kamar"];
+            $ws_query["rawat_intensif"] = $query[0]["rawat_intensif"];
+            $ws_query["sewa_alat"] = $query[0]["sewa_alat"];
 
 
-        $builder = $tb->select("isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
+            $builder = $tb->select("isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 4 then sell_price*(DOSE_PRESC - quantity) else 0 end),0) as obat_kronis,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '21' or tt.CASEMIX_ID = '15') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as bmhp,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '1' or tt.CASEMIX_ID = '14') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as alkes,
         isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) <> 10 and tt.casemix_id = '13' and (isnull(ISALKES,0) not in ('1','21')) then tagihan*(1-discount) else 0 end),0) +
         sum(case when racikan in (1,4) or treatment_bill.brand_id is null or (treatment_bill.resep_no) is null then 0 else 1000 end) as obat")
-            ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
-            ->join("goods g", "treatment_bill.brand_id = g.brand_id", "left")
-            ->where("trans_id", $trans)
-            ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or treatment_bill.tarif_type = 803)");
+                ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
+                ->join("goods g", "treatment_bill.brand_id = g.brand_id", "left")
+                ->where("trans_id", $trans)
+                ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or treatment_bill.tarif_type = 803)");
 
 
 
-        $query = $this->lowerKey($builder->findAll());
+            $query = $this->lowerKey($builder->findAll());
 
-        $ws_query["obat"] = $query[0]["obat"];
-        $ws_query["obat_kronis"] = $query[0]["obat_kronis"];
-        $ws_query["obat_kemoterapi"] = $query[0]["obat_kemoterapi"];
-        $ws_query["alkes"] = $query[0]["alkes"];
-        $ws_query["bmhp"] = $query[0]["bmhp"];
+            $ws_query["obat"] = $query[0]["obat"];
+            $ws_query["obat_kronis"] = $query[0]["obat_kronis"];
+            $ws_query["obat_kemoterapi"] = $query[0]["obat_kemoterapi"];
+            $ws_query["alkes"] = $query[0]["alkes"];
+            $ws_query["bmhp"] = $query[0]["bmhp"];
 
-        $p = new PasienModel();
-        $query = $p->select('date_of_birth')->find($norm);
-        $ws_query["date_of_birth"] = $query['date_of_birth'];
-
-
+            $p = new PasienModel();
+            $query = $p->select('date_of_birth')->find($norm);
+            $ws_query["date_of_birth"] = $query['date_of_birth'];
+        }
 
         return json_encode($ws_query);
     }
@@ -4610,6 +5563,46 @@ This Function is used to Add Patient
 
         return json_encode($tbselect);
     }
+    public function getTreatResultList()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body);
+
+        $nomor = $body['nomor'];
+        $visit = $body['visit'];
+
+
+
+        $model = new ResultTypeModel();
+        $resultType = $this->lowerKey($model->findAll());
+
+
+
+
+        $tb = new TreatResultModel();
+        $tbselect = $this->lowerKey($tb->getTreatResultList($nomor, $visit));
+
+        foreach ($tbselect as $key => $value) {
+            foreach ($resultType as $key1 => $value) {
+                if ($resultType[$key1]['result_type'] == $tbselect[$key]['result_type']) {
+                    $tbselect[$key]['result_name'] = $resultType[$key1]['results'];
+                }
+            }
+            foreach ($resultType as $key1 => $value) {
+                if ($resultType[$key1]['result_type'] == $tbselect[$key]['result_type']) {
+                    $tbselect[$key]['result_symbol'] = $resultType[$key1]['symbol'];
+                }
+            }
+        }
+
+        return json_encode($tbselect);
+    }
 
     public function getHasilLab()
     {
@@ -4625,7 +5618,7 @@ This Function is used to Add Patient
         $nomor = $body['nomor'];
         $visit = $body['visit'];
 
-        $nomor = '574969';
+        $nomor = '453284';
 
         $db = db_connect('sharelis');
         $builder = $db->table('HASIL_PEMERIKSAANV2 hp')->join('HLISV2 hl', ' hl.NO_NOTA = hp.NO_NOTA ', 'inner')
@@ -4652,24 +5645,48 @@ This Function is used to Add Patient
         $dt = '';
 
         foreach ($headerKey as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-            <tr>
-                <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
-                <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
-            </tr>
-            </thead>
-            <tbody id="viewlab' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#labResult' . $key . '" aria-expanded="true" aria-controls="labResult' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="labResult' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="labTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="viewlab' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table  class="table table-borderedcustom table-bordered table-hover">
+            //     <thead style="text-align: center;">
+            //     <tr>
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Nama Test</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Hasil</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 10%;">Satuan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;">Nilai Rujukan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: 30%;">Catatan</th class="text-center">
+            //         <th class="text-center" rowspan="2" style="width: auto;"></th class="text-center">
+            //     </tr>
+            //     </thead>
+            //     <tbody id="viewlab' . $key . '">
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
         $data['result'] = $result;
         $data['headerKey'] = $dt;
@@ -4690,9 +5707,18 @@ This Function is used to Add Patient
 
         $visitId = $body['visit_id'];
         $nomor = $body['nomor'];
+        $soldStatus = $body['sold_status'];
 
-        $to = new TreatmentObatModel();
-        $select = $this->lowerKey($to->getHistoryObatResep($nomor));
+        if ($soldStatus == 0) {
+            $gf = new GoodGfModel();
+            $select = $this->lowerKey($gf->getHistoryObatResep($nomor, $soldStatus, $visitId));
+        } else {
+            $to = new TreatmentObatModel();
+            $select = $this->lowerKey($to->getHistoryObatResep($nomor, $soldStatus));
+        }
+        // $to = new TreatmentObatModel();
+        // $select = $this->lowerKey($to->getHistoryObatResep($nomor, $soldStatus));
+
         // $select = $this->lowerKey($to->getObatResep($visitId));
 
         $obat = [];
@@ -4702,51 +5728,80 @@ This Function is used to Add Patient
         $db = new ClinicModel();
         $clinic = $this->lowerKey($db->findAll());
         $db = new EmployeeAllModel();
-        $employee = $this->lowerKey($db->findAll());
+        $employee = $this->lowerKey($db->getEmployee());
+
+        // return json_encode($select);
 
 
         foreach ($select as $key => $value) {
-            if ($select[$key]['isrj'] == 1) {
-                foreach ($employee as $key1 => $value1) {
-                    if ($employee[$key1]['employee_id'] == $select[$key]['employee_id']) {
-                        $select[$key]['fullname'] = $employee[$key1]['fullname'];
-                        // break;
-                    }
-                }
-                foreach ($clinic as $key1 => $value1) {
-                    if ($clinic[$key1]['clinic_id'] == $select[$key]['clinic_id_from']) {
-                        $select[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
-                        // break;
-                    }
-                }
-                if ($select[$key]['visit_id'] == $visitId) {
-                    $obat[] = $select[$key];
-                } else {
-                    $historyObat[] = $select[$key];
-                    $visitHistory[$select[$key]['visit_id']] = ' <i class="far fa-caret-square-down"></i> (' . substr($select[$key]['treat_date'], 0, 10) . ") " . $select[$key]['fullname'] . ' => ' . $select[$key]['name_of_clinic'];
+            $select[$key]['fullname'] = '';
+            foreach ($employee as $key1 => $value1) {
+                if ($employee[$key1]['employee_id'] == $select[$key]['employee_id']) {
+                    $select[$key]['fullname'] = $employee[$key1]['fullname'];
+                    // break;
                 }
             }
+            $select[$key]['name_of_clinic'] = '';
+            foreach ($clinic as $key1 => $value1) {
+                if ($clinic[$key1]['clinic_id'] == $select[$key]['clinic_id_from']) {
+                    $select[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
+                    // break;
+                }
+            }
+            if ($select[$key]['visit_id'] == $visitId) {
+                $obat[] = $select[$key];
+            } else {
+                $historyObat[] = $select[$key];
+                $visitHistory[$select[$key]['visit_id']] = ' <i class="far fa-caret-square-down"></i> (' . substr($select[$key]['treat_date'], 0, 10) . ") " . $select[$key]['fullname'] . ' => ' . $select[$key]['name_of_clinic'];
+            }
+            // if ($select[$key]['isrj'] == 1) {
+            // }
         }
 
         $dt = '';
 
         foreach ($visitHistory as $key => $value) {
-            $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
-            $dt = $dt . '<table id="eresepTable" class="table table-borderedcustom table-bordered table-hover">
-            <thead style="text-align: center;">
-                <tr>
-                    <th class="text-center" style="width: 4%;">No.</th class="text-center">
-                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                    <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
-                </tr>
-            </thead>
-            <tbody id="body' . $key . '">
+            $dt = $dt . '<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#historyPresc' . $key . '" aria-expanded="true" aria-controls="historyPresc' . $key . '">
+                                    ' . $value . '
+                                </button>
+                            </h2>
+                            <div id="historyPresc' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-muted">
+                                    <table id="eresepTable" class="table table-bordered table-hover">
+                                        <thead class="table-primary" style="text-align: center;">
+                                            <tr>
+                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+                                            </tr>
+                                        </thead>
+                                        <tbody id="body' . $key . '">
 
-            </tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>';
 
-        </table>';
-            $dt = $dt . '</div></div></div>';
+            //     $dt = $dt . "<div class='panel panel-default'><div class='panel-heading'><h4 class='panel-title'><a data-toggle='collapse' data-parent='#accordion' href='#" . $key . "'>" . $value . "</a></h4></div><div id='" . $key . "' class='panel-collapse collapse'><div class='panel-body'>";
+            //     $dt = $dt . '<table id="eresepTable" class="table table-bordered table-hover">
+            //     <thead class="table-primary" style="text-align: center;">
+            //         <tr>
+            //             <th class="text-center" style="width: 4%;">No.</th class="text-center">
+            //             <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+            //             <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+            //             <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
+            //         </tr>
+            //     </thead>
+            //     <tbody id="body' . $key . '">
+
+            //     </tbody>
+
+            // </table>';
+            //     $dt = $dt . '</div></div></div>';
         }
 
 
@@ -4930,10 +5985,10 @@ This Function is used to Add Patient
             ->join('tarif_comp', 'treat_tarif.tarif_id = tarif_comp.tarif_id', 'inner')
             ->where('treat_tarif.class_id', $classPlafond)
             ->where('iscito', $isCito)
-            ->where("upper(ltrim(rtrim(treat_tarif.tarif_name))) like upper(ltrim(rtrim(left(:tarif, 
-        case charindex('(', :tarif,1) 
-           when 0  then len(:tarif)
-           else charindex('.', :tarif,1)-1
+            ->where("upper(ltrim(rtrim(treat_tarif.tarif_name))) like upper(ltrim(rtrim(left('$tarifName', 
+        case charindex('(', '$tarifName',1)
+           when 0  then len('$tarifName')
+           else charindex('.', '$tarifName',1)-1
          end )))) +'%'")
             ->findAll();
         if (!empty($select)) {
@@ -4950,40 +6005,10 @@ This Function is used to Add Patient
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // return $this->request->is('put');
-
-
-        // return json_encode($norm);
-        // $rules = [
-        //     'bed_id' => 'permit_empty|integer',
-        //     'keluar_id' => 'permit_empty|integer',
-        //     'status_pasien_id' => 'permit_empty|integer',
-        //     'ageyear' => 'permit_empty|integer',
-        //     'agemonth' => 'permit_empty|integer',
-        //     'ageday' => 'permit_empty|integer',
-        //     'saturasi' => 'permit_empty|integer',
-        //     'kesadaran' => 'permit_empty|integer',
-        //     'isvalid' => 'permit_empty|integer',
-        //     'temperature' => 'permit_empty|integer',
-        //     'tension_upper' => 'permit_empty|integer',
-        //     'tension_below' => 'permit_empty|integer',
-        //     'nadi' => 'permit_empty|integer',
-        //     'nafas' => 'permit_empty|integer',
-        //     'weight' => 'permit_empty|integer',
-        //     'height' => 'permit_empty|integer',
-        //     'arm_diameter' => 'permit_empty|integer',
-        // ];
 
 
 
-        // if (!$this->validate($rules)) {
-        //     $validation = \Config\Services::validation();
-        //     $errors = $validation->getErrors();
-        //     $array   = array('status' => 'fail', 'error' => $errors, 'message' => 'update gagal');
-        //     return json_encode($array);
-        // }
-
-
+        $bill_id = $this->request->getPost('bill_id');
         $trans_id = $this->request->getPost('trans_id');
         $no_registration = $this->request->getPost('no_registration');
         $theorder = $this->request->getPost('theorder');
@@ -5003,7 +6028,7 @@ This Function is used to Add Patient
         $ageday = $this->request->getPost('ageday');
         $kal_id = $this->request->getPost('kal_id');
         $karyawan = $this->request->getPost('karyawan');
-        $class_room_ID = $this->request->getPost('class_room_ID');
+        $class_room_id = $this->request->getPost('class_room_id');
         $bed_id = $this->request->getPost('bed_id');
         $employee_id_from = $this->request->getPost('employee_id_from');
         $doctor_from = $this->request->getPost('doctor_from');
@@ -5088,7 +6113,15 @@ This Function is used to Add Patient
 
 
         $orgModel = new OrganizationunitModel();
-        $id = $orgModel->generateId();
+
+        $isnew = true;
+        if ($bill_id == null || $bill_id == '') {
+            $id = $orgModel->generateId();
+            $isnew = false;
+        } else {
+            $id = $bill_id;
+            $isnew = true;
+        }
 
         if (is_null($nota_no)) {
             $nota_no = $orgModel->generateId();
@@ -5120,7 +6153,7 @@ This Function is used to Add Patient
             'ageday' => $ageday,
             'kal_id' => $kal_id,
             'karyawan' => $karyawan,
-            'class_room_ID' => $class_room_ID,
+            'class_room_id' => $class_room_id,
             'bed_id' => $bed_id,
             'employee_id_from' => $employee_id_from,
             'doctor_from' => $doctor_from,
@@ -5155,8 +6188,7 @@ This Function is used to Add Patient
         ];
 
         // return json_encode($data);
-
-        $tbModel->insert($data);
+        $tbModel->save($data);
         // String of all alphanumeric character
         $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         // Shufle the $str_result and returns substring
@@ -5165,12 +6197,261 @@ This Function is used to Add Patient
         $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah tindakan berhasil', 'billId' => $id, 'data' => $data);
         echo json_encode($array);
     }
+    public function addBillCharge()
+    {
+        // dd($this->request->is('post'));
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
 
-    public function editBill()
-    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+
+        $bill_id = $body['bill_id']; //$this->request->getPost('bill_id');
+        $trans_id = $body['trans_id']; //$this->request->getPost('trans_id');
+        $no_registration = $body['no_registration']; //$this->request->getPost('no_registration');
+        $theorder = $body['theorder']; //$this->request->getPost('theorder');
+        $visit_id = $body['visit_id']; //$this->request->getPost('visit_id');
+        $org_unit_code = $body['org_unit_code']; //$this->request->getPost('org_unit_code');
+        $payor_id = $body['payor_id']; //$this->request->getPost('payor_id');
+        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
+        $theid = $body['theid']; //$this->request->getPost('theid');
+        $thename = $body['thename']; //$this->request->getPost('thename');
+        $theaddress = $body['theaddress']; //$this->request->getPost('theaddress');
+        $isrj = $body['isrj']; //$this->request->getPost('isRJ');
+        $gender = $body['gender']; //$this->request->getPost('gender');
+        $ageyear = $body['ageyear']; //$this->request->getPost('ageyear');
+        $agemonth = $body['agemonth']; //$this->request->getPost('agemonth');
+        $ageday = $body['ageday']; //$this->request->getPost('ageday');
+        $kal_id = $body['kal_id']; //$this->request->getPost('kal_id');
+        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
+        $class_room_id = $body['class_room_id']; //$this->request->getPost('class_room_id');
+        $bed_id = $body['bed_id']; //$this->request->getPost('bed_id');
+        $employee_id_from = $body['employee_id_from']; //$this->request->getPost('employee_id_from');
+        $doctor_from = $body['doctor_from']; //$this->request->getPost('doctor_from');
+        $clinic_id = $body['clinic_id']; //$this->request->getPost('clinic_id');
+        $clinic_id_from = $body['clinic_id_from']; //$this->request->getPost('clinic_id_from');
+        $status_pasien_id = $body['status_pasien_id']; //$this->request->getPost('status_pasien_id');
+        $treat_date = $body['treat_date']; //$this->request->getPost('treat_date');
+        $exit_date = $body['exit_date']; //$this->request->getPost('exit_date');
+        $cashier = $body['cashier']; //$this->request->getPost('cashier');
+        $modified_from = $body['modified_from']; //$this->request->getPost('modified_from');
+        $islunas = $body['islunas']; //$this->request->getPost('islunas');
+        $measure_id = $body['measure_id']; //$this->request->getPost('measure_id');
+        $tarif_id = $body['tarif_id']; //$this->request->getPost('tarif_id');
+        $treatment = $body['treatment']; //$this->request->getPost('treatment');
+        $employee_id = $body['employee_id']; //$this->request->getPost('employee_id');
+        $sell_price = $body['sell_price']; //$this->request->getPost('sell_price');
+        $quantity = $body['quantity']; //$this->request->getPost('quantity');
+        $amount_paid = $body['amount_paid']; //$this->request->getPost('amount_paid');
+        $discount = $body['discount']; //$this->request->getPost('discount');
+        $subsidisat = $body['subsidisat']; //$this->request->getPost('subsidisat');
+        $amount = $body['amount']; //$this->request->getPost('amount');
+        $tagihan = $body['tagihan']; //$this->request->getPost('tagihan');
+        $subsidi = $body['subsidi']; //$this->request->getPost('subsidi');
+        $profesi = $body['profesi']; //$this->request->getPost('profesi');
+        $tarif_type = $body['tarif_type']; //$this->request->getPost('tarif_type');
+        $class_id = $body['class_id']; //$this->request->getPost('class_id');
+        $amount_plafond = $body['amount_plafond']; //$this->request->getPost('amount_plafond');
+        $amount_paid_plafond = $body['amount_paid_plafond']; //$this->request->getPost('amount_paid_plafond');
+        $class_id_plafond = $body['class_id_plafond']; //$this->request->getPost('class_id_plafond');
+        $treatment_plafond = $body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
+        $nota_no = $body['nota_no']; //$this->request->getPost('nota_no');
+
+        // echo $treat_date;
+
+
+
+        $eaModel = new EmployeeAllModel();
+        $doctor = $eaModel->select('fullname')->find($employee_id);
+        if (isset($doctor))
+            $doctor = $doctor['fullname'];
+        else
+            $doctor = '';
+
+
+
+
+        if (is_null($sell_price) || empty($sell_price) || $sell_price == '') {
+            $sell_price = 0;
+        }
+        if (is_null($quantity) || empty($quantity) || $quantity == '') {
+            $quantity = 0;
+        }
+        if (is_null($amount_paid) || empty($amount_paid) || $amount_paid == '') {
+            $amount_paid = 0;
+        }
+        if (is_null($discount) || empty($discount) || $discount == '') {
+            $discount = 0;
+        }
+        if (is_null($subsidisat) || empty($subsidisat) || $subsidisat == '') {
+            $subsidisat = 0;
+        }
+        if (is_null($amount) || empty($amount) || $amount == '') {
+            $amount = 0;
+        }
+        if (is_null($tagihan) || empty($tagihan) || $tagihan == '') {
+            $tagihan = 0;
+        }
+        if (is_null($subsidi) || empty($subsidi) || $subsidi == '') {
+            $subsidi = 0;
+        }
+        if (is_null($profesi) || empty($profesi) || $profesi == '') {
+            $profesi = 0;
+        }
+
+
+        if (is_null($amount_plafond) || empty($amount_plafond) || $amount_plafond == '') {
+            $amount_plafond = 0;
+        }
+        if (is_null($amount_paid_plafond) || empty($amount_paid_plafond) || $amount_paid_plafond == '') {
+            $amount_paid_plafond = 0;
+        }
+
+
+
+
+
+        $tbModel = new TreatmentBillModel();
+
+
+        $orgModel = new OrganizationunitModel();
+
+        $isnew = true;
+        if ($bill_id == null || $bill_id == '') {
+            $id = $orgModel->generateId();
+            $isnew = false;
+        } else {
+            $id = $bill_id;
+            $isnew = true;
+        }
+
+        // return json_encode($bill_id);
+
+        if (is_null($nota_no)) {
+            $nota_no = $orgModel->generateId();
+        }
+
+
+        if (in_array($clinic_id, ['P016', 'P013', 'P015'])) {
+            $penunjangModel = new PasienPenunjangModel();
+            $getresep = $penunjangModel->select("body_id")
+                // ->where("valid_user is not null")
+                ->find($nota_no);
+
+            if (!isset($getresep['body_id'])) {
+                $data = [
+                    'org_unit_code' => $org_unit_code,
+                    'visit_id' => $visit_id,
+                    'trans_id' => $trans_id,
+                    'body_id' => $nota_no,
+                    'no_registration' => $no_registration,
+                    'bill_id' => $id,
+                    'clinic_id' => $clinic_id,
+                    'validation' => 0,
+                    'terlayani' => 0,
+                    'iscito' => 0,
+                    'employee_id' => $employee_id,
+                    'treat_date' => $treat_date,
+                    'thename' => $thename,
+                    'theaddress' => $theaddress,
+                    'theid' => $theid,
+                    'isrj' => $isrj,
+                    'ageyear' => $ageyear,
+                    'agemonth' => $agemonth,
+                    'ageday' => $ageday,
+                    'status_pasien_id' => $status_pasien_id,
+                    'gender' => $gender,
+                    'doctor' => $doctor,
+                    'class_room_id' => $class_room_id,
+                    // 'bed_id' => $bed_id,
+                    'perujuk' => $employee_id,
+                    'modified_by' => user()->username,
+                    'modified_from' => $modified_from,
+                ];
+                // return json_encode($data);
+
+                $penunjangModel->save($data);
+            }
+        }
+
+
+        $data = [
+            'bill_id' => $id,
+            'trans_id' => $trans_id,
+            'nota_no' => $nota_no,
+            'no_registration' => $no_registration,
+            'theorder' => $theorder,
+            'visit_id' => $visit_id,
+            'org_unit_code' => $org_unit_code,
+            'class_id_plafond' => $class_id_plafond,
+            'payor_id' => $payor_id,
+            'karyawan' => $karyawan,
+            'theid' => $theid,
+            'thename' => $thename,
+            'theaddress' => $theaddress,
+            'status_pasien_id' => $status_pasien_id,
+            'isRJ' => $isrj,
+            'gender' => $gender,
+            'ageyear' => $ageyear,
+            'agemonth' => $agemonth,
+            'ageday' => $ageday,
+            'kal_id' => $kal_id,
+            'karyawan' => $karyawan,
+            'class_room_id' => $class_room_id,
+            // 'bed_id' => $bed_id,
+            'employee_id_from' => $employee_id_from,
+            'doctor_from' => $doctor_from,
+            'clinic_id' => $clinic_id,
+            'clinic_id_from' => $clinic_id_from,
+            'status_pasien_id' => $status_pasien_id,
+            'treat_date' => $treat_date,
+            'exit_date' => $exit_date,
+            'cashier' => $cashier,
+            'modified_from' => $modified_from,
+            'islunas' => $islunas,
+            'measure_id' => $measure_id,
+            'tarif_id' => $tarif_id,
+            'treatment' => $treatment,
+            'employee_id' => $employee_id,
+            'sell_price' => $sell_price,
+            'quantity' => $quantity,
+            'amount_paid' => $amount_paid,
+            'discount' => $discount,
+            'subsidisat' => $subsidisat,
+            'amount' => $amount,
+            'tagihan' => $tagihan,
+            'subsidi' => $subsidi,
+            'profesi' => $profesi,
+            'tarif_type' => $tarif_type,
+            'class_id' => $class_id,
+            'amount_plafond' => $amount_plafond,
+            'amount_paid_plafond' => $amount_paid_plafond,
+            'class_id_plafond' => $class_id_plafond,
+            'treatment_plafond' => $treatment_plafond,
+            'doctor' => $doctor
+        ];
+
+        $tbModel->save($data);
+
+        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah tindakan berhasil', 'billId' => $id, 'data' => $data);
+        echo json_encode($array);
     }
-    public function delBill()
+
+
+    public function delBill($bill_id)
     {
+        $tb = new TreatmentBillModel();
+        $result = $tb->delete($bill_id);
+
+        if ($result) {
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'delete berhasil');
+            echo json_encode($array);
+        } else {
+            $array   = array('status' => 'failure', 'error' => '', 'message' => 'delete gagal');
+            echo json_encode($array);
+        }
     }
     public function rajal()
     {
@@ -5179,8 +6460,7 @@ This Function is used to Add Patient
         $session->set($sessionData);
         $giTipe = 1;
 
-        $title = 'Rawat Jalan';
-
+        $title = 'Pelayanan';
         return $this->rajalTemplate($giTipe, $title);
     }
 
@@ -5192,6 +6472,17 @@ This Function is used to Add Patient
         $giTipe = 3;
 
         $title = 'Rawat Inap';
+
+        return $this->searchingTemplate($giTipe, $title);
+    }
+    public function bidan()
+    {
+        $session = session();
+        $sessionData = ['gsPoli' => 'P004'];
+        $session->set($sessionData);
+        $giTipe = 2;
+
+        $title = 'Kebidanan';
 
         return $this->searchingTemplate($giTipe, $title);
     }
@@ -5266,10 +6557,10 @@ This Function is used to Add Patient
     public function kamaroperasi()
     {
         $title = 'Kamar Operasi';
-        $giTipe = 2;
+        $giTipe = 6;
 
         $session = session();
-        $sessionData = ['gsPoli' => ''];
+        $sessionData = ['gsPoli' => 'P002'];
         $session->set($sessionData);
 
         return $this->searchingTemplate($giTipe, $title);
@@ -5492,6 +6783,10 @@ This Function is used to Add Patient
         //     return json_encode($array);
         // }
 
+        $visit = (string)$this->request->getPost('visit');
+        $visit = base64_decode($visit);
+        $visit = json_decode($visit, true);
+
 
         $org_unit_code = $this->request->getPost('org_unit_code');
         $jml_bks = $this->request->getPost('jml_bks');
@@ -5548,93 +6843,249 @@ This Function is used to Add Patient
         $dose1 = $this->request->getPost('dose1');
         $dose2 = $this->request->getPost('dose2');
         $theorder = $this->request->getPost('theorder');
+        $soldstatus = $this->request->getPost('sold_status');
 
-        // return json_encode($bill_id);
+        // return json_encode($this->request->getPost());
 
 
-        $model = new TreatmentObatModel();
 
         $result = [];
 
 
-        foreach ($bill_id as $key => $value) {
-            $data = [
-                'org_unit_code' => $org_unit_code[$key],
-                'jml_bks' => (int)$jml_bks[$key],
-                'dose' => (float)$dose[$key],
-                'orig_dose' => (float)$orig_dose[$key],
-                'resep_ke' => $resep_ke[$key],
-                'description' => $description[$key],
-                'brand_id' => $brand_id[$key],
-                'measure_id' => $measure_id[$key],
-                'measure_id2' => $measure_id2[$key],
-                'racikan' => (int)$racikan[$key],
-                'doctor' => $doctor[$key],
-                'employee_id' => $employee_id[$key],
-                'employee_id_from' => $employee_id_from[$key],
-                'doctor_from' => $doctor_from[$key],
-                'status_obat' => $status_obat[$key],
-                'tarif_id' => $tarif_id[$key],
-                'treatment' => $treatment[$key],
-                'tarif_type' => $tarif_type[$key],
-                'amount' => (float)$amount[$key],
-                'sell_price' => (float)$sell_price[$key],
-                'tagihan' => (float)$tagihan[$key],
-                'subsidi' => (float)$subsidi[$key],
-                'subsidisat' => (float)$subsidisat[$key],
-                'margin' => (float)$margin[$key],
-                'ppn' => (float)$ppn[$key],
-                'ppnvalue' => (float)$ppnvalue[$key],
-                'discount' => (float)$discount[$key],
-                'diskon' => (float)$diskon[$key],
-                'profession' => $profession[$key],
-                'profesi' => $profesi[$key],
-                'amount_paid' => (float)$amount_paid[$key],
-                'description2' => $description2[$key],
-                'dose_presc' => (float)$dose_presc[$key],
-                'quantity' => (float)$quantity[$key],
-                'numer' => (int)$numer[$key],
-                'resep_no' => $resep_no[$key],
-                'nota_no' => $nota_no[$key],
-                'treat_date' => $treat_date[$key],
-                'bill_id' => $bill_id[$key],
-                'class_room_id' => $class_room_id[$key],
-                'clinic_id' => $clinic_id[$key],
-                'clinic_id_from' => $clinic_id_from[$key],
-                'visit_id' => $visit_id[$key],
-                'no_registration' => $no_registration[$key],
-                'trans_id' => $trans_id[$key],
-                'modified_from' => $modified_from[$key],
-                'modified_date' => $modified_date[$key],
-                'isrj' => (float)$isrj[$key],
-                'thename' => $thename[$key],
-                'theaddress' => $theaddress[$key],
-                'theid' => $theid[$key],
-                'dose1' => (float)$dose1[$key],
-                'dose2' => (float)$dose2[$key],
-                'module_id' => $moduleId[$key],
-                'theorder' => (int)$theorder[$key]
-            ];
+        if (count($bill_id) > 0) {
+
+            $pasienPrescription = new PasienPrescriptionModel();
+            $getresep = $pasienPrescription->select("resep_no")
+                ->where("valid_user is not null")
+                ->find($resep_no[0]);
+            if (!isset($getresep['resep_no'])) {
+                $data = [
+                    'org_unit_code' => $org_unit_code[0],
+                    'no_registration' => $no_registration[0],
+                    'visit_id' => $visit_id[0],
+                    'trans_id' => $trans_id[0],
+                    'resep_no' => $resep_no[0],
+                    'nota_no' => $nota_no[0],
+                    'treat_date' => $treat_date[0],
+                    'sold_status' => $soldstatus[0],
+                    'start_date' => $treat_date[0],
+                    'iter' => 1,
+                    'clinic_id' => $clinic_id[0],
+                    'terlayani' => 0,
+                    'employee_id' => $employee_id[0],
+                    'description' => $description[0],
+                    'modified_date' => $modified_date[0],
+                    'modified_by' => user()->username,
+                    'modified_from' => $modified_from[0],
+                    'thename' => $thename[0],
+                    'theaddress' => $theaddress[0],
+                    'theid' => $theid[0],
+                    'isrj' => $isrj[0],
+                    'ageyear' => $visit['ageyear'],
+                    'agemonth' => $visit['agemonth'],
+                    'ageday' => $visit['ageday'],
+                    'status_pasien_id' => $visit['status_pasien_id'],
+                    'payor_id' => $visit['payor_id'],
+                    'doctor' => $doctor[0],
+                    'class_room_id' => $class_room_id[0],
+                    'bed_id' => $visit['ageday'],
+                    'keluar_id' => $visit['ageday'],
+                ];
+                $pasienPrescription->save($data);
+
+                // return json_encode($data);
+
+                $model = new TreatmentObatModel();
+                $modelgf = new GoodGfModel();
 
 
-            $model->save($data, true);
+                foreach ($bill_id as $key => $value) {
+                    if ($soldstatus[$key] != 0) {
+                        $data = [
+                            'org_unit_code' => $org_unit_code[$key],
+                            'jml_bks' => (int)$jml_bks[$key],
+                            'dose' => (float)$dose[$key],
+                            'orig_dose' => (float)$orig_dose[$key],
+                            'resep_ke' => $resep_ke[$key],
+                            'description' => $description[$key],
+                            'brand_id' => $brand_id[$key],
+                            'measure_id' => $measure_id[$key],
+                            'measure_id2' => $measure_id2[$key],
+                            'racikan' => (int)$racikan[$key],
+                            'doctor' => $doctor[$key],
+                            'employee_id' => $employee_id[$key],
+                            'employee_id_from' => $employee_id_from[$key],
+                            'doctor_from' => $doctor_from[$key],
+                            'status_obat' => $status_obat[$key],
+                            'tarif_id' => $tarif_id[$key],
+                            'treatment' => $treatment[$key],
+                            'tarif_type' => $tarif_type[$key],
+                            'amount' => (float)$amount[$key],
+                            'sell_price' => (float)$sell_price[$key],
+                            'tagihan' => (float)$tagihan[$key],
+                            'subsidi' => (float)$subsidi[$key],
+                            'subsidisat' => (float)$subsidisat[$key],
+                            'margin' => (float)$margin[$key],
+                            'ppn' => (float)$ppn[$key],
+                            'ppnvalue' => (float)$ppnvalue[$key],
+                            'discount' => (float)$discount[$key],
+                            'diskon' => (float)$diskon[$key],
+                            'profession' => $profession[$key],
+                            'profesi' => $profesi[$key],
+                            'amount_paid' => (float)$amount_paid[$key],
+                            'description2' => $description2[$key],
+                            'dose_presc' => (float)$dose_presc[$key],
+                            'quantity' => (float)$quantity[$key],
+                            'numer' => (int)$numer[$key],
+                            'resep_no' => $resep_no[$key],
+                            'nota_no' => $nota_no[$key],
+                            'treat_date' => $treat_date[$key],
+                            'bill_id' => $bill_id[$key],
+                            'class_room_id' => $class_room_id[$key],
+                            'clinic_id' => $clinic_id[$key],
+                            'clinic_id_from' => $clinic_id_from[$key],
+                            'visit_id' => $visit_id[$key],
+                            'no_registration' => $no_registration[$key],
+                            'trans_id' => $trans_id[$key],
+                            'modified_from' => $modified_from[$key],
+                            'modified_date' => $modified_date[$key],
+                            'isrj' => (float)$isrj[$key],
+                            'thename' => $thename[$key],
+                            'theaddress' => $theaddress[$key],
+                            'theid' => $theid[$key],
+                            'dose1' => (float)$dose1[$key],
+                            'dose2' => (float)$dose2[$key],
+                            'module_id' => $moduleId[$key],
+                            'theorder' => (int)$theorder[$key],
+                            'sold_status' => $soldstatus[$key]
+                        ];
 
-            $result[] = $data;
+
+                        $model->save($data, true);
+
+                        $result[] = $data;
+                    } else {
+                        $data = [
+                            'org_unit_code' => $org_unit_code[$key],
+                            'jml_bks' => (int)$jml_bks[$key],
+                            'dose' => (float)$dose[$key],
+                            'orig_dose' => (float)$orig_dose[$key],
+                            'resep_ke' => $resep_ke[$key],
+                            'description' => $description[$key],
+                            'brand_id' => $brand_id[$key],
+                            'measure_id' => $measure_id[$key],
+                            'measure_id2' => $measure_id2[$key],
+                            'racikan' => (int)$racikan[$key],
+                            'doctor' => $doctor[$key],
+                            'employee_id' => $employee_id[$key],
+                            'employee_id_from' => $employee_id_from[$key],
+                            'doctor_from' => $doctor_from[$key],
+                            'status_obat' => $status_obat[$key],
+                            'tarif_id' => $tarif_id[$key],
+                            'treatment' => $treatment[$key],
+                            'tarif_type' => $tarif_type[$key],
+                            'amount' => (float)$amount[$key],
+                            'sell_price' => (float)$sell_price[$key],
+                            'tagihan' => (float)$tagihan[$key],
+                            'subsidi' => (float)$subsidi[$key],
+                            'subsidisat' => (float)$subsidisat[$key],
+                            'margin' => (float)$margin[$key],
+                            'ppn' => (float)$ppn[$key],
+                            'ppnvalue' => (float)$ppnvalue[$key],
+                            'discount' => (float)$discount[$key],
+                            'diskon' => (float)$diskon[$key],
+                            'profession' => $profession[$key],
+                            'profesi' => $profesi[$key],
+                            'amount_paid' => (float)$amount_paid[$key],
+                            'description2' => $description2[$key],
+                            'dose_presc' => (float)$dose_presc[$key],
+                            'quantity' => (float)$quantity[$key],
+                            'numer' => (int)$numer[$key],
+                            'resep_no' => $resep_no[$key],
+                            'nota_no' => $nota_no[$key],
+                            'treat_date' => $treat_date[$key],
+                            'bill_id' => $bill_id[$key],
+                            'class_room_id' => $class_room_id[$key],
+                            'clinic_id' => $clinic_id[$key],
+                            'clinic_id_from' => $clinic_id_from[$key],
+                            'visit_id' => $visit_id[$key],
+                            'no_registration' => $no_registration[$key],
+                            'trans_id' => $trans_id[$key],
+                            'modified_from' => $modified_from[$key],
+                            'modified_date' => $modified_date[$key],
+                            'isrj' => (float)$isrj[$key],
+                            'thename' => $thename[$key],
+                            'theaddress' => $theaddress[$key],
+                            'theid' => $theid[$key],
+                            'dose1' => (float)$dose1[$key],
+                            'dose2' => (float)$dose2[$key],
+                            'module_id' => $moduleId[$key],
+                            'theorder' => (int)$theorder[$key],
+                            'sold_status' => $soldstatus[$key]
+                        ];
+                        $dataalkes = [
+                            'org_unit_code' => $org_unit_code[$key],
+                            'size_goods' => (float)$dose[$key],
+                            'brand_name' => $description[$key],
+                            'brand_id' => $brand_id[$key],
+                            'measure_dosis' => $measure_id[$key],
+                            'measure_id2' => $measure_id2[$key],
+                            'measure_id3' => $measure_id2[$key],
+                            'distribution_type' => (int)$numer[$key] == 4 ? 3 : (int)$racikan[$key],
+                            'price' => (float)$amount[$key],
+                            'order_price' => (float)$sell_price[$key],
+                            'discount' => (float)$subsidi[$key],
+                            'discount2' => (float)$discount[$key],
+                            'corrections' => $description2[$key],
+                            'diminta' => (float)$dose_presc[$key],
+                            'quantity' => (float)$quantity[$key],
+                            'condition' => (int)$numer[$key],
+                            'invoice_id' => $resep_no[$key],
+                            'po' => $nota_no[$key],
+                            'allocated_date' => $treat_date[$key],
+                            'item_id' => $bill_id[$key],
+                            'org_id' => $clinic_id[$key],
+                            'org_unit_from' => $clinic_id_from[$key],
+                            'company_id' => $no_registration[$key],
+                            'retur_id' => $trans_id[$key],
+                            'rooms_id' => $visit['clinic_id'],
+                            'allocated_from' => $thename[$key],
+                            'doc_no' => $theid[$key],
+                            'isoutlet' => $soldstatus[$key],
+                            'from_rooms_id' => $clinic_id[$key] == $modified_from[$key] ? $clinic_id_from[$key] : $clinic_id[$key],
+                            'discountoff' => 0,
+                            'dijual' => (float)$quantity[$key],
+                            'invoice_id2' => $employee_id[$key] . $doctor[$key],
+                            'month_id' => new rawsql("month('{$treat_date[$key]}')"),
+                            'year_id' => new rawsql("year('{$treat_date[$key]}')"),
+                            'correction_doc' => substr($tarif_id[$key] . $treatment[$key], 0, 50),
+                            'stock_opname' => 0,
+                            'stok_awal' => 0,
+                            'stock_lalu' => 0,
+                            'stock_koreksi' => 0,
+                            'diterima' => 0,
+                            'distribusi' => 0,
+                            'dihapus' => 0,
+                            'diretur' => 0,
+                            'batch_no' => $visit_id[$key]
+                        ];
+
+                        $modelgf->save($dataalkes, true);
+
+                        $result[] = $data;
+                    }
+                }
+                $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah obat racikan berhasil', 'data' => $result);
+                return json_encode($array);
+            } else {
+                $array   = array('status' => 'fail', 'error' => '', 'message' => 'Resep ini sudah terkunci, tidak bisa mengubah data lagi', 'data' => $result);
+                return json_encode($array);
+            }
+        } else {
+
+            $array   = array('status' => 'fail', 'error' => '', 'message' => 'Data tidak ada', 'data' => $result);
+            return json_encode($array);
         }
-
-
-
-
-
-        // return json_encode($data);
-
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah obat racikan berhasil', 'data' => $result);
-        echo json_encode($array);
     }
     public function deletePresc()
     {
@@ -6047,157 +7498,99 @@ This Function is used to Add Patient
         $array   = array('status' => 'success', 'error' => '', 'message' => 'edit obat non racikan berhasil', 'data' => $returnData);
         echo json_encode($array);
     }
-    private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
-    private $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
-    function stringDecrypt($key, $string)
+    public function getPasienRanapRoom()
     {
-
-
-        $encrypt_method = 'AES-256-CBC';
-
-        // hash
-        $key_hash = hex2bin(hash('sha256', $key));
-
-        // iv - encrypt method AES-256-CBC expects 16 bytes - else you will get a warning
-        $iv = substr(hex2bin(hash('sha256', $key)), 0, 16);
-
-        $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key_hash, OPENSSL_RAW_DATA, $iv);
-
-        return $output;
-    }
-    function decompress($string)
-    {
-        $return = LZString::decompressFromEncodedURIComponent($string);
-        $return = json_decode(($return), true);
-        return $return;
-    }
-    public function AuthBridging()
-    {
-        $pdo = db_connect();
-
-
-        // //WATES
-        // $consId = '30659';
-        // $consSecret = 'rsud766wates38';
-        // $userKey = '70b62d70a50f4866e8484a065a0de1bb';
-
-        //BENGKULU
-        $consId = '4633';
-        $consSecret = 'rsud344myns618';
-        $userKey = '3c6bee8d6d6a74c295e50f462810c43d';
-
-
-
-        $current_timestamp = Time::now()->timestamp;
-        $this->keybridging = $consId . $consSecret . $current_timestamp;
-        $db = db_connect('default');
-        $builder = $db->query("DECLARE  @return_value int,
-        @h64 varchar(max)
-
-    EXEC    @return_value = [dbo].[SP_H002]
-            @CONS = N'$consId',
-            @TIMESTMP = N'$current_timestamp',
-            @MESSAGES = N'$consSecret',
-            @h64 = @h64 OUTPUT
-    SELECT  @h64 as N'h64'");
-        $signature = $builder->getResultArray();
-        // return json_encode($signature);
-        $signature = json_decode(json_encode($signature), true);
-        $headers = [
-            "X-cons-id: " . $consId,
-            "X-Timestamp: " . $current_timestamp,
-            "X-signature: " . $signature[0]['h64'],
-            "user-key: " . $userKey,
-            // "Content-type: Application/json",
-            "Accept: */*"
-        ];
-
-        return ($headers);
-    }
-    private function SendBridging($url, $method, $postdata, $headers)
-    {
-        // Gunakan curl untuk mengakses/merequest alamat api
-        if (strpos($url, 'aplicaresws') == true) {
-            array_push($headers, "Content-type: Application/json");
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
 
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $clinic_id = $body['clinic_id'];
+        $class_room_id = $body['class_room_id'];
 
-        $results = curl_exec($curl);
-        curl_close($curl);
+        $ta = new TreatmentAkomodasiModel();
+        $kunjungan = $this->lowerKey($ta->getPasienRanap('%', '%', '%', $clinic_id, '2000-01-01', '2100-01-01', '%', '%', '%', 0, 100));
 
-        // return $results;
-        $results = json_decode(($results), true);
-        if (str_contains($url, 'SEP/2.0/inserts')) {
-            $results = '{
-           "metadata": {
-              "code": "200",
-              "message": "Sukses"
-           },
-           "response": {
-              "sep": {
-                 "catatan": "test",
-                 "diagnosa": "A00.1 - Cholera due to Vibrio cholerae 01, biovar eltor",
-                 "jnsPelayanan": "R.Inap",
-                 "kelasRawat": "1",
-                 "noSep": "0301R0011117V000008",
-                 "penjamin": "-",
-                 "peserta": {
-                    "asuransi": "-",
-                    "hakKelas": "Kelas 1",
-                    "jnsPeserta": "PNS PUSAT",
-                    "kelamin": "Laki-Laki",
-                    "nama": "ZIYADUL",
-                    "noKartu": "0001112230666",
-                    "noMr": "123456",
-                    "tglLahir": "2008-02-05"
-                 },
-                 "informasi:": {
-                    "Dinsos":null,
-                    "prolanisPRB":null,
-                    "noSKTM":null
-                 },
-                 "poli": "-",
-                 "poliEksekutif": "-",
-                 "tglSep": "2017-10-12"
-              }
-           }
-        }';
-            $results = json_decode($results, true);
-        } else if (isset($results['response'])) {
-            if (strpos($url, 'aplicaresws') == false) {
-                $result = $this->stringDecrypt($this->keybridging, $results['response']);
-                $result = $this->decompress($result);
-            } else {
-                $result = $results;
+        return json_encode($kunjungan);
+    }
+    public function getHandOver()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $model = new HandoverModel();
+        $modelDetail = new HandoverDetailModel();
+
+        $select = $model
+            // ->where("received_by is not null and received_by <> ''")
+            ->findAll();
+        $selectDetail = [];
+        if (count($select) > 0) {
+            $select = $this->lowerKey($select);
+            $where = '';
+            foreach ($select as $key => $value) {
+                $where .= "'{$value['body_id']}' ,";
             }
-            $results['response'] = $result;
+            if (strlen($where) > 1) {
+                $where = substr($where, 0, strlen($where) - 1);
+                $selectDetail = $modelDetail->where("body_id in ($where)")->findAll();
+                if (count($selectDetail) > 0) {
+                    $selectDetail = $this->lowerKey($selectDetail);
+                }
+            }
         }
-        return $results;
+        $data['handover'] = $select;
+        $data['handoverDetail'] = $selectDetail;
+
+        return json_encode($data);
     }
-    function sendVclaim($url, $method, $data)
+    public function saveHandover()
     {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
 
-        // $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/SEP/2.0/insert';
-        // $method = 'POST';
-        $headers = $this->AuthBridging();
+        $orgModel = new OrganizationunitModel();
+        $org = $this->lowerKeyOne($orgModel->first());
 
-        $postdata = ($data);
-        array_push($headers, 'Content-length' . strlen($postdata));
-        $result = $this->SendBridging($url, $method, $postdata, $headers);
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $body['modified_by'] = user()->username;
+        $body['org_unit_code'] = $org['org_unit_code'];
+        $clinic_id = $body['clinic_id'];
+        $body_id = $body['body_id'];
+        $handover_by = $body['handover_by'];
+        $handover_date = $body['handover_date'];
+        $handover_sign = $body['handover_sign'];
+        $received_by = $body['received_by'];
+        $received_date = $body['received_date'];
+        $received_sign = $body['received_sign'];
+        $clinic_id = $body['clinic_id'];
+        $class_room_id = $body['class_room_id'];
+        $data = $body['data'];
 
-        return ($result);
-        // ->json($result)
-        // ->header('Access-Control-Allow-Origin','*')
-        // ->header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS');
+
+        $model = new HandoverModel();
+        $model->save($body);
+
+        $array = [];
+
+        foreach ($data as $key => $value) {
+            $array[] = [
+                "org_unit_code" => $org['org_unit_code'],
+                "body_id" => $body_id,
+                "visit_id" => $value,
+                "modified_by" => user()->username
+            ];
+        }
+
+        $modelDetail = new HandoverDetailModel();
+        $modelDetail->where("body_id", $body_id)->delete();
+        $modelDetail->insertBatch($array);
+
+
+        return json_encode($array);
     }
 }

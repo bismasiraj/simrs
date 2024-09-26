@@ -9,7 +9,7 @@ class CaraKeluarModel extends Model
     protected $table      = 'cara_keluar';
     protected $primaryKey = 'keluar_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

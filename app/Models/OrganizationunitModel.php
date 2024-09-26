@@ -15,7 +15,7 @@ class OrganizationunitModel extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    // protected $allowedFields = ['name', 'email'];
+    protected $allowedFields = ['sstoken'];
 
     // Dates
     protected $useTimestamps = false;

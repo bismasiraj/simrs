@@ -126,13 +126,24 @@ class TreatmentBillModel extends Model
     ];
 
 
-    public function getBill($nomor, $ke, $mulai, $akhir, $lunas, $klinik, $rj, $status, $nota, $trans)
+    public function getBill($nomor, $ke, $mulai, $akhir, $lunas, $klinik, $rj, $status, $nota, $trans, $start = null, $end = null)
     {
         $sql = "SP_TAGIHANPASIEN_NOTATRANS;1 @NOMOR = '$nomor', @KE = '$ke', @MULAI = '$mulai', @AKHIR = '$akhir', @LUNAS = '$lunas', @KLINIK = '$klinik', @RJ = '$rj', @status = '$status', @NOTA = '$nota', @TRANS = '$trans'";
-        // return $sql;
+
         $result = $this->db->query(new RawSql($sql));
-        return $result->getResultArray();
+
+        $data = $result->getResultArray();
+
+        if ($start !== null && $end !== null) {
+            $data = array_filter($data, function ($row) use ($start, $end) {
+                $treatDate = $row['TREAT_DATE'];
+                return ($treatDate >= $start && $treatDate <= $end);
+            });
+        }
+
+        return $data;
     }
+
     public function getharian($mulai, $akhir, $status, $rj)
     {
         $sql = "SP_EIS_TRANSAKSI;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj'";

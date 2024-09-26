@@ -30,8 +30,27 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Admin\Admin::index');
+$routes->get('/', 'Admin\Patient::rajal');
 $routes->get('lang/{locale}', 'Language::index');
+
+$routes->group("api/satusehat", ['filter' => 'satuSehatFilter'], function ($routes) {
+    $routes->post("login", "SatuSehat::login");
+    $routes->get("getToken", "SatuSehat::getToken");
+    $routes->get("getPasienID", "SatuSehat::getPasienID");
+    $routes->post("postEncounter", "SatuSehat::postEncounter");
+    $routes->post("postBundleEncounter", "SatuSehat::postBundleEncounter");
+    $routes->get("postingBatch", "SatuSehat::postingBatch");
+});
+$routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
+    $routes->post("tambahAntrean", "AntrianBpjs::tambahAntrean");
+    $routes->post("updateWaktu", "AntrianBpjs::updateWaktu");
+    $routes->post("updateStatusAntraenPV", "AntrianBpjs::updateStatusAntraenPV");
+});
+$routes->post("satusehat/loginInternal", "SatuSehat::loginInternal", ['filter' => 'login']);
+$routes->post("satusehat/postOrganization", "SatuSehat::postOrganization", ['filter' => 'login']);
+// $routes->post("satusehat/generateBundleEncounter", "SatuSehat::postLocation", ['filter' => 'login']);
+$routes->post("satusehat/postLocation", "SatuSehat::postLocation", ['filter' => 'login']);
+$routes->post("api/satusehat/getPasienID", "SatuSehat::getPasienID", ['filter' => 'satuSehatFilter']);
 
 /*
  * --------------------------------------------------------------------

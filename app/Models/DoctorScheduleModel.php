@@ -9,7 +9,7 @@ class DoctorScheduleModel extends Model
     protected $table      = 'doctor_schedule';
     protected $primaryKey = 'schedule_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

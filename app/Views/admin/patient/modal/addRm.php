@@ -1,6 +1,5 @@
 <script type="text/javascript">
     var historyJson = new Array();
-    var pasienDiagnosa = <?= json_encode($pasienDiagnosa); ?>;
     var currentIndex;
     var indexLength;
     $(document).ready(function(e) {})
@@ -28,94 +27,7 @@
         }
     });
 
-    function modalAddRm() {
-        enableRM()
-        $("#arorg_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#arvisit_id").val("<?= $visit['visit_id']; ?>")
-        $("#ardate_of_diagnosa").val(get_date())
-        $("#arreport_date").val(get_date())
 
-        $("#artheid").val("<?= $visit['pasien_id']; ?>")
-        $("#artheaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#arisrj").val("<?= $visit['isrj']; ?>")
-        $("#arkal_id").val("<?= $visit['kal_id']; ?>")
-        $("#arclinic_id").val("<?= $visit['clinic_id']; ?>")
-
-        $("#aremployee_id").val("<?= $visit['employee_id']; ?>")
-        $("#ardoctor").val("<?= $visit['fullname']; ?>")
-        $("#arclass_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#arbed_id").val("<?= $visit['bed_id']; ?>")
-
-
-        $("#arin_date").val("<?= $visit['in_date']; ?>")
-        $("#arexit_date").val("<?= $visit['exit_date']; ?>")
-        $("#armodified_date").val(get_date())
-        $("#armodified_by").val("<?= user_id(); ?>")
-        $("#arnokartu").val("<?= $visit['pasien_id']; ?>")
-        $("#arvisit_id").val("<?= $visit['visit_id']; ?>")
-        $("#arno_registration").val("<?= $visit['no_registration']; ?>")
-
-
-
-
-
-
-
-        $("#arthename").val(pasienDiagnosa.thename)
-        $("#arstatus_pasien_id").val(pasienDiagnosa.status_pasien_id)
-        $("#argender").val(pasienDiagnosa.gender)
-        $("#arageyear").val(pasienDiagnosa.ageyear)
-        $("#aragemonth").val(pasienDiagnosa.agemonth)
-        $("#arageday").val(pasienDiagnosa.ageday)
-        $("#arspesialistik").val(pasienDiagnosa.spesialistik)
-        $("#arresult_id").val(pasienDiagnosa.result_id)
-        $("#arkeluar_id").val(pasienDiagnosa.keluar_id)
-        $("#arnosep").val(pasienDiagnosa.nosep)
-        $("#artglsep").val(pasienDiagnosa.tglsep)
-        $("#arpasien_diagnosa_id").val(pasienDiagnosa.pasien_diagnosa_id)
-
-
-
-
-        $("#ardescription").val(pasienDiagnosa.description)
-        $("#ardiagnosa_desc_05").val(pasienDiagnosa.diagnosa_desc_05)
-        $("#ardiagnosa_desc_06").val(pasienDiagnosa.diagnosa_desc_06)
-        $("#aranamnase").val(pasienDiagnosa.anamnase)
-        $("#arpemeriksaan").val(pasienDiagnosa.pemeriksaan)
-        $("#arpemeriksaan_02").val(pasienDiagnosa.pemeriksaan_02)
-        $("#arpemeriksaan_03").val(pasienDiagnosa.pemeriksaan_03)
-        $("#arpemeriksaan_05").val(pasienDiagnosa.pemeriksaan_05)
-        $("#arteraphy_desc").val(pasienDiagnosa.teraphy_desc)
-        $("#arinstruction").val(pasienDiagnosa.instruction)
-        $("#armorfologi_neoplasma").val(pasienDiagnosa.morfologi_neoplasma)
-        $("#ardisability").val(pasienDiagnosa.disability)
-        $("#arrencanatl").val(pasienDiagnosa.rencanatl)
-        var option = new Option(pasienDiagnosa.dirujukke, pasienDiagnosa.dirujukke, true, true);
-        $("#ardirujukke").append(option).trigger('change');
-        $("#artgl_kontrol").val(pasienDiagnosa.tglkontrol)
-        $("#arkdpoli_kontrol").val(pasienDiagnosa.clinic_id)
-        $("#arprocedure_05").val(pasienDiagnosa.procedure_05)
-        $("#arsuffer_type").val(pasienDiagnosa.suffer_type)
-
-
-
-
-
-
-
-
-
-
-        // holdModal('addRmModal')
-        // getDataFillRekamMedis()
-
-        <?php if (isset($pasienDiagnosaAll[0])) { ?>
-            getHistoryRekamMedis()
-        <?php } ?>
-
-        tindakLanjut()
-
-    }
 
     function getDataFillRekamMedis() {
         $.ajax({
@@ -289,58 +201,71 @@
         $("#currentHistory").html(text);
     }
 
-    function tindakLanjut() {
-        var tindakLanjutType = $("#arrencanatl").val()
-        if (tindakLanjutType == '1') {
-            $("#ardirujukkegroup").hide()
-            $("#artgl_kontrolgroup").hide()
-            $("#arkdpoli_kontrolgroup").hide()
-            $("#ardescriptiongroup").hide()
-            $("#arskdpgroup").hide()
-            $("#arsprigroup").hide()
-            $("#arrujukaneksternalgroup").hide()
-            $("#artiperujukan_group").hide()
-        } else if (tindakLanjutType == '2') {
-            $("#ardirujukkegroup").hide()
-            $("#artgl_kontrolgroup").hide()
-            $("#arkdpoli_kontrolgroup").hide()
-            $("#ardescriptiongroup").hide()
-            $("#arskdpgroup").hide()
-            $("#arsprigroup").hide()
-            $("#arrujukaneksternalgroup").hide()
-            $("#artiperujukan_group").hide()
-        } else if (tindakLanjutType == '3') {
-            $("#ardirujukkegroup").show()
-            $("#artgl_kontrolgroup").show()
-            $("#arkdpoli_kontrolgroup").show()
-            $("#ardescriptiongroup").show()
-            $("#arskdpgroup").hide()
-            $("#arsprigroup").hide()
-            $("#arrujukaneksternalgroup").show()
-            $("#artiperujukan_group").show()
-            getRujukan()
-        } else if (tindakLanjutType == '4') {
-            $("#ardirujukkegroup").hide()
-            $("#artgl_kontrolgroup").show()
-            $("#arkdpoli_kontrolgroup").show()
-            $("#ardescriptiongroup").show()
-            $("#arskdpgroup").show()
-            $("#arsprigroup").hide()
-            $("#arrujukaneksternalgroup").hide()
-            $("#artiperujukan_group").hide()
-        } else if (tindakLanjutType == '5') {
-            $("#ardirujukkegroup").hide()
-            $("#artgl_kontrolgroup").show()
-            $("#arkdpoli_kontrolgroup").hide()
-            $("#ardescriptiongroup").show()
-            $("#arskdpgroup").hide()
-            $("#arsprigroup").show()
-            $("#arrujukaneksternalgroup").hide()
-            $("#artiperujukan_group").hide()
-        } else {
-
-        }
-    }
+    // function tindakLanjut() {
+    //     var tindakLanjutType = $("#armrencanatl").val()
+    //     if (tindakLanjutType == '1') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '2') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '3') {
+    //         $("#armdirujukkegroup").slideDown()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideDown()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideDown()
+    //         $("#armtiperujukan_group").slideDown()
+    //         getRujukan()
+    //         $("#arrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '4') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideDown()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideDown()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '5') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideDown()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideDown()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideDown()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideUp()
+    //     } else if (tindakLanjutType == '6') {
+    //         $("#armdirujukkegroup").slideUp()
+    //         $("#armtgl_kontrolgroup").slideUp()
+    //         $("#armkdpoli_kontrolgroup").slideUp()
+    //         $("#armdescriptiongroup").slideUp()
+    //         $("#armskdpgroup").slideUp()
+    //         $("#armsprigroup").slideUp()
+    //         $("#armrujukaneksternalgroup").slideUp()
+    //         $("#armtiperujukan_group").slideUp()
+    //         $("#armrujukaninternalgroup").slideDown()
+    //     }
+    // }
 
     $("#formaddrm").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -368,9 +293,23 @@
                     pasienDiagnosa = data.data
                     modalAddRm()
                     disableRM()
-                    $("#formaddrmbtn").toggle()
-                    $("#formeditrm").toggle()
+                    $("#formaddrmbtn").slideUp()
+                    $("#formeditrm").slideDown()
+                    $("#postingSS").slideDown()
                     $(".rmdescription").val(pasienDiagnosa.description)
+                    executeWaktuUpdate()
+
+                    $(".rmdescription").html($("#ardescription").val())
+                    $(".rmdiagnosa_desc_05").html($("#ardiagnosa_desc_05").val())
+                    $(".rmdiagnosa_desc_06").html($("#ardiagnosa_desc_06").val())
+                    $(".rmanamnase").html($("#aranamnase").val())
+                    $(".rmpemeriksaan").html($("#arpemeriksaan").val())
+                    $(".rmpemeriksaan_02").html($("#arpemeriksaan_02").val())
+                    $(".rmpemeriksaan_03").html($("#arpemeriksaan_03").val())
+                    $(".rmpemeriksaan_05").html($("#arpemeriksaan_05").val())
+                    $(".rmteraphy_desc").html($("#arteraphy_desc").val())
+                    $(".rminstruction").html($("#arinstruction").val())
+                    $(".profileRM").slideDown()
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -488,130 +427,6 @@
         })
     }
 
-    function postRujukan() {
-        var clicked_submit_btn = $("#addnorujukan")
-
-
-
-        var rujvisit = '<?= $visit['visit_id']; ?>'
-        var rujrujukanNosep = '<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>'
-        var rujnoRujukan = $("#arnorujukan").val()
-        var rujtglRujukan = '<?= $visit['visit_date']; ?>'
-        var rujtglRencanaKunjungan = $("#artgl_kontrol").val()
-        if (rujtglRencanaKunjungan == '' || rujtglRencanaKunjungan == null) {
-            alert('Tanggal Rencana Rujukan harus diisi')
-            return '';
-        }
-        var rujppkdirujuk = $("#ardirujukke").val()
-        if (rujppkdirujuk == '' || rujppkdirujuk == null) {
-            alert('kolom "Dirujuk Ke" tidak boleh kosong')
-            return '';
-        }
-        var rujppkname = $("#ardirujukke").find(":selected").data()
-        if (typeof rujppkname !== 'undefined') {
-            var rujppkdirujukName = rujppkname.data.text
-        }
-        var rujjnsPelayanan = '<?= is_null($visit['class_room_id']) ? '1' : '2'; ?>'
-        var rujcatatan = $("#arprocedure_05").val()
-        var rujdiagRujukan = $("#diag_id1").val()
-        if (rujdiagRujukan == '' || rujdiagRujukan == null) {
-            alert('Harus sudah mengisi diagnosa utama')
-            return '';
-        }
-        var rujdiagname = $("#diag_id1").find(":selected").data()
-        if (typeof rujdiagname !== 'undefined') {
-            var rujdiagRujukanName = rujdiagname.data.text
-        }
-        var rujtipeRujukan = $("#artiperujukan").val()
-        var rujpoliRujukan = $("#arkdpoli_kontrol").val()
-        if (rujpoliRujukan == '' || rujpoliRujukan == null) {
-            alert('Poli rujukan harus diisi')
-            return '';
-        }
-        var rujsex = '<?= $visit['gender']; ?>'
-        var rujnama = '<?= $visit['diantar_oleh']; ?>'
-        var rujnokartu = '<?= $visit['pasien_id']; ?>'
-        var rujnorm = '<?= $visit['no_registration']; ?>'
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/postRujukan',
-            type: "POST",
-            data: JSON.stringify({
-                'nosep': rujrujukanNosep,
-                'norujukan': rujnoRujukan,
-                'tglRujukan': rujtglRujukan,
-                'tglRencanaKunjungan': rujtglRencanaKunjungan,
-                'ppkdirujuk': rujppkdirujuk,
-                'jnsPelayanan': rujjnsPelayanan,
-                'catatan': rujcatatan,
-                'diagRujukan': rujdiagRujukan,
-                'tipeRujukan': rujtipeRujukan,
-                'poliRujukan': rujpoliRujukan,
-                'visit': rujvisit,
-                'ppkdirujukName': rujppkdirujukName,
-                'diagRujukanName': rujdiagRujukanName,
-                'sex': rujsex,
-                'nama': rujnama,
-                'nokartu': rujnokartu,
-                'nomr': rujnorm
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data.metaData.code == '200') {
-                    var noRujukan = data.response.rujukan.noRujukan
-                    $("#arnorujukan").val(noRujukan);
-                    $("#arnorujukan").prop("disabled", true);
-                }
-
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
-    }
-
-    function deleteRujukan() {
-        var clicked_submit_btn = $("#deleterujukan")
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/deleteRujukan',
-            type: "POST",
-            data: JSON.stringify({
-                'visit_id': '<?= $visit['visit_id']; ?>',
-                'noRujukan': $("#arnorujukan").val(),
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                if (data.metaData.code == '200') {
-                    $("#arnorujukan").val("");
-                }
-
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        })
-    }
-
     function modalDiagnosa() {
         holdModal('addDiagModal');
     }
@@ -636,6 +451,8 @@
         $("#arprocedure_05").prop("disabled", true);
         $("#arsuffer_type").prop("disabled", true);
         $("#artiperujukan").prop("disabled", true);
+        $("#tablediagnosa select").prop("disabled", true);
+        $("#tableprocedure select").prop("disabled", true);
     }
 
     function enableRM() {
@@ -658,11 +475,14 @@
         $("#arprocedure_05").prop("disabled", false);
         $("#arsuffer_type").prop("disabled", false);
         $("#artiperujukan").prop("disabled", true);
+        $("#tablediagnosa select").prop("disabled", false);
+        $("#tableprocedure select").prop("disabled", false);
     }
 
     function editRM() {
-        $("#formaddrmbtn").toggle()
-        $("#formeditrm").toggle()
+        $("#formaddrmbtn").slideDown()
+        $("#formeditrm").slideUp()
+        $("#postingSS").slideUp()
         enableRM()
     }
 
@@ -685,6 +505,172 @@
             error: function() {
 
             }
+        });
+    }
+
+    function satuSehatLogin() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>satusehat/loginInternal',
+            type: "POST",
+            data: JSON.stringify({
+                'username': 'usi'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                localStorage.setItem('jwtauth', data.token)
+                getSatuSehatToken()
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function getSatuSehatToken() {
+        var jwtauth = localStorage.getItem('jwtauth')
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/getToken',
+            type: "GET",
+            headers: {
+                Authorization: 'Bearer ' + jwtauth
+            },
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data)
+                // var aksestoken = data.access_token
+                // console.log(aksestoken)
+                localStorage.setItem('ssToken', data)
+                alert("Get Token Satu Sehat Berhasil, silahkan ulangi proses bridging satu sehat kembali")
+            },
+            error: function(xhr) {
+                alert(xhr);
+                satuSehatLogin()
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function updateWaktu(task) {
+        var statusantrean = $("#pvstatusantrean").val()
+        var checktask = task - 1
+        console.log(statusantrean)
+        console.log('2' + (String)(checktask))
+        // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {
+        if (true) {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/updateWaktu',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    "norm": '<?= $visit['no_registration']; ?>',
+                    "kodebooking": '<?= $visit['trans_id']; ?>',
+                    "taskid": task,
+                    "waktu": Date.now()
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $("#postingSS").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
+                },
+                success: function(data) {
+                    console.log("Tambah Antrean " + data.metadata.message)
+
+                    if (data.metadata.code == 200) {
+                        $("#arstatusantrean").val('2' + (String)(task))
+                        executeWaktuUpdate()
+                    } else {
+                        alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                    }
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                },
+                complete: function() {
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                }
+
+            });
+        }
+
+    }
+
+    function executeWaktuUpdate() {
+        var statusantrean = $("#arstatusantrean").val()
+        var task = '';
+        if (statusantrean == '23') {
+            task = '4'
+        } else if (statusantrean == '24') {
+            task = '5'
+        }
+        if (task != '') {
+            updateWaktu(task)
+        }
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/antrianbpjs/updateStatusAntraenPV',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+            },
+            data: JSON.stringify({
+                "norm": '<?= $visit['no_registration']; ?>',
+                "kodebooking": '<?= $visit['trans_id']; ?>',
+                "taskid": $("#arstatusantrean").val(),
+                "waktu": Date.now()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
+            },
+            success: function(data) {
+                console.log("Update Waktu Selesai")
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                }
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            },
+            complete: function() {
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            }
+
         });
     }
 </script>

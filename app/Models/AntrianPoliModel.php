@@ -8,7 +8,7 @@ class AntrianPoliModel extends Model
 {
     protected $table      = 'antrian_poli';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

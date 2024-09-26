@@ -102,7 +102,7 @@
                                 </div><!--./row-->
                             </div><!--./box-footer-->
                         </div>
-                        <div id=""></div>
+                        <div></div>
                         <div class="modal-footer">
                             <div class="pull-right">
                                 <button type="submit" id="addPrescRBtn" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-info"><?php echo lang('Word.save'); ?></button>

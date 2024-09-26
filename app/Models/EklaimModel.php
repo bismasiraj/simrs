@@ -9,7 +9,7 @@ class EklaimModel extends Model
     protected $table      = 'eklaim_klaim';
     protected $primaryKey = 'nosep_klaim';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

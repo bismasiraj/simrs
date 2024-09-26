@@ -9,7 +9,7 @@ class FollowUpModel extends Model
     protected $table      = 'follow_up';
     protected $primaryKey = 'follow_up';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -1,6 +1,6 @@
 <?php
 $currency_symbol = "Rp. ";
-$permission = user()->getPermissions();
+$permissions = user()->getPermissions();
 ?>
 
 <style>
@@ -21,238 +21,155 @@ $permission = user()->getPermissions();
 </style>
 <div class="tab-pane" id="lab" role="tabpanel">
     <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
-            <div class="box-header border-b mb10 pl-0 pt0">
-                <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
-
-                    <?php
-
-                    if ($visit['gender'] == '1') {
-                        $file = "uploads\images\profile_male.png";
-                    } else if ($visit['gender'] == '2') {
-                        $file = "uploads\images\profile_female.png";
-                    }
-
-                    ?>
-                    <img width="115" height="115" class="rounded-circle avatar-lg" src="<?php echo base_url(); ?><?php echo $file ?>">
-
-                </div><!--./col-lg-5-->
-                <hr>
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <table class="table">
-                        <tr>
-                            <td class="bolds"><?php echo lang('Word.age'); ?></td>
-                            <td id="age"><?= $visit['age']; ?></td>
-                        </tr>
-                        <tr>
-                            <td class="bolds">Alamat</td>
-                            <td id="address"><?php echo $visit['visitor_address']; ?></td>
-                        </tr>
-
-                        <tr>
-                            <td class="bolds">Dokter</td>
-                            <td id="dokter"><?php echo $visit['fullname']; ?></td>
-                        </tr>
-                        <?php if (!is_null($visit['class_room_id'])) { ?>
-                            <tr>
-                                <td class="bolds">Tanggal Masuk</td>
-                                <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="bolds">Tanggal Keluar</td>
-                                <td id="exit_date"><?php echo $visit['exit_date']; ?></td>
-                            </tr>
-                        <?php } else { ?>
-                            <tr>
-                                <td class="bolds">Tanggal</td>
-                                <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
-                            </tr>
-                        <?php } ?>
-
-                        <tr>
-                            <?php if (!is_null($visit['class_room_id'])) { ?>
-                                <td class="bolds">Bangsal</td>
-                                <td id="klinik"><?php echo ($visit['name_of_class']); ?></td>
-                            <?php } else { ?>
-                                <td class="bolds">Poli</td>
-                                <td id="klinik"><?php echo $visit['name_of_clinic']; ?></td>
-                            <?php } ?>
-                        </tr>
-                        <tr>
-                            <td class="bolds">Alergi</td>
-                            <td class="alergi"> - </td>
-                        </tr>
-
-
-                    </table>
-                </div><!--./col-lg-7-->
-            </div><!--./row-->
-
-
-            <?php if (!empty($pasienDiagnosa)) {
-            ?>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Ringkasan Diagnosis:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmdescription"><?= $pasienDiagnosa['description']; ?></div>
-                    </li>
-                    <li>
-                        <div><?= $pasienDiagnosa['diagnosa_desc_05']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Riwayat Alergi:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmdiagnosa_desc_06"><?= $pasienDiagnosa['diagnosa_desc_06']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Anamnesis:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmanamnase"><?= $pasienDiagnosa['anamnase']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Periksa Fisik:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmpemeriksaan"><?= $pasienDiagnosa['pemeriksaan']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Periksa Lab:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmpemeriksaan_02"><?= $pasienDiagnosa['pemeriksaan_02']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Periksa RO:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmpemeriksaan_03"><?= $pasienDiagnosa['pemeriksaan_03']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Pemeriksaan Lain:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmpemeriksaan_05"><?= $pasienDiagnosa['pemeriksaan_05']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Terapi:</b></p>
-                <ul>
-                    <li>
-                        <div class="rmteraphy_desc"><?= $pasienDiagnosa['teraphy_desc']; ?></div>
-                    </li>
-                </ul>
-                <hr class="hr-panel-heading hr-10">
-                <p><b><i class="fa fa-tag"></i> Instruksi:</b></p>
-                <ul>
-                    <li>
-                        <div class="rminstruction"><?= $pasienDiagnosa['instruction']; ?></div>
-                    </li>
-                </ul>
-            <?php
-            } ?>
-
-
-        </div><!--./col-lg-6-->
-        <div class="col-lg-10 col-md-10 col-xs-12">
-            <div class="panel-group" id="labBody">
-
-            </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+            <?php echo view('admin/patient/profilemodul/profilebiodata', [
+                'visit' => $visit,
+                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                'pasienDiagnosa' => $pasienDiagnosa
+            ]); ?>
         </div>
-    </div><!--./row-->
+        <!--./col-lg-6-->
+        <div class="col-lg-9 col-md-9 col-xs-12">
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div id="listRequestLab" class="row">
+
+                    </div>
+                </div>
+                <!-- <div class="col-md-12">
+                    <div id="laboratoriumAdd" class="box-tab-tools text-center">
+                        <a data-toggle="modal" onclick="requestLab()" class="btn btn-primary btn-lg" id="addLabBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Lab Online</a>
+                    </div>
+                </div> -->
+            </div>
+            <div class="accordion mt-4">
+                <div class="panel-group" id="labBody">
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="operasi-tab">
+                        <ul class="nav nav-underline mb-3" style="border-bottom: 2px solid var(--bs-border-color);">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#transaksi-lab-tab" data-bs-toggle="tab">Transaksi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#catatan-keperawatan" data-bs-toggle="tab">Bridging List</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#checklist-keselamatan" data-bs-toggle="tab">Lihat Hasil</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mt-3">
+
+
+
+
+                            <div class="tab-pane fade show active" id="transaksi-lab-tab">
+                                <form id="formlabbill" action="" method="post">
+                                    <div class="row g-3">
+                                        <input type="hidden" name="ci_csrf_token" value="">
+
+                                        <div class="col-12">
+                                            <?php if (isset($permissions['tindakanpoli']['c']) && $permissions['tindakanpoli']['c'] == '1') { ?>
+                                                <div class="row">
+
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="startDateLab">Start Date</label>
+                                                            <input type="date" id="startDateLab" class="form-control form-control-sm">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="endDateLab">End Date</label>
+                                                            <input type="date" id="endDateLab" class="form-control form-control-sm">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="notaNoLab">Nomor Sesi</label>
+                                                            <div class="input-group">
+                                                                <select id="notaNoLab" class="form-select form-select-sm">
+                                                                    <option value="%">Semua</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <label for="btn-search-lab"></label>
+                                                            <div class="input-group pt-2">
+                                                                <button type="button" id="btn-search-lab" class="btn btn-secondary btn-sm" name="cari"> <i class="fa fa-search"></i>Cari</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row mt-3">
+                                                    <!-- Pencarian Tarif -->
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="searchTarifLab">Pencarian Tarif</label>
+                                                            <div class="input-group">
+                                                                <select id="searchTarifLab" class="form-control fit" style="width: 70%;"></select>
+                                                                <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillLab("searchTarifLab")'>
+                                                                    <i class="fa fa-plus"></i> Tambah
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="table-responsive mt-4">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-primary text-center">
+                                            <tr>
+                                                <th class="align-middle">No.</th>
+                                                <th class="align-middle">Jenis Tindakan</th>
+                                                <th class="align-middle">Tgl Tindakan</th>
+                                                <th class="align-middle">Nilai</th>
+                                                <th class="align-middle">Jml</th>
+                                                <th class="align-middle">Total Tagihan</th>
+                                                <th colspan="2">Tanggungan pihak ke-3</th>
+                                                <th class="align-middle">Diskon</th>
+                                                <th class="align-middle">Subsidi Satuan</th>
+                                                <th class="align-middle">Subsidi Total</th>
+                                                <th class="align-middle"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="labChargesBody" class="table-group-divider"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button type="button" id="formSaveBillLabBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary me-2">
+                                        <i class="fa fa-check-circle"></i> Simpan
+                                    </button>
+                                    <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
+                                        <i class="fa fa-signature"></i> Sign
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+        </div>
+    </div>
+    <!--./row-->
 </div>
 <!-- -->
-
-
-
-<script type='text/javascript'>
-    var mrJson;
-    var tagihan = 0.0;
-    var subsidi = 0.0;
-    var potongan = 0.0;
-    var pembulatan = 0.0;
-    var pembayaran = 0.0;
-    var retur = 0.0;
-    var total = 0.0;
-    var lastOrder = 0;
-    $(document).ready(function(e) {
-        var nomor = '<?= $visit['no_registration']; ?>';
-        var ke = '%'
-        var mulai = '2023-08-01' //tidak terpakai
-        var akhir = '2023-08-31' //tidak terpakai
-        var lunas = '%'
-        // var klinik = '<?= $visit['clinic_id']; ?>'
-        var klinik = '%'
-        var rj = '%'
-        var status = '%'
-        var nota = '%'
-        var trans = '<?= $visit['trans_id']; ?>'
-        var visit = '<?= $visit['visit_id']; ?>'
-
-    })
-</script>
-<script type='text/javascript'>
-    function formatCurrency(total) {
-        //Seperates the components of the number
-        var components = total.toFixed(2).toString().split(".");
-        //Comma-fies the first part
-        components[0] = components[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        //Combines the two sections
-        return components.join(",");
-    }
-
-
-    function isnullcheck(parameter) {
-        return parameter == null ? 0 : (parameter)
-    }
-
-    function getHasilLab(nomor, visit) {
-
-
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/getHasilLab',
-            type: "POST",
-            data: JSON.stringify({
-                'nomor': nomor,
-                'visit': visit
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-
-
-                hasilLabJson = data.result
-                var headerKey = data.headerKey
-
-                $("#labBody").html(headerKey)
-
-
-                hasilLabJson.forEach((element, key) => {
-                    $("#viewlab" + hasilLabJson[key].periksa_tgl).append($("<tr>")
-                        .append($("<td>").append($("<p>").html(hasilLabJson[key].parameter_name)))
-                        .append($("<td>").html(hasilLabJson[key].hasil))
-                        .append($("<td>").html(hasilLabJson[key].satuan))
-                        .append($("<td>").html(hasilLabJson[key].nilai_rujukan))
-                        .append($("<td>").html(hasilLabJson[key].description))
-                    )
-                });
-            },
-            error: function() {
-
-            }
-        });
-    }
-</script>

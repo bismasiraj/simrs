@@ -71,6 +71,7 @@ class TreatmentObatModel extends Model
         'dose1',
         'dose2',
         'theorder',
+        'sold_status'
         // 'org_unit_code',
         // 'jml_bks',
         // 'dose',
@@ -253,7 +254,7 @@ class TreatmentObatModel extends Model
             ->findAll();
         return $select;
     }
-    public function getHistoryObatResep($nomor)
+    public function getHistoryObatResep($nomor, $soldStatus)
     {
         $select = $this->select("treatment_obat.no_registration,   
         treatment_obat.visit_id, 
@@ -368,7 +369,8 @@ class TreatmentObatModel extends Model
           isnull(treatment_obat.dose1,0) as dose1,
           isnull(treatment_obat.dose2,0) as dose2")
             ->where('no_registration', $nomor)
-            ->where("treat_date > dateadd(year,-1,getdate())")
+            ->where('sold_status', $soldStatus)
+            ->where("treat_date > dateadd(month,-3,getdate())")
             ->orderBy('resep_no,resep_ke, theorder, treat_date')
             ->findAll();
         return $select;

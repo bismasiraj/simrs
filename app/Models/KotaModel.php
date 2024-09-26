@@ -9,7 +9,7 @@ class KotaModel extends Model
     protected $table      = 'kota';
     protected $primaryKey = 'kode_kota';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
