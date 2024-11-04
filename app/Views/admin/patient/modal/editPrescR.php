@@ -388,9 +388,9 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(data.message);
+                    successSwal(data.message);
 
                     $("#editprescItemBodyRacik").html("")
 
@@ -492,9 +492,9 @@
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(data.message);
+                        successSwal(data.message);
                         resepDetail.forEach((element, key) => {
                             if (resepDetail[key].resep_ke == data.resepKe && resepDetail[key].resep_no == data.resepNo)
                                 resepDetail.splice(key, 1)

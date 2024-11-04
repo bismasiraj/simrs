@@ -134,15 +134,16 @@ class TreatmentBillModel extends Model
 
         $data = $result->getResultArray();
 
-        if ($start !== null && $end !== null) {
-            $data = array_filter($data, function ($row) use ($start, $end) {
-                $treatDate = $row['TREAT_DATE'];
-                return ($treatDate >= $start && $treatDate <= $end);
+        if ($mulai !== null && $akhir !== null) {
+            $data = array_filter($data, function ($row) use ($mulai, $akhir) {
+                $treatDate = substr($row['TREAT_DATE'], 0, 10);
+                return ($treatDate >= $mulai && $treatDate <= $akhir);
             });
         }
 
-        return $data;
+        return array_values($data);
     }
+
 
     public function getharian($mulai, $akhir, $status, $rj)
     {

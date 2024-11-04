@@ -33,7 +33,7 @@
 
     function addRowgcs(gcsselect, key) {
         $("#gcsBody").append($("<tr>")
-            .append($("<td>").append((gcsselect.examination_date).substring(0, 16)))
+            .append($("<td>").append((gcsselect.examination_date)?.substring(0, 16)))
             .append($("<td>").html(gcsselect.modified_by))
             .append($("<td>").html(gcsselect.gcs_e))
             .append($("<td>").html(gcsselect.gcs_m))
@@ -45,7 +45,7 @@
         )
         // if (gcsselect.valid_user === null) {} else {
         //     $("#gcsBody").append($("<tr>")
-        //         .append($("<td>").append((gcsselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").append((gcsselect.examination_date)?.substring(0, 16)))
         //         .append($("<td>").html(gcsselect.modified_by))
         //         .append($("<td>").html(gcsselect.gcs_e))
         //         .append($("<td>").html(gcsselect.gcs_m))
@@ -178,7 +178,7 @@
 <script>
     function initialAddagcs() {
         $("#agcsDocument").html("")
-        addGcs(1, 0, 'Gcs', 'agcsDocument')
+        addGcs(1, 0, 'Gcs', 'agcsDocument', true, true)
         $("#gcsModal").modal("show")
         $("#agcsDocument").find("input, select, textarea").prop("disabled", false)
     }

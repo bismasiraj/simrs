@@ -21,6 +21,7 @@
                     <div class="accordion-body" id="the-sign-in">
 
                     </div>
+
                 </div>
             </div>
             <div class="accordion-item">
@@ -33,25 +34,7 @@
                     <div class="accordion-body" id="the-time-out">
 
                     </div>
-                    <div class="container" id="container-instrumen">
-                        <div class="row">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Alat</th>
-                                        <th width="100px">Jumlah Sebelum</th>
-                                        <th width="1%" class="text-center"><i class="fas fa-trash-alt"></i></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="body-instrumen">
 
-                                </tbody>
-                            </table>
-                            <div class="box-tab-tools my-3" style="text-align: center;">
-                                <button type="button" id="addInstrumen" name="addInstrumen" data-body="body-instrumen" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><span>Tambah</span></button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="accordion-item">
@@ -87,6 +70,7 @@
                     <div class="accordion-body" id="the-sign-out">
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -94,21 +78,15 @@
             <button type="button" id="btn-print-checklist-keselamatan" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
             </button>
-            <button type="button" id="btn-save-checklist-keselamatan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
+            <button type="button" id="btn-save-checklist-keselamatan" class="btn btn-primary btn-save-operasi">Simpan</button>
         </div>
     </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('#addInstrumen').click(function() {
-        addRowInstrumen();
-    });
-
-
     $('#btn-save-checklist-keselamatan').on('click', function(e) {
 
         e.preventDefault();
-        tinymce.triggerSave();
 
         let formElement = $('#form-checklist-keselamatan')[0];
         let dataSend = new FormData(formElement);
@@ -161,41 +139,7 @@
             if (res.respon === true) {
                 successSwal('Data berhasil disimpan.');
                 $('#form-checklist-keselamatan')[0].reset();
-                tinymce.remove();
             }
         });
     });
-
-    const addRowInstrumen = (props) => {
-        // Create HTML for new row
-        var newRow = `
-            <tr>
-                <td>
-                    <select class="form-control" name="brand_name[]">
-                        <option data-nama="Alat 1" value="1" ${props?.brand_id == 1 ? 'selected' : '' }>Alat 1</option>
-                        <option data-nama="Alat 2" value="2" ${props?.brand_id == 2 ? 'selected' : '' }>Alat 2</option>
-                        <option data-nama="Alat 3" value="3" ${props?.brand_id == 3 ? 'selected' : '' }>Alat 3</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="hidden" name="body_id[]" value="${props?.body_id}" />
-                    <input type="hidden" name="quantity_intra[]" value="${props?.quantity_intra}" />
-                    <input type="hidden" name="quantity_additional[]" value="${props?.quantity_additional}" />
-                    <input type="hidden" name="quantity_after[]" value="${props?.quantity_after}" />
-                    <input type="number" class="form-control" name="quantity_before[]" value="${props?.quantity_before}">
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm delete-row"><i class="fas fa-trash-alt"></i></button>
-                </td>
-            </tr>
-        `;
-
-        // Append the new row to the tbody
-        $('#body-instrumen').append(newRow);
-
-        // Attach click event handler for delete button in the new row
-        $('.delete-row').click(function() {
-            $(this).closest('tr').remove();
-        });
-    }
 </script>

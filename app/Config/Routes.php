@@ -30,7 +30,8 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Admin\Patient::rajal');
+$routes->get('/', 'Admin\Admin::index');
+$routes->get('/redirect-to', 'Home::refresh');
 $routes->get('lang/{locale}', 'Language::index');
 
 $routes->group("api/satusehat", ['filter' => 'satuSehatFilter'], function ($routes) {
@@ -41,8 +42,16 @@ $routes->group("api/satusehat", ['filter' => 'satuSehatFilter'], function ($rout
     $routes->post("postBundleEncounter", "SatuSehat::postBundleEncounter");
     $routes->get("postingBatch", "SatuSehat::postingBatch");
 });
+$routes->group('antrian', function ($routes) {
+    $routes->get('/', 'admin\Antrian::indexDisplay', ['as' => 'antrian']);
+    $routes->get('getPoliAndEmployee', 'admin\Antrian::getPoliAndEmployeeDisplay'); // Pastikan ini sesuai
+    $routes->post('getData', 'admin\Antrian::getDataDisplay');
+    $routes->get('ip', 'admin\Antrian::getDataIp');
+    $routes->post('updateStatus', 'admin\Antrian::updateStatusPanggilan');
+});
 $routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
     $routes->post("tambahAntrean", "AntrianBpjs::tambahAntrean");
+    $routes->post("deleteAntrean", "AntrianBpjs::deleteAntrean");
     $routes->post("updateWaktu", "AntrianBpjs::updateWaktu");
     $routes->post("updateStatusAntraenPV", "AntrianBpjs::updateStatusAntraenPV");
 });

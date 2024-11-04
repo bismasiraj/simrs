@@ -85,7 +85,7 @@
                     </td>
                     <td class="p-1" style="width:33.3%">
                         <b>Nama Pasien</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
                     </td>
                     <td class="p-1" style="width:33.3%">
                         <b>Jenis Kelamin</b>
@@ -294,7 +294,7 @@
                 <tr>
                     <td>
                         <b>Keadaan Umum</b>
-                        <input type="text" class="form-control" name="" value="">
+                        <input type="text" class="form-control" id="" name="" value="">
                     </td>
                 </tr>
             </tbody>
@@ -331,7 +331,7 @@
                 <tr>
                     <td colspan="2">
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" name=""></textarea>
+                        <textarea type="text" class="form-control" id="" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -345,7 +345,7 @@
                     </td>
                     <td>
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" name=""></textarea>
+                        <textarea type="text" class="form-control" id="" name=""></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -359,7 +359,7 @@
                     </td>
                     <td>
                         <b>Keterangan :</b>
-                        <textarea type="text" class="form-control" name=""></textarea>
+                        <textarea type="text" class="form-control" id="" name=""></textarea>
                     </td>
                 </tr>
             </tbody>

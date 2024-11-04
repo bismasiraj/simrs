@@ -28,7 +28,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="bolds text-end">Jenis Kelamin</td>
-                                                    <td id="radgender"><?= $visit['gendername']; ?></td>
+                                                    <td id="radgender"><?= $visit['gendername'] ?? ''; ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="bolds">Asuransi</td>

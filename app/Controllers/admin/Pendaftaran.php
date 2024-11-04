@@ -22,7 +22,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getSinglePV()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -49,7 +52,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function gethistoryrajaldatatable()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $pv = new PasienVisitationModel();
 
@@ -172,7 +178,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getHistoryPv()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $pv = new PasienVisitationModel();
 
@@ -192,7 +201,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getSKDP()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $ik = new InasisKontrolModel();
@@ -236,7 +248,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getSPRI()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $ik = new InasisKontrolModel();
@@ -281,7 +296,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function saveSkdp()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -384,7 +402,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function checkSkdp()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -410,7 +431,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function saveSpri()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -484,7 +508,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function checkSpri()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -537,7 +564,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getRujukan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -590,7 +620,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function insertSep()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -879,7 +912,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getDiagnosaAll()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -907,7 +943,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getKalurahanAll()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -952,7 +991,10 @@ class Pendaftaran extends \App\Controllers\BaseController
     public function getPesertaBpjs()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $tglSEP = $this->request->getPost('tglSEP');
         $getPesertaType = $this->request->getPost('getPesertaType');

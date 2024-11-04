@@ -37,7 +37,7 @@
     var eknosep = '<?= $visit['no_skp']; ?>'
     var eknosep_inap = '<?= $visit['no_skpinap']; ?>'
     var eknomor_kartu = '<?= $visit['pasien_id']; ?>'
-    var eknomor_sep = '<?= $visit['no_skpinap'] ?? $visit['no_skp']; ?>'
+    var eknomor_sep = '<?= is_null($visit['no_skpinap']) || $visit['no_skpinap'] == '' ? $visit['no_skp'] : $visit['no_skpinap']; ?>'
     var eknomor_rm = '<?= $visit['no_registration']; ?>'
     var eknama_pasien = '<?= $visit['diantar_oleh']; ?>'
     var ekgender = '<?= $visit['gender']; ?>'
@@ -47,19 +47,19 @@
     var ekcob_cd = '-'
 
     var ekjenis_rawat = '<?= !isset($visit['no_skpinap']) || is_null($visit['no_skpinap']) ? 2 : 1; ?>'
-    var ektgl_masuk = '<?= $visit['visit_date']; ?>'
-    var ektgl_pulang = '<?= $visit['no_skpinap'] == '' || is_null($visit['no_skpinap']) ? $visit['visit_date'] : $visit['exit_date']; ?>'
+    var ektgl_masuk = formatedDatetimeFlat('<?= $visit['visit_date']; ?>')
+    var ektgl_pulang = formatedDatetimeFlat('<?= $visit['no_skpinap'] == '' || is_null($visit['no_skpinap']) ? $visit['visit_date'] : $visit['exit_date']; ?>')
     var ekcara_masuk = '<?php if ($visit['asalrujukan'] == '1') {
                             echo 'gp';
                         } else if ($visit['asalrujukan'] == '2') {
                             echo 'hosp-trans';
                         } ?>'
-    var ekdischarge_status = eklaimCaraKeluar['<?= $visit['keluar_id']; ?>']
+    var ekdischarge_status = eklaimCaraKeluar['<?= $visit['keluar_id'] ?? 1; ?>']
     <?php $empl = user()->getEmployeeData() ?>
     var ekcoder_nik = '1771051804810003' //'<?= isset($empl['npk']) ? $empl['npk'] : ''; ?>'
     var eknama_dokter = '<?= is_null($visit['fullname_inap']) || $visit['fullname_inap'] == '' ? $visit['fullname'] : $visit['fullname_inap']; ?>'
     var ektarif_poli_eks = 10000
-    var ekkode_tarif = 'BP'
+    var ekkode_tarif = 'DS'
     var ektension_upper = $("#aetension_upper").val()
     var ektension_below = $("#aetension_below").val()
     var ekadl_sub_acute = ''
@@ -197,12 +197,15 @@
                     .append('<div class="p-2 select2-full-width"><select id="ekunuDiag' + iUnuDiag + '" class="form-control" name="unuDiag[]" ></select></div>')
                 )
                 .append($('<td>')
-                    .append($('<select class="form-control">')
-                        .attr('name', 'unuDiagCat[]').attr('id', 'unuDiagCat' + iUnuDiag) <?php foreach ($diagCat as $key => $value) { ?>
-                            .append($("<option>")
-                                .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
-                            ) <?php } ?>
+                    .append($(`<div class="p-2">`)
+                        .append($('<select class="form-select">')
+                            .attr('name', 'unuDiagCat[]').attr('id', 'unuDiagCat' + iUnuDiag) <?php foreach ($diagCat as $key => $value) { ?>
+                                .append($("<option>")
+                                    .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
+                                ) <?php } ?>
+                        )
                     )
+
                 )
             )
 
@@ -218,7 +221,6 @@
                     .append('<div class="p-2 select2-full-width"><select id="ekunuProc' + iUnuProc + '" class="form-control" name="unuProc[]" ></select></div>')
                 )
             )
-
         initializeProcSelect2("ekunuProc" + iUnuProc, initialvalue, initialname)
     }
 
@@ -230,7 +232,7 @@
                     .append('<div class="p-2 select2-full-width"><select id="ekinaDiag' + iInaDiag + '" class="form-control" name="inaDiag[]" ></select></div>')
                 )
                 .append($('<td>')
-                    .append($('<select class="form-control">')
+                    .append($('<select class="form-select">')
                         .attr('name', 'inaDiagCat[]').attr('id', 'inaDiagCat' + iInaDiag) <?php foreach ($diagCat as $key => $value) { ?>
                             .append($("<option>")
                                 .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
@@ -284,8 +286,8 @@
 
         $("#ekjenis_rawat").val(ekjenis_rawat)
         $("#ekkelas_rawat").val(ekkelas_rawat)
-        $("#ektgl_masuk").val(ektgl_masuk)
-        $("#ektgl_pulang").val(ektgl_pulang)
+        $("#flatektgl_masuk").val(ektgl_masuk).trigger("change")
+        $("#flatektgl_pulang").val(ektgl_pulang).trigger("change")
         $("#ekcara_masuk").val(ekcara_masuk)
         $("#ekdischarge_status").val(ekdischarge_status)
         $("#ekcoder_nik").val(ekcoder_nik)
@@ -401,146 +403,146 @@
 
     }
 
-    function setEklaimData() {
+    // function setEklaimData() {
 
-        $("#ekcurrentStep").val(currentStep)
-        $("#ektrans_id").val(ektrans_id)
-        $("#ekvisit_id").val(ekvisit_id)
-        $("#eknosep").val(eknosep)
-        $("#eknosep_inap").val(eknosep_inap)
-        $("#eknama_pasien").val(eknama_pasien)
-        $("#ekgender").val(ekgender)
-        $("#eknomor_rm").val(eknomor_rm)
-        $("#ektgl_lahir").val(ektgl_lahir)
-        $("#eknama_dokter").val(eknama_dokter)
-
-
-        $("#eknomor_kartu").val(eknomor_kartu)
-        $("#eknomor_sep").val(eknomor_sep)
-        $("#ekpayor_id").val(ekpayor_id)
-        $("#ekpayor_cd").val(ekpayor_cd)
-        $("#payor").val(ekpayor_id + '-' + ekpayor_cd)
-        $("#ekcob_cd").val(ekcob_cd)
-        $("#ekkode_tarif").val(ekkode_tarif)
-
-        $("#ekjenis_rawat").val(ekjenis_rawat)
-        $("#ekkelas_rawat").val(ekkelas_rawat)
-        $("#ektgl_masuk").val(ektgl_masuk)
-        $("#ektgl_pulang").val(ektgl_pulang)
-        $("#ekcara_masuk").val(ekcara_masuk)
-        $("#ekdischarge_status").val(ekdischarge_status)
-        $("#ekcoder_nik").val(ekcoder_nik)
-        $("#ektension_upper").val(ektension_upper)
-        $("#ektension_below").val(ektension_below)
-        $("#ekadl_sub_acute").val(ekadl_sub_acute)
-        $("#ekadl_chronic").val(ekadl_chronic)
-        $("#ekdializer_single_use").val(ekdializer_single_use)
-        $("#ekkantong_darah").val(ekkantong_darah)
-        $("input[name=upgrade_class_ind][value=" + ekupgrade_class_ind + "]").prop('checked', true);
-        if (ekupgrade_class_ind == '1') {
-            $(".upgradeClassParam").slideDown()
-        } else {
-            $(".upgradeClassParam").slideUp()
-        }
-        $("#ekupgrade_class_class").val(ekupgrade_class_class)
-        $("#ekupgrade_class_los").val(ekupgrade_class_los)
-        $("#ekadd_payment_pct").val(ekadd_payment_pct)
-        $("#ekupgrade_class_payor").val(ekupgrade_class_payor)
-
-        $("#ekicu_indikator").val(ekicu_indikator)
-        $("#ekicu_los").val(ekicu_los)
-        $("#ekventilator_hour").val(ekventilator_hour)
-        $("#ekuse_ind").val(ekuse_ind)
-        $("#ekstart_dttm").val(ekstart_dttm)
-        $("#ekstop_dttm").val(ekstop_dttm)
-        $("#ekbirth_weight").val(ekbirth_weight)
-
-        // $("input[name=apgar][value=" + ekapgar + "]").prop('checked', true);
-        // $("#ekmnt1appearance").val(ekapgar[0].appearance)
-        // $("#ekmnt1pulse").val(ekapgar[0].pulse)
-        // $("#ekmnt1grimace").val(ekapgar[0].grimace)
-        // $("#ekmnt1activity").val(ekapgar[0].activity)
-        // $("#ekmnt1respiration").val(ekapgar[0].respiration)
-        // $("#ekmnt5appearance").val(ekapgar[1].appearance)
-        // $("#ekmnt5pulse").val(ekapgar[1].pulse)
-        // $("#ekmnt5grimace").val(ekapgar[1].grimace)
-        // $("#ekmnt5activity").val(ekapgar[1].activity)
-        // $("#ekmnt5respiration").val(ekapgar[1].respiration)
-
-        // $("input[name=persalinan][value=" + ekpersalinan + "]").prop('checked', true);
-        $("#ekusia_kehamilan").val(ekusia_kehamilan)
-        $("#ekonset_kontraksi").val(ekonset_kontraksi)
-        $("#ekgravida").val(ekgravida)
-        $("#ekpartus").val(ekpartus)
-        $("#ekabortus").val(ekabortus)
-        $("#ekdelivery_sequence").val('')
-        $("#ekdelivery_method").val('')
-        $("#ekuse_manual").val('')
-        $("#ekuse_forcep").val('')
-        $("#ekuse_vacuum").val('')
-        $("#ekletak_janin").val('')
-        $("#ekkondisi").val('')
-
-        $('#ektarif_poli_eks').val(ektarif_poli_eks)
-
-        // $("input[name=covid_indicator][value=" + ekcovid_indicator + "]").prop('checked', true);
-        $("#ekcovid19_status_cd").val(ekcovid19_status_cd)
-        $("#eknomor_kartu_t").val(eknomor_kartu_t)
-        $("#ekcovid19_no_sep").val(ekcovid19_no_sep)
-        $("#ekterapi_konvalesen").val(ekterapi_konvalesen)
-        $("#ekisoman_ind").val(ekisoman_ind)
-        $("#ekbayi_lahir_status_cd").val(ekbayi_lahir_status_cd)
-        $("#ekcovid19_rs_darurat_ind").val(ekcovid19_rs_darurat_ind)
-        $("#ekcovid19_cc_ind").val(ekcovid19_cc_ind)
-        $("#ekcovid19_co_insidense_ind").val(ekcovid19_co_insidense_ind)
-        $("#ekepisodes7").val(ekepisodes7)
-        $("#ekepisodes8").val(ekepisodes8)
-        $("#ekepisodes9").val(ekepisodes9)
-        $("#ekepisodes10").val(ekepisodes10)
-        $("#ekepisodes11").val(ekepisodes11)
-        $("#ekepisodes12").val(ekepisodes12)
-        $("#eklab_asam_laktat").val(eklab_asam_laktat)
-        $("#eklab_d_dimer").val(eklab_d_dimer)
-        $("#eklab_anti_hiv").val(eklab_anti_hiv)
-        $("#eklab_procalcitonin").val(eklab_procalcitonin)
-        $("#eklab_analisa_gas").val(eklab_analisa_gas)
-        $("#eklab_crp").val(eklab_crp)
-        $("#eklab_aptt").val(eklab_aptt)
-        $("#eklab_pt").val(eklab_pt)
-        $("#eklab_albumin").val(eklab_albumin)
-        $("#eklab_kultur").val(eklab_kultur)
-        $("#eklab_waktu_pendarahan").val(eklab_waktu_pendarahan)
-        $("#ekrad_thorax_ap_pa").val(ekrad_thorax_ap_pa)
-        $("#ekpemulasaraan_jenazah").val(ekpemulasaraan_jenazah)
-        $("#ekkantong_jenazah").val(ekkantong_jenazah)
-        $("#ekpeti_jenazah").val(ekpeti_jenazah)
-        $("#ekplastik_erat").val(ekplastik_erat)
-        $("#ekdesinfektan_jenazah").val(ekdesinfektan_jenazah)
-        $("#ekmobil_jenazah").val(ekmobil_jenazah)
-        $("#ekdesinfektan_mobil_jenazah").val(ekdesinfektan_mobil_jenazah)
-
-        $("#ekprosedur_non_bedah").val((ekprosedur_non_bedah))
-        $("#ekprosedur_bedah").val((ekprosedur_bedah))
-        $("#ekkonsultasi").val((ekkonsultasi))
-        $("#ektenaga_ahli").val((ektenaga_ahli))
-        $("#ekkeperawatan").val((ekkeperawatan))
-        $("#ekpenunjang").val((ekpenunjang))
-        $("#ekradiologi").val((ekradiologi))
-        $("#eklaboratorium").val((eklaboratorium))
-        $("#ekpelayanan_darah").val((ekpelayanan_darah))
-        $("#ekrehabilitasi").val((ekrehabilitasi))
-        $("#ekkamar").val((ekkamar))
-        $("#ekrawat_intensif").val((ekrawat_intensif))
-        $("#ekobat").val((ekobat))
-        $("#ekobat_kronis").val((ekobat_kronis))
-        $("#ekobat_kemoterapi").val((ekobat_kemoterapi))
-        $("#ekalkes").val((ekalkes))
-        $("#ekbmhp").val((ekbmhp))
-        $("#eksewa_alat").val((eksewa_alat))
-        $("#ekbilling_amount").val(formatCurrency(ektotalBillEklaim))
+    //     $("#ekcurrentStep").val(currentStep)
+    //     $("#ektrans_id").val(ektrans_id)
+    //     $("#ekvisit_id").val(ekvisit_id)
+    //     $("#eknosep").val(eknosep)
+    //     $("#eknosep_inap").val(eknosep_inap)
+    //     $("#eknama_pasien").val(eknama_pasien)
+    //     $("#ekgender").val(ekgender)
+    //     $("#eknomor_rm").val(eknomor_rm)
+    //     $("#ektgl_lahir").val(ektgl_lahir)
+    //     $("#eknama_dokter").val(eknama_dokter)
 
 
-    }
+    //     $("#eknomor_kartu").val(eknomor_kartu)
+    //     $("#eknomor_sep").val(eknomor_sep)
+    //     $("#ekpayor_id").val(ekpayor_id)
+    //     $("#ekpayor_cd").val(ekpayor_cd)
+    //     $("#payor").val(ekpayor_id + '-' + ekpayor_cd)
+    //     $("#ekcob_cd").val(ekcob_cd)
+    //     $("#ekkode_tarif").val(ekkode_tarif)
+
+    //     $("#ekjenis_rawat").val(ekjenis_rawat)
+    //     $("#ekkelas_rawat").val(ekkelas_rawat)
+    //     $("#flatektgl_masuk").val(ektgl_masuk).trigger("change")
+    //     $("#flatektgl_pulang").val(ektgl_pulang).trigger("change")
+    //     $("#ekcara_masuk").val(ekcara_masuk)
+    //     $("#ekdischarge_status").val(ekdischarge_status)
+    //     $("#ekcoder_nik").val(ekcoder_nik)
+    //     $("#ektension_upper").val(ektension_upper)
+    //     $("#ektension_below").val(ektension_below)
+    //     $("#ekadl_sub_acute").val(ekadl_sub_acute)
+    //     $("#ekadl_chronic").val(ekadl_chronic)
+    //     $("#ekdializer_single_use").val(ekdializer_single_use)
+    //     $("#ekkantong_darah").val(ekkantong_darah)
+    //     $("input[name=upgrade_class_ind][value=" + ekupgrade_class_ind + "]").prop('checked', true);
+    //     if (ekupgrade_class_ind == '1') {
+    //         $(".upgradeClassParam").slideDown()
+    //     } else {
+    //         $(".upgradeClassParam").slideUp()
+    //     }
+    //     $("#ekupgrade_class_class").val(ekupgrade_class_class)
+    //     $("#ekupgrade_class_los").val(ekupgrade_class_los)
+    //     $("#ekadd_payment_pct").val(ekadd_payment_pct)
+    //     $("#ekupgrade_class_payor").val(ekupgrade_class_payor)
+
+    //     $("#ekicu_indikator").val(ekicu_indikator)
+    //     $("#ekicu_los").val(ekicu_los)
+    //     $("#ekventilator_hour").val(ekventilator_hour)
+    //     $("#ekuse_ind").val(ekuse_ind)
+    //     $("#ekstart_dttm").val(ekstart_dttm)
+    //     $("#ekstop_dttm").val(ekstop_dttm)
+    //     $("#ekbirth_weight").val(ekbirth_weight)
+
+    //     // $("input[name=apgar][value=" + ekapgar + "]").prop('checked', true);
+    //     // $("#ekmnt1appearance").val(ekapgar[0].appearance)
+    //     // $("#ekmnt1pulse").val(ekapgar[0].pulse)
+    //     // $("#ekmnt1grimace").val(ekapgar[0].grimace)
+    //     // $("#ekmnt1activity").val(ekapgar[0].activity)
+    //     // $("#ekmnt1respiration").val(ekapgar[0].respiration)
+    //     // $("#ekmnt5appearance").val(ekapgar[1].appearance)
+    //     // $("#ekmnt5pulse").val(ekapgar[1].pulse)
+    //     // $("#ekmnt5grimace").val(ekapgar[1].grimace)
+    //     // $("#ekmnt5activity").val(ekapgar[1].activity)
+    //     // $("#ekmnt5respiration").val(ekapgar[1].respiration)
+
+    //     // $("input[name=persalinan][value=" + ekpersalinan + "]").prop('checked', true);
+    //     $("#ekusia_kehamilan").val(ekusia_kehamilan)
+    //     $("#ekonset_kontraksi").val(ekonset_kontraksi)
+    //     $("#ekgravida").val(ekgravida)
+    //     $("#ekpartus").val(ekpartus)
+    //     $("#ekabortus").val(ekabortus)
+    //     $("#ekdelivery_sequence").val('')
+    //     $("#ekdelivery_method").val('')
+    //     $("#ekuse_manual").val('')
+    //     $("#ekuse_forcep").val('')
+    //     $("#ekuse_vacuum").val('')
+    //     $("#ekletak_janin").val('')
+    //     $("#ekkondisi").val('')
+
+    //     $('#ektarif_poli_eks').val(ektarif_poli_eks)
+
+    //     // $("input[name=covid_indicator][value=" + ekcovid_indicator + "]").prop('checked', true);
+    //     $("#ekcovid19_status_cd").val(ekcovid19_status_cd)
+    //     $("#eknomor_kartu_t").val(eknomor_kartu_t)
+    //     $("#ekcovid19_no_sep").val(ekcovid19_no_sep)
+    //     $("#ekterapi_konvalesen").val(ekterapi_konvalesen)
+    //     $("#ekisoman_ind").val(ekisoman_ind)
+    //     $("#ekbayi_lahir_status_cd").val(ekbayi_lahir_status_cd)
+    //     $("#ekcovid19_rs_darurat_ind").val(ekcovid19_rs_darurat_ind)
+    //     $("#ekcovid19_cc_ind").val(ekcovid19_cc_ind)
+    //     $("#ekcovid19_co_insidense_ind").val(ekcovid19_co_insidense_ind)
+    //     $("#ekepisodes7").val(ekepisodes7)
+    //     $("#ekepisodes8").val(ekepisodes8)
+    //     $("#ekepisodes9").val(ekepisodes9)
+    //     $("#ekepisodes10").val(ekepisodes10)
+    //     $("#ekepisodes11").val(ekepisodes11)
+    //     $("#ekepisodes12").val(ekepisodes12)
+    //     $("#eklab_asam_laktat").val(eklab_asam_laktat)
+    //     $("#eklab_d_dimer").val(eklab_d_dimer)
+    //     $("#eklab_anti_hiv").val(eklab_anti_hiv)
+    //     $("#eklab_procalcitonin").val(eklab_procalcitonin)
+    //     $("#eklab_analisa_gas").val(eklab_analisa_gas)
+    //     $("#eklab_crp").val(eklab_crp)
+    //     $("#eklab_aptt").val(eklab_aptt)
+    //     $("#eklab_pt").val(eklab_pt)
+    //     $("#eklab_albumin").val(eklab_albumin)
+    //     $("#eklab_kultur").val(eklab_kultur)
+    //     $("#eklab_waktu_pendarahan").val(eklab_waktu_pendarahan)
+    //     $("#ekrad_thorax_ap_pa").val(ekrad_thorax_ap_pa)
+    //     $("#ekpemulasaraan_jenazah").val(ekpemulasaraan_jenazah)
+    //     $("#ekkantong_jenazah").val(ekkantong_jenazah)
+    //     $("#ekpeti_jenazah").val(ekpeti_jenazah)
+    //     $("#ekplastik_erat").val(ekplastik_erat)
+    //     $("#ekdesinfektan_jenazah").val(ekdesinfektan_jenazah)
+    //     $("#ekmobil_jenazah").val(ekmobil_jenazah)
+    //     $("#ekdesinfektan_mobil_jenazah").val(ekdesinfektan_mobil_jenazah)
+
+    //     $("#ekprosedur_non_bedah").val((ekprosedur_non_bedah))
+    //     $("#ekprosedur_bedah").val((ekprosedur_bedah))
+    //     $("#ekkonsultasi").val((ekkonsultasi))
+    //     $("#ektenaga_ahli").val((ektenaga_ahli))
+    //     $("#ekkeperawatan").val((ekkeperawatan))
+    //     $("#ekpenunjang").val((ekpenunjang))
+    //     $("#ekradiologi").val((ekradiologi))
+    //     $("#eklaboratorium").val((eklaboratorium))
+    //     $("#ekpelayanan_darah").val((ekpelayanan_darah))
+    //     $("#ekrehabilitasi").val((ekrehabilitasi))
+    //     $("#ekkamar").val((ekkamar))
+    //     $("#ekrawat_intensif").val((ekrawat_intensif))
+    //     $("#ekobat").val((ekobat))
+    //     $("#ekobat_kronis").val((ekobat_kronis))
+    //     $("#ekobat_kemoterapi").val((ekobat_kemoterapi))
+    //     $("#ekalkes").val((ekalkes))
+    //     $("#ekbmhp").val((ekbmhp))
+    //     $("#eksewa_alat").val((eksewa_alat))
+    //     $("#ekbilling_amount").val(formatCurrency(ektotalBillEklaim))
+
+
+    // }
 
     function setEnableEklaim(bool) {
 
@@ -760,9 +762,6 @@
                     }
                     setEklaimData()
                 }
-
-
-
             },
             error: function() {
 
@@ -775,73 +774,83 @@
             url: '<?php echo base_url(); ?>admin/patient/getBillEklaim18',
             type: "POST",
             data: JSON.stringify({
-                'trans': trans
+                'trans': trans,
+                'visit': '<?= $visit['visit_id']; ?>'
             }),
             dataType: 'json',
             contentType: false,
             cache: false,
             processData: false,
-            success: function(data) {
-                ekprosedur_non_bedah = parseFloat(data?.prosedur_non_bedah)
-                ekprosedur_bedah = parseFloat(data?.prosedur_bedah)
-                ekkonsultasi = parseFloat(data?.konsultasi)
-                ektenaga_ahli = parseFloat(data?.tenaga_ahli)
-                ekkeperawatan = parseFloat(data?.keperawatan)
-                ekpenunjang = parseFloat(data?.penunjang)
-                ekradiologi = parseFloat(data?.radiologi)
-                eklaboratorium = parseFloat(data?.laboratorium)
-                ekpelayanan_darah = parseFloat(data?.pelayanan_darah)
-                ekrehabilitasi = parseFloat(data?.rehabilitasi)
-                ekkamar = parseFloat(data?.kamar)
-                ekrawat_intensif = parseFloat(data?.rawat_intensif)
-                ekobat = parseFloat(data?.obat)
-                ekobat_kronis = parseFloat(data?.obat_kronis)
-                ekobat_kemoterapi = parseFloat(data?.obat_kemoterapi)
-                ekalkes = parseFloat(data?.alkes)
-                ekbmhp = parseFloat(data?.bmhp)
-                eksewa_alat = parseFloat(data?.sewa_alat)
+            success: function(res) {
+                var data = res?.data
+                if (true) {
+                    ekprosedur_non_bedah = formatCurrency(parseFloat(data?.prosedur_non_bedah))
+                    ekprosedur_bedah = formatCurrency(parseFloat(data?.prosedur_bedah))
+                    ekkonsultasi = formatCurrency(parseFloat(data?.konsultasi))
+                    ektenaga_ahli = formatCurrency(parseFloat(data?.tenaga_ahli))
+                    ekkeperawatan = formatCurrency(parseFloat(data?.keperawatan))
+                    ekpenunjang = formatCurrency(parseFloat(data?.penunjang))
+                    ekradiologi = formatCurrency(parseFloat(data?.radiologi))
+                    eklaboratorium = formatCurrency(parseFloat(data?.laboratorium))
+                    ekpelayanan_darah = formatCurrency(parseFloat(data?.pelayanan_darah))
+                    ekrehabilitasi = formatCurrency(parseFloat(data?.rehabilitasi))
+                    ekkamar = formatCurrency(parseFloat(data?.kamar))
+                    ekrawat_intensif = formatCurrency(parseFloat(data?.rawat_intensif))
+                    ekobat = formatCurrency(parseFloat(data?.obat))
+                    ekobat_kronis = formatCurrency(parseFloat(data?.obat_kronis))
+                    ekobat_kemoterapi = formatCurrency(parseFloat(data?.obat_kemoterapi))
+                    ekalkes = formatCurrency(parseFloat(data?.alkes))
+                    ekbmhp = formatCurrency(parseFloat(data?.bmhp))
+                    eksewa_alat = formatCurrency(parseFloat(data?.sewa_alat))
 
-                ektotalBillEklaim = ekprosedur_non_bedah +
-                    ekprosedur_bedah +
-                    ekkonsultasi +
-                    ektenaga_ahli +
-                    ekkeperawatan +
-                    ekpenunjang +
-                    ekradiologi +
-                    eklaboratorium +
-                    ekpelayanan_darah +
-                    ekrehabilitasi +
-                    ekkamar +
-                    ekrawat_intensif +
-                    ekobat +
-                    ekobat_kronis +
-                    ekobat_kemoterapi +
-                    ekalkes +
-                    ekbmhp +
-                    eksewa_alat;
+                    ektotalBillEklaim = (
+                        parseFloat(data?.prosedur_non_bedah) +
+                        parseFloat(data?.prosedur_bedah) +
+                        parseFloat(data?.konsultasi) +
+                        parseFloat(data?.tenaga_ahli) +
+                        parseFloat(data?.keperawatan) +
+                        parseFloat(data?.penunjang) +
+                        parseFloat(data?.radiologi) +
+                        parseFloat(data?.laboratorium) +
+                        parseFloat(data?.pelayanan_darah) +
+                        parseFloat(data?.rehabilitasi) +
+                        parseFloat(data?.kamar) +
+                        parseFloat(data?.rawat_intensif) +
+                        parseFloat(data?.obat) +
+                        parseFloat(data?.obat_kronis) +
+                        parseFloat(data?.obat_kemoterapi) +
+                        parseFloat(data?.alkes) +
+                        parseFloat(data?.bmhp) +
+                        parseFloat(data?.sewa_alat));
 
 
-                $("#ekprosedur_non_bedah").val((ekprosedur_non_bedah))
-                $("#ekprosedur_bedah").val((ekprosedur_bedah))
-                $("#ekkonsultasi").val((ekkonsultasi))
-                $("#ektenaga_ahli").val((ektenaga_ahli))
-                $("#ekkeperawatan").val((ekkeperawatan))
-                $("#ekpenunjang").val((ekpenunjang))
-                $("#ekradiologi").val((ekradiologi))
-                $("#eklaboratorium").val((eklaboratorium))
-                $("#ekpelayanan_darah").val((ekpelayanan_darah))
-                $("#ekrehabilitasi").val((ekrehabilitasi))
-                $("#ekkamar").val((ekkamar))
-                $("#ekrawat_intensif").val((ekrawat_intensif))
-                $("#ekobat").val((ekobat))
-                $("#ekobat_kronis").val((ekobat_kronis))
-                $("#ekobat_kemoterapi").val((ekobat_kemoterapi))
-                $("#ekalkes").val((ekalkes))
-                $("#ekbmhp").val((ekbmhp))
-                $("#eksewa_alat").val((eksewa_alat))
-                $("#ektgl_lahir").val(data.date_of_birth)
 
-                $("#ekbilling_amount").val(formatCurrency(ektotalBillEklaim))
+                    $("#ekprosedur_non_bedah").val((ekprosedur_non_bedah))
+                    $("#ekprosedur_bedah").val((ekprosedur_bedah))
+                    $("#ekkonsultasi").val((ekkonsultasi))
+                    $("#ektenaga_ahli").val((ektenaga_ahli))
+                    $("#ekkeperawatan").val((ekkeperawatan))
+                    $("#ekpenunjang").val((ekpenunjang))
+                    $("#ekradiologi").val((ekradiologi))
+                    $("#eklaboratorium").val((eklaboratorium))
+                    $("#ekpelayanan_darah").val((ekpelayanan_darah))
+                    $("#ekrehabilitasi").val((ekrehabilitasi))
+                    $("#ekkamar").val((ekkamar))
+                    $("#ekrawat_intensif").val((ekrawat_intensif))
+                    $("#ekobat").val((ekobat))
+                    $("#ekobat_kronis").val((ekobat_kronis))
+                    $("#ekobat_kemoterapi").val((ekobat_kemoterapi))
+                    $("#ekalkes").val((ekalkes))
+                    $("#ekbmhp").val((ekbmhp))
+                    $("#eksewa_alat").val((eksewa_alat))
+                    $("#ektgl_lahir").val(data.date_of_birth)
+
+                    $("#ekbilling_amount").val(formatCurrency(ektotalBillEklaim))
+                }
+
+                var apgareklaim = data?.apgarData
+
+                console.log(apgareklaim)
 
             },
             error: function() {
@@ -907,7 +916,7 @@
             $("#totalGrouper").html(formatCurrency(totalIna))
 
         } else {
-            errorMsg(data.metadata.message);
+            errorSwal(data.metadata.message);
         }
     }
     var eklaimhasil;
@@ -926,19 +935,23 @@
                 clicked_submit_btn.button('loading');
             },
             success: function(data) {
-                setGrouperResult(data)
-                if (currentStep < 3) {
-                    $("#ekfinalklaimbtn").slideUp()
+                if (data.metadata.code == 200) {
+                    setGrouperResult(data)
+                    if (currentStep < 3) {
+                        $("#ekfinalklaimbtn").slideUp()
+                    } else {
+                        $("#ekfinalklaimbtn").slideDown()
+                    }
+                    successSwal(JSON.stringify(data.response));
                 } else {
-                    $("#ekfinalklaimbtn").slideDown()
+                    errorSwal(data.metadata.message)
                 }
-                clicked_submit_btn.button('reset');
-                // successMsg(data.message);
+
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');

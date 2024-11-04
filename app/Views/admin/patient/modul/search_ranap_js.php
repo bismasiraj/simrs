@@ -60,13 +60,13 @@
             processData: false,
             success: function(data) {
                 if (data.metadata.code == 200) {
-                    successMsg(data.metadata.message)
+                    successSwal(data.metadata.message)
                     if (data.response.lastkeluar == 32) {
                         nextFormRanap()
                         $("#addRanapModal").css("z-index", 2000)
                     }
                 } else {
-                    errorMsg(data.metadata.message)
+                    errorSwal(data.metadata.message)
                 }
                 $("#formAkomodasiViewBtn").html('<i class="fa fa-save"></i> Simpan')
                 $("#formAkomodasiViewBtn").slideUp()
@@ -749,7 +749,7 @@
                                             )
                                         }
                                     } else {
-                                        errorMsg(data.metadata.message)
+                                        errorSwal(data.metadata.message)
                                     }
                                     $("#delBtnAkomodasi" + key).html('<i class="fa fa-trash"></i>')
                                 },
@@ -787,7 +787,7 @@
     //                 console.log(data.metaData.code)
     //                 if (data.metaData.code == 200) {
     //                     alert(data.metaData.message)
-    //                     successMsg(data.metaData.message)
+    //                     successSwal(data.metaData.message)
     //                     $("#tano_skpinap").val(data.response.sep.noSep)
     //                 } else {
     //                     alert(data.metaData.message)
@@ -925,10 +925,10 @@
                 console.log(data)
                 if (data.metaData.code == 200) {
                     alert(data.metaData.message)
-                    successMsg(data.metaData.message)
+                    successSwal(data.metaData.message)
                     $("#tano_skpinap").val(data.response.sep.noSep)
                 } else {
-                    errorMsg(data.metaData.message)
+                    errorSwal(data.metaData.message)
                 }
             },
             error: function() {
@@ -953,10 +953,10 @@
             success: function(data) {
                 console.log(data)
                 if (data.metaData.code == 200) {
-                    successMsg(data.metaData.message)
+                    successSwal(data.metaData.message)
                     $("#tano_skpinap").val("")
                 } else {
-                    errorMsg(data.metaData.message)
+                    errorSwal(data.metaData.message)
                 }
                 $("#deleteSepInapBtn").html('<i class="fa fa-plus"></i>')
             },
@@ -980,10 +980,10 @@
             success: function(data) {
                 console.log(data)
                 if (data.metaData.code == 200) {
-                    successMsg(data.metaData.message)
+                    successSwal(data.metaData.message)
                     $("#tano_skpinap").val("")
                 } else {
-                    errorMsg(data.metaData.message)
+                    errorSwal(data.metaData.message)
                 }
             },
             error: function() {
@@ -1169,10 +1169,10 @@
             success: function(data) {
                 console.log(data)
                 if (data.metaData.code == 200) {
-                    successMsg(data.metaData.message)
+                    successSwal(data.metaData.message)
                     $("#noRujukanInap").val("")
                 } else {
-                    errorMsg(data.metaData.message)
+                    errorSwal(data.metaData.message)
                 }
             },
             error: function() {

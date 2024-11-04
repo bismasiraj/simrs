@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\Model;
 
 class PasienPenunjangModel extends Model
@@ -61,4 +62,34 @@ class PasienPenunjangModel extends Model
     protected $createdField  = 'modified_date';
     protected $updatedField  = 'modified_date';
     protected $deletedField  = 'deleted_at';
+    public function getKunjunganPenunjang($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null)
+    {
+        $sql = "DECLARE	@return_value int
+
+            EXEC	@return_value = [dbo].[SP_SEARCHKUNJUNGANRJ_lab]
+                    @NAMA = N'%$nama%',
+                    @KODE = N'%$kode%',
+                    @ALAMAT = N'%$kode%',
+                    @POLI = N'%$poli%',
+                    @MULAI = N'$mulai',
+                    @AKHIR = N'$akhir',
+                    @SUDAH = N'%$sudah%',
+                    @DOKTER = N'%$dokter%',
+                    @NOKARTU = N'%$nokartu%'
+
+            SELECT	'Return Value' = @return_value";
+        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_FORM;1 @X = '100',
+        // @NAMA = '%$nama%',
+        // @KODE = '%$kode%',
+        // @ALAMAT = '%$alamat%',
+        // @POLI = '%$poli%',
+        // @MULAI = '$mulai',
+        // @AKHIR = '$akhir',
+        // @KELUAR = '%',
+        // @SUDAH = '%$sudah%',
+        // @DOKTER = '%$dokter%',
+        // @NOKARTU = '%$nokartu%'";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
 }

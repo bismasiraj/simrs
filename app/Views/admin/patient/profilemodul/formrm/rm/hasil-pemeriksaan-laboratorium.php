@@ -7,12 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
@@ -78,7 +85,8 @@
 
 <body>
     <div class="container-fluid mt-5">
-        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
+        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post"
+            autocomplete="off">
             <div style="display: none;">
                 <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
                 <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
@@ -217,16 +225,20 @@
             </table>
 
             <em>Hasil berupa angka menggunakan desimal dengan separator titik
-                <p>H: Hasil Lebih Dari Nilai Rujukan | L: Hasil Kurang Dari Nilai Rujukan | (*): Abnormal | (K): Hasil Nilai Kritis</p>
+                <p>H: Hasil Lebih Dari Nilai Rujukan | L: Hasil Kurang Dari Nilai Rujukan | (*): Abnormal | (K): Hasil
+                    Nilai Kritis</p>
             </em>
 
             <h6>Expertise :</h6>
             <p>Note: Rapid Antigen SARS-CoV-2
                 * Spesimen : Swab Nasofaring/ Orofaring
                 * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
-                * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan ke orang lain,
-                disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila probabilitas pretes relatif tinggi,
-                terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19</p>
+                * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
+                ke orang lain,
+                disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
+                probabilitas pretes relatif tinggi,
+                terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
+            </p>
 
 
             <div class="row mb-2">
@@ -247,13 +259,25 @@
                     <div id="validator-ttd"></div>
                 </div>
             </div>
+            <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab', 'eklaim'])) { ?>
+                <div class="d-flex justify-content-end mb-3">
+                    <button type="button" id="Print-labbbbb" onclick="window.print()"
+                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
+                        <i class="fas fa-print"></i> Cetak
+                    </button>
+
+
+                </div>
+            <?php } ?>
         </form>
     </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 
@@ -269,7 +293,9 @@
     const dataRenderTables = () => {
         <?php $dataJsonTables = json_encode($dataTables); ?>
 
-        let dataTable = <?php echo $dataJsonTables; ?>
+        let dataTable = <?php echo $dataJsonTables; ?>;
+        console.log(dataTable);
+
 
 
         let groupedData = {};
@@ -301,19 +327,29 @@
                                             </tr>`;
 
                         groupedData[kelPemeriksaan][tarifName].forEach(e => {
+                            console.log(e);
+
                             dataResultTable += `<tr>
                                                     <td style="padding-left: 40px;">${e.parameter_name}</td>
-                                                    <td>${e.flag_hl === 'L ' || e.flag_hl === 'L'  ? `<b style="color:blue;">${e.hasil}</b>` : 
-                                                        e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                        e.flag_hl === '(*) ' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                        e.hasil}</td>
+                                                    <td>${(e.flag_hl?.trim() || '') === 'L' ? `<b style="color:blue;">${e.hasil}</b>` : 
+                                                            (e.flag_hl?.trim() || '') === 'H' ? `<b style="color:red;">${e.hasil}</b>` :
+                                                            (e.flag_hl?.trim() || '') === '(*)' ? `<b style="color:red;">${e.hasil}</b>` :
+                                                            e.hasil}
+
+                                                        </td>
+
                                                     <td>${!e.satuan? "-":e.satuan}</td>
                                                     <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
                                                     <td>${!e.metode_periksa ? "-" : e.metode_periksa}</td>
-                                                    <td>${e.flag_hl === 'L '  || e.flag_hl === 'L' ? `<b style="color:blue;">${e.flag_hl}</b>` : 
-                                                        e.flag_hl === 'H ' || e.flag_hl === 'H' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                        e.flag_hl === '(*)' || e.flag_hl === '(*)' ? `<b style="color:red;">${e.flag_hl}</b>` :
-                                                        e.flag_hl}</td>
+                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                        (e.flag_hl?.trim() || '') === 'L' ? `<b style="color:blue;">${e.flag_hl.trim()}</b>` : 
+                                                        (e.flag_hl?.trim() || '') === 'H' ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
+                                                        (e.flag_hl?.trim() || '') === '(*)' ? `<b style="color:red;">${e.flag_hl.trim()}</b>` : 
+                                                        e.flag_hl.trim()}
+
+
+                                                    </td>
+
                                                 </tr>`;
                         });
                     }
@@ -416,11 +452,15 @@
             text-align: inherit;
         }
 
+        .d-flex button {
+            display: none;
+        }
+
     }
 </style>
 
 <script type="text/javascript">
-    window.print();
+    // window.print();
 </script>
 
 </html>

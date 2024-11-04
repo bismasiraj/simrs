@@ -7,12 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -22,96 +27,72 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <style>
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #FFF;
-            opacity: 1;
-        }
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #FFF;
+        opacity: 1;
+    }
 
-        .form-control,
-        .input-group-text {
-            background-color: #fff;
-            border: 1px solid #fff;
-            font-size: 12px;
-        }
+    .form-control,
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #fff;
+        font-size: 12px;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
     </style>
 </head>
 
 <body>
     <div class="container-fluid mt-5">
-        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post" autocomplete="off">
+        <form action="/admin/rekammedis/rmj2_4/ <?= base64_encode(json_encode($visit)); ?>" method="post"
+            autocomplete="off">
             <div style="display: none;">
                 <button id="btnSimpan" class="btn btn-primary" type="button">Simpan</button>
                 <button id="btnEdit" class="btn btn-secondary" type="button">Edit</button>
                 <button id="btnDelete" class="btn btn-warning" type="button">Delete</button>
             </div>
 
-            <input type="hidden" name="body_id" id="body_id">
-            <input type="hidden" name="org_unit_code" id="org_unit_code">
-            <input type="hidden" name="pasien_diagnosa_id" id="pasien_diagnosa_id">
-            <input type="hidden" name="diagnosa_id" id="diagnosa_id">
-            <input type="hidden" name="visit_id" id="visit_id">
-            <input type="hidden" name="bill_id" id="bill_id">
-            <input type="hidden" name="class_room_id" id="class_room_id">
-            <input type="hidden" name="in_date" id="in_date">
-            <input type="hidden" name="exit_date" id="exit_date">
-            <input type="hidden" name="keluar_id" id="keluar_id">
-            <!-- <input type="hidden" name="examination_date" id="examination_date"> -->
-            <input type="hidden" name="employee_id" id="employee_id">
-            <input type="hidden" name="description" id="description">
-            <input type="hidden" name="modified_date" id="modified_date">
-            <input type="hidden" name="modified_by" id="modified_by">
-            <input type="hidden" name="modified_from" id="modified_from">
-            <input type="hidden" name="status_pasien_id" id="status_pasien_id">
-            <input type="hidden" name="ageyear" id="ageyear">
-            <input type="hidden" name="agemonth" id="agemonth">
-            <input type="hidden" name="ageday" id="ageday">
-            <input type="hidden" name="theid" id="theid">
-            <input type="hidden" name="isrj" id="isrj">
-            <input type="hidden" name="gender" id="gender">
-            <input type="hidden" name="kal_id" id="kal_id">
-            <input type="hidden" name="petugas_id" id="petugas_id">
-            <input type="hidden" name="petugas" id="petugas">
-            <input type="hidden" name="account_id" id="account_id">
             <?php csrf_field(); ?>
             <div class="row">
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
                 </div>
                 <div class="col mt-2" align="center">
-                    <h3>RS PKU Muhammadiyah Sampangan</h3>
-                    <h3>Surakarta</h3>
-                    <p>Semanggi RT 002 / RW 020 Pasar Kliwon, 0271-633894, Fax : 0271-630229, Surakarta<br>SK No.449/0238/P-02/IORS/II/2018</p>
+                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
+                    <!-- <h3>Surakarta</h3> -->
+                    <p><?= @$kop['contact_address'] ?></p>
                 </div>
                 <div class="col-auto" align="center">
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -128,62 +109,50 @@
                     <tr>
                         <td>
                             <b>Nomor RM</b>
-                            <input type="text" class="form-control" id="no_registration" name="no_registration">
+                            <div id="no_registration" name="no_registration"><?= @$visit['no_registration']; ?></div>
                         </td>
                         <td>
                             <b>Nama Pasien</b>
-                            <input type="text" class="form-control" id="thename" name="thename">
+                            <div id="thename" name="thename" class="thename"><?= @$visit['diantar_oleh']; ?></div>
                         </td>
                         <td>
                             <b>Jenis Kelamin</b>
-                            <select name="gender" id="gender" class="form-control">
-                                <option value="1">Laki-Laki</option>
-                                <option value="2">Perempuan</option>
-                            </select>
+                            <div name="gender" id="gender">
+                                <?= @$visit['name_of_gender']; ?>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>Tanggal Lahir (Usia)</b>
-                            <input type="text" class="form-control" id="patient_age" name="patient_age">
+                            <div id="patient_age" name="patient_age"><?= @$visit['date_of_birth']; ?>
+                                (<?= @$visit['age']; ?> )</div>
                         </td>
                         <td colspan="2">
                             <b>Alamat Pasien</b>
-                            <input type="text" class="form-control" id="theaddress" name="theaddress">
+                            <div id="theaddress" name="theaddress" class="theaddress"><?= @$visit['contact_address']; ?>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <b>DPJP</b>
-                            <input type="text" class="form-control" id="doctor" name="doctor">
+                            <div id="fullname" name="fullname"><?= @$visit['fullname']; ?></div>
                         </td>
                         <td>
                             <b>Department</b>
-                            <input type="text" class="form-control" id="clinic_id" name="clinic_id">
+                            <div id="clinic_id" name="clinic_id"><?= @$visit['clinic_id']; ?></div>
                         </td>
                         <td>
                             <b>Tanggal Masuk</b>
-                            <input type="text" class="form-control" id="examination_date" name="examination_date">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Kelas</b>
-                            <input type="text" class="form-control" id="kelas" name="kelas" value="">
-                        </td>
-                        <td>
-                            <b>Bangsal/Kamar</b>
-                            <input type="text" class="form-control" id="bangsal" name="bangsal" value="">
-                        </td>
-                        <td>
-                            <b>Bed</b>
-                            <input type="text" class="form-control" id="bed" name="bed" value="">
+                            <div id="examination_date" name="examination_date"><?= @$visit['visit_date']; ?></div>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="row mb-5">
                 <h4>Grafik Nadi dan Suhu</h4>
+                <canvas id="myChartRecoveryRoom" width="auto" height="200"></canvas>
             </div>
             <div class="row">
                 <h4>Tabel Nadi dan Suhu</h4>
@@ -197,20 +166,28 @@
                         <td>Suhu</td>
                         <td>Catatan</td>
                         <td>Staff</td>
-                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach ($data as $item): ?>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><?= isset($item['examination_date']) ? date('Y-m-d', strtotime($item['examination_date'])) : '-'; ?>
+                        </td>
+                        <td>
+                            <?= isset($item['tension_upper']) && isset($item['tension_below']) 
+                                ? $item['tension_upper'] . ' / ' . $item['tension_below'] 
+                                : '-'; ?>
+                        </td>
+
+                        <td><?= @$item['nadi'] ?></td>
+                        <td><?= @$item['temperature'] ?></td>
+                        <td><?= @$item['description'] ?></td>
+                        <td><?= @$item['petugas'] ?></td>
+
                     </tr>
+                    <?php endforeach; ?>
                 </tbody>
+
             </table>
         </form>
     </div>
@@ -218,69 +195,232 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 <script>
-    $(document).ready(function() {
-        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-        $("#no_registration").val("<?= $visit['no_registration']; ?>")
-        $("#visit_id").val("<?= $visit['visit_id']; ?>")
-        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-        $("#in_date").val("<?= $visit['in_date']; ?>")
-        $("#exit_date").val("<?= $visit['exit_date']; ?>")
-        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
-        ?>
-        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#employee_id").val("<?= $visit['employee_id']; ?>")
-        $("#description").val("<?= $visit['description']; ?>")
-        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-        $("#modified_by").val("<?= user()->username; ?>")
-        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-        $("#ageyear").val("<?= $visit['ageyear']; ?>")
-        $("#agemonth").val("<?= $visit['agemonth']; ?>")
-        $("#ageday").val("<?= $visit['ageday']; ?>")
-        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-        $("#theid").val("<?= $visit['pasien_id']; ?>")
-        $("#isrj").val("<?= $visit['isrj']; ?>")
-        $("#gender").val("<?= $visit['gender']; ?>")
-        $("#doctor").val("<?= $visit['employee_id']; ?>")
-        $("#kal_id").val("<?= $visit['kal_id']; ?>")
-        $("#petugas_id").val("<?= user()->username; ?>")
-        $("#petugas").val("<?= user()->fullname; ?>")
-        $("#account_id").val("<?= $visit['account_id']; ?>")
-    })
-    $("#btnSimpan").on("click", function() {
-        saveSignatureData()
-        saveSignatureData1()
-        console.log($("#TTD").val())
-        $("#form").submit()
-    })
-    $("#btnEdit").on("click", function() {
-        $("input").prop("disabled", false);
-        $("textarea").prop("disabled", false);
+$(document).ready(function() {
+    let data = <?= json_encode($data); ?>;
 
+    ChartMonitoringDurante({
+        data: data
     })
+})
+
+
+const ChartMonitoringDurante = (props) => {
+    let rawData = props?.data || [];
+    let dataRendersTables = '';
+
+    let groupedData = {};
+
+    rawData.forEach(item => {
+        let dateTime = item?.examination_date ? moment(item?.examination_date).format('DD MMM YYYY HH:mm') :
+            null;
+        if (dateTime) {
+            let dateOnly = moment(item?.examination_date).format('DD MMM YYYY');
+            if (!groupedData[dateOnly]) {
+                groupedData[dateOnly] = {
+                    times: [],
+                    nadi: [],
+                    temperature: [],
+                    saturasi: [],
+                    tension_upper: [],
+                    tension_below: []
+                };
+            }
+            groupedData[dateOnly].times.push(moment(item?.examination_date).format('HH:mm'));
+            groupedData[dateOnly].nadi.push(parseInt(item?.nadi ?? 0));
+            groupedData[dateOnly].temperature.push(parseInt(item?.temperature ?? 0));
+            groupedData[dateOnly].saturasi.push(parseInt(item?.saturasi ?? 10));
+            groupedData[dateOnly].tension_upper.push(parseInt(item?.tension_upper ?? 0));
+            groupedData[dateOnly].tension_below.push(parseInt(item?.tension_below ?? 0));
+        }
+    });
+    let datasets = [{
+            label: 'Nadi',
+            backgroundColor: 'rgba(235, 125, 52, 0.2)',
+            borderColor: '#eb7d34',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'yNadi',
+        },
+        {
+            label: 'Suhu',
+            backgroundColor: 'rgba(52, 101, 235, 0.2)',
+            borderColor: '#3465eb',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'yTemperature',
+        },
+        {
+            label: 'SPO2',
+            backgroundColor: 'rgba(18, 41, 105, 0.2)',
+            borderColor: '#122969',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'ySaturasi',
+        },
+        {
+            label: 'Sistole',
+            backgroundColor: 'rgba(61, 235, 52, 0.2)',
+            borderColor: '#3deb34',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'yTension',
+        },
+        {
+            label: 'Diastole',
+            backgroundColor: 'rgba(61, 235, 52, 0.2)',
+            borderColor: '#3deb34',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'yTension',
+        },
+        {
+            label: 'Respirasi',
+            backgroundColor: 'rgba(230, 242, 5, 0.2)',
+            borderColor: '#e6f205',
+            fill: true,
+            tension: 0.2,
+            yAxisID: 'yRespirasi',
+        },
+    ];
+
+    // Untuk tiap tanggal, render dataset secara terpisah untuk setiap jam
+    let labels = [];
+    Object.keys(groupedData).forEach(date => {
+        let dateData = groupedData[date];
+        dateData.times.forEach(time => {
+            labels.push(`${date} ${time}`);
+        });
+
+        datasets.forEach((dataset, index) => {
+            switch (dataset.label) {
+                case 'Nadi':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.nadi);
+                    break;
+                case 'Suhu':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.temperature);
+                    break;
+                case 'SPO2':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.saturasi);
+                    break;
+                case 'Sistole':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.tension_upper);
+                    break;
+                case 'Diastole':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.tension_below);
+                    break;
+                case 'Respirasi':
+                    dataset.data = dataset.data || [];
+                    dataset.data.push(...dateData.nadi); // Assuming respirasi is mapped to nadi
+                    break;
+            }
+        });
+    });
+
+    const ctxChart = document.getElementById(`myChartRecoveryRoom`).getContext('2d');
+    new Chart(ctxChart, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            plugins: {
+                datalabels: false
+            },
+            scales: {
+                yNadi: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Nadi'
+                    }
+                },
+                yTemperature: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Suhu'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                ySaturasi: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'SPO2'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                yTension: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Tekanan Darah'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                },
+                yRespirasi: {
+                    type: 'linear',
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Respirasi'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 10,
+                    bottom: 10
+                }
+            }
+        }
+    });
+};
 </script>
 <style>
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-        }
-
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
+@media print {
+    @page {
+        margin: none;
+        scale: 85;
     }
+
+    .container {
+        width: 210mm;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+}
 </style>
 <script type="text/javascript">
+setTimeout(() => {
     window.print();
+}, 200);
 </script>
 
 </html>

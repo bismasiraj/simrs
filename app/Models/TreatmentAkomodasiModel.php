@@ -124,7 +124,7 @@ class TreatmentAkomodasiModel extends Model
     }
     public function getrmkunjunganranap($mulai, $akhir, $kal, $rw, $poli, $status, $baru, $lb, $ub, $nomor, $tindak)
     {
-        $sql = "SP_EIS_KUNJUNGAN_RI;1 @MULAI = '$mulai', @AKHIR = '$akhir', @KAL = '$kal', @RW = '$rw', @POLI = '$poli', @STATUS = '$status', @BARU = '$baru', @LB = '$lb', @UB = '$ub', @NOMOR = '$nomor', @TINDAK = '$tindak'";
+        $sql = "SP_EIS_KUNJUNGAN_RI;1 @MULAI = '$mulai', @AKHIR = '$akhir', @KAL = '$kal', @RW = '$rw', @POLI = '$poli', @STATUS = '$status', @BARU = '$baru', @LB = '$lb', @UB = '$ub', @NOMOR = '$nomor', @TINDAK = '$tindak', @KLAS = '%'";
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

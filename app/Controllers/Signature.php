@@ -9,6 +9,7 @@ use App\Models\Assessment\PainDetilModel;
 use App\Models\DocsSignedModel;
 use App\Models\ExaminationModel;
 use App\Models\PasienDiagnosaModel;
+use App\Models\PasienModel;
 use App\Models\RsaKeyModel;
 use Myth\Auth\Models\UserModel;
 
@@ -58,11 +59,16 @@ class Signature extends BaseController
 
         $users = new UserModel();
 
-        $select = $users->select('password_hash')->where('username', $login)->findAll();
+        $select = $users->select('password_hash')->where('username', $login)->first();
+
+        if (isset($select->password_hash)) {
+            return (password_verify(base64_encode(hash('sha384', $password, true)), $select->password_hash));
+        } else {
+            return false;
+        }
 
         // return json_encode(base64_encode(hash('sha384', $password, true)));
 
-        return (password_verify(base64_encode(hash('sha384', $password, true)), $select[0]->password_hash));
         // return json_encode(password_verify(base64_encode(hash('sha384', "Heny3008", true)), $select[0]->password_hash));
         // return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
     }
@@ -135,7 +141,10 @@ class Signature extends BaseController
     {
         // Check if the request is POST
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // Get JSON body from request
@@ -272,7 +281,20 @@ class Signature extends BaseController
 
         // return json_encode($dataDoc);
         // Validate login and password
-        $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
+        if ($user_type == 1) {
+            $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
+        } else if ($user_type == 2) {
+            $pModel = new PasienModel();
+            $select = $pModel->select("no_registration")
+                ->where("left(replace(replace(REPLACE(convert(varchar,date_of_birth,121),'-',''),':',''),' ',''),8) = " . $dataForm['datebirth'] . "")
+                ->where("no_registration", $dataForm['no_registration'])
+                ->findAll();
+            if (count($select) > 0) {
+                $checkpass = true;
+            } else {
+                $checkpass = false;
+            }
+        }
 
         if ($checkpass) {
             // Create signature for docData
@@ -288,7 +310,7 @@ class Signature extends BaseController
             $dataForm["sign"] = $signedData;
             $return = $docModel->insert($dataForm);
 
-            return json_encode($return);
+            return json_encode($dataForm);
         }
 
         // Return error or checkpass result

@@ -163,7 +163,7 @@
     $(document).ready(function() {
         var base_url = '<?php echo base_url(); ?>';
         $.backstretch([
-            base_url + "/assets/img/backgrounds/RSMY-COVER-web.png"
+            "<?php echo base_url(); ?>/assets/img/backgrounds/RSMY-COVER-web.png"
         ], {
             duration: 3000,
             fade: 750

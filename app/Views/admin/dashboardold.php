@@ -620,9 +620,9 @@
                 success: function(data) {
                     if (data.status == "fail") {
 
-                        errorMsg(data.msg);
+                        errorSwal(data.msg);
                     } else {
-                        successMsg(data.msg);
+                        successSwal(data.msg);
                     }
 
                 }

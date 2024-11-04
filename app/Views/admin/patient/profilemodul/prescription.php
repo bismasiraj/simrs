@@ -21,14 +21,14 @@ $permissions = user()->getPermissions();
 </style>
 <div class="tab-pane" id="eresep" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                 'pasienDiagnosa' => $pasienDiagnosa
             ]); ?>
         </div><!--.col-lg-2 col-md-2 col-sm-12 border-r-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <div class="box-tab-header">
             </div>
             <form id="formFilterResep" action="" method="post" class="">
@@ -95,15 +95,15 @@ $permissions = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col-sm-6 col-md-3 d-none">
                         <div class="mb-4">
                             <div class="form-group">
-                                <label>Jenis Resep</label>
+                                <label>Jenis</label>
                                 <select name="jenisresep" id="jenisresep" class="form-control">
                                     <option value="1">E-Resep</option>
                                     <option value="7">ODD</option>
                                     <option value="8">Medical Item</option>
-                                    <option value="0">Alkes/BMHP</option>
+                                    <option value="0">BMHP</option>
                                 </select>
                             </div>
                         </div>
@@ -140,8 +140,8 @@ $permissions = user()->getPermissions();
                         padding: 0.3rem 0.3rem;
                     }
                 </style>
-                <?php if (isset($permissions['eresep']['c'])) {
-                    if ($permissions['eresep']['c'] == '1') { ?>
+                <?php if (user()->checkPermission("eresep", "c")) {
+                    if (true) { ?>
                         <div id="eresepBtnGroup" class="row">
                             <div class="col-md-6">
                                 <div id="eresepAddR" class="box-tab-tools text-end">
@@ -156,13 +156,18 @@ $permissions = user()->getPermissions();
                         </div>
                 <?php }
                 } ?>
-                <div id="medItemBtnGroup" class="row">
-                    <div class="col-md-12">
-                        <div id="eresepAdds" class="box-tab-tools text-center">
-                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                <?php if (user()->checkPermission("medicalitem", "c")) {
+                ?>
+                    <div id="medItemBtnGroup" class="row">
+                        <div class="col-md-12">
+                            <div id="eresepAdds" class="box-tab-tools text-center">
+                                <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                <?php
+                } ?>
+
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
 
@@ -190,7 +195,12 @@ $permissions = user()->getPermissions();
                         </div>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formAddPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Edit</span></button>
+                            <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                            <?php if ($visit['isrj'] == 0 && user()->checkRoles(['dokter', 'admin', 'superadmin'])) {
+                            ?>
+                                <button type="button" id="formStopOddBtn" onclick="stopOddAll()" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-stop"></i> <span>Stop ODD</span></button>
+                            <?php
+                            } ?>
                             <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light"><i class="fa fa-history"></i> <span>History</span></button>
                         </div>
                     </form>

@@ -2,7 +2,8 @@
 
 $this->extend('layout/nosidelayout', [
     'orgunit' => $orgunit,
-    'img_time' => $img_time
+    'img_time' => $img_time,
+    'session_id' => $visit['session_id']
 ]) ?>
 
 <?php
@@ -10,6 +11,11 @@ $permissions = user()->getPermissions();
 $group = user()->getRoles();
 $pasienDiagnosa = array();
 $pasienDiagnosaAll = array();
+
+$session = session();
+$gsPoli = $session->gsPoli;
+$roles = user()->getRoles();
+
 foreach ($pd as $key => $value) {
     if ($pd[$key]['visit_id'] == $visit['visit_id'] && $key == 0) {
         $pasienDiagnosa = $pd[$key];
@@ -18,45 +24,110 @@ foreach ($pd as $key => $value) {
     }
 }
 $menu = [
-    'assessmentmedis' => 1,
-    'assessmentperawat' => 1,
-    'cppt' => 1,
-    'eresep' => 1,
-    'lab' => 1,
-    'rad' => 1,
-    'fisio' => 1,
-    'rekammedis' => 1,
-    'tindakan' => 1,
+    'assessmentmedis' => 0,
+    'assessmentperawat' => 0,
+    'cppt' => 0,
+    'eresep' => 0,
+    'lab' => 0,
+    'rad' => 0,
+    'fisio' => 0,
+    'rekammedis' => 0,
+    'tindakan' => 0,
     'charges' => 1,
-    'rm' => 1,
-    'pain' => 1,
-    'fall' => 1,
-    'gcs' => 1,
-    'medicalitem' => 1,
-    'diagnosa' => 1,
-    'ordergizi' => 1,
-    'vitalsign' => 1,
-    'transfer' => 1,
-    'tindakanperawat' => 1,
-    'informedconcent' => 1,
+    'rm' => 0,
+    'pain' => 0,
+    'fall' => 0,
+    'gcs' => 0,
+    'medicalitem' => 0,
+    'diagnosa' => 0,
+    'ordergizi' => 0,
+    'vitalsign' => 0,
+    'transfer' => 0,
+    'tindakanperawat' => 0,
+    'informedconcent' => 0,
     'odd' => 0,
     'nifas' => 0,
     'persalinan' => 0,
     'eklaim' => 0,
     'mrpasien' => 0,
-    'casemanager' => 1,
+    'casemanager' => 0,
     'suratketeranganlahir' => 0,
-    'patientOperationRequest' => 1,
+    'patientOperationRequest' => 0,
+    'educationIntegration' => 0,
+    'educationForm' => 0,
+    'gizi' => 1,
+    'cairan' => 1,
+    'penunjang' => 1,
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
     $menu['persalinan'] = 1;
     $menu['suratketeranganlahir'] = 1;
 }
-if ($gsPoli ?? '' == 'P002') {
+if (@$gsPoli == 'P002') {
     $menu['patientOperationRequest'] = 1;
 }
 
+if (user()->checkPermission("assessmentmedis", "r"))
+    $menu['assessmentmedis'] = 1;
+if (user()->checkPermission("assessmentperawat", "r"))
+    $menu['assessmentperawat'] = 1;
+if (user()->checkPermission("cppt", "r"))
+    $menu['cppt'] = 1;
+if (user()->checkPermission("eresep", "r"))
+    $menu['eresep'] = 1;
+if (user()->checkPermission("lab", "r"))
+    $menu['lab'] = 1;
+if (user()->checkPermission("rad", "r"))
+    $menu['rad'] = 1;
+if (user()->checkPermission("fisio", "r"))
+    $menu['fisio'] = 1;
+if (user()->checkPermission("assessmentmedis", "r"))
+    $menu['rekammedis'] = 1;
+if (user()->checkPermission("tindakanmedis", "r"))
+    $menu['tindakan'] = 1;
+if (user()->checkPermission("charges", "r"))
+    $menu['charges'] = 1;
+if (user()->checkPermission("reporting", "r"))
+    $menu['rm'] = 1;
+if (user()->checkPermission("pain", "r"))
+    $menu['pain'] = 1;
+if (user()->checkPermission("fall", "r"))
+    $menu['fall'] = 1;
+if (user()->checkPermission("gcs", "r"))
+    $menu['gcs'] = 1;
+if (user()->checkPermission("medicalitem", "r"))
+    $menu['medicalitem'] = 1;
+if (user()->checkPermission("diagnosa", "r"))
+    $menu['diagnosa'] = 1;
+if (user()->checkPermission("ordergizi", "r"))
+    $menu['ordergizi'] = 1;
+if (user()->checkPermission("vitalsign", "r"))
+    $menu['vitalsign'] = 1;
+if (user()->checkPermission("tindaklanjut", "r"))
+    $menu['transfer'] = 1;
+if (user()->checkPermission("assessmentperawat", "r"))
+    $menu['tindakanperawat'] = 1;
+if (user()->checkPermission("informconcent", "r"))
+    $menu['informedconcent'] = 1;
+if (user()->checkPermission("odd", "r"))
+    $menu['odd'] = 1;
+if (user()->checkPermission("mrpasien", "r"))
+    $menu['mrpasien'] = 1;
+if (user()->checkPermission("casemanager", "r"))
+    $menu['casemanager'] = 1;
+if (user()->checkPermission("pasienoperasi", "r"))
+    $menu['patientOperationRequest'] = 1;
+if (user()->checkPermission("educationintegration", "r"))
+    $menu['educationIntegration'] = 1;
+if (user()->checkPermission("educationform", "r"))
+    $menu['educationForm'] = 1;
+if (user()->checkPermission("eklaim", "r"))
+    $menu['eklaim'] = 1;
+if (user()->checkPermission("asuhangizi", "r"))
+    $menu['gizi'] = 1;
+if (user()->checkPermission("cairan", "r"))
+    $menu['cairan'] = 1;
 ?>
 
 <?php $this->section('content') ?>
@@ -87,6 +158,34 @@ $currency_symbol = 'Rp. ';
 
     .select2-container--default .select2-dropdown {
         z-index: 1050;
+    }
+</style>
+<style>
+    .modal-xl {
+        /* max-width: 100%; */
+        /* Remove the max-width to allow full screen */
+        height: 90%;
+        /* Set height to 100% */
+        /* margin: 0; */
+        /* Remove margins */
+    }
+
+    /* .modal-sm {
+        max-height: 90%;
+    } */
+
+    .modal-content {
+        height: 100%;
+        /* Allow the content to fill the modal */
+        border-radius: 0;
+        /* Optional: Remove rounded corners */
+    }
+
+    .modal-body {
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+        /* max-height: calc(100vh - 200px); */
+        /* Set max height for modal body */
     }
 </style>
 <div class="content-wrapper">
@@ -126,8 +225,13 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab">Radiologi</a></li>
                                             <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
+                                        if ($menu['penunjang'] == 1) { ?>
+                                            <li class="nav-item"><a id="penunjangMedisTab" class="nav-link border-bottom" href="#penunjangMedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Penunjang Medis</a></li>
+                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
+                                        <?php }
                                         if ($menu['fisio'] == 1) { ?>
                                             <li class="nav-item"><a id="fisioTab" class="nav-link border-bottom" href="#fisio" data-bs-toggle="tab" aria-expanded="true" role="tab">Fisioterapi</a></li>
+                                            <li class="nav-item"><a id="jadwalFisioTab" class="nav-link border-bottom" href="#jadwalFisiomodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Jadwal Fisio</a></li>
                                             <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
                                         if ($menu['rekammedis'] == 1) { ?>
@@ -167,6 +271,11 @@ $currency_symbol = 'Rp. ';
                                         <?php if ($menu['gcs'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="gcsTab" class="nav-link border-bottom" href="#gcs" data-bs-toggle="tab" aria-expanded="true" role="tab">GCS</a></li>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['educationIntegration'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="educationIntegrationTab" class="nav-link border-bottom" href="#educationIntegration" data-bs-toggle="tab" aria-expanded="true" role="tab">Edukasi Integrasi</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['medicalitem'] == 1) {
@@ -234,8 +343,24 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="patientOperationRequestTab" class="nav-link border-bottom" href="#patientOperationRequest" data-bs-toggle="tab" aria-expanded="true" role="tab">Operasi Pasien</a></li>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['gizi'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="giziTab" class="nav-link border-bottom" href="#gizi" data-bs-toggle="tab" aria-expanded="true" role="tab">Asuhan Gizi</a></li>
+                                        <?php
+                                        } ?>
+
+                                        <?php if ($menu['cairan'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="cairanTab" class="nav-link border-bottom" href="#cairan" data-bs-toggle="tab" aria-expanded="true" role="tab">Balance Cairan</a></li>
+                                        <?php
+                                        } ?>
+
+                                        <?php if ($menu['eklaim'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="eklaimTab" class="nav-link border-bottom" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab">EKlaim</a></li>
+                                        <?php
+                                        } ?>
                                         <!-- <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li> -->
-                                        <!-- <li class="nav-item"><a id="eklaimTab" class="nav-link border-bottom" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab">EKlaim</a></li> -->
                                         <?php if ($visit['specialist_type_id'] == '1.05') {
                                         ?>
                                         <?php
@@ -244,11 +369,12 @@ $currency_symbol = 'Rp. ';
                                     <div class="tab-content">
                                         <div class="tab-pane tab-content-height active show" id="overview">
                                             <div class="row">
-                                                <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+                                                <div class="col-lg-2 col-md-2 col-sm-12 border-r">
                                                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
                                                         'visit' => $visit,
                                                         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                        'pasienDiagnosa' => $pasienDiagnosa
+                                                        'pasienDiagnosa' => $pasienDiagnosa,
+
                                                     ]); ?>
                                                 </div><!--./col-lg-6-->
                                                 <div class="col-lg-4 col-md-4 col-sm-12">
@@ -258,73 +384,72 @@ $currency_symbol = 'Rp. ';
                                                             // if (false) {
                                                         ?>
                                                             <hr class="hr-panel-heading hr-10">
-
                                                         <?php
                                                         } else { ?>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Ringkasan Diagnosis:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmdescription"></div>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="rmdiagnosa_desc_05"></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Riwayat Alergi:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmdiagnosa_desc_06"></div>
-                                                                </li>
-                                                            </ul>
                                                             <hr class="hr-panel-heading hr-10">
                                                             <p><b><i class="fa fa-tag"></i> Anamnesis:</b></p>
                                                             <ul>
                                                                 <li>
                                                                     <div class="rmanamnase"></div>
                                                                 </li>
+                                                                <li>
+                                                                    <div class="rmalloanamnase"></div>
+                                                                </li>
                                                             </ul>
                                                             <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Periksa Fisik:</b></p>
+                                                            <p><b><i class="fa fa-tag"></i> Riwayat Penyakit Sekarang:</b></p>
                                                             <ul>
                                                                 <li>
-                                                                    <div class="rmpemeriksaan"></div>
+                                                                    <div class="rmdescription"></div>
+                                                                </li>
+                                                            </ul>
+                                                            <hr class="hr-panel-heading hr-10">
+                                                            <p><b><i class="fa fa-tag"></i> Diagnosa Klinis:</b></p>
+                                                            <ul>
+                                                                <li>
+                                                                    <div class="rmanamnase"></div>
+                                                                </li>
+                                                            </ul>
+                                                            <hr class="hr-panel-heading hr-10">
+                                                            <p><b><i class="fa fa-tag"></i> Standing Order:</b></p>
+                                                            <ul>
+                                                                <li>
+                                                                    <div class="rmstanding_order"></div>
+                                                                </li>
+                                                            </ul>
+                                                            <hr class="hr-panel-heading hr-10">
+                                                            <p><b><i class="fa fa-tag"></i> Rencana Instruksi:</b></p>
+                                                            <ul>
+                                                                <li>
+                                                                    <div class="rminstruction"></div>
                                                                 </li>
                                                             </ul>
                                                             <hr class="hr-panel-heading hr-10">
                                                             <p><b><i class="fa fa-tag"></i> Periksa Lab:</b></p>
                                                             <ul>
                                                                 <li>
-                                                                    <div class="rmpemeriksaan_02"></div>
+                                                                    <div class="rmlab_result"></div>
                                                                 </li>
                                                             </ul>
                                                             <hr class="hr-panel-heading hr-10">
                                                             <p><b><i class="fa fa-tag"></i> Periksa RO:</b></p>
                                                             <ul>
                                                                 <li>
-                                                                    <div class="rmpemeriksaan_03"></div>
+                                                                    <div class="rmro_result"></div>
                                                                 </li>
                                                             </ul>
                                                             <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Pemeriksaan Lain:</b></p>
-                                                            <ul>
-                                                                <li>
-                                                                    <div class="rmpemeriksaan_05"></div>
-                                                                </li>
-                                                            </ul>
-                                                            <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Terapi:</b></p>
+                                                            <p><b><i class="fa fa-tag"></i> Farmakoterapi:</b></p>
                                                             <ul>
                                                                 <li>
                                                                     <div class="rmteraphy_desc"></div>
                                                                 </li>
                                                             </ul>
                                                             <hr class="hr-panel-heading hr-10">
-                                                            <p><b><i class="fa fa-tag"></i> Instruksi:</b></p>
+                                                            <p><b><i class="fa fa-tag"></i> Terapi:</b></p>
                                                             <ul>
                                                                 <li>
-                                                                    <div class="rminstruction"></div>
+                                                                    <div class="rmtherapy_target"></div>
                                                                 </li>
                                                             </ul>
                                                         <?php } ?>
@@ -463,7 +588,8 @@ $currency_symbol = 'Rp. ';
                                             'diagCat' => $diagCat,
                                             'employee' => $employee,
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+
                                         ]); ?>
                                         <?php echo view('admin/patient/profilemodul/mrpasien', [
                                             'title' => '',
@@ -480,7 +606,8 @@ $currency_symbol = 'Rp. ';
                                             'diagCat' => $diagCat,
                                             'employee' => $employee,
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+
                                         ]); ?>
                                         <?php if ($menu['rad'] == 1) {
                                         ?>
@@ -499,7 +626,31 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
+                                            ]); ?>
+                                        <?php
+                                        } ?>
+
+                                        <?php if ($menu['penunjang'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/penunjangMedis', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -521,7 +672,26 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
+                                            ]); ?>
+                                            <?php echo view('admin/patient/profilemodul/jadwalfisio', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -543,7 +713,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -565,11 +736,13 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['eresep'] == 1) {
+                                        <?php //if ($menu['eresep'] == 1 || $menu['medicalitem'] == 1) {
+                                        if (true) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/prescription', [
                                                 'title' => '',
@@ -586,7 +759,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -653,7 +827,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -675,7 +850,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -696,7 +872,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -717,7 +894,30 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
+                                            ]); ?>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['educationIntegration'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/educationintegration', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -816,7 +1016,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -839,7 +1040,9 @@ $currency_symbol = 'Rp. ';
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                                                 'pasienDiagnosa' => $pasienDiagnosa,
                                                 'clinic' => $clinic,
-                                                'followup' => $followup
+                                                'clinicAll' => $clinicAll,
+                                                'followup' => $followup,
+                                                'clinicType' => $clinicType
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -860,7 +1063,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -884,7 +1088,8 @@ $currency_symbol = 'Rp. ';
                                             'diagCat' => $diagCat,
                                             'employee' => $employee,
                                             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                            'pasienDiagnosa' => $pasienDiagnosa
+                                            'pasienDiagnosa' => $pasienDiagnosa,
+
                                         ]); ?>
 
 
@@ -905,7 +1110,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -926,7 +1132,8 @@ $currency_symbol = 'Rp. ';
                                                 'diagCat' => $diagCat,
                                                 'employee' => $employee,
                                                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+
                                             ]); ?>
                                         <?php
                                         } ?>
@@ -969,6 +1176,31 @@ $currency_symbol = 'Rp. ';
                                         <?php if ($menu['persalinan'] == 1) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/persalinan', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
+
+                                        <?php if ($menu['gizi'] == 1) {
+                                        ?>
+                                            <?php echo view('admin\patient\profilemodul\gizi.php', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['cairan'] == 1) {
+                                        ?>
+                                            <?php echo view('admin\patient\profilemodul\cairan.php', [
                                                 'title' => '',
                                                 'visit' => $visit,
                                                 'aParent' => $aParent,
@@ -1178,7 +1410,8 @@ $currency_symbol = 'Rp. ';
             'clinic' => $clinic,
             'visit' => $visit,
             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-            'pasienDiagnosa' => $pasienDiagnosa
+            'pasienDiagnosa' => $pasienDiagnosa,
+
         ]);
 
         echo view('admin/patient/modal/addDiag', [
@@ -1221,7 +1454,8 @@ echo view('admin/patient/modal/hasilRad', [
 ]); ?>
 <script type="text/javascript">
     $('#fillitemid').select2({
-        placeholder: "Input nama obat",
+        placeholder: "input nama item",
+        theme: 'bootstrap-5',
         ajax: {
             url: '<?= base_url(); ?>admin/patient/getObatListAjax',
             type: "post",
@@ -1242,7 +1476,8 @@ echo view('admin/patient/modal/hasilRad', [
         }
     });
     $('#fillitemidR').select2({
-        placeholder: "Input nama obat",
+        placeholder: "input nama item",
+        theme: 'bootstrap-5',
         ajax: {
             url: '<?= base_url(); ?>admin/patient/getObatListAjax',
             type: "post",
@@ -1263,9 +1498,152 @@ echo view('admin/patient/modal/hasilRad', [
         }
     });
 
+    function initializeDiagGizi(theid, initialvalue = null, initialname = null, initialcat = null) {
+        $("#" + theid).select2({
+            placeholder: "Input Diagnosa",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term,
+                        clinic: 'gizi'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            var option = new Option(initialname, initialvalue, true, true);
+            // console.log(theid)
+            // console.log(option)
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
+    function initializeSearchTemplateExpertise(theid) {
+        $("#" + theid).select2({
+            theme: "bootstrap-5",
+            dropdownParent: "#modalExpertise",
+            placeholder: "Masukkan Template",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getTemplateExpertise',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function initializeSearchAgeRange(theid, modalParent, initialvalue = null, initialName = null) {
+        $("#" + theid).select2({
+            theme: "bootstrap-5",
+            dropdownParent: modalParent,
+            placeholder: "Pilih Kategori Usia",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getAgeRange',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            let option = new Option(initialName, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
+    function initializeSearchDokterRad(theid) {
+        $("#" + theid).select2({
+            theme: "bootstrap-5",
+            placeholder: "Input Dokter",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDokterRad',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
+    function initializeSearchDietaryHabit(theid, modalParent, initialvalue = null, initialName = null) {
+        $("#" + theid).select2({
+            theme: "bootstrap-5",
+            dropdownParent: modalParent,
+            placeholder: "Pilih pola makan",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDietaryHabit',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            let option = new Option(initialName, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
     function initializeSearchTarif(theid, clinicIdTarif) {
         $("#" + theid).select2({
             placeholder: "Input Tarif",
+            theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getTarif',
                 type: "post",
@@ -1289,9 +1667,71 @@ echo view('admin/patient/modal/hasilRad', [
         });
     }
 
+    function initializeSearchTarifFisio(className, initialValue = null, initialName = null) {
+        $("." + className).each(function() {
+
+            $(this).select2({
+                theme: "bootstrap-5",
+                ajax: {
+                    url: '<?= base_url(); ?>admin/patient/getTarif',
+                    type: "post",
+                    dataType: 'json',
+                    delay: 50,
+                    data: function(params) {
+                        return {
+                            searchTerm: params.term
+                        };
+                    },
+                    processResults: function(response) {
+                        $(this).val(null).trigger('change');
+                        return {
+                            results: response
+                        };
+
+                    }.bind(this),
+                    cache: true
+                }
+            });
+
+            if (initialValue != null) {
+                let option = new Option(initialName, initialValue, true, true);
+                $(this).append(option).trigger('change');
+            }
+        });
+    }
+
+
+    function initializeSearchTarifPerawat(theid, clinicIdTarif) {
+        $("#" + theid).select2({
+            placeholder: "Input Tarif",
+            theme: 'bootstrap-5',
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getTarifPerawat',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term, // search term
+                        klinik: clinicIdTarif,
+                        kelas: '<?= $visit['isrj'] == '1' ? 0 : $visit['class_id']; ?>'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+    }
+
     function initializeResepSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
-            placeholder: "Input nama obat",
+            placeholder: "input nama item",
+            theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatListAjax',
                 type: "post",
@@ -1318,9 +1758,40 @@ echo view('admin/patient/modal/hasilRad', [
         }
     }
 
+    function initializeResepRacikSelect2(theid, initialvalue = null) {
+        $("#" + theid).select2({
+            placeholder: "input nama item",
+            theme: 'bootstrap-5',
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getObatListAjaxRacik',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term, // search term
+                        employeeId: '<?= $visit['employee_id']; ?>'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            var option = new Option(initialvalue, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
     function initializeResepAlkesSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
-            placeholder: "Input nama obat",
+            placeholder: "input nama item",
+            theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatAlkesListAjax',
                 type: "post",
@@ -1348,6 +1819,67 @@ echo view('admin/patient/modal/hasilRad', [
 
     }
 
+    function initializeResepAllSelect2(theid, initialvalue = null) {
+        $("#" + theid).select2({
+            placeholder: "input nama item",
+            theme: 'bootstrap-5',
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getObatAllListAjax',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term, // search term
+                        employeeId: '<?= $visit['employee_id']; ?>'
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            var option = new Option(initialvalue, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
+    function initializeSearchDietaryHabit(theid, modalParent, initialvalue = null, initialName = null) {
+        $("#" + theid).select2({
+            theme: "bootstrap-5",
+            tags: true, //new
+            dropdownParent: modalParent,
+            placeholder: "Pilih pola makan",
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDietaryHabit',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + theid).val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (initialvalue != null) {
+            let option = new Option(initialName, initialvalue, true, true);
+            $("#" + theid).append(option).trigger('change');
+        }
+    }
+
     function initializeDiagSelect2(theid, initialvalue = null, initialname = null, initialcat = null, modalParent = null) {
         let modalParentId;
         if (modalParent == null) {
@@ -1358,6 +1890,7 @@ echo view('admin/patient/modal/hasilRad', [
         $("#" + theid).select2({
             placeholder: "Input Diagnosa",
             dropdownParent: modalParentId,
+            theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
                 type: "post",
@@ -1379,8 +1912,6 @@ echo view('admin/patient/modal/hasilRad', [
         });
         if (initialvalue != null) {
             var option = new Option(initialname, initialvalue, true, true);
-            // console.log(theid)
-            // console.log(option)
             $("#" + theid).append(option).trigger('change');
         }
     }
@@ -1389,6 +1920,7 @@ echo view('admin/patient/modal/hasilRad', [
         $("#" + theid).select2({
             placeholder: "Input Prosedur",
             dropdownParent: $(this).parent(),
+            theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getProcedureListAjax',
                 type: "post",
@@ -1491,7 +2023,7 @@ if ($menu['assessmentmedis'] == 1) {
         'mappingAssessment' => $mappingAssessment
     ]);
 }
-if ($menu['assessmentperawat'] == 1) {
+if (true) {
     echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
         'title' => '',
         'orgunit' => $orgunit,
@@ -1531,7 +2063,8 @@ if ($menu['charges'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['mrpasien'] == 1) {
@@ -1550,7 +2083,8 @@ if ($menu['mrpasien'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['rad'] == 1) {
@@ -1569,7 +2103,28 @@ if ($menu['rad'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
+    ]);
+}
+if ($menu['penunjang'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/penunjangMedis_js', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['fisio'] == 1) {
@@ -1588,7 +2143,26 @@ if ($menu['fisio'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
+    ]);
+    echo view('admin/patient/profilemodul/jsprofile/jadwalfisio_js', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['ordergizi'] == 1) {
@@ -1607,7 +2181,8 @@ if ($menu['ordergizi'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['lab'] == 1) {
@@ -1626,7 +2201,8 @@ if ($menu['lab'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['tindakan'] == 1) {
@@ -1645,7 +2221,8 @@ if ($menu['tindakan'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if (isset($permissions['tindakanpoli']['c'])) {
@@ -1665,12 +2242,33 @@ if (isset($permissions['tindakanpoli']['c'])) {
             'diagCat' => $diagCat,
             'employee' => $employee,
             'pasienDiagnosaAll' => $pasienDiagnosaAll,
-            'pasienDiagnosa' => $pasienDiagnosa
+            'pasienDiagnosa' => $pasienDiagnosa,
+
         ]);
     }
-} ?>
+}
+echo view('admin/patient/profilemodul/skriningsuspect', [
+    'title' => '',
+    'orgunit' => $orgunit,
+    'statusPasien' => $statusPasien,
+    'reason' => $reason,
+    'isattended' => $isattended,
+    'inasisPoli' => $inasisPoli,
+    'inasisFaskes' => $inasisFaskes,
+    'visit' => $visit,
+    'exam' => $exam,
+    'pd' => $pasienDiagnosa,
+    'suffer' => $suffer,
+    'diagCat' => $diagCat,
+    'employee' => $employee,
+    'pasienDiagnosaAll' => $pasienDiagnosaAll,
+    'pasienDiagnosa' => $pasienDiagnosa,
 
-<?php if ($menu['eresep'] == 1) {
+]);
+?>
+
+<?php //if (true) {
+if ($menu['eresep'] == 1 || $menu['medicalitem'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/prescription_js', [
         'title' => '',
         'orgunit' => $orgunit,
@@ -1686,7 +2284,8 @@ if (isset($permissions['tindakanpoli']['c'])) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['rekammedis'] == 1) {
@@ -1725,7 +2324,8 @@ if ($menu['cppt'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['pain'] == 1) {
@@ -1744,7 +2344,8 @@ if ($menu['pain'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['fall'] == 1) {
@@ -1763,7 +2364,8 @@ if ($menu['fall'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['gcs'] == 1) {
@@ -1782,7 +2384,28 @@ if ($menu['gcs'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
+    ]);
+}
+if ($menu['educationIntegration'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/educationintegration_js', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['vitalsign'] == 1) {
@@ -1801,7 +2424,8 @@ if ($menu['vitalsign'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['transfer'] == 1) {
@@ -1820,7 +2444,8 @@ if ($menu['transfer'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 echo view('admin/patient/profilemodul/jsprofile/tandatangan_js', [
@@ -1838,7 +2463,8 @@ echo view('admin/patient/profilemodul/jsprofile/tandatangan_js', [
     'diagCat' => $diagCat,
     'employee' => $employee,
     'pasienDiagnosaAll' => $pasienDiagnosaAll,
-    'pasienDiagnosa' => $pasienDiagnosa
+    'pasienDiagnosa' => $pasienDiagnosa,
+
 ]); ?>
 
 <?php if ($menu['diagnosa'] == 1) {
@@ -1857,7 +2483,8 @@ echo view('admin/patient/profilemodul/jsprofile/tandatangan_js', [
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['tindakanperawat'] == 1) {
@@ -1876,7 +2503,8 @@ if ($menu['tindakanperawat'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 if ($menu['odd'] == 1) {
@@ -1916,6 +2544,50 @@ if ($menu['eklaim'] == 1) {
     ]);
 } ?>
 
+<?php if ($menu['gizi'] == 1) {
+?>
+    <?php echo view('admin\patient\profilemodul\jsprofile\gizi_js.php', [
+        'title' => '',
+        'visit' => $visit,
+        'aParent' => $aParent,
+        'aType' => $aType,
+        'aParameter' => $aParameter,
+        'aValue' => $aValue,
+    ]) ?>
+<?php
+} ?>
+<?php if ($menu['casemanager'] == 1) {
+?>
+    <?php echo view('admin\patient\profilemodul\jsprofile\casemanager_js.php', [
+        'title' => '',
+        'visit' => $visit,
+        'aParent' => $aParent,
+        'aType' => $aType,
+        'aParameter' => $aParameter,
+        'aValue' => $aValue,
+    ]) ?>
+<?php
+} ?>
+<?php if ($menu['cairan'] == 1) {
+?>
+    <?php echo view('admin\patient\profilemodul\jsprofile\cairan_js.php', [
+        'title' => '',
+        'visit' => $visit,
+        'aParent' => $aParent,
+        'aType' => $aType,
+        'aParameter' => $aParameter,
+        'aValue' => $aValue,
+    ]) ?>
+<?php
+} ?>
+<?php echo view('admin\patient\profilemodul\jsprofile\skriningsuspect_js.php', [
+    'title' => '',
+    'visit' => $visit,
+    'aParent' => $aParent,
+    'aType' => $aType,
+    'aParameter' => $aParameter,
+    'aValue' => $aValue,
+]) ?>
 <?php if ($menu['informedconcent'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/informedConsent_js', [
         'title' => '',
@@ -1932,7 +2604,8 @@ if ($menu['eklaim'] == 1) {
         'diagCat' => $diagCat,
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
-        'pasienDiagnosa' => $pasienDiagnosa
+        'pasienDiagnosa' => $pasienDiagnosa,
+
     ]);
 }
 $this->endSection() ?>

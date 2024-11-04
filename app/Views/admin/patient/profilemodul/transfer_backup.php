@@ -21,7 +21,7 @@ $permission = user()->getPermissions();
 </style>
 <div class="tab-pane" id="transfer" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -29,7 +29,7 @@ $permission = user()->getPermissions();
             ]); ?>
 
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <div id="contentTindakLanjut" class="card border-1 rounded-4 mt-4" style="display: none;">
                 <div class="card-body">
                     <div class="col-md-12 text-end">

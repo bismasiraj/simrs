@@ -1,3 +1,19 @@
+document.addEventListener("DOMContentLoaded", (event) => {
+  // Check if the localStorage contains a login event
+  if (localStorage.getItem("userLoggedIn") === "true") {
+    // Perform actions needed after login
+    console.log("User is logged in");
+  }
+
+  // Listen for changes to localStorage
+  window.addEventListener("storage", (event) => {
+    if (event.key === "userLoggedIn" && event.newValue === "true") {
+      // Trigger a refresh or update based on the login event
+      window.location.reload();
+    }
+  });
+});
+
 function successMsg(msg) {
   $("#successToastBody").html(msg);
   $("#successToastHeader").html("Berhasil");
@@ -68,7 +84,7 @@ function tempTablesNull() {
                   </tr>`);
 }
 
-let BASE_URL = `/`;
+var BASE_URL = `/`;
 
 function getData(response, url, beforesend) {
   $.ajax({
@@ -996,6 +1012,49 @@ function getObsetricScore(type, value) {
           colorPicker: "#198754",
         };
       }
+    case "pain":
+      if (value == 3) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 0) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
+    case "lochia":
+      if (value == 3) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 0) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
+
+    case "proteinuria":
+      if (value == 3) {
+        return {
+          score: 3,
+          color: "danger",
+          colorPicker: "#ffc107",
+        };
+      } else if (value == 2) {
+        return {
+          score: 0,
+          color: "success",
+          colorPicker: "#198754",
+        };
+      }
   }
 } //new 30/07
 function getAdultScore(type, value) {
@@ -1740,27 +1799,39 @@ function vitalsignInput(prop) {
   switch (true) {
     case name.startsWith("nadi"):
       data = scoreFunction("nadi", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("temperature"):
       data = scoreFunction("suhu", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("saturasi"):
       data = scoreFunction("saturasi", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("nafas"):
       data = scoreFunction("pernapasan", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("oxygen_usage"):
       data = scoreFunction("oksigen", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("awareness"):
       data = scoreFunction("awareness", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
+      break;
+    case name.startsWith("pain"):
+      data = scoreFunction("pain", value);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
+      break;
+    case name.startsWith("lochia"):
+      data = scoreFunction("lochia", value);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
+      break;
+    case name.startsWith("proteinuria"):
+      data = scoreFunction("proteinuria", value);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("weight"):
       if (value < 0) {
@@ -1778,7 +1849,7 @@ function vitalsignInput(prop) {
         value = 250.0;
       }
       data = scoreFunction("darah", value);
-      setBadge(id, "badge-" + id, "bg-" + data.color, data.score);
+      setBadge(id, "badge-" + id, "bg-" + data?.color, data?.score);
       break;
     case name.startsWith("tension_below"):
       if (value < 0) {
@@ -1860,11 +1931,42 @@ function datetimepickerbyid(flatid) {
       .trigger("change");
   });
   $("#" + flatid)
-    .val(nowtime)
+    .val(moment().format("DD/MM/YYYY HH:mm"))
     .trigger("change");
+}
+let flatpickrInstances = {}; // Object to hold instances
+function datetimepickerbyidinitial(
+  flatid,
+  initial = moment().format("DD/MM/YYYY HH:mm")
+) {
+  flatpickrInstances[flatid] = flatpickr("#" + flatid, {
+    enableTime: true,
+    dateFormat: "d/m/Y H:i", // Display format
+    time_24hr: true, // 24-hour time format
+    defaultDate: initial,
+    minuteIncrement: 1,
+  });
+  $("#" + flatid).prop("readonly", false);
+  $("#" + flatid).on("change", function () {
+    let theid = flatid.replace("flat", "");
+    let thevalue = $(this).val();
+    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+      "YYYY-MM-DD HH:mm"
+    );
+    $("#" + theid)
+      .val(formattedDate)
+      .trigger("change");
+  });
+  // $("#" + flatid)
+  //   .val(moment().format("DD/MM/YYYY HH:mm"))
+  //   .trigger("change");
 }
 function formatedDatetimeFlat(thedatetime) {
   let formatedDate = moment(thedatetime).format("DD/MM/YYYY HH:mm");
+  return formatedDate;
+}
+function formatedDateFlat(thedatetime) {
+  let formatedDate = moment(thedatetime).format("DD/MM/YYYY");
   return formatedDate;
 }
 function originalFormatedDatetimeFlat(thedatetime) {
@@ -1887,3 +1989,91 @@ function removeByClass(className) {
 function triggerRefresh() {
   localStorage.setItem("refresh", new Date().toISOString());
 }
+
+function initializeQuillEditors() {
+  let quillInstances;
+  document.querySelectorAll(".quill-editor").forEach((editor) => {
+    if (!quillInstances[editor.id]) {
+      const quill = new Quill(editor, {
+        theme: "snow",
+      });
+
+      quillInstances[editor.id] = quill;
+
+      const inputField = document.querySelector(
+        `input[name="${editor.getAttribute("name")}"]`
+      );
+      if (inputField) {
+        const initialContent = inputField.value || "";
+        quill.root.innerHTML = initialContent;
+
+        quill.on("text-change", () => {
+          const quillContent = quill.root.innerHTML.trim();
+          inputField.value = quillContent === "<p><br></p>" ? "" : quillContent;
+        });
+      }
+    }
+  });
+}
+function initializeQuillEditorsById(idname, initialvalue = "") {
+  // Initialize Quill editor
+  const quill = new Quill("#" + idname, {
+    theme: "snow",
+  });
+
+  // Get the associated input field
+  const inputField = document.querySelector(
+    `input[name="${document.querySelector("#" + idname).getAttribute("name")}"]`
+  );
+
+  if (inputField) {
+    // Set initial content
+    const initialContent = inputField.value || "";
+    quill.root.innerHTML = initialContent;
+
+    // Listen for changes and update input field
+    quill.on("text-change", () => {
+      const quillContent = quill.root.innerHTML.trim();
+      inputField.value = quillContent === "<p><br></p>" ? "" : quillContent;
+    });
+  }
+}
+function formBtnChangePassword() {}
+
+function togglePasswordVisibility(inputId, button) {
+  var input = document.getElementById(inputId);
+  if (input.type === "password") {
+    input.type = "text";
+    button.classList.add("btn-outline-primary");
+  } else {
+    input.type = "password";
+    button.classList.remove("btn-outline-primary");
+  }
+}
+$(document).ready(function () {
+  $(".modal-change-password")
+    .off()
+    .on("click", function (e) {
+      $("#changePasswordModal").modal("show");
+    });
+  $("#changePasswordForm").on("submit", function (event) {
+    event.preventDefault();
+
+    let formData = new FormData(this);
+    let jsonObj = {};
+
+    formData.forEach((value, key) => {
+      jsonObj[key] = value;
+    });
+
+    postData(jsonObj, "Home/changePassword", (res) => {
+      if (res.success) {
+        successSwal("Password successfully updated!");
+        $("#changePasswordModal").modal("hide");
+        $("#changePasswordForm")[0].reset();
+      } else {
+        errorSwal(res.message);
+      }
+    });
+  });
+});

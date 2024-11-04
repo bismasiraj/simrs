@@ -7,11 +7,6 @@ use App\Controllers\BaseController;
 
 $basecontroller = new Patient();
 $basecontroller->checkMenuActive('register');
-
-
-
-// dd(user()->checkRoles(['superuser']))
-
 ?>
 
 <head>
@@ -81,6 +76,8 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/datepicker/date.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/jquery-ui.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/js/school-custom.js"></script>
+    <script src="<?php echo base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+
     <!-- fullCalendar -->
     <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.print.min.css" media="print">
@@ -253,7 +250,7 @@ $basecontroller->checkMenuActive('register');
                     url: base_url + "admin/language/defoult_language/" + id,
                     data: {},
                     success: function(data) {
-                        successMsg("<?php echo lang('Word.status_change_successfully'); ?>");
+                        successSwal("<?php echo lang('Word.status_change_successfully'); ?>");
                         $('#languageSwitcher').html(data);
 
                     }
@@ -268,7 +265,7 @@ $basecontroller->checkMenuActive('register');
                     url: base_url + "admin/language/user_language/" + lang_id,
                     data: {},
                     success: function(data) {
-                        successMsg("<?php echo lang('Word.status_change_successfully'); ?>");
+                        successSwal("<?php echo lang('Word.status_change_successfully'); ?>");
                         window.location.reload('true');
 
                     }
@@ -706,9 +703,9 @@ $basecontroller->checkMenuActive('register');
                     $.each(res.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(res.message);
+                    successSwal(res.message);
                     window.location.reload(true);
                 }
             }
@@ -1071,10 +1068,10 @@ $basecontroller->checkMenuActive('register');
                         $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
 
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#addevent_formbtn").button('reset');
@@ -1101,9 +1098,9 @@ $basecontroller->checkMenuActive('register');
                         $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#updateevent_formbtn").button('reset');
@@ -1123,9 +1120,9 @@ $basecontroller->checkMenuActive('register');
                 dataType: "json",
                 success: function(res) {
                     if (res.status == "fail") {
-                        errorMsg(res.message);
+                        errorSwal(res.message);
                     } else {
-                        successMsg(msg + "<?php echo lang('Word.delete_message') ?>");
+                        successSwal(msg + "<?php echo lang('Word.delete_message') ?>");
                         window.location.reload(true);
                     }
                 }

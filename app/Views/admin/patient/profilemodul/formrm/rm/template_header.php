@@ -28,7 +28,7 @@
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Nama Pasien</b>
-                <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
+                <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
             </td>
             <td class="p-1" style="width:33.3%">
                 <b>Jenis Kelamin</b>
@@ -52,7 +52,7 @@
             <tr>
                 <td class="p-1">
                     <b>Kelas</b>
-                    <p class="m-0 mt-1 p-0"><?= @$visit['class_id']; ?></p>
+                    <p class="m-0 mt-1 p-0"><?= @$visit['name_of_class_plafond']; ?></p>
                 </td>
                 <td class="p-1">
                     <b>Bangsal/Kamar</b>

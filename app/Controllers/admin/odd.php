@@ -22,10 +22,17 @@ class odd extends \App\Controllers\BaseController
 
         // $formData['visit_id'] = '2024052721452002230C3';
         $model = new OddModel();
-        $data = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->where('treat_date between getdate() and dateadd(hour,24,getdate()) ')->findAll());
+
+
+        $data = $this->lowerKey(
+            $model->where('visit_id', $formData['visit_id'])
+                ->where('treat_date BETWEEN DATEADD(hour, -24, GETDATE()) AND DATEADD(hour, 24, GETDATE())')
+                ->findAll()
+        );
 
         return $this->response->setJSON($data);
     }
+
 
     public function getDetail()
     {
@@ -65,8 +72,9 @@ class odd extends \App\Controllers\BaseController
             $update = [
                 'received_date' => $data['datetime'],
                 'quantity_detail' => $data['qtySend'],
-                'valid_date' => date('Y-m-d H:i:s'),
-                'valid_user' => user()->fullname,
+                'status_obat' => $data['status_obat']
+                // 'valid_date' => date('Y-m-d H:i:s'),
+                // 'valid_user' => user()->fullname,
             ];
 
             $model->where('bill_id', $data['bill_id'])

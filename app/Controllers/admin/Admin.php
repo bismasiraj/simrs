@@ -51,7 +51,13 @@ class Admin extends \App\Controllers\BaseController
         // return 'asdf';
 
         // dd(!is_null(user()->employee_id) && user()->employee_id != '');
-        if (!is_null(user()->employee_id) && user()->employee_id != '') {
+        if (user()->checkRoles(['adminlab', 'dokterlab'])) {
+            $patient = new Patient();
+            return $patient->laboratorium();
+        } else if (user()->checkRoles(['adminrad', 'dokterrad'])) {
+            $patient = new Patient();
+            return $patient->radiologi();
+        } else if (!is_null(user()->employee_id) && user()->employee_id != '') {
             return $this->rajal();
         } else {
             return $this->dashboard();
@@ -83,7 +89,7 @@ class Admin extends \App\Controllers\BaseController
         $year_end_month              = date("Y-m-t", strtotime($Next_year . '-' . $ar[1] . '-01'));
         //======================Current Month Collection ==============================
         $first_day_this_month = date('Y-m-01');
-        // dd(in_groups('superadmin'));
+        // dd(in_groups('superuser'));
         // $tot_roles            = $this->role_model->get();
         // foreach ($tot_roles as $key => $value) {
         //     if ($value["id"] != 1) {

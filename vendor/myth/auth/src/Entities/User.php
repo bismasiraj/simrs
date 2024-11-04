@@ -278,6 +278,16 @@ class User extends Entity
 
         return $this->roles;
     }
+    public function getOneRoles()
+    {
+        if (empty($this->id)) {
+            throw new RuntimeException('Users must be created before getting roles.');
+        }
+
+        $groups = model(GroupModel::class)->getOneGroupForUser($this->id);
+
+        return @$groups['group_id'];
+    }
 
     public function checkRoles($ingroup)
     {
@@ -290,14 +300,18 @@ class User extends Entity
 
     public function checkPermission($inpermission, $rule)
     {
+        if (!is_string($inpermission) || !is_string($rule)) {
+            return false;
+        }
         $permissions = $this->permissions;
         $haspermission = false;
         foreach ($permissions as $key => $value) {
-            if (isset($value[$inpermission][$rule]))
-                if ($value[$inpermission][$rule] == '1') {
+            if (is_array($value) && isset($value['name']) && isset($value[$rule])) {
+                if (($value['name'] == $inpermission) && ($value[$rule] == 1)) {
                     $haspermission = true;
                     break;
                 }
+            }
         }
 
         return ($haspermission);

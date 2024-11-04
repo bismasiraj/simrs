@@ -62,14 +62,14 @@ $permission = user()->getPermissions();
 </style>
 <div class="tab-pane" id="klaim" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                 'pasienDiagnosa' => $pasienDiagnosa
             ]); ?>
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <form id="formeklaim" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                 <div class="modal-body pt0 pb0">
                     <input id="ekcurrentStep" name="currentStep" placeholder="" type="text" class="form-control block" value="" style="display: none" />
@@ -112,7 +112,7 @@ $permission = user()->getPermissions();
                                         <div class="row">
                                             <label for="ekpayor" class="col-md-4 col-form-label">Jaminan / Cara Bayar</label>
                                             <div class="col-md-8">
-                                                <select name="payor" id="ekpayor" class="form-control">
+                                                <select name="payor" id="ekpayor" class="form-select">
                                                     <option value="3-JKN">JKN</option>
                                                     <option value="71-COVID-19">JAMINAN COVID-19</option>
                                                     <option value="72-KIPI">JAMINAN KIPI</option>
@@ -132,7 +132,7 @@ $permission = user()->getPermissions();
                                         <div class="row">
                                             <label for="eknomor_kartu" class="col-md-2 col-form-label">COB</label>
                                             <div class="col-md-10">
-                                                <select name="cob_cd" id="ekcob_cd" class="form-control">
+                                                <select name="cob_cd" id="ekcob_cd" class="form-select">
                                                     <option value="-">-</option>
                                                     <option value="1">MANDIRI INHEALTH</option>
                                                     <option value="5">ASURANSI SINAR MAS</option>
@@ -205,6 +205,7 @@ $permission = user()->getPermissions();
                                 <h3>
                                     Parameter Klaim
                                 </h3>
+                                <hr>
                             </div>
 
                             <div class="col-sm-12 col-md-4 col-lg-4">
@@ -213,7 +214,7 @@ $permission = user()->getPermissions();
                                         <tr>
                                             <td>Jenis Rawat</td>
                                             <td>
-                                                <select name="jenis_rawat" id="ekjenis_rawat" class="form-control">
+                                                <select name="jenis_rawat" id="ekjenis_rawat" class="form-select">
                                                     <option value="1">Rawat Inap</option>
                                                     <option value="2">Rawat Jalan</option>
                                                     <option value="3">IGD</option>
@@ -224,7 +225,7 @@ $permission = user()->getPermissions();
                                             <?php if ($visit['no_skpinap'] == '' || is_null($visit['no_skpinap'])) { ?>
                                                 <td>Poli Eksekutif</td>
                                                 <td>
-                                                    <select name="kelas_rawat" id="ekkelas_rawat" class="form-control">
+                                                    <select name="kelas_rawat" id="ekkelas_rawat" class="form-select">
                                                         <option value="3">Regular</option>
                                                         <option value="1">Eksekutif</option>
                                                     </select>
@@ -232,7 +233,7 @@ $permission = user()->getPermissions();
                                             <?php } else { ?>
                                                 <td>Kelas Hak</td>
                                                 <td>
-                                                    <select name="kelas_rawat" id="ekkelas_rawat" class="form-control">
+                                                    <select name="kelas_rawat" id="ekkelas_rawat" class="form-select">
                                                         <option value="3">Kelas 3</option>
                                                         <option value="2">Kelas 2</option>
                                                         <option value="1">Kelas 1</option>
@@ -248,7 +249,8 @@ $permission = user()->getPermissions();
                                             <td>
                                                 <div>
                                                     <div class="input-group" id="ektgl_masuk_group">
-                                                        <input id="etgl_masuk" name=" tgl_masuk" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#ektgl_masuk_group' value="<?= date('Y-m-d'); ?>">
+                                                        <input id="flatektgl_masuk" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                                        <input id="ektgl_masuk" name="tgl_masuk" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
 
                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 
@@ -262,7 +264,8 @@ $permission = user()->getPermissions();
                                             <td>
                                                 <div>
                                                     <div class="input-group" id="ektgl_pulang_group">
-                                                        <input id="ektgl_pulang" name=" tgl_pulang" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#ektgl_pulang_group' value="<?= date('Y-m-d'); ?>">
+                                                        <input id="flatektgl_pulang" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                                        <input id="ektgl_pulang" name="tgl_pulang" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
 
                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 
@@ -285,7 +288,7 @@ $permission = user()->getPermissions();
                                         <tr>
                                             <td>Cara Masuk</td>
                                             <td colspan="3">
-                                                <select name="cara_masuk" id="ekcara_masuk" class="form-control">
+                                                <select name="cara_masuk" id="ekcara_masuk" class="form-select">
                                                     <option value="gp">Rujukan FKTP</option>
                                                     <option value="hosp-trans">Rujukan FKRTL</option>
                                                     <option value="mp">Rujukan Spesialis</option>
@@ -305,7 +308,7 @@ $permission = user()->getPermissions();
                                         <tr>
                                             <td>Cara Pulang</td>
                                             <td colspan="3">
-                                                <select name="discharge_status" id="ekdischarge_status" class="form-control">
+                                                <select name="discharge_status" id="ekdischarge_status" class="form-select">
                                                     <option value="1">Atas persetujuan dokter</option>
                                                     <option value="2">Dirujuk</option>
                                                     <option value="3">Atas permintaan sendiri</option>
@@ -346,7 +349,7 @@ $permission = user()->getPermissions();
                                         <tr>
                                             <td>Hemodialisa</td>
                                             <td colspan="3">
-                                                <select name="dializer_single_use" id="ekdializer_single_use" class="form-control">
+                                                <select name="dializer_single_use" id="ekdializer_single_use" class="form-select">
                                                     <option value="1">Single Use</option>
                                                     <option value="0">Multiple Use</option>
                                                 </select>
@@ -367,13 +370,19 @@ $permission = user()->getPermissions();
                                             <tr>
                                                 <td width="20">Naik Kelas</td>
                                                 <td>
-                                                    <label class="radio-inline"><input type="radio" value="1" name="upgrade_class_ind" onclick="showHideEklaim('upgradeClassParam',1)">Ya</label>
-                                                    <label class="radio-inline"><input type="radio" value="0" name="upgrade_class_ind" onclick="showHideEklaim('upgradeClassParam',0)" checked>Tidak</label>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimupgrade_class_ind1" class="form-check-input" type="radio" name="upgrade_class_ind" value="1" onclick="showHideEklaim('upgradeClassParam',1)">
+                                                        <label class="form-check-label" for="eklaimupgrade_class_ind1">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimupgrade_class_ind0" class="form-check-input" type="radio" name="upgrade_class_ind" value="0" onclick="showHideEklaim('upgradeClassParam',0)" checked>
+                                                        <label class="form-check-label" for="eklaimupgrade_class_ind0">Tidak</label>
+                                                    </div>
                                                 </td>
                                                 <td class="upgradeClassParam">=></td>
                                                 <td class="upgradeClassParam">Menjadi Kelas</td>
                                                 <td class="upgradeClassParam">
-                                                    <select name="upgrade_class_class" id="ekupgrade_class_class" class="form-control">
+                                                    <select name="upgrade_class_class" id="ekupgrade_class_class" class="form-select">
                                                         <option value="kelas_1">Kelas 1</option>
                                                         <option value="kelas_2">Kelas 2</option>
                                                         <option value="vip">Kelas VIP</option>
@@ -406,7 +415,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Penanggung</td>
                                                 <td>
-                                                    <select name="upgrade_class_payor" id="ekupgrade_class_payor" class="form-control">
+                                                    <select name="upgrade_class_payor" id="ekupgrade_class_payor" class="form-select">
                                                         <option value="peserta">Peserta</option>
                                                         <option value="pemberi_kerja">Pemberi Kerja</option>
                                                         <option value="asuransi_tambahan">Asuransi Tambahan</option>
@@ -417,8 +426,16 @@ $permission = user()->getPermissions();
                                             <tr>
                                                 <td>ICU</td>
                                                 <td>
-                                                    <label class="radio-inline"><input type="radio" value="1" name="icu_indikator" onclick="showHideEklaim('icuParam',1)">Ya</label>
-                                                    <label class="radio-inline"><input type="radio" value="0" name="icu_indikator" onclick="showHideEklaim('icuParam',0)" checked>Tidak</label>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimicu_indikator1" class="form-check-input" type="radio" name="icu_indikator" value="1" onclick="showHideEklaim('icuParam',1)">
+                                                        <label class="form-check-label" for="eklaimicu_indikator1">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimicu_indikator0" class="form-check-input" type="radio" name="icu_indikator" value="0" onclick="showHideEklaim('icuParam',0)" checked>
+                                                        <label class="form-check-label" for="eklaimicu_indikator0">Tidak</label>
+                                                    </div>
+                                                    <!-- <label class="radio-inline"><input type="radio" value="1" name="icu_indikator" onclick="showHideEklaim('icuParam',1)">Ya</label>
+                                                    <label class="radio-inline"><input type="radio" value="0" name="icu_indikator" onclick="showHideEklaim('icuParam',0)" checked>Tidak</label> -->
                                                 </td>
                                                 <td class="icuParam">=></td>
                                                 <td class="icuParam">LOS</td>
@@ -441,7 +458,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Uso Index</td>
                                                 <td>
-                                                    <select name="use_ind" id="ekuse_ind" class="form-control">
+                                                    <select name="use_ind" id="ekuse_ind" class="form-select">
                                                         <option value="1">Ya</option>
                                                         <option value="0">Tidak</option>
                                                     </select>
@@ -464,8 +481,16 @@ $permission = user()->getPermissions();
                                             <tr>
                                                 <td>APGAR</td>
                                                 <td>
-                                                    <label class="radio-inline"><input type="radio" value="1" name="apgar" onclick="showHideEklaim('apgarParam',1)">Ya</label>
-                                                    <label class="radio-inline"><input type="radio" value="0" name="apgar" onclick="showHideEklaim('apgarParam',0)" checked>Tidak</label>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimapgar1" class="form-check-input" type="radio" name="apgar" value="1" onclick="showHideEklaim('apgarParam',1)">
+                                                        <label class="form-check-label" for="eklaimapgar1">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimapgar0" class="form-check-input" type="radio" name="apgar" value="0" onclick="showHideEklaim('apgarParam',0)" checked>
+                                                        <label class="form-check-label" for="eklaimapgar0">Tidak</label>
+                                                    </div>
+                                                    <!-- <label class="radio-inline"><input type="radio" value="1" name="apgar" onclick="showHideEklaim('apgarParam',1)">Ya</label>
+                                                    <label class="radio-inline"><input type="radio" value="0" name="apgar" onclick="showHideEklaim('apgarParam',0)" checked>Tidak</label> -->
                                                 </td>
                                                 <td class="apgarParam">=></td>
                                                 <td class="apgarParam"></td>
@@ -517,8 +542,16 @@ $permission = user()->getPermissions();
                                             <tr>
                                                 <td>Persalinan</td>
                                                 <td>
-                                                    <label class="radio-inline"><input type="radio" value="1" name="persalinan" onclick="showHideEklaim('persalinanParam',1)">Ya</label>
-                                                    <label class="radio-inline"><input type="radio" value="0" name="persalinan" onclick="showHideEklaim('persalinanParam',0)" checked>Tidak</label>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimpersalinan1" class="form-check-input" type="radio" name="persalinan" value="1" onclick="showHideEklaim('persalinanParam',1)">
+                                                        <label class="form-check-label" for="eklaimpersalinan1">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimpersalinan0" class="form-check-input" type="radio" name="persalinan" value="0" onclick="showHideEklaim('persalinanParam',0)" checked>
+                                                        <label class="form-check-label" for="eklaimpersalinan0">Tidak</label>
+                                                    </div>
+                                                    <!-- <label class="radio-inline"><input type="radio" value="1" name="persalinan" onclick="showHideEklaim('persalinanParam',1)">Ya</label>
+                                                    <label class="radio-inline"><input type="radio" value="0" name="persalinan" onclick="showHideEklaim('persalinanParam',0)" checked>Tidak</label> -->
                                                 </td>
                                                 <td class="persalinanParam">=></td>
                                                 <td class="persalinanParam">Usia Kehamilan</td>
@@ -532,7 +565,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Onset Kontraksi</td>
                                                 <td>
-                                                    <select name="onset_kontraksi" id="ekonset_kontraksi" class="form-control">
+                                                    <select name="onset_kontraksi" id="ekonset_kontraksi" class="form-select">
                                                         <option value="spontan">Spontan</option>
                                                         <option value="induksi">Induksi</option>
                                                         <option value="non_spontan_non_induksi">Non Spontan Non Induksi</option>
@@ -578,7 +611,7 @@ $permission = user()->getPermissions();
                                                 <td></td>
                                                 <td class="persalinanBody persalinanBodyLeft"><input onchange="eklaimInput(this)" type="text" name="delivery_sequence[]" id="ekdelivery_sequence" placeholder="" value="" class="form-control"></td>
                                                 <td class="persalinanBody">
-                                                    <select name="delivery_method[]" id="ekdelivery_method" class="form-control">
+                                                    <select name="delivery_method[]" id="ekdelivery_method" class="form-select">
                                                         <option value="vaginal">Vaginal</option>
                                                         <option value="sc">Sectio Caesarea</option>
                                                     </select>
@@ -598,14 +631,14 @@ $permission = user()->getPermissions();
                                                 <td class="persalinanBody persalinanBodyMiddle"><input onchange="eklaimInput(this)" type="text" name="delivery_dttm[]" id="ekdelivery_dttm" placeholder="" value="" class="form-control"></td>
 
                                                 <td class="persalinanBody persalinanBodyMiddle">
-                                                    <select name="letak_janin[]" id="ekletak_janin" class="form-control">
+                                                    <select name="letak_janin[]" id="ekletak_janin" class="form-select">
                                                         <option value="kepala">Kepala</option>
                                                         <option value="sungsang">Sungsang</option>
                                                         <option value="lintang">Lintang</option>
                                                     </select>
                                                 </td>
                                                 <td class="persalinanBody persalinanBodyright">
-                                                    <select name="kondisi[]" id="ekkondisi" class="form-control">
+                                                    <select name="kondisi[]" id="ekkondisi" class="form-select">
                                                         <option value="livebirth">Live Birth</option>
                                                         <option value="stillbirth">Still Birth</option>
                                                     </select>
@@ -628,13 +661,21 @@ $permission = user()->getPermissions();
                                             <tr>
                                                 <td>Covid-19</td>
                                                 <td>
-                                                    <label class="radio-inline"><input type="radio" value="1" name="covid_indicator" onclick="showHideEklaim('covidParam',1)">Ya</label>
-                                                    <label class="radio-inline"><input type="radio" value="0" name="covid_indicator" onclick="showHideEklaim('covidParam',0)" checked>Tidak</label>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimcovid_indicator1" class="form-check-input" type="radio" name="covid_indicator" value="1" onclick="showHideEklaim('covidParam',1)">
+                                                        <label class="form-check-label" for="eklaimcovid_indicator1">Ya</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-3">
+                                                        <input id="eklaimcovid_indicator0" class="form-check-input" type="radio" name="covid_indicator" value="0" onclick="showHideEklaim('covidParam',0)" checked>
+                                                        <label class="form-check-label" for="eklaimcovid_indicator0">Tidak</label>
+                                                    </div>
+                                                    <!-- <label class="radio-inline"><input type="radio" value="1" name="covid_indicator" onclick="showHideEklaim('covidParam',1)">Ya</label>
+                                                    <label class="radio-inline"><input type="radio" value="0" name="covid_indicator" onclick="showHideEklaim('covidParam',0)" checked>Tidak</label> -->
                                                 </td>
                                                 <td class="covidParam">=></td>
                                                 <td class="covidParam">Status CD</td>
                                                 <td class="covidParam" colspan="2">
-                                                    <select name="covid19_status_cd" id="ekcovid19_status_cd" class="form-control">
+                                                    <select name="covid19_status_cd" id="ekcovid19_status_cd" class="form-select">
                                                         <option value="4">Suspek</option>
                                                         <option value="5">Probabel</option>
                                                         <option value="3">Terkonfirmasi Positif</option>
@@ -658,7 +699,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Nomor Kartu</td>
                                                 <td colspan="2">
-                                                    <select name="nomor_kartu_t" id="eknomor_kartu_t" class="form-control">
+                                                    <select name="nomor_kartu_t" id="eknomor_kartu_t" class="form-select">
                                                         <option value="nik">NIK</option>
                                                         <option value="kitas">KITAS/KITAP</option>
                                                         <option value="paspor">Passport (WNA)</option>
@@ -693,7 +734,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Isolasi Mandiri</td>
                                                 <td colspan="2">
-                                                    <select name="isoman_ind" id="ekisoman_ind" class="form-control">
+                                                    <select name="isoman_ind" id="ekisoman_ind" class="form-select">
                                                         <option value="1">Ya, melakukan isolasi mandiri</option>
                                                         <option value="0">Tidak melakukan isolasi mandiri</option>
                                                     </select>
@@ -707,7 +748,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Status Bayi Lahir</td>
                                                 <td colspan="2">
-                                                    <select name="bayi_lahir_status_cd" id="ekbayi_lahir_status_cd" class="form-control">
+                                                    <select name="bayi_lahir_status_cd" id="ekbayi_lahir_status_cd" class="form-select">
                                                         <option value="1">Tanpa Kelainan</option>
                                                         <option value="2">Dengan Kelainan</option>
                                                     </select>
@@ -721,7 +762,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>RS Darurat</td>
                                                 <td colspan="2">
-                                                    <select name="covid19_rs_darurat_ind" id="ekcovid19_rs_darurat_ind" class="form-control">
+                                                    <select name="covid19_rs_darurat_ind" id="ekcovid19_rs_darurat_ind" class="form-select">
                                                         <option value="1">Ya, pasien dirawat di lokasi RS darurat atau RS lapangan</option>
                                                         <option value="0">Tidak dirawat di lokasi RS darurat atau RS lapangan</option>
                                                     </select>
@@ -735,7 +776,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Comorbidity/Complexity</td>
                                                 <td colspan="2">
-                                                    <select name="covid19_cc_ind" id="ekcovid19_cc_ind" class="form-control">
+                                                    <select name="covid19_cc_ind" id="ekcovid19_cc_ind" class="form-select">
                                                         <option value="1">Ya</option>
                                                         <option value="0">Tidak</option>
                                                     </select>
@@ -749,7 +790,7 @@ $permission = user()->getPermissions();
                                                 <td>=></td>
                                                 <td>Co-Insidense</td>
                                                 <td colspan="2">
-                                                    <select name="covid19_co_insidense_ind" id="ekcovid19_co_insidense_ind" class="form-control">
+                                                    <select name="covid19_co_insidense_ind" id="ekcovid19_co_insidense_ind" class="form-select">
                                                         <option value="1">Ya</option>
                                                         <option value="0">Tidak</option>
                                                     </select>
@@ -1146,7 +1187,7 @@ $permission = user()->getPermissions();
                                                     </colgroup>
                                                     <tbody>
                                                         <tr>
-                                                            <td><select name="special_procedure" id="special_proceduredescription" class="form-control" style="width: 50%;" disabled>
+                                                            <td><select name="special_procedure" id="special_proceduredescription" class="form-select" style="width: 50%;" disabled>
                                                                     <option value="">-</option>
                                                                 </select></td>
                                                             <td id="special_procedurecode">-</td>
@@ -1167,7 +1208,7 @@ $permission = user()->getPermissions();
                                                     </colgroup>
                                                     <tbody>
                                                         <tr>
-                                                            <td><select name="special_prosthesis" id="special_prosthesisdescription" class="form-control" style="width: 50%;" disabled>
+                                                            <td><select name="special_prosthesis" id="special_prosthesisdescription" class="form-select" style="width: 50%;" disabled>
                                                                     <option value="">-</option>
                                                                 </select></td>
                                                             <td id="special_prosthesiscode">-</td>
@@ -1188,7 +1229,7 @@ $permission = user()->getPermissions();
                                                     </colgroup>
                                                     <tbody>
                                                         <tr>
-                                                            <td><select name="special_investigation" id="special_investigationdescription" class="form-control" style="width: 50%;" disabled>
+                                                            <td><select name="special_investigation" id="special_investigationdescription" class="form-select" style="width: 50%;" disabled>
                                                                     <option value="">-</option>
                                                                 </select></td>
                                                             <td id="special_investigationcode">-</td>
@@ -1209,7 +1250,7 @@ $permission = user()->getPermissions();
                                                     </colgroup>
                                                     <tbody>
                                                         <tr>
-                                                            <td><select name="special_drug" id="special_drugdescription" class="form-control" style="width: 50%;" disabled>
+                                                            <td><select name="special_drug" id="special_drugdescription" class="form-select" style="width: 50%;" disabled>
                                                                     <option value="">-</option>
                                                                 </select></td>
                                                             <td id="special_drugcode">-</td>
@@ -1275,6 +1316,8 @@ $permission = user()->getPermissions();
                         <button type="button" id="ekfinalklaimbtn" onclick="finalKlaim()" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Final Klaim</button>
                         <button type="submit" id="ekformsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
                         <button type="button" id="ekeditbtn" onclick="editKlaim()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
+                        <button type="button" id="" onclick="" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
+                        <a href="<?= base_url() . '/admin/cetak/cetakAllGrouping/' . base64_encode(json_encode($visit)); ?>" target="_blank">All Template</a>
                     </div>
                 </div>
             </form>

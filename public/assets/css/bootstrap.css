@@ -255,7 +255,7 @@ File: Custom Bootstrap Css File
 
 body {
   margin: 0;
-  font-family: Montserrat;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;;
   font-size: var(--bs-body-font-size);
   font-weight: var(--bs-body-font-weight);
   line-height: var(--bs-body-line-height);

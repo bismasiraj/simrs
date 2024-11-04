@@ -26,7 +26,8 @@ class BloodRequestModel extends Model
         'blood_type_id',
         'blood_quantity',
         'measure_id',
-        'descriptions'
+        'descriptions',
+        'using_time' //new 12/10/2024
     ];
 
     // Dates

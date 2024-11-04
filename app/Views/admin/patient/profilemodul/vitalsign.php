@@ -26,14 +26,14 @@ $permission = user()->getPermissions();
     <div class="row">
         <div id="loadContentVitalSign" class="col-12 center-spinner"></div>
         <div id="contentVitalSign" class="row">
-            <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+            <div class="col-lg-2 col-md-2 col-sm-12 border-r">
                 <?php echo view('admin/patient/profilemodul/profilebiodata', [
                     'visit' => $visit,
                     'pasienDiagnosaAll' => $pasienDiagnosaAll,
                     'pasienDiagnosa' => $pasienDiagnosa
                 ]); ?>
             </div><!--./col-lg-6-->
-            <div class="col-lg-9 col-md-9 col-sm-12">
+            <div class="col-lg-10 col-md-10 col-sm-12">
                 <div id="vitalSignDocument" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
                     <div class="card-body">
                         <form id="formvitalsign" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
@@ -189,6 +189,41 @@ $permission = user()->getPermissions();
                                                                 <span class="h6" id="badge-avtawareness"></span>
                                                             </div>
                                                         </div>
+                                                        <?php if ($visit['specialist_type_id'] == '1.05') {
+                                                        ?>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Nyeri</label>
+                                                                    <select class="form-select" name="pain" id="prslexampain" onchange="vitalsignInput(this)">
+                                                                        <option value="0">Normal</option>
+                                                                        <option value="3">Abnormal</option>
+                                                                    </select>
+                                                                    <span class="h6" id="badge-prslexampain"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Discharge/Lokia</label>
+                                                                    <select class="form-select" name="lochia" id="prslexamlochia" onchange="vitalsignInput(this)">
+                                                                        <option value="0">Normal</option>
+                                                                        <option value="3">Abnormal</option>
+                                                                    </select>
+                                                                    <span class="h6" id="badge-prslexamlokia"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Proteinuria (Perhari)</label>
+                                                                    <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
+                                                                        <option value="0">-</option>
+                                                                        <option value="2">+</option>
+                                                                        <option value="3">++</option>
+                                                                    </select>
+                                                                    <span class="h6" id="badge-prslexamproteinuria"></span>
+                                                                </div>
+                                                            </div>
+                                                        <?php
+                                                        } ?>
                                                         <div class="col-sm-12 mt-2">
                                                             <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="avtpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                                         </div>
@@ -267,10 +302,12 @@ $permission = user()->getPermissions();
                 <div class="d-flex mb-3">
                     <a href="<?= base_url() . '/admin/cetak/cetakVitalSign/' . base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
                 </div>
+                <div class="d-flex mb-3">
+                    <a href="<?= base_url() . '/admin/rm/lainnya/nadi_suhu/' . base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-warning w-100"><i class="fa fa-print"></i> Lembar Nadi / Suhu</a>
+                </div>
             </div>
         </div>
     </div><!--./row-->
-
 </div>
 <!-- -->
 

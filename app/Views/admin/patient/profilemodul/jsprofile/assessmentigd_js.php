@@ -18,7 +18,10 @@ foreach ($aValue as $key => $value) {
         const status = '%'
         const nota = '%'
         const trans = '<?= $visit['trans_id']; ?>'
+        const trans_id = '<?= $visit['trans_id']; ?>'
         const visit = '<?= $visit['visit_id']; ?>'
+
+
 
 
 
@@ -164,7 +167,7 @@ foreach ($aValue as $key => $value) {
 
 <script type="text/javascript">
     $(".formsavearpbtn").on('click', (function(e) {
-        $("#formaddarp").find("button.btn-save:not([disabled])").trigger("click")
+        $("#formaddarp").find("button.btn-save:visible").trigger("click")
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         $.ajax({
@@ -178,10 +181,58 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             beforeSend: function() {
-                clicked_submit_btn.button('loading');
+                $(".formsavearpbtn").html('<i class="spinner-border spinner-border-sm"></i>')
             },
             success: function(data) {
-                getAssessmentKeperawatan()
+                $("#formaddarp").find('input, select, textarea').each(function() {
+                    const key = $(this).attr('id'); // Use ID or placeholder as key
+
+                    localStorage.removeItem(key);
+                })
+                $("#arpModal").modal("hide")
+                let formData = new FormData(document.getElementById("formaddarp"))
+                let formDataObject = {};
+                formData.forEach(function(value, key) {
+                    formDataObject[key] = value
+                });
+                var isNewDocument = 0
+                $.each(examForassessment, function(key, value) {
+                    if (value.body_id == formDataObject.body_id) {
+                        examForassessment[key] = formDataObject
+                        isNewDocument = 1
+                    }
+                })
+                // if (isNewDocument != 1)
+                //     examForassessment.push(formDataObject)
+
+                if (isNewDocument != 1) {
+                    let examNew = Array();
+                    examNew.push(formDataObject)
+                    $.each(examForassessment, function(key, value) {
+                        examNew.push(examForassessment[key])
+                    })
+                    examForassessment = examNew
+                }
+
+
+                // $("#cpptBody").html("")
+                let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
+                if (examFiltered145.length > 0) {
+                    fillDataArp(examFiltered145.length - 1)
+                    // $("#arpAddDocument").slideUp()
+                    $("#arpDocument").slideDown()
+                }
+
+                if (examForassessment.length > 0) {
+                    displayTableAssessmentKeperawatan();
+                    displayTableAssessmentKeperawatanForVitalSign();
+                }
+
+
+                fillRiwayatArp()
+                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+
+                // getAssessmentKeperawatan()
                 // // $("#formsavearpbtn").slideUp()
                 // // $("#formeditarp").slideDown()
                 // var isNewDocument = 0
@@ -197,11 +248,12 @@ foreach ($aValue as $key => $value) {
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                $(".formsavearpbtn").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+                errorSwal(xhr);
             },
             complete: function() {
-                clicked_submit_btn.button('reset');
+                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+                // clicked_submit_btn.button('reset');
             }
         });
     }));
@@ -247,13 +299,18 @@ foreach ($aValue as $key => $value) {
         $("#bodyIntegumenPerawat").html("")
     }
 
-    function getAssessmentKeperawatan() {
+    function getAssessmentKeperawatan(top = 10, episode = 1) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'trans_id': '<?= $visit['trans_id']; ?>',
+                'nomor': '<?= $visit['no_registration']; ?>',
+                'isrj': '<?= $visit['isrj']; ?>',
+                'norujukan': '<?= $visit['norujukan']; ?>',
+                'top': top,
+                'episode': episode
             }),
             dataType: 'json',
             contentType: false,
@@ -288,7 +345,7 @@ foreach ($aValue as $key => $value) {
                 let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
                 if (examFiltered145.length > 0) {
                     fillDataArp(examFiltered145.length - 1)
-                    $("#arpAddDocument").slideUp()
+                    // $("#arpAddDocument").slideUp()
                     $("#arpDocument").slideDown()
                 }
 
@@ -309,14 +366,74 @@ foreach ($aValue as $key => $value) {
 
     function initialAddArp() {
 
+        <?php if ($visit['specialist_type_id'] == '1.05') {
+        ?>
+            $("#arpTitle").html("Assessment Kebidanan")
+        <?php
+        } ?>
+        let bodyId = '<?= $visit['session_id']; ?>';
+        let isnew = false;
+        $.each(examForassessment, function(key, value) {
+            if (value.body_id == bodyId) {
+                isnew = true;
+            }
+        })
+        if (isnew) {
+            return alert("Anda sudah pernah membuat dokumen Assessment pada sesi " + bodyId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
+        }
+
+        $("#bodyDiagPerawat").html("")
+
+
+        $("#accordionAssessmentAwal .accordion-collapse.show").collapse('hide')
+        $("#bodyFallRiskPerawatAddBtn").html(`<a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyPainMonitoringPerawatAddBtn").html(`<a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`);
+        $("#bodyTriagePerawatAddBtn").html(`<a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("bodyApgarPerawatAddBtn").html(`<a onclick="addApgar(1, 0, 'arpbody_id', 'bodyApgarPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyGiziPerawatAddBtn").html(`<a onclick="addGizi(1,1, 'arpbody_id','bodyGiziPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyADLPerawatAddBtn").html(`<a onclick="addADL(1,1, 'arpbody_id','bodyADLPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyDekubitusPerawatAddBtn").html(`<a onclick="addDekubitus(1,1, 'arpbody_id','bodyDekubitusPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyStabilitasPerawatAddBtn").html(`<a onclick="addDerajatStabilitas(1, 0, 'arpbody_id', 'bodyStabilitasPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addEducationIntegrationButton").html(`<a onclick="addEducationIntegration(1,0, 'arpbody_id','bodyEducationIntegration', false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyEducationFormPerawatAddBtn").html(`<a onclick="addEducationForm(1,1, 'arpbody_id','bodyEducationFormPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyGcsPerawatAddBtn").html(`<a onclick="addGcs(1,0,'arpbody_id', 'bodyGcsPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyIntegumenPerawatAddBtn").html(`<a onclick="addIntegumen(1,1, 'arpbody_id','bodyIntegumenPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyAnakPerawatAddBtn").html(`<a onclick="addAnak(1,1, 'arpbody_id','bodyAnakPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#bodyNeonatusPerawatAddBtn").html(`<a onclick="addNeonatus(1,1, 'arpbody_id','bodyNeonatusPerawat')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addNeurosensorisButton").html(`<a onclick="addNeurosensoris(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addPencernaanButton").html(`<a onclick="addPencernaan(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addPerkemihanButton").html(`<a onclick="addPerkemihan(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addPernapasanButton").html(`<a onclick="addPernapasan(1,0, 'arpbody_id', 'bodyPernapasan')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addPsikologiButton").html(`<a onclick="addPsikologi(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addSeksualButton").html(`<a onclick="addSeksual(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addSirkulasiButton").html(`<a onclick="addSirkulasi(1,0,'arpbody_id', 'bodySirkulasi')" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addSocialButton").html(`<a onclick="addSocial(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addHearingButton").html(`<a onclick="addHearing(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+        $("#addSleepingButton").html(`<a onclick="addSleeping(1,0)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+
+
 
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
         $("#formaddarp").find('input[type="text"], input[type="hidden"], textarea').val(null)
+        var initialexam = examForassessment[examForassessment.length - 1]
+        $.each(initialexam, function(key, value) {
+            $("#arp" + key).val(value)
+        })
 
-        $("#arpvs_status_id1").prop("checked", true)
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#avtvs_status_id").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#avtvs_status_id").prop("selectedIndex", 1);
+        } else {
+            $("#avtvs_status_id").prop("selectedIndex", 2);
+        }
         $("#arpbody_id").val(bodyId)
         $("#arporg_unit_code").val('<?= $visit['org_unit_code']; ?>')
         $("#arppasien_diagnosa_id").val(null)
@@ -348,7 +465,8 @@ foreach ($aValue as $key => $value) {
         $("#arpin_date").val('<?= $visit['in_date']; ?>')
         $("#arpexit_date").val('<?= $visit['exit_date']; ?>')
         $("#arpkeluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#flatarpexamination_date").val(nowtime).trigger("change")
+        flatpickrInstances["flatarpexamination_date"].setDate(moment().format("DD/MM/YYYY HH:mm"))
+        $("#flatarpexamination_date").trigger("change")
         $("#arpmodified_date").val(get_date())
         $("#arpmodified_by").val('<?= user()->username; ?>')
         $("#arpmodified_from").val('<?= $visit['clinic_id']; ?>')
@@ -366,6 +484,16 @@ foreach ($aValue as $key => $value) {
         $("#arppetugas_id").val('<?= user()->username; ?>')
         $("#arppetugas").val('<?= user()->getFullname(); ?>')
         $("#arpaccount_id").val(2)
+
+        <?php if ($visit['specialist_type_id'] == '1.05') {
+        ?>
+            $("#arpvs_status_id10").trigger("click")
+        <?php
+        } ?>
+
+
+        $("#arpweight").val(berat)
+        $("#arpheight").val(tinggi)
         // $("#arpvs_status_id").val(1)
 
         $('#keperawatanListLinkAll').html("")
@@ -401,11 +529,22 @@ foreach ($aValue as $key => $value) {
         $("#arpcollapseVitalSign").find("#arptotal_score").html("")
         $("#arpcollapseVitalSign").find("span.h6").html("")
 
-        $("#arpAddDocument").slideUp()
+        // $("#arpAddDocument").slideUp()
         $("#arpDocument").slideDown()
         enableARP()
         fillRiwayatArp()
+
         generateSatelite()
+
+        $("#formaddarp").find('input, select, textarea').each(function() {
+            const key = $(this).attr('id'); // Use ID or placeholder as key
+
+            const savedValue = localStorage.getItem(key);
+            if (savedValue) {
+                $(this).val(savedValue);
+            }
+        })
+        $("#arpModal").modal("show")
     }
 
     const fillDataArp = async (index) => {
@@ -423,35 +562,39 @@ foreach ($aValue as $key => $value) {
         $("#arpcollapseVitalSign").find("input").each(function() {
             $(this).trigger("change")
         })
-        $("#flatarpexamination_date").val(formatedDatetimeFlat(ex.examination_date)).trigger("change")
+        flatpickrInstances["flatarpexamination_date"].setDate(
+            formatedDatetimeFlat(ex.examination_date)
+        );
+        $("#flatarpexamination_date").trigger("change");
 
         await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid", 3)
 
         disableARP()
 
-        // getFallRisk(ex.body_id)
-        // getPainMonitoring(ex.body_id)
-        // getTriage(ex.body_id, "bodyTriage")
-        // getGcs(ex.body_id, "bodyGcsPerawat")
-        // getApgar(ex.body_id)
-        // getStabilitas(ex.body_id)
-        // getPernapasan(ex.body_id)
-        // getSirkulasi(ex.body_id)
-        // getNeurosensoris(ex.body_id)
-        // getIntegumen(ex.body_id)
-        // getADL(ex.body_id)
-        // getPencernaan(ex.body_id)
-        // getDekubitus(ex.body_id)
-        // getPsikologi(ex.body_id)
-        // getPerkemihan(ex.body_id)
-        // getSeksual(ex.body_id)
-        // getSocial(ex.body_id)
-        // getGizi(ex.body_id)
-        // getEducationForm(ex.body_id)
-        // getEducationIntegration(ex.body_id)
-        // getHearing(ex.body_id)
-        // getSleeping(ex.body_id)
+        getFallRisk(ex.body_id)
+        getPainMonitoring(ex.body_id)
+        getTriage(ex.body_id, "bodyTriage")
+        getGcs(ex.body_id, "bodyGcsPerawat")
+        getApgar(ex.body_id)
+        getStabilitas(ex.body_id)
+        getPernapasan(ex.body_id)
+        getSirkulasi(ex.body_id)
+        getNeurosensoris(ex.body_id)
+        getIntegumen(ex.body_id)
+        getADL(ex.body_id)
+        getPencernaan(ex.body_id)
+        getDekubitus(ex.body_id)
+        getPsikologi(ex.body_id)
+        getPerkemihan(ex.body_id)
+        getSeksual(ex.body_id)
+        getSocial(ex.body_id)
+        getGizi(ex.body_id)
+        getEducationForm(ex.body_id)
+        getEducationIntegration(ex.body_id)
+        getHearing(ex.body_id)
+        getSleeping(ex.body_id)
 
+        $("#arpModal").modal("show")
     }
 
     function fillRiwayatArp() {
@@ -576,7 +719,11 @@ foreach ($aValue as $key => $value) {
 
     const disableARP = () => {
         $("#formsavearpbtnid").slideUp()
-        $("#formeditarpid").slideDown()
+        if ($("#arpmodified_by").val() == '<?= user()->username; ?>' || <?= json_encode(user()->checkRoles(['superuser'])) ?>) {
+            $("#formeditarpid").slideDown()
+        } else {
+            $("#formeditarpid").slideUp()
+        }
         // $(".formsignarp").slideUp()
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)

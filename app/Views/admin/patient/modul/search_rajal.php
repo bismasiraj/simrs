@@ -2,10 +2,11 @@
 $session = session();
 $gsPoli = $session->gsPoli;
 $permissions = user()->getPermissions();
+$roles = user()->getRoles();
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 73 || $giTipe == 50 || user()->checkRoles(['dokter'])) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -24,7 +25,7 @@ $permissions = user()->getPermissions();
                     <div class="col-sm-6 col-md-2">
                         <div class="form-group">
                             <label>Pelayanan</label><small class="req"> *</small>
-                            <select id="klinikrajal" class="form-control" name="klinik" onchange="showdate(this.value)" autocomplete="off">
+                            <select id="klinikrajal" class="form-select" name="klinik" onchange="showdate(this.value)" autocomplete="off">
                                 <option value="%">Semua</option>
                                 <?php if (is_null(user()->employee_id)) { ?>
                                 <?php } ?>
@@ -50,11 +51,15 @@ $permissions = user()->getPermissions();
                         <span class="text-danger" id="error_search_type"></span>
                     </div>
 
-                    <div class="col-sm-6 col-md-2" <?php if (user()->employee_id != '' && !is_null(user()->employee_id)) { ?> style="display: none;" <?php } ?>>
+                    <div class="col-sm-6 col-md-2">
                         <div class="form-group">
                             <label>Dokter</label>
-                            <select id="dokter" class="form-control" name="dokter" onchange="showdate(this.value)">
-                                <?php if (is_null(user()->employee_id)) { ?>
+                            <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
+                                <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
+                                    <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
+                                <?php
+                                } else {
+                                ?>
                                     <option value="%">Semua</option>
                                     <?php $dokterlist = array();
                                     foreach ($dokter as $key => $value) {
@@ -66,22 +71,8 @@ $permissions = user()->getPermissions();
                                     ?>
                                     <?php foreach ($dokterlist as $key => $value) { ?>
                                         <option value="<?= $key; ?>"><?= $value; ?></option>
-                                    <?php }
-                                } else { ?>
-                                    <?php $dokterlist = array();
-                                    foreach ($dokter as $key => $value) {
-                                        foreach ($value as $key1 => $value1) {
-                                            if ($key1 == user()->employee_id) {
-                                                $dokterlist[$key1] = $value1;
-                                            }
-                                        }
-                                    }
-                                    asort($dokterlist); ?>
-                                    <?php foreach ($dokterlist as $key => $value) { ?>
-                                        <option value="<?= $key; ?>"><?= $value; ?></option>
-                                    <?php } ?>
-                                <?php } ?>
-
+                                <?php }
+                                } ?>
                             </select>
                             <span class="text-danger" id="error_doctor"></span>
                         </div>
@@ -92,7 +83,7 @@ $permissions = user()->getPermissions();
                         <div class="form-group">
                             <label>Rujukan Dari</label>
 
-                            <select name="rujukan" id="rujukan" class="form-control">
+                            <select name="rujukan" id="rujukan" class="form-select">
                                 <option value="%">Semua</option>
                                 <?php foreach ($cliniclist as $key => $value) { ?>
                                     <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -104,7 +95,7 @@ $permissions = user()->getPermissions();
                     <div class="col-sm-6 col-md-2" style="display: none;">
                         <div class="form-group">
                             <label>Relasi</label>
-                            <select name="statuspasien" id="statuspasien" class="form-control">
+                            <select name="statuspasien" id="statuspasien" class="form-select">
                                 <option value="%">Semua</option>
                                 <?php foreach ($statusPasien as $key => $value) {
                                     if ($statusPasien[$key]['name_of_status_pasien'] != null && $statusPasien[$key]['name_of_status_pasien'] != '') {
@@ -144,7 +135,7 @@ $permissions = user()->getPermissions();
                             <label>Tanggal Awal</label>
                             <div>
                                 <div class="input-group">
-                                    <input id="mulai" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <input id="flatsearchmulai" type="text" class="form-control dateflatpickr" autocomplete="off">
                                     <input type="hidden" id="searchmulai" name="mulai">
 
                                     <!-- <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
@@ -160,7 +151,7 @@ $permissions = user()->getPermissions();
                             <label>Tanggal Akhir</label>
                             <div>
                                 <div class="input-group">
-                                    <input id="akhir" type="text" class="form-control dateflatpickr" autocomplete="off">
+                                    <input id="flatsearchakhir" type="text" class="form-control dateflatpickr" autocomplete="off">
                                     <input type="hidden" id="searchakhir" name="akhir">
 
 
@@ -297,7 +288,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="clinic_id">Tujuan</label>
                                                                 <div>
-                                                                    <select name='clinic_id' id="pvclinic_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='clinic_id' id="pvclinic_id" class="form-select select2 act" style="width:100%">
                                                                         <?php $cliniclist = array();
                                                                         foreach ($clinic as $key => $value) {
                                                                             if ($giTipe == 5) {
@@ -320,7 +311,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="employee_id">Dokter</label>
                                                                 <div>
-                                                                    <select name='employee_id' id="pvemployee_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='employee_id' id="pvemployee_id" class="form-select select2 act" style="width:100%">
                                                                         <?php $dokterlist = array();
                                                                         foreach ($dokter as $key => $value) {
                                                                             if ($key == 'P003') {
@@ -341,7 +332,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="kddpjp">DPJP</label>
                                                                 <div>
-                                                                    <select name='kddpjp' id="pvkddpjp" class="form-control select2 act" style="width:100%">
+                                                                    <select name='kddpjp' id="pvkddpjp" class="form-select select2 act" style="width:100%">
                                                                         <?php $dpjplist = array();
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
@@ -369,7 +360,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="class_id">Kelas</label>
                                                                 <div>
-                                                                    <select name='class_id' id="pvclass_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='class_id' id="pvclass_id" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($kelas as $key => $value) { ?>
                                                                             <option value="<?= $kelas[$key]['class_id']; ?>"><?= $kelas[$key]['name_of_class']; ?></option>
                                                                         <?php } ?>
@@ -380,7 +371,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="class_id_plafond">Hak Kelas</label>
                                                                 <div>
-                                                                    <select name='class_id_plafond' id="pvclass_id_plafond" class="form-control select2 act" style="width:100%">
+                                                                    <select name='class_id_plafond' id="pvclass_id_plafond" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($kelas as $key => $value) { ?>
                                                                             <option value="<?= $kelas[$key]['class_id']; ?>"><?= $kelas[$key]['name_of_class']; ?></option>
                                                                         <?php } ?>
@@ -391,7 +382,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="status_pasien_id">Status Bayar</label>
                                                                 <div>
-                                                                    <select name='status_pasien_id' id="pvstatus_pasien_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='status_pasien_id' id="pvstatus_pasien_id" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($statusPasien as $key => $value) { ?>
                                                                             <option value="<?= $statusPasien[$key]['status_pasien_id']; ?>"><?= $statusPasien[$key]['name_of_status_pasien']; ?></option>
                                                                         <?php } ?>
@@ -430,7 +421,7 @@ $permissions = user()->getPermissions();
                                                             <label for="kdpoli_eks">Eksekutif</label>
                                                             <div class="form-group">
                                                                 <div>
-                                                                    <select name='kdpoli_eks' id="pvkdpoli_eks" class="form-control select2 act" style="width:100%">
+                                                                    <select name='kdpoli_eks' id="pvkdpoli_eks" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Ya</option>
                                                                         <option value="0">Tidak</option>
                                                                     </select>
@@ -440,7 +431,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="isnew">Baru</label>
                                                                 <div>
-                                                                    <select name='isnew' id="pvisnew" class="form-control select2 act" style="width:100%">
+                                                                    <select name='isnew' id="pvisnew" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Ya</option>
                                                                         <option value="0">Tidak</option>
                                                                     </select>
@@ -450,7 +441,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="cob">COB</label>
                                                                 <div>
-                                                                    <select name='cob' id="pvcob" class="form-control select2 act" style="width:100%">
+                                                                    <select name='cob' id="pvcob" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Ya</option>
                                                                         <option value="0">Tidak</option>
                                                                     </select>
@@ -460,7 +451,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-1 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvbackcharge">Katarak</label>
                                                                 <div>
-                                                                    <select name='backcharge' id="pvbackcharge" class="form-control select2 act" style="width:100%">
+                                                                    <select name='backcharge' id="pvbackcharge" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Ya</option>
                                                                         <option value="0">Tidak</option>
                                                                     </select>
@@ -471,7 +462,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvway_id">Cara Datang</label>
                                                                 <div>
-                                                                    <select name='way_id' id="pvway_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='way_id' id="pvway_id" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($way as $key => $value) { ?>
                                                                             <option value="<?= $way[$key]['way_id']; ?>"><?= $way[$key]['way']; ?></option>
                                                                         <?php } ?>
@@ -482,7 +473,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvreason_id">Alasan/Lakalantas</label>
                                                                 <div>
-                                                                    <select name='reason_id' id="pvreason_id" class="form-control select2 act" style="width:100%">
+                                                                    <select name='reason_id' id="pvreason_id" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($reason as $key => $value) { ?>
                                                                             <option value="<?= $reason[$key]['reason_id']; ?>"><?= $reason[$key]['reason']; ?></option>
                                                                         <?php } ?>
@@ -492,7 +483,7 @@ $permissions = user()->getPermissions();
                                                         </div>
                                                         <div class="col-sm-4 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvisattended">Sudah Dilayani</label>
-                                                                <select name='isattended' id="pvisattended" class="form-control select2 act" style="width:100%">
+                                                                <select name='isattended' id="pvisattended" class="form-select select2 act" style="width:100%">
                                                                     <?php foreach ($isattended as $key => $value) { ?>
                                                                         <option value="<?= $isattended[$key]['isattended']; ?>"><?= $isattended[$key]['visitstatus']; ?></option>
                                                                     <?php } ?>
@@ -527,7 +518,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
                                                                 <div>
-                                                                    <select name='asalrujukan' id="pvasalrujukan" class="form-control select2 act" style="width:100%">
+                                                                    <select name='asalrujukan' id="pvasalrujukan" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Faskes 1</option>
                                                                         <option value="2">Faskes 2 (RS)</option>
                                                                     </select>
@@ -540,7 +531,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="kdpoli">Poli Rujukan</label>
                                                                 <div>
-                                                                    <select name='kdpoli' id="pvkdpoli" class="form-control select2 act" style="width:100%">
+                                                                    <select name='kdpoli' id="pvkdpoli" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($inasisPoli as $key => $value) { ?>
                                                                             <option value="<?= $inasisPoli[$key]['kdpoli']; ?>"><?= $inasisPoli[$key]['nmpoli']; ?></option>
                                                                         <?php } ?>
@@ -554,7 +545,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="ppkrujukan">PPK Rujukan</label>
                                                                 <div>
-                                                                    <select name='ppkrujukan' id="pvppkrujukan" class="form-control select2 act" style="width:100%">
+                                                                    <select name='ppkrujukan' id="pvppkrujukan" class="form-select select2 act" style="width:100%">
                                                                         <?php foreach ($inasisFaskes as $key => $value) { ?>
                                                                             <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
                                                                         <?php } ?>
@@ -565,7 +556,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
                                                                 <div class="input-group">
-                                                                    <select class="form-control" name='diag_awal' id="pvdiag_awal">
+                                                                    <select class="form-select" name='diag_awal' id="pvdiag_awal">
                                                                     </select>
                                                                     <span class="input-group-btn">
                                                                         <button id="openSearchDiagnosaBtn" class="form-control" onclick="s()" type="button"><i class="fa fa-search"></i></button>
@@ -603,7 +594,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvtujuankunj">Tujuan Kunjungan</label>
                                                                 <div>
-                                                                    <select name='tujuankunj' id="pvtujuankunj" class="form-control select2 act" style="width:100%">
+                                                                    <select name='tujuankunj' id="pvtujuankunj" class="form-select select2 act" style="width:100%">
                                                                         <option value="0">Normal</option>
                                                                         <option value="1">Prosedur</option>
                                                                         <option value="2">Konsul Dokter</option>
@@ -614,7 +605,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvkdpenunjang">Penunjang</label>
                                                                 <div>
-                                                                    <select name='kdpenunjang' id="pvkdpenunjang" class="form-control select2 act" style="width:100%">
+                                                                    <select name='kdpenunjang' id="pvkdpenunjang" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Radioterapi</option>
                                                                         <option value="2">Kemoterapi</option>
                                                                         <option value="3">Rehab Medik</option>
@@ -635,7 +626,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvflagprocedure">Procedure</label>
                                                                 <div>
-                                                                    <select name='flagprocedure' id="pvflagprocedure" class="form-control select2 act" style="width:100%">
+                                                                    <select name='flagprocedure' id="pvflagprocedure" class="form-select select2 act" style="width:100%">
                                                                         <option value="0">Prosedur Tidak Berkelanjutan</option>
                                                                         <option value="1">Prosedur dan Terapi Berkelanjutan</option>
                                                                         <option value="99">-</option>
@@ -646,7 +637,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-3 col-xs-12 mb-3">
                                                             <div class="form-group"><label for="pvassesmentpelgroup">Assesment Pelayanan</label>
                                                                 <div>
-                                                                    <select name='assesmentpel' id="pvassesmentpel" class="form-control select2 act" style="width:100%">
+                                                                    <select name='assesmentpel' id="pvassesmentpel" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
                                                                         <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
                                                                         <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
@@ -739,7 +730,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvpenjamin">Penjamin Lakalantas</label>
                                                                 <div>
-                                                                    <select name="penjamin" id="pvpenjamin" class="form-control" style="width:100%" multiple>
+                                                                    <select name="penjamin" id="pvpenjamin" class="form-select" style="width:100%" multiple>
                                                                         <option value="0">Pribadi</option>
                                                                         <option value="1">Jasa Raharja PT</option>
                                                                         <option value="2">BPJS Ketenagakerjaan</option>
@@ -752,7 +743,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="lokasilaka">Lokasi Laka</label>
                                                                 <div class="p-2 select2-full-width">
-                                                                    <select class="form-control patient_list_ajax" name='pvlokasilaka' id="lokasilaka">
+                                                                    <select class="form-select patient_list_ajax" name='pvlokasilaka' id="lokasilaka">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -760,7 +751,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="pvispertarif">Suplesi</label>
                                                                 <div>
-                                                                    <select name='ispertarif' id="pvispertarif" class="form-control select2 act" style="width:100%">
+                                                                    <select name='ispertarif' id="pvispertarif" class="form-select select2 act" style="width:100%">
                                                                         <option value="1">Ya</option>
                                                                         <option value="0">Tidak</option>
                                                                     </select>
@@ -809,7 +800,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="skdpkddpjp">Dokter</label>
                                                                 <div>
-                                                                    <select name="skdpkddpjp" id="skdpkddpjp" class="form-control" style="width:100%">
+                                                                    <select name="skdpkddpjp" id="skdpkddpjp" class="form-select" style="width:100%">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -817,7 +808,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-2 col-xs-4 mb-3">
                                                             <div class="form-group"><label for="skdpkdpoli">Poli Kontrol</label>
                                                                 <div>
-                                                                    <select name="skdpkdpoli" id="skdpkdpoli" class="form-control" style="width:100%">
+                                                                    <select name="skdpkdpoli" id="skdpkdpoli" class="form-select" style="width:100%">
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -877,7 +868,7 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                                             <div class="form-group"><label for="sprikddpjp">Dokter</label>
                                                                 <div>
-                                                                    <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
+                                                                    <select name="sprikddpjp" id="sprikddpjp" class="form-select" style="width:100%">
                                                                         <?php $dpjplist = array();
                                                                         foreach ($dokter as $key => $value) {
                                                                             foreach ($value as $key1 => $value1) {
@@ -904,12 +895,12 @@ $permissions = user()->getPermissions();
                                                         <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                                             <div class="form-group"><label for="sprikdpoli">Poli Kontrol</label>
                                                                 <div>
-                                                                    <select name="sprikdpoli" id="sprikdpoli" class="form-control" style="width:100%">
+                                                                    <select name="sprikdpoli" id="sprikdpoli" class="form-select" style="width:100%">
                                                                         <?php
                                                                         $clinicList = array();
                                                                         foreach ($clinic as $key => $value) {
                                                                             if ($value['stype_id'] == '1') {
-                                                                                $clinicList[$value['other_id']] = $value['name_of_clinic'];
+                                                                                $clinicList[@$value['other_id']] = @$value['name_of_clinic'];
                                                                         ?>
                                                                         <?php
                                                                             }

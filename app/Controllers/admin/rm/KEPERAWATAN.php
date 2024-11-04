@@ -662,7 +662,11 @@ class keperawatan extends \App\Controllers\BaseController
                     ei.TEMPERATURE AS Suhu,
                     ei.NAFAS as respiration,
                     ei.SATURASI AS SPO2,
-                    EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
+                    CASE 
+						WHEN EI.HEIGHT IS NOT NULL AND EI.HEIGHT > 0 
+						THEN EI.WEIGHT / ( (CAST(EI.HEIGHT AS DECIMAL(5,2)) / CAST(100 AS DECIMAL(5,2))) * (CAST(EI.HEIGHT AS DECIMAL(5,2)) / CAST(100 AS DECIMAL(5,2))) )
+						ELSE NULL -- or 0, or another appropriate value
+					END AS IMT,
                     isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
                     where ASSESSMENT_FALL_RISK.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
 					isnull((select top(1) ASSESSMENT_FALL_RISK.DESCRIPTION from ASSESSMENT_FALL_RISK
@@ -948,26 +952,26 @@ class keperawatan extends \App\Controllers\BaseController
             $db = db_connect();
             $select = $this->lowerKey($db->query(
                 "
-            select ei.examination_date ,
+            select convert(varchar, ei.examination_date, 100) as examination_date ,
             case when ea2.specialist_type_id = '20' then 'D'
             when ea2.OBJECT_CATEGORY_ID = '21' then 'P'
             when ea2.OBJECT_CATEGORY_ID = '22' then 'Far'
             when ea2.OBJECT_CATEGORY_ID = '23' then 'B'
                 when ea2.OBJECT_CATEGORY_ID = '24' then 'G'
                 when ea2.OBJECT_CATEGORY_ID = '25' then 'Fis'
-                else '' end as kode_PPA,
+                else '' end as kode_ppa,
                 case when ea2.FULLNAME is null then ei.modified_by else ea2.fullname end as nama_ppa ,
                 ei.ANAMNASE as Subyectif,
                 'BB : ' + cast(WEIGHT as varchar(10))  + 'Kg , ' +'TB : ' + cast(height as varchar(10)) + ' cm , ' +
             'Tensi : '+ cast(TENSION_UPPER as varchar(10)) + ' / ' + cast(TENSION_BELOW as varchar(10)) + ' mmHg , ' + 
             'Nadi : ' + cast(nadi as varchar(10)) + ' /mnt , ' + 'RR : ' + cast(NAFAS as varchar(10)) + ' /mnt , ' + ' SpO2 : ' + 
             cast(saturasi as varchar(10)) + ' % ' 
-            + ' Keadaan Umum : ' + ei.ALO_ANAMNASE  as obyektif,
-                ei.DESCRIPTION as asesmen,
+            + ' Keadaan Umum : ' + isnull(ei.ALO_ANAMNASE, '')  as obyektif,
+                ei.teraphy_desc as asesmen,
                 ei.instruction as  planning,
                 ei.examination_date as tanggal_dibuat,
                 ei.valid_date as tanggal_konfirm,
-                case when ei.valid_user is null or ei.valid_user = '' then '' else ea.fullname end as konfirm_oleh
+                case when ei.valid_user is null or ei.valid_user = '' then '' else isnull(ea.fullname, ei.modified_by) end as konfirm_oleh
 
             from examination_info ei
             left outer join employee_all ea on ei.employee_id = ea.employee_id
@@ -977,6 +981,7 @@ class keperawatan extends \App\Controllers\BaseController
             visit_id  = '{$visit['visit_id']}'
             and NO_REGISTRATION = '{$visit['no_registration']}'
             and ei.account_id in ('3','4')
+            order by examination_date desc
             "
             )->getResultArray());
 
@@ -1028,7 +1033,7 @@ class keperawatan extends \App\Controllers\BaseController
 				'Resiko Jatuh : ' + COALESCE(CAST(afr.total_score AS VARCHAR(10)), 'tidak ada resiko jatuh') + ' , ' +
 				'GCS : ' + COALESCE(CAST(gcs.GCS_DESC AS VARCHAR(10)), '-') + ' , ' +
 				' Keadaan Umum : ' + ei.ALO_ANAMNASE  as obyektif,
-                ei.DESCRIPTION as asesmen,
+                ei.teraphy_desc as asesmen,
                 ei.instruction as  planning,
                 ei.examination_date as tanggal_dibuat,
                 ei.valid_date as tanggal_konfirm,
@@ -1042,9 +1047,8 @@ class keperawatan extends \App\Controllers\BaseController
 			left outer join ASSESSMENT_FALL_RISK afr on ei.body_id = afr.DOCUMENT_ID
             left outer join employee_all ea on ei.employee_id = ea.employee_id
             where
-            visit_id  = '{$visit['visit_id']}'
-            and NO_REGISTRATION = '{$visit['no_registration']}'
-            and vs_status_id in('2','7')
+            ei.visit_id  = '{$visit['visit_id']}'
+            and ei.NO_REGISTRATION = '{$visit['no_registration']}'
 
 			order by tanggal_dibuat desc
             "
@@ -1053,24 +1057,359 @@ class keperawatan extends \App\Controllers\BaseController
             $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
             $selectinfo = $visit;
 
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/9-cppt-ralan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select,
-                    "organization" => $selectorganization,
-                    "info" => $selectinfo
-
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/9-cppt-ralan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "organization" => $selectorganization
-                ]);
-            }
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/9-cppt-ralan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "val" => $select,
+                "organization" => $selectorganization,
+                "info" => $selectinfo
+            ]);
+            // if (isset($select[0])) {
+            // } else {
+            //     return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/9-cppt-ralan.php", [
+            //         "visit" => $visit,
+            //         'title' => $title,
+            //         "organization" => $selectorganization
+            //     ]);
+            // }
         }
     }
+    // private function getData_sdki()
+    // {
+    //     $formData = $this->request->getJSON();
+    //     $diag_id = "D.0001";
+    //     $id =  "20240819040438075";
+    //     $visit_id = "202408030838210037799";
+
+    //     $db = db_connect();
+
+    //     $date = isset($formData->date) ? $formData->date : '';
+    //     $dateSiki = isset($formData->dateSiki) ? $formData->dateSiki : '';
+
+    //     //check diagnosan id tersedia atau tidak di sdki luaran
+    //     $checkSDKI = $this->lowerKey($db->query("
+    //     SELECT
+    //     DIAGNOSAN_ID
+    //     FROM ASKEP_SDKI_LUARAN WHERE DIAGNOSAN_ID = '" . $diag_id . "'
+    //     ")->getResultArray());
+    //     if (empty($checkSDKI)) {
+    //         return $this->response->setJSON([
+    //             'message' => 'Data Kosong',
+    //             'respon' => false
+    //         ]);
+    //     }
+
+
+    //     $queryAskepSdkiPenyebab = $this->lowerKey($db->query("SELECT
+    //                                                         ASKEP_SDKI.DIAGNOSAN_ID AS diag_id
+    //                                                         , 'Penyebab'
+    //                                                         AS child_parent
+    //                                                         , ASKEP_SDKI.DIAGNOSAN_NAME AS diag_name
+    //                                                         , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY_ID AS diag_val_id
+    //                                                         , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY AS diag_val_name
+    //                                                         , ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE AS type
+    //                                                         , MAX(
+    //                                                             CASE WHEN ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE = ASKEP_ETIOLOGY_TYPE.ETIOLOGY_TYPE THEN ASKEP_ETIOLOGY_TYPE.ETIOLOGYTYPE ELSE ''
+    //                                                             END
+    //                                                         ) AS type_name
+    //                                                         , MAX(
+    //                                                             CASE WHEN ASKEP_SDKI_DETAIL.DETAIL_ID IS NOT NULL THEN 1 ELSE 0 END
+    //                                                         ) AS checked FROM ASKEP_SDKI INNER JOIN ASKEP_SDKI_ETIOLOGY ON ASKEP_SDKI.DIAGNOSAN_ID = ASKEP_SDKI_ETIOLOGY
+    //                                                         .DIAGNOSAN_ID INNER JOIN ASKEP_ETIOLOGY_TYPE ON ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE = ASKEP_ETIOLOGY_TYPE
+    //                                                         .ETIOLOGY_TYPE INNER JOIN ASKEP_CATEGORY ON ASKEP_SDKI.ASKEP_CAT = ASKEP_CATEGORY.ASKEP_CAT LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_ETIOLOGY
+    //                                                         .DIAGNOSAN_ETIOLOGY_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL.DOCUMENT_ID = '$id'
+    //                                                         WHERE ASKEP_SDKI.DIAGNOSAN_ID = '$diag_id'
+    //                                                         GROUP BY ASKEP_SDKI.DIAGNOSAN_ID
+    //                                                         , ASKEP_SDKI.DIAGNOSAN_NAME
+    //                                                         , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY_ID
+    //                                                         , ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE
+    //                                                         , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY;")->getResultArray());
+
+    //     $queryAskepSdkiGejala = $this->lowerKey($db->query("SELECT
+    //                                                         ASKEP_SDKI_symptom.DIAGNOSAN_ID AS diag_id
+    //                                                         , 'Gejala'
+    //                                                         AS child_parent
+    //                                                         , ASKEP_SDKI.DIAGNOSAN_NAME AS diag_name
+    //                                                         , ASKEP_SYMPTOM_TYPE.SYMPTOM_TYPE AS type
+    //                                                         , ASKEP_SYMPTOM_TYPE.SYMPTOMTYPE AS type_name
+    //                                                         , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID AS diag_val_id
+    //                                                         , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM AS diag_val_name
+    //                                                         , MAX(
+    //                                                             CASE WHEN ASKEP_SDKI_DETAIL.DETAIL_ID IS NOT NULL THEN 1 ELSE 0 END
+    //                                                         ) AS checked FROM ASKEP_SDKI_symptom INNER JOIN ASKEP_SYMPTOM_TYPE ON ASKEP_SDKI_symptom.SYMPTOM_TYPE = ASKEP_SYMPTOM_TYPE
+    //                                                         .SYMPTOM_TYPE INNER JOIN ASKEP_SDKI ON ASKEP_SDKI_symptom.DIAGNOSAN_ID = ASKEP_SDKI
+    //                                                         .DIAGNOSAN_ID LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL
+    //                                                         .DOCUMENT_ID = '$id'
+    //                                                         WHERE ASKEP_SDKI_symptom.DIAGNOSAN_ID = '$diag_id'
+    //                                                         GROUP BY ASKEP_SDKI_symptom.DIAGNOSAN_ID
+    //                                                         , ASKEP_SDKI.DIAGNOSAN_NAME
+    //                                                         , ASKEP_SYMPTOM_TYPE.SYMPTOM_TYPE
+    //                                                         , ASKEP_SYMPTOM_TYPE.SYMPTOMTYPE
+    //                                                         , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID
+    //                                                         , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM;")->getResultArray());
+
+    //     $queryAskepSlkiTopDate = $db->query("SELECT TOP 1  RESULT_DATE
+    //                                         FROM ASKEP_SDKI_LUARAN_RESULTS
+    //                                         WHERE document_id = '$id'
+    //                                         ORDER BY RESULT_DATE DESC")->getRowArray()['RESULT_DATE'] ?? null;
+
+
+    //     $queryAskepSlki = $db->query("SELECT 
+    //                                     ASKEP_SDKI_LUARAN.DIAGNOSAN_ID AS diag_id,
+    //                                     ASKEP_SDKI_LUARAN.LUARAN_NAME AS diag_name,
+    //                                     ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE AS type,
+    //                                     ASKEP_RELATIONAL_TYPE.RELATIONALTYPE AS type_name,
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA_ID AS diag_val_id,
+    //                                     ASKEP_SLKI_KRITERIA.P_TYPE AS p_type,
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA AS diag_val_name,
+    //                                     MAX(CASE 
+    //                                         WHEN DATEPART(YEAR, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(YEAR, '$date')
+    //                                         AND DATEPART(MONTH, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(MONTH, '$date')
+    //                                         AND DATEPART(DAY, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(DAY, '$date')
+    //                                         AND DATEPART(HOUR, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(HOUR, '$date')
+    //                                         THEN ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE
+    //                                         ELSE ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE
+    //                                     END) AS RESULT_DATE,
+    //                                     MAX(CASE 
+    //                                         WHEN ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE IS NOT NULL 
+    //                                         THEN 1 
+    //                                         ELSE 0 
+    //                                     END) AS checked
+    //                                 FROM 
+    //                                     ASKEP_SDKI_LUARAN
+    //                                     INNER JOIN ASKEP_RELATIONAL_TYPE 
+    //                                         ON ASKEP_SDKI_LUARAN.RELATIONAL_TYPE = ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE
+    //                                     INNER JOIN ASKEP_SLKI_KRITERIA 
+    //                                         ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID 
+    //                                     LEFT JOIN ASKEP_SDKI_LUARAN_RESULTS 
+    //                                         ON ASKEP_SLKI_KRITERIA.KRITERIA_ID = ASKEP_SDKI_LUARAN_RESULTS.KRITERIA_ID
+    //                                         AND ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE = 
+    //                                             COALESCE(
+    //                                                 (SELECT TOP 1 RESULT_DATE
+    //                                                 FROM ASKEP_SDKI_LUARAN_RESULTS
+    //                                                 WHERE document_id = '$id'
+    //                                                 AND DATEPART(YEAR, RESULT_DATE) = DATEPART(YEAR, '$date')
+    //                                                 AND DATEPART(MONTH, RESULT_DATE) = DATEPART(MONTH, '$date')
+    //                                                 AND DATEPART(DAY, RESULT_DATE) = DATEPART(DAY, '$date')
+    //                                                 AND DATEPART(HOUR, RESULT_DATE) = DATEPART(HOUR, '$date')
+    //                                                 ORDER BY RESULT_DATE DESC),
+    //                                                 (SELECT TOP 1 RESULT_DATE
+    //                                                 FROM ASKEP_SDKI_LUARAN_RESULTS
+    //                                                 WHERE document_id = '$id'
+    //                                                 ORDER BY RESULT_DATE DESC)
+    //                                             )
+    //                                 WHERE 
+    //                                     ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$diag_id'
+    //                                 GROUP BY 
+    //                                     ASKEP_SDKI_LUARAN.DIAGNOSAN_ID,
+    //                                     ASKEP_SDKI_LUARAN.LUARAN_NAME,
+    //                                     ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE,
+    //                                     ASKEP_RELATIONAL_TYPE.RELATIONALTYPE,
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA,
+    //                                     ASKEP_SLKI_KRITERIA.P_TYPE;")->getResultArray();
+
+
+
+    //     if (empty($queryAskepSlki)) {
+    //         $queryAskepSlkiEmpty = $db->query("
+    //                     select KRITERIA_ID AS diag_val_id from ASKEP_SDKI_LUARAN 
+    //                     INNER JOIN ASKEP_SLKI_KRITERIA ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID
+    //                     WHERE ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$diag_id' ORDER BY diag_val_id")->getResultArray();
+    //         $criteriaIds = array_column($queryAskepSlkiEmpty, 'diag_val_id');
+    //         $criteriaIds = array_map('intval', $criteriaIds);
+    //     } else {
+    //         $criteriaIds = array_column($queryAskepSlki, 'diag_val_id');
+    //         $criteriaIds = array_map('intval', $criteriaIds);
+    //     }
+
+    //     $queryDropdown = $db->query("SELECT 
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+    //                                     ASKEP_SLKI_KRITERIA.P_TYPE,
+    //                                     ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID,  
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_ID,     
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_DESC,
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE,
+    //                                     COALESCE(MAX(
+    //                                         CASE 
+    //                                             WHEN ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASKEP_SDKI_LUARAN_RESULTS.PARAMETER_ID
+    //                                                 AND ASSESSMENT_PARAMETER_VALUE.VALUE_ID = ASKEP_SDKI_LUARAN_RESULTS.VALUE_ID
+    //                                                 AND ASSESSMENT_PARAMETER_VALUE.VALUE_DESC = ASKEP_SDKI_LUARAN_RESULTS.VALUE_DESC
+    //                                                 AND ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE = ASKEP_SDKI_LUARAN_RESULTS.VALUE_SCORE
+    //                                                 AND ASKEP_SLKI_KRITERIA.KRITERIA_ID = ASKEP_SDKI_LUARAN_RESULTS.KRITERIA_ID
+    //                                             THEN 1 
+    //                                             ELSE 0 
+    //                                         END
+    //                                     ), 0) AS selected
+    //                                 FROM 
+    //                                     ASKEP_SLKI_KRITERIA
+    //                                     INNER JOIN ASSESSMENT_PARAMETER_VALUE 
+    //                                         ON ASKEP_SLKI_KRITERIA.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE 
+    //                                         AND ASKEP_SLKI_KRITERIA.PARAMETER_ID = ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID
+    //                                     INNER JOIN ASKEP_SDKI_LUARAN 
+    //                                         ON ASKEP_SLKI_KRITERIA.LUARAN_ID = ASKEP_SDKI_LUARAN.LUARAN_ID
+    //                                     LEFT JOIN ASKEP_SDKI_LUARAN_RESULTS 
+    //                                         ON ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASKEP_SDKI_LUARAN_RESULTS.PARAMETER_ID
+    //                                         AND ASSESSMENT_PARAMETER_VALUE.VALUE_ID = ASKEP_SDKI_LUARAN_RESULTS.VALUE_ID
+    //                                         AND ASSESSMENT_PARAMETER_VALUE.VALUE_DESC = ASKEP_SDKI_LUARAN_RESULTS.VALUE_DESC
+    //                                         AND ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE = ASKEP_SDKI_LUARAN_RESULTS.VALUE_SCORE
+    //                                         AND ASKEP_SDKI_LUARAN_RESULTS.DOCUMENT_ID = '$id'
+    //                                         AND ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE = 
+    //                                             COALESCE(
+    //                                                 (
+    //                                                     SELECT TOP 1 RESULT_DATE
+    //                                                     FROM ASKEP_SDKI_LUARAN_RESULTS
+    //                                                     WHERE DOCUMENT_ID = '$id'
+    //                                                     AND DATEPART(YEAR, RESULT_DATE) = DATEPART(YEAR, '$date')
+    //                                                     AND DATEPART(MONTH, RESULT_DATE) = DATEPART(MONTH, '$date')
+    //                                                     AND DATEPART(DAY, RESULT_DATE) = DATEPART(DAY, '$date')
+    //                                                     AND DATEPART(HOUR, RESULT_DATE) = DATEPART(HOUR, '$date')
+    //                                                     ORDER BY RESULT_DATE DESC
+    //                                                 ),
+    //                                                 (
+    //                                                     SELECT TOP 1 RESULT_DATE
+    //                                                     FROM ASKEP_SDKI_LUARAN_RESULTS
+    //                                                     WHERE DOCUMENT_ID = '$id'
+    //                                                     ORDER BY RESULT_DATE DESC
+    //                                                 )
+    //                                             )
+    //                                 WHERE 
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA_ID IN (" . implode(',', $criteriaIds) . ")  AND ASKEP_SLKI_KRITERIA.LUARAN_ID = 'L.01001'
+    //                                 GROUP BY 
+    //                                     ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+    //                                     ASKEP_SLKI_KRITERIA.P_TYPE,
+    //                                     ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID,
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_ID,     
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_DESC,
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE
+    //                                 ORDER BY 
+    //                                     ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE ASC;")->getResultArray();
+
+    //     $slkiData = [];
+    //     foreach ($queryAskepSlki as $slki) {
+    //         $diag_val_id = $slki['diag_val_id'];
+    //         if (!isset($slkiData[$diag_val_id])) {
+    //             $slkiData[$diag_val_id] = [
+    //                 'result_date' => $slki['RESULT_DATE'],
+    //                 'diag_id' => $slki['diag_id'],
+    //                 'diag_name' => $slki['diag_name'],
+    //                 'type' => $slki['type'],
+    //                 'type_name' => $slki['type_name'],
+    //                 'diag_val_id' => $slki['diag_val_id'],
+    //                 'diag_val_name' => $slki['diag_val_name'],
+    //                 'p_type' => $slki['p_type'],
+    //                 'checked' => $slki['checked'],
+    //                 'selected' => []
+    //             ];
+    //         }
+    //     }
+
+    //     foreach ($queryDropdown as $dropdown) {
+    //         $diag_val_id = $dropdown['KRITERIA_ID'];
+    //         if (isset($slkiData[$diag_val_id])) {
+    //             $slkiData[$diag_val_id]['selected'][] = [
+    //                 'kriteria_id' => $dropdown['KRITERIA_ID'],
+    //                 'p_type' => $dropdown['P_TYPE'],
+    //                 'value_desc' => $dropdown['VALUE_DESC'],
+    //                 'value_score' => $dropdown['VALUE_SCORE'],
+    //                 'selected' => $dropdown['selected'],
+    //                 'parameter_id' => $dropdown['PARAMETER_ID'],
+    //                 'value_id' => $dropdown['VALUE_ID']
+    //             ];
+    //         }
+    //     }
+
+    //     $queryAskepSikiTopDate = $db->query("SELECT TOP 1  INTERVENSI_DATE
+    //                                         FROM ASKEP_SDKI_INTERVENSI_RESULTS
+    //                                         WHERE document_id = '$id'
+    //                                         ORDER BY INTERVENSI_DATE DESC")->getRowArray()['INTERVENSI_DATE'] ?? null;
+
+    //     $queryAskepSiki = $db->query("SELECT 
+    //                                     ASKEP_SIKI.INTERVENSI_ID AS DIAG_ID,
+    //                                     ASKEP_SIKI.INTERVENSI_NAME AS DIAG_NAME,
+    //                                     ASKEP_SIKI_TYPE.SIKI_TYPE AS TYPE,
+    //                                     ASKEP_SIKI_TYPE.SIKITYPE AS TYPE_NAME,
+    //                                     ASKEP_SIKI_TINDAKAN.TINDAKAN_ID AS DIAG_VAL_ID,
+    //                                     ASKEP_SIKI_TINDAKAN.TINDAKAN AS DIAG_VAL_NAME,
+    //                                     MAX(CASE 
+    //                                         WHEN DATEPART(YEAR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+    //                                         AND DATEPART(MONTH, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+    //                                         AND DATEPART(DAY, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+    //                                         AND DATEPART(HOUR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+    //                                         THEN ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+    //                                         ELSE ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+    //                                     END) AS RESULT_DATE,
+    //                                     MAX(CASE 
+    //                                         WHEN ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID IS NOT NULL 
+    //                                         THEN 1 
+    //                                         ELSE 0 
+    //                                     END) AS checked
+    //                                 FROM 
+    //                                     ASKEP_SIKI
+    //                                     INNER JOIN ASKEP_SIKI_TINDAKAN 
+    //                                         ON ASKEP_SIKI.INTERVENSI_ID = ASKEP_SIKI_TINDAKAN.INTERVENSI_ID
+    //                                     INNER JOIN ASKEP_SIKI_TYPE 
+    //                                         ON ASKEP_SIKI_TINDAKAN.SIKI_TYPE = ASKEP_SIKI_TYPE.SIKI_TYPE
+    //                                     LEFT JOIN ASKEP_SDKI_INTERVENSI_RESULTS 
+    //                                         ON ASKEP_SIKI_TINDAKAN.TINDAKAN_ID = ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID
+    //                                         AND ASKEP_SDKI_INTERVENSI_RESULTS.DOCUMENT_ID = '$id'
+    //                                         AND ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE = 
+    //                                             COALESCE(
+    //                                                 (SELECT TOP 1 INTERVENSI_DATE
+    //                                                 FROM ASKEP_SDKI_INTERVENSI_RESULTS
+    //                                                 WHERE DOCUMENT_ID = '$id'
+    //                                                 AND DATEPART(YEAR, INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+    //                                                 AND DATEPART(MONTH, INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+    //                                                 AND DATEPART(DAY, INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+    //                                                 AND DATEPART(HOUR, INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+    //                                                 ORDER BY INTERVENSI_DATE DESC),
+    //                                                 (SELECT TOP 1 INTERVENSI_DATE
+    //                                                 FROM ASKEP_SDKI_INTERVENSI_RESULTS
+    //                                                 WHERE DOCUMENT_ID = '$id'
+    //                                                 ORDER BY INTERVENSI_DATE DESC)
+    //                                             )
+    //                                 WHERE 
+    //                                     ASKEP_SIKI.INTERVENSI_ID IN ('1.01014', '1.01011')
+    //                                 GROUP BY 
+    //                                     ASKEP_SIKI.INTERVENSI_ID,
+    //                                     ASKEP_SIKI.INTERVENSI_NAME,
+    //                                     ASKEP_SIKI_TYPE.SIKI_TYPE,
+    //                                     ASKEP_SIKI_TYPE.SIKITYPE,
+    //                                     ASKEP_SIKI_TINDAKAN.TINDAKAN_ID,
+    //                                     ASKEP_SIKI_TINDAKAN.TINDAKAN;
+
+    //                         ")->getResultArray();
+
+    //     $slkiData = array_values($slkiData);
+    //     $sdkiPenyebab = $this->lowerKey($queryAskepSdkiPenyebab);
+    //     $sdkiGejala = $this->lowerKey($queryAskepSdkiGejala);
+    //     $queryAskepSiki = $this->lowerKey($queryAskepSiki);
+    //     $hasData = !empty($sdkiPenyebab);
+    //     $resultDateSlki = $queryAskepSlkiTopDate ?? Null;
+    //     $resultDateSiki = $queryAskepSikiTopDate ?? Null;
+
+
+    //     $responseData = [
+    //         'sdki' => [
+    //             'penyebab' => $sdkiPenyebab ?? [],
+    //             'Gejala' => $sdkiGejala ?? [],
+    //         ],
+    //         'slki' => [
+    //             'date' => $resultDateSlki,
+    //             'data' => $slkiData
+    //         ],
+    //         'siki' => [
+    //             'diag_id' => $queryAskepSdkiPenyebab[0]['diag_id'],
+    //             'date' => $resultDateSiki,
+    //             'data' => $queryAskepSiki
+    //         ]
+    //     ];
+    //     $formattedResponseData = $this->lowerKey($responseData);
+    //     return  $formattedResponseData;
+    //     // return $this->response->setStatusCode(200)->setJSON([
+    //     //     'message' => $hasData ? 'Data retrieved successfully.' : 'No data found.', 'respon' => $hasData, 'document_id' => isset($id) ? $id : null, 'value' => $formattedResponseData
+    //     // ]);
+    // }
     public function diagnosis_keperawatan($visit, $vactination_id = null)
     {
         $title = "Diagnosis Keperawatan - Bersihan Jalan Nafas Tidak Efektif";
@@ -1078,42 +1417,362 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/10-diagnosis-keperawatan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/10-diagnosis-keperawatan.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
-            }
+            $dataRequest = [];
+            $kopprintData = $this->kopprint();
+
+            $data = $this->getData_sdki($visit);
+
+
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/10-diagnosis-keperawatan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'data' => $data,
+                'kop' => $kopprintData[0],
+                // 'sdki' =>$sdki,
+                // 'slki' =>$slki,
+                // 'siki' =>$siki,
+            ]);
         }
     }
-    public function edukasi_obat($visit, $vactination_id = null)
+
+    private function getData_sdki($visit)
     {
-        $title = "Edukasi Obat Oleh Apoteker";
-        if ($this->request->is('get')) {
-            $visit = base64_decode($visit);
-            $visit = json_decode($visit, true);
-            $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/12-edukasi-obat.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/12-edukasi-obat.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
+        $formData = $this->request->getJSON();
+        $diag_id = "D.0001";
+        $diag_id = $visit['d_diag_id'];
+
+        $id =  $visit['d_id'];
+        // $id =  "20240819040438075";
+        $visit_id = "202408030838210037799";
+
+        $db = db_connect();
+
+        $date = isset($formData->date) ? $formData->date : '';
+        $dateSiki = isset($formData->dateSiki) ? $formData->dateSiki : '';
+
+        //check diagnosan id tersedia atau tidak di sdki luaran
+        $checkSDKI = $this->lowerKey($db->query("
+        SELECT
+        DIAGNOSAN_ID
+        FROM ASKEP_SDKI_LUARAN WHERE DIAGNOSAN_ID = '" . $diag_id . "'
+        ")->getResultArray());
+        if (empty($checkSDKI)) {
+            return $this->response->setJSON([
+                'message' => 'Data Kosong',
+                'respon' => false
+            ]);
+        }
+
+
+        $queryAskepSdkiPenyebab = $this->lowerKey($db->query("SELECT
+                                                            ASKEP_SDKI.DIAGNOSAN_ID AS diag_id
+                                                            , 'Penyebab'
+                                                            AS child_parent
+                                                            , ASKEP_SDKI.DIAGNOSAN_NAME AS diag_name
+                                                            , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY_ID AS diag_val_id
+                                                            , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY AS diag_val_name
+                                                            , ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE AS type
+                                                            , MAX(
+                                                                CASE WHEN ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE = ASKEP_ETIOLOGY_TYPE.ETIOLOGY_TYPE THEN ASKEP_ETIOLOGY_TYPE.ETIOLOGYTYPE ELSE ''
+                                                                END
+                                                            ) AS type_name
+                                                            , MAX(
+                                                                CASE WHEN ASKEP_SDKI_DETAIL.DETAIL_ID IS NOT NULL THEN 1 ELSE 0 END
+                                                            ) AS checked FROM ASKEP_SDKI INNER JOIN ASKEP_SDKI_ETIOLOGY ON ASKEP_SDKI.DIAGNOSAN_ID = ASKEP_SDKI_ETIOLOGY
+                                                            .DIAGNOSAN_ID INNER JOIN ASKEP_ETIOLOGY_TYPE ON ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE = ASKEP_ETIOLOGY_TYPE
+                                                            .ETIOLOGY_TYPE INNER JOIN ASKEP_CATEGORY ON ASKEP_SDKI.ASKEP_CAT = ASKEP_CATEGORY.ASKEP_CAT LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_ETIOLOGY
+                                                            .DIAGNOSAN_ETIOLOGY_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL.DOCUMENT_ID = '$id'
+                                                            WHERE ASKEP_SDKI.DIAGNOSAN_ID = '$diag_id'
+                                                            GROUP BY ASKEP_SDKI.DIAGNOSAN_ID
+                                                            , ASKEP_SDKI.DIAGNOSAN_NAME
+                                                            , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY_ID
+                                                            , ASKEP_SDKI_ETIOLOGY.ETIOLOGY_TYPE
+                                                            , ASKEP_SDKI_ETIOLOGY.DIAGNOSAN_ETIOLOGY;")->getResultArray());
+
+        $queryAskepSdkiGejala = $this->lowerKey($db->query("SELECT
+                                                            ASKEP_SDKI_symptom.DIAGNOSAN_ID AS diag_id
+                                                            , 'Gejala'
+                                                            AS child_parent
+                                                            , ASKEP_SDKI.DIAGNOSAN_NAME AS diag_name
+                                                            , ASKEP_SYMPTOM_TYPE.SYMPTOM_TYPE AS type
+                                                            , ASKEP_SYMPTOM_TYPE.SYMPTOMTYPE AS type_name
+                                                            , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID AS diag_val_id
+                                                            , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM AS diag_val_name
+                                                            , MAX(
+                                                                CASE WHEN ASKEP_SDKI_DETAIL.DETAIL_ID IS NOT NULL THEN 1 ELSE 0 END
+                                                            ) AS checked FROM ASKEP_SDKI_symptom INNER JOIN ASKEP_SYMPTOM_TYPE ON ASKEP_SDKI_symptom.SYMPTOM_TYPE = ASKEP_SYMPTOM_TYPE
+                                                            .SYMPTOM_TYPE INNER JOIN ASKEP_SDKI ON ASKEP_SDKI_symptom.DIAGNOSAN_ID = ASKEP_SDKI
+                                                            .DIAGNOSAN_ID LEFT JOIN ASKEP_SDKI_DETAIL ON ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID = ASKEP_SDKI_DETAIL.DETAIL_ID AND ASKEP_SDKI_DETAIL
+                                                            .DOCUMENT_ID = '$id'
+                                                            WHERE ASKEP_SDKI_symptom.DIAGNOSAN_ID = '$diag_id'
+                                                            GROUP BY ASKEP_SDKI_symptom.DIAGNOSAN_ID
+                                                            , ASKEP_SDKI.DIAGNOSAN_NAME
+                                                            , ASKEP_SYMPTOM_TYPE.SYMPTOM_TYPE
+                                                            , ASKEP_SYMPTOM_TYPE.SYMPTOMTYPE
+                                                            , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM_ID
+                                                            , ASKEP_SDKI_symptom.DIAGNOSAN_SYMPTOM;")->getResultArray());
+
+        $queryAskepSlkiTopDate = $db->query("SELECT TOP 1  RESULT_DATE
+                                            FROM ASKEP_SDKI_LUARAN_RESULTS
+                                            WHERE document_id = '$id'
+                                            ORDER BY RESULT_DATE DESC")->getRowArray()['RESULT_DATE'] ?? null;
+
+
+        $queryAskepSlki = $db->query("SELECT 
+                                        ASKEP_SDKI_LUARAN.DIAGNOSAN_ID AS diag_id,
+                                        ASKEP_SDKI_LUARAN.LUARAN_NAME AS diag_name,
+                                        ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE AS type,
+                                        ASKEP_RELATIONAL_TYPE.RELATIONALTYPE AS type_name,
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID AS diag_val_id,
+                                        ASKEP_SLKI_KRITERIA.P_TYPE AS p_type,
+                                        ASKEP_SLKI_KRITERIA.KRITERIA AS diag_val_name,
+                                        MAX(CASE 
+                                            WHEN DATEPART(YEAR, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(YEAR, '$date')
+                                            AND DATEPART(MONTH, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(MONTH, '$date')
+                                            AND DATEPART(DAY, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(DAY, '$date')
+                                            AND DATEPART(HOUR, ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE) = DATEPART(HOUR, '$date')
+                                            THEN ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE
+                                            ELSE ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE
+                                        END) AS RESULT_DATE,
+                                        MAX(CASE 
+                                            WHEN ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE IS NOT NULL 
+                                            THEN 1 
+                                            ELSE 0 
+                                        END) AS checked
+                                    FROM 
+                                        ASKEP_SDKI_LUARAN
+                                        INNER JOIN ASKEP_RELATIONAL_TYPE 
+                                            ON ASKEP_SDKI_LUARAN.RELATIONAL_TYPE = ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE
+                                        INNER JOIN ASKEP_SLKI_KRITERIA 
+                                            ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID 
+                                        LEFT JOIN ASKEP_SDKI_LUARAN_RESULTS 
+                                            ON ASKEP_SLKI_KRITERIA.KRITERIA_ID = ASKEP_SDKI_LUARAN_RESULTS.KRITERIA_ID
+                                            AND ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE = 
+                                                COALESCE(
+                                                    (SELECT TOP 1 RESULT_DATE
+                                                    FROM ASKEP_SDKI_LUARAN_RESULTS
+                                                    WHERE document_id = '$id'
+                                                    AND DATEPART(YEAR, RESULT_DATE) = DATEPART(YEAR, '$date')
+                                                    AND DATEPART(MONTH, RESULT_DATE) = DATEPART(MONTH, '$date')
+                                                    AND DATEPART(DAY, RESULT_DATE) = DATEPART(DAY, '$date')
+                                                    AND DATEPART(HOUR, RESULT_DATE) = DATEPART(HOUR, '$date')
+                                                    ORDER BY RESULT_DATE DESC),
+                                                    (SELECT TOP 1 RESULT_DATE
+                                                    FROM ASKEP_SDKI_LUARAN_RESULTS
+                                                    WHERE document_id = '$id'
+                                                    ORDER BY RESULT_DATE DESC)
+                                                )
+                                    WHERE 
+                                        ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$diag_id'
+                                    GROUP BY 
+                                        ASKEP_SDKI_LUARAN.DIAGNOSAN_ID,
+                                        ASKEP_SDKI_LUARAN.LUARAN_NAME,
+                                        ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE,
+                                        ASKEP_RELATIONAL_TYPE.RELATIONALTYPE,
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+                                        ASKEP_SLKI_KRITERIA.KRITERIA,
+                                        ASKEP_SLKI_KRITERIA.P_TYPE;")->getResultArray();
+
+
+
+        if (empty($queryAskepSlki)) {
+            $queryAskepSlkiEmpty = $db->query("
+                        select KRITERIA_ID AS diag_val_id from ASKEP_SDKI_LUARAN 
+                        INNER JOIN ASKEP_SLKI_KRITERIA ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID
+                        WHERE ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$diag_id' ORDER BY diag_val_id")->getResultArray();
+            $criteriaIds = array_column($queryAskepSlkiEmpty, 'diag_val_id');
+            $criteriaIds = array_map('intval', $criteriaIds);
+        } else {
+            $criteriaIds = array_column($queryAskepSlki, 'diag_val_id');
+            $criteriaIds = array_map('intval', $criteriaIds);
+        }
+
+        $queryDropdown = $db->query("SELECT 
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+                                        ASKEP_SLKI_KRITERIA.P_TYPE,
+                                        ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID,  
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_ID,     
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_DESC,
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE,
+                                        COALESCE(MAX(
+                                            CASE 
+                                                WHEN ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASKEP_SDKI_LUARAN_RESULTS.PARAMETER_ID
+                                                    AND ASSESSMENT_PARAMETER_VALUE.VALUE_ID = ASKEP_SDKI_LUARAN_RESULTS.VALUE_ID
+                                                    AND ASSESSMENT_PARAMETER_VALUE.VALUE_DESC = ASKEP_SDKI_LUARAN_RESULTS.VALUE_DESC
+                                                    AND ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE = ASKEP_SDKI_LUARAN_RESULTS.VALUE_SCORE
+                                                    AND ASKEP_SLKI_KRITERIA.KRITERIA_ID = ASKEP_SDKI_LUARAN_RESULTS.KRITERIA_ID
+                                                THEN 1 
+                                                ELSE 0 
+                                            END
+                                        ), 0) AS selected
+                                    FROM 
+                                        ASKEP_SLKI_KRITERIA
+                                        INNER JOIN ASSESSMENT_PARAMETER_VALUE 
+                                            ON ASKEP_SLKI_KRITERIA.P_TYPE = ASSESSMENT_PARAMETER_VALUE.P_TYPE 
+                                            AND ASKEP_SLKI_KRITERIA.PARAMETER_ID = ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID
+                                        INNER JOIN ASKEP_SDKI_LUARAN 
+                                            ON ASKEP_SLKI_KRITERIA.LUARAN_ID = ASKEP_SDKI_LUARAN.LUARAN_ID
+                                        LEFT JOIN ASKEP_SDKI_LUARAN_RESULTS 
+                                            ON ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID = ASKEP_SDKI_LUARAN_RESULTS.PARAMETER_ID
+                                            AND ASSESSMENT_PARAMETER_VALUE.VALUE_ID = ASKEP_SDKI_LUARAN_RESULTS.VALUE_ID
+                                            AND ASSESSMENT_PARAMETER_VALUE.VALUE_DESC = ASKEP_SDKI_LUARAN_RESULTS.VALUE_DESC
+                                            AND ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE = ASKEP_SDKI_LUARAN_RESULTS.VALUE_SCORE
+                                            AND ASKEP_SDKI_LUARAN_RESULTS.DOCUMENT_ID = '$id'
+                                            AND ASKEP_SDKI_LUARAN_RESULTS.RESULT_DATE = 
+                                                COALESCE(
+                                                    (
+                                                        SELECT TOP 1 RESULT_DATE
+                                                        FROM ASKEP_SDKI_LUARAN_RESULTS
+                                                        WHERE DOCUMENT_ID = '$id'
+                                                        AND DATEPART(YEAR, RESULT_DATE) = DATEPART(YEAR, '$date')
+                                                        AND DATEPART(MONTH, RESULT_DATE) = DATEPART(MONTH, '$date')
+                                                        AND DATEPART(DAY, RESULT_DATE) = DATEPART(DAY, '$date')
+                                                        AND DATEPART(HOUR, RESULT_DATE) = DATEPART(HOUR, '$date')
+                                                        ORDER BY RESULT_DATE DESC
+                                                    ),
+                                                    (
+                                                        SELECT TOP 1 RESULT_DATE
+                                                        FROM ASKEP_SDKI_LUARAN_RESULTS
+                                                        WHERE DOCUMENT_ID = '$id'
+                                                        ORDER BY RESULT_DATE DESC
+                                                    )
+                                                )
+                                    WHERE 
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID IN (" . implode(',', $criteriaIds) . ")  AND ASKEP_SLKI_KRITERIA.LUARAN_ID = 'L.01001'
+                                    GROUP BY 
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+                                        ASKEP_SLKI_KRITERIA.P_TYPE,
+                                        ASSESSMENT_PARAMETER_VALUE.PARAMETER_ID,
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_ID,     
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_DESC,
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE
+                                    ORDER BY 
+                                        ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE ASC;")->getResultArray();
+
+        $slkiData = [];
+        foreach ($queryAskepSlki as $slki) {
+            $diag_val_id = $slki['diag_val_id'];
+            if (!isset($slkiData[$diag_val_id])) {
+                $slkiData[$diag_val_id] = [
+                    'result_date' => $slki['RESULT_DATE'],
+                    'diag_id' => $slki['diag_id'],
+                    'diag_name' => $slki['diag_name'],
+                    'type' => $slki['type'],
+                    'type_name' => $slki['type_name'],
+                    'diag_val_id' => $slki['diag_val_id'],
+                    'diag_val_name' => $slki['diag_val_name'],
+                    'p_type' => $slki['p_type'],
+                    'checked' => $slki['checked'],
+                    'selected' => []
+                ];
             }
         }
+
+        foreach ($queryDropdown as $dropdown) {
+            $diag_val_id = $dropdown['KRITERIA_ID'];
+            if (isset($slkiData[$diag_val_id])) {
+                $slkiData[$diag_val_id]['selected'][] = [
+                    'kriteria_id' => $dropdown['KRITERIA_ID'],
+                    'p_type' => $dropdown['P_TYPE'],
+                    'value_desc' => $dropdown['VALUE_DESC'],
+                    'value_score' => $dropdown['VALUE_SCORE'],
+                    'selected' => $dropdown['selected'],
+                    'parameter_id' => $dropdown['PARAMETER_ID'],
+                    'value_id' => $dropdown['VALUE_ID']
+                ];
+            }
+        }
+
+        $queryAskepSikiTopDate = $db->query("SELECT TOP 1  INTERVENSI_DATE
+                                            FROM ASKEP_SDKI_INTERVENSI_RESULTS
+                                            WHERE document_id = '$id'
+                                            ORDER BY INTERVENSI_DATE DESC")->getRowArray()['INTERVENSI_DATE'] ?? null;
+
+        $queryAskepSiki = $db->query("SELECT 
+                                        ASKEP_SIKI.INTERVENSI_ID AS DIAG_ID,
+                                        ASKEP_SIKI.INTERVENSI_NAME AS DIAG_NAME,
+                                        ASKEP_SIKI_TYPE.SIKI_TYPE AS TYPE,
+                                        ASKEP_SIKI_TYPE.SIKITYPE AS TYPE_NAME,
+                                        ASKEP_SIKI_TINDAKAN.TINDAKAN_ID AS DIAG_VAL_ID,
+                                        ASKEP_SIKI_TINDAKAN.TINDAKAN AS DIAG_VAL_NAME,
+                                        MAX(CASE 
+                                            WHEN DATEPART(YEAR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+                                            AND DATEPART(MONTH, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+                                            AND DATEPART(DAY, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+                                            AND DATEPART(HOUR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+                                            THEN ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+                                            ELSE ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+                                        END) AS RESULT_DATE,
+                                        MAX(CASE 
+                                            WHEN ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID IS NOT NULL 
+                                            THEN 1 
+                                            ELSE 0 
+                                        END) AS checked
+                                    FROM 
+                                        ASKEP_SIKI
+                                        INNER JOIN ASKEP_SIKI_TINDAKAN 
+                                            ON ASKEP_SIKI.INTERVENSI_ID = ASKEP_SIKI_TINDAKAN.INTERVENSI_ID
+                                        INNER JOIN ASKEP_SIKI_TYPE 
+                                            ON ASKEP_SIKI_TINDAKAN.SIKI_TYPE = ASKEP_SIKI_TYPE.SIKI_TYPE
+                                        LEFT JOIN ASKEP_SDKI_INTERVENSI_RESULTS 
+                                            ON ASKEP_SIKI_TINDAKAN.TINDAKAN_ID = ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID
+                                            AND ASKEP_SDKI_INTERVENSI_RESULTS.DOCUMENT_ID = '$id'
+                                            AND ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE = 
+                                                COALESCE(
+                                                    (SELECT TOP 1 INTERVENSI_DATE
+                                                    FROM ASKEP_SDKI_INTERVENSI_RESULTS
+                                                    WHERE DOCUMENT_ID = '$id'
+                                                    AND DATEPART(YEAR, INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+                                                    AND DATEPART(MONTH, INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+                                                    AND DATEPART(DAY, INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+                                                    AND DATEPART(HOUR, INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+                                                    ORDER BY INTERVENSI_DATE DESC),
+                                                    (SELECT TOP 1 INTERVENSI_DATE
+                                                    FROM ASKEP_SDKI_INTERVENSI_RESULTS
+                                                    WHERE DOCUMENT_ID = '$id'
+                                                    ORDER BY INTERVENSI_DATE DESC)
+                                                )
+                                    WHERE 
+                                        ASKEP_SIKI.INTERVENSI_ID IN ('1.01014', '1.01011')
+                                    GROUP BY 
+                                        ASKEP_SIKI.INTERVENSI_ID,
+                                        ASKEP_SIKI.INTERVENSI_NAME,
+                                        ASKEP_SIKI_TYPE.SIKI_TYPE,
+                                        ASKEP_SIKI_TYPE.SIKITYPE,
+                                        ASKEP_SIKI_TINDAKAN.TINDAKAN_ID,
+                                        ASKEP_SIKI_TINDAKAN.TINDAKAN;
+
+                            ")->getResultArray();
+
+        $slkiData = array_values($slkiData);
+        $sdkiPenyebab = $this->lowerKey($queryAskepSdkiPenyebab);
+        $sdkiGejala = $this->lowerKey($queryAskepSdkiGejala);
+        $queryAskepSiki = $this->lowerKey($queryAskepSiki);
+        $hasData = !empty($sdkiPenyebab);
+        $resultDateSlki = $queryAskepSlkiTopDate ?? Null;
+        $resultDateSiki = $queryAskepSikiTopDate ?? Null;
+
+
+        $responseData = [
+            'sdki' => [
+                'penyebab' => $sdkiPenyebab ?? [],
+                'Gejala' => $sdkiGejala ?? [],
+            ],
+            'slki' => [
+                'date' => $resultDateSlki,
+                'data' => $slkiData
+            ],
+            'siki' => [
+                'diag_id' => $queryAskepSdkiPenyebab[0]['diag_id'],
+                'date' => $resultDateSiki,
+                'data' => $queryAskepSiki
+            ]
+        ];
+        $formattedResponseData = $this->lowerKey($responseData);
+        return  $formattedResponseData;
+        // return $this->response->setStatusCode(200)->setJSON([
+        //     'message' => $hasData ? 'Data retrieved successfully.' : 'No data found.', 'respon' => $hasData, 'document_id' => isset($id) ? $id : null, 'value' => $formattedResponseData
+        // ]);
     }
     public function formulir_edukasi($visit, $vactination_id = null)
     {
@@ -1153,19 +1812,20 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/15-identitas.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/15-identitas.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
-            }
+            $select = [];
+            $kopprintData = $this->kopprint();
+            $selectFamily =  $this->lowerKey($db->query("SELECT F.*, FS.FAMILY_STATUS 
+                                FROM FAMILY F
+                                JOIN FAMILY_STATUS FS ON F.FAMILY_STATUS_ID = FS.FAMILY_STATUS_ID
+                                WHERE F.NO_REGISTRATION = '0086029';")->getResultArray());
+
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/15-identitas.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'kop' => $kopprintData[0],
+                'family_data' => !empty($selectFamily) ? $selectFamily[0] : []
+
+            ]);
         }
     }
     public function igd_anak($visit, $vactination_id = null)
@@ -1926,7 +2586,7 @@ class keperawatan extends \App\Controllers\BaseController
             union all
             select HANDOVER_DATE as tanggal, HANDOVER_BY as tindakan, received_by as respons, ah.BODY_ID as nama, 'handover' as type
             from ASSESSMENT_HANDOVER ah inner join ASSESSMENT_HANDOVER_DETAIL ahd on ah.BODY_ID = ahd.BODY_ID
-            where HANDOVER_BY is not null and HANDOVER_BY != ''--  and visit_id ='{$visit['visit_id']}'
+            where HANDOVER_BY is not null and HANDOVER_BY != ''  and visit_id ='{$visit['visit_id']}'
             order by tanggal;")->getResultArray());
 
             $kopprintData = $this->kopprint();
@@ -1968,5 +2628,52 @@ class keperawatan extends \App\Controllers\BaseController
         $orgUnits = $this->lowerKey($query->getResultArray());
 
         return $orgUnits;
+    }
+
+    public function edukasi_obat($visit, $vactination_id = null)
+    {
+        $title = "Edukasi Obat Oleh Apoteker";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $kopprintData = $this->kopprint();
+            $daftar_obat = $this->lowerKey($db->query("SELECT brand_id,description as nama_obat, description2 as aturanpakai, RESEP_NO from treatment_obat where visit_id ='" . $visit['visit_id'] . "'")->getResultArray());
+            if (empty($daftar_obat)) {
+
+                foreach ($daftar_obat as &$obat) {
+
+                    if (empty($obat['resep_no'])) {
+                        $obat['resep_no'] = $obat['resep_no'];
+                    }
+                }
+            }
+
+            $resep_nos = array_unique(array_column($daftar_obat, 'resep_no'));
+            if (!empty($resep_nos)) {
+
+                $resep_nos_in = "'" . implode("','", $resep_nos) . "'";
+
+                $desc_tutor = $this->lowerKey(
+                    $db->query(
+                        "
+                        SELECT AFE.BODY_ID as resep_no, afe.VALUE_DESC, AP.PARAMETER_DESC, AFE.PARAMETER_ID
+                        FROM ASSESSMENT_FARMASI_EDUKASI afe, ASSESSMENT_PARAMETER AP
+                        WHERE AFE.PARAMETER_ID = AP.PARAMETER_ID 
+                        AND AP.P_TYPE = AFE.P_TYPE
+                        AND afe.body_id IN (" . $resep_nos_in . ")
+                        ORDER BY AFE.PARAMETER_ID, AFE.VALUE_DESC"
+                    )->getResultArray()
+                );
+            }
+            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/12-edukasi-obat.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'kop' => $kopprintData[0],
+                'daftar' => $daftar_obat ?? [],
+                'desc' => $desc_tutor ?? []
+
+            ]);
+        }
     }
 }

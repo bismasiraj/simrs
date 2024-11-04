@@ -3,8 +3,10 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AgamaModel;
+use App\Models\Assessment\ApgarDetailModel;
 use App\Models\Assessment\DiagnosaPerawatModel;
 use App\Models\Assessment\PasienTransferModel;
+use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\AssessmentModel;
 use App\Models\BloodModel;
 use App\Models\CaraKeluarModel;
@@ -90,6 +92,7 @@ class Patient extends \App\Controllers\BaseController
     }
     private function rajalTemplate($giTipe, $title)
     {
+
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
@@ -225,6 +228,8 @@ class Patient extends \App\Controllers\BaseController
                         if ($clinic[$ckey]['clinic_id'] == $clinicDoctor[$key]['clinic_id']) {
                             foreach ($cvalue as $ckey2 => $cvalue2) {
                                 $clinicPermission[$clinicDoctor[$key]['clinic_id']][$ckey2] = $cvalue2;
+                                $clinicPermission[$clinicDoctor[$key]['clinic_id']]['stype_id'] = $clinic[$ckey]['stype_id'];
+                                // dd($clinicPermission);
                             }
                         }
                     }
@@ -424,7 +429,6 @@ class Patient extends \App\Controllers\BaseController
         asort($clinicInap);
 
         // dd($clinic);
-        // dd($dokter);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -859,9 +863,11 @@ This Function is used to Add Patient
     public function getopddatatable($searchtype = null)
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
-        $pv = new PasienVisitationModel();
 
         $nama = $this->request->getPost('nama');
         $kode = $this->request->getPost('norm');
@@ -898,9 +904,16 @@ This Function is used to Add Patient
         $nama = $kode;
         $nokartu = $kode;
 
-        $kunjungan = $this->lowerKey($pv->getKunjunganPoli($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
 
+        if ($poli == 'P013' || $poli == 'P016' || $poli == 'P015') {
+            $pv = new PasienPenunjangModel();
 
+            $kunjungan = $this->lowerKey($pv->getKunjunganPenunjang($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
+        } else {
+            $pv = new PasienVisitationModel();
+
+            $kunjungan = $this->lowerKey($pv->getKunjunganPoli($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu));
+        }
 
         // colecting parameter
         $wayModel = new VisitWayModel();
@@ -978,35 +991,35 @@ This Function is used to Add Patient
                     }
                 }
                 foreach ($employee as $key1 => $value1) {
-                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_id']) {
+                    if ($employee[$key1]['employee_id'] == @$kunjungan[$key]['employee_id']) {
                         $kunjungan[$key]['fullname'] = $employee[$key1]['fullname'];
                     }
-                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_id_from']) {
+                    if ($employee[$key1]['employee_id'] == @$kunjungan[$key]['employee_id_from']) {
                         $kunjungan[$key]['fullname_from'] = $employee[$key1]['fullname'];
                     }
-                    if ($employee[$key1]['employee_id'] == $kunjungan[$key]['employee_inap']) {
+                    if ($employee[$key1]['employee_id'] == @$kunjungan[$key]['employee_inap']) {
                         $kunjungan[$key]['fullname_inap'] = $employee[$key1]['fullname'];
                     }
                 }
                 foreach ($class as $key1 => $value1) {
-                    if ($kunjungan[$key]['class_id'] == $class[$key1]['class_id']) {
+                    if ($kunjungan[$key]['class_id'] == @$class[$key1]['class_id']) {
                         $kunjungan[$key]['name_of_class'] = $class[$key1]['name_of_class'];
                     }
-                    if ($kunjungan[$key]['class_id_plafond'] == $class[$key1]['class_id']) {
+                    if ($kunjungan[$key]['class_id_plafond'] == @$class[$key1]['class_id']) {
                         $kunjungan[$key]['name_of_class_plafond'] = $class[$key1]['name_of_class'];
                     }
                 }
-                if ($kunjungan[$key]['locked'] == '1') {
+                if (@$kunjungan[$key]['locked'] == '1') {
                     $kunjungan[$key]['locked'] == 'Valid Lock';
-                } elseif ($kunjungan[$key]['locked'] == '2') {
+                } elseif (@$kunjungan[$key]['locked'] == '2') {
                     $kunjungan[$key]['locked'] == 'Close';
-                } elseif ($kunjungan[$key]['locked'] == '5') {
+                } elseif (@$kunjungan[$key]['locked'] == '5') {
                     $kunjungan[$key]['locked'] == 'Close Billing';
                 } else {
-                    $kunjungan[$key]['locked'] == 'Open';
+                    $kunjungan[$key]['locked'] = 'Open';
                 }
 
-                if (!is_null($kunjungan[$key]['rm_in_date'])) {
+                if (!is_null(@$kunjungan[$key]['rm_in_date'])) {
                     $kunjungan[$key]['rm_in_date'] = '<br>DRM - Kembali';
                 } else {
                     $kunjungan[$key]['rm_in_date'] = '';
@@ -1050,43 +1063,44 @@ This Function is used to Add Patient
                 if (!is_null($kunjungan[$key]['class_room_id']) && ($kunjungan[$key]['class_room_id'] != '')) {
                     $ranap = '<h5 class="text-danger">RAWAT INAP - ' . $kunjungan[$key]['name_of_class_room'] . '</h5>';
                 }
+                $action = '<button type="button" name="panggil" onclick=\'panggilPasien("' . $kunjungan[$key]['visit_id'] . '", "' . $kunjungan[$key]['ticket_no'] . '", "' . $kunjungan[$key]['trans_id'] . '", "' . $kunjungan[$key]['no_registration'] . '")\' class="btn btn-primary waves-effect waves-light me-1"><i class="fa fa-bullhorn"></i> Panggil</button>';
+                // $action = '<div class="btn-group" role="group">';
+                // $action .= '<button id="btnGroupVerticalDrop' . $id . '" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                //                                     Pilih <i class="mdi mdi-chevron-down"></i>
+                //                                 </button>';
+                // $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
 
-                $action = '<div class="btn-group" role="group">';
-                $action .= '<button id="btnGroupVerticalDrop' . $id . '" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Pilih <i class="mdi mdi-chevron-down"></i>
-                                                </button>';
-                $action .= '<div class="dropdown-menu" aria-labelledby="btnGroupVerticalDrop1" style="">';
-                // if ($kunjungan[$key]['visit_id'] != null) {
-                //     $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
-                //     $action .= '<a onclick="getAkomodasi(\'' . $kunjungan[$key]['visit_id'] . '\')" class="dropdown-item" href="#"><i style="color: red">PASIEN SEDANG RAWAT INAP</i></a>';
-                // } else {
-                //     $action .= '<a onclick="addVisitPatient(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Jalan</a>';
-                //     $action .= '<a onclick="addRanap(\'' . $id . '\')" class="dropdown-item" href="#">Rawat Inap</a>';
-                // }
-                $action .= '<a onclick=\'panggilPasien("' . $kunjungan[$key]['visit_id'] . '", "' . $kunjungan[$key]['ticket_no'] . '")\' class="dropdown-item" href="#">Panggil Pasien</a>';
-                // $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
-                $action .= "</div>";
+                // $action .= '<a onclick=\'panggilPasien("' . $kunjungan[$key]['visit_id'] . '", "' . $kunjungan[$key]['ticket_no'] . '")\' class="dropdown-item" href="#">Panggil Pasien</a>';
+                // // $action .= '<a onclick=\'editBiodataPasien("' . $key . '")\' class="dropdown-item" href="#">Edit Biodata</a>';
+                // $action .= "</div>";
                 // dd($ranap);
                 //====================================
                 // $action = "<div class='rowoptionview rowview-mt-19'>";
                 // $action .= "<a href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 // $action .= "</div'>";
-                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                if ($poli == 'P013') {
+                    $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profilepenunjang/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                } else {
+                    $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                }
                 //==============================
-                if ($kunjungan[$key]['status_panggil'] == '1') {
+                if (@$kunjungan[$key]['status_panggil'] == '1') {
                     $row[] = '<h4 id="antrian' . $kunjungan[$key]['visit_id'] . '" style="margin: auto;
                     padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . ' <i class="fa fa-check-circle"></i></h4>';
                 } else {
-                    $row[] = '<h4 id="antrian' . $kunjungan[$key]['visit_id'] . '" style="margin: auto;
-                    padding: 20px;padding-left: 10px;">#' . $kunjungan[$key]['ticket_no'] . '</h4>';
+                    $row[] = '<h4 id="antrian' . @$kunjungan[$key]['visit_id'] . '" style="margin: auto;
+                    padding: 20px;padding-left: 10px;">#' . @$kunjungan[$key]['ticket_no'] . '</h4>';
                 }
-
-                $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
-                $row[] = substr($kunjungan[$key]['visit_date'], 0, 10) . "<br>" . substr($kunjungan[$key]['date_of_birth'], 0, 10);
+                if ($kunjungan[$key]['tbc'] > 0) {
+                    $row[] = $first_action . "" . $kunjungan[$key]['diantar_oleh'] . " - " . $kunjungan[$key]['no_registration'] . "</a><p class=\"bg-warning\">Terindikasi TBC</p>";
+                } else {
+                    $row[] = $first_action . "" . $kunjungan[$key]['diantar_oleh'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
+                }
+                $row[] = substr($kunjungan[$key]['visit_date'], 8, 2) . "/" . substr($kunjungan[$key]['visit_date'], 5, 2) . "/" . substr($kunjungan[$key]['visit_date'], 0, 4) . "<br>" . substr(@$kunjungan[$key]['date_of_birth'], 8, 2) . "/" . substr(@$kunjungan[$key]['date_of_birth'], 5, 2) . "/" . substr(@$kunjungan[$key]['date_of_birth'], 0, 4);
                 $row[] = $kunjungan[$key]['name_of_status_pasien'] . "/" . $kunjungan[$key]['name_of_gender'] . "/" . $kunjungan[$key]['nama_agama'] . "<br>" . $ranap;
                 $row[] = "<b>" . $kunjungan[$key]['name_of_clinic'] . "</b><br><b>" . $kunjungan[$key]['fullname'] . "</b><br>" . $kunjungan[$key]['name_of_class'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
-                $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 0, 10);
+                $row[] = $kunjungan[$key]['no_skp'] . "<br>No. Rujukan : " . $kunjungan[$key]['norujukan'] . " Tgl : " . substr($kunjungan[$key]['tanggal_rujukan'], 8, 2) . "/" . substr($kunjungan[$key]['tanggal_rujukan'], 5, 2) . "/" . substr($kunjungan[$key]['tanggal_rujukan'], 0, 4);
                 $row[] = $kunjungan[$key]['name_of_clinic_from'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'] . "<br>" . $kunjungan[$key]['locked'];
                 $row[] = $action;
                 $dt_data[] = $row;
@@ -1102,7 +1116,10 @@ This Function is used to Add Patient
     public function getoperationdatatable($searchtype = null)
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $pv = new PasienVisitationModel();
 
@@ -1161,14 +1178,14 @@ This Function is used to Add Patient
                 // $action = "<div class='rowoptionview rowview-mt-19'>";
                 // $action .= "<a href=" . base_url() . 'admin/patient/profile/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 // $action .= "</div'>";
-                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileoperasi/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profilepenunjang/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
                 $row[] = '<h4 style="margin: auto;
                 padding: 20px;padding-left: 10px;">' . $key + 1 . ". </h4>";
                 $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 $row[] = $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bln " . $kunjungan[$key]['ageday'] . "hr";
                 $row[] = $kunjungan[$key]['name_of_clinic'];
-                $row[] = substr($kunjungan[$key]['treat_date'], 0, 16);
+                $row[] = substr($kunjungan[$key]['treat_date'], 8, 2) . "/" . substr($kunjungan[$key]['treat_date'], 5, 2) . "/" . substr($kunjungan[$key]['treat_date'], 0, 4) . " " . substr($kunjungan[$key]['treat_date'], 11, 2) . "-" . substr($kunjungan[$key]['treat_date'], 14, 2);
                 // $row[] = $kunjungan[$key]['tarif_id'];
                 $tarifid = $kunjungan[$key]['tarif_id'];
                 $row[] = array_column(array_filter($tarif, function ($value) use ($tarifid) {
@@ -1189,7 +1206,10 @@ This Function is used to Add Patient
     public function getipddatatable()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $ta = new TreatmentAkomodasiModel();
 
@@ -1357,12 +1377,14 @@ This Function is used to Add Patient
                 // width: 50%;
                 // text-align: left;
                 // padding: 10px;">' . ($key + 1) . ".</p>";
+                $visit_date = substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16);
                 $row[] = $kunjungan[$key]['no_registration'];
                 $row[] = $first_action . "" . $kunjungan[$key]['name_of_pasien'] . "" . "</a>"; // . $action;
                 $row[] = $kunjungan[$key]['contact_address'] .  "<br>No. Jaminan: " . $kunjungan[$key]['pasien_id'] . "<br>No. SEP: " . $kunjungan[$key]['no_skpinap'];
                 $row[] = $kunjungan[$key]['name_of_status_pasien'] . "<br>" . $kunjungan[$key]['gender'] . "<br>" . $kunjungan[$key]['kode_agama'];
                 $row[] = $kunjungan[$key]['name_of_clinic'] .  "<br>" . $kunjungan[$key]['fullname'] . "<br>Phone1:" . $kunjungan[$key]['phone_number'] . "<br>Phone2:" . $kunjungan[$key]['mobile'];
-                $row[] = $kunjungan[$key]['name_of_clinic_from'] .  "<br>" . $kunjungan[$key]['cara_keluar'] .  "<br>Tgl ke RS: " . substr(date('Y-m-d H:i', strtotime('1900-01-01 + ' . ($kunjungan[$key]['visit_date'] - 2) . ' days')), 0, 16) . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
+                $row[] = $kunjungan[$key]['name_of_clinic_from'] .  "<br>" . $kunjungan[$key]['cara_keluar'] .  "<br><b>Tgl Masuk</b>: " . substr($visit_date, 8, 2) . "/" . substr($visit_date, 5, 2) . "/" . substr($visit_date, 0, 4) . " " . substr($visit_date, 11, 2) . "-" . substr($visit_date, 14, 2) . "<br>" . substr($kunjungan[$key]['treat_date'], 8, 2) . "/" . substr($kunjungan[$key]['treat_date'], 5, 2) . "/" . substr($kunjungan[$key]['treat_date'], 0, 4) . " " . substr($kunjungan[$key]['treat_date'], 11, 2) . "-" . substr($kunjungan[$key]['treat_date'], 14, 2);
+                // $row[] = $kunjungan[$key]['name_of_clinic_from'] .  "<br>" . $kunjungan[$key]['cara_keluar'] .  "<br><b>Tgl Masuk</b>: " .  . "<br>" . substr($kunjungan[$key]['treat_date'], 0, 16);
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = substr($kunjungan[$key]['date_of_birth'], 0, 10) . "<br>" . $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bl " . $kunjungan[$key]['ageday'] . "hr";
                 $row[] = $kunjungan[$key]['payor'] . "<br>" . $kunjungan[$key]['name_of_class'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'];
@@ -1385,7 +1407,6 @@ This Function is used to Add Patient
             $result = $this->lowerKey($p->getPatientListfilter($search_term));
             $data   = array();
             if (!empty($result)) {
-
                 foreach ($result as $value) {
                     $data[] = array("id" => $value['no_registration'], "text" => $value['name_of_pasien'] . " (" . $value['no_registration'] . ")");
                 }
@@ -1396,16 +1417,33 @@ This Function is used to Add Patient
     public function getDiagnosisListAjax()
     {
         $search_term = $this->request->getPost("searchTerm");
-        if (isset($search_term) && $search_term != '') {
-            $p = new DiagnosaModel();
-            $result = $this->lowerKey($p->getDiagnosa($search_term));
-            $data   = array();
-            if (!empty($result)) {
-                foreach ($result as $value) {
-                    $data[] = array("id" => $value['diagnosa_id'], "text" => $value['name_of_diagnosa'] . " (" . $value['diagnosa_id'] . ")");
+        $clinic = $this->request->getPost("clinic");
+
+        if (isset($clinic) && $clinic == 'gizi') {
+            if (isset($search_term) && $search_term != '') {
+                $p = new DiagnosaModel();
+                $result = $this->lowerKey($p->getDiagnosaGizi($search_term));
+                $data   = array();
+                if (!empty($result)) {
+                    foreach ($result as $value) {
+                        $data[] = array("id" => $value['diagnosa_id'], "text" => $value['name_of_diagnosa'] . " (" . $value['diagnosa_id'] . ")");
+                    }
                 }
+
+                echo json_encode($data);
             }
-            echo json_encode($data);
+        } else {
+            if (isset($search_term) && $search_term != '') {
+                $p = new DiagnosaModel();
+                $result = $this->lowerKey($p->getDiagnosa($search_term));
+                $data   = array();
+                if (!empty($result)) {
+                    foreach ($result as $value) {
+                        $data[] = array("id" => $value['diagnosa_id'], "text" => $value['name_of_diagnosa'] . " (" . $value['diagnosa_id'] . ")");
+                    }
+                }
+                echo json_encode($data);
+            }
         }
     }
     public function getDiagnosisPerawatListAjax()
@@ -1494,6 +1532,28 @@ This Function is used to Add Patient
             echo json_encode($data);
         }
     }
+    public function getObatListAjaxRacik()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        $employee_id = $this->request->getPost('employeeId');
+        if (isset($search_term) && $search_term != '') {
+            $model = new GoodsModel();
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
+            // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
+            // $result = $this->lowerKey($model->getObatAlkesDokter($search_term, $employee_id));
+            $result = $this->lowerKey($model->getObatDokterRacik($search_term, $employee_id));
+            $data   = array();
+            // $data[] = array("id" => '%', "text" => "Semua (%)");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
     public function getObatAlkesListAjax()
     {
         $search_term = $this->request->getPost("searchTerm");
@@ -1504,6 +1564,27 @@ This Function is used to Add Patient
             // $customObat['name'] = $search_term;
             // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
             $result = $this->lowerKey($model->getObatAlkesDokter($search_term, $employee_id));
+            $data   = array();
+            // $data[] = array("id" => '%', "text" => "Semua (%)");
+            // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => json_encode($value), "text" => $value['name'] . " (" . $value['brand_id'] . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
+    public function getObatAllListAjax()
+    {
+        $search_term = $this->request->getPost("searchTerm");
+        $employee_id = $this->request->getPost('employeeId');
+        if (isset($search_term) && $search_term != '') {
+            $model = new GoodsModel();
+            // $customObat = $this->lowerKeyOne($model->find('00000'));
+            // $customObat['name'] = $search_term;
+            // $result = $this->lowerKey($model->like('name', $search_term)->findAll());
+            $result = $this->lowerKey($model->getObatAll($search_term, $employee_id));
             $data   = array();
             // $data[] = array("id" => '%', "text" => "Semua (%)");
             // $data[] = array("id" => json_encode($customObat), "text" => $search_term . "");
@@ -1536,7 +1617,10 @@ This Function is used to Add Patient
     public function getVisit()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1552,7 +1636,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 
@@ -1869,7 +1956,10 @@ This Function is used to Add Patient
     public function deletevisit()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $visit_id = $this->request->getPost('visit_id');
 
@@ -1904,8 +1994,11 @@ This Function is used to Add Patient
     }
     public function profile($id, $pv)
     {
-        // dd(user()->getRoles());
         $org = new OrganizationunitModel();
+
+        $session_id = $org->generateId();
+
+        // return $session_id;
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
         // return json_encode($orgunit);
@@ -1916,84 +2009,83 @@ This Function is used to Add Patient
 
         $img_time = new Time('now');
         $img_timestamp = $img_time->getTimestamp();
-        //parameter
-        // $coverageModel = new CoverageModel();
-        // $coverage = $this->lowerKey($coverageModel->findAll());
 
-        // $statusModel = new StatusPesertaModel();
-        // $status = $this->lowerKey($statusModel->findAll());
-
-        // $jenisModel = new JenisPesertaModel();
-        // $jenis = $this->lowerKey($jenisModel->findAll());
-
-        // $kelasModel = new ClassModel();
-        // $kelas = $this->lowerKey($kelasModel->findAll());
-
-        // $kalurahanModel = new KalurahanModel();
-        // $kalurahan = $this->lowerKey($kalurahanModel->findAll());
-
-        // $kecamatanModel = new KecamatanModel();
-        // $kecamatan = $this->lowerKey($kecamatanModel->findAll());
-
-        // $kotaModel = new KotaModel();
-        // $kota = $this->lowerKey($kotaModel->findAll());
-
-        // $provModel = new ProvinceModel();
-        // $prov = $this->lowerKey($provModel->findAll());
-
-        $statusPasienModel = new StatusPasienModel();
-        $statusPasien = $this->lowerKey($statusPasienModel->findAll());
+        // $statusPasienModel = new StatusPasienModel();
+        // $statusPasien = $this->lowerKey($statusPasienModel->findAll());
+        $statusPasien = $this->getStatusPasien();
 
 
 
-        $followupModel = new FollowUpModel();
-        $followup = $this->lowerKey($followupModel->findAll());
+        // $followupModel = new FollowUpModel();
+        // $followup = $this->lowerKey($followupModel->findAll());
+        $followup = $this->getFollowUp();
 
-        $genderModel = new SexModel();
-        $gender = $this->lowerKey($genderModel->findAll());
+        // $genderModel = new SexModel();
+        // $gender = $this->lowerKey($genderModel->findAll());
+        $gender = $this->getGender();
 
-        $clinicModel = new ClinicModel();
-        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5)")->findAll());
+
+
+        // $clinicModel = new ClinicModel();
+        // $clinic = $this->lowerKey($clinicModel->select("clinic_id, name_of_clinic, stype_id, clinic_type, other_id, account_id, kdpoli, sslocation_id")
+        //     ->where("stype_id in (1,2,3,5)")->findAll());
+
+        $clinic = $this->getClinicModel();
 
         // $scheduleModel = new DoctorScheduleModel();
         // $schedule = $this->lowerKey($scheduleModel->getSchedule());
 
 
 
-        $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->getEmployee());
+        // $employeeModel = new EmployeeAllModel();
+        // $employee = $this->lowerKey($employeeModel->getEmployee());
+        $employee = $this->getEmployee();
+
 
         // $wayModel = new VisitWayModel();
         // $way = $this->lowerKey($wayModel->findAll());
 
-        $reasonModel = new VisitReasonModel();
-        $reason = $this->lowerKey($reasonModel->findAll());
+        // $reasonModel = new VisitReasonModel();
+        // $reason = $this->lowerKey($reasonModel->findAll());
+        $reason = $this->getReason();
 
-        $isattendedModel = new IsattendedsModel();
-        $isattended = $this->lowerKey($isattendedModel->findAll());
+        // $isattendedModel = new IsattendedsModel();
+        // $isattended = $this->lowerKey($isattendedModel->findAll());
+        $isattended = $this->getIsattended();
 
-        $inasisPoliModel = new InasisPoliModel();
-        $inasisPoli = $this->lowerKey($inasisPoliModel->findAll());
+        // $inasisPoliModel = new InasisPoliModel();
+        // $inasisPoli = $this->lowerKey($inasisPoliModel
+        //     ->select("kdpoli, nmpoli")
+        //     ->findAll());
+        $inasisPoli = $this->getInasisPoli();
 
         $inasisFaskesModel = new InasisFaskesModel();
-        $inasisFaskes = $this->lowerKey($inasisFaskesModel->findAll());
+        $inasisFaskes = $this->lowerKey($inasisFaskesModel
+            ->select("kdprovider, nmprovider")
+            ->findAll());
 
-        $sufferModel = new SufferModel();
-        $suffer = $this->lowerKey($sufferModel->findAll());
+        // $sufferModel = new SufferModel();
+        // $suffer = $this->lowerKey($sufferModel->findAll());
+        $suffer = $this->getSuffer();
 
-        $diagCatModel = new DiagnosaCategoryModel();
-        $diagCat = $this->lowerKey($diagCatModel->findAll());
+        // $diagCatModel = new DiagnosaCategoryModel();
+        // $diagCat = $this->lowerKey($diagCatModel->findAll());
+        $diagCat = $this->getDiagCat();
 
 
         $dokter = array();
         $dpjp = array();
 
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
+
         // dd($employee);
 
         // $pv = new PasienVisitationModel();
         // $visit = $this->lowerKey($pv->find($id));
         $visit = $pv;
+        $visit['session_id'] = $session_id;
         // return json_encode($visit['gender']);
 
 
@@ -2008,13 +2100,13 @@ This Function is used to Add Patient
             }
         }
         foreach ($employee as $key => $value) {
-            if ($employee[$key]['employee_id'] == $visit['employee_id']) {
+            if ($employee[$key]['employee_id'] == @$visit['employee_id']) {
                 $visit['fullname'] = $employee[$key]['fullname'];
             }
-            if ($employee[$key]['employee_id'] == $visit['employee_id_from']) {
+            if ($employee[$key]['employee_id'] == @$visit['employee_id_from']) {
                 $visit['fullname_from'] = $employee[$key]['fullname'];
             }
-            if ($employee[$key]['employee_id'] == $visit['employee_inap']) {
+            if ($employee[$key]['employee_id'] == @$visit['employee_inap']) {
                 $visit['fullname_inap'] = $employee[$key]['fullname'];
             }
         }
@@ -2026,6 +2118,8 @@ This Function is used to Add Patient
                 $visit['name_of_clinic'] = $clinic[$key]['name_of_clinic'];
             }
         }
+        $clinicAll = $clinic;
+
         $db = db_connect();
 
         $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
@@ -2075,7 +2169,7 @@ This Function is used to Add Patient
         }
 
 
-        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+        usort($mapAssessment, fn($a, $b) => $a['theorder'] <=> $b['theorder']);
 
         if (!isset($visit['name_of_clinic'])) {
             $visit['name_of_clinic'] = '';
@@ -2094,9 +2188,9 @@ This Function is used to Add Patient
         $visit['exit_datetime'] = $visit['exit_date'];
         $visit['exit_date'] = $visitDate;
 
-        // $examModel = new ExaminationModel();
-        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
-        $exam = [];
+        $examModel = new ExaminationModel();
+        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->where('visit_id', $visit['visit_id'])->orderBy('examination_date asc')->findAll());
+        // $exam = [];
 
         // $pdModel = new PasienDiagnosaModel();
         // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
@@ -2157,8 +2251,8 @@ This Function is used to Add Patient
 
             $i = 0;
             foreach ($clinicPermission as $key => $value) {
-                $i++;
                 $clinic[$i] = $clinicPermission[$key];
+                $i++;
             }
         }
         // dd($employee);
@@ -2173,57 +2267,29 @@ This Function is used to Add Patient
 
         $db = db_connect();
         $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
-        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
-        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type not in ('GEN0017', 'exOPRS006') order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type not in ('GEN0017', 'exOPRS006')")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type not in ('GEN0017', 'exOPRS006')")->getResultArray());
+
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
-        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
-        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        usort($aParent, fn($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn($a, $b) => $a['p_description'] <=> $b['p_description']);
 
-
-
-
-        // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
-        // dd($mapAssessment);
-        // dd($visit['specialist_type_id']);
-        // dd(array_filter($mapAssessment, function ($value) use ($visit) {
-        //     return $value['doc_type'] == 1 && $value['specialist_type_id'] == $visit['specialist_type_id'];
-        // }));
-
-
+        // dd($clinic);
         return view('admin/patient/profile', [
             'title' => '',
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
+            'clinicAll' => $clinicAll,
             'schedule' => $schedule,
-            // 'dokter' => $dokter,
-            // 'coverage' => $coverage,
-            // 'status' => $status,
-            // 'jenis' => $jenis,
-            // 'kelas' => $kelas,
-            // 'kalurahan' => $kalurahan,
-            // 'kecamatan' => $kecamatan,
-            // 'kota' => $kota,
-            // 'prov' => $prov,
             'statusPasien' => $statusPasien,
-            // 'payor' => $payor,
-            // 'education' => $education,
-            // 'marital' => $marital,
-            // 'agama' => $agama,
-            // 'job' => $job,
-            // 'blood' => $blood,
-            // 'family' => $family,
-            // 'gender' => $gender,
-            // 'way' => $way,
             'reason' => $reason,
             'isattended' => $isattended,
             'inasisPoli' => $inasisPoli,
             'inasisFaskes' => $inasisFaskes,
             'followup' => $followup,
-            // 'diagnosa' => $diagnosa,
-            // 'dpjp' => $dpjp,
             'visit' => $visit,
             'exam' => $exam,
             'pd' => $pasienDiagnosa,
@@ -2235,21 +2301,18 @@ This Function is used to Add Patient
             'aParameter' => $aParameter,
             'aValue' => $aValue,
             'mappingAssessment' => $mappingAssessment,
-            // 'aParent' => [],
-            // 'aType' => [],
-            // 'aParameter' => [],
-            // 'aValue' => [],
-            // 'mappingAssessment' => [],
-            'mapAssessment' => $mapAssessment
+            'mapAssessment' => $mapAssessment,
+            'clinicType' => $clinicType
         ]);
     }
 
     public function profileranap($id, $ta)
     {
-
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
+
+        $session_id = $org->generateId();
 
         // dd(user()->getEmployeeData());
 
@@ -2261,42 +2324,35 @@ This Function is used to Add Patient
 
 
 
-        $statusPasienModel = new StatusPasienModel();
-        $statusPasien = $this->lowerKey($statusPasienModel->findAll());
+        $statusPasien = $this->getStatusPasien();
 
 
 
-        $followupModel = new FollowUpModel();
-        $followup = $this->lowerKey($followupModel->findAll());
+        $followup = $this->getFollowUp();
+        $gender = $this->getGender();
+        $clinic = $this->getClinicModel();
+        $clinicAll = $clinic;
 
-        $genderModel = new SexModel();
-        $gender = $this->lowerKey($genderModel->findAll());
-
-        $clinicModel = new ClinicModel();
-        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+        // return json_encode($clinicAl)
 
 
+        $reason = $this->getReason();
+        $employee = $this->getEmployee();
+        $isattended = $this->getIsattended();
 
-        $reasonModel = new VisitReasonModel();
-        $reason = $this->lowerKey($reasonModel->findAll());
-
-        $employeeModel = new EmployeeAllModel();
-        $employee = $this->lowerKey($employeeModel->getEmployee());
-
-        $isattendedModel = new IsattendedsModel();
-        $isattended = $this->lowerKey($isattendedModel->findAll());
-
-        $inasisPoliModel = new InasisPoliModel();
-        $inasisPoli = $this->lowerKey($inasisPoliModel->findAll());
+        $inasisPoli = $this->getInasisPoli();
 
         $inasisFaskesModel = new InasisFaskesModel();
-        $inasisFaskes = $this->lowerKey($inasisFaskesModel->findAll());
+        $inasisFaskes = $this->lowerKey($inasisFaskesModel
+            ->select("kdprovider, nmprovider")
+            ->findAll());
 
-        $sufferModel = new SufferModel();
-        $suffer = $this->lowerKey($sufferModel->findAll());
+        $suffer = $this->getSuffer();
 
-        $diagCatModel = new DiagnosaCategoryModel();
-        $diagCat = $this->lowerKey($diagCatModel->findAll());
+        $diagCat = $this->getDiagCat();
+
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
 
 
@@ -2307,6 +2363,8 @@ This Function is used to Add Patient
 
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
+        $visit['session_id'] = $session_id;
+
         // $visit = $ta;
         unset($ta['visit_date']);
         foreach ($ta as $key => $value) {
@@ -2379,7 +2437,7 @@ This Function is used to Add Patient
                 where c.CLINIC_ID = 'P001';")->getResultArray());
         }
 
-        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+        usort($mapAssessment, fn($a, $b) => $a['theorder'] <=> $b['theorder']);
         // dd($mapAssessment);
 
         foreach ($gender as $key => $value) {
@@ -2394,13 +2452,13 @@ This Function is used to Add Patient
         $visitDate = substr($visit['exit_date'], 0, 10);
         $visit['exit_date'] = $visitDate;
 
-        // $examModel = new ExaminationModel();
-        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
-        $exam = [];
+        $examModel = new ExaminationModel();
+        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        // $exam = [];
 
-        // $pdModel = new PasienDiagnosaModel();
-        // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
-        $pasienDiagnosa = [];
+        $pdModel = new PasienDiagnosaModel();
+        $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
+        // $pasienDiagnosa = [];
 
         // if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
         //     $visit['isrj'] = '0';
@@ -2435,22 +2493,29 @@ This Function is used to Add Patient
         // $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type like 'GEN%'")->getResultArray());
         $db = db_connect();
         $aParent = $db->query("select parent_id, parent_parameter from assessment_parameter_parent order by PARENT_PARAMETER")->getResultArray();
-        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type order by P_DESCRIPTION")->getResultArray());
-        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter")->getResultArray());
-        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
+        $aType = $this->lowerKey($db->query("select * from assessment_parameter_type where p_type not in ('GEN0017', 'exOPRS006') order by P_DESCRIPTION")->getResultArray());
+        $aParameter = $this->lowerKey($db->query("select * from assessment_parameter where p_type not in ('GEN0017', 'exOPRS006')")->getResultArray());
+        $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type not in ('GEN0017', 'exOPRS006')")->getResultArray());
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
-        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
-        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        usort($aParent, fn($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn($a, $b) => $a['p_description'] <=> $b['p_description']);
+
+        // dd($visit);
+
+        // dd(json_encode($clinic));
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
         // return json_encode($mappingAssessment);
-        // dd($visit['clinic_id_from']);
+        asort($employee);
+
+        // dd($employee);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
+            'clinicAll' => $clinicAll,
             'dokter' => $dokter,
             // 'coverage' => $coverage,
             // 'status' => $status,
@@ -2489,15 +2554,18 @@ This Function is used to Add Patient
             'aParameter' => $aParameter,
             'aValue' => $aValue,
             'mappingAssessment' => $mappingAssessment,
-            'mapAssessment' => $mapAssessment
+            'mapAssessment' => $mapAssessment,
+            'clinicType' => $clinicType
         ]);
     }
-    public function profileoperasi($id, $ta)
+    public function profilepenunjang($id, $ta)
     {
 
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
+
+        $session_id = $org->generateId();
 
         // dd(user()->getEmployeeData());
 
@@ -2518,6 +2586,7 @@ This Function is used to Add Patient
 
         $clinicModel = new ClinicModel();
         $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+        $clinicAll = $clinic;
 
         $reasonModel = new VisitReasonModel();
         $reason = $this->lowerKey($reasonModel->findAll());
@@ -2541,6 +2610,8 @@ This Function is used to Add Patient
         $diagCat = $this->lowerKey($diagCatModel->findAll());
 
 
+        $clinicTypeModel = new ClinicTypeModel();
+        $clinicType = $this->lowerKey($clinicTypeModel->findAll());
 
         $dokter = array();
         $dpjp = array();
@@ -2549,6 +2620,8 @@ This Function is used to Add Patient
 
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
+        $visit['session_id'] = $session_id;
+
         // $visit = $ta;
         unset($ta['visit_date']);
         foreach ($ta as $key => $value) {
@@ -2640,7 +2713,7 @@ This Function is used to Add Patient
                 where c.CLINIC_ID = 'P001';")->getResultArray());
         }
 
-        usort($mapAssessment, fn ($a, $b) => $a['theorder'] <=> $b['theorder']);
+        usort($mapAssessment, fn($a, $b) => $a['theorder'] <=> $b['theorder']);
         // dd($mapAssessment);
 
         foreach ($gender as $key => $value) {
@@ -2700,8 +2773,8 @@ This Function is used to Add Patient
         $aValue = $this->lowerKey($db->query("select * from assessment_parameter_value")->getResultArray());
         $mappingAssessment = $this->lowerKey($db->query("select * from mapping_assessment where clinic_id ='" . $visit['clinic_id'] . "'")->getResultArray());
 
-        usort($aParent, fn ($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
-        usort($aType, fn ($a, $b) => $a['p_description'] <=> $b['p_description']);
+        usort($aParent, fn($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
+        usort($aType, fn($a, $b) => $a['p_description'] <=> $b['p_description']);
         // $aTypeClinic = $this->lowerKey($db->query("select * from assessment_access_clinic where clinic_id = '".."'"))
 
         // return json_encode($visit);
@@ -2710,6 +2783,7 @@ This Function is used to Add Patient
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp,
             'clinic' => $clinic,
+            'clinicAll' => $clinicAll,
             'dokter' => $dokter,
             // 'coverage' => $coverage,
             // 'status' => $status,
@@ -2749,7 +2823,8 @@ This Function is used to Add Patient
             'aValue' => $aValue,
             'mappingAssessment' => $mappingAssessment,
             'mapAssessment' => $mapAssessment,
-            'gsPoli' => 'P002'
+            'gsPoli' => 'P002',
+            'clinicType' => $clinicType
         ]);
     }
 
@@ -2757,7 +2832,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -2945,7 +3023,10 @@ This Function is used to Add Patient
         // var_dump($_POST['body_id']);
         // die();
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -3181,7 +3262,7 @@ This Function is used to Add Patient
             // echo "update <br>";
             // var_dump($result);
             // die();
-            $message = "update pemeriksaan fisik berhasil";
+            $message = "Update berhasil";
             $type = "update";
         }
         // return $result;
@@ -3198,7 +3279,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -3499,7 +3583,7 @@ This Function is used to Add Patient
                 'petugas' => $petugas
             ];
             $result = $examModel->update($id, $data);
-            $message = "update pemeriksaan fisik berhasil";
+            $message = "Update berhasil";
             $type = "update";
         }
         // return $result;
@@ -3584,7 +3668,10 @@ This Function is used to Add Patient
     public function addrekammedis()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -3833,7 +3920,10 @@ This Function is used to Add Patient
     public function getKontrol()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 
@@ -3850,7 +3940,10 @@ This Function is used to Add Patient
     public function postKontrol()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3950,7 +4043,10 @@ This Function is used to Add Patient
     public function deleteKontrol()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3985,7 +4081,10 @@ This Function is used to Add Patient
     public function postRujukan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4191,7 +4290,10 @@ This Function is used to Add Patient
     public function deleteRujukan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4316,7 +4418,10 @@ This Function is used to Add Patient
     public function getDiagnosas()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4335,7 +4440,10 @@ This Function is used to Add Patient
     public function getProcedures()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4354,7 +4462,10 @@ This Function is used to Add Patient
     public function getBillPoli()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4391,14 +4502,6 @@ This Function is used to Add Patient
         $statusPasien = $this->lowerKey($statusPasienModel->findAll());
 
         foreach ($tbselect as $key => $value) {
-            // foreach ($schedule as $key => $value) {
-            //     if ($schedule[$key]['employee_id'] == $tbselect[$key]['employee_id']) {
-            //         $tbselect[$key]['fullname'] = $schedule[$key]['fullname'];
-            //     }
-            //     if ($schedule[$key]['employee_id'] == $tbselect[$key]['employee_id']) {
-            //         $tbselect[$key]['fullname'] = $schedule[$key]['fullname'];
-            //     }
-            // }
             foreach ($clinic as $key1 => $value1) {
                 if ($clinic[$key1]['clinic_id'] == $tbselect[$key]['clinic_id']) {
                     $tbselect[$key]['name_of_clinic'] = $clinic[$key1]['name_of_clinic'];
@@ -4416,29 +4519,33 @@ This Function is used to Add Patient
     public function getBillEklaim18()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
         $trans = $body['trans'];
+        $visit = $body['visit'];
 
 
         $tb = new TreatmentBillModel();
-        $builder = $tb->select("sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 1 then tagihan*(1-discount) else 0 end) as prosedur_non_bedah,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 2 then tagihan*(1-discount) else 0 end) as prosedur_bedah,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 3 then tagihan*(1-discount) else 0 end) as konsultasi,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 4 then tagihan*(1-discount) else 0 end) as tenaga_ahli,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 5 then tagihan*(1-discount) else 0 end) as keperawatan,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 6 then tagihan*(1-discount) else 0 end) as penunjang,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 7 then tagihan*(1-discount) else 0 end) as radiologi,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500 or treatment_bill.tarif_type = 803) and tt.casemix_id = 8 then tagihan*(1-discount) else 0 end) as laboratorium,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 9 then tagihan*(1-discount) else 0 end) as pelayanan_darah,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 10 then tagihan*(1-discount) else 0 end) as rehabilitasi,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 11 then tagihan*(1-discount) else 0 end) as kamar,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 12 then tagihan*(1-discount) else 0 end) as rawat_intensif,
-        sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 804 or treatment_bill.tarif_type = 500) and tt.casemix_id = 16 then tagihan*(1-discount) else 0 end) as sewa_alat,
-        treatment_bill.no_registration")
+        $builder = $tb->select("sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 1 then tagihan*(1-discount) else 0 end) as prosedur_non_bedah,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 2 then tagihan*(1-discount) else 0 end) as prosedur_bedah,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 3 then tagihan*(1-discount) else 0 end) as konsultasi,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 4 then tagihan*(1-discount) else 0 end) as tenaga_ahli,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 5 then tagihan*(1-discount) else 0 end) as keperawatan,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 6 then tagihan*(1-discount) else 0 end) as penunjang,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 7 then tagihan*(1-discount) else 0 end) as radiologi,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500 or isnull(tt.tarif_type, 0) = 803) and tt.casemix_id = 8 then tagihan*(1-discount) else 0 end) as laboratorium,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 9 then tagihan*(1-discount) else 0 end) as pelayanan_darah,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 10 then tagihan*(1-discount) else 0 end) as rehabilitasi,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 11 then tagihan*(1-discount) else 0 end) as kamar,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(tt.tarif_type, 0) = 500) and tt.casemix_id = 12 then tagihan*(1-discount) else 0 end) as rawat_intensif,
+            sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 804 or isnull(isnull(tt.tarif_type, 0), 0) = 500) and tt.casemix_id = 16 then tagihan*(1-discount) else 0 end) as sewa_alat,
+            treatment_bill.no_registration")
             ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
             ->where("trans_id", $trans)
             ->where("(treatment_bill.status_pasien_id <> 1 and isnull(numer,1) <> 0)")
@@ -4466,16 +4573,16 @@ This Function is used to Add Patient
             $ws_query["sewa_alat"] = $query[0]["sewa_alat"];
 
 
-            $builder = $tb->select("isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
-        isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) = 4 then sell_price*(DOSE_PRESC - quantity) else 0 end),0) as obat_kronis,
-        isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '21' or tt.CASEMIX_ID = '15') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as bmhp,
-        isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and (isnull(ISALKES,0) = '1' or tt.CASEMIX_ID = '14') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as alkes,
-        isnull(sum(case when (treatment_bill.tarif_type < 100 or treatment_bill.tarif_type = 803 or treatment_bill.tarif_type = 500) and isnull(treatment_bill.numer,1) <> 10 and tt.casemix_id = '13' and (isnull(ISALKES,0) not in ('1','21')) then tagihan*(1-discount) else 0 end),0) +
-        sum(case when racikan in (1,4) or treatment_bill.brand_id is null or (treatment_bill.resep_no) is null then 0 else 1000 end) as obat")
+            $builder = $tb->select("isnull(sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 803 or isnull(tt.tarif_type, 0) = 500) and isnull(treatment_bill.numer,1) = 10 then tagihan*(1-discount) else 0 end),0) as obat_kemoterapi,
+            isnull(sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 803 or isnull(tt.tarif_type, 0) = 500) and isnull(treatment_bill.numer,1) = 4 then sell_price*(DOSE_PRESC - quantity) else 0 end),0) as obat_kronis,
+            isnull(sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 803 or isnull(tt.tarif_type, 0) = 500) and (isnull(ISALKES,0) = '21' or tt.CASEMIX_ID = '15') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as bmhp,
+            isnull(sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 803 or isnull(tt.tarif_type, 0) = 500) and (isnull(ISALKES,0) = '1' or tt.CASEMIX_ID = '14') and isnull(treatment_bill.numer,1) <> 4 then tagihan*(1-discount) else 0 end),0) as alkes,
+            isnull(sum(case when (isnull(tt.tarif_type, 0) < 100 or isnull(tt.tarif_type, 0) = 803 or isnull(tt.tarif_type, 0) = 500) and isnull(treatment_bill.numer,1) <> 10 and tt.casemix_id = '13' and (isnull(ISALKES,0) not in ('1','21')) then tagihan*(1-discount) else 0 end),0) +
+            sum(case when racikan in (1,4) or treatment_bill.brand_id is null or (treatment_bill.resep_no) is null then 0 else 1000 end) as obat")
                 ->join("treat_tarif tt", "treatment_bill.tarif_id = tt.tarif_id", "inner")
                 ->join("goods g", "treatment_bill.brand_id = g.brand_id", "left")
                 ->where("trans_id", $trans)
-                ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or treatment_bill.tarif_type = 803)");
+                ->where("(treatment_bill.status_pasien_id <> 1 or isrj = 0 or isnull(tt.tarif_type, 0) = 803)");
 
 
 
@@ -4492,12 +4599,36 @@ This Function is used to Add Patient
             $ws_query["date_of_birth"] = $query['date_of_birth'];
         }
 
-        return json_encode($ws_query);
+        $result['data'] = $ws_query;
+
+        //get data apgar
+        $db = db_connect();
+
+        $apgar = $this->lowerKey($db->query("select * from assessment_indicator where visit_id = '$visit' and p_type in (select p_type from assessment_parameter_type where PARENT_ID = '005') order by examination_date desc")->getFirstRow());
+        // return json_encode($apgar);
+        $apgarData = [];
+        if (count($apgar) > 0) {
+            $apgarDetil = "select * from assessment_apgar_detail where body_id = '" . $apgar['body_id'] . "'";
+
+            $apgarDetil = $this->lowerKey($db->query($apgarDetil)->getResultArray());
+
+            $apgarData = [
+                'apgar' => $apgar,
+                'apgarDetil' => $apgarDetil
+            ];
+        }
+        $result['apgarData'] = $apgarData;
+
+
+        return json_encode($result);
     }
     public function getEklaimData()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4518,7 +4649,10 @@ This Function is used to Add Patient
     public function getInacbg()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4627,8 +4761,8 @@ This Function is used to Add Patient
         $header = array("Content-Type: application/x-www-form-urlencoded");
         // url server aplikasi E-Klaim,
         // silakan disesuaikan instalasi masing-masing
-        $url = "http://localhost/E-Klaim/ws.php";
-        // $url = "http://192.168.0.240/E-Klaim/ws.php";
+        $url = "http://192.168.10.110/E-Klaim/ws.php";
+        // $url = "http://192.168.110.254:8081/E-Klaim/ws.php";
         // setup curl
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -4657,46 +4791,20 @@ This Function is used to Add Patient
     public function postEklaim()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
-        $eklaimkey = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
+        $eklaimkey = 'aaa618f82e01502b3807109d5fe7b74c19a62b4b8c0b7a4ea9b53fb185995c00';
 
-        // return $this->request->is('put');
+        $body = $this->request->getPost();
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+        }
+        // return ($body['currentStep']);
 
-
-        // return json_encode($norm);
-        // $rules = [
-        //     'bed_id' => 'permit_empty|integer',
-        //     'keluar_id' => 'permit_empty|integer',
-        //     'status_pasien_id' => 'permit_empty|integer',
-        //     'ageyear' => 'permit_empty|integer',
-        //     'agemonth' => 'permit_empty|integer',
-        //     'ageday' => 'permit_empty|integer',
-        //     'saturasi' => 'permit_empty|integer',
-        //     'kesadaran' => 'permit_empty|integer',
-        //     'isvalid' => 'permit_empty|integer',
-        //     'temperature' => 'permit_empty|integer',
-        //     'tension_upper' => 'permit_empty|integer',
-        //     'tension_below' => 'permit_empty|integer',
-        //     'nadi' => 'permit_empty|integer',
-        //     'nafas' => 'permit_empty|integer',
-        //     'weight' => 'permit_empty|integer',
-        //     'height' => 'permit_empty|integer',
-        //     'arm_diameter' => 'permit_empty|integer',
-        // ];
-
-
-
-        // if (!$this->validate($rules)) {
-        //     $validation = \Config\Services::validation();
-        //     $errors = $validation->getErrors();
-        //     $array   = array('status' => 'fail', 'error' => $errors, 'message' => 'update gagal');
-        //     return json_encode($array);
-        // }
-
-
-        // $org_unit_code = $this->request->getPost('org_unit_code');
         $currentStep = $this->request->getPost('currentStep');
         $trans_id = $this->request->getPost('trans_id');
         $visit_id = $this->request->getPost('visit_id');
@@ -4712,7 +4820,9 @@ This Function is used to Add Patient
         $payor_id = $this->request->getPost('payor_id');
         $payor_cd = $this->request->getPost('payor_cd');
         $cob_cd = $this->request->getPost('cob_cd');
-        $kode_tarif = $this->request->getPost('kode_tarif');
+        // $kode_tarif = $this->request->getPost('kode_tarif');
+        $kode_tarif = "DS";
+        // return json_encode($kode_tarif);
         $jenis_rawat = $this->request->getPost('jenis_rawat');
         $kelas_rawat = $this->request->getPost('kelas_rawat');
         $tgl_masuk = $this->request->getPost('tgl_masuk');
@@ -4848,8 +4958,8 @@ This Function is used to Add Patient
         $ws_query["data"]["cara_masuk"] = $cara_masuk;
         $ws_query["data"]["jenis_rawat"] = $jenis_rawat;
         $ws_query["data"]["kelas_rawat"] = $kelas_rawat;
-        $ws_query["data"]["adl_sub_acute"] = $adl_sub_acute;
-        $ws_query["data"]["adl_chronic"] = $adl_chronic;
+        // $ws_query["data"]["adl_sub_acute"] = $adl_sub_acute;
+        // $ws_query["data"]["adl_chronic"] = $adl_chronic;
         $ws_query["data"]["icu_indikator"] = $icu_indikator;
         $ws_query["data"]["icu_los"] = $icu_los;
         $ws_query["data"]["ventilator_hour"] = $ventilator_hour;
@@ -4914,24 +5024,24 @@ This Function is used to Add Patient
         $ws_query["data"]["diagnosa_inagrouper"] = $diagnosa_inagrouper;
         $ws_query["data"]["procedure_inagrouper"] = $procedure_inagrouper;
 
-        $ws_query["data"]["tarif_rs"]["prosedur_non_bedah"] = $prosedur_non_bedah;
-        $ws_query["data"]["tarif_rs"]["prosedur_bedah"] = $prosedur_bedah;
-        $ws_query["data"]["tarif_rs"]["konsultasi"] = $konsultasi;
-        $ws_query["data"]["tarif_rs"]["tenaga_ahli"] = $tenaga_ahli;
-        $ws_query["data"]["tarif_rs"]["keperawatan"] = $keperawatan;
-        $ws_query["data"]["tarif_rs"]["penunjang"] = $penunjang;
-        $ws_query["data"]["tarif_rs"]["radiologi"] = $radiologi;
-        $ws_query["data"]["tarif_rs"]["laboratorium"] = $laboratorium;
-        $ws_query["data"]["tarif_rs"]["pelayanan_darah"] = $pelayanan_darah;
-        $ws_query["data"]["tarif_rs"]["rehabilitasi"] = $rehabilitasi;
-        $ws_query["data"]["tarif_rs"]["kamar"] = $kamar;
-        $ws_query["data"]["tarif_rs"]["rawat_intensif"] = $rawat_intensif;
-        $ws_query["data"]["tarif_rs"]["obat"] = $obat;
-        $ws_query["data"]["tarif_rs"]["obat_kronis"] = $obat_kronis;
-        $ws_query["data"]["tarif_rs"]["obat_kemoterapi"] = $obat_kemoterapi;
-        $ws_query["data"]["tarif_rs"]["alkes"] = $alkes;
-        $ws_query["data"]["tarif_rs"]["bmhp"] = $bmhp;
-        $ws_query["data"]["tarif_rs"]["sewa_alat"] = $sewa_alat;
+        $ws_query["data"]["tarif_rs"]["prosedur_non_bedah"] = str_replace(",", ".", str_replace(".", "", $prosedur_non_bedah));
+        $ws_query["data"]["tarif_rs"]["prosedur_bedah"] = str_replace(",", ".", str_replace(".", "", $prosedur_bedah));
+        $ws_query["data"]["tarif_rs"]["konsultasi"] = str_replace(",", ".", str_replace(".", "", $konsultasi));
+        $ws_query["data"]["tarif_rs"]["tenaga_ahli"] = str_replace(",", ".", str_replace(".", "", $tenaga_ahli));
+        $ws_query["data"]["tarif_rs"]["keperawatan"] = str_replace(",", ".", str_replace(".", "", $keperawatan));
+        $ws_query["data"]["tarif_rs"]["penunjang"] = str_replace(",", ".", str_replace(".", "", $penunjang));
+        $ws_query["data"]["tarif_rs"]["radiologi"] = str_replace(",", ".", str_replace(".", "", $radiologi));
+        $ws_query["data"]["tarif_rs"]["laboratorium"] = str_replace(",", ".", str_replace(".", "", $laboratorium));
+        $ws_query["data"]["tarif_rs"]["pelayanan_darah"] = str_replace(",", ".", str_replace(".", "", $pelayanan_darah));
+        $ws_query["data"]["tarif_rs"]["rehabilitasi"] = str_replace(",", ".", str_replace(".", "", $rehabilitasi));
+        $ws_query["data"]["tarif_rs"]["kamar"] = str_replace(",", ".", str_replace(".", "", $kamar));
+        $ws_query["data"]["tarif_rs"]["rawat_intensif"] = str_replace(",", ".", str_replace(".", "", $rawat_intensif));
+        $ws_query["data"]["tarif_rs"]["obat"] = str_replace(",", ".", str_replace(".", "", $obat));
+        $ws_query["data"]["tarif_rs"]["obat_kronis"] = str_replace(",", ".", str_replace(".", "", $obat_kronis));
+        $ws_query["data"]["tarif_rs"]["obat_kemoterapi"] = str_replace(",", ".", str_replace(".", "", $obat_kemoterapi));
+        $ws_query["data"]["tarif_rs"]["alkes"] = str_replace(",", ".", str_replace(".", "", $alkes));
+        $ws_query["data"]["tarif_rs"]["bmhp"] = str_replace(",", ".", str_replace(".", "", $bmhp));
+        $ws_query["data"]["tarif_rs"]["sewa_alat"] = str_replace(",", ".", str_replace(".", "", $sewa_alat));
 
         $ws_query["data"]["pemulasaraan_jenazah"] = $pemulasaraan_jenazah;
         $ws_query["data"]["kantong_jenazah"] = $kantong_jenazah;
@@ -5025,7 +5135,7 @@ This Function is used to Add Patient
         $ws_query["data"]["payor_id"] = $payor_id;
         $ws_query["data"]["payor_cd"] = $payor_cd;
         $ws_query["data"]["cob_cd"] = $cob_cd;
-        $ws_query["data"]["coder_nik"] = '1771051804810003'; //$coder_nik;
+        $ws_query["data"]["coder_nik"] = '123123123123'; //$coder_nik;
 
 
 
@@ -5037,25 +5147,49 @@ This Function is used to Add Patient
 
         $json_request = json_encode($ws_new_claim);
 
+
         if ($currentStep < 1) {
             $resultNewKlaim = $this->eklaim($json_request, $eklaimkey);
         } else {
             $resultNewKlaim['metadata']['code'] = '400';
         }
 
+        if (isset($resultNewKlaim['duplicate'][0])) {
+            if ($resultNewKlaim['duplicate'][0]['nomor_rm'] != $nomor_rm) {
+                $result = [
+                    "metadata" => [
+                        "code" => 400,
+                        "message" => json_encode($resultNewKlaim['duplicate'][0])
+                    ]
+                ];
+                return json_encode($result);
+            } else {
+                $resultNewKlaim['metadata']['code'] = '200';
+            }
+        }
+        // return json_encode($resultNewKlaim);
+
         $ekModel = new EklaimModel();
 
-        if ($resultNewKlaim['metadata']['code'] == '200' || $currentStep < 1) {
+        if ($resultNewKlaim['metadata']['code'] == '200' && $currentStep < 1) {
             $json_request = json_encode($ws_query);
+
+            // return $json_request;
 
             $resultSetKlaim = $this->eklaim($json_request, $eklaimkey);
 
-            if ($resultSetKlaim['metadata']['code'] == 200 || $currentStep < 2) {
+
+
+            if ($resultSetKlaim['metadata']['code'] == 200 && $currentStep < 2) {
                 $json_request = json_encode($ws_grouper1);
+
+                // return json_encode($ws_query);
 
                 $resultGrouper1 = $this->eklaim($json_request, $eklaimkey);
 
-                if ($resultGrouper1['metadata']['code'] == 200 || $currentStep <= 3) {
+                // return json_encode($resultGrouper1);
+
+                if ($resultGrouper1['metadata']['code'] == 200 && $currentStep <= 3) {
                     $data = [
                         'trans_id' => $trans_id,
                         'visit_id' => $visit_id,
@@ -5164,7 +5298,7 @@ This Function is used to Add Patient
                     // $grouperModel->query("delete from grouper where no_sep = '$nomor_sep'");
 
                     // return json_encode($resultGrouper1);
-
+                    $db = db_connect();
                     $jmlgrouper = 0;
                     if (!is_null($resultGrouper1['response']['cbg']) and isset($resultGrouper1['response']['cbg'])) {
                         $cbg = $resultGrouper1['response']['cbg'];
@@ -5178,8 +5312,8 @@ This Function is used to Add Patient
                                 'tarif' => $cbg['tariff'],
                                 'modified_by' => user_id()
                             ];
+                            // $db->query("delete from grouper where no_sep = '$sep' and code = '" . $cbg['code'] . "'");
                             $grouperModel->insert($grouperData);
-                            // DB::delete("delete from grouper where no_sep = '$sep' and code = '".$cbg['code']."'");
                             $jmlgrouper += $cbg['tariff'];
                         }
                     }
@@ -5209,7 +5343,7 @@ This Function is used to Add Patient
                             'tarif' => 0,
                             'modified_by' => user_id()
                         ];
-                        $grouperModel->insert($grouperData);
+                        // $grouperModel->insert($grouperData);
                     }
                     if (isset($resultGrouper1['response']['chronic'])) {
                         $chronic = $resultGrouper1['response']['chronic'];
@@ -5248,60 +5382,87 @@ This Function is used to Add Patient
                         }
                     }
                     // return($amt);
-                    $ekModel->update($nomor_sep, ['claim_value' => (float)$jmlgrouper]);
-                    // dd($json_response);
-                    if (isset($resultGrouper1['special_cmg_option'])) {
-                        $special_cmg = $resultGrouper1['special_cmg_option'];
-                        // dd($special_cmg);
-                        // if (isset($json_response['special_cmg'])) {
-                        // $special_cmg = $json_response['special_cmg'];
-                        $jmlgrouper2 = 0;
-                        // dd($special_cmg);
-                        $grouperModel->where('grouper_stage', '2')->where('no_sep', $nomor_sep)->delete();
-                        foreach ($special_cmg as $key => $value) {
-                            if ($special_cmg[$key]['type'] == 'Special Prosthesist') {
-                                $type = 4;
-                            } elseif ($special_cmg[$key]['type'] == 'Special Procedure') {
-                                $type = 5;
-                            } elseif ($special_cmg[$key]['type'] == 'Special Investigation') {
-                                $type = 6;
-                            } elseif ($special_cmg[$key]['type'] == 'Special Drug') {
-                                $type = 7;
-                            }
-                            $grouperModel->insert([
-                                'no_sep' => $nomor_sep,
-                                'grouper_stage' => '2',
-                                'grouper_type' => $type,
-                                'code' => $special_cmg[$key]['code'],
-                                'descriptions' => $special_cmg[$key]['description'],
-                                'MODIFIED_BY' => user_id()
-                            ]);
-                            // $jmlgrouper2 += $special_cmg[$key]['tariff'];
-                        };
+                    try {
+                        // Ensure $jmlgrouper is set and is a valid numeric value
+                        $jmlgrouper = isset($jmlgrouper) ? (float)$jmlgrouper : 0.0;
+
+                        // Ensure $nomor_sep is set and is a string
+                        $nomor_sep = isset($nomor_sep) ? (string)$nomor_sep : '';
+
+                        // Call the save method
+                        $ekModel->save([
+                            'claim_value' => (float)$jmlgrouper,
+                            'nomor_sep' => $nomor_sep
+                        ]);
+                    } catch (\Exception $e) {
+                        // Handle the exception (e.g., log the error, show a message to the user)
+                        // error_log($e->getMessage()); // Log the error message
+                        // echo 'An error occurred while saving data.';
                     }
-                    if (isset($resultGrouper1['tarif_alt'])) {
-                        $tarif_alt = $resultGrouper1['tarif_alt'];
-                        foreach ($tarif_alt as $key => $value) {
-                            if (isset($tarif_alt[$key]['tarif_inacbg'])) {
-                                $tarifAltModel = new TarifAltModel();
-                                $tarifAltModel->where('nosep', $nomor_sep)->delete();
-                                $tarifAltModel->insert([
-                                    'NOSEP' => $nomor_sep,
-                                    'CLASS_ID' => $tarif_alt[$key]['kelas'],
-                                    'TARIF_INACBG' => $tarif_alt[$key]['tarif_inacbg'],
-                                    'TARIF_SP' => 0,
-                                    'TARIF_SR' => 0,
-                                    'MODIFIED_BY' => user_id()
+                    try {
+
+                        // dd($json_response);
+                        if (isset($resultGrouper1['special_cmg_option'])) {
+                            $special_cmg = $resultGrouper1['special_cmg_option'];
+                            // dd($special_cmg);
+                            // if (isset($json_response['special_cmg'])) {
+                            // $special_cmg = $json_response['special_cmg'];
+                            $jmlgrouper2 = 0;
+                            // dd($special_cmg);
+                            $grouperModel->where('grouper_stage', '2')->where('no_sep', $nomor_sep)->delete();
+                            foreach ($special_cmg as $key => $value) {
+                                if ($special_cmg[$key]['type'] == 'Special Prosthesist') {
+                                    $type = 4;
+                                } elseif ($special_cmg[$key]['type'] == 'Special Procedure') {
+                                    $type = 5;
+                                } elseif ($special_cmg[$key]['type'] == 'Special Investigation') {
+                                    $type = 6;
+                                } elseif ($special_cmg[$key]['type'] == 'Special Drug') {
+                                    $type = 7;
+                                }
+                                $grouperModel->insert([
+                                    'no_sep' => $nomor_sep,
+                                    'grouper_stage' => '2',
+                                    'grouper_type' => $type,
+                                    'code' => $special_cmg[$key]['code'],
+                                    'descriptions' => $special_cmg[$key]['description'],
+                                    'modified_by' => user_id()
                                 ]);
+                                // $jmlgrouper2 += $special_cmg[$key]['tariff'];
+                            };
+                        }
+                        if (isset($resultGrouper1['tarif_alt'])) {
+                            $tarif_alt = $resultGrouper1['tarif_alt'];
+                            foreach ($tarif_alt as $key => $value) {
+                                if (isset($tarif_alt[$key]['tarif_inacbg'])) {
+                                    $tarifAltModel = new TarifAltModel();
+                                    $tarifAltModel->where('nosep', $nomor_sep)->delete();
+                                    $tarifAltModel->insert([
+                                        'nosep' => $nomor_sep,
+                                        'class_id' => $tarif_alt[$key]['kelas'],
+                                        'tarif_inacbg' => $tarif_alt[$key]['tarif_inacbg'],
+                                        'tarif_sp' => 0,
+                                        'tarif_sr' => 0,
+                                        'modified_by' => user_id()
+                                    ]);
+                                }
                             }
                         }
+                        $db = db_connect();
+                        $db->query("update eklaim_klaim set
+                        grouper_date = current_timestamp ,
+                        claim_value = (select sum(tarif) from grouper where no_sep = '$nomor_sep'),
+                        cbg_tarif = (select sum(tarif) from grouper where no_sep = '$nomor_sep')
+                        where nosep_klaim = '$nomor_sep'");
+                    } catch (\Exception $e) {
+                        // Return error response
+                        return $this->response->setJSON([
+                            'status' => 'error',
+                            'message' => $e->getMessage()
+                        ])->setStatusCode(500); // Internal Server Error
                     }
-                    $db = db_connect();
-                    $db->query("update eklaim_klaim set
-                    grouper_date = current_timestamp ,
-                    claim_value = (select sum(tarif) from grouper where no_sep = '$nomor_sep'),
-                    cbg_tarif = (select sum(tarif) from grouper where no_sep = '$nomor_sep')
-                    where nosep_klaim = '$nomor_sep'");
+
+
 
                     return json_encode($resultGrouper1);
                 } else {
@@ -5313,31 +5474,14 @@ This Function is used to Add Patient
         } else {
             return json_encode($resultNewKlaim);
         }
-
-
-
-
-
-
-
-
-
-
-
-        // return json_encode($data);
-
-        // String of all alphanumeric character
-        $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        // Shufle the $str_result and returns substring
-        // of specified length
-        $alfa_no = substr(str_shuffle($str_result), 0, 5);
-        $array   = array('status' => 'success', 'error' => '', 'message' => 'edit obat non racikan berhasil', 'data' => $returnData);
-        echo json_encode($array);
     }
     public function postGrouper2()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5380,7 +5524,10 @@ This Function is used to Add Patient
     public function finalKlaim()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5429,7 +5576,10 @@ This Function is used to Add Patient
     public function editKlaim()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5476,7 +5626,10 @@ This Function is used to Add Patient
     public function getMrPasien()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5525,7 +5678,10 @@ This Function is used to Add Patient
     public function getTreatResult()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5576,6 +5732,7 @@ This Function is used to Add Patient
 
         $nomor = $body['nomor'];
         $visit = $body['visit'];
+        $clinic_id = $body['clinic_id'] ?? null;
 
 
 
@@ -5586,7 +5743,7 @@ This Function is used to Add Patient
 
 
         $tb = new TreatResultModel();
-        $tbselect = $this->lowerKey($tb->getTreatResultList($nomor, $visit));
+        $tbselect = $this->lowerKey($tb->getTreatResultList($nomor, $visit, $clinic_id));
 
         foreach ($tbselect as $key => $value) {
             foreach ($resultType as $key1 => $value) {
@@ -5607,7 +5764,10 @@ This Function is used to Add Patient
     public function getHasilLab()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5697,7 +5857,10 @@ This Function is used to Add Patient
     public function getResep()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5752,7 +5915,7 @@ This Function is used to Add Patient
                 $obat[] = $select[$key];
             } else {
                 $historyObat[] = $select[$key];
-                $visitHistory[$select[$key]['visit_id']] = ' <i class="far fa-caret-square-down"></i> (' . substr($select[$key]['treat_date'], 0, 10) . ") " . $select[$key]['fullname'] . ' => ' . $select[$key]['name_of_clinic'];
+                $visitHistory[$select[$key]['visit_id']] = ' | ' . substr($select[$key]['treat_date'], 0, 10) . " | " . $select[$key]['fullname'] . '  | ' . $select[$key]['name_of_clinic'] . ' | ';
             }
             // if ($select[$key]['isrj'] == 1) {
             // }
@@ -5769,19 +5932,28 @@ This Function is used to Add Patient
                             </h2>
                             <div id="historyPresc' . $key . '" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body text-muted">
-                                    <table id="eresepTable" class="table table-bordered table-hover">
-                                        <thead class="table-primary" style="text-align: center;">
-                                            <tr>
-                                                <th class="text-center" style="width: 4%;">No.</th class="text-center">
-                                                <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                                                <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                                                <th class="text-center" colspan="5" style="width: 50%;">Aturan Minum</th class="text-center">
-                                            </tr>
-                                        </thead>
-                                        <tbody id="body' . $key . '">
+                                    <form id="formbody' . $key . '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
+                                        <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
+                                            <thead class="table-primary" style="text-align: center;">
+                                                <tr>
+                                                    <th class="text-center" style="width: 4%;">No.</th class="text-center">
+                                                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                    <th class="text-center" colspan="5" style="width: 30%;">Aturan Minum</th class="text-center">
+                                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
+                                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
+                                                </tr>
+                                            </thead>
+                                            <tbody id="ereseploadingspace">
 
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                        <div id="body' . $key . '">
+                                        </div>
+                                        <div class="panel-footer text-end mb-4">
+                                            <button type="button" id="btnCopyResep' . $key . '" name="copyresep" data-loading-text="prcessing" class="btn btn-secondary" onclick="copyResep(\'body' . $key . '\')"><i class="fa fa-check-circle"></i> <span>Copy</span></button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>';
@@ -5836,10 +6008,170 @@ This Function is used to Add Patient
 
         return json_encode($data);
     }
+    public function copyResep()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body);
+
+        $billId = $body['billId'];
+        $noresep = $body['noresep'];
+        $visit_id = $body['visit_id'];
+        $trans_id = $body['trans_id'];
+
+        $strinbill = str_replace(['[', ']'], ['', ''], str_replace('"', "'", json_encode($billId)));
+
+        // return json_encode($strinbill);
+
+        $db = db_connect();
+        $db->query("
+        insert into treatment_obat
+        select
+        ORG_UNIT_CODE,
+        left(replace(replace(REPLACE(convert(varchar,getdate(),121),'-',''),':',''),' ',''),14)+right(newid(),4) as bill_id,
+        NO_REGISTRATION,
+        '$visit_id' as visit_id,
+        TARIF_ID,
+        CLASS_ID,
+        CLINIC_ID,
+        CLINIC_ID_FROM,
+        TREATMENT,
+        getdate(),
+        QUANTITY,
+        MEASURE_ID,
+        DESCRIPTION,
+        '$noresep',
+        DOSE_PRESC,
+        SOLD_STATUS,
+        RACIKAN,
+        CLASS_ROOM_ID,
+        KELUAR_ID,
+        BED_ID,
+        EMPLOYEE_ID,
+        DESCRIPTION2,
+        BRAND_ID,
+        DOCTOR,
+        EXIT_DATE,
+        EMPLOYEE_ID_FROM,
+        DOCTOR_FROM,
+        status_pasien_id,
+        THENAME,
+        THEADDRESS,
+        THEID,
+        SERIAL_NB,
+        ISRJ,
+        AGEYEAR,
+        AGEMONTH,
+        AGEDAY,
+        GENDER,
+        KARYAWAN,
+        '" . user()->username . "',
+        getdate(),
+        MODIFIED_FROM,
+        NUMER,
+        NOTA_NO,
+        MEASURE_ID2,
+        POTONGAN,
+        BAYAR,
+        RETUR,
+        TARIF_TYPE,
+        PPNVALUE,
+        TAGIHAN,
+        KOREKSI,
+        AMOUNT_PAID,
+        DISKON,
+        SELL_PRICE,
+        ACCOUNT_ID,
+        subsidi,
+        PROFESI,
+        EMBALACE,
+        DISCOUNT,
+        AMOUNT,
+        PPN,
+        ITER,
+        PAYOR_ID,
+        STATUS_OBAT,
+        SUBSIDISAT,
+        MARGIN,
+        POKOK_JUAL,
+        PRINTQ,
+        PRINTED_BY,
+        STOCK_AVAILABLE,
+        STATUS_TARIF,
+        PACKAGE_ID,
+        MODULE_ID,
+        profession,
+        THEORDER,
+        CORRECTION_ID,
+        CORRECTION_BY,
+        CASHIER,
+        islunas,
+        PAY_METHOD_ID,
+        PAYMENT_DATE,
+        ISCETAK,
+        print_date,
+        DOSE,
+        JML_BKS,
+        ORIG_DOSE,
+        RESEP_KE,
+        ITER_KE,
+        KUITANSI_ID,
+        PEMBULATAN,
+        KAL_ID,
+        INVOICE_ID,
+        SERVICE_TIME,
+        TAKEN_TIME,
+        modified_datesys,
+        '$trans_id' as trans_id,
+        SPPBILL,
+        SPPBILLDATE,
+        SPPBILLUSER,
+        SPPKASIR,
+        SPPKASIRDATE,
+        SPPKASIRUSER,
+        SPPPOLI,
+        SPPPOLIUSER,
+        SPPPOLIDATE,
+        NOSEP,
+        FUND_ID,
+        ATURANMINUM2,
+        REKONSTATUS_ID,
+        EDUCATION_ID,
+        TAKEPILL_DATE,
+        STOKDARI,
+        C,
+        CIF,
+        ED,
+        DOSE1,
+        DOSE2,
+        SIGNA_1,
+        SIGNA_2,
+        SIGNA_3,
+        SIGNA_4,
+        SIGNA_5
+        from treatment_obat where bill_id in ($strinbill)");
+
+        $response['code'] = '200';
+        $response['message'] = 'Copy Resep berhasil';
+
+
+        return json_encode($response);
+    }
     public function getAssessmentIgd()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5859,7 +6191,10 @@ This Function is used to Add Patient
     public function generateResep()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5881,7 +6216,10 @@ This Function is used to Add Patient
     public function getAlergi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -5900,7 +6238,10 @@ This Function is used to Add Patient
     public function getTarif()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $search_term = $this->request->getPost("searchTerm");
@@ -5909,7 +6250,7 @@ This Function is used to Add Patient
         $class_id = $this->request->getPost("kelas");
         // $class_id = '%';
         if (isset($search_term) && $search_term != '') {
-            $search_term = '%' . $search_term . '%';
+            // $search_term = $search_term;
             $ttModel = new TreatTarifModel();
             $result = $this->lowerKey($ttModel->getTarif($clinic_id, $class_id, $search_term));
             $data   = array();
@@ -5921,10 +6262,176 @@ This Function is used to Add Patient
             echo json_encode($data);
         }
     }
-    public function getDiskon()
+    public function getTarifPerawat()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $search_term = $this->request->getPost("searchTerm");
+        $clinic_id = $this->request->getPost("klinik");
+        // $clinic_id = '%';
+        $class_id = $this->request->getPost("kelas");
+        // $class_id = '%';
+        if (isset($search_term) && $search_term != '') {
+            // $search_term = $search_term;
+            $ttModel = new TreatTarifModel();
+            $result = $this->lowerKey($ttModel->getTarifPerawat($clinic_id, $class_id, $search_term));
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => json_encode($value), "text" => $value['tarif_name'] . " (Rp. " . number_format($value['amount'], 2, ",", ".") . ")");
+                }
+            }
+            echo json_encode($data);
+        }
+    }
+    public function getDokterRad()
     {
         if (!$this->request->is('post')) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $search_term = $this->request->getPost("searchTerm");
+
+        if (isset($search_term) && $search_term != '') {
+            $result =
+                $db->query(
+                    "
+                    SELECT EMPLOYEE_ID,FULLNAME 
+                    from EMPLOYEE_ALL  
+                    WHERE employee_id in (select employee_id from doctor_schedule where clinic_id = 'P016')
+                    AND FULLNAME LIKE '" . $search_term . "%'
+                    Order by fullname;
+                    "
+                )->getResultArray();
+
+            $result = $this->lowerKey($result);
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array("id" => $value['employee_id'], "text" => $value['fullname']);
+                }
+            }
+
+            echo json_encode($data);
+        }
+    }
+    public function getTemplateExpertise()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $search_term = $this->request->getPost("searchTerm");
+        $employee_id = user()->employee_id ?? '61';
+        if (isset($search_term) && $search_term != '') {
+            $result =
+                $db->query(
+                    "
+                   SELECT top(10) RADIOLOGI_BACAAN_ID,
+                    RADIOLOGI_BACAAN_TYPE, 
+                    RADIOLOGI_BACAANTYPE, 
+                    EMPLOYEE_ID, 
+                    TREATMENT, 
+                    HASIL_BACA, KESAN
+                    FROM RADIOLOGI_TEMPLATE
+                    WHERE EMPLOYEE_ID = '$employee_id'
+                    AND TREATMENT LIKE '" . $search_term . "%'
+                    "
+                )->getResultArray();
+
+            $result = $this->lowerKey($result);
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array(
+                        "id" => $value['radiologi_bacaan_id'],
+                        "text" => $value['treatment'],
+                        "hasil_baca" => $value['hasil_baca'],
+                        "kesimpulan" => $value['kesan'],
+                    );
+                }
+            }
+
+            echo json_encode($data);
+        }
+    }
+    public function getDietaryHabit()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $search_term = $this->request->getPost("searchTerm");
+        if (isset($search_term) && $search_term != '') {
+            $result =
+                $db->query(
+                    "
+                    select top(10) * from ASSESSMENT_NUTRITION_HABIT
+                    WHERE dietary_habit LIKE '" . $search_term . "%'
+                    "
+                )->getResultArray();
+
+            $result = $this->lowerKey($result);
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array(
+                        "id" => $value['habit_id'],
+                        "text" => $value['dietary_habit'],
+                    );
+                }
+            }
+
+            echo json_encode($data);
+        }
+    }
+
+    public function getAgeRange()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $search_term = $this->request->getPost("searchTerm");
+        if (isset($search_term) && $search_term != '') {
+            $result =
+                $db->query(
+                    "
+                    select age_range, display from AGE_RANGE 
+                     WHERE display LIKE '%" . $search_term . "%'
+                    "
+                )->getResultArray();
+
+            $result = $this->lowerKey($result);
+            $data   = array();
+            if (!empty($result)) {
+                foreach ($result as $value) {
+                    $data[] = array(
+                        "id" => $value['age_range'],
+                        "text" => $value['display'],
+                    );
+                }
+            }
+
+            echo json_encode($data);
+        }
+    }
+    public function getDiskon()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -5971,7 +6478,10 @@ This Function is used to Add Patient
     public function getPlafond()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -6002,7 +6512,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 
@@ -6201,63 +6714,66 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
 
 
-        $bill_id = $body['bill_id']; //$this->request->getPost('bill_id');
-        $trans_id = $body['trans_id']; //$this->request->getPost('trans_id');
-        $no_registration = $body['no_registration']; //$this->request->getPost('no_registration');
-        $theorder = $body['theorder']; //$this->request->getPost('theorder');
-        $visit_id = $body['visit_id']; //$this->request->getPost('visit_id');
-        $org_unit_code = $body['org_unit_code']; //$this->request->getPost('org_unit_code');
-        $payor_id = $body['payor_id']; //$this->request->getPost('payor_id');
-        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
-        $theid = $body['theid']; //$this->request->getPost('theid');
-        $thename = $body['thename']; //$this->request->getPost('thename');
-        $theaddress = $body['theaddress']; //$this->request->getPost('theaddress');
-        $isrj = $body['isrj']; //$this->request->getPost('isRJ');
-        $gender = $body['gender']; //$this->request->getPost('gender');
-        $ageyear = $body['ageyear']; //$this->request->getPost('ageyear');
-        $agemonth = $body['agemonth']; //$this->request->getPost('agemonth');
-        $ageday = $body['ageday']; //$this->request->getPost('ageday');
-        $kal_id = $body['kal_id']; //$this->request->getPost('kal_id');
-        $karyawan = $body['karyawan']; //$this->request->getPost('karyawan');
-        $class_room_id = $body['class_room_id']; //$this->request->getPost('class_room_id');
-        $bed_id = $body['bed_id']; //$this->request->getPost('bed_id');
-        $employee_id_from = $body['employee_id_from']; //$this->request->getPost('employee_id_from');
-        $doctor_from = $body['doctor_from']; //$this->request->getPost('doctor_from');
-        $clinic_id = $body['clinic_id']; //$this->request->getPost('clinic_id');
-        $clinic_id_from = $body['clinic_id_from']; //$this->request->getPost('clinic_id_from');
-        $status_pasien_id = $body['status_pasien_id']; //$this->request->getPost('status_pasien_id');
-        $treat_date = $body['treat_date']; //$this->request->getPost('treat_date');
-        $exit_date = $body['exit_date']; //$this->request->getPost('exit_date');
-        $cashier = $body['cashier']; //$this->request->getPost('cashier');
-        $modified_from = $body['modified_from']; //$this->request->getPost('modified_from');
-        $islunas = $body['islunas']; //$this->request->getPost('islunas');
-        $measure_id = $body['measure_id']; //$this->request->getPost('measure_id');
-        $tarif_id = $body['tarif_id']; //$this->request->getPost('tarif_id');
-        $treatment = $body['treatment']; //$this->request->getPost('treatment');
-        $employee_id = $body['employee_id']; //$this->request->getPost('employee_id');
-        $sell_price = $body['sell_price']; //$this->request->getPost('sell_price');
-        $quantity = $body['quantity']; //$this->request->getPost('quantity');
-        $amount_paid = $body['amount_paid']; //$this->request->getPost('amount_paid');
-        $discount = $body['discount']; //$this->request->getPost('discount');
-        $subsidisat = $body['subsidisat']; //$this->request->getPost('subsidisat');
-        $amount = $body['amount']; //$this->request->getPost('amount');
-        $tagihan = $body['tagihan']; //$this->request->getPost('tagihan');
-        $subsidi = $body['subsidi']; //$this->request->getPost('subsidi');
-        $profesi = $body['profesi']; //$this->request->getPost('profesi');
-        $tarif_type = $body['tarif_type']; //$this->request->getPost('tarif_type');
-        $class_id = $body['class_id']; //$this->request->getPost('class_id');
-        $amount_plafond = $body['amount_plafond']; //$this->request->getPost('amount_plafond');
-        $amount_paid_plafond = $body['amount_paid_plafond']; //$this->request->getPost('amount_paid_plafond');
-        $class_id_plafond = $body['class_id_plafond']; //$this->request->getPost('class_id_plafond');
-        $treatment_plafond = $body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
-        $nota_no = $body['nota_no']; //$this->request->getPost('nota_no');
+        $bill_id = @$body['bill_id']; //$this->request->getPost('bill_id');
+        $trans_id = @$body['trans_id']; //$this->request->getPost('trans_id');
+        $no_registration = @$body['no_registration']; //$this->request->getPost('no_registration');
+        $theorder = @$body['theorder']; //$this->request->getPost('theorder');
+        $visit_id = @$body['visit_id']; //$this->request->getPost('visit_id');
+        $org_unit_code = @$body['org_unit_code']; //$this->request->getPost('org_unit_code');
+        $payor_id = @$body['payor_id']; //$this->request->getPost('payor_id');
+        $karyawan = @$body['karyawan']; //$this->request->getPost('karyawan');
+        $theid = @$body['theid']; //$this->request->getPost('theid');
+        $thename = @$body['thename']; //$this->request->getPost('thename');
+        $theaddress = @$body['theaddress']; //$this->request->getPost('theaddress');
+        $isrj = @$body['isrj']; //$this->request->getPost('isRJ');
+        $gender = @$body['gender']; //$this->request->getPost('gender');
+        $ageyear = @$body['ageyear']; //$this->request->getPost('ageyear');
+        $agemonth = @$body['agemonth']; //$this->request->getPost('agemonth');
+        $ageday = @$body['ageday']; //$this->request->getPost('ageday');
+        $kal_id = @$body['kal_id']; //$this->request->getPost('kal_id');
+        $karyawan = @$body['karyawan']; //$this->request->getPost('karyawan');
+        $class_room_id = @$body['class_room_id']; //$this->request->getPost('class_room_id');
+        $bed_id = @$body['bed_id']; //$this->request->getPost('bed_id');
+        $employee_id_from = @$body['employee_id_from']; //$this->request->getPost('employee_id_from');
+        $doctor_from = @$body['doctor_from']; //$this->request->getPost('doctor_from');
+        $clinic_id = @$body['clinic_id']; //$this->request->getPost('clinic_id');
+        $clinic_id_from = @$body['clinic_id_from']; //$this->request->getPost('clinic_id_from');
+        $status_pasien_id = @$body['status_pasien_id']; //$this->request->getPost('status_pasien_id');
+        $treat_date = @$body['treat_date']; //$this->request->getPost('treat_date');
+        $exit_date = @$body['exit_date']; //$this->request->getPost('exit_date');
+        $cashier = @$body['cashier']; //$this->request->getPost('cashier');
+        $modified_from = @$body['modified_from']; //$this->request->getPost('modified_from');
+        $islunas = @$body['islunas']; //$this->request->getPost('islunas');
+        $measure_id = @$body['measure_id']; //$this->request->getPost('measure_id');
+        $tarif_id = @$body['tarif_id']; //$this->request->getPost('tarif_id');
+        $treatment = @$body['treatment']; //$this->request->getPost('treatment');
+        $employee_id = @$body['employee_id']; //$this->request->getPost('employee_id');
+        $sell_price = @$body['sell_price']; //$this->request->getPost('sell_price');
+        $quantity = @$body['quantity']; //$this->request->getPost('quantity');
+        $amount_paid = @$body['amount_paid']; //$this->request->getPost('amount_paid');
+        $discount = @$body['discount']; //$this->request->getPost('discount');
+        $subsidisat = @$body['subsidisat']; //$this->request->getPost('subsidisat');
+        $amount = @$body['amount']; //$this->request->getPost('amount');
+        $tagihan = @$body['tagihan']; //$this->request->getPost('tagihan');
+        $subsidi = @$body['subsidi']; //$this->request->getPost('subsidi');
+        $profesi = @$body['profesi']; //$this->request->getPost('profesi');
+        $tarif_type = @$body['tarif_type']; //$this->request->getPost('tarif_type');
+        $class_id = @$body['class_id']; //$this->request->getPost('class_id');
+        $amount_plafond = @$body['amount_plafond']; //$this->request->getPost('amount_plafond');
+        $amount_paid_plafond = @$body['amount_paid_plafond']; //$this->request->getPost('amount_paid_plafond');
+        $class_id_plafond = @$body['class_id_plafond']; //$this->request->getPost('class_id_plafond');
+        $treatment_plafond = @$body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
+        $nota_no = @$body['nota_no']; //$this->request->getPost('nota_no');
 
         // echo $treat_date;
 
@@ -6440,8 +6956,28 @@ This Function is used to Add Patient
     }
 
 
-    public function delBill($bill_id)
+    public function delBill($bill_id = '')
     {
+        if ($bill_id != '') {
+            $tb = new TreatmentBillModel();
+            $result = $tb->delete($bill_id);
+
+            if ($result) {
+                $array   = array('status' => 'success', 'error' => '', 'message' => 'delete berhasil');
+                echo json_encode($array);
+            } else {
+                $array   = array('status' => 'failure', 'error' => '', 'message' => 'delete gagal');
+                echo json_encode($array);
+            }
+        } else {
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'delete berhasil');
+            echo json_encode($array);
+        }
+    }
+    public function delBillPerawat($bill_id)
+    {
+        $tb = new TreatmentPerawatModel();
+        $result = $tb->delete($bill_id);
         $tb = new TreatmentBillModel();
         $result = $tb->delete($bill_id);
 
@@ -6570,7 +7106,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -6747,45 +7286,17 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
-
-        // return $this->request->is('put');
-
-
-        // return json_encode($norm);
-        // $rules = [
-        //     'bed_id' => 'permit_empty|integer',
-        //     'keluar_id' => 'permit_empty|integer',
-        //     'status_pasien_id' => 'permit_empty|integer',
-        //     'ageyear' => 'permit_empty|integer',
-        //     'agemonth' => 'permit_empty|integer',
-        //     'ageday' => 'permit_empty|integer',
-        //     'saturasi' => 'permit_empty|integer',
-        //     'kesadaran' => 'permit_empty|integer',
-        //     'isvalid' => 'permit_empty|integer',
-        //     'temperature' => 'permit_empty|integer',
-        //     'tension_upper' => 'permit_empty|integer',
-        //     'tension_below' => 'permit_empty|integer',
-        //     'nadi' => 'permit_empty|integer',
-        //     'nafas' => 'permit_empty|integer',
-        //     'weight' => 'permit_empty|integer',
-        //     'height' => 'permit_empty|integer',
-        //     'arm_diameter' => 'permit_empty|integer',
-        // ];
-
-
-
-        // if (!$this->validate($rules)) {
-        //     $validation = \Config\Services::validation();
-        //     $errors = $validation->getErrors();
-        //     $array   = array('status' => 'fail', 'error' => $errors, 'message' => 'update gagal');
-        //     return json_encode($array);
-        // }
 
         $visit = (string)$this->request->getPost('visit');
         $visit = base64_decode($visit);
         $visit = json_decode($visit, true);
+
+        // return json_encode($visit);
 
 
         $org_unit_code = $this->request->getPost('org_unit_code');
@@ -6844,6 +7355,10 @@ This Function is used to Add Patient
         $dose2 = $this->request->getPost('dose2');
         $theorder = $this->request->getPost('theorder');
         $soldstatus = $this->request->getPost('sold_status');
+        $measure_dosis = $this->request->getPost('measure_dosis');
+        $body_id = $this->request->getPost('body_id');
+        $status_tarif = $this->request->getPost('status_tarif');
+        $sold_status = $this->request->getPost('sold_status');
 
         // return json_encode($this->request->getPost());
 
@@ -6898,7 +7413,7 @@ This Function is used to Add Patient
                 $model = new TreatmentObatModel();
                 $modelgf = new GoodGfModel();
 
-
+                // return json_encode($soldstatus);
                 foreach ($bill_id as $key => $value) {
                     if ($soldstatus[$key] != 0) {
                         $data = [
@@ -6916,7 +7431,7 @@ This Function is used to Add Patient
                             'employee_id' => $employee_id[$key],
                             'employee_id_from' => $employee_id_from[$key],
                             'doctor_from' => $doctor_from[$key],
-                            'status_obat' => $status_obat[$key],
+                            // 'status_obat' => $status_obat[$key],
                             'tarif_id' => $tarif_id[$key],
                             'treatment' => $treatment[$key],
                             'tarif_type' => $tarif_type[$key],
@@ -6930,8 +7445,8 @@ This Function is used to Add Patient
                             'ppnvalue' => (float)$ppnvalue[$key],
                             'discount' => (float)$discount[$key],
                             'diskon' => (float)$diskon[$key],
-                            'profession' => $profession[$key],
-                            'profesi' => $profesi[$key],
+                            // 'profession' => $profession[$key],
+                            // 'profesi' => $profesi[$key],
                             'amount_paid' => (float)$amount_paid[$key],
                             'description2' => $description2[$key],
                             'dose_presc' => (float)$dose_presc[$key],
@@ -6955,10 +7470,15 @@ This Function is used to Add Patient
                             'theid' => $theid[$key],
                             'dose1' => (float)$dose1[$key],
                             'dose2' => (float)$dose2[$key],
-                            'module_id' => $moduleId[$key],
+                            'module_id' => $moduleId[$key] ?? null,
                             'theorder' => (int)$theorder[$key],
-                            'sold_status' => $soldstatus[$key]
+                            'body_id' => $body_id[$key],
+                            'status_tarif' => $status_tarif[$key],
+                            'sold_status' => $sold_status[$key],
                         ];
+                        if ((int)$racikan[$key] == 1 && isset($measure_dosis[$key])) {
+                            $data['measure_dosis'] = $measure_dosis[$key];
+                        }
 
 
                         $model->save($data, true);
@@ -6980,7 +7500,7 @@ This Function is used to Add Patient
                             'employee_id' => $employee_id[$key],
                             'employee_id_from' => $employee_id_from[$key],
                             'doctor_from' => $doctor_from[$key],
-                            'status_obat' => $status_obat[$key],
+                            // 'status_obat' => $status_obat[$key],
                             'tarif_id' => $tarif_id[$key],
                             'treatment' => $treatment[$key],
                             'tarif_type' => $tarif_type[$key],
@@ -6994,8 +7514,8 @@ This Function is used to Add Patient
                             'ppnvalue' => (float)$ppnvalue[$key],
                             'discount' => (float)$discount[$key],
                             'diskon' => (float)$diskon[$key],
-                            'profession' => $profession[$key],
-                            'profesi' => $profesi[$key],
+                            // 'profession' => $profession[$key],
+                            // 'profesi' => $profesi[$key],
                             'amount_paid' => (float)$amount_paid[$key],
                             'description2' => $description2[$key],
                             'dose_presc' => (float)$dose_presc[$key],
@@ -7075,10 +7595,10 @@ This Function is used to Add Patient
                         $result[] = $data;
                     }
                 }
-                $array   = array('status' => 'success', 'error' => '', 'message' => 'tambah obat racikan berhasil', 'data' => $result);
+                $array   = array('status' => 'success', 'error' => '', 'message' => 'Berhasil simpan data', 'data' => $result);
                 return json_encode($array);
             } else {
-                $array   = array('status' => 'fail', 'error' => '', 'message' => 'Resep ini sudah terkunci, tidak bisa mengubah data lagi', 'data' => $result);
+                $array   = array('status' => 'fail', 'error' => '', 'message' => 'Data ini sudah terkunci, tidak bisa mengubah data lagi', 'data' => $result);
                 return json_encode($array);
             }
         } else {
@@ -7091,7 +7611,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -7115,7 +7638,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -7137,11 +7663,84 @@ This Function is used to Add Patient
             echo json_encode($array);
         }
     }
+    public function stopOdd()
+    {
+        // dd($this->request->is('post'));
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $resep_no = $body['resep_no'];
+        $resep_ke = $body['resep_ke'];
+
+        // return json_encode($id);
+
+        $db = db_connect();
+        $result = $db->query("update treatment_obat set status_tarif = 0 where resep_no = '$resep_no' and resep_ke = '$resep_ke'");
+
+        // $model = new TreatmentObatModel();
+        // $data = [
+        //     'status_tarif' => 1
+        // ];
+        // $result = $model->where("resep_no", $resep_no)->where("resep_ke", $resep_ke)
+        //     ->set($data)->update();
+
+        if ($result) {
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'Stop ODD Berhasil', 'data' => $body);
+            echo json_encode($array);
+        } else {
+            $array   = array('status' => 'failure', 'error' => '', 'message' => 'Stop ODD Gagal');
+            echo json_encode($array);
+        }
+    }
+    public function stopOddAll()
+    {
+        // dd($this->request->is('post'));
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $resep_no = $body['resep_no'];
+        $visit_id = $body['visit_id'];
+
+        // return json_encode($id);
+
+        $db = db_connect();
+        $result = $db->query("update treatment_obat set status_tarif = 0 where resep_no like '$resep_no' and visit_id = '$visit_id'");
+
+        // $model = new TreatmentObatModel();
+        // $data = [
+        //     'status_tarif' => 1
+        // ];
+        // $result = $model->where("resep_no", $resep_no)->where("resep_ke", $resep_ke)
+        //     ->set($data)->update();
+
+        if ($result) {
+            $array   = array('status' => 'success', 'error' => '', 'message' => 'Stop ODD Berhasil', 'data' => $body);
+            echo json_encode($array);
+        } else {
+            $array   = array('status' => 'failure', 'error' => '', 'message' => 'Stop ODD Gagal');
+            echo json_encode($array);
+        }
+    }
     public function editPresc()
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -7192,7 +7791,7 @@ This Function is used to Add Patient
         $employee_id = $this->request->getPost('employee_id');
         $employee_id_from = $this->request->getPost('employee_id_from');
         $doctor_from = $this->request->getPost('doctor_from');
-        $status_obat = $this->request->getPost('status_obat');
+        // $status_obat = $this->request->getPost('status_obat');
         $tarif_id = $this->request->getPost('tarif_id');
         $treatment = $this->request->getPost('treatment');
         $tarif_type = $this->request->getPost('tarif_type');
@@ -7253,7 +7852,7 @@ This Function is used to Add Patient
                 'employee_id' => $employee_id[$key],
                 'employee_id_from' => $employee_id_from[$key],
                 'doctor_from' => $doctor_from[$key],
-                'status_obat' => $status_obat[$key],
+                // 'status_obat' => $status_obat[$key],
                 'tarif_id' => $tarif_id[$key],
                 'treatment' => $treatment[$key],
                 'tarif_type' => $tarif_type[$key],
@@ -7319,7 +7918,10 @@ This Function is used to Add Patient
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return $this->request->is('put');
@@ -7370,7 +7972,7 @@ This Function is used to Add Patient
         $employee_id = $this->request->getPost('employee_id');
         $employee_id_from = $this->request->getPost('employee_id_from');
         $doctor_from = $this->request->getPost('doctor_from');
-        $status_obat = $this->request->getPost('status_obat');
+        // $status_obat = $this->request->getPost('status_obat');
         $tarif_id = $this->request->getPost('tarif_id');
         $treatment = $this->request->getPost('treatment');
         $tarif_type = $this->request->getPost('tarif_type');
@@ -7436,7 +8038,7 @@ This Function is used to Add Patient
                 'employee_id' => $employee_id[$key],
                 'employee_id_from' => $employee_id_from[$key],
                 'doctor_from' => $doctor_from[$key],
-                'status_obat' => $status_obat[$key],
+                // 'status_obat' => $status_obat[$key],
                 'tarif_id' => $tarif_id[$key],
                 'treatment' => $treatment[$key],
                 'tarif_type' => $tarif_type[$key],
@@ -7501,7 +8103,10 @@ This Function is used to Add Patient
     public function getPasienRanapRoom()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -7517,7 +8122,10 @@ This Function is used to Add Patient
     public function getHandOver()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $model = new HandoverModel();
@@ -7549,7 +8157,10 @@ This Function is used to Add Patient
     public function saveHandover()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $orgModel = new OrganizationunitModel();
@@ -7592,5 +8203,107 @@ This Function is used to Add Patient
 
 
         return json_encode($array);
+    }
+    public function gizi()
+    {
+        $db = db_connect();
+
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+        // dd(user()->getEmployeeData());
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+
+        $data_diet_type = $this->lowerKey($db->query("
+        select * from diet_type
+        ")->getResultArray() ?? []);
+
+
+        $diet_type = [];
+
+        $diet_type = array_column($data_diet_type, 'dtype_id');
+
+        $data_diet_warning = $this->lowerKey($db->query("
+        select * from diet_warning
+        ")->getResultArray() ?? []);
+
+        $diet_warning  = [];
+        $diet_warning = array_column($data_diet_warning, 'diet_warning');
+
+        $title = 'Gizi';
+        return view('admin/patient/gizi', [
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_time,
+            'clinic' => $clinic,
+            'diet_type' => $diet_type,
+            'diet_warning' => $diet_warning,
+        ]);
+        // $session = session();
+        // $sessionData = ['gsPoli' => ''];
+        // $session->set($sessionData);
+        // $giTipe = 3;
+
+        // $title = 'Gizi';
+
+        // return $this->searchingTemplate($giTipe, $title);
+    }
+    public function pmkp()
+    {
+        $db = db_connect();
+
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+        // dd(user()->getEmployeeData());
+        $scheduleModel = new DoctorScheduleModel();
+        $schedule = $this->lowerKey(
+            $scheduleModel->join('employee_all ea', 'doctor_schedule.employee_id = ea.employee_id')
+                ->join('clinic c', 'c.clinic_id = doctor_schedule.clinic_id')
+                ->select("replace(fullname,'''','') as FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id")
+                ->where('day_id is not null')
+                // ->where('start_time > dateadd(day,-1,getdate())')
+                ->where('START_TIME < GETDATE()')
+                ->groupBy('FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id')
+                ->orderBy('day_id')->findAll()
+        );
+        // echo '<pre>';
+        // var_dump($schedule);
+        // die();
+        $dokter = array();
+
+        foreach ($clinic as $key => $value) {
+            $selectDokter = array();
+
+            foreach ($schedule as $key1 => $value1) {
+                if ($clinic[$key]['clinic_id'] == $schedule[$key1]['clinic_id']) {
+                    $selectDokter[$schedule[$key1]['employee_id']] = $schedule[$key1]['fullname'];
+                }
+            }
+            $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
+            unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
+        }
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $title = 'Peningkatan Mutu dan Keselamatan Pasien';
+        return view('admin/patient/pmkp', [
+            'title' => $title,
+            'orgunit' => $orgunit,
+            'img_time' => $img_time,
+            'clinic' => $clinic,
+            'dokter' => $dokter,
+        ]);
     }
 }

@@ -116,7 +116,7 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="accordion-item">
+                    <div class="accordion-item">
                         <h2 class="accordion-header" id="lainnya">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapselainnya" aria-expanded="true" aria-controls="collapselainnya">
                                 <b>LAIN-LAIN</b>
@@ -134,7 +134,7 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -244,4 +244,37 @@ $permission = user()->getPermissions();
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/surat_lahir/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Surat Keterangan Lahir</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/laboratorium_cetak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Laboratorium</a></li>')
     $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/radiologi_cetak/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank">Radiologi</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_1_1/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $(" #armbody_id").val() + '" target="_blank"> RL-1_1</a></li>')
+
+    $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_1_3/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank"> RL-1_3</a></li>')
+
+    $('#lainnyaListLink').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_2/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val() + '" target="_blank"> RL-2</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_3_6/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank"> RL-3_6</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_3_7/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank"> RL-3_7</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_3_8/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank"> RL-3_8</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/cetak/rl_3_9/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank"> RL-3_9</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/DocCetak/cetakGroupeRajalFilePoli/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() + '" target="_blank">Rajal File Pendukung Poli</a></li>')
+
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/DocCetak/cetakGroupeRajalIgd/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() + '" target="_blank">Rajal IGD</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/DocCetak/cetakGroupeRanapFile/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() + '" target="_blank">Ranap File Pendukung</a></li>')
 </script>

@@ -50,7 +50,7 @@ $permissions = user()->getPermissions();
                 $("#form1btn").html('<i class="fa fa-search"></i> Cari')
             },
             error: function() {
-                errorMsg('Data terlalu besar, silahkan persempit range tanggal atau ubah filter menjadi lebih spesifik')
+                errorSwal('Data terlalu besar, silahkan persempit range tanggal atau ubah filter menjadi lebih spesifik')
                 $("#form1btn").html('<i class="fa fa-search"></i>')
             }
         });
@@ -114,6 +114,7 @@ $permissions = user()->getPermissions();
         var end = new Date()
 
         var daydiff = datediff(start, end)
+        deleteAntrean()
 
         if (daydiff < 3) {
             $.ajax({
@@ -162,7 +163,7 @@ $permissions = user()->getPermissions();
             $("#patientDetails").slideUp();
         } else {
             $.ajax({
-                url: baseurl + 'admin/patient/getpatientDetails',
+                url: '<?= base_url(); ?>admin/patient/getpatientDetails',
                 type: "POST",
                 data: {
                     id: id
@@ -852,260 +853,240 @@ $permissions = user()->getPermissions();
         var page = skunjAll.length - key
         $("#paginationRajalText").html(page + " dari " + skunjAll.length + " kunjungan")
 
-        if (typeof skunjAll[key].visit_id !== 'undefined') {
-
-            skunj = skunjAll[key]
-
-            $("#pvcurrentkey").val(key)
-
-            $("#pvtrans_id").val(skunj.trans_id)
-            $("#pvticket_no").val(skunj.ticket_no)
-            // <input name="visit_id" id="pvvisit_id" type="hidden" class="form-control" />
-            $("#pvvisit_id").val(skunj.visit_id)
-            //                 <input name="no_registration" id="pvno_registration" type="hidden" class="form-control" />
-            $("#pvno_registration").val(skunj.no_registration);
-            //                 <input name="diantar_oleh" id="pvdiantar_oleh" type="hidden" class="form-control" />
-            $("#pvdiantar_oleh").val(skunj.diantar_oleh);
-            //                 <input name="visitor_address" id="pvvisitor_address" type="hidden" class="form-control" />
-            $("#pvvisitor_address").val(skunj.visitor_address);
-            //                 <input name="org_unit_code" id="pvorg_unit_code" type="hidden" class="form-control" />
-            $("#pvorg_unit_code").val(skunj.org_unit_code);
-            //                 <input name="tgl_lahir" id="pvtgl_lahir" type="hidden" class="form-control" />
-            $("#pvtgl_lahir").val(skunj.tgl_lahir);
-            //                 <input name="gender" id="pvgender" type="hidden" class="form-control" />
-            $("#pvgender").val(skunj.gender);
-            //                 <input name="payor_id" id="pvpayor_id" type="hidden" class="form-control" />
-            $("#pvpayor_id").val(skunj.payor_id);
-            //                 <input name="clinic_id_from" id="pvclinic_id_from" type="hidden" class="form-control" />
-            $("#pvclinic_id_from").val(skunj.clinic_id_from);
-            //                 <input name="pasien_id" id="pvpasien_id" type="hidden" class="form-control" />
-            $("#pasien_id").val(skunj.pasien_id);
-            //                 <input name="karyawan" id="pvkaryawan" type="hidden" class="form-control" />
-            $("#pvkaryawan").val(skunj.karyawan)
-            //                 <input name="family_status_id" id="pvfamily_status_id" type="hidden" class="form-control" />
-            $("#pvfamily_status_id").val(skunj.family_status_id)
-            //                 <input name="account_id" id="pvaccount_id" type="hidden" class="form-control" />
-            $("#pvaccount_id").val(skunj.account_id)
-            //                 <input name="coverage_Id" id="pvcoverage_Id" type="hidden" class="form-control" />
-            $("#pvcoverage_id").val(skunj.coverage_id)
-            //                 <input name="ageday" id="pvageday" type="hidden" class="form-control" />
-            $("#pvageday").val(skunj.ageday)
-            //                 <input name="agemonth" id="pvagemonth" type="hidden" class="form-control" />
-            $("#pvagemonth").val(skunj.agemonth)
-            //                 <input name="ageyear" id="pvageyear" type="hidden" class="form-control" />
-            $("#pvageyear").val(skunj.ageyear)
-            //                 <input name="kode_agama" id="pvagama" type="hidden" class="form-control" />
-            $("#pvagama").val(skunj.kode_agama)
-            //                 <input name="aktif" id="pvaktif" type="hidden" class="form-control" />
-            $("#pvaktif").val(skunj.aktif)
-            //                 <input name="isrj" id="pvisrj" type="hidden" class="form-control" />
-            $("#pvisrj").val(skunj.isrj);
-
-            $("#pvclinic_id").val(skunj.clinic_id)
-            $("#pvemployee_id").html("");
-            var clinicSelected = skunj.clinic_id
-            dokterdpjp.forEach((value, key) => {
-                if (value[0] == clinicSelected) {
-                    $("#pvemployee_id").append(new Option(value[2], value[1]))
+        if (skunjAll.length > 0) {
+            if (typeof skunjAll[key].visit_id !== 'undefined') {
+                skunj = skunjAll[key]
+                $("#pvcurrentkey").val(key)
+                $("#pvtrans_id").val(skunj.trans_id)
+                $("#pvticket_no").val(skunj.ticket_no)
+                // <input name="visit_id" id="pvvisit_id" type="hidden" class="form-control" />
+                $("#pvvisit_id").val(skunj.visit_id)
+                //                 <input name="no_registration" id="pvno_registration" type="hidden" class="form-control" />
+                $("#pvno_registration").val(skunj.no_registration);
+                //                 <input name="diantar_oleh" id="pvdiantar_oleh" type="hidden" class="form-control" />
+                $("#pvdiantar_oleh").val(skunj.diantar_oleh);
+                //                 <input name="visitor_address" id="pvvisitor_address" type="hidden" class="form-control" />
+                $("#pvvisitor_address").val(skunj.visitor_address);
+                //                 <input name="org_unit_code" id="pvorg_unit_code" type="hidden" class="form-control" />
+                $("#pvorg_unit_code").val(skunj.org_unit_code);
+                //                 <input name="tgl_lahir" id="pvtgl_lahir" type="hidden" class="form-control" />
+                $("#pvtgl_lahir").val(skunj.tgl_lahir);
+                //                 <input name="gender" id="pvgender" type="hidden" class="form-control" />
+                $("#pvgender").val(skunj.gender);
+                //                 <input name="payor_id" id="pvpayor_id" type="hidden" class="form-control" />
+                $("#pvpayor_id").val(skunj.payor_id);
+                //                 <input name="clinic_id_from" id="pvclinic_id_from" type="hidden" class="form-control" />
+                $("#pvclinic_id_from").val(skunj.clinic_id_from);
+                //                 <input name="pasien_id" id="pvpasien_id" type="hidden" class="form-control" />
+                $("#pasien_id").val(skunj.pasien_id);
+                //                 <input name="karyawan" id="pvkaryawan" type="hidden" class="form-control" />
+                $("#pvkaryawan").val(skunj.karyawan)
+                //                 <input name="family_status_id" id="pvfamily_status_id" type="hidden" class="form-control" />
+                $("#pvfamily_status_id").val(skunj.family_status_id)
+                //                 <input name="account_id" id="pvaccount_id" type="hidden" class="form-control" />
+                $("#pvaccount_id").val(skunj.account_id)
+                //                 <input name="coverage_Id" id="pvcoverage_Id" type="hidden" class="form-control" />
+                $("#pvcoverage_id").val(skunj.coverage_id)
+                //                 <input name="ageday" id="pvageday" type="hidden" class="form-control" />
+                $("#pvageday").val(skunj.ageday)
+                //                 <input name="agemonth" id="pvagemonth" type="hidden" class="form-control" />
+                $("#pvagemonth").val(skunj.agemonth)
+                //                 <input name="ageyear" id="pvageyear" type="hidden" class="form-control" />
+                $("#pvageyear").val(skunj.ageyear)
+                //                 <input name="kode_agama" id="pvagama" type="hidden" class="form-control" />
+                $("#pvagama").val(skunj.kode_agama)
+                //                 <input name="aktif" id="pvaktif" type="hidden" class="form-control" />
+                $("#pvaktif").val(skunj.aktif)
+                //                 <input name="isrj" id="pvisrj" type="hidden" class="form-control" />
+                $("#pvisrj").val(skunj.isrj);
+                $("#pvclinic_id").val(skunj.clinic_id)
+                $("#pvemployee_id").html("");
+                var clinicSelected = skunj.clinic_id
+                dokterdpjp.forEach((value, key) => {
+                    if (value[0] == clinicSelected) {
+                        $("#pvemployee_id").append(new Option(value[2], value[1]))
+                    }
+                })
+                $("#pvemployee_id").val(skunj.employee_id)
+                $("#pvkddpjp").val(skunj.kddpjp)
+                $("#pvclass_id").val(skunj.class_id);
+                $("#pvclass_id_plafond").val(skunj.class_id_plafond)
+                $("#pvstatus_pasien_id").val(skunj.status_pasien_id)
+                $("#pvvisit_date").val((String)(skunj.visit_date).slice(0, 16))
+                $("#pvbooked_date").val((String)(skunj.booked_date).slice(0, 16))
+                $("#pvkdpoli_eks").val(skunj.kdpoli_eks)
+                $("#pvisnew").val(skunj.isnew)
+                $("#pvcob").val(skunj.cob)
+                $("#pvdescription").val(skunj.description) //catatan
+                $("#pvbackcharge").val(skunj.backcharge) //katarak
+                $("#pvway_id").val(skunj.way_id)
+                $("#pvreason_id").val(skunj.reason_id)
+                $("#pvisattended").val((Number)(skunj.isattended))
+                $("#pvasalrujukan").val(skunj.asalrujukan)
+                $("#pvnorujukan").val(skunj.norujukan)
+                $("#pvkdpoli").val(skunj.kdpoli)
+                $("#pvtanggal_rujukan").val((String)(skunj.tanggal_rujukan).slice(0, 10))
+                $("#pvppkrujukan").val(skunj.ppkrujukan)
+                // $("#pvdiag_awal").html("")
+                $("#pvdiag_awal").append(new Option(skunj.conclusion, skunj.diag_awal))
+                $("#pvconclusion").val(skunj.conclusion)
+                $("#pvdiagnosa_id").val(skunj.diagnosa_id)
+                $("#pvkdpoli_from").val(skunj.kdpoli_from)
+                $("#pvtujuankunj").val(skunj.tujuankunj)
+                $("#pvkdpenunjang").val(skunj.kdpenunjang)
+                $("#pvflagprocedure").val(skunj.flagprocedure)
+                $("#pvassesmentpel").val(skunj.assesmentpel)
+                $("#pvedit_sep").val(skunj.edit_sep)
+                $("#pvspecimenno").val(skunj.specimenno)
+                $("#pvno_skp").val(skunj.no_skp)
+                $("#pvno_skpinap").val(skunj.no_skpinap)
+                if (skunj.no_skpinap != null && skunj.no_skpinap != '') {
+                    $("#skdpnosep").val(skunj.no_skpinap)
+                } else {
+                    $("#skdpnosep").val(skunj.no_skp)
                 }
-            })
-            $("#pvemployee_id").val(skunj.employee_id)
-            $("#pvkddpjp").val(skunj.kddpjp)
-            $("#pvclass_id").val(skunj.class_id);
-            $("#pvclass_id_plafond").val(skunj.class_id_plafond)
-            $("#pvstatus_pasien_id").val(skunj.status_pasien_id)
-            $("#pvvisit_date").val((String)(skunj.visit_date).slice(0, 16))
-            $("#pvbooked_date").val((String)(skunj.booked_date).slice(0, 16))
-            $("#pvkdpoli_eks").val(skunj.kdpoli_eks)
-            $("#pvisnew").val(skunj.isnew)
-            $("#pvcob").val(skunj.cob)
-            $("#pvdescription").val(skunj.description) //catatan
-            $("#pvbackcharge").val(skunj.backcharge) //katarak
-            $("#pvway_id").val(skunj.way_id)
-            $("#pvreason_id").val(skunj.reason_id)
-            $("#pvisattended").val((Number)(skunj.isattended))
-            $("#pvasalrujukan").val(skunj.asalrujukan)
-            $("#pvnorujukan").val(skunj.norujukan)
-            $("#pvkdpoli").val(skunj.kdpoli)
-            $("#pvtanggal_rujukan").val((String)(skunj.tanggal_rujukan).slice(0, 10))
-            $("#pvppkrujukan").val(skunj.ppkrujukan)
-            // $("#pvdiag_awal").html("")
-            $("#pvdiag_awal").append(new Option(skunj.conclusion, skunj.diag_awal))
-            $("#pvconclusion").val(skunj.conclusion)
-            $("#pvdiagnosa_id").val(skunj.diagnosa_id)
-            $("#pvkdpoli_from").val(skunj.kdpoli_from)
-            $("#pvtujuankunj").val(skunj.tujuankunj)
-            $("#pvkdpenunjang").val(skunj.kdpenunjang)
-            $("#pvflagprocedure").val(skunj.flagprocedure)
-            $("#pvassesmentpel").val(skunj.assesmentpel)
-            $("#pvedit_sep").val(skunj.edit_sep)
-            $("#pvspecimenno").val(skunj.specimenno)
-            $("#pvno_skp").val(skunj.no_skp)
-            $("#pvno_skpinap").val(skunj.no_skpinap)
-            if (skunj.no_skpinap != null && skunj.no_skpinap != '') {
-                $("#skdpnosep").val(skunj.no_skpinap)
+                $("#pvvalid_rm_date").val(skunj.valid_rm_date) //tanggal kejadian laka
+                $("#pvpenjamin").val(skunj.penjamin) //penjamin laka
+                $("#pvlokasilaka").val(skunj.lokasilaka) //lokasi laka
+                $("#pvispertarif").val(skunj.ispertarif) //suplesi
+                $("#pvtemptrans").val(skunj.temptrans) //No LP
+                $("#pvdelete_sep").val(skunj.delete_sep) //keterangan laka
+                $("#skdpkddpjp").html("")
+                $("#skdpkdpoli").html("")
+                $("#skdptglkontrol").val(null)
+                $("#skdpnosurat").val(null)
+                $("#sprikddpjp").val("")
+                $("#sprikdpoli").val("")
+                $("#spritglkontrol").val(null)
+                $("#sprinosurat").val(null)
+                $("#pvssencounter_id").val(skunj.ssencounter_id)
+                $("#pvstatusantrean").val(skunj.statusantrean)
+                var start = new Date(skunj.visit_date)
+                var end = new Date()
+                var daydiff = datediff(start, end)
+                disableFormPv()
+                $("#formaddpvbtn").slideUp()
+                if (daydiff < 4) {
+                    $("#formeditpvbtn").slideDown()
+                    $("#formdelpvbtn").slideDown()
+                } else {
+                    $("#formeditpvbtn").slideUp()
+                    $("#formdelpvbtn").slideUp()
+                }
+                // $("#headingKunjunganBtn").click()
+                // $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
             } else {
-                $("#skdpnosep").val(skunj.no_skp)
-            }
-            $("#pvvalid_rm_date").val(skunj.valid_rm_date) //tanggal kejadian laka
-            $("#pvpenjamin").val(skunj.penjamin) //penjamin laka
-            $("#pvlokasilaka").val(skunj.lokasilaka) //lokasi laka
-            $("#pvispertarif").val(skunj.ispertarif) //suplesi
-            $("#pvtemptrans").val(skunj.temptrans) //No LP
-            $("#pvdelete_sep").val(skunj.delete_sep) //keterangan laka
-
-            $("#skdpkddpjp").html("")
-            $("#skdpkdpoli").html("")
-            $("#skdptglkontrol").val(null)
-            $("#skdpnosurat").val(null)
-
-            $("#sprikddpjp").val("")
-            $("#sprikdpoli").val("")
-            $("#spritglkontrol").val(null)
-            $("#sprinosurat").val(null)
-            $("#pvssencounter_id").val(skunj.ssencounter_id)
-            $("#pvstatusantrean").val(skunj.statusantrean)
-
-
-            var start = new Date(skunj.visit_date)
-            var end = new Date()
-
-            var daydiff = datediff(start, end)
-
-            disableFormPv()
-            $("#formaddpvbtn").slideUp()
-            if (daydiff < 4) {
-                $("#formeditpvbtn").slideDown()
-                $("#formdelpvbtn").slideDown()
-            } else {
+                $("#pvcurrentkey").val(key)
+                $("#pvtrans_id").val(null)
+                $("#pvticket_no").val(null)
+                // <input name="visit_id" id="pvvisit_id" type="hidden" class="form-control" />
+                $("#pvvisit_id").val(null)
+                //                 <input name="no_registration" id="pvno_registration" type="hidden" class="form-control" />
+                $("#pvno_registration").val(sbio.no_registration);
+                //                 <input name="diantar_oleh" id="pvdiantar_oleh" type="hidden" class="form-control" />
+                $("#pvdiantar_oleh").val(sbio.name_of_pasien);
+                //                 <input name="visitor_address" id="pvvisitor_address" type="hidden" class="form-control" />
+                $("#pvvisitor_address").val(sbio.contact_address);
+                //                 <input name="org_unit_code" id="pvorg_unit_code" type="hidden" class="form-control" />
+                $("#pvorg_unit_code").val(sbio.org_unit_code);
+                //                 <input name="tgl_lahir" id="pvtgl_lahir" type="hidden" class="form-control" />
+                $("#pvtgl_lahir").val(sbio.date_of_birth);
+                //                 <input name="gender" id="pvgender" type="hidden" class="form-control" />
+                $("#pvgender").val(sbio.gender);
+                //                 <input name="payor_id" id="pvpayor_id" type="hidden" class="form-control" />
+                $("#pvpayor_id").val(sbio.payor_id);
+                //                 <input name="clinic_id_from" id="pvclinic_id_from" type="hidden" class="form-control" />
+                $("#pvclinic_id_from").val("P000");
+                //                 <input name="pasien_id" id="pvpasien_id" type="hidden" class="form-control" />
+                $("#pasien_id").val(sbio.kk_no);
+                //                 <input name="karyawan" id="pvkaryawan" type="hidden" class="form-control" />
+                $("#pvkaryawan").val(null)
+                //                 <input name="family_status_id" id="pvfamily_status_id" type="hidden" class="form-control" />
+                $("#pvfamily_status_id").val(sbio.family_status_id)
+                //                 <input name="account_id" id="pvaccount_id" type="hidden" class="form-control" />
+                $("#pvaccount_id").val(sbio.account_id)
+                //                 <input name="coverage_Id" id="pvcoverage_Id" type="hidden" class="form-control" />
+                $("#pvcoverage_id").val(sbio.coverage_id)
+                //                 <input name="ageday" id="pvageday" type="hidden" class="form-control" />
+                var age = getAge(sbio.date_of_birth);
+                $("#pvageyear").val(age.years)
+                $("#pvagemonth").val(age.month)
+                $("#pvageday").val(age.days)
+                //                 <input name="kode_agama" id="pvagama" type="hidden" class="form-control" />
+                $("#pvagama").val(sbio.kode_agama)
+                //                 <input name="aktif" id="pvaktif" type="hidden" class="form-control" />
+                $("#pvaktif").val(sbio.aktif)
+                //                 <input name="isrj" id="pvisrj" type="hidden" class="form-control" />
+                $("#pvisrj").val(1);
+                $("#pvclinic_id").val(null)
+                $("#pvemployee_id").html(null)
+                var clinicSelected = skunj.clinic_id
+                dokterdpjp.forEach((value, key) => {
+                    if (value[0] == clinicSelected) {
+                        $("#pvemployee_id").append(new Option(value[2], value[1]))
+                    }
+                })
+                $("#pvemployee_id").val(null)
+                $("#pvkddpjp").val("")
+                $("#pvclass_id").val(sbio.class_id);
+                $("#pvclass_id_plafond").val(sbio.class_id);
+                $("#pvstatus_pasien_id").val(sbio.status_pasien_id);
+                $("#pvvisit_date").val((get_date()).slice(0, 16));
+                $("#pvbooked_date").val((get_date()).slice(0, 16));
+                $("#pvkdpoli_eks").val(0)
+                if (skunjAll.length < 1)
+                    $("#pvisnew").val(0)
+                else
+                    $("#pvisnew").val(1)
+                $("#pvcob").val(0)
+                $("#pvdescription").val("") //catatan
+                if (sbio.backcharge == null) {
+                    $("#pvbackcharge").val(0) //katarak
+                } else {
+                    $("#pvbackcharge").val(sbio.backcharge) //katarak
+                }
+                $("#pvway_id").val(17)
+                $("#pvreason_id").val(0)
+                $("#pvisattended").val(0)
+                $("#pvasalrujukan").val('2')
+                $("#pvnorujukan").val(null)
+                $("#pvkdpoli").val(null)
+                $("#pvtanggal_rujukan").val((String)(get_date()).slice(0, 10))
+                $("#pvppkrujukan").val(null)
+                $("#pvdiag_awal").html("")
+                $("#pvconclusion").val(null)
+                $("#pvdiagnosa_id").val(null)
+                $("#pvkdpoli_from").val(null)
+                $("#pvtujuankunj").val(0)
+                $("#pvkdpenunjang").val(99)
+                $("#pvflagprocedure").val(99)
+                $("#pvassesmentpel").val(99)
+                $("#pvedit_sep").val(null)
+                $("#pvspecimenno").val(null)
+                $("#pvno_skp").val(null)
+                $("#pvno_skpinap").val(null)
+                $("#skdpnosep").val(null)
+                $("#pvvalid_rm_date").val(null) //tanggal kejadian laka
+                $("#pvpenjamin").val(null) //penjamin laka
+                $("#pvlokasilaka").val(null) //lokasi laka
+                $("#pvispertarif").val(null) //suplesi
+                $("#pvtemptrans").val(null) //No LP
+                $("#pvdelete_sep").val(null) //keterangan laka
+                $("#skdpkddpjp").html("")
+                $("#skdpkdpoli").html("")
+                $("#skdptglkontrol").val(null)
+                $("#skdpnosurat").val(null)
+                $("#sprikddpjp").val("")
+                $("#sprikdpoli").val("")
+                $("#spritglkontrol").val(null)
+                $("#sprinosurat").val(null)
+                $("#pvssencounter_id").val(null)
+                $("#pvstatusantrean").val(null)
+                enableFormPV()
+                $("#formaddpvbtn").slideDown()
                 $("#formeditpvbtn").slideUp()
                 $("#formdelpvbtn").slideUp()
             }
-
-            // $("#headingKunjunganBtn").click()
-
-
-            // $('#edit_delete').html("<a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' data-placement='bottom' title='edit' data-target='' data-toggle='modal'   data-original-title='edit'><i class='fa fa-pencil'></i></a>" + link + "");
-        } else {
-            $("#pvcurrentkey").val(key)
-
-
-            $("#pvtrans_id").val(null)
-            $("#pvticket_no").val(null)
-            // <input name="visit_id" id="pvvisit_id" type="hidden" class="form-control" />
-            $("#pvvisit_id").val(null)
-            //                 <input name="no_registration" id="pvno_registration" type="hidden" class="form-control" />
-            $("#pvno_registration").val(sbio.no_registration);
-            //                 <input name="diantar_oleh" id="pvdiantar_oleh" type="hidden" class="form-control" />
-            $("#pvdiantar_oleh").val(sbio.name_of_pasien);
-            //                 <input name="visitor_address" id="pvvisitor_address" type="hidden" class="form-control" />
-            $("#pvvisitor_address").val(sbio.contact_address);
-            //                 <input name="org_unit_code" id="pvorg_unit_code" type="hidden" class="form-control" />
-            $("#pvorg_unit_code").val(sbio.org_unit_code);
-            //                 <input name="tgl_lahir" id="pvtgl_lahir" type="hidden" class="form-control" />
-            $("#pvtgl_lahir").val(sbio.date_of_birth);
-            //                 <input name="gender" id="pvgender" type="hidden" class="form-control" />
-            $("#pvgender").val(sbio.gender);
-            //                 <input name="payor_id" id="pvpayor_id" type="hidden" class="form-control" />
-            $("#pvpayor_id").val(sbio.payor_id);
-            //                 <input name="clinic_id_from" id="pvclinic_id_from" type="hidden" class="form-control" />
-            $("#pvclinic_id_from").val("P000");
-            //                 <input name="pasien_id" id="pvpasien_id" type="hidden" class="form-control" />
-            $("#pasien_id").val(sbio.kk_no);
-            //                 <input name="karyawan" id="pvkaryawan" type="hidden" class="form-control" />
-            $("#pvkaryawan").val(null)
-            //                 <input name="family_status_id" id="pvfamily_status_id" type="hidden" class="form-control" />
-            $("#pvfamily_status_id").val(sbio.family_status_id)
-            //                 <input name="account_id" id="pvaccount_id" type="hidden" class="form-control" />
-            $("#pvaccount_id").val(sbio.account_id)
-            //                 <input name="coverage_Id" id="pvcoverage_Id" type="hidden" class="form-control" />
-            $("#pvcoverage_id").val(sbio.coverage_id)
-            //                 <input name="ageday" id="pvageday" type="hidden" class="form-control" />
-
-            var age = getAge(sbio.date_of_birth);
-            $("#pvageyear").val(age.years)
-            $("#pvagemonth").val(age.month)
-            $("#pvageday").val(age.days)
-            //                 <input name="kode_agama" id="pvagama" type="hidden" class="form-control" />
-            $("#pvagama").val(sbio.kode_agama)
-            //                 <input name="aktif" id="pvaktif" type="hidden" class="form-control" />
-            $("#pvaktif").val(sbio.aktif)
-            //                 <input name="isrj" id="pvisrj" type="hidden" class="form-control" />
-            $("#pvisrj").val(1);
-
-            $("#pvclinic_id").val(null)
-            $("#pvemployee_id").html(null)
-            var clinicSelected = skunj.clinic_id
-            dokterdpjp.forEach((value, key) => {
-                if (value[0] == clinicSelected) {
-                    $("#pvemployee_id").append(new Option(value[2], value[1]))
-                }
-            })
-            $("#pvemployee_id").val(null)
-            $("#pvkddpjp").val("")
-            $("#pvclass_id").val(sbio.class_id);
-            $("#pvclass_id_plafond").val(sbio.class_id);
-            $("#pvstatus_pasien_id").val(sbio.status_pasien_id);
-            $("#pvvisit_date").val((get_date()).slice(0, 16));
-            $("#pvbooked_date").val((get_date()).slice(0, 16));
-            $("#pvkdpoli_eks").val(0)
-            if (skunjAll.length < 1)
-                $("#pvisnew").val(0)
-            else
-                $("#pvisnew").val(1)
-
-            $("#pvcob").val(0)
-            $("#pvdescription").val("") //catatan
-            if (sbio.backcharge == null) {
-                $("#pvbackcharge").val(0) //katarak
-            } else {
-                $("#pvbackcharge").val(sbio.backcharge) //katarak
-            }
-            $("#pvway_id").val(17)
-            $("#pvreason_id").val(0)
-            $("#pvisattended").val(0)
-            $("#pvasalrujukan").val('2')
-            $("#pvnorujukan").val(null)
-            $("#pvkdpoli").val(null)
-            $("#pvtanggal_rujukan").val((String)(get_date()).slice(0, 10))
-            $("#pvppkrujukan").val(null)
-            $("#pvdiag_awal").html("")
-            $("#pvconclusion").val(null)
-            $("#pvdiagnosa_id").val(null)
-            $("#pvkdpoli_from").val(null)
-            $("#pvtujuankunj").val(0)
-            $("#pvkdpenunjang").val(99)
-            $("#pvflagprocedure").val(99)
-            $("#pvassesmentpel").val(99)
-            $("#pvedit_sep").val(null)
-            $("#pvspecimenno").val(null)
-            $("#pvno_skp").val(null)
-            $("#pvno_skpinap").val(null)
-            $("#skdpnosep").val(null)
-            $("#pvvalid_rm_date").val(null) //tanggal kejadian laka
-            $("#pvpenjamin").val(null) //penjamin laka
-            $("#pvlokasilaka").val(null) //lokasi laka
-            $("#pvispertarif").val(null) //suplesi
-            $("#pvtemptrans").val(null) //No LP
-            $("#pvdelete_sep").val(null) //keterangan laka
-
-            $("#skdpkddpjp").html("")
-            $("#skdpkdpoli").html("")
-            $("#skdptglkontrol").val(null)
-            $("#skdpnosurat").val(null)
-
-            $("#sprikddpjp").val("")
-            $("#sprikdpoli").val("")
-            $("#spritglkontrol").val(null)
-            $("#sprinosurat").val(null)
-            $("#pvssencounter_id").val(null)
-            $("#pvstatusantrean").val(null)
-
-
-            enableFormPV()
-            $("#formaddpvbtn").slideDown()
-            $("#formeditpvbtn").slideUp()
-            $("#formdelpvbtn").slideUp()
         }
         if (!$("#collapseKunjungan").hasClass("show")) {
             $("#headingKunjunganBtn").click()
@@ -1876,10 +1857,63 @@ $permissions = user()->getPermissions();
                 },
                 success: function(data) {
                     console.log("Tambah Antrean " + data.metadata.message)
-                    if (data.metadata.code == 200) {
+                    if (data.metadata.code == 200 || data.metadata.code == 208) {
                         alert("Update task-id 1 berhasil")
                         $("#pvstatusantrean").val('11')
-                        executeWaktuUpdate()
+                        // executeWaktuUpdate()
+                    } else {
+                        alert("Posting Tambah Antrean BPJS Gagal:" + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert(xhr.statusText)
+                    }
+                    $("#formaddpvbtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+                },
+                complete: function() {
+                    $("#formaddpvbtn").html('<i class="fa fa-plus"></i> <span> Simpan </span>')
+                }
+
+            });
+        }
+    }
+
+    function deleteAntrean() {
+        var statusantrean = $("#pvstatusantrean").val()
+        var kdpoli = ''
+        var clinicSelected = $("#pvclinic_id").val()
+        klinikBpjs.forEach((value, key) => {
+            if (value[1] == clinicSelected) {
+                kdpoli = value[0]
+            }
+        })
+        if (statusantrean == '11') {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/deleteAntrean',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    "kodebooking": skunj.trans_id,
+                    "norm": skunj.no_registration,
+                    "keterangan": "Tidak jadi periksa."
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i>Posting Tambah Antrean ...')
+                },
+                success: function(data) {
+                    if (data.metadata.code == 200 || data.metadata.code == 208) {
+                        alert("Berhasil hapus transaksi dengan kode booking " + skunj.trans_id)
+                        $("#pvstatusantrean").val('0')
+                        // executeWaktuUpdate()
                     } else {
                         alert("Posting Tambah Antrean BPJS Gagal:" + data.metadata.message)
                     }
@@ -1901,10 +1935,10 @@ $permissions = user()->getPermissions();
 
     }
 
-    function updateWaktu(task) {
-        var statusantrean = $("#pvstatusantrean").val()
+    function updateWaktu(task, trans, norm) {
+        // var statusantrean = $("#pvstatusantrean").val()
         var checktask = task - 1
-        console.log(statusantrean)
+        // console.log(statusantrean)
         console.log('2' + (String)(checktask))
         // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {
         if (true) {
@@ -1915,8 +1949,8 @@ $permissions = user()->getPermissions();
                     Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
                 },
                 data: JSON.stringify({
-                    "norm": $("#pvno_registration").val(),
-                    "kodebooking": $("#pvtrans_id").val(),
+                    "norm": norm,
+                    "kodebooking": trans,
                     "taskid": task,
                     "waktu": Date.now()
                 }),
@@ -1928,11 +1962,14 @@ $permissions = user()->getPermissions();
                     $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
                 },
                 success: function(data) {
-                    console.log("Tambah Antrean " + data.metadata.message)
 
                     if (data.metadata.code == 200) {
-                        $("#pvstatusantrean").val('2' + (String)(task))
-                        executeWaktuUpdate()
+                        alert("Update Waktu Task-ID " + task + " Berhasil")
+                        if ((String)(task) < 4) {
+
+                            $("#pvstatusantrean").val('2' + (String)(task))
+                            executeWaktuUpdate()
+                        }
                     } else {
                         alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
                     }
@@ -1943,10 +1980,10 @@ $permissions = user()->getPermissions();
                     } else {
                         alert("Update Waktu Antrean BPJS: " + xhr.statusText)
                     }
-                    $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+                    // $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
                 },
                 complete: function() {
-                    $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+                    // $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
                 }
 
             });
@@ -1965,7 +2002,7 @@ $permissions = user()->getPermissions();
             task = '3'
         }
         if (task != '') {
-            updateWaktu(task)
+            updateWaktu(task, $("#pvtrans_id").val(), $("#pvno_registration").val())
             return '';
         }
         $.ajax({
@@ -1995,12 +2032,12 @@ $permissions = user()->getPermissions();
                     "waktu": Date.now()
                 }))
 
-                // if (data.metadata.code == 200) {
-                //     $("#pvstatusantrean").val('2' + (String)(task))
-                //     executeWaktuUpdate()
-                // } else {
-                //     alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
-                // }
+                if (data.metadata.code == 200) {
+                    $("#pvstatusantrean").val('2' + (String)(task))
+                    executeWaktuUpdate()
+                } else {
+                    alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                }
             },
             error: function(xhr) {
                 if (xhr.status == '401') {
@@ -2036,11 +2073,12 @@ $permissions = user()->getPermissions();
     }
 </script>
 <script>
-    const panggilPasien = (visitId, ticketNo) => {
+    const panggilPasien = (visitId, ticketNo, trans, norm) => {
         postData({
             visit: visitId,
         }, 'admin/patient/postingPanggilPasien', (res) => {
             $("#antrian" + visitId).html("#" + ticketNo + ' <i class="fa fa-check-circle"></i>')
         });
+        updateWaktu(4, trans, norm)
     }
 </script>

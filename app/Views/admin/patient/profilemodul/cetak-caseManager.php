@@ -19,7 +19,6 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
-    <script src="<?= base_url('assets/js/default.js') ?>"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
@@ -275,146 +274,37 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-
+                <h5 class="text-center">Dokumentasi Case Manager - Form B</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="text-center">CATATAN IMPLEMENTASI CASE MANAGER</th>
+                        </tr>
+                        <tr>
+                            <th width="15%">TGL/JAM</th>
+                            <th width="35%">IMPLEMENTASI</th>
+                            <th width="35%">CATATAN/EVALUASI</th>
+                            <th width="15%">NAMA TERANG</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-CM_B_01">
+                        <?php foreach ($data4 as $key4 => $row4) : ?>
+                            <tr>
+                                <td class="py-0" width="15%"><?= date_format(date_create($row4['modified_date']), 'd-m-Y H:i'); ?></td>
+                                <td class="py-0" width="35%"><?= $row4['implementasi']; ?></td>
+                                <td class="py-0" width="35%"><?= $row4['catatan']; ?></td>
+                                <td class="py-0" width="15%"><?= $row4['modified_by']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <br>
                 <i class="my-4">*dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')) ?></i>
             </div>
         </div>
 
     </body>
 </div>
-<!-- <script>
-    $(document).ready(function() {
-        getDataStart()
-    });
 
-    const getDataStart = () => {
-        let data1 = <?= json_encode($visit) ?>;
-        console.log(data1);
-        let param = data1?.parameter_id;
-        if (param !== undefined) {
-            let lastPart;
-
-            if (typeof param === 'string') {
-                if (param.includes('_')) {
-                    let parts = param.split('_');
-                    lastPart = parts[parts.length - 1];
-                } else {
-                    lastPart = param;
-                }
-            } else if (typeof param === 'number') {
-                lastPart = param.toString();
-            } else {
-                console.error('Parameter ID is not valid or undefined.');
-            }
-
-
-
-            if (lastPart !== undefined) {
-                $(`#${lastPart}-content`).removeAttr("hidden");
-            } else {
-                console.error('Cannot find valid lastPart to remove hidden attribute.');
-            }
-        } else {
-            console.error('Parameter ID is not valid or undefined.');
-        }
-
-        postData({
-            body_id: data1?.body_id,
-            visit_id: data1?.visit_id,
-        }, 'admin/CaseManager/getDetailByVisit', (res) => {
-            let hasil = {
-                data: res
-            };
-            contentData(hasil);
-        });
-
-    };
-    const contentData = (result) => {
-        let data2 = <?= json_encode($AValue) ?>;
-        let hasil = "";
-        let aValue = data2.filter(item => item?.p_type === "GEN0019");
-        let dataContent = '';
-        let dataInformasi = '';
-        let dataTTD = '';
-        result1 = result.data.filter(item => item?.p_type === "GEN0019" && item?.parameter_id === 'CM_A_01');
-        // result2 = result.data.filter(item => item?.p_type === "GEN0019" && item?.parameter_id === 'CM_A_02');
-        // result3 = result.data.filter(item => item?.p_type === "GEN0019" && item?.parameter_id === 'CM_A_03');
-        console.log(result1);
-        // console.log(result2);
-        // console.log(result3);
-        // getDataIdTables({
-        //     id: result.data[2].value_info,
-        //     score: result.data[2].value_score,
-        //     vId: result.data[2].value_id,
-        //     element: "#jenis-kelamin-B03"
-        // })
-        // getDataByID({
-        //     table: 'sex',
-        //     value_info: visit[aValue[12].value_info],
-        //     value_id: aValue[12].value_info,
-        //     element: "#jenis-kelamin-2-B03"
-        // })
-        // getDataIdTables({
-        //     id: result.data[4].value_info,
-        //     score: result.data[4].value_score,
-        //     vId: result.data[4].value_id,
-        //     element: "#pekerjaan-B03"
-        // })
-        // getDataIdTables({
-        //     id: result.data[7].value_info,
-        //     score: result.data[7].value_score,
-        //     vId: result.data[7].value_id,
-        //     element: "#selaku-B03"
-        // })
-
-        // dataInformasi +=
-        //     `
-        //         <h5 class="text-center">${aValue[0].value_info}</h5>
-
-        //         `;
-
-        // dataContent +=
-        //     `
-        //         <tr>
-        //             <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
-        //             <td class="py-0" width="1%">:</td>
-        //             <td class="py-0"></td>
-        //         </tr>
-        //     `;
-        result1.forEach((element, index) => {
-            dataContent +=
-                `
-                    <tr>
-                        <td class="py-0" width="1%">${index+1}</td>
-                        <td class="py-0">${element.value_desc}</td>
-                        <td class="py-0">${element.value_info}</td>
-                    </tr>
-                    `;
-        });
-
-
-        $("#data-informasi-CM_A_03").html(dataInformasi);
-        $("#data-table-CM_A_01").html(dataContent);
-        // $("#data-ttd-CM_A_03").html(dataTTD);
-
-        // let element = document.getElementById(`ttd-pernyataan-B03`);
-        // let element1 = document.getElementById(`ttd-dokter-B03`);
-        // let element2 = document.getElementById(`ttd-medis-B03`);
-        // let element3 = document.getElementById(`ttd-saksi-B03`);
-
-        // if (element) {
-        //     generateQRCode(`ttd-pernyataan-B03`, visit.name_of_pasien, 100, 100);
-        // }
-        // if (element1) {
-        //     generateQRCode(`ttd-dokter-B03`, visit.fullname, 100, 100);
-        // }
-        // if (element2) {
-        //     generateQRCode(`ttd-medis-B03`, visit.fullname, 100, 100);
-        // }
-        // if (element3) {
-        //     generateQRCode(`ttd-saksi-B03`, result.data[1].value_info, 100, 100);
-        // }
-    }
-</script> -->
 
 </html>

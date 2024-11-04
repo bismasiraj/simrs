@@ -66,7 +66,8 @@ $currency_symbol = "Rp. ";
                                                                 <label>Mulai Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="mulai">
-                                                                        <input name="mulai" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai' value="<?= date('Y-m-d'); ?>">
+                                                                        <input id="flatreportmulai" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#mulai'>
+                                                                        <input id="reportmulai" name="mulai" type="hidden" class="" placeholder="yyyy-mm-dd">
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
@@ -80,7 +81,8 @@ $currency_symbol = "Rp. ";
                                                                 <label>Hingga Tanggal</label>
                                                                 <div>
                                                                     <div class="input-group" id="akhir">
-                                                                        <input name="akhir" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir' value="<?= date('Y-m-d'); ?>">
+                                                                        <input id="flatreportakhir" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#akhir'>
+                                                                        <input id="reportakhir" name="akhir" type="hidden">
                                                                         <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                                                     </div>
                                                                     <!-- input-group -->
@@ -407,7 +409,7 @@ $currency_symbol = "Rp. ";
                                                                 <select id="kasir" class="form-control" name="kasir">
                                                                     <option value="%">Semua</option>
                                                                     <?php
-                                                                    usort($kasir, fn ($a, $b) => $a['fullname'] <=> $b['fullname']);
+                                                                    usort($kasir, fn($a, $b) => $a['fullname'] <=> $b['fullname']);
                                                                     ?>
                                                                     <?php foreach ($kasir as $key => $value) { ?>
                                                                         <option value="<?= $value['username']; ?>"><?= $value['fullname']; ?></option>

@@ -33,7 +33,7 @@ class PersalinanModel extends Model
         'kala_4',
         'born',
         'born_condition',
-        'weight',
+        'weight_placenta',
         'shape',
         'umbilical_cord',
         'amiotic_membrane',

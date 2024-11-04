@@ -63,7 +63,7 @@
         })
         $("#painBody").append($("<tr>"))
         $("#painBody").append($("<tr>")
-            .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+            .append($("<td>").append((painselect.examination_date)?.substring(0, 16)))
             .append($("<td>").html(painselect.modified_by))
             .append($("<td>").html(type))
             .append($("<td>").html(p))
@@ -76,7 +76,7 @@
         )
         // if (painselect.valid_user === null) {
         //     $("#painBody").append($("<tr>")
-        //         .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").append((painselect.examination_date)?.substring(0, 16)))
         //         .append($("<td>").html(painselect.modified_by))
         //         .append($("<td>").html(type))
         //         .append($("<td>").html(p))
@@ -89,7 +89,7 @@
         //     )
         // } else {
         //     $("#painBody").append($("<tr>")
-        //         .append($("<td>").append((painselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").append((painselect.examination_date)?.substring(0, 16)))
         //         .append($("<td>").html(painselect.modified_by))
         //         .append($("<td>").html(type))
         //         .append($("<td>").html(p))
@@ -223,7 +223,7 @@
 <script>
     function initialAddapain() {
         $("#apainDocument").html("")
-        addPainMonitoring(1, 0, 'painmonitoring', 'apainDocument')
+        addPainMonitoring(1, 0, 'painmonitoring', 'apainDocument', true, true)
         $("#painModal").modal("show")
         $("#apainDocument").find("input, select, textarea").prop("disabled", false)
     }

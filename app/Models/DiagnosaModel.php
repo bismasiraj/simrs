@@ -24,6 +24,10 @@ extends Model
     {
         return $this->select("top(20) *")->like('diagnosa_id', $text)->orLike('name_of_diagnosa', $text)->findAll();
     }
+    public function getDiagnosaGizi($text)
+    {
+        return $this->select("TOP(20) *")->groupStart()->like('diagnosa_id', $text)->orLike('name_of_diagnosa', $text)->groupEnd()->where('dtype', '2000')->findAll();
+    }
     public function getProcedures($text)
     {
         return $this->select("top(20) *")->where("dtype", '0100')->like('diagnosa_id', $text)->orLike('name_of_diagnosa', $text)->findAll();

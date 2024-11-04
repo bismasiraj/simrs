@@ -1,149 +1,184 @@
 <script>
     var orderGiziAll;
     $("#orderGiziTab").on("click", function() {
+        // getDataDiewt()
         getOrderGizi()
     })
 </script>
 
 <script type='text/javascript'>
-    var arrayBentuk = {
-        1: 'Nasi Biasa(NB)',
-        2: 'Nasi Lunak(NL)',
-        3: 'Bubur Biasa(BB)',
-        4: 'Bubur Saring(BS)',
-        5: 'Makanan Cair',
-        6: 'BBLS',
-        7: 'Puasa',
-        8: 'Buah'
-    }
-    $.each(arrayBentuk, function(key, value) {
-        $("#bentukmultibox").append(`<div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="dtype` + key + `" value="` + key + `">
-                        <label class="form-check-label" for="dtype` + key + `">
-                            ` + value + `
-                        </label>
-                    </div>`)
+    // const getDataDiewt = () => {
+    $(document).ready(async function(e) {
+        await fetchDataDiet();
+        // initializeDietTypes();
     })
+
+    async function fetchDataDiet() {
+        await getDataList('admin/DietRequest/getData', (res) => {
+
+            let result = res.data;
+            let diet_type = result.diet_type;
+            let diet_warning = result.diet_warning;
+            initializeDietTypes({
+                data: diet_type
+            })
+            initializeDietWarning({
+                data: diet_warning
+            })
+        });
+
+    }
+    // }
+
+    const initializeDietTypes = (props) => {
+        let arrayBentuk = props?.data;
+
+        let rowContainer = $('<div class="row"></div>');
+        let column1 = $('<div class="col-6"></div>');
+        let column2 = $('<div class="col-6"></div>');
+
+        const halfLength = Math.ceil(arrayBentuk.length / 2);
+
+        $.each(arrayBentuk, function(key, value) {
+            const checkbox = `
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="dtype${key}" value="${value}">
+                            <label class="form-check-label" for="dtype${key}">
+                                ${value}
+                            </label>
+                        </div>
+                    `;
+
+            if (key < halfLength) {
+                column1.append(checkbox);
+            } else {
+                column2.append(checkbox);
+            }
+        });
+
+        rowContainer.append(column1);
+        rowContainer.append(column2);
+
+        $("#bentukmultibox").append(rowContainer);
+
+
+        $("#saveBentukGizi").on("click", function() {
+            var container = $("#bentukgizicontainer").val()
+            var bentukValue = '';
+            var bentukDesc = '';
+
+            $.each(arrayBentuk, function(key, value) {
+                if ($("#dtype" + key).is(":checked")) {
+                    bentukValue += ',' + $("#dtype" + key).val()
+                }
+            })
+
+            if (bentukValue.charAt(0) === ',') {
+                bentukValue = bentukValue.substring(1);
+            }
+
+            if (container.includes('pagi')) {
+
+                let dtype_siang = container.replace('pagi', 'siang');
+                let dtype_malam = container.replace('pagi', 'malam');
+
+                $("#ordergizi" + dtype_siang).val(bentukValue)
+                $("#ordergizi" + dtype_malam).val(bentukValue)
+            }
+
+
+            $("#ordergizi" + container).val(bentukValue)
+            // $("#ordergizi" + container + "display").val(bentukDesc)
+            $("#bentukmultibox").find("input").prop("checked", false)
+
+            $("#bentukGizi").modal("hide")
+        })
+    }
+
 
     function isiBentukGizi(container) {
         $("#bentukgizicontainer").val(container)
         $("#bentukGizi").modal('show')
     }
-    $("#saveBentukGizi").on("click", function() {
-        var container = $("#bentukgizicontainer").val()
-        var bentukValue = '';
-        var bentukDesc = '';
-        $.each(arrayBentuk, function(key, value) {
-            if ($("#dtype" + key).is(":checked")) {
-                bentukValue += ',' + $("#dtype" + key).val()
-                bentukDesc += ', ' + arrayBentuk[$("#dtype" + key).val()]
-            }
-        })
-        if (bentukValue.charAt(0) === ',') {
-            // Remove the first character (comma)
-            bentukValue = bentukValue.substring(1);
-            bentukDesc = bentukDesc.substring(1);
-            // inputField.val(newValue);
-        }
-        // console.log("bentukValue")
-        // console.log(bentukValue)
-        // console.log(bentukDesc)
-        // console.log(container)
-        $("#ordergizi" + container).val(bentukValue)
-        $("#ordergizi" + container + "display").val(bentukDesc)
-        $("#bentukmultibox").find("input").prop("checked", false)
-
-        $("#bentukGizi").modal("hide")
-    })
 </script>
 
 <script>
-    var arrayPeringatan = ['ALBUMIN',
-        'BB',
-        'BS',
-        'DH I',
-        'DH II',
-        'DH III',
-        'DH IV',
-        'DJ I',
-        'DJ II',
-        'DJ III',
-        'DJ IV',
-        'DL I',
-        'DL II',
-        'DL III',
-        'DL IV',
-        'DM',
-        'ENCER',
-        'KECAP',
-        'LAUK SARING',
-        'MC',
-        'NABATI',
-        'NB',
-        'NL',
-        'PRO 40 GR',
-        'PRO 60 GR',
-        'R. LEMAK',
-        'R. PURIN',
-        'R. SERAT',
-        'RG',
-        'STROKE I',
-        'STROKE II A (BS)',
-        'STROKE II B (BB)',
-        'STROKE II C(NB)',
-        'T. SERAT',
-        'TIM SARING',
-        'TKTP',
-    ];
+    const initializeDietWarning = (props) => {
+        let arrayPeringatan = props?.data
 
-    $.each(arrayPeringatan, function(key, value) {
-        var textnya = `<div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="peringatan` + key + `" value="` + value + `">
-                        <label class="form-check-label" for="peringatan` + key + `">
-                            ` + value + `
-                        </label>
-                    </div>`
 
-        $("#peringatanmultibox").append(textnya)
-    })
+        let rowContainer = $('<div class="row"></div>');
+        let columns = [$('<div class="col-4"></div>'), $('<div class="col-4"></div>'), $('<div class="col-4"></div>')];
+
+        $.each(arrayPeringatan, function(key, value) {
+            var textnya = `<div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="peringatan${key}" value="${value}">
+                            <label class="form-check-label" for="peringatan${key}">
+                                ${value}
+                            </label>
+                        </div>`;
+
+            columns[key % 3].append(textnya);
+        });
+
+        columns.forEach(column => {
+            rowContainer.append(column);
+        });
+
+        $("#peringatanmultibox").append(rowContainer);
+
+        $("#savePeringatanGizi").on("click", function() {
+            var container = $("#peringatangizicontainer").val()
+            const id = container?.split("pantangan_pagi");
+            var peringatan = '';
+
+            $.each(arrayPeringatan, function(key, value) {
+                if ($("#peringatan" + key).is(":checked")) {
+                    peringatan += ',' + $("#peringatan" + key).val()
+                }
+            })
+
+            if (peringatan.charAt(0) === ',') {
+                peringatan = peringatan.substring(1);
+            }
+            if (container.includes('pagi')) {
+                let peringatan_siang = container.replace('pagi', 'siang');
+                let peringatan_malam = container.replace('pagi', 'malam');
+
+                $("#ordergizi" + peringatan_siang).val(peringatan)
+                $("#ordergizi" + peringatan_malam).val(peringatan)
+            }
+            $("#ordergizi" + container).val(peringatan)
+            $("#peringatanmultibox").find("input").prop("checked", false)
+            $("#peringatanGizi").modal("hide")
+        })
+    }
+
 
     function isiPeringatanGizi(container) {
         $("#peringatangizicontainer").val(container)
         $("#peringatanGizi").modal('show')
     }
-    $("#savePeringatanGizi").on("click", function() {
-        var container = $("#peringatangizicontainer").val()
-        var peringatan = '';
-
-        $.each(arrayPeringatan, function(key, value) {
-            if ($("#peringatan" + key).is(":checked")) {
-                peringatan += ',' + $("#peringatan" + key).val()
-            }
-        })
-
-        if (peringatan.charAt(0) === ',') {
-            // Remove the first character (comma)
-            var peringatan = peringatan.substring(1);
-            // inputField.val(newValue);
-        }
-        $("#ordergizi" + container).val(peringatan)
-        $("#peringatanmultibox").find("input").prop("checked", false)
-        $("#peringatanGizi").modal("hide")
-    })
 </script>
 <script>
     function addOrderGizi(flag, counter, document_id, container) {
         var bodyId = get_bodyid()
         var content = `<form id="formGiziRequest` + counter + `" action="">
-                    <input type="hidden" id="ordergiziorg_unit_code` + counter + `" name="org_unit_code" value="<?= $visit['org_unit_code']; ?>">
-                    <input type="hidden" id="ordergizivisit_id` + counter + `" name="visit_id" value="<?= $visit['visit_id']; ?>">
-                    <input type="hidden" id="ordergizino_registration` + counter + `" name="no_registration" value="<?= $visit['no_registration']; ?>">
+                    <input type="hidden" id="ordergiziorg_unit_code` + counter + `" name="org_unit_code" value="<?= @$visit['org_unit_code']; ?>">
+                    <input type="hidden" id="ordergizivisit_id` + counter + `" name="visit_id" value="<?= @$visit['visit_id']; ?>">
+                    <input type="hidden" id="ordergizino_registration` + counter + `" name="no_registration" value="<?= @$visit['no_registration']; ?>">
                     <input type="hidden" id="ordergizidtype_id` + counter + `" name="dtype_id" value="` + bodyId + `">
                     <input type="hidden" id="ordergizidescription` + counter + `" name="description">
-                    <input type="hidden" id="ordergiziorder_date` + counter + `" name="order_date" value"` + get_date() + `">
-                    <input type="hidden" id="ordergizithename` + counter + `" name="thename" value="<?= $visit['diantar_oleh']; ?>">
-                    <input type="hidden" id="ordergizitheaddress` + counter + `" name="theaddress" value="<?= $visit['visitor_address']; ?>">
-                    <input type="hidden" id="ordergiziclinic_id` + counter + `" name="clinic_id" value="<?= $visit['clinic_id']; ?>">
+                    <input type="hidden" id="ordergiziorder_date` + counter + `" name="order_date" value="` +
+            get_date() + `">
+                    <input type="hidden" id="ordergizithename` + counter + `" name="thename" value="<?= @$visit['diantar_oleh']; ?>">
+                    <input type="hidden" id="ordergizitheaddress` + counter + `" name="theaddress" value="<?= @$visit['visitor_address']; ?>">
+                    <input type="hidden" id="ordergiziclinic_id` + counter + `" name="clinic_id" value="<?= @$visit['clinic_id']; ?>">
+                    <input type="hidden" id="ordergizibed_id` + counter + `" name="bed_id" value="<?= @$visit['bed_id']; ?>">
+                    <input type="hidden" id="ordergiziclass_room_id` + counter + `" name="class_room_id" value="<?= @$visit['bed_id']; ?>">
+                    <input type="hidden" id="ordergizikeluar_id` + counter + `" name="keluar_id" value="<?= @$visit['bed_id']; ?>">
+                    <input type="hidden" id="ordergiziemployee_id` + counter + `" name="employee_id" value="<?= @$visit['bed_id']; ?>">
+                    <input type="hidden" id="ordergizidoctor` + counter + `" name="doctor" value="<?= @$visit['fullname']; ?>">
                     <div class="table-responsive mb-4">
                         <table class="table table-sm table-hover">
                             <thead>
@@ -156,48 +191,55 @@
                                     <th style='width:25%'>Makan Malam</th>
                                 </tr>
                             </thead>
-                            <tbody id="ordergizi` + counter + `" class="table-group-divider">
+                            <tbody id="ordergizi` + counter +
+            `" class="table-group-divider">
                                 <tr>
                                     <td rowspan="4">1.</td>
                                     <td rowspan="4">
-                                    <input type="text" class="form-control" id="flatordergizidiet_date` + counter + `">
-                                    <input type="hidden" class="form-control" name="diet_date" id="ordergizidiet_date` + counter + `">
+                                    <input type="text" class="form-control" id="flatordergizidiet_date${counter}">
+                                    <input type="hidden" class="form-control" name="diet_date" id="ordergizidiet_date${counter}">
                                     </td>
                                     <!-- <td><?= $visit['diantar_oleh']; ?></td> -->
                                     <td>Bentuk</td>
+                                 
                                     <td>
-                                        <input type="text" id="ordergizidtype_pagi` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')" autocomplete="off">
-                                        <input type="hidden" id="ordergizidtype_pagi` + counter + `" name="dtype_pagi" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + counter + `')" autocomplete="off">
+                                        <input type="text" id="ordergizidtype_pagi${counter}" name="dtype_pagi" class="form-control" onfocus="isiBentukGizi('dtype_pagi${counter}')" autocomplete="off">
                                     </td>
                                     <td>
-                                        <input type="text" id="ordergizidtype_siang` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')" autocomplete="off">
-                                        <input type="hidden" id="ordergizidtype_siang` + counter + `" name="dtype_siang" class="form-control" onfocus="isiBentukGizi('dtype_siang` + counter + `')" autocomplete="off">
+                                        <input type="text" id="ordergizidtype_siang${counter}" name="dtype_siang" class="form-control" onfocus="isiBentukGizi('dtype_siang${counter}')" autocomplete="off">
                                     </td>
                                     <td>
-                                        <input type="text" id="ordergizidtype_malam` + counter + `display" name="" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')" autocomplete="off">
-                                        <input type="hidden" id="ordergizidtype_malam` + counter + `" name="dtype_malam" class="form-control" onfocus="isiBentukGizi('dtype_malam` + counter + `')" autocomplete="off">
+                                        
+                                        <input type="text" id="ordergizidtype_malam${counter}" name="dtype_malam" class="form-control" onfocus="isiBentukGizi(  'dtype_malam${counter}')" autocomplete="off">
                                     </td>
                                 </tr>
                                 <tr>
                                     <!-- <td><?= $visit['no_registration']; ?></td> -->
                                     <td>Jenis</td>
-                                    <td><input type="text" name="pantangan_pagi" id="ordergizipantangan_pagi` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_pagi` + counter + `')" autocomplete="off"></td>
-                                    <td><input type="text" name="pantangan_siang" id="ordergizipantangan_siang` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_siang` + counter + `')" autocomplete="off"></td>
-                                    <td><input type="text" name="pantangan_malam" id="ordergizipantangan_malam` + counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_malam` + counter + `')" autocomplete="off"></td>
+                                    <td><input type="text" name="pantangan_pagi" id="ordergizipantangan_pagi${counter}" class="form-control" onfocus="isiPeringatanGizi('pantangan_pagi` +
+            counter + `')" autocomplete="off"></td>
+                                    <td><input type="text" name="pantangan_siang" id="ordergizipantangan_siang` +
+            counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_siang` + counter + `')" autocomplete="off"></td>
+                                    <td><input type="text" name="pantangan_malam" id="ordergizipantangan_malam` +
+            counter + `" class="form-control" onfocus="isiPeringatanGizi('pantangan_malam` + counter + `')" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <!-- <td><?= $visit['ageyear']; ?> th <?= $visit['agemonth']; ?> bln <?= $visit['ageday'] ?> hr</td> -->
                                     <td>Mineral</td>
                                     <td><input type="text" name="dtype_iddesc" id="ordergizidtype_iddesc` + counter + `" class="form-control" autocomplete="off"></td>
-                                    <td><input type="text" name="dtype_siangdesc" id="ordergizidtype_siangdesc` + counter + `" class="form-control" autocomplete="off"></td>
-                                    <td><input type="text" name="dtype_malamdesc" id="ordergizidtype_malamdesc` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="dtype_siangdesc" id="ordergizidtype_siangdesc` +
+            counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="dtype_malamdesc" id="ordergizidtype_malamdesc` +
+            counter + `" class="form-control" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <!-- <td></td> -->
-                                    <td>Menu penunggu</td>
+                                    <td>Menu</td>
                                     <td><input type="text" name="penunggu_pagi" id="ordergizipenunggu_pagi` + counter + `" class="form-control" autocomplete="off"></td>
-                                    <td><input type="text" name="penunggu_siang" id="ordergizipenunggu_siang` + counter + `" class="form-control" autocomplete="off"></td>
-                                    <td><input type="text" name="penunggu_malam" id="ordergizipenunggu_malam` + counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="penunggu_siang" id="ordergizipenunggu_siang` +
+            counter + `" class="form-control" autocomplete="off"></td>
+                                    <td><input type="text" name="penunggu_malam" id="ordergizipenunggu_malam` +
+            counter + `" class="form-control" autocomplete="off"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -285,7 +327,9 @@
             $("#formGiziRequest" + counter).find("input").prop("disabled", false)
         }
 
-        $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + 1 + `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`)
+        $("#ordergiziAdd").html(`<a data-toggle="modal" onclick="addOrderGizi(1,` + counter + 1 +
+            `, '','orderGiziBody')" class="btn btn-primary btn-lg" id="addOrderGiziBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Order Gizi</a>`
+        )
 
     }
     const deleteOrderIgizi = (container, counter, bodyId) => {

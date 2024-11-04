@@ -4,7 +4,7 @@ $permissions = user()->getPermissions();
 ?>
 
 <div class="tab-pane tab-content-height 
-                            <?php if ($giTipe == 0 || $giTipe == 5) echo "active"; ?>
+                            <?php if (($giTipe == 0 || $giTipe == 5) && !user()->checkRoles(['dokter'])) echo "active"; ?>
                             " id="biodata">
     <div class="row">
         <!-- <div class="col-md-12">
@@ -294,7 +294,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label> <?php echo lang('Word.gender'); ?></label><small class="req"> *</small>
-                                                    <select class="form-control" name="gender" id="agenders" required>
+                                                    <select class="form-select" name="gender" id="agenders" required>
                                                         <?php foreach ($gender as $key => $value) { ?>
                                                             <option value="<?php echo $gender[$key]['gender']; ?>"><?php echo $gender[$key]['name_of_gender']; ?></option>
                                                         <?php } ?>
@@ -333,7 +333,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Darah</label><small class="req"> *</small>
-                                                    <select class="form-control" id="agoldar" name="goldar" required>
+                                                    <select class="form-select" id="agoldar" name="goldar" required>
                                                         <?php foreach ($blood as $key => $value) { ?>
                                                             <option value="<?php echo $blood[$key]['blood_type_id']; ?>"><?php echo $blood[$key]['name_of_type']; ?></option>
                                                         <?php } ?>
@@ -446,7 +446,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Status di Keluarga</label>
-                                                    <select class="form-control" id="afamily" name="family">
+                                                    <select class="form-select" id="afamily" name="family">
                                                         <?php foreach ($family as $key => $value) { ?>
                                                             <option value="<?php echo $family[$key]['family_status_id']; ?>"><?php echo $family[$key]['family_status']; ?></option>
                                                         <?php } ?>
@@ -462,7 +462,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Agama</label>
-                                                    <select class="form-control" id="aagama" name="agama">
+                                                    <select class="form-select" id="aagama" name="agama">
                                                         <?php foreach ($agama as $key => $value) { ?>
                                                             <option value="<?php echo $agama[$key]['kode_agama']; ?>"><?php echo $agama[$key]['nama_agama']; ?></option>
                                                         <?php } ?>
@@ -474,7 +474,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="kota">Pendidikan</label>
-                                                    <select class="form-control" id="aedukasi" name="edukasi">
+                                                    <select class="form-select" id="aedukasi" name="edukasi">
                                                         <?php foreach ($education as $key => $value) { ?>
                                                             <option value="<?php echo $education[$key]['education_type_code']; ?>"><?php echo $education[$key]['name_of_edu_type']; ?></option>
                                                         <?php } ?>
@@ -515,7 +515,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Asuransi</label><small class="req">*</small>
-                                                    <select class="form-control" id="astatus" name="status">
+                                                    <select class="form-select" id="astatus" name="status">
                                                         <?php foreach ($statusPasien as $key => $value) { ?>
                                                             <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
                                                         <?php } ?>
@@ -553,7 +553,7 @@ $permissions = user()->getPermissions();
                                             <div class="col-sm-2">
                                                 <div class="form-group">
                                                     <label>Pisa</label>
-                                                    <select class="form-control" id="apisa" name="pisa">
+                                                    <select class="form-select" id="apisa" name="pisa">
                                                         <?php foreach ($coverage as $key => $value) { ?>
                                                             <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
                                                         <?php } ?>
@@ -567,7 +567,7 @@ $permissions = user()->getPermissions();
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kelompok</label>
-                                            <select class="form-control" id="apayor" name="payor">
+                                            <select class="form-select" id="apayor" name="payor">
                                                 <option value=""><?php echo lang('Word.select'); ?></option>
                                                 <?php foreach ($payor as $key => $value) { ?>
                                                     <option value="<?php echo $payor[$key]['payor_id']; ?>"><?php echo $payor[$key]['payor']; ?></option>
@@ -580,7 +580,7 @@ $permissions = user()->getPermissions();
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label>Kelas</label><small class="req">*</small>
-                                            <select class="form-control" id="aclass_id" name="class_id" required>
+                                            <select class="form-select" id="aclass_id" name="class_id" required>
                                                 <?php foreach ($kelas as $key => $value) { ?>
                                                     <option value="<?php echo $kelas[$key]['class_id']; ?>"><?php echo $kelas[$key]['name_of_class']; ?></option>
                                                 <?php } ?>

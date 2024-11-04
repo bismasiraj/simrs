@@ -317,8 +317,11 @@ class PasienVisitationModel extends Model
             pv.asalrujukan,
             pv.kdpoli_eks,
               pv.diagnosa,
-              ap.status_panggil")
+              ap.status_panggil,
+              cough+hemoptisis+weight_loss+hiperhidrosis+dispnea+close_contact+pneumonia+diabetes+hiv+suspect as tbc
+              ")
                 ->join("antrian_poli ap", "pv.visit_id = ap.visit_id", "left")
+                ->join("assessment_tbc at", "pv.trans_id = at.trans_id", "left")
                 ->where("(
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
                 (PV.NO_REGISTRATION like '%$kode%' or isnull(PV.DIANTAR_OLEH,'') like '%$kode%' ) or  

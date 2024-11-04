@@ -104,7 +104,7 @@
                     </td>
                     <td class="p-1">
                         <b>Nama Pasien</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
                     </td>
                     <td class="p-1">
                         <b>Jenis Kelamin</b>

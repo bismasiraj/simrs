@@ -1,3 +1,5 @@
+<link rel="icon" href="<?php echo base_url(); ?>assets/img/logo.png" type="image/x-icon">
+<link rel="shortcut icon" href="<?php echo base_url(); ?>assets/img/logo.png" type="image/x-icon">
 <!-- Bootstrap Css -->
 <link href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
 <!-- Icons Css -->

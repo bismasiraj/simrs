@@ -39,7 +39,7 @@ $permissions = user()->getPermissions();
                 $("#formsearchoperasibtn").html('<i class="fa fa-search"></i> Cari')
             },
             error: function() {
-                errorMsg('Data terlalu besar, silahkan persempit range tanggal atau ubah filter menjadi lebih spesifik')
+                errorSwal('Data terlalu besar, silahkan persempit range tanggal atau ubah filter menjadi lebih spesifik')
                 $("#formsearchoperasibtn").html('<i class="fa fa-search"></i>')
             }
         });

@@ -2157,7 +2157,6 @@ class medis extends \App\Controllers\BaseController
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
             $selectinfo = $visit;
-
             return view("admin/patient/profilemodul/formrm/rm/MEDIS/14-profile-ringkas.php", [
                 "visit" => $visit,
                 'title' => $title,
@@ -2262,7 +2261,8 @@ class medis extends \App\Controllers\BaseController
             pasien p 
             where 
             pd.PASIEN_DIAGNOSA_ID = '$vactination_id'
-            and PD.VISIT_ID = '" . $visit['visit_id'] . "' -- 
+            and PD.VISIT_ID = '" . $visit['visit_id'] .
+                "' -- 
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
@@ -2530,6 +2530,245 @@ class medis extends \App\Controllers\BaseController
                     "visit" => $visit,
                     'title' => $title,
                     "val" => []
+                ]);
+            }
+        }
+    }
+    public function surat_rujukan($visit, $vactination_id = null)
+    {
+        $title = "SURAT RUJUKAN";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select
+            INASIS_KONTROL.NOSEP,  
+            INASIS_KONTROL.TGLRENCKONTROL AS TGL_KONTROL_SELANJUTNYA,  
+            INASIS_KONTROL.POLIKONTROL_KDPOLI,   
+            INASIS_KONTROL.POLIKONTROL_NMPOLI,  
+            INASIS_KONTROL.KODEDOKTER,
+            INASIS_KONTROL.MODIFIED_BY,   
+            INASIS_KONTROL.MODIFIED_DATE,   
+            INASIS_KONTROL.NOSURATKONTROL,
+            INASIS_KONTROL.SURATTYPE,
+            PD.THEID as NO_bpjS,
+            PD.THENAME as nama,
+            pd.THEADDRESS as alamat,
+            CASE WHEN pd.GENDER = '1' THEN 'Laki-Laki'
+            else 'Perempuan' end as jeniskel,
+            PD.NO_REGISTRATION AS NO_RM, 
+            convert(varchar,PV.tgl_lahir,105) as date_of_birth,
+            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
+            CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' as UMUR,
+            Pd.DIAGNOSA_DESC as diagnosis,
+            PD.DIAGNOSA_ID as kode_diagnosa,
+            pd.TERAPHY_DESC as farmakologi,
+            igt.nama as alasan_kontrol,
+            pd.DOCTOR as dpjp,
+            pd.IN_DATE as tgl_masuk,
+            cr.NAME_OF_CLASS as bangsal,
+            pd.BED_ID no_tt,
+            c.NAME_OF_CLASS as kelas,
+            st.SPECIALIST_TYPE as department,
+            polikontrol_nmpoli as bangsal,
+            PD.INSTRUCTION as INTRUKSI--,
+            --PD.STANDING_ORDER as INTRUKSITAMBAHAN
+            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+            left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
+            left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+            left outer join class c on c.CLASS_ID = cr.CLASS_ID
+            left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
+            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
+            and surattype = '2'
+            and pd.DIAG_CAT = '1'")->getResultArray());
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/21-surat-rujukan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0],
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/21-surat-rujukan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => [],
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+
+    public function surat_transfusi_darah($visit, $vactination_id = null)
+    {
+        $title = "SURAT PERMINTAAN TRANSFUSI DARAH";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select
+            INASIS_KONTROL.NOSEP,  
+            INASIS_KONTROL.TGLRENCKONTROL AS TGL_KONTROL_SELANJUTNYA,  
+            INASIS_KONTROL.POLIKONTROL_KDPOLI,   
+            INASIS_KONTROL.POLIKONTROL_NMPOLI,  
+            INASIS_KONTROL.KODEDOKTER,
+            INASIS_KONTROL.MODIFIED_BY,   
+            INASIS_KONTROL.MODIFIED_DATE,   
+            INASIS_KONTROL.NOSURATKONTROL,
+            INASIS_KONTROL.SURATTYPE,
+            PD.THEID as NO_bpjS,
+            PD.THENAME as nama,
+            pd.THEADDRESS as alamat,
+            CASE WHEN pd.GENDER = '1' THEN 'Laki-Laki'
+            else 'Perempuan' end as jeniskel,
+            PD.NO_REGISTRATION AS NO_RM, 
+            convert(varchar,PV.tgl_lahir,105) as date_of_birth,
+            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
+            CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' as UMUR,
+            Pd.DIAGNOSA_DESC as diagnosis,
+            PD.DIAGNOSA_ID as kode_diagnosa,
+            pd.TERAPHY_DESC as farmakologi,
+            igt.nama as alasan_kontrol,
+            pd.DOCTOR as dpjp,
+            pd.IN_DATE as tgl_masuk,
+            cr.NAME_OF_CLASS as bangsal,
+            pd.BED_ID no_tt,
+            c.NAME_OF_CLASS as kelas,
+            st.SPECIALIST_TYPE as department,
+            polikontrol_nmpoli as bangsal,
+            PD.INSTRUCTION as INTRUKSI--,
+            --PD.STANDING_ORDER as INTRUKSITAMBAHAN
+            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+            left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
+            left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+            left outer join class c on c.CLASS_ID = cr.CLASS_ID
+            left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
+            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
+            and surattype = '2'
+            and pd.DIAG_CAT = '1'")->getResultArray());
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $bloodRequest = $this->lowerKey($db->query("
+            SELECT br.*, but.usagetype AS usageType
+            FROM BLOOD_REQUEST br
+            LEFT JOIN BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
+            WHERE br.visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+
+            $request_date = $bloodRequest[0]['request_date'];
+            $formatted_list = array_map(function ($item) {
+                return $item['usagetype'] . ' (' . $item['blood_quantity'] . ')';
+            }, $bloodRequest);
+
+            $blood = [
+                'tanggal' => $request_date,
+                'usagetype' => implode(', ', $formatted_list)
+            ];
+
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/22-surat-transfusi-darah.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0],
+                    "organization" => $selectorganization,
+                    'blood_request' => $blood
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/22-surat-transfusi-darah.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => [],
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function surat_pemasangan_infus($visit, $vactination_id = null)
+    {
+        $title = "SURAT PERSETUJUAN PEMASANGAN INFUS";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("select
+            INASIS_KONTROL.NOSEP,  
+            INASIS_KONTROL.TGLRENCKONTROL AS TGL_KONTROL_SELANJUTNYA,  
+            INASIS_KONTROL.POLIKONTROL_KDPOLI,   
+            INASIS_KONTROL.POLIKONTROL_NMPOLI,  
+            INASIS_KONTROL.KODEDOKTER,
+            INASIS_KONTROL.MODIFIED_BY,   
+            INASIS_KONTROL.MODIFIED_DATE,   
+            INASIS_KONTROL.NOSURATKONTROL,
+            INASIS_KONTROL.SURATTYPE,
+            PD.THEID as NO_bpjS,
+            PD.THENAME as nama,
+            pd.THEADDRESS as alamat,
+            CASE WHEN pd.GENDER = '1' THEN 'Laki-Laki'
+            else 'Perempuan' end as jeniskel,
+            PD.NO_REGISTRATION AS NO_RM, 
+            convert(varchar,PV.tgl_lahir,105) as date_of_birth,
+            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
+            CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' as UMUR,
+            Pd.DIAGNOSA_DESC as diagnosis,
+            PD.DIAGNOSA_ID as kode_diagnosa,
+            pd.TERAPHY_DESC as farmakologi,
+            igt.nama as alasan_kontrol,
+            pd.DOCTOR as dpjp,
+            pd.IN_DATE as tgl_masuk,
+            cr.NAME_OF_CLASS as bangsal,
+            pd.BED_ID no_tt,
+            c.NAME_OF_CLASS as kelas,
+            st.SPECIALIST_TYPE as department,
+            polikontrol_nmpoli as bangsal,
+            PD.INSTRUCTION as INTRUKSI--,
+            --PD.STANDING_ORDER as INTRUKSITAMBAHAN
+            FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap) 
+            inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+            left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
+            left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+            left outer join class c on c.CLASS_ID = cr.CLASS_ID
+            left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
+            where  INASIS_KONTROL.NOSEP = '0701R0011218V004912' 
+            and surattype = '2'
+            and pd.DIAG_CAT = '1'")->getResultArray());
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $bloodRequest = $this->lowerKey($db->query("
+            SELECT br.*, but.usagetype AS usageType
+            FROM BLOOD_REQUEST br
+            LEFT JOIN BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
+            WHERE br.visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
+
+            $request_date = $bloodRequest[0]['request_date'];
+            $formatted_list = array_map(function ($item) {
+                return $item['usagetype'] . ' (' . $item['blood_quantity'] . ')';
+            }, $bloodRequest);
+
+            $blood = [
+                'tanggal' => $request_date,
+                'usagetype' => implode(', ', $formatted_list)
+            ];
+
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/23-surat-pemasangan-infus.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0],
+                    "organization" => $selectorganization,
+                    'blood_request' => $blood
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/23-surat-pemasangan-infus.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => [],
+                    "organization" => $selectorganization
                 ]);
             }
         }

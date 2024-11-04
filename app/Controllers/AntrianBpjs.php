@@ -11,73 +11,74 @@ use LZCompressor\LZString;
 
 class AntrianBpjs extends \App\Controllers\BaseController
 {
-    private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev';
     // private $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs';
-
+    private $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev/';
 
     // function lzstring decompress https://github.com/nullpunkt/lz-string-php
 
-    public function AuthBridgingAntrean()
-    {
-        // tester sampangan
-        $consId = '16957';
-        $consSecret = '7dK0AAC16B';
-        $userKey = '6a7b82093922c4fafd211cfed64e82d9';
-        $current_timestamp = Time::now()->timestamp;
-        $this->keybridging = $consId . $consSecret . $current_timestamp;
-        $db = db_connect('default');
-        $signature = $db->query("DECLARE  @return_value int,
-                                    @h64 varchar(max)
+    // public function AuthBridgingAntrean()
+    // {
+    //     // tester sampangan
+    //     $consId = '25558';
+    //     $consSecret = '1hQ5EFD3B5';
+    //     $userKey = '86eeb2685a0e05c9dd0ccf73b711f6ad';
+    //     $current_timestamp = Time::now()->timestamp;
+    //     $this->keybridging = $consId . $consSecret . $current_timestamp;
+    //     $db = db_connect('default');
+    //     $signature = $db->query("DECLARE  @return_value int,
+    //                                 @h64 varchar(max)
 
-                                EXEC    @return_value = [dbo].[SP_H002]
-                                        @CONS = N'$consId',
-                                        @TIMESTMP = N'$current_timestamp',
-                                        @MESSAGES = N'$consSecret',
-                                        @h64 = @h64 OUTPUT
-                                SELECT  @h64 as N'h64'");
-        $signature = json_decode(json_encode($signature), true);
-        $headers = [
-            "X-cons-id: " . $consId,
-            "X-Timestamp: " . $current_timestamp,
-            "X-signature: " . $signature[0]['h64'],
-            "user-key: " . $userKey,
-            "Content-type: application/json",
-            "Accept: application/json"
-        ];
+    //                             EXEC    @return_value = [dbo].[SP_H002]
+    //                                     @CONS = N'$consId',
+    //                                     @TIMESTMP = N'$current_timestamp',
+    //                                     @MESSAGES = N'$consSecret',
+    //                                     @h64 = @h64 OUTPUT
+    //                             SELECT  @h64 as N'h64'");
+    //     $signature = json_decode(json_encode($signature), true);
+    //     $headers = [
+    //         "X-cons-id: " . $consId,
+    //         "X-Timestamp: " . $current_timestamp,
+    //         "X-signature: " . $signature[0]['h64'],
+    //         "user-key: " . $userKey,
+    //         "Content-type: application/json",
+    //         "Accept: application/json"
+    //     ];
 
-        return $headers;
-    }
+    //     return $headers;
+    // }
     private function checkResponse($result, $body, $url, $type)
     {
         $bb = new BatchingBridgingModel();
 
         if (!isset($result['metadata']['code']) || $result['metadata']['code'] != '200') {
+            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
             $bb->insert([
-                'NO_REGISTRATION' => $body['norm'],
-                'TRANS_ID' => $body['kodebooking'],
+                'no_registration' => $body['norm'],
+                'trans_id' => $body['kodebooking'],
                 'url' => $url,
-                'METHOD' => 'POST',
-                'PARAMETER' => json_encode($body),
-                'RESULT' => json_encode($result),
+                'method' => 'POST',
+                'parameter' => json_encode($body),
+                'result' => json_encode($result),
                 // 'STATUS'=>$result['metadata']['code'],
-                'CREATED_DATE' => Time::now(),
-                'MODIFIED_DATE' => Time::now(),
-                'TIPE' => $type
+                'created_date' => Time::now(),
+                'modified_date' => Time::now(),
+                'tipe' => $type
             ]);
             $pv = new PasienVisitationModel();
             $pv->where('trans_id', $body['kodebooking'])->set('statusantrean', $type)->update();
         } else {
+            $bb->where("trans_id = '" . $body['kodebooking'] . "' and tipe = '" . $type . "'")->delete();
             $bb->insert([
-                'NO_REGISTRATION' => $body['norm'],
-                'TRANS_ID' => $body['kodebooking'],
+                'no_registration' => $body['norm'],
+                'trans_id' => $body['kodebooking'],
                 'url' => $url,
-                'METHOD' => 'POST',
-                'PARAMETER' => json_encode($body),
-                'RESULT' => json_encode($result),
-                'STATUS' => $result['metadata']['code'],
-                'CREATED_DATE' => Time::now(),
-                'MODIFIED_DATE' => Time::now(),
-                'TIPE' => $type
+                'method' => 'POST',
+                'parameter' => json_encode($body),
+                'result' => json_encode($result),
+                'status' => $result['metadata']['code'],
+                'created_date' => Time::now(),
+                'modified_date' => Time::now(),
+                'tipe' => $type
             ]);
         }
     }
@@ -85,7 +86,10 @@ class AntrianBpjs extends \App\Controllers\BaseController
     public function tambahAntrean()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 
@@ -137,10 +141,42 @@ class AntrianBpjs extends \App\Controllers\BaseController
         $this->checkResponse($result, $body, $url, 1);
         return json_encode($result);
     }
+    public function deleteAntrean()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+
+
+        $url = $this->url . "/antrean/batal";
+        $method = 'POST';
+
+        $postdata = json_encode($body);
+
+        unset($result);
+        $headers = $this->AuthBridging();
+        // return json_encode($postdata);
+        array_push($headers, "Content-length: " . strlen($postdata));
+        $result = $this->SendBridging($url, $method, $postdata, $headers);
+
+        $this->checkResponse($result, $body, $url, 1);
+        return json_encode($result);
+    }
     public function updateWaktu()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 
@@ -195,7 +231,7 @@ class AntrianBpjs extends \App\Controllers\BaseController
         $postdata = json_encode($body);
         unset($result);
         $headers = $this->AuthBridging();
-        return json_encode($headers);
+        // return json_encode($headers);
         $method = 'POST';
         array_push($headers, "Content-length: " . strlen($postdata));
         $result = $this->SendBridging($url, $method, $postdata, $headers);
@@ -215,7 +251,10 @@ class AntrianBpjs extends \App\Controllers\BaseController
     public function updateStatusAntraenPV()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
 

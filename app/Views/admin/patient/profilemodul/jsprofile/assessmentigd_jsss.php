@@ -276,7 +276,7 @@
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -699,7 +699,7 @@
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    '<select class="form-control" name="parameter_id01" id="atypeASES02101' + bodyId + '" onchange="aValueParamPain(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\')">' +
+                    '<select class="form-select" name="parameter_id01" id="atypeASES02101' + bodyId + '" onchange="aValueParamPain(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\')">' +
                     <?php foreach ($aValue as $key => $value1) { ?> <?php if ($value1['parameter_id'] == '01' && $value1['p_type'] == 'ASES021') { ?> '<option value="<?= $value1['value_id']; ?>"><?= $value1['value_desc']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
@@ -795,12 +795,12 @@
 
                             clicked_submit_btn.button('reset');
                             checkSign("formPainMonitoring" + bodyId)
-                            // successMsg(data.message);
+                            // successSwal(data.message);
                         },
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
                             clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
+                            errorSwal(xhr);
                         },
                         complete: function() {
                             clicked_submit_btn.button('reset');
@@ -1335,8 +1335,8 @@
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    // '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" >' +
-                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
+                    // '<select class="form-select" name="p_type" id="aParamTriage' + bodyId + '" >' +
+                    '<select class="form-select" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
                     <?php foreach ($aType as $key1 => $value1) { ?> <?php if ($value1['parent_id'] == $value['parent_id']) { ?> '<option value="<?= $value1['p_type']; ?>"><?= $value1['p_description']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
@@ -1409,7 +1409,7 @@
                         <div class="col-md-3"><h5 class="font-size-14 mb-4 badge bg-primary">Score Triase:</h5>
                         </div>
                             <div class="col-md-9"><div class="form-check mb-3">
-                                <select class="form-control" name="total_score" id="aTriageTotalScore` + bodyId + `">
+                                <select class="form-select" name="total_score" id="aTriageTotalScore` + bodyId + `">
                                     <option value="1">ATS 1</option>
                                     <option value="2">ATS 2</option>
                                     <option value="3">ATS 3</option>
@@ -1478,7 +1478,7 @@
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
                             clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
+                            errorSwal(xhr);
                         },
                         complete: function() {
                             clicked_submit_btn.button('reset');
@@ -1795,7 +1795,7 @@
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
                             clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
+                            errorSwal(xhr);
                         },
                         complete: function() {
                             clicked_submit_btn.button('reset');
@@ -1963,7 +1963,7 @@
             '<h5 class="font-size-14 mb-4 badge bg-primary">Indikator:</h5>' +
             '</div>' +
             '<div class="col-md-3">' +
-            '<select class="form-control" id="stabilitas' + bodyId + '" name="stabilitas">' +
+            '<select class="form-select" id="stabilitas' + bodyId + '" name="stabilitas">' +
             <?php foreach ($aValue as $key1 => $value1) {
                 if ($value1['p_type'] == 'GEN0012') {
             ?> '<option value="<?= $value1['value_id']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc']; ?>' +
@@ -2056,7 +2056,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2353,7 +2353,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2571,7 +2571,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2928,7 +2928,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3185,7 +3185,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3465,7 +3465,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3746,7 +3746,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4021,7 +4021,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4321,7 +4321,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4585,7 +4585,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4864,7 +4864,7 @@
                     error: function(xhr) { // if error occured
                         alert("Error occured.please try again");
                         clicked_submit_btn.button('reset');
-                        errorMsg(xhr);
+                        errorSwal(xhr);
                     },
                     complete: function() {
                         clicked_submit_btn.button('reset');
@@ -5141,7 +5141,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5414,7 +5414,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5669,7 +5669,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5932,7 +5932,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6192,7 +6192,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6377,14 +6377,14 @@
                                     .append('<label for="giziGIZI004' + bodyId + '" class="col-form-label mb-4">Mukosa mulut / lidah</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI004" id="giziGIZI004' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI004' && $value['parameter_id'] == '01') {
-                                                                                                                                ?>
+                                    .append($('<select class="form-select" name="GIZI004" id="giziGIZI004' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                if ($value['p_type'] == 'GIZI004' && $value['parameter_id'] == '01') {
+                                                                                                                            ?>
                                                 .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                }
+                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6427,14 +6427,14 @@
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="giziGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                        if ($value['p_type'] == 'GIZI008' && $value['parameter_id'] == '01') {
-                                                                                                                                    ?>
+                                    .append($('<select class="form-select" name="GIZI00801" id="giziGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                    if ($value['p_type'] == 'GIZI008' && $value['parameter_id'] == '01') {
+                                                                                                                                ?>
                                                 .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                        }
-                                                                                                                                    } ?>
+                                                                                                                                    }
+                                                                                                                                } ?>
                                     )
                                 )
                             )
@@ -6450,7 +6450,7 @@
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="age_cat" id="giziage_cat' + bodyId + '">')
+                                    .append($('<select class="form-select" name="age_cat" id="giziage_cat' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -6467,7 +6467,7 @@
                             )
                             .append($('<div class="row">')
                                 .append('<label for="gizimt' + bodyId + '" class="col-md-4 col-form-label mb-4">IMT</label>')
-                                .append('<div class="col-md-8"><select class="form-control" type="text" id="gizimt' + bodyId + '" name="imt" placeholder="" readonly></select></div>')
+                                .append('<div class="col-md-8"><select class="form-select" type="text" id="gizimt' + bodyId + '" name="imt" placeholder="" readonly></select></div>')
                             )
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
@@ -6477,14 +6477,14 @@
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step1_score_imt" id="gizistep1_score_imt' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '01') {
-                                                                                                                                                ?>
+                                    .append($('<select class="form-select" name="step1_score_imt" id="gizistep1_score_imt' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '01') {
+                                                                                                                                            ?>
                                                 .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                    }
-                                                                                                                                                } ?>
+                                                                                                                                                }
+                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6493,14 +6493,14 @@
                                     .append('<label for="gizistep2_score_wightloss' + bodyId + '" class="col-form-label mb-4">Step 2|Skor Penurunan BB</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step2_score_wightloss" id="gizistep2_score_wightloss' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                                if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '02') {
-                                                                                                                                                            ?>
+                                    .append($('<select class="form-select" name="step2_score_wightloss" id="gizistep2_score_wightloss' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                            if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '02') {
+                                                                                                                                                        ?>
                                                 .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                                }
-                                                                                                                                                            } ?>
+                                                                                                                                                            }
+                                                                                                                                                        } ?>
                                     )
                                 )
                             )
@@ -6509,14 +6509,14 @@
                                     .append('<label for="gizistep3_score_acute_disease' + bodyId + '" class="col-form-label mb-4">Step 3|Skor Efek Penyakit Akut</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step3_score_acute_disease" id="gizistep3_score_acute_disease' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                                        if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '03') {
-                                                                                                                                                                    ?>
+                                    .append($('<select class="form-select" name="step3_score_acute_disease" id="gizistep3_score_acute_disease' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '03') {
+                                                                                                                                                                ?>
                                                 .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                                        }
-                                                                                                                                                                    } ?>
+                                                                                                                                                                    }
+                                                                                                                                                                } ?>
                                     )
                                 )
                             )
@@ -6533,7 +6533,7 @@
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="score_desc" id="giziscore_desc' + bodyId + '">')
+                                    .append($('<select class="form-select" name="score_desc" id="giziscore_desc' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -6696,7 +6696,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7103,7 +7103,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7628,7 +7628,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7843,7 +7843,7 @@
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -7879,7 +7879,7 @@
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -8141,7 +8141,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -8461,7 +8461,7 @@
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');

@@ -4,11 +4,9 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6 offset-sm-3">
-
             <div class="card">
                 <h2 class="card-header"><?= lang('Auth.register') ?></h2>
                 <div class="card-body">
-
                     <?= view('Myth\Auth\Views\_message_block') ?>
 
                     <form action="<?= url_to('register') ?>" method="post">

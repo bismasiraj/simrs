@@ -2,26 +2,91 @@
 $currency_symbol = "Rp. ";
 $permission = user()->getPermissions();
 $group = user()->getRoles();
-// dd($employee);
+// dd($permissions['assessmentmedis']);
+// dd(user()->checkPermission("assessmentmedis", "c"));
 ?>
 <!-- <div class="tab-pane <?= isset($group[11]) ? 'active' : '' ?>" id="assessmentmedis" role="tabpanel"> -->
 <div class="tab-pane " id="assessmentmedis" role="tabpanel">
     <div class="row">
         <div id="loadContentAssessmentMedis" class="col-12 center-spinner"></div>
         <div class="row" id="contentAssessmentMedis">
-            <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="col-lg-2 col-md-2 col-sm-12">
                 <?php echo view('admin/patient/profilemodul/profilebiodata', [
                     'visit' => $visit,
                     'pasienDiagnosaAll' => $pasienDiagnosaAll,
                     'pasienDiagnosa' => $pasienDiagnosa
                 ]); ?>
             </div>
-            <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
-                <div class="card border-1 rounded-4 p-4">
+            <div class="col-lg-10 col-md-10 col-sm-12 mt-4">
+                <!-- <div class="card border-1 rounded-4 p-4">
+                    <div class="card-body">
+                    </div>
+                </div> -->
+                <?php if (user()->checkPermission("assessmentmedis", "c")) {
+                    if (true) { ?>
+                        <div class="box-tab-tools text-center mb-4">
+                            <a id="formaddarmbtn" data-toggle="modal" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        </div> <?php }
+                        } ?>
+                <!-- <h3>Histori Assessmen Medis</h3> -->
+
+                <table class="table table-striped table-hover">
+                    <thead class="table-primary" style="text-align: center;">
+                        <tr>
+                            <th style="width: 5%;"></th>
+                            <th class="text-center" style="width: 15%;"></th class="text-center">
+                            <th class="text-center" style="width: 10%;"></th class="text-center">
+                            <th class="text-center" style="width: 60%;"></th class="text-center">
+                            <th class="text-center" style="width: 10%;"></th class="text-center">
+                        </tr>
+                    </thead>
+                    <tbody id="assessmentMedisHistoryBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><!--./row-->
+
+</div>
+<div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0" id="cetakarmbody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="armModal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3 id="armTitle">ASESMEN MEDIS INSTALASI GAWAT DARURAT</h3>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pt0 pb0">
+                <div class="card">
                     <div class="card-body">
                         <form id="formaddarm" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                             <div class="modal-body pt0 pb0">
-                                <div class="row">
+                                <div class="row flex-grow-1">
                                     <div class="col-lg-12 col-md-12 col-sm-12">
                                         <input name="org_unit_code" id="armorg_unit_code" type="hidden" />
                                         <input name="visit_id" id="armvisit_id" type="hidden" />
@@ -66,7 +131,6 @@ $group = user()->getRoles();
                                             <div class="col-lg-12 col-md-12 col-sm-12">
                                                 <div id="ajax_load"></div>
                                                 <div class="row">
-                                                    <h3 id="armTitle">ASESMEN MEDIS INSTALASI GAWAT DARURAT</h3>
                                                     <hr>
                                                     <div class="col-md-12">
                                                         <div class="dividerhr"></div>
@@ -81,7 +145,7 @@ $group = user()->getRoles();
                                                             <div class="mb-3">
                                                                 <div class="form-group">
                                                                     <label for="armdate_of_diagnosa">Tanggal Assessmennt</label>
-                                                                    <input id="flatarmdate_of_diagnosa" type="text" class="form-control datetimeflatpickr" />
+                                                                    <input id="flatarmdate_of_diagnosa" type="text" class="form-control datetimeflatpickr" readonly />
                                                                     <input id="armdate_of_diagnosa" type="hidden" id="searchmulai" name="date_of_diagnosa">
                                                                 </div>
                                                             </div>
@@ -116,18 +180,14 @@ $group = user()->getRoles();
                                             </div><!--./col-md-8-->
                                             <!-- INI HISTORY PART -->
                                             <div class="row text-center">
-                                                <div class="col-sm-12 col-md-4 m-4">
+                                                <div class="col-sm-6 col-md-4 m-4">
                                                     <div id="formaddarmqrcode1" class="qrcode-class"></div>
                                                     <div id="formaddarmsigner1"></div>
                                                 </div>
-                                            </div>
-                                            <div class="panel-footer text-end mb-4">
-                                                <button type="button" id="formaddarmbtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-                                                <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                                <button type="button" id="formeditarm" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                                <button type="button" id="formsignarm" name="signrm" onclick="signarm()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                                                <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
-                                                <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                                                <div class="col-sm-6 col-md-4 m-4">
+                                                    <div id="formaddarmqrcode2" class="qrcode-class"></div>
+                                                    <div id="formaddarmsigner2"></div>
+                                                </div>
                                             </div>
                                         </div><!--./col-md-4-->
                                     </div><!--./row-->
@@ -136,40 +196,21 @@ $group = user()->getRoles();
                         </form>
                     </div>
                 </div>
-                <!-- <h3>Histori Assessmen Medis</h3> -->
-                <table class="table table-striped table-hover">
-                    <thead class="table-primary" style="text-align: center;">
-                        <tr>
-                            <th></th>
-                            <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
-                            <th class="text-center" style="width: 20%;">S (Subyektif)</th class="text-center">
-                            <th class="text-center" style="width: 20%;">O (Obyektif)</th class="text-center">
-                            <th class="text-center" style="width: 20%;">A (Asesmen)</th class="text-center">
-                            <th class="text-center" style="width: 20%;">P (Prosedur)</th class="text-center">
-                        </tr>
-                    </thead>
-                    <tbody id="assessmentMedisHistoryBody">
-                    </tbody>
-                </table>
             </div>
-        </div>
-    </div><!--./row-->
+            <div class="modal-footer">
 
-</div>
-<div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content rounded-4">
-            <div class="modal-header">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 text-end">
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-            </div><!--./modal-header-->
-            <div class="modal-body pt0 pb0" id="cetakarmbody">
+                <?php if (user()->checkPermission("assessmentmedis", "u")) {
+                    if (true) { ?>
+                        <button type="button" id="formeditarm" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                <?php }
+                } ?>
+                <?php if (user()->checkPermission("assessmentmedis", "c") || user()->checkPermission("assessmentmedis", "c")) {
+                    if (true) { ?>
+                        <button type="button" id="formsavearmbtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                        <button type="button" id="formsignarm" name="signrm" onclick="signarm()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                <?php }
+                } ?>
+                <button type="button" id="formcetakarm" name="" onclick="cetakAssessmentMedis()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fas fa-file"></i> <span>Cetak</span></button>
             </div>
         </div>
     </div>

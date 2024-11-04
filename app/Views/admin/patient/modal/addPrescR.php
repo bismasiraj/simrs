@@ -379,9 +379,9 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(data.message);
+                    successSwal(data.message);
 
                     $("#prescRItemBody").html("")
 

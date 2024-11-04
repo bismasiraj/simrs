@@ -7,6 +7,10 @@ $permission = user()->getPermissions();
     .pointer {
         cursor: pointer;
     }
+
+    .quill>.ql-toolbar:first-child {
+        display: none !important;
+    }
 </style>
 
 <div class="tab-pane" id="patientOperationRequest" role="tabpanel">
@@ -21,8 +25,12 @@ $permission = user()->getPermissions();
                 </div>
 
                 <div class="col-lg-9 col-md-9 col-xs-12">
-                    <div class="d-flex mt-4">
-                        <button type="button" class="btn btn-primary btn-lg mx-auto" data-toggle="modal" data-target="#create-modal-operasi" id="btn-create-operasi">+ Tambah Permintaan</button>
+                    <div class="row mt-3 ">
+                        <div class="col-md-12">
+                            <div class="box-tab-tools text-center">
+                                <a data-toggle="modal" data-target="#create-modal-operasi" class="btn btn-primary btn-lg" id="btn-create-operasi" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Permintaan</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="panel-group" id="table">
                         <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">PERMINTAAN TINDAKAN OPERASI</h3>
@@ -32,6 +40,7 @@ $permission = user()->getPermissions();
                                     <th scope="col">No</th>
                                     <th scope="col">Tanggal</th>
                                     <th scope="col">Tindakan Operasi</th>
+                                    <th scope="col">Tarif</th>
                                     <th scope="col">Dokter</th>
                                     <th scope="col"></th>
                                 </tr>
@@ -53,8 +62,12 @@ $permission = user()->getPermissions();
                             <div class="operasi-tab">
                                 <ul class="nav nav-underline" style="border-bottom: 2px solid var(--bs-border-color);">
                                     <li class="nav-item">
-                                        <a class="nav-link active" aria-current="page" href="#catatan-keperawatan" data-bs-toggle="tab">Catatan Keperawatan Peri Operasi</a>
+                                        <a class="nav-link " aria-current="page" href="#pra-operasi" data-bs-toggle="tab">Catatan Keperawatan Pra Operasi</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" aria-current="page" href="#catatan-keperawatan" data-bs-toggle="tab">Catatan Keperawatan Peri Operasi</a>
+                                    </li>
+
                                     <li class="nav-item">
                                         <a class="nav-link" href="#checklist-keselamatan" data-bs-toggle="tab">Checklist
                                             Keselamatan Operasi</a>
@@ -64,20 +77,31 @@ $permission = user()->getPermissions();
                                             Anestesi</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#laporan-pembedahan" data-bs-toggle="tab">Checklist
+                                        <a class="nav-link" href="#laporan-pembedahan" data-bs-toggle="tab">Laporan
                                             Pembedahan</a>
                                     </li>
-
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Informasi Post Operasi</a>
+                                        <a class="nav-link" href="#anesthesi-lengkap" data-bs-toggle="tab">Catatan Anestesi dan Sedasi</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Laporan
-                                            Anesthesi & Sedasi</a>
+                                        <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Asesmen Pra Anestesi</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Instruksi Post Operasi</a>
                                     </li>
                                 </ul>
                                 <div class="tab-content mt-3">
 
+
+                                    <!-- catatan -->
+                                    <?php echo view('admin/patient/profilemodul/operasi/praoperasi.php', [
+                                        'title' => 'Test',
+                                        'visit' => $visit,
+                                        'aParent' => $aParent,
+                                        'aType' => $aType,
+                                        'aParameter' => $aParameter,
+                                        'aValue' => $aValue,
+                                    ]) ?>
 
                                     <!-- catatan -->
                                     <?php echo view('admin/patient/profilemodul/operasi/catatan-keperawatan.php', [
@@ -139,6 +163,14 @@ $permission = user()->getPermissions();
                                         'aParameter' => $aParameter,
                                         'aValue' => $aValue,
                                     ]) ?>
+                                    <?php echo view('admin/patient/profilemodul/operasi/anesthesi-lengkap.php', [
+                                        'title' => 'Test',
+                                        'visit' => $visit,
+                                        'aParent' => $aParent,
+                                        'aType' => $aType,
+                                        'aParameter' => $aParameter,
+                                        'aValue' => $aValue,
+                                    ]) ?>
 
 
                                 </div>
@@ -169,7 +201,7 @@ $permission = user()->getPermissions();
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: 75vh; overflow-y: auto;">
                 <form id="formDokumentPermintaanOperasi">
                     <div id="content-hide" hidden>
                     </div>
@@ -218,17 +250,7 @@ $permission = user()->getPermissions();
             // Add event listener to each tab trigger
             tabTrigger.addEventListener('shown.bs.tab', function(event) {
                 activeTab = event.target.getAttribute('href'); // Get the href attribute
-                if (activeTab == '#catatan-keperawatan') {
 
-                } else if (activeTab == '#checklist-keselamatan') {
-
-                } else if (activeTab == '#checklist-anestesi') {
-
-                } else if (activeTab == '#laporan-pembedahan') {
-
-                } else {
-
-                }
                 // You can perform further actions based on the active tab here
             });
         });
@@ -246,7 +268,7 @@ $permission = user()->getPermissions();
 
     });
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <?php echo view('admin/patient/profilemodul/jsprofile/patientOperationRequest_js', [
     'title' => 'Test',
     'visit' => $visit,

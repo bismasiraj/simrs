@@ -73,8 +73,14 @@ class ExaminationModel extends Model
         "account_id",
         "kesadaran",
         "isvalid",
+        'vs_status_id',
         'awareness',
-        'vs_status_id'
+        'pain',
+        'lochia',
+        'general_condition',
+        'cardiovasculer',
+        'respiration',
+        'proteinuria'
     ];
 
     protected $useTimestamps = true;

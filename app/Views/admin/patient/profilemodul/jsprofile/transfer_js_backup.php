@@ -181,9 +181,9 @@
                 //     $.each(data.error, function(index, value) {
                 //         message += value;
                 //     });
-                //     errorMsg(message);
+                //     errorSwal(message);
                 // } else {
-                //     successMsg(data.message);
+                //     successSwal(data.message);
                 // }
                 $("#formaddatransfer").find("input, textarea, select").prop("disabled", true)
                 $("#formtransfersubmit").toggle()
@@ -191,7 +191,7 @@
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             error: function(xhr) { // if error occured
-                errorMsg("Error occured.please try again");
+                errorSwal("Error occured.please try again");
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             complete: function() {
@@ -260,7 +260,7 @@
                 }
             })
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td rowspan='3'>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td rowspan='3'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td rowspan='3'>").html(examselect.petugas))
                 .append($("<td rowspan='3'>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td>").html('<b>Departemen</b>'))
@@ -314,7 +314,7 @@
                 }
             })
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td colspan=\"2\">").html(visitselected?.visit_id))
@@ -332,7 +332,7 @@
             )
         } else if (isinternal == 2) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect?.examination_date).substring(0, 16)))
+                .append($("<td>").append((examselect?.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect?.petugas))
                 .append($("<td>").html(getFollowUpName(examselect?.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect?.org_id))
@@ -350,7 +350,7 @@
             )
         } else if (isinternal == 4) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -368,7 +368,7 @@
             )
         } else if (isinternal == 5) {
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td>").html(examselect.petugas))
                 .append($("<td>").html(getFollowUpName(examselect.isinternal)))
                 .append($("<td colspan=\"2\">").html(examselect.isinternal))
@@ -662,7 +662,7 @@
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -729,7 +729,7 @@
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');

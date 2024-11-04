@@ -281,7 +281,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label> <?php echo lang('Word.gender'); ?></label>
-                                            <select class="form-control" name="gender" id="agenders">
+                                            <select class="form-select" name="gender" id="agenders">
                                                 <?php foreach ($gender as $key => $value) { ?>
                                                     <option value="<?php echo $gender[$key]['gender']; ?>"><?php echo $gender[$key]['name_of_gender']; ?></option>
                                                 <?php } ?>
@@ -316,7 +316,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Darah</label>
-                                            <select class="form-control" id="agoldar" name="goldar">
+                                            <select class="form-select" id="agoldar" name="goldar">
                                                 <?php foreach ($blood as $key => $value) { ?>
                                                     <option value="<?php echo $blood[$key]['blood_type_id']; ?>"><?php echo $blood[$key]['name_of_type']; ?></option>
                                                 <?php } ?>
@@ -376,7 +376,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Provinsi</label>
-                                            <select class="form-control" id="aprov" name="prov">
+                                            <select class="form-select" id="aprov" name="prov">
                                                 <option value=""><?php echo lang('Word.select'); ?></option>
                                                 <?php foreach ($prov as $key => $value) { ?>
                                                     <option value="<?php echo $prov[$key]['province_code']; ?>"><?php echo $prov[$key]['name_of_province']; ?></option>
@@ -458,7 +458,7 @@ $currency_symbol = 'Rp. ';
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label>Asuransi</label>
-                                    <select class="form-control" id="astatus" name="status">
+                                    <select class="form-select" id="astatus" name="status">
                                         <?php foreach ($statusPasien as $key => $value) { ?>
                                             <option value="<?php echo $statusPasien[$key]['status_pasien_id']; ?>"><?php echo $statusPasien[$key]['name_of_status_pasien']; ?></option>
                                         <?php } ?>
@@ -496,7 +496,7 @@ $currency_symbol = 'Rp. ';
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Pisa</label>
-                                    <select class="form-control" id="apisa" name="pisa">
+                                    <select class="form-select" id="apisa" name="pisa">
                                         <?php foreach ($coverage as $key => $value) { ?>
                                             <option value="<?php echo $coverage[$key]['coverage_id']; ?>"><?php echo $coverage[$key]['coveragetype']; ?></option>
                                         <?php } ?>
@@ -508,7 +508,7 @@ $currency_symbol = 'Rp. ';
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label>Kelompok</label>
-                                    <select class="form-control" id="apayor" name="payor">
+                                    <select class="form-select" id="apayor" name="payor">
                                         <option value=""><?php echo lang('Word.select'); ?></option>
                                         <?php foreach ($payor as $key => $value) { ?>
                                             <option value="<?php echo $payor[$key]['payor_id']; ?>"><?php echo $payor[$key]['payor']; ?></option>
@@ -521,7 +521,7 @@ $currency_symbol = 'Rp. ';
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label>Kelas</label>
-                                    <select class="form-control" id="aclass_id" name="class_id">
+                                    <select class="form-select" id="aclass_id" name="class_id">
                                         <?php foreach ($kelas as $key => $value) { ?>
                                             <option value="<?php echo $kelas[$key]['class_id']; ?>"><?php echo $kelas[$key]['name_of_class']; ?></option>
                                         <?php } ?>
@@ -535,7 +535,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Status di Keluarga</label>
-                                            <select class="form-control" id="afamily" name="family">
+                                            <select class="form-select" id="afamily" name="family">
                                                 <?php foreach ($family as $key => $value) { ?>
                                                     <option value="<?php echo $family[$key]['family_status_id']; ?>"><?php echo $family[$key]['family_status']; ?></option>
                                                 <?php } ?>
@@ -547,7 +547,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Agama</label>
-                                            <select class="form-control" id="aagama" name="agama">
+                                            <select class="form-select" id="aagama" name="agama">
                                                 <?php foreach ($agama as $key => $value) { ?>
                                                     <option value="<?php echo $agama[$key]['kode_agama']; ?>"><?php echo $agama[$key]['nama_agama']; ?></option>
                                                 <?php } ?>
@@ -559,7 +559,7 @@ $currency_symbol = 'Rp. ';
                                     <div class="col-sm-3">
                                         <div class="form-group">
                                             <label for="kota">Pendidikan</label>
-                                            <select class="form-control" id="aedukasi" name="edukasi">
+                                            <select class="form-select" id="aedukasi" name="edukasi">
                                                 <?php foreach ($education as $key => $value) { ?>
                                                     <option value="<?php echo $education[$key]['education_type_code']; ?>"><?php echo $education[$key]['name_of_edu_type']; ?></option>
                                                 <?php } ?>
@@ -1081,9 +1081,9 @@ $currency_symbol = 'Rp. ';
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(data.message);
+                        successSwal(data.message);
                         window.location.reload(true);
                     }
                     $("#formeditpabtn").button('reset');
@@ -1105,7 +1105,7 @@ $currency_symbol = 'Rp. ';
                 },
                 dataType: 'json',
                 success: function(data) {
-                    successMsg(<?php echo "'" . lang('Word.delete_message') . "'"; ?>);
+                    successSwal(<?php echo "'" . lang('Word.delete_message') . "'"; ?>);
                     $("#myModal").modal("hide");
                     table.ajax.reload();
                 }
@@ -1125,9 +1125,9 @@ $currency_symbol = 'Rp. ';
                 success: function(data) {
                     if (data.status == "fail") {
                         var message = (data.message);
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(<?php echo "'" . lang('Word.record_disable') . "'"; ?>);
+                        successSwal(<?php echo "'" . lang('Word.record_disable') . "'"; ?>);
                         window.getpatientData(id);
                     }
                 }
@@ -1174,7 +1174,7 @@ $currency_symbol = 'Rp. ';
                 },
                 dataType: 'json',
                 success: function(data) {
-                    successMsg(<?php echo "'" . lang('Word.record_active') . "'"; ?>);
+                    successSwal(<?php echo "'" . lang('Word.record_active') . "'"; ?>);
                     window.getpatientData(id);
                 }
             })
@@ -1201,14 +1201,14 @@ $currency_symbol = 'Rp. ';
                 success: function(res) {
                     $this.button('reset');
                     if (res.status == 1) {
-                        successMsg(res.msg);
+                        successSwal(res.msg);
                         table.ajax.reload();
                     } else {
                         var message = "";
                         $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     }
                 },
                 error: function(xhr) { // if error occured
@@ -1292,9 +1292,9 @@ $currency_symbol = 'Rp. ';
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(data.message);
+                        successSwal(data.message);
                         window.location.reload(true);
                     }
                     clicked_submit_btn.button('reset');

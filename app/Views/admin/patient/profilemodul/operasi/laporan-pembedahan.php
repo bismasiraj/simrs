@@ -47,9 +47,9 @@
             </div> -->
         </div>
         <div class="col-12 my-3 d-flex justify-content-end gap-2">
-            <!-- <button type="button" id="btn-print-checklist-anestesi" class="btn btn-success">
+            <button type="button" id="btn-print-laporan-pembedahan" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
-            </button> -->
+            </button>
             <button type="button" id="btn-save-laporan-pembedahan" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
@@ -60,7 +60,6 @@
     //     // Code to handle click event
 
     //     e.preventDefault();
-    //     tinymce.triggerSave();
 
     //     let formElement = $('#form-catatan-keperawatan')[0];
     //     let dataSend = new FormData(formElement);
@@ -73,7 +72,6 @@
     //             successSwal('Data berhasil disimpan.');
     //             $('#form-catatan-keperawatan')[0].reset();
     //             let visit_id = '<?php echo $visit['visit_id']; ?>';
-    //             tinymce.remove();
     //             // getDataTables({
     //             //     visit_id: visit_id
     //             // });

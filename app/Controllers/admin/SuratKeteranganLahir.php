@@ -35,49 +35,49 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
             $formData['inspection_date'] = str_replace("T", " ", $formData['inspection_date']);
         }
         $data = [
-            'ORG_UNIT_CODE' => $formData['org_unit_code'],
-            'NO_REGISTRATION' => $formData['no_registration'],
-            'BABY_ID' => $formData['baby_id'],
-            'VISIT_ID' => $formData['visit_id'],
-            // 'BILL_ID' => '1',
-            'CLINIC_ID' => $formData['clinic_id'],
-            'DIAGNOSA_ID' => $formData['diagnosa_id'],
-            'EMPLOYEE_ID' => $formData['employee_id'],
-            'BABY_KE' => $jumlah_baby,
-            'INSPECTION_DATE' => $formData['inspection_date'],
-            // 'BIRTH_CON' => '1',
-            // 'WEIGHT' => '1',
-            // 'HEIGHT' => '1',
-            // 'HEAD_ROUND' => '1',
-            // 'ANOMALI_ID' => '1',
-            // 'BREAST_FEED' => '1',
-            // 'BABY_FEED' => '1',
-            // 'PUSAR_ID' => '1',
-            'BABY_BIRTH' => $formData['baby_birth'],
-            // 'BREAST_FEED_DURATION' => '1',
-            // 'START_FRUIT' => '1',
-            // 'START_BUBUR' => '1',
-            // 'START_TIM' => '1',
-            // 'START_RICE' => '1',
-            // 'DESCRIPTION' => '1',
-            'MODIFIED_DATE' => $date,
-            'MODIFIED_BY' => user()->username,
-            'MODIFIED_FROM' => $formData['clinic_id'],
-            'OBSTETRI_ID' => null,
-            'THENAME' => $formData['thename'],
-            'THEADDRESS' => $formData['contact_address'],
-            'THEID' => $formData['pasien_id'],
-            'STATUS_PASIEN_ID' => $formData['status_pasien_id'],
-            'ISRJ' => $formData['isrj'],
-            'AGEYEAR' => $formData['ageyear'],
-            'AGEMONTH' => $formData['agemonth'],
-            'AGEDAY' => $formData['ageday'],
-            'GENDER' => $formData['gender'],
-            'CLASS_ROOM_ID' => $formData['class_room_id'],
-            'BED_ID' => $formData['bed_id'],
-            'KELUAR_ID' => $formData['keluar_id'],
-            'DOCTOR' => $formData['doctor'],
-            'MOTHERNAME' => $formData['mothername'],
+            'org_unit_code' => $formData['org_unit_code'],
+            'no_registration' => $formData['no_registration'],
+            'baby_id' => $formData['baby_id'],
+            'visit_id' => $formData['visit_id'],
+            // 'bill_id' => '1',
+            'clinic_id' => $formData['clinic_id'],
+            'diagnosa_id' => $formData['diagnosa_id'],
+            'employee_id' => $formData['employee_id'],
+            'baby_ke' => $jumlah_baby,
+            'inspection_date' => $formData['inspection_date'],
+            // 'birth_con' => '1',
+            // 'weight' => '1',
+            // 'height' => '1',
+            // 'head_round' => '1',
+            // 'anomali_id' => '1',
+            // 'breast_feed' => '1',
+            // 'baby_feed' => '1',
+            // 'pusar_id' => '1',
+            'baby_birth' => $formData['baby_birth'],
+            // 'breast_feed_duration' => '1',
+            // 'start_fruit' => '1',
+            // 'start_bubur' => '1',
+            // 'start_tim' => '1',
+            // 'start_rice' => '1',
+            // 'description' => '1',
+            'modified_date' => $date,
+            'modified_by' => user()->username,
+            'modified_from' => $formData['clinic_id'],
+            'obstetri_id' => null,
+            'thename' => $formData['thename'],
+            'theaddress' => $formData['contact_address'],
+            'theid' => $formData['pasien_id'],
+            'status_pasien_id' => $formData['status_pasien_id'],
+            'isrj' => $formData['isrj'],
+            'ageyear' => $formData['ageyear'],
+            'agemonth' => $formData['agemonth'],
+            'ageday' => $formData['ageday'],
+            'gender' => $formData['gender'],
+            'class_room_id' => $formData['class_room_id'],
+            'bed_id' => $formData['bed_id'],
+            'keluar_id' => $formData['keluar_id'],
+            'doctor' => $formData['doctor'],
+            'mothername' => $formData['mothername'],
             // 'MOTHERNO' => '1',
             // 'KAL_ID' => '1'
         ];
@@ -94,7 +94,10 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
     public function getData()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -112,7 +115,10 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
     public function getDetail()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();

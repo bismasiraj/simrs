@@ -140,7 +140,10 @@ class RekamMedis extends \App\Controllers\BaseController
     public function getdokterrujukan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return json_encode($this->request->getPost('clinicSelected'));

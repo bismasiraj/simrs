@@ -4,14 +4,14 @@ $permission = user()->getPermissions();
 ?>
 <div class="tab-pane" id="rekammedis" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12">
+        <div class="col-lg-2 col-md-2 col-sm-12">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
                 'pasienDiagnosa' => $pasienDiagnosa
             ]); ?>
         </div>
-        <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
+        <div class="col-lg-10 col-md-10 col-sm-12 mt-4">
             <form id="formaddrm" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
                 <div class="">
                     <div class="modal-body pt0 pb0">

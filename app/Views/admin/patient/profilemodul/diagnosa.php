@@ -4,20 +4,20 @@ $permission = user()->getPermissions();
 ?>
 
 <style>
-    table.table-fit {
-        width: auto !important;
-        table-layout: auto !important;
-    }
+table.table-fit {
+    width: auto !important;
+    table-layout: auto !important;
+}
 
-    table.table-fit thead th,
-    table.table-fit tfoot th {
-        width: auto !important;
-    }
+table.table-fit thead th,
+table.table-fit tfoot th {
+    width: auto !important;
+}
 
-    table.table-fit tbody td,
-    table.table-fit tfoot td {
-        width: auto !important;
-    }
+table.table-fit tbody td,
+table.table-fit tfoot td {
+    width: auto !important;
+}
 </style>
 <div class="tab-pane" id="diagnosa" role="tabpanel">
     <div class="row">
@@ -148,11 +148,14 @@ $permission = user()->getPermissions();
                     <!-- Accordion Item 1 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingOneAskep">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOneAskep" aria-expanded="true" aria-controls="collapseOneAskep">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOneAskep" aria-expanded="true"
+                                aria-controls="collapseOneAskep">
                                 Diagnosis Keperawatan (SDKI)
                             </button>
                         </h2>
-                        <div id="collapseOneAskep" class="accordion-collapse collapse show" aria-labelledby="headingOneAskep" data-bs-parent="#accordionAskep">
+                        <div id="collapseOneAskep" class="accordion-collapse collapse show"
+                            aria-labelledby="headingOneAskep" data-bs-parent="#accordionAskep">
                             <div class="accordion-body">
                                 <form id="formDiagnosisAskep">
                                     <div class="mb-3 row" id="diagnosisAskepRender">
@@ -166,11 +169,14 @@ $permission = user()->getPermissions();
                     <!-- Accordion Item 2 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingTwoAskep">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoAskep" aria-expanded="false" aria-controls="collapseTwoAskep">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseTwoAskep" aria-expanded="false"
+                                aria-controls="collapseTwoAskep">
                                 Standar Luaran Keperawatan Indonesia (SLKI)
                             </button>
                         </h2>
-                        <div id="collapseTwoAskep" class="accordion-collapse collapse" aria-labelledby="headingTwoAskep" data-bs-parent="#accordionAskep">
+                        <div id="collapseTwoAskep" class="accordion-collapse collapse" aria-labelledby="headingTwoAskep"
+                            data-bs-parent="#accordionAskep">
                             <div class="accordion-body">
                                 <form id="formLuaranAskep">
 
@@ -187,11 +193,14 @@ $permission = user()->getPermissions();
                     <!-- Accordion Item 3 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingThreeAskep">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThreeAskep" aria-expanded="false" aria-controls="collapseThreeAskep">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseThreeAskep" aria-expanded="false"
+                                aria-controls="collapseThreeAskep">
                                 Standar Intervensi Keperawatan Indonesia (SIKI)
                             </button>
                         </h2>
-                        <div id="collapseThreeAskep" class="accordion-collapse collapse" aria-labelledby="headingThreeAskep" data-bs-parent="#accordionAskep">
+                        <div id="collapseThreeAskep" class="accordion-collapse collapse"
+                            aria-labelledby="headingThreeAskep" data-bs-parent="#accordionAskep">
                             <div class="accordion-body">
                                 <form id="formIntervensiAskep">
                                     <div class="mb-3 row" id="intervensiAskepRender">
@@ -206,6 +215,9 @@ $permission = user()->getPermissions();
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" id="btnCetakAskep" data-loading-text="processing"
+                    class="btn btn-light pull-right"><i class="fa fa-signature"></i>
+                    <span>Cetak</span></button>
                 <button id="saveButtonAskep" type="button" class="btn btn-primary" disabled>Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

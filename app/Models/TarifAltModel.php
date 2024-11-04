@@ -8,7 +8,7 @@ use CodeIgniter\Model;
 class TarifAltModel extends Model
 {
     protected $table      = 'tarif_alt';
-    // protected $primaryKey = 'brand_id';
+    protected $primaryKey = 'nosep';
 
     protected $useAutoIncrement = false;
 
@@ -16,13 +16,13 @@ class TarifAltModel extends Model
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
-        'NOSEP',
-        'CLASS_ID',
-        'TARIF_INACBG',
-        'TARIF_SP',
-        'TARIF_SR',
-        'MODIFIED_DATE',
-        'MODIFIED_BY'
+        'nosep',
+        'class_id',
+        'tarif_inacbg',
+        'tarif_sp',
+        'tarif_sr',
+        'modified_date',
+        'modified_by'
     ];
 
     // Dates

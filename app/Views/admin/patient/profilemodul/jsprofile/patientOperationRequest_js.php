@@ -1,20 +1,3 @@
-<!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> -->
-
-<!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.snow.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.2/quill.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
-
-
-
-
 <script type="text/javascript">
     let treatmentData = [];
     let historyPasien = [];
@@ -29,12 +12,13 @@
         $(document).ready(function() {
 
             let visit = <?= json_encode($visit) ?>;
+            getDataTreatment();
             getDataTableOperation(visit);
 
             actionButtonAddOperation(visit);
             $('#container-tab').attr('hidden', true) //update
             $("#close-create-modal-permintaan-operasi").off().on("click", (e) => {
-                tinymce.remove();
+
                 e.preventDefault();
                 $("#create-modal-permintaan-operasi").modal("hide");
             });
@@ -48,11 +32,13 @@
                 renderDropdownTreatment({
                     data: treatmentData
                 });
+
+
             });
 
             // tindakan 
             $("#close-create-modal-tindakan-operasi").off().on("click", (e) => {
-                tinymce.remove();
+
                 e.preventDefault();
                 $("#create-modal-tindakan-operasi").modal("hide");
             });
@@ -68,6 +54,7 @@
             });
 
             $('#btn-reset-data').click(function() {
+                $('#bodydataRequestOperation > tr').removeClass('table-primary');
                 $('#container-tab').attr('hidden', true)
             });
 
@@ -128,57 +115,6 @@
             }, {});
         };
 
-        const initTinyMCERequestOperation = () => {
-            tinymce.remove();
-
-            tinymce.init({
-                selector: '#diagnosa_desc-permintaan_operasi',
-                height: 300,
-                plugins: [
-                    "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking"
-                ],
-                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons",
-                style_formats: [{
-                        title: "Bold text",
-                        inline: "b"
-                    },
-                    {
-                        title: "Red text",
-                        inline: "span",
-                        styles: {
-                            color: "#ff0000"
-                        }
-                    },
-                    {
-                        title: "Red header",
-                        block: "h1",
-                        styles: {
-                            color: "#ff0000"
-                        }
-                    },
-                    {
-                        title: "Example 1",
-                        inline: "span",
-                        classes: "example1"
-                    },
-                    {
-                        title: "Example 2",
-                        inline: "span",
-                        classes: "example2"
-                    },
-                    {
-                        title: "Table styles"
-                    },
-                    {
-                        title: "Table row 1",
-                        selector: "tr",
-                        classes: "tablerow1"
-                    }
-                ]
-            });
-        };
-
         const manipulationsTextCheckbox = (ids) => {
             ids.forEach(id => {
                 let initialInput = document.getElementById(id);
@@ -236,14 +172,44 @@
 
             $("#patientOperationRequestTab").off().on("click", function(e) {
                 getLoadingscreen("contentToHide-requestOperation", "load-content-requestOperation")
-                getDataTreatment()
+                // getDataTreatment()
                 e.preventDefault();
                 getDataTabelRequestOperation({
                     no_registration: props?.no_registration,
                     visit_id: props?.visit_id
                 })
+                $("#container-tab").slideUp();
             })
         };
+
+
+        const initializeFlatpickrOperasi = () => {
+            flatpickr(".datetimeflatpickr", {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i", // Display format
+                time_24hr: true, // 24-hour time format
+            });
+
+            $(".datetimeflatpickr").prop("readonly", false);
+
+            $(".datetimeflatpickr").on("change", function() {
+                let theid = $(this).attr("id");
+                theid = theid.replace("flat", "");
+                let thevalue = $(this).val();
+
+                if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+                    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+                        "YYYY-MM-DD HH:mm"
+                    );
+                    $("#" + theid).val(formattedDate);
+                } else {
+                    // console.warn("Invalid date entered:", thevalue);
+                }
+            });
+
+            // const nowtime = moment().format("DD/MM/YYYY HH:mm");
+            // $(".datetimeflatpickr").val(nowtime).trigger("change");
+        }
 
         const btnSaveActionRequestOperation = (props) => {
             $("#btn-save-permintaan-operasi-modal").off().on("click", function(e) {
@@ -256,7 +222,7 @@
                     return;
                 }
 
-                tinymce.triggerSave();
+
 
                 $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
                     $(this).removeAttr('disabled');
@@ -286,7 +252,7 @@
 
                         $("#create-modal-permintaan-operasi").modal("hide");
                         $('#formDokumentPermintaanOperasi')[0].reset();
-                        tinymce.remove();
+
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
                             visit_id: props?.visit_id
@@ -299,7 +265,7 @@
         const btnUpdateDataRequestOperation = (props) => {
             $('#btn-edit-permintaan-operasi-modal').off().on('click', function(e) {
                 e.preventDefault();
-                tinymce.triggerSave();
+
                 $('#formDokumentPermintaanOperasi').find(':disabled').each(function() {
                     $(this).removeAttr('disabled');
                 });
@@ -324,7 +290,7 @@
 
                         $("#create-modal-permintaan-operasi").modal("hide");
                         $('#formDokumentPermintaanOperasi')[0].reset();
-                        tinymce.remove();
+
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
                             visit_id: props?.visit_id
@@ -368,6 +334,8 @@
                         });
                     }
                 });
+
+
             });
         };
 
@@ -375,9 +343,10 @@
             $("#btn-save-catatan-keperawatan").off().on("click", function(e) {
                 e.preventDefault();
 
-                tinymce.triggerSave();
+
                 let jsonObj = {
                     instrumen: [],
+                    instrumen2: [],
                     drain: [],
                     diagnosas: [],
                     bromage: [],
@@ -424,18 +393,39 @@
                 let quantity_additional = dataSend.getAll('quantity_additional[]');
                 let quantity_after = dataSend.getAll('quantity_after[]');
                 let brand_name = dataSend.getAll('brand_name[]');
+                let arrInstrument = ['Instrumen', 'Kassa', 'Jarum'];
                 let brand_id = dataSend.getAll('brand_id[]');
 
                 for (let i = 0; i < brand_id.length; i++) {
                     let entry = {
                         brand_id: brand_id[i],
-                        brand_name: brand_name[i],
+                        brand_name: brand_name[i] ?? arrInstrument[i],
                         quantity_before: quantity_before[i],
                         quantity_intra: quantity_intra[i],
                         quantity_additional: quantity_additional[i],
                         quantity_after: quantity_after[i],
                     };
                     jsonObj.instrumen.push(entry);
+                }
+
+
+
+                let quantity_before2 = dataSend.getAll('quantity_before2[]');
+                let quantity_intra2 = dataSend.getAll('quantity_intra2[]');
+                let quantity_additional2 = dataSend.getAll('quantity_additional2[]');
+                let quantity_after2 = dataSend.getAll('quantity_after2[]');
+                let brand_name2 = dataSend.getAll('brand_name2[]');
+                let brand_id2 = dataSend.getAll('brand_id2[]');
+                for (let i = 0; i < brand_id2.length; i++) {
+                    let entry = {
+                        brand_id: brand_id2[i],
+                        brand_name: brand_name2[i],
+                        quantity_before: quantity_before2[i],
+                        quantity_intra: quantity_intra2[i],
+                        quantity_additional: quantity_additional2[i],
+                        quantity_after: quantity_after2[i],
+                    };
+                    jsonObj.instrumen2.push(entry);
                 }
 
 
@@ -616,7 +606,7 @@
                         successSwal('Data berhasil diperbarui.');
 
                         $("#create-modal-permintaan-operasi").modal("hide");
-                        tinymce.remove();
+
 
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
@@ -642,18 +632,34 @@
             $("#btn-save-laporan-pembedahan").off().on('click', function(e) {
                 e.preventDefault();
 
-                tinymce.triggerSave();
+
                 $('#form-laporan-pembedahan').find(':disabled').removeAttr('disabled');
 
                 let formElement = document.getElementById('form-laporan-pembedahan');
                 let dataSend = new FormData(formElement);
-                let jsonObj = {};
+                let jsonObj = {
+                    diagnosas: [],
+                };
 
 
                 dataSend.forEach((value, key) => {
                     jsonObj[key] = value;
                 });
 
+                let diag_cats = dataSend.getAll('diag_cat[]');
+                let diag_ids = dataSend.getAll('diag_id[]');
+                let diag_names = dataSend.getAll('diag_name[]');
+                let suffer_type = dataSend.getAll('suffer_type[]');
+
+                for (let i = 0; i < diag_ids.length; i++) {
+                    let entry = {
+                        diagnosa_cat: diag_cats[i],
+                        diagnosa_id: diag_ids[i],
+                        diagnosa_name: diag_names[i],
+                        suffer_type: suffer_type[i],
+                    };
+                    jsonObj.diagnosas.push(entry);
+                }
                 postData(jsonObj, 'admin/PatientOperationRequest/insertLaporanPembedahan', (
                     res) => {
 
@@ -662,7 +668,7 @@
 
                         // $("#create-modal-permintaan-operasi").modal("hide");
                         // $('#form-operasi')[0].reset();
-                        tinymce.remove();
+
 
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
@@ -683,6 +689,9 @@
                 let index = $(this).data('index');
                 let item = pasienOperasiValue[index];
                 pasienOperasiSelected = item;
+
+                $('#bodydataRequestOperation > tr').removeClass('table-primary');
+                $(this).closest('tr').addClass('table-primary')
                 // assessmentPraOperasi(item)
                 // getDataInstrumenoprs(item);
                 postData({
@@ -692,11 +701,13 @@
 
                     if (res.respon) {
                         let result = res?.data
-
+                        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(result
+                            ?.assessment_anesthesia?.body_id); //new
 
                         checklistKeselamatan({
                             data: result?.assessment_operation_check,
                         });
+
                         anestesi({
                             data: {
                                 assessment_operation: result?.assessment_operation,
@@ -705,17 +716,30 @@
                                 ori: item
                             }
                         });
+
                         catatanKeperawatanPraOperasi({
                             data: result?.assessment_operation,
                             assessment_anesthesia_recovery: result
-                                ?.assessment_anesthesia_recovery
+                                ?.assessment_anesthesia_recovery,
+                            exam_info: result?.exam_info
 
                         })
+
+                        getDataKeperawatanOPRS001({
+                            data: result?.assessment_operation_pra,
+                            blood_request: result?.treatmentobat.blood_request,
+                            diagnosas: result?.diagnosas
+
+                        })
+
                         pembedahan({
-                            data: item
+                            data: item,
+                            diagnosas: result?.diagnosas,
                         });
+
                         LaporanAnesthesi({
-                            data: result?.assessment_anesthesia
+                            data: result?.assessment_anesthesia,
+                            exam_info: result?.exam_info
                         })
 
 
@@ -729,9 +753,10 @@
                                     ?.assessment_anesthesia_post,
                                 assessment_anesthesia_recovery: result
                                     ?.assessment_anesthesia_recovery,
-
-                            }
+                            },
+                            exam_info: result?.exam_info
                         })
+
                         templateOprasiPembedahan({
                             data: {
                                 operation_team: result?.operation_team,
@@ -739,6 +764,7 @@
 
                             }
                         })
+
                         templateOprasiPembedahanAnesthesiLengkap({
                             data: {
                                 operation_team: result?.operation_team,
@@ -758,20 +784,22 @@
                                 ?.assessment_anesthesia_recovery,
 
                         });
+
                         getInstrumen({
                             data: result?.assessment_instrument
                         });
 
                     }
                 })
-
                 postOperasi(item);
+
 
                 // appendLokalisOperation("accordionPraOperasiSurgeryBody")
                 $("#container-tab").attr("hidden", false);
                 $("#nama-tindakan-operasi").text($(this).data('treatname') + ' (' + $(this).data(
                         'date') +
                     ')');
+                $('#operation_planning').val($(this).data('treatname'));
                 $("#document_id_checklist_keselamatan").val($(this).data('id')); //new
                 $("#document_id_checklist_anestesi").val($(this).data('id')); //new
                 $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
@@ -794,6 +822,11 @@
                 })
                 cetakOperasi({
                     vactination_id: $(this).data('id'),
+                    element_id: '#btn-print-anestesi-lengkap',
+                    method: 'cetak_anesthesi_lengkap'
+                })
+                cetakOperasi({
+                    vactination_id: $(this).data('id'),
                     element_id: '#btn-print-checklist-anestesi',
                     method: 'cetak_checklist_anestesi'
                 })
@@ -812,8 +845,14 @@
                     element_id: '#btn-print-post-operasi',
                     method: 'cetak_post_operasi'
                 })
-
-
+                cetakOperasi({
+                    vactination_id: $(this).data('id'),
+                    element_id: '#btn-print-laporan-pembedahan',
+                    method: 'cetak_laporan_pembedahan'
+                })
+                $("#container-tab").slideUp();
+                $("#container-tab").slideDown();
+                // initializeFlatpickrOperasi()
             });
         }; //new update 1/08
 
@@ -837,7 +876,7 @@
             $('#btn-updateAndInsert-permintaan-operasi-modal').off().on('click', function(e) {
                 e.preventDefault();
 
-                tinymce.triggerSave();
+
                 $('#formDokumentPermintaanOperasi').find(':disabled').removeAttr('disabled');
 
                 let formElement = document.getElementById('formDokumentPermintaanOperasi');
@@ -911,7 +950,7 @@
 
                         $("#create-modal-permintaan-operasi").modal("hide");
                         $('#formDokumentPermintaanOperasi')[0].reset();
-                        tinymce.remove();
+
 
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
@@ -975,7 +1014,7 @@
             $("#btn-save-laporan-anesthesi").off().on("click", function(e) {
                 e.preventDefault();
 
-                tinymce.triggerSave();
+
                 $('#form-laporan-anesthesi').find(':disabled').removeAttr('disabled');
                 let formElement = document.getElementById('form-laporan-anesthesi');
                 let dataSend = new FormData(formElement);
@@ -1060,7 +1099,7 @@
                     if (res.respon === true) {
                         successSwal('Data berhasil diperbarui.');
                         $("#create-modal-permintaan-operasi").modal("hide");
-                        tinymce.remove();
+
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
                             visit_id: props?.visit_id
@@ -1276,12 +1315,12 @@
                 dataRendersTables = rawData.map(item => `
                                         <tr>
                                             <td>${moment(item?.examination_date).format('DD MMM YYYY HH:mm')}</td>
-                                            <td>${item?.tension_upper}</td>
-                                            <td>${item?.tension_below}</td>
-                                            <td>${item?.nadi}</td>
-                                            <td>${item?.temperature}</td>
-                                            <td>${item?.nafas}</td>
-                                            <td>${item?.saturasi}</td>
+                                            <td>${item?.tension_upper ?? 0}</td>
+                                            <td>${item?.tension_below?? 0}</td>
+                                            <td>${item?.nadi?? 0}</td>
+                                            <td>${item?.temperature?? 0}</td>
+                                            <td>${item?.nafas?? 0}</td>
+                                            <td>${item?.saturasi?? 0}</td>
                                             <td>${item?.pemeriksaan ?? "-"}</td>
                                             <td>${item?.petugas ?? "-"}</td>
                                         </tr>
@@ -1297,7 +1336,7 @@
             $("#btn-save-laporan-anesthesiLengkap").off().on("click", function(e) {
 
                 e.preventDefault();
-                // tinymce.triggerSave();
+                // 
 
                 let jsonObj = {
                     instrumen: [],
@@ -1306,7 +1345,8 @@
                     bromage: [],
                     aldrete: [],
                     steward: [],
-                    vitailsign: {}
+                    vitailsign: {},
+                    vitailsign2: {}
                 };
 
                 const selects = document.querySelectorAll('#bromageContainer1 select');
@@ -1351,7 +1391,7 @@
                         diag_id: diag_id[i],
                         diag_name: diag_name[i],
                         suffer_type: suffer_type[i],
-                        pasien_diagnosa_id: jsonObj['body_id']
+                        pasien_diagnosa_id: dataSend.get('body_id')
                     };
 
                     jsonObj.diagnosa.push(entry);
@@ -1365,6 +1405,482 @@
                     });
                 });
 
+                let InfusBodyId = get_bodyid();
+                jsonObj.infusion = [];
+
+
+                $('#recovery-room-oprs029').find('[name^="oprs029"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: InfusBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS029',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.infusion.push(entry);
+                    }
+                    // Check if the element is a <select> option and is selected
+                    else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: InfusBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS029',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.infusion.push(entry);
+                            }
+                        });
+                    }
+                    // Check if the element is a text input and its value is not empty
+                    else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: InfusBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS029',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.infusion.push(entry);
+                        }
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: InfusBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS029',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.infusion.push(entry);
+                        }
+                    }
+
+                });
+                let RegionalBodyId = get_bodyid();
+                jsonObj.regional = [];
+
+                $('#recovery-room-oprs033').find('[name^="oprs033"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: RegionalBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS033',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.regional.push(entry);
+                    }
+                    // Check if the element is a <select> option and is selected
+                    else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: RegionalBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS033',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.regional.push(entry);
+                            }
+                        });
+                    }
+                    // Check if the element is a text input and its value is not empty
+                    else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: RegionalBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS033',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.regional.push(entry);
+                        }
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: RegionalBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS033',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.regional.push(entry);
+                        }
+                    }
+
+                });
+
+
+                let GeneralBodyId = get_bodyid();
+                jsonObj.general = [];
+
+                $('#recovery-room-oprs030').find('[name^="oprs030"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: GeneralBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS030',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.general.push(entry);
+                    }
+                    // Check if the element is a <select> option and is selected
+                    else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: GeneralBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS030',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.general.push(entry);
+                            }
+                        });
+                    }
+                    // Check if the element is a text input and its value is not empty
+                    else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: GeneralBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS030',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.general.push(entry);
+                        }
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: GeneralBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS030',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.general.push(entry);
+                        }
+                    }
+
+                });
+
+                let VentilasiBodyId = get_bodyid();
+                jsonObj.ventilasi = [];
+
+                $('#recovery-room-oprs031').find('[name^="oprs031"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: VentilasiBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS031',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.ventilasi.push(entry);
+                    }
+                    // Check if the element is a <select> option and is selected
+                    else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: VentilasiBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS031',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.ventilasi.push(entry);
+                            }
+                        });
+                    }
+                    // Check if the element is a text input and its value is not empty
+                    else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: VentilasiBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS031',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.ventilasi.push(entry);
+                        }
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: VentilasiBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS031',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.ventilasi.push(entry);
+                        }
+                    }
+
+                });
+
+
+                let JalanNapasBodyId = get_bodyid();
+                jsonObj.jalan_napas = [];
+
+                $('#recovery-room-oprs032').find('[name^="oprs032"]').each(function() {
+
+                    if ($(this).is(':checkbox:checked') || $(this).is(':radio:checked')) {
+                        let entry = {
+                            org_unit_code: dataSend.get('org_unit_code'),
+                            visit_id: dataSend.get('visit_id'),
+                            trans_id: dataSend.get('trans_id'),
+                            body_id: JalanNapasBodyId,
+                            document_id: props?.vactination_id,
+                            p_type: 'OPRS032',
+                            parameter_id: $(this).attr('name').split('_')[1] || '',
+                            value_score: $(this).data('score'),
+                            value_desc: $(this).data('desc'),
+                            observation_date: '',
+                            modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            modified_by: dataSend.get('modified_by'),
+                            value_id: $(this).val()
+                        };
+                        jsonObj.jalan_napas.push(entry);
+                    }
+                    // Check if the element is a <select> option and is selected
+                    else if ($(this).is('select')) {
+                        let selectName = $(this).attr('name')
+                        $(this).find('option:selected').each(function() {
+                            var option = $(this);
+                            var optionDataScore = option.data('score');
+                            if (optionDataScore) {
+                                let entry = {
+                                    org_unit_code: dataSend.get('org_unit_code'),
+                                    visit_id: dataSend.get('visit_id'),
+                                    trans_id: dataSend.get('trans_id'),
+                                    body_id: JalanNapasBodyId,
+                                    document_id: props?.vactination_id,
+                                    p_type: 'OPRS032',
+                                    parameter_id: selectName.split('_')[1] || '',
+                                    value_score: optionDataScore,
+                                    value_desc: $(this).data('desc'),
+                                    observation_date: '',
+                                    modified_date: moment().format(
+                                        'YYYY-MM-DD HH:mm:ss'),
+                                    modified_by: dataSend.get('modified_by'),
+                                    value_id: $(this).val()
+                                };
+                                jsonObj.jalan_napas.push(entry);
+                            }
+                        });
+                    }
+                    // Check if the element is a text input and its value is not empty
+                    else if ($(this).is(':input[type="text"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: JalanNapasBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS032',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.jalan_napas.push(entry);
+                        }
+                    } else if ($(this).is(':input[type="hidden"]')) {
+                        var inputValue = $(this).val().trim();
+                        if (inputValue && $(this).data('score')) {
+                            let entry = {
+                                org_unit_code: dataSend.get('org_unit_code'),
+                                visit_id: dataSend.get('visit_id'),
+                                trans_id: dataSend.get('trans_id'),
+                                body_id: JalanNapasBodyId,
+                                document_id: props?.vactination_id,
+                                p_type: 'OPRS032',
+                                parameter_id: $(this).attr('name').split('_')[1] || '',
+                                value_score: '',
+                                value_desc: $(this).data('desc'),
+                                observation_date: '',
+                                modified_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                modified_by: dataSend.get('modified_by'),
+                                value_id: inputValue
+                            };
+                            jsonObj.jalan_napas.push(entry);
+                        }
+                    }
+
+                });
 
                 $('#bodyAldreteoprs023-1').find('tr').each(function(rowIndex, tr) {
                     let row = $(tr);
@@ -1466,8 +1982,22 @@
                     delete jsonObj[key];
                 });
                 vitailSignKeys2.forEach(key => {
-                    jsonObj.vitailsign2[key] = jsonObj[key];
-                    delete jsonObj[key];
+                    let inputElement = document.querySelector(
+                        `#formvitalsign-laporanAnesthesi-lengkap3 [name="${key}"]`);
+                    if (inputElement) {
+                        if (inputElement.type === 'checkbox') {
+                            jsonObj.vitailsign2[key] = inputElement.checked;
+                        } else if (inputElement.type === 'radio') {
+                            if (inputElement.checked) {
+                                jsonObj.vitailsign2[key] = inputElement.value;
+                            }
+                        } else {
+                            jsonObj.vitailsign2[key] = inputElement.value;
+                        }
+                    } else {
+                        console.warn(`Input element for key ${key} not found.`);
+                        jsonObj.vitailsign2[key] = null;
+                    }
                 });
 
                 jsonObj.vitailsign['body_id'] = dataSend.get('body_id');
@@ -1518,11 +2048,9 @@
                 jsonObj.vitailsign2['trans_id'] = dataSend.get('trans_id');
                 jsonObj.vitailsign2['pasien_diagnosa_id'] = jsonObj['body_id']
 
-                // Inisialisasi jsonObj.post_anesthesia sebagai array kosong
-                // Initialize the post_anesthesia object
                 jsonObj.post_anesthesia = {};
 
-                // List of keys to be moved
+
                 const postAnesthesiaKeys = [
                     'bp_medicine', 'fasting', 'infus', 'infus_volume', 'meal', 'meal_time',
                     'oxygen', 'postan_position', 'respiratory_interval', 'transfusion',
@@ -1532,10 +2060,7 @@
 
                 // Populate jsonObj.post_anesthesia with key-value pairs
                 postAnesthesiaKeys.forEach(key => {
-                    // Set the key-value pair in the post_anesthesia object
                     jsonObj.post_anesthesia[key] = dataSend.get(key);
-
-                    // Optionally delete the key from jsonObj if needed
                     delete jsonObj[key];
                 });
 
@@ -1547,7 +2072,7 @@
                     if (res.respon === true) {
                         successSwal('Data berhasil diperbarui.');
                         $("#create-modal-permintaan-operasi").modal("hide");
-                        tinymce.remove();
+
                         getDataTabelRequestOperation({
                             no_registration: props?.no_registration,
                             visit_id: props?.visit_id
@@ -1608,11 +2133,12 @@
         const actionButtonAddOperation = (visit) => {
             $("#btn-create-operasi").off().on("click", (e) => {
                 e.preventDefault();
-                tinymce.remove();
+
                 $("#dropdown-param-tindakan-operasi").html("");
 
                 $("#create-modal-permintaan-operasi").modal("show");
                 $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(visit));
+
                 $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
                 // $('#form-permintaan-operasi')[0].reset();
 
@@ -1648,7 +2174,7 @@
                 $('#keluar_id-permintaan_operasi').val(visit.keluar_id);
                 $('#diagnosa_pra-permintaan_operasi').val(visit.diagnosa_pra);
                 $('#diagnosa_pasca-permintaan_operasi').val(visit.diagnosa_pasca);
-                $('#end_operation-permintaan_operasi').val(visit.end_operation);
+                $('#end_operation-permintaan_operasi').val();
                 $('#start_anestesi-permintaan_operasi').val(visit.start_anestesi);
                 $('#end_anestesi-permintaan_operasi').val(visit.end_anestesi);
                 $('#result_id-permintaan_operasi').val(visit.result_id);
@@ -1656,10 +2182,10 @@
                 $('#transaksi-permintaan_operasi').val(0);
                 $('#layan-permintaan_operasi').val(visit.layan);
                 let currentDateTime = moment().format("YYYY-MM-DDTHH:mm");
-                $("#start_operation-permintaan_operasi").val(currentDateTime);
+                $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
                 $('#rooms_id-permintaan_operasi').val(visit?.rooms_id);
                 $('#clinic_id_from-permintaan_operasi').val(visit.clinic_id);
-                $('#class_room_id-permintaan_operasi').text(visit.class_room_id);
+                $('#class_room_id-permintaan_operasi').val(visit.class_room_id);
                 $('#patient_category_id-permintaan_operasi').prop('checked', visit
                     .patient_category_id);
                 $('#operation_type-permintaan_operasi').val("");
@@ -1680,14 +2206,7 @@
                     element_id: 'clinic_id_from-permintaan_operasi_name'
                 })
 
-                tinymce.init({
-                    selector: '#diagnosa_desc-permintaan_operasi',
-                    toolbar: true,
-                    menubar: true,
-                    plugins: [],
-                }).then((editors) => {
-                    editors[0]?.setContent(visit.diagnosa_desc);
-                });
+
 
                 $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                     let treatmentData = renderDropdownTreatment();
@@ -1696,11 +2215,12 @@
                         disabled: false,
                         dropdownParent: $('#create-modal-permintaan-operasi')
                     });
+                    initializeFlatpickrOperasi()
+                    initializeQuillEditors();
                 });
 
-
+                initializeQuillEditors();
                 actionDropdownSpesialisas();
-                initTinyMCERequestOperation();
                 btnSaveActionRequestOperation(visit);
             });
         }
@@ -1869,15 +2389,17 @@
                 <div class="row form-group pt-3">
                     <div class="col-md-4" id="formDate-tindakan-oprasi-1">
                         <label for="start_operation-permintaan_operasi">Tanggal/Jam Operasi</label>
-                        <input class="form-control datetime-input" type="datetime-local" id="start_operation-permintaan_operasi" name="start_operation">
+                        <input id="start_operation-permintaan_operasi" name="start_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd HH:mm ">
+                        <input class="form-control datetimeflatpickr" type="text" id="flatstart_operation-permintaan_operasi" >
                     </div>
                     <div class="col-md-6" id="formDate-tindakan-oprasi-2">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="start_operation-range">Tanggal/Jam Operasi</label>
-                                    <input class="form-control datetime-input" type="datetime-local" id="start_operation-permintaan_operasi" name="start_operation">
-                                </div>
+                                      <input id="start_operation-permintaan_operasi" name="start_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                    <input class="form-control datetimeflatpickr" type="text" id="flatstart_operation-permintaan_operasi" >
+                                    </div>
                             </div>
                             <div class="col-md-2 d-flex align-items-end justify-content-center">
                                 <div class="form-group">
@@ -1887,7 +2409,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="end_operation-permintaan_operasi">&nbsp;</label>
-                                    <input class="form-control datetime-input" type="datetime-local" id="end_operation-permintaan_operasi" name="end_operation">
+                                    <input id="end_operation-permintaan_operasi" name="end_operation" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                    <input class="form-control  datetimeflatpickr" type="text" id="flatend_operation-permintaan_operasi" name="end_operation">
                                 </div>
                             </div>
                         </div>
@@ -1944,10 +2467,10 @@
                     </div>
                 </div>
 
-                <div class="row form-group">
+                <div class="row form-group mb-3 pb-5">
                     <div class="col-md-12">
                         <label for="diagnosa_desc-permintaan_operasi">Diagnosis</label>
-                        <textarea class="form-control disabled" id="diagnosa_desc-permintaan_operasi" name="diagnosa_desc"></textarea>
+                        <textarea class="form-control quill-editor disabled" id="diagnosa_desc-permintaan_operasi" name="diagnosa_desc"></textarea>
                     </div>
                 </div>
             </div>
@@ -1996,7 +2519,7 @@
             $('#keluar_id-permintaan_operasi').val(result.keluar_id);
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-            $('#end_operation-permintaan_operasi').val(result.end_operation);
+            $('#end_operation-permintaan_operasi').val(result.end_operation)
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
             $('#result_id-permintaan_operasi').val(result.result_id);
@@ -2004,7 +2527,7 @@
             $('#transaksi-permintaan_operasi').val(result.transaksi);
             $('#layan-permintaan_operasi').val(result.layan);
             let currentDateTime = moment(result.start_operation).format("YYYY-MM-DDTHH:mm");
-            $("#start_operation-permintaan_operasi").val(currentDateTime);
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
@@ -2012,7 +2535,7 @@
             $('#operation_type-permintaan_operasi').val(result.operation_type);
             $('#vactination_id-permintaan_operasi').val(result.vactination_id);
             $("#trans_id-permintaan_operasi").val(result?.trans_id)
-            $("#start_operation-permintaan_operasi").attr("disabled", true)
+            $("#flatstart_operation-permintaan_operasi").attr("disabled", true)
             $("#patient_category_id-permintaan_operasi").attr("disabled", true)
             const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
 
@@ -2032,22 +2555,17 @@
                 id: result.clinic_id,
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
-            tinymce.init({
-                selector: '#diagnosa_desc-permintaan_operasi',
-                readonly: true,
-                toolbar: true,
-                menubar: true,
-                plugins: [],
-            }).then((editors) => {
-                editors[0].setContent(result.diagnosa_desc);
-            });
+
 
             $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                 $('#tarif_id-permintaan_operasi').select2({
                     disabled: true
                 });
                 $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
             });
+            initializeQuillEditors();
         };
 
         const modalViewEditRequestOperation = (data) => {
@@ -2092,7 +2610,7 @@
             $('#keluar_id-permintaan_operasi').val(result.keluar_id);
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-            $('#end_operation-permintaan_operasi').val(result.end_operation);
+            $('#end_operation-permintaan_operasi').val(result.end_operation)
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
             $('#result_id-permintaan_operasi').val(result.result_id);
@@ -2100,7 +2618,7 @@
             $('#transaksi-permintaan_operasi').val(result.transaksi);
             $('#layan-permintaan_operasi').val(result.layan);
             let currentDateTime = moment(result.start_operation).format("YYYY-MM-DDTHH:mm");
-            $("#start_operation-permintaan_operasi").val(currentDateTime);
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
@@ -2125,14 +2643,7 @@
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
 
-            tinymce.init({
-                selector: '#diagnosa_desc-permintaan_operasi',
-                toolbar: true,
-                menubar: true,
-                plugins: [],
-            }).then((editors) => {
-                editors[0].setContent(result.diagnosa_desc);
-            });
+
 
             $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                 let treatmentData = renderDropdownTreatment();
@@ -2144,8 +2655,11 @@
                 });
 
                 $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
             });
-
+            initializeFlatpickrOperasi()
+            initializeQuillEditors();
             btnUpdateDataRequestOperation(result)
         };
 
@@ -2158,8 +2672,11 @@
                 terlayani: result?.terlayani
 
             })
-            let currentDateTime = moment(result.start_operation).format("YYYY-MM-DDTHH:mm");
-            let currentDateTimeEnd = moment(result.end_operation).format("YYYY-MM-DDTHH:mm");
+
+            let currentDateTime = moment(new Date(result.start_operation)).format("YYYY-MM-DDTHH:mm");
+
+            let currentDateTimeEnd = moment(result?.end_operation ? new Date(result?.end_operation) : new Date())
+                .format("DD/MM/YYYY HH:mm");
 
             $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
             $("#formDate-tindakan-oprasi-1").html("").attr("class", "");
@@ -2168,7 +2685,6 @@
             $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
             $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
             $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', false);
-
 
             // Set the rest of the fields
             $('#vactination_id-permintaan_operasi').val(result.vactination_id);
@@ -2208,9 +2724,11 @@
             $('#clinic_id-permintaan_operasi').val(result.clinic_id);
             $('#layan-permintaan_operasi').val(result.layan);
 
+            $("#start_operation-permintaan_operasi").val(moment(currentDateTime).format("YYYY-MM-DD HH:mm"))
+            $("#end_operation-permintaan_operasi").val(moment(currentDateTimeEnd).format("YYYY-MM-DD HH:mm"))
 
-            $("#start_operation-permintaan_operasi").val(currentDateTime);
-            $("#end_operation-permintaan_operasi").val(currentDateTimeEnd);
+            $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+            $("#flatend_operation-permintaan_operasi").val(currentDateTimeEnd).trigger("change");
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
             $('#patient_category_id-permintaan_operasi').prop('checked', result.patient_category_id);
@@ -2221,14 +2739,14 @@
                 table_name: 'class_room',
                 column_name: 'name_of_class',
                 column_id: 'class_room_id',
-                id: result.class_room_id,
+                id: result?.class_room_id,
                 element_id: 'class_room_id-permintaan_operasi_name'
             })
             getDataColumnName({
                 table_name: 'clinic',
                 column_name: 'name_of_clinic',
                 column_id: 'clinic_id',
-                id: result.clinic_id,
+                id: result?.clinic_id,
                 element_id: 'clinic_id_from-permintaan_operasi_name'
             })
 
@@ -2259,22 +2777,15 @@
 
                 $inputElementRoom.replaceWith($selectElementRoom);
             } else {
-                $("#rooms_id-permintaan_operasi").val(result.rooms_id);
+                $("#rooms_id-permintaan_operasi").val(result?.rooms_id);
             }
 
 
 
-            const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
+            const foundData = treatmentData.find(item => item.operation_type === `${result?.operation_type}`);
 
             $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
-            tinymce.init({
-                selector: '#diagnosa_desc-permintaan_operasi',
-                toolbar: true,
-                menubar: true,
-                plugins: [],
-            }).then((editors) => {
-                editors[0].setContent(result.diagnosa_desc);
-            });
+
 
             $('#create-modal-permintaan-operasi').off().on('shown.bs.modal', function() {
                 let treatmentData = renderDropdownTreatment();
@@ -2284,80 +2795,77 @@
                     dropdownParent: $('#create-modal-permintaan-operasi')
                 });
 
-                $('#tarif_id-permintaan_operasi').val(result.tarif_id).trigger('change');
+                $('#tarif_id-permintaan_operasi').val(result?.tarif_id).trigger('change');
+                initializeFlatpickrOperasi()
+                initializeQuillEditors();
             });
 
 
-
+            initializeQuillEditors();
             actionBtnUpdateAndInsert(result);
-        }; // new 30/07
+        };
+
 
         const valueCatatan = async (props) => {
             try {
-                let dataHtml = '';
-                let promises = [];
+                let promises = props?.data.map(async (e) => {
+                    const {
+                        htmlContent
+                    } = await getType({
+                        parameter_desc: e?.parameter_desc,
+                        parameter_id: e?.parameter_id,
+                        column_name: e?.column_name,
+                        p_type: e?.p_type,
+                        code: e?.entry_type,
+                        get_data: props?.get_data,
+                        items: props?.items,
+                        data_tindakan: props?.data_tindakan
+                    });
 
-                props?.data.forEach((e) => {
-                    promises.push(
-                        getType({
-                            parameter_desc: e?.parameter_desc,
-                            parameter_id: e?.parameter_id,
-                            column_name: e?.column_name,
-                            p_type: e?.p_type,
-                            code: e?.entry_type,
-                            get_data: props?.get_data,
-                            items: props?.items,
-                            data_tindakan: props?.data_tindakan //new
-                        }).then(({
-                            htmlContent,
-                            initializeQuill
-                        }) => {
-                            return `
-                        <div class="row pl-sm-0 ${e?.entry_type == 4 ? 'col-12' : 'col-6'}" id="type-container-${e?.parameter_id}-${e?.p_type}">
-                            ${htmlContent}
-                        </div>`;
-                        })
-                    );
+                    return htmlContent.trim() ? `
+                <div class="row pl-sm-0 ${e?.entry_type == 4 ? 'col-12' : 'col-6'}" 
+                    id="type-container-${e?.parameter_id}-${e?.p_type}">
+                    ${htmlContent}
+                </div>` : '';
                 });
 
                 const results = await Promise.all(promises);
-                dataHtml = results.join('');
+                const dataHtml = results.filter(html => html.trim() !== '').join('');
 
                 const container = $(`#${props?.content_id}`);
                 container.html(dataHtml);
 
                 initializeQuillEditors();
+                initializeFlatpickrOperasi();
+
                 $('#type-container-03-OPRS011').remove();
-                if ($('textarea.tinymce-init').length > 0) {
-                    tinymce.remove('textarea.tinymce-init');
-                    tinymce.init({
-                        selector: 'textarea.tinymce-init',
-                        plugins: 'lists link image',
-                        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat'
-                    });
-                }
+
+
             } catch (error) {
                 // console.error('Error in valueCatatan:', error);
             }
-        }; // new update 31/7
+        };
 
         const renderbodyInstrumenoprs004 = (props) => {
             let hasil = '';
             InstrumenValue = props?.items
             InstrumenValue.forEach((item, index) => {
                 hasil += `<tr>
-                    <td hidden><input type="number" name="brand_id[]" value="${item?.brand_id}"/></td>
-                    <td>${item?.brand_name}
+                    <td hidden><input type="number" name="brand_id2[]" value="${item?.brand_id}"/></td>
+                    <td>${item?.brand_name === '1' ? "Instrumen" :
+                                    item?.brand_name === '2' ? "Kassa" :
+                                    item?.brand_name === '3' ? "Jarum" :
+                                    item?.brand_name}
                         <input type="hidden" name="document_id" id="document_id_checklist_keperawatan" value="${item?.document_id}">
                         <input type="hidden" name="body_id_instrument" id="body_id_instrument" value="${item?.body_id}">
                     </td>
-                    <td hidden><input type="text" name="brand_name[]" value="${item?.brand_name}"/></td>
+                    <td hidden><input type="text" name="brand_name2[]" value="${item?.brand_name}"/></td>
                     <td>${item?.quantity_before}</td>
-                    <td hidden><input type="number" name="quantity_before[]" value="${item?.quantity_before}"/></td>
+                    <td hidden><input type="number" name="quantity_before2[]" value="${item?.quantity_before}"/></td>
                     
-                    <td><input type="number" class="form-control quantity-intra" min="0" id="quantity_intra_${index}" name="quantity_intra[]" data-before="${item?.quantity_before}" value="${item?.quantity_intra || ''}" /></td>
-                    <td><input type="number" class="form-control quantity-additional" min="0" id="quantity_additional_${index}" name="quantity_additional[]" value="${item?.quantity_additional || ''}" /></td>
-                    <td><input type="number" class="form-control quantity-after" min="0" id="quantity_after_${index}" name="quantity_after[]" value="${item?.quantity_after || ''}" /></td>
+                    <td><input type="number" class="form-control quantity-intra" min="0" id="quantity_intra_${index}" name="quantity_intra2[]" data-before="${item?.quantity_before}" value="${item?.quantity_intra || ''}" /></td>
+                    <td><input type="number" class="form-control quantity-additional" min="0" id="quantity_additional_${index}" name="quantity_additional2[]" value="${item?.quantity_additional || ''}" /></td>
+                    <td><input type="number" class="form-control quantity-after" min="0" id="quantity_after_${index}" name="quantity_after2[]" value="${item?.quantity_after || ''}" /></td>
                 
                     <td class="result-${index}"></td>
                 </tr>`;
@@ -2368,7 +2876,6 @@
             $("input.quantity-intra, input.quantity-additional, input.quantity-after").on('input',
                 function() {
                     updateResults();
-                    console.log('change');
                 });
 
             const updateResults = () => {
@@ -2426,18 +2933,23 @@
                         index: index,
                         container: 'bodyAldreteoprs023'
                     });
+                    $('#addAldrete').hide();
                 });
             }
 
             $('#addAldrete').click(function() {
                 let rowCount = $('#bodyAldreteoprs023 tr').length;
-                AddRowAldrete005({
-                    item: {},
-                    index: rowCount,
-                    container: 'bodyAldreteoprs023'
 
-                });
+                if (rowCount === 0) {
+                    AddRowAldrete005({
+                        item: {},
+                        index: rowCount,
+                        container: 'bodyAldreteoprs023'
+                    });
+                    $(this).hide();
+                }
             });
+
         };
         const AddRowAldrete005 = (props) => {
             let visit = <?= json_encode($visit) ?>;
@@ -2524,7 +3036,7 @@
                     ${props.index === 0 ? `
                     <td></td>
                         <td class="datetime">
-                            <input type="datetime-local" class="form-control datetime-input" value="${observationDateFormatted}" hidden>
+                            <input type="text" class="form-control datetime-input datetimeflatpickr" value="${observationDateFormatted}" hidden>
                             <h4><span class="badge text-bg-secondary">${observationTimeOnly}</span></h4>
                         </td>
                     ` : `
@@ -2535,12 +3047,12 @@
                             </select>
                         </td>
                         <td class="datetime">
-                            <input type="datetime-local" class="form-control datetime-input" value="${observationDateFormatted}" hidden name='observation_date[]'>
+                            <input type="text" class="form-control datetime-input datetimeflatpickr" value="${observationDateFormatted}" hidden name='observation_date[]'>
                             <h4><span class="badge text-bg-secondary datetime-display">${observationTimeOnly}</span></h4>
                         </td>
                     `}
                     <td>
-                        <button type="button" class="btn btn-danger btn-sm delete-row"><i class="fas fa-trash-alt"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm adrete-delete-row"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 </tr>
             `;
@@ -2576,8 +3088,15 @@
                     defaultDatetime));
             }
 
-            $(`#${props?.container}`).on('click', '.delete-row', function() {
+            $(`#${props?.container}`).on('click', '.adrete-delete-row', function() {
+                let theid = props?.container
                 $(this).closest('tr').remove();
+
+                theid = theid.replace("bodyAldreteoprs023", "addAldrete");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
+
             });
         };
 
@@ -2592,7 +3111,13 @@
                                 <input type="text" class="form-control" name="drain_type_drain[]" value="${props?.item.drain_type ?? ""}">
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="drain_kinds_drain[]" value="${props?.item.drain_kinds ?? ""}">
+                               
+                                <select class="form-select" name="drain_kinds_drain[]">
+                                    <option>-- pilih --</option>
+                                    <option data-nama="handscoon" value="handscoon" ${props?.item.drain_kinds == 'handscoon' ? 'selected' : '' }>Drain Handscoon</option>
+                                    <option data-nama="vacuum" value="vacuum" ${props?.item.drain_kinds == 'vacuum' ? 'selected' : '' }>Drain Vacuum</option>
+                                    <option data-nama="ndt" value="ndt" ${props?.item.drain_kinds == 'ndt' ? 'selected' : '' }>Drain NDT</option>
+                                </select>
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="size_drain[]" value="${props?.item.size ?? ""}">
@@ -2764,25 +3289,159 @@
                     `${item.value_desc} : ${item.histories || 'Tidak ada catatan'}<br>`;
             });
 
-            tinymce.init({
-                selector: '#riwayat_penyakit-catatan_operasi',
-                readonly: true,
-                toolbar: true,
-                menubar: true,
-                plugins: [],
-            }).then((editors) => {
-                editors[0]?.setContent(contentPenyakit);
+        }
+
+        const getDataKeperawatanOPRS001 = async (props) => {
+            let data = props?.data
+            let blood_request = props?.blood_request
+            let diagnosas = props?.diagnosas
+
+            let catatanKeperawatanOPRS001 = `
+                    <div class="container">
+                        <div class="row">
+                            <div id="cKeperawatanoprs001-1" class="row"></div>
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                            <div class="form-group">
+                                <label><strong>Tanda Tangan Perawat Ruangan</strong></label>
+                                <div class="position-relative" id="qr-1-${data?.body_id}">
+
+                                    <button type="button" id="formPraOperasiSignBtn1" name="signrm" data-sign-ke="1"
+                                        data-button-id="formPraOperasiSaveBtn" class="btn btn-warning">
+                                        <i class="fa fa-signature"></i> <span>Sign</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    `;
+            let bloodRequest = `
+            <div class="row mt-4">
+                            <div class="table tablecustom-responsive">
+                                <h4><b>Produk Darah</b></h4>
+                                <hr>
+                                <table id="tablediagnosa" class="table">
+                                    <thead>
+                                        <th class="text-center" style="width: 20%">Jenis Darah</th>
+                                        <th class="text-center" style="width: 10%">Jumlah</th>
+                                        <th class="text-center" style="width: 10%">Satuan Ukuran</th>
+                                        <th class="text-center" style="width: 10%">Golongan Darah</th>
+                                        <th class="text-center" style="width: 30%">Keterangan</th>
+                                        <th class="text-center" style="width: 19%">Waktu Penggunaan</th>
+                                        <th class="text-center" style="width: 1%"></th>
+                                    </thead>
+                                    <tbody id="bodyBloodRequest">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="box-tab-tools" style="text-align: center;">
+                                <button type="button" id="addbloodrequest2" name="addbloodrequest" class="btn btn-secondary"><i class="fa fa-plus"></i> <span>Tambah</span></button>
+                            </div>
+                        </div>
+            `; // new 28 sept
+
+            let diagnosaOPRS001 = `
+            <div class="row mt-4">
+                                <div class="table tablecustom-responsive">
+                                    <h4><b>DIAGNOSA</b></h4>
+                                    <hr>
+                                    <table id="tablediagnosa" class="table">
+                                        <thead>
+                                            <th class="text-center" style="width: 40%">Diagnosa</th>
+                                            <th class="text-center" style="width: 20%">Jenis Kasus</th>
+                                            <th class="text-center" style="width: 40%" colspan="2">Kategori Diagnosis
+                                            </th>
+                                        </thead>
+                                        <tbody id="bodyDiagPraOperation2-${pasienOperasiSelected?.vactination_id}">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="box-tab-tools" style="text-align: center;">
+                                    <button type="button" id="adddiagnosaPraOperasi" class="btn btn-secondary"><i class="fa fa-check-circle"></i>
+                                        <span>Diagnosa</span></button>
+                                </div>
+                            </div>
+            `;
+
+            let ttdOps2 = `<div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                        <div class="form-group">
+                            <label><strong>Tanda Tangan Dokter Penanda</strong></label>
+                            <div class="position-relative" id="qr-2-${data?.body_id}">
+                                <button type="button" id="formPraOperasiSignBtn2" name="signrm" data-sign-ke="2"
+                                    data-button-id="formPraOperasiSaveBtn" class="btn btn-warning">
+                                    <i class="fa fa-signature"></i> <span>Sign</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>`
+
+            getAvalueType({
+                p_type: 'OPRS001',
+                content_id: 'cKeperawatanoprs001-1',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: data,
             });
 
-            tinymce.init({
-                selector: '#alergi-catatan_operasi',
-                readonly: true,
-                toolbar: true,
-                menubar: true,
-                plugins: [],
-            }).then((editors) => {
-                editors[0]?.setContent(contentAlergi);
+            $('#ttd-praOps').html(ttdOps2)
+            $('#cKeperawatanoprs001').html(catatanKeperawatanOPRS001);
+            $('#containerBloodRequest').html(bloodRequest);
+            $('#praOperasiDiagnosaBody').html(diagnosaOPRS001);
+
+            if (blood_request) {
+                blood_request.forEach((item, index) => {
+                    addBloodRequest('bodyBloodRequest', item.blood_request, item);
+                });
+            }
+
+            $("#addbloodrequest2").on("click", () => {
+                const container = 'bodyBloodRequest';
+                const bodyId = get_bodyid();
+                const bloodselected = [];
+
+
+                addBloodRequest(container, bodyId, bloodselected);
             });
+
+
+            if (diagnosas) {
+
+                diagnosas.forEach((item, index) => {
+
+                    addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id,
+                        item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat);
+                });
+            }
+
+            $("#adddiagnosaPraOperasi").on("click", () => {
+                addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id);
+            });
+
+
+            const formId = 'formPraOperasi';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'formPraOperasiSaveBtn';
+            $("button[name='signrm']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+
+            $("button[name='signrm']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+
+                addSignUserOPS("formPraOperasi", "accordionPraOperasi", data?.body_id, buttonId,
+                    7, signKe,
+                    1, "Catatan Keperawatan Pra Operasi");
+            });
+
+            // if (data?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '7');
+            // }
         }
 
         //---------bbb
@@ -2820,19 +3479,23 @@
             if (xrayData !== undefined) {
                 $(`input[name="xray"][value="${xrayData}"]`).prop('checked', true);
             }
-            getDataVitailSign({
-                pasien_diagnosa_id: data?.document_id ?? pasienOperasiSelected
-                    ?.vactination_id,
-                account_ids: ['10'],
-                suffixes: ["-catatanKeperawatan"]
-            });
+            if (data?.document_id) {
+
+                getDataVitailSign({
+                    pasien_diagnosa_id: data?.document_id ?? pasienOperasiSelected
+                        ?.vactination_id,
+                    account_ids: ['10'],
+                    suffixes: ["-catatanKeperawatan"]
+                });
+
+                getDataDiagnosassPerawat({
+                    visit_id: data?.visit_id,
+                    document_id: data?.document_id,
+                    vactination_id: data?.document_id
+                });
+            }
 
 
-            getDataDiagnosassPerawat({
-                visit_id: data?.visit_id,
-                document_id: data?.document_id,
-                vactination_id: data?.document_id
-            });
 
 
             let oprs003 = `
@@ -2870,9 +3533,20 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                    <div class="form-group">
+                                        <label><strong>Tanda Tangan Perawat IBS</strong></label>
+                                        <div class="position-relative" id="qr-1-${data?.body_id}">
+                                            <button type="button" id="formPeriOperasiSignBtn1" name="signperi" data-sign-ke="1"
+                                                data-button-id="btn-save-catatan-keperawatan" class="btn btn-warning">
+                                                <i class="fa fa-signature"></i> <span>Sign</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                            `;
+            `;
 
             let oprs004 = `
                             <div class="container">
@@ -2927,6 +3601,28 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                    <div class="form-group">
+                                        <label><strong>Tanda Tangan Instrument</strong></label>
+                                        <div class="position-relative" id="qr-2-${data?.body_id}">
+                                            <button type="button" id="formPeriOperasiSignBtn2" name="signperi" data-sign-ke="2"
+                                                data-button-id="btn-save-catatan-keperawatan" class="btn btn-warning">
+                                                <i class="fa fa-signature"></i> <span>Sign</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                    <div class="form-group">
+                                        <label><strong>Tanda Tangan Sirkulasi</strong></label>
+                                        <div class="position-relative" id="qr-3-${data?.body_id}">
+                                            <button type="button" id="formPeriOperasiSignBtn3" name="signperi" data-sign-ke="3"
+                                                data-button-id="btn-save-catatan-keperawatan" class="btn btn-warning">
+                                                <i class="fa fa-signature"></i> <span>Sign</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input class="form-control disabled" id="trans_id-catatan_operasi" name="trans_id" value="${data?.trans_id ?? visit?.trans_id}" hidden></input>
                                 <input class="form-control disabled" id="body_id-catatan_operasi" name="body_id" value="${data?.body_id}" hidden></input>
                                 <input class="form-control disabled" id="org_unit_code-catatan_operasi" name="org_unit_code" value="${data?.org_unit_code ?? visit?.org_unit_code}" hidden></input>
@@ -2964,7 +3660,7 @@
                                 <input class="form-control disabled" id="org_unit_code-catatan_operasi" name="org_unit_code" value="${data?.org_unit_code ?? visit?.org_unit_code}" hidden></input>
                             </div>
                         </div>
-                    `;
+            `;
 
             let oprs024 = `
                         <div class="container">
@@ -2976,18 +3672,31 @@
                         </div>
             `;
             let oprs025 = `
-                        <div class="container">
-                            <div class="row">
-                                <h5><b>Steward</b></h5>
-                                <input class="form-control disabled" id="trans_id-steward" name="trans_id" value="${data?.trans_id ?? visit?.trans_id}" hidden></input>
-                                <input class="form-control disabled" id="body_id-steward" name="body_id" value="${data?.body_id}" hidden></input>
-                                <input class="form-control disabled" id="org_unit_code-steward" name="org_unit_code" value="${data?.org_unit_code ?? visit?.org_unit_code}" hidden></input>
-                                <div id="stewardContainer" class="row"></div>
+                    <div class="container">
+                        <div class="row">
+                            <h5><b>Steward</b></h5>
+                            <input class="form-control steward-trans-id" id="trans_id-steward" name="trans_id" value="${data?.trans_id ?? visit?.trans_id}" hidden></input>
+                            <input class="form-control steward-body-id" id="body_id-steward" name="body_id" value="${data?.body_id}" hidden></input>
+                            <input class="form-control steward-org-unit-code" id="org_unit_code-steward" name="org_unit_code" value="${data?.org_unit_code ?? visit?.org_unit_code}" hidden></input>
+                            <div id="stewardContainer" class="row"></div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm my-3" id="addSteward">+ Tambah Steward</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                            <div class="form-group">
+                                <label><strong>Tanda Tangan Petugas Ruang Pulih</strong></label>
+                                <div class="position-relative" id="qr-4-${data?.body_id}">
+                                    <button type="button" id="formPeriOperasiSignBtn4" name="signperi" data-sign-ke="4"
+                                        data-button-id="btn-save-catatan-keperawatan" class="btn btn-warning">
+                                        <i class="fa fa-signature"></i> <span>Sign</span>
+                                    </button>
+                                </div>
                             </div>
-                            <button type="button" class="btn btn-primary btn-sm my-3" id="addSteward">+ Tambah Steward</button>
                         </div>
             `;
 
+            $('#weight-catatanKeperawatan').val(props?.exam_info.weight);
+            $('#height-catatanKeperawatan').val(props?.exam_info.height);
 
             $('#template-tindakan-operasi').html(oprs003);
             $('#cKeperawatanIntraOperatif').html(oprs004);
@@ -3002,36 +3711,58 @@
                         data: each,
                         container: 'bromageContainer',
                         bodyId: 'bodyBromage'
-                    })
-                })
+                    });
+                    $('#addBromage').hide();
+                });
             }
             if (props?.assessment_anesthesia_recovery?.steward) {
                 props.assessment_anesthesia_recovery?.steward.forEach((item, index) => {
                     addSteward({
                         document_id: pasienOperasiSelected?.vactination_id,
                         item: item,
-                        index: index, // new 08/08
+                        index: index,
                         container: 'stewardContainer'
-                    })
+                    });
+                    $('#addSteward').hide();
                 });
             }
             $("#addBromage").on("click", function(e) {
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    container: 'bromageContainer',
-                    bodyId: 'bodyBromage'
-                })
+                let bromageCount = $('#bromageContainer .bromage-item').length;
+
+
+                if (bromageCount === 0) {
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        container: 'bromageContainer',
+                        bodyId: 'bodyBromage'
+                    });
+
+                    $(this).hide();
+                }
             });
             $("#addSteward").on("click", function(e) {
                 let rowCount = $('#stewardContainer tr').length;
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: {},
-                    index: rowCount, // new 08/08,
-                    container: 'stewardContainer'
-                })
+                if (rowCount === 0) {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: {},
+                        index: rowCount,
+                        container: 'stewardContainer'
+                    })
+                    $(this).hide();
+                }
             });
 
+            $('#addInstrumen').off().on("click", function() {
+                addRowInstrumen();
+                updateAddButtonVisibility();
+
+            });
+
+            $('#addInstrumen1').off().on("click", function() {
+                addRowInstrumen();
+                updateAddButtonVisibility();
+            });
 
             $("#formdiag-catatan").on("click", function(e) {
                 addRowDiagPerawat('bodyDiagKepCatatan-', data?.document_id ?? pasienOperasiSelected
@@ -3041,45 +3772,100 @@
             renderHistoryTemplate();
 
             btnSavepraOprasi(pasienOperasiSelected);
+
+            $("#vs_status_id-catatanKeperawatan").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-catatanKeperawatan').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-catatanKeperawatan',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-catatanKeperawatan',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+            const formId = 'form-catatan-keperawatan';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'btn-save-catatan-keperawatan';
+
+            $("button[name='signperi']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+            $("button[name='signperi']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-catatan-keperawatan", "catatan-keperawatan", data?.body_id,
+                        buttonId,
+                        8, signKe, 1,
+                        "Catatan Keperawatan Peri Operasi");
+                }
+            });
+            // if (data?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '8');
+            // }
+
         };
 
 
-        const addBromage = (props) => {
 
+        const addBromage = (props) => {
             let bromageCount = $('#' + props.container + ' .bromage-item').length;
 
-            // Buat ID baru untuk elemen Bromage
             let newId = `${props.bodyId}-${bromageCount + 1}`;
+
             $('#' + props.container).append(
                 `
-                <div class="col-md-12 bromage-item">
-                    <div id="${newId}" class="row">
-                    </div>
-                    <h3 class="badge text-bg-secondary">Skor Bromage : ${props?.data?.value_score ?? 0}</h3>
-                    <div class="row pe-4 mt-2" style="box-sizing: border-box;">
-                        <div class="d-flex pe-4 col-6" style="box-sizing: border-box;">
-                            <button type="button" class="btn btn-danger w-100 deleteBromage"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>
+        <div class="col-md-12 bromage-item">
+            <div id="${newId}" class="row">
+            </div>
+            <h3 class="badge text-bg-secondary">Skor Bromage : ${props?.data?.value_score ?? 0}</h3>
+            <div class="row pe-4 mt-2" style="box-sizing: border-box;">
+                <div class="d-flex pe-4 col-6" style="box-sizing: border-box;">
+                    <button type="button" class="btn btn-danger w-100 deleteBromage"><i class="fas fa-trash-alt"></i></button>
                 </div>
-                `
-            ); //new 07/08
+            </div>
+        </div>
+        `
+            );
 
-            // Panggil fungsi untuk mengatur konten
             getAvalueType({
                 p_type: 'OPRS024',
                 content_id: newId,
                 body_id: props.document_id,
                 get_data: props.data,
             });
+            let hasil = props?.bodyId
 
 
+            $('#' + props.container).on('click', '.deleteBromage', function() {
 
-            $('.deleteBromage').on('click', function() {
-                // Find the closest parent .bromage-item and remove it
+                let theid = props?.container
+
                 $(this).closest('.bromage-item').remove();
+
+                theid = theid.replace("bromageContainer", "addBromage");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
             });
-        }
+        };
 
         const addSteward = (props) => {
             let visit = <?= json_encode($visit) ?>;
@@ -3097,10 +3883,10 @@
 
             const createSelectOptions = (options, selectedValue) => {
                 return options.map(option => `
-                    <option value="${option.value_id}" data-score="${option.value_score}" ${option.value_id === selectedValue ? 'selected' : ''}>
-                        ${option.value_desc}
-                    </option>
-                `).join('');
+            <option value="${option.value_id}" data-score="${option.value_score}" ${option.value_id === selectedValue ? 'selected' : ''}>
+                ${option.value_desc}
+            </option>
+        `).join('');
             };
 
             const createTimeOptions = () => {
@@ -3133,11 +3919,10 @@
 
             const updateRowScoreAndStatus = (row) => {
                 let totalScore = calculateTotalScore(row);
-                console.log(totalScore);
-                row.find('.total-score-input').text(totalScore);
+                row.find('.steward-total-score-input').text(totalScore);
 
                 let status = totalScore >= 8 ? 'Pindah Ruangan / Pulang' : 'Tidak Pindah';
-                row.find('.discharge-status-input').val(status);
+                row.find('.steward-discharge-status-input').val(status);
             };
 
             let observationDate = props?.item?.observation_date ? moment(props?.item?.observation_date) : moment(
@@ -3145,50 +3930,50 @@
             let observationDateFormatted = formatDateTime(observationDate);
             let observationTimeOnly = formatTimeOnly(observationDate);
 
-            let newRowDrain = `
-                <tr>
-                    ${Object.keys(groupedData).map(parameterId => {
-                        let selectedValue = props.item[`value_id_${parameterId}`] || '';
-                        return `
-                            <td>
-                                <select class="form-select" name="parameter_oprs025_${parameterId}">
-                                    <option value="">Select...</option>
-                                    ${createSelectOptions(groupedData[parameterId], selectedValue)}
-                                </select>
-                            </td>
-                        `;
-                    }).join('')}
-                    <td class="total-score">
-                        <h3><span class="badge text-bg-secondary total-score-input">0</span></h3>
-                    </td>
-                    <td class="discharge-status">
-                        <input type="text" class="form-control discharge-status-input" readonly value="">
-                    </td>
-                    ${props.index === 0 ? `
-                    <td></td>
-                        <td class="datetime">
-                            <input type="datetime-local" class="form-control datetime-input" value="${observationDateFormatted}" hidden>
-                            <h4><span class="badge text-bg-secondary">${observationTimeOnly}</span></h4>
-                        </td>
-                    ` : `
-                        <td class="time-interval">
-                            <select class="form-select" name="time_interval[]">
-                                <option value="">Select Time...</option>
-                                ${createTimeOptions()}
-                            </select>
-                        </td>
-                        <td class="datetime">
-                            <input type="datetime-local" class="form-control datetime-input" value="${observationDateFormatted}" hidden name='observation_date[]'>
-                            <h4><span class="badge text-bg-secondary datetime-display">${observationTimeOnly}</span></h4>
-                        </td>
-                    `}
+            let newRowSteward = `
+        <tr>
+            ${Object.keys(groupedData).map(parameterId => {
+                let selectedValue = props.item[`value_id_${parameterId}`] || '';
+                return `
                     <td>
-                        <button type="button" class="btn btn-danger btn-sm delete-row"><i class="fas fa-trash-alt"></i></button>
+                        <select class="form-select steward-select" name="parameter_oprs025_${parameterId}">
+                            <option value="">Select...</option>
+                            ${createSelectOptions(groupedData[parameterId], selectedValue)}
+                        </select>
                     </td>
-                </tr>
-            `;
+                `;
+            }).join('')}
+            <td class="steward-total-score">
+                <h3><span class="badge text-bg-secondary steward-total-score-input">0</span></h3>
+            </td>
+            <td class="steward-discharge-status">
+                <input type="text" class="form-control steward-discharge-status-input" readonly value="">
+            </td>
+            ${props.index === 0 ? `
+            <td></td>
+                <td class="steward-datetime">
+                    <input type="datetime-local" class="form-control steward-datetime-input" value="${observationDateFormatted}" hidden>
+                    <h4><span class="badge text-bg-secondary">${observationTimeOnly}</span></h4>
+                </td>
+            ` : `
+                <td class="steward-time-interval">
+                    <select class="form-select steward-time-interval-select" name="steward-time-interval[]">
+                        <option value="">Select Time...</option>
+                        ${createTimeOptions()}
+                    </select>
+                </td>
+                <td class="steward-datetime">
+                    <input type="datetime-local" class="form-control steward-datetime-input" value="${observationDateFormatted}" hidden name='steward-observation-date[]'>
+                    <h4><span class="badge text-bg-secondary steward-datetime-display">${observationTimeOnly}</span></h4>
+                </td>
+            `}
+            <td>
+                <button type="button" class="btn btn-danger btn-sm steward-delete-row"><i class="fas fa-trash-alt"></i></button>
+            </td>
+        </tr>
+        `;
 
-            $(`#${props?.container}`).append(newRowDrain);
+            $(`#${props?.container}`).append(newRowSteward);
 
             updateRowScoreAndStatus($(`#${props?.container} tr`).last());
 
@@ -3197,30 +3982,38 @@
                 updateRowScoreAndStatus(row);
             });
 
-            $(`#${props?.container}`).on('change', 'select[name="time_interval[]"]', function() {
+            $(`#${props?.container}`).on('change', 'select[name="steward-time-interval[]"]', function() {
                 let row = $(this).closest('tr');
                 let selectedMinutes = parseInt($(this).val(), 10) || 0;
-                let previousDatetime = row.prev().find('.datetime-input').val();
+                let previousDatetime = row.prev().find('.steward-datetime-input').val();
                 if (previousDatetime) {
                     let newDatetime = moment(previousDatetime).add(selectedMinutes, 'minutes').format(
                         'YYYY-MM-DDTHH:mm');
-                    row.find('.datetime-input').val(newDatetime);
-                    row.find('.datetime-display').text(formatTimeOnly(newDatetime));
+                    row.find('.steward-datetime-input').val(newDatetime);
+                    row.find('.steward-datetime-display').text(formatTimeOnly(newDatetime));
                     updateRowScoreAndStatus(row);
                 }
             });
 
             if (props.index > 0) {
-                let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find('.datetime-input')
-                    .val();
+                let previousDatetime = $(`#${props?.container} tr`).eq(props.index - 1).find(
+                    '.steward-datetime-input').val();
                 let defaultDatetime = moment(previousDatetime).add(5, 'minutes').format('YYYY-MM-DDTHH:mm');
-                $(`#${props?.container} tr`).eq(props.index).find('.datetime-input').val(defaultDatetime);
-                $(`#${props?.container} tr`).eq(props.index).find('.datetime-display').text(formatTimeOnly(
+                $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-input').val(defaultDatetime);
+                $(`#${props?.container} tr`).eq(props.index).find('.steward-datetime-display').text(formatTimeOnly(
                     defaultDatetime));
             }
 
-            $(`#${props?.container}`).on('click', '.delete-row', function() {
+            $(`#${props?.container}`).on('click', '.steward-delete-row', function() {
+
+
+                let theid = props?.container
                 $(this).closest('tr').remove();
+
+                theid = theid.replace("stewardContainer", "addSteward");
+                if ($(`#${props?.container} tr`).length === 0) {
+                    $(`#${theid}`).show();
+                }
             });
         };
         //---------cccccccccccccccccccccccccccccccccccccccccccccc
@@ -3250,17 +4043,73 @@
             let catatanSignIn = `
                     <div class="container">
                         <div class="row">
-                            <div id="the-sign-in-1"></div>
+                            <div id="the-sign-in-1" class="row"></div>
+                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                    <div class="form-group">
+                                        <label><strong>Tanda Tangan Dokter Anestesi</strong></label>
+                                        <div class="position-relative" id="qr-1-${data?.body_id}">
+                                            <button type="button" id="formCkOpsSignBtn1" name="CkOps" data-sign-ke="1"
+                                                data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                                <i class="fa fa-signature"></i> <span>Sign</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                    <div class="form-group">
+                                        <label><strong>Tanda Tangan Perawat</strong></label>
+                                        <div class="position-relative" id="qr-2-${data?.body_id}">
+                                            <button type="button" id="formCkOpsSignBtn2" name="CkOps" data-sign-ke="2"
+                                                data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                                <i class="fa fa-signature"></i> <span>Sign</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                         </div>
                     </div>
-                    `;
+            `;
             let catatanTimeOut = `
                     <div class="container">
                         <div class="row">
                               
-                            <div id="the-time-out-1"></div>
+                            <div id="the-time-out-1" class="row"></div>
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Dokter Operator</strong></label>
+                                    <div class="position-relative" id="qr-3-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn3" name="CkOps" data-sign-ke="3"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Dokter Anestesi</strong></label>
+                                    <div class="position-relative" id="qr-4-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn4" name="CkOps" data-sign-ke="4"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Perawat</strong></label>
+                                    <div class="position-relative" id="qr-5-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn5" name="CkOps" data-sign-ke="5"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     `;
@@ -3268,15 +4117,81 @@
                     <div class="container">
                         <div class="row">
                               
-                            <div id="the-sign-out-1"></div>
+                            <div id="the-sign-out-1" class="row"></div>
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Dokter Operator</strong></label>
+                                    <div class="position-relative" id="qr-6-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn6" name="CkOps" data-sign-ke="6"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Dokter Anestesi</strong></label>
+                                    <div class="position-relative" id="qr-7-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn7" name="CkOps" data-sign-ke="7"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-12 col-sm-12 col-md-3 mt-2 ps-3 pb-2">
+                                <div class="form-group">
+                                    <label><strong>Tanda Tangan Perawat</strong></label>
+                                    <div class="position-relative" id="qr-8-${data?.body_id}">
+                                        <button type="button" id="formCkOpsSignBtn8" name="CkOps" data-sign-ke="8"
+                                            data-button-id="btn-save-checklist-keselamatan" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> <span>Sign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     `;
 
+
             $('#the-sign-in').html(catatanSignIn);
             $('#the-time-out').html(catatanTimeOut);
             $('#the-sign-out').html(catatanSignOut);
+
+
+            const formId = 'form-checklist-keselamatan';
+            const primaryKey = data?.body_id;
+            const formSaveBtn = 'btn-save-checklist-keselamatan';
+
+            $("button[name='CkOps']").each(function() {
+                if (data?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+
+            $("button[name='CkOps']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-checklist-keselamatan", "checklist-keselamatan", data?.body_id,
+                        buttonId,
+                        9, signKe, 1,
+                        "Checklist Keselamatan Operasi");
+                }
+            });
+
+            // if (data?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '9');
+            // }
+
         };
 
         //---------dddddddddddddd
@@ -3296,7 +4211,7 @@
                     <div class="container">
                         <div class="row">
                               
-                            <div id="checklist-anestesi-1"></div>
+                            <div id="checklist-anestesi-1" class="row"></div>
 
                         </div>
                     </div>
@@ -3313,6 +4228,7 @@
         //---------eeeeeeeeeeeeeee
         const pembedahan = (props) => {
             let data = props?.data
+            let diagnosas = props?.diagnosas
             getAvalueType({
                 p_type: 'OPRS008',
                 content_id: 'pembedahan-laporan-1',
@@ -3364,10 +4280,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <input class="form-control disabled" id="trans_id-catatan_operasi" name="trans_id" value=${data?.trans_id ??visit?.trans_id} hidden></input>
-                            <input class="form-control disabled" id="body_id-catatan_operasi" name="vactination_id" value=${data?.document_id ?? pasienOperasiSelected?.vactination_id} hidden></input>
-                            <input class="form-control disabled" id="visit_id-catatan_operasi" name="visit_id" value=${data?.visit_id??visit?.visit_id} hidden></input>
-                            <input class="form-control disabled" id="org_unit_code-catatan_operasi" name="org_unit_code" value=${data?.org_unit_code ??visit?.org_unit_code} hidden></input>
+                            <input class="form-control disabled" id="trans_id-catatan_operasi" name="trans_id" value="${data?.trans_id ??visit?.trans_id}" hidden></input>
+                            <input class="form-control disabled" id="body_id-catatan_operasi" name="vactination_id" value="${data?.document_id ?? pasienOperasiSelected?.vactination_id}" hidden></input>
+                            <input class="form-control disabled" id="visit_id-catatan_operasi" name="visit_id" value="${data?.visit_id??visit?.visit_id}" hidden></input>
+                            <input class="form-control disabled" id="org_unit_code-catatan_operasi" name="org_unit_code" value="${data?.org_unit_code ??visit?.org_unit_code}" hidden></input>
                         </div>
                     </div>
                     `;
@@ -3407,6 +4323,18 @@
             $("#formdiag2").on("click", function(e) {
                 addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id);
             });
+            if (diagnosas) {
+
+                diagnosas.forEach((item, index) => {
+                    if (item.diag_cat == 13) {
+                        addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id,
+                            item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
+                    } else {
+                        addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id,
+                            item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
+                    }
+                });
+            }
             $("#formdiag").on("click", function(e) {
                 addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id);
             });
@@ -3454,6 +4382,8 @@
                             </div>
                         </div>
                     `;
+            $('#weight-laporanAnesthesi').val(props?.exam_info.weight);
+            $('#height-laporanAnesthesi').val(props?.exam_info.height);
 
             $('#informasiMedis-laporan').html(oprs006);
             $("#trans_id-laporan_anestesi").val(data?.trans_id ?? visit?.trans_id);
@@ -3462,7 +4392,6 @@
             $("#formdiag-laporan").on("click", function(e) {
                 addRowDiagDokter('bodyDiagLaporanAnesthesi-', pasienOperasiSelected?.vactination_id);
             });
-            console.log(pasienOperasiSelected?.vactination_id);
             getAvalueType({
                 p_type: 'OPRS006',
                 content_id: 'informasiMedis-laporan-1',
@@ -3486,19 +4415,43 @@
             //     account_ids: 11 //new
             // });
 
-            getDataVitailSign({
-                pasien_diagnosa_id: data?.body_id,
-                account_ids: ['11'],
-                suffixes: ["-laporanAnesthesi"]
-            });
+            if (data?.body_id) {
 
-            getDataDiagnosass({
-                pasien_diagnosa_id: data?.body_id,
-                vactination_id: data?.document_id
-            });
+                getDataVitailSign({
+                    pasien_diagnosa_id: data?.body_id,
+                    account_ids: ['11'],
+                    suffixes: ["-laporanAnesthesi"]
+                });
+                getDataDiagnosass({
+                    pasien_diagnosa_id: data?.body_id,
+                    vactination_id: data?.document_id
+                });
+            }
 
             btnSaveLaporanAnestesi(pasienOperasiSelected);
+            $("#vs_status_id-laporanAnesthesi").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi').empty();
 
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
         };
 
         // -------------------hhhhhhhhhhh
@@ -3565,20 +4518,43 @@
                 get_data: data?.assessment_anesthesia_post,
             });
 
-            getAvalueType({
-                p_type: 'OPRS006',
-                content_id: 'informasiMedis-laporan-1',
-                body_id: pasienOperasiSelected
-                    ?.vactination_id,
-                get_data: data?.assessment_anesthesia,
-            });
-
 
             getAvalueType({
                 p_type: 'OPRS014',
                 content_id: 'informasiMedis-Anesthesi-dan-Sedasi-2',
                 body_id: pasienOperasiSelected?.vactination_id,
                 get_data: data?.assessment_anesthesia_post,
+            });
+
+            getAvalueType({
+                p_type: 'OPRS029',
+                content_id: 'recovery-room-oprs029',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.infusion,
+            });
+            getAvalueType({
+                p_type: 'OPRS030',
+                content_id: 'recovery-room-oprs030',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.general,
+            });
+            getAvalueType({
+                p_type: 'OPRS031',
+                content_id: 'recovery-room-oprs031',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.ventilasi,
+            });
+            getAvalueType({
+                p_type: 'OPRS032',
+                content_id: 'recovery-room-oprs032',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.jalan_napas,
+            });
+            getAvalueType({
+                p_type: 'OPRS033',
+                content_id: 'recovery-room-oprs033',
+                body_id: pasienOperasiSelected?.vactination_id,
+                get_data: anesthesia_recovery?.regional,
             });
 
             let oprs011 = `
@@ -3661,7 +4637,6 @@
             let oprs006 = `
                         <div class="container">
                             <div class="row">
-                                <div id="informasiMedis-laporan-1" class="row pb-3"></div>
                                 <input class="form-control" id="body_id-laporan_anestesiLengkap" name="body_id" value="" hidden></input>
                                 <div class="row mb-4 pt-4">
                                     <div class="table tablecustom-responsive">
@@ -3811,27 +4786,60 @@
                             <button type="button" class="btn btn-primary btn-sm my-3" id="addSteward1">+ Tambah Steward</button>
                         </div>
             `;
+
+            let recoveryRoomOprs029Oprs033 = `
+                <div class="container mb-3">
+                    <h3>Infus</h3>
+                    <div class="row mb-3">
+                        <div id="recovery-room-oprs029" class="row"></div>
+                    </div>
+                </div>
+                <div class="container my-3">
+                    <h3>Regional Anestesia</h3>
+                    <div class="row">
+                        <div id="recovery-room-oprs033" class="row"></div>
+                    </div>
+                </div>
+                <div class="container mb-3">
+                    <h3>General Anestesia</h3>
+                    <div class="row">
+                        <div id="recovery-room-oprs030" class="row"></div>
+                    </div>
+                </div>
+                <div class="container mb-3">
+                    <h3>Ventilasi</h3>
+                    <div class="row">
+                        <div id="recovery-room-oprs031" class="row"></div>
+                    </div>
+                </div>
+                <div class="container mb-3">
+                    <h3>Jalan Napas</h3>
+                    <div class="row">
+                        <div id="recovery-room-oprs032" class="row"></div>
+                    </div>
+                </div>
+            `; //new 02/09
             let monitoringDurante1 = `
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="anesthesiaStart" class="form-label"><strong>Anesthesia Start Time:</strong></label>
-                                                <input type="datetime-local" id="anesthesiaStart" name="start_anesthesia" class="form-control">
+                                                <input type="text" id="anesthesiaStart" name="start_anesthesia" class="form-control datetimeflatpickr">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="anesthesiaEnd" class="form-label"><strong>Anesthesia End Time:</strong></label>
-                                                <input type="datetime-local" id="anesthesiaEnd" name="end_anesthesia" class="form-control">
+                                                <input type="text" id="anesthesiaEnd" name="end_anesthesia" class="form-control datetimeflatpickr">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="surgeryStart" class="form-label"><strong>Surgery Start Time:</strong></label>
-                                                <input type="datetime-local" id="surgeryStart" name="surgeryStart" class="form-control">
+                                                <input type="text" id="surgeryStart" name="surgeryStart" class="form-control datetimeflatpickr">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="surgeryEnd" class="form-label"><strong>Surgery End Time:</strong></label>
-                                                <input type="datetime-local" id="surgeryEnd" name="surgeryEnd" class="form-control">
+                                                <input type="text" id="surgeryEnd" name="surgeryEnd" class="form-control datetimeflatpickr">
                                             </div>
                                         </div>
                                     </div>
@@ -3848,16 +4856,14 @@
             let output = `<div class="container">
                             <div class="row">
                                 <div id="informasiMedis-laporan-output-2" class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
+                                            <div class="mb-3 col-6">
                                                 <label for="anesthesiaStart" class="form-label"><strong>Bleeding Amount:</strong></label>
                                                 <input type="Number" id="bleeding_amount_val" name="bleeding_amount" class="form-control">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-3 col-6">
                                                 <label for="anesthesiaEnd" class="form-label"><strong>Urine Output:</strong></label>
                                                 <input type="Number" id="urine_amount_val" name="urine_amount" class="form-control">
                                             </div>
-                                        </div>
                                 </div>
                             </div>
                         </div>`;
@@ -3916,8 +4922,40 @@
                         </div>
                     </div>
                 `;
+            let ttdAll = `
+                        <div class="col-xs-12 col-sm-12 col-md-6 mt-2 ps-3 pb-2">
+                            <div class="form-group">
+                                <label><strong>Tanda Tangan Dokter</strong></label>
+                                <div class="position-relative" id="qr-1-${data?.assessment_anesthesia?.body_id}">
+                                    <button type="button" id="formALengkapSignBtn1" name="signAlengkap" data-sign-ke="1"
+                                        data-button-id="btn-save-laporan-anesthesiLengkap" class="btn btn-warning">
+                                        <i class="fa fa-signature"></i> <span>Sign</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 mt-2 ps-3 pb-2">
+                            <div class="form-group">
+                                <label><strong>Tanda Tangan Dokter</strong></label>
+                                <div class="position-relative" id="qr-2-${data?.assessment_anesthesia?.body_id}">
+                                    <button type="button" id="formALengkapSignBtn2" name="signAlengkap" data-sign-ke="2"
+                                        data-button-id="btn-save-laporan-anesthesiLengkap" class="btn btn-warning">
+                                        <i class="fa fa-signature"></i> <span>Sign</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
 
+            $('#weight-laporanAnesthesi-lengkap-durantee').val(props?.exam_info.weight)
+            $('#height-laporanAnesthesi-lengkap-durantee').val(props?.exam_info.height)
 
+            $('#weight-laporanAnesthesi-lengkap').val(props?.exam_info.weight)
+            $('#height-laporanAnesthesi-lengkap').val(props?.exam_info.height)
+            console.log($('#weight-laporanAnesthesi-lengkap').val());
+            console.log($('#height-laporanAnesthesi-lengkap').val());
+
+            $("#informasiMedis-laporan-durante-signature").html(ttdAll);
             $('#informasiMedis-laporan-output').html(output)
             $('#bodyDiagnosisAnesthesiLengkap').html(oprs006);
             $('#informasiMedis-laporan-anesthesia-details').html(oprs011);
@@ -3929,6 +4967,7 @@
             $('#informasiMedis-laporan-recovery-medication').html(medication);
             $('#informasiMedis-laporan-recovery-room-monitoring').html(recoveryRoom);
             $('#informasiMedis-laporan-recovery-room-monitoring-score').html(roomRecoveryScore);
+            $('#body-recovery-room-oprs029-oprs033').html(recoveryRoomOprs029Oprs033);
             $('#informasiMedis-laporan-intruksi-pasca-anesthesi').html(oprs013)
             $('#informasiMedis-laporan-recovery-room-monitoring-score-2').html(oprs014)
 
@@ -3969,6 +5008,8 @@
                         container: 'bromageContainer1',
                         bodyId: 'bodyBromage1'
                     })
+                    $("#addBromage1").hide();
+
                 })
             }
 
@@ -3980,26 +5021,40 @@
                         index: index, // new 08/08
                         container: 'stewardContainer1'
                     })
+                    $("#addSteward1").hide();
                 });
             }
 
             $("#addBromage1").on("click", function(e) {
-                addBromage({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    data: {},
-                    container: 'bromageContainer1',
-                    bodyId: 'bodyBromage1'
-                })
+                let bromageCount = $('#bromageContainer1 .bromage-item').length;
+
+
+                if (bromageCount === 0) {
+                    addBromage({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        data: {},
+                        container: 'bromageContainer1',
+                        bodyId: 'bodyBromage1'
+                    })
+
+                    $(this).hide();
+                }
             });
+
             $("#addSteward1").on("click", function(e) {
                 let rowCount = $('#stewardContainer1 tr').length;
-                addSteward({
-                    document_id: pasienOperasiSelected?.vactination_id,
-                    item: {},
-                    index: rowCount, // new 08/08
-                    container: 'stewardContainer1'
-                })
+                if (rowCount === 0) {
+                    addSteward({
+                        document_id: pasienOperasiSelected?.vactination_id,
+                        item: {},
+                        index: rowCount, // new 08/08,
+                        container: 'stewardContainer1'
+                    })
+                    $(this).hide();
+                }
             });
+
+
 
             $('#bodyAldreteoprs023').empty();
 
@@ -4011,47 +5066,47 @@
                         index: index,
                         container: 'bodyAldreteoprs023-1'
                     });
+                    $("#addAldrete-1").hide()
+
                 });
             }
 
             $('#addAldrete-1').click(function() {
                 let rowCount = $('#bodyAldreteoprs023-1 tr').length;
-                AddRowAldrete005({
-                    item: {},
-                    index: rowCount,
-                    container: 'bodyAldreteoprs023-1'
 
+                if (rowCount === 0) {
+                    AddRowAldrete005({
+                        item: {},
+                        index: rowCount,
+                        container: 'bodyAldreteoprs023-1'
+
+                    });
+                    $(this).hide();
+                }
+
+            });
+
+
+            getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap', '11');
+            getVitalSignLaporanAnesthesiLengkap('vitalSignBodyLaporanAnesthesiLengkap2', '12');
+            getVitalSignLaporanAnesthesiLengkap2('vitalSignBodyLaporanAnesthesiLengkap3', '13');
+
+            if (data?.assessment_anesthesia?.body_id) {
+
+                getDataVitailSign({
+                    pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
+                    account_ids: ['11', '12', '13'],
+                    suffixes: ["-laporanAnesthesi-lengkap", "-laporanAnesthesi-lengkap-durante",
+                        "-laporanAnesthesi-lengkap-monitoring"
+                    ]
                 });
-            });
-
-            // getDataVitailSign({
-            //     pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-            //     val: "-laporanAnesthesi-lengkap",
-            //     account_id: '11' //new 
-            // });
-            // getDataVitailSign({
-            //     pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-            //     val: "-laporanAnesthesi-lengkap-durante",
-            //     account_id: '12' //new 
-            // });
-            // getDataVitailSign({
-            //     pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-            //     val: "-laporanAnesthesi-lengkap-monitoring",
-            //     account_id: '13' //new 
-            // });
-            getDataVitailSign({
-                pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-                account_ids: ['11', '12', '13'],
-                suffixes: ["-laporanAnesthesi-lengkap", "-laporanAnesthesi-lengkap-durante",
-                    "-laporanAnesthesi-lengkap-monitoring"
-                ]
-            });
 
 
-            getDataDiagnosasss({
-                pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
-                vactination_id: pasienOperasiSelected?.vactination_id
-            });
+                getDataDiagnosasss({
+                    pasien_diagnosa_id: data?.assessment_anesthesia?.body_id,
+                    vactination_id: pasienOperasiSelected?.vactination_id
+                });
+            }
             const monitoringDuranteId = '#monitoringDurante-1';
             const recoveryRoomId = '#RecoveryRoom-1';
 
@@ -4064,9 +5119,83 @@
             });
 
 
+            const formId = 'form-laporanAnesthesi-lengkap';
+            const primaryKey = data?.assessment_anesthesia?.body_id;
+            const formSaveBtn = 'btn-save-laporan-anesthesiLengkap';
 
+
+            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi-lengkap-durantee').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap-durantee',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+            $("#vs_status_id-laporanAnesthesi-lengkap").on("change", function() {
+                var optionSelected = $("option:selected", this);
+                $('#container-vitalsign-laporanAnesthesi-lengkap').empty();
+
+                switch (optionSelected.val()) {
+                    case '4':
+                        getAvalueType({
+                            p_type: 'GEN0022',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                    case '10':
+                        getAvalueType({
+                            p_type: 'GEN0021',
+                            content_id: 'container-vitalsign-laporanAnesthesi-lengkap',
+                            body_id: pasienOperasiSelected?.vactination_id,
+                            get_data: data ?? null,
+                        });
+                        break;
+                }
+            })
+
+            $("button[name='signAlengkap']").each(function() {
+                if (data?.assessment_anesthesia?.body_id) {
+                    $(this).prop('disabled', false);
+                } else {
+                    $(this).prop('disabled', true);
+                }
+            });
+
+            $("button[name='signAlengkap']").off().on("click", function() {
+                const buttonId = $(this).data('button-id');
+                const signKe = $(this).data('sign-ke');
+                if (!$(this).is(':disabled')) {
+                    addSignUserOPS("form-laporanAnesthesi-lengkap", "anesthesi-lengkap", data
+                        ?.assessment_anesthesia?.body_id,
+                        buttonId, 10, signKe, 1, "Laporan Anesthesi Lengkap");
+                }
+            });
+
+
+            // if (data?.assessment_anesthesia?.body_id) {
+            //     checkSignSignature1(formId, primaryKey, formSaveBtn, '10');
+            // }
             btnSaveLaporanAnestesiLengkap(pasienOperasiSelected)
         }
+
 
 
         const getType = (props) => {
@@ -4080,12 +5209,15 @@
 
                 let aValue = <?= json_encode($aValue) ?>;
                 // let colClass = props?.code === 4 ? 'col-12' : 'col-6';
+                const validTypesRecoveryRoom = ['OPRS029', 'OPRS030', 'OPRS031', 'OPRS032', 'OPRS033'];
 
                 if ([3, 4, 7].includes(parseInt(props?.code))) {
                     let matchedData = aValue?.filter(item => item?.parameter_id === props
                         ?.parameter_id &&
                         item?.p_type === props?.p_type);
                     let valueProp = props?.p_type === "" ? 'value_score' : 'value_id';
+
+
 
                     switch (parseInt(props?.code)) {
                         case 3:
@@ -4094,46 +5226,109 @@
                                 selectOptions = matchedData?.map(item =>
                                     `<option value="${item[valueProp]}" data-type="${item?.p_type}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" data-parameter="${item?.parameter_id}" ${props?.get_data?.value_id === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
                                 ).join('');
-                            } else {
+                            } else if (props?.p_type == 'GEN0022' || props?.p_type == 'GEN0021') {
+
                                 selectOptions = matchedData?.map(item =>
-                                    `<option value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
+                                    `<option value="${item['value_score']}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
+                                ).join('');
+                            } else if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item['value_id']}" data-score="${item?.value_score}" data-desc="${item?.value_desc}"  ${props?.get_data?.['value_desc_'+props?.parameter_id] == item?.value_desc ? 'selected': ''}>${item?.value_desc}</option>`
+                                ).join('');
+                            } else {
+                                // if (props?.p_type == 'OPRS008') {
+                                //     console.log(props?.get_data?.[props?.column_name?.toLowerCase()]);
+                                // }
+                                selectOptions = matchedData?.map(item =>
+                                    `<option value="${item[valueProp]}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
                                 ).join('');
                             }
-                            htmlContent = `
-                                <div class="form-group mb-0 pt-4">
-                                    <label for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}">
-                                        <option value="" selected>Pilih</option>
-                                        ${selectOptions}
-                                    </select>
-                                </div>
-                            `; //new 07/08
+
+                            if (props?.p_type == 'GEN0022' || props?.p_type == 'GEN0021') {
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
+                                            <option value="" selected>Pilih</option>
+                                            ${selectOptions}
+                                        </select>
+                                    </div>
+                                `;
+                            } else if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
+                                            <option value="" selected>Pilih</option>
+                                            ${selectOptions}
+                                        </select>
+                                    </div>
+                                `;
+                            } else {
+
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}">
+                                            <option value="" selected>Pilih</option>
+                                            ${selectOptions}
+                                        </select>
+                                    </div>
+                                `;
+                            }
                             break;
 
                         case 4:
                             initializeQuill = true; // Set flag to initialize Quill
-                            htmlContent = `
-                                <div class="form-group pb-5 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
-                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                                </div>
-                            `;
+                            if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                htmlContent = `
+                                    <div class="form-group pb-5 pt-4">
+                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" value="${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}">
+                                        <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}</div>
+                                    </div>
+                                `;
+                            } else {
+
+                                htmlContent = `
+                                    <div class="form-group pb-5 pt-4">
+                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
+                                        <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
+                                    </div>
+                                `;
+                            }
                             break;
 
                         case 7:
-                            let radioOptions = matchedData.map((item, index) => `
-                                <div class="form-check mb-0 pt-4">
-                                    <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
-                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                                </div>
-                            `).join('');
-                            htmlContent = `
-                                <div class="form-group mb-0 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    ${radioOptions}
-                                </div>
-                            `;
+                            if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                let radioOptions = matchedData.map((item, index) => `
+                                    <div class="form-check mb-0 pt-4">
+                                        <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.['value_desc_'+ props?.parameter_id] ? 'checked' : '')}>
+                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                                    </div>
+                                `).join('');
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        ${radioOptions}
+                                    </div>
+                                `;
+                            } else {
+                                let radioOptions = matchedData.map((item, index) => `
+                        <div class="form-check mb-0 pt-4">
+                            <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
+                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                        </div>
+                    `).join('');
+                                htmlContent = `
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            ${radioOptions}
+                        </div>
+                    `;
+                            }
+
                             break;
 
                         default:
@@ -4148,13 +5343,24 @@
                     //new
                     switch (parseInt(props?.code)) {
                         case 2:
-                            htmlContent = `
-                                    <div class="form-check mb-0 pt-4">
-                                        <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
-                                        <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
-                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    </div>
+                            if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                htmlContent = `
+                                <div class="form-check mb-0 pt-4">
+                                    <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="">
+                                    <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score ?? ''}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="1" ${props?.get_data?.['value_id_'+props?.parameter_id] ?? "" === '1' ? 'checked' : ''}>
+                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                </div>
                                 `;
+                            } else {
+
+                                htmlContent = `
+                                <div class="form-check mb-0 pt-4">
+                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
+                                    <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
+                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                </div>
+                                `;
+                            }
                             break;
 
 
@@ -4170,46 +5376,61 @@
                             }
 
                             htmlContent = `
-                                <div class="form-group mb-0 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input class="form-control datetime-input" type="datetime-local" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(props?.get_data?.[props?.column_name?.toLowerCase()], "YYYY-MM-DDTHH:mm").format("YYYY-MM-DDTHH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                                </div>
-                            `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                            <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                        </div>
+                             `;
+
 
                             break;
                         case 6:
                             let multiOptions = matchedData?.map((item, index) => `
-                                <div class="form-check mb-0 pt-4">
-                                    <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
-                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                                </div>
-                            `).join('');
+                        <div class="form-check mb-0 pt-4">
+                            <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
+                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                        </div>
+                    `).join('');
                             htmlContent = `
-                                <div class="form-group mb-0 pt-4">
-                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                     ${multiOptions}
-                                </div>
-                            `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                             ${multiOptions}
+                        </div>
+                    `;
                             break;
                         case 1:
+                            if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                    <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${props?.get_data?.['value_desc_'+props?.parameter_id] == props?.parameter_desc ? props?.get_data?.['value_id_'+props?.parameter_id]: ''}" >
+                                    </div>
+                                `;
+                            } else {
+                                htmlContent = `
+                                    <div class="form-group mb-0 pt-4">
+                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                    <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
+                                    </div>
+                                `;
+                            }
 
-                            htmlContent = `
-                                <div class="form-group mb-0 pt-4">
-                                    <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                   <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
-                                </div>
-                            `;
 
                             if (isAnastesi) {
                                 if (props?.column_name?.toLowerCase() == 'type_of_anesthesia') {
-                                    getDataColumnName({
-                                        table_name: 'ASSESSMENT_PARAMETER_VALUE',
-                                        column_name: 'value_desc',
-                                        column_id: 'value_id',
-                                        id: props?.items.type_of_anesthesia,
-                                        element_id: props?.p_type?.toLowerCase() + '_' + props
-                                            ?.parameter_id
-                                    })
+                                    if (props?.items.type_of_anesthesia) {
+                                        getDataColumnName({
+                                            table_name: 'ASSESSMENT_PARAMETER_VALUE',
+                                            column_name: 'value_desc',
+                                            column_id: 'value_id',
+                                            id: props?.items.type_of_anesthesia,
+                                            element_id: props?.p_type?.toLowerCase() + '_' + props
+                                                ?.parameter_id
+                                        })
+                                    }
+
+
                                 }
 
                             }
@@ -4405,10 +5626,12 @@
             data?.data?.map((item, index) => {
                 let treatment = treatmentData.find(t => t.tarif_id === item?.tarif_id);
                 let treatmentName = treatment ? treatment.tarif_name : "-";
+                let treatmentPrice = treatment ? (treatment.amount_paid ?? '0') : "0";
                 hasil += `<tr>
                 <td>${index + 1}</td>
-                <td>${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}</td>
+                <td>${convertDate(moment(item?.start_operation).format("DD/MM/YYYY HH:mm"))}</td>
                 <td class="operation_action cursor-pointer pointer" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}">${treatmentName}</td>
+                <td>Rp. ${treatmentPrice}</td>
                 <td>${item?.doctor ?? "-"}</td>
                 <td>
                     ${item?.terlayani === 0 ? `
@@ -4436,6 +5659,7 @@
             </tr>`;
             });
             $("#bodydataRequestOperation").html(hasil);
+
             getDetailRequestOperation();
             getEditRequestOperation();
             deleteModalDataRequestOperation();
@@ -4466,7 +5690,6 @@
         const getInstrumen = (props) => {
             if (props.data) {
                 dataInstrumen = props?.data;
-                console.log(dataInstrumen);
                 renderbodyInstrumenoprs004({
                     items: dataInstrumen
                 });
@@ -4477,7 +5700,13 @@
                     tableInstrumen.append(
                         `<tr>
                             <td class="text-center">${key + 1}</td>
-                            <td class="text-center">${element?.brand_name}</td>
+                            <td class="text-center">
+                                ${element?.brand_name === '1' ? "Instrumen" :
+                                    element?.brand_name === '2' ? "Kassa" :
+                                    element?.brand_name === '3' ? "Jarum" :
+                                    element?.brand_name}
+                                </td>
+
                             <td class="text-center">${element?.quantity_before}</td>
                             <td class="text-center">${element?.quantity_intra}</td>
                             <td class="text-center">${element?.quantity_additional}</td>
@@ -4489,6 +5718,60 @@
             }
         };
 
+
+        const addRowInstrumen = (props) => {
+            // Create HTML for new row
+            var newRow = `
+                <tr>
+                    <td>
+                        <select class="form-select" name="brand_id[]">
+                            <option data-nama-instrumen="Instrumen" value="1" ${props?.brand_id == '1' ? 'selected' : '' }>Instrumen</option>
+                            <option data-nama-instrumen="Kassa" value="2" ${props?.brand_id == '2' ? 'selected' : '' }>Kassa</option>
+                            <option data-nama-instrumen="Jarum" value="3" ${props?.brand_id == '3' ? 'selected' : '' }>Jarum</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="hidden" name="body_id_instrument[]" value="${props?.body_id ?? ''}" />
+                        <input type="hidden" name="quantity_intra[]" value="${props?.quantity_intra ?? 0}" />
+                        <input type="hidden" name="quantity_additional[]" value="${props?.quantity_additional ?? 0}" />
+                        <input type="hidden" name="quantity_after[]" value="${props?.quantity_after ?? 0}" />
+                        <input type="number" class="form-control" name="quantity_before[]" value="${props?.quantity_before ?? 0}">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm delete-row"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `;
+
+            $('#body-instrumen').append(newRow);
+            $('#body-instrumen1').append(newRow);
+
+
+            $('.delete-row').click(function() {
+                $(this).closest('tr').remove();
+                updateAddButtonVisibility();
+            });
+
+            updateAddButtonVisibility();
+        }
+
+        const updateAddButtonVisibility = () => {
+            let rowCount = $('#body-instrumen tr').length;
+            let rowCount1 = $('#body-instrumen1 tr').length;
+
+            if (rowCount1 >= 3) {
+                $('#addInstrumen1').hide();
+            } else {
+                $('#addInstrumen1').show();
+            }
+
+
+            if (rowCount >= 3) {
+                $('#addInstrumen').hide();
+            } else {
+                $('#addInstrumen').show();
+            }
+        }
         const getDataDrain = (props) => {
             let data = props?.data
             dataDrain = data || []
@@ -4590,7 +5873,7 @@
                     visit_id: $(this).data('visit_id'),
                     no_registration: $(this).data('noregis')
                 }, 'admin/PatientOperationRequest/getDetail', (res) => {
-                    tinymce.remove();
+
                     modalViewOperationAction({
                         data: res
                     });
@@ -4624,7 +5907,7 @@
                     visit_id: $(this).data('visit_id'),
                     no_registration: $(this).data('noregis')
                 }, 'admin/PatientOperationRequest/getDetail', (res) => {
-                    tinymce.remove();
+
                     modalViewEditRequestOperation({
                         data: res
                     });
@@ -4639,7 +5922,7 @@
                     visit_id: $(this).data('visit_id'),
                     no_registration: $(this).data('noregis')
                 }, 'admin/PatientOperationRequest/getDetail', (res) => {
-                    tinymce.remove();
+
                     modalViewDetailRequestOperation({
                         data: res
                     });
@@ -4813,7 +6096,7 @@
                     )
                 )
                 .append($('<td>')
-                    .append($("<select class=\"form-control enablekan\">")
+                    .append($("<select class=\"form-select enablekan\">")
                         .attr('name', 'suffer_type[]').attr('id', 'adiagsuffer_type' +
                             diagIndex) <?php foreach ($suffer as $key => $value) { ?>
                             .append($("<option>")
@@ -4823,12 +6106,14 @@
                     )
                 )
                 .append($('<td>')
-                    .append($("<select class=\"form-control enablekan\">")
-                        .attr('name', 'diag_cat[]').attr('id', 'adiagdiag_cat' +
-                            diagIndex) <?php foreach ($diagCat as $key => $value) { ?>
-                            .append($("<option>")
-                                .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html(
-                                    '<?= $diagCat[$key]['diagnosa_category']; ?>')) <?php } ?>
+                    .append($("<select class=\"form-select enablekan\">")
+                        .attr('name', 'diag_cat[]')
+                        .attr('id', 'adiagdiag_cat' +
+                            diagIndex
+                        ) <?php foreach ($diagCat as $key => $value) { ?> <?php if (in_array($diagCat[$key]['diag_cat'], [1, 13, 14, 15])) { ?>
+                                .append($("<option>")
+                                    .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>')
+                                    .html('<?= $diagCat[$key]['diagnosa_category']; ?>')) <?php } ?> <?php } ?>
                         .val(diag_cat)
                     )
                 )
@@ -5016,6 +6301,16 @@
                 }
             });
         }; //new 01/08
+
+        const convertDate = (dateString) => {
+            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm", "YYYY-MM-DDTHH:mm"];
+            const parsedDate = moment(dateString, formats, true);
+            if (parsedDate.isValid()) {
+                return parsedDate.format("YYYY-MM-DD HH:mm");
+            } else {
+                return null;
+            }
+        };
 
     })()
 

@@ -53,6 +53,7 @@ class Auth extends BaseConfig
         'resend-activate-account' => 'resend-activate-account',
         'forgot'                  => 'forgot',
         'reset-password'          => 'reset-password',
+        'antrian'                => 'antrian',
     ];
 
     /**
@@ -383,4 +384,9 @@ class Auth extends BaseConfig
      * @var int
      */
     public $resetTime = 3600;
+
+    public $session = [
+        'expire_on_close' => true, // Session expires when the browser closes
+        'expiration' => 7200,      // Session timeout in seconds (2 hours)
+    ];
 }

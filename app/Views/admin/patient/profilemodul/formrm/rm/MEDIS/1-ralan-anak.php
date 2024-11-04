@@ -82,7 +82,7 @@
                     </td>
                     <td class="p-1" style="width:33.3%">
                         <b>Nama Pasien</b>
-                        <p class="m-0 mt-1 p-0"><?= @$visit['name_of_pasien']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$visit['diantar_oleh']; ?></p>
                     </td>
                     <td class="p-1" style="width:33.3%">
                         <b>Jenis Kelamin</b>
@@ -126,59 +126,59 @@
                         <div class="row mb-1">
                             <div class="col">
                                 <b>Keluhan Utama (Autoanamnesis)</b>
-                                <div id="anamnesis" name="anamnesis" class="h6"><?= $val['anamnesis']; ?></div>
+                                <div id="anamnesis" name="anamnesis" class="h6"><?= @$val['anamnesis']; ?></div>
                             </div>
                         </div>
                         <div class="row mb-1">
                             <div class="col">
                                 <b>Keluhan Utama (Alloanamnesis)</b>
-                                <div id="alloanamnesis" name="alloanamnesis" class="h6"><?= $val['alloanamnase']; ?></div>
+                                <div id="alloanamnesis" name="alloanamnesis" class="h6"><?= @$val['alloanamnase']; ?></div>
                             </div>
                         </div>
                     </td>
                     <td>
                         <b>Riwayat Penyakit Sekarang</b>
-                        <div id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" class="h6"><?= $val['riwayat_penyakit_sekarang']; ?></div>
+                        <div id="riwayat_penyakit_sekarang" name="riwayat_penyakit_sekarang" class="h6"><?= @$val['riwayat_penyakit_sekarang']; ?></div>
                     </td>
                     <td>
                         <b>Riwayat Penyakit Dahulu</b>
-                        <div id="riwayat_penyakit_dahulu" name="riwayat_penyakit_dahulu" class="h6"><?= $val['riwayat_penyakit_dahulu']; ?></div>
+                        <div id="riwayat_penyakit_dahulu" name="riwayat_penyakit_dahulu" class="h6"><?= @$val['riwayat_penyakit_dahulu']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Riwayat Penyakit Keluarga</b>
-                        <div id="riwayat_penyakit_keluarga" name="riwayat_penyakit_keluarga" class="h6"><?= $val['riwayat_penyakit_keluarga']; ?></div>
+                        <div id="riwayat_penyakit_keluarga" name="riwayat_penyakit_keluarga" class="h6"><?= @$val['riwayat_penyakit_keluarga']; ?></div>
                     </td>
                     <td>
                         <b>Riwayat Alergi (Non Obat)</b>
-                        <div id="riwayat_alergi_nonobat" name="riwayat_alergi_nonobat" class="h6"><?= $val['riwayat_alergi_nonobat']; ?></div>
+                        <div id="riwayat_alergi_nonobat" name="riwayat_alergi_nonobat" class="h6"><?= @$val['riwayat_alergi_nonobat']; ?></div>
                         <b>Riwayat Alergi (Obat)</b>
-                        <div id="riwayat_alergi_obat" name="riwayat_alergi_obat" class="h6"><?= $val['riwayat_alergi_obat']; ?></div>
+                        <div id="riwayat_alergi_obat" name="riwayat_alergi_obat" class="h6"><?= @$val['riwayat_alergi_obat']; ?></div>
                     </td>
                     <td>
                         <b>Riwayat Obat Yang Dikonsumsi</b>
-                        <div id="riwayat_obat_dikonsumsi" name="riwayat_obat_dikonsumsi" class="h6"><?= $val['riwayat_obat_dikonsumsi']; ?></div>
+                        <div id="riwayat_obat_dikonsumsi" name="riwayat_obat_dikonsumsi" class="h6"><?= @$val['riwayat_obat_dikonsumsi']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Riwayat Kehamilan dan Persalinan</b>
-                        <div id="riwayat_kehamilan" name="riwayat_kehamilan" class="h6"><?= $val['riwayat_kehamilan']; ?></div>
+                        <div id="riwayat_kehamilan" name="riwayat_kehamilan" class="h6"><?= @$val['riwayat_kehamilan']; ?></div>
                     </td>
                     <td>
                         <b>Riwayat Diet</b>
-                        <div id="riwayat_diet" name="riwayat_diet" class="h6"><?= $val['riwayat_diet']; ?></div>
+                        <div id="riwayat_diet" name="riwayat_diet" class="h6"><?= @$val['riwayat_diet']; ?></div>
                     </td>
                     <td>
                         <b>Riwayat Imunisasi</b>
-                        <div id="riwayat_imunisasi" name="riwayat_imunisasi" class="h6"><?= $val['riwayat_imunisasi']; ?></div>
+                        <div id="riwayat_imunisasi" name="riwayat_imunisasi" class="h6"><?= @$val['riwayat_imunisasi']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3">
                         <b>Riwayat Kebiasaan (Negatif)</b>
-                        <div id="riwayat_alkohol" name="riwayat_alkohol" class="h6"><?= $val['riwayat_alkohol']; ?>, <?= $val['riwayat_merokok']; ?></div>
+                        <div id="riwayat_alkohol" name="riwayat_alkohol" class="h6"><?= @$val['riwayat_alkohol']; ?>, <?= @$val['riwayat_merokok']; ?></div>
                     </td>
                 </tr>
             </tbody>
@@ -195,28 +195,28 @@
                     <td>
                         <b>Tekanan Darah</b>
                         <div class="input-group">
-                            <div id="tensi_atas" name="tensi_atas" class="h6"><?= $val['tensi_atas']; ?> / <?= $val['tensi_bawah']; ?></div>
+                            <div id="tensi_atas" name="tensi_atas" class="h6"><?= @$val['tensi_atas']; ?> / <?= @$val['tensi_bawah']; ?></div>
                             <span class="" id="basic-addon2">mmHg</span>
                         </div>
                     </td>
                     <td>
                         <b>Denyut Nadi</b>
                         <div class="input-group">
-                            <div id="nadi" name="nadi" class="h6"><?= $val['nadi']; ?></div>
+                            <div id="nadi" name="nadi" class="h6"><?= @$val['nadi']; ?></div>
                             <span class="" id="basic-addon2">x/m</span>
                         </div>
                     </td>
                     <td>
                         <b>Suhu Tubuh</b>
                         <div class="input-group">
-                            <div id="suhu" name="suhu" class="h6"><?= $val['suhu']; ?></div>
+                            <div id="suhu" name="suhu" class="h6"><?= @$val['suhu']; ?></div>
                             <span class="" id="basic-addon2">℃</span>
                         </div>
                     </td>
                     <td>
                         <b>Respiration Rate</b>
                         <div class="input-group">
-                            <div id="respiration" name="respiration" class="h6"><?= $val['respiration']; ?></div>
+                            <div id="respiration" name="respiration" class="h6"><?= @$val['respiration']; ?></div>
                             <span class="" id="basic-addon2">x/m</span>
                         </div>
                     </td>
@@ -225,27 +225,27 @@
                     <td>
                         <b>Berat Badan</b>
                         <div class="input-group">
-                            <div id="berat" name="berat" class="h6"><?= $val['berat']; ?></div>
+                            <div id="berat" name="berat" class="h6"><?= @$val['berat']; ?></div>
                             <span class="" id="basic-addon2">kg</span>
                         </div>
                     </td>
                     <td>
                         <b>Tinggi Badan</b>
                         <div class="input-group">
-                            <div id="tinggi" name="tinggi" class="h6"><?= $val['tinggi']; ?></div>
+                            <div id="tinggi" name="tinggi" class="h6"><?= @$val['tinggi']; ?></div>
                             <span class="" id="basic-addon2">cm</span>
                         </div>
                     </td>
                     <td>
                         <b>SpO2</b>
                         <div class="input-group">
-                            <div id="spo2" name="spo2" class="h6"><?= $val['spo2']; ?></div>
+                            <div id="spo2" name="spo2" class="h6"><?= @$val['spo2']; ?></div>
                         </div>
                     </td>
                     <td>
                         <b>BMI</b>
                         <div class="input-group">
-                            <div id="imt" name="imt" class="h6"><?= $val['imt']; ?></div>
+                            <div id="imt" name="imt" class="h6"><?= @$val['imt']; ?></div>
                         </div>
                     </td>
                 </tr>
@@ -265,7 +265,7 @@
                     <td>
                         <b>Pemeriksaan Fisik Tambahan</b>
                         <div class="input-group">
-                            <div id="no_registration" name="no_registration" class="h6"><?= $val['pemeriksaan_fisik']; ?></div>
+                            <div id="no_registration" name="no_registration" class="h6"><?= @$val['pemeriksaan_fisik']; ?></div>
                         </div>
                     </td>
                 </tr>
@@ -279,19 +279,19 @@
                 <tr>
                     <td>
                         <b>Diagnosis (ICD-10)</b>
-                        <div id="icd10" name="icd10" class="h6"><?= $val['icd10']; ?></div>
+                        <div id="icd10" name="icd10" class="h6"><?= @$val['icd10']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Permasalahan Medis</b>
-                        <div id="masalah_medis" name="masalah_medis" class="h6"><?= $val['masalah_medis']; ?></div>
+                        <div id="masalah_medis" name="masalah_medis" class="h6"><?= @$val['masalah_medis']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Penyebab Cidera / Keracunan</b>
-                        <div id="penyebab_cidera" name="penyebab_cidera" class="h6"><?= $val['penyebab_cidera']; ?></div>
+                        <div id="penyebab_cidera" name="penyebab_cidera" class="h6"><?= @$val['penyebab_cidera']; ?></div>
                     </td>
                 </tr>
             </tbody>
@@ -304,7 +304,7 @@
                 <tr>
                     <td>
                         <b>Target / Sasaran Terapi</b>
-                        <div id="sasaran" name="sasaran" class="h6"><?= $val['sasaran']; ?></div>
+                        <div id="sasaran" name="sasaran" class="h6"><?= @$val['sasaran']; ?></div>
                     </td>
                 </tr>
             </tbody>
@@ -317,13 +317,13 @@
                 <tr>
                     <td>
                         <b>Laboratorium</b>
-                        <div type="text" class="h6" id="laboratorium" name="laboratorium"><?= $val['laboratorium']; ?></div>
+                        <div type="text" class="h6" id="laboratorium" name="laboratorium"><?= @$val['laboratorium']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Radiologi</b>
-                        <div type="text" class="h6" id="radiologi" name="radiologi"><?= $val['radiologi']; ?></div>
+                        <div type="text" class="h6" id="radiologi" name="radiologi"><?= @$val['radiologi']; ?></div>
                     </td>
                 </tr>
             </tbody>
@@ -336,14 +336,14 @@
                 <tr>
                     <td>
                         <b>Farmakoterapi</b>
-                        <div type="text" class="h6" id="farmakologia" name="farmakologia"><?= $val['farmakologia']; ?>
+                        <div type="text" class="h6" id="farmakologia" name="farmakologia"><?= @$val['farmakologia']; ?>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Procedure</b>
-                        <div type="text" class="h6" id="prosedur" name="prosedur"><?= $val['prosedur']; ?>
+                        <div type="text" class="h6" id="prosedur" name="prosedur"><?= @$val['prosedur']; ?>
                         </div>
                     </td>
                 </tr>
@@ -357,7 +357,7 @@
                 <tr>
                     <td>
                         <b>Standing Order</b>
-                        <div type="text" class="h6" id="standing_order" name="standing_order"><?= $val['standing_order']; ?>
+                        <div type="text" class="h6" id="standing_order" name="standing_order"><?= @$val['standing_order']; ?>
                         </div>
                     </td>
                 </tr>
@@ -371,13 +371,13 @@
                 <tr>
                     <td>
                         <b>Rencana Tindak Lanjut</b>
-                        <div type="text" class="h6" id="rencana_tl" name="rencana_tl"><?= $val['rencana_tl']; ?></div>
+                        <div type="text" class="h6" id="rencana_tl" name="rencana_tl"><?= @$val['rencana_tl']; ?></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Kontrol</b>
-                        <div type="text" class="h6" id="kontrol" name="kontrol"><?= $val['kontrol']; ?></div>
+                        <div type="text" class="h6" id="kontrol" name="kontrol"><?= @$val['kontrol']; ?></div>
                     </td>
                 </tr>
             </tbody>
@@ -390,13 +390,13 @@
                 <tr>
                     <td>
                         <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-                        <div name="" class="h6"></div>
+                        <div id="" name="" class="h6"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b>Materi Edukasi:</b>
-                        <div name="" class="h6"></div>
+                        <div id="" name="" class="h6"></div>
                     </td>
                 </tr>
             </tbody>

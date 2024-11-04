@@ -1,7 +1,7 @@
 <script>
     $(document).ready(function() {
-        initializeSearchTarif("searchTarifKolaboratif", '<?= $visit['clinic_id']; ?>')
-        initializeSearchTarif("searchTarifPerawatMandiriSelf", '<?= $visit['clinic_id']; ?>')
+        initializeSearchTarifPerawat("searchTarifKolaboratif", '<?= $visit['clinic_id']; ?>')
+        // initializeSearchTarif("searchTarifPerawatMandiriSelf", '<?= $visit['clinic_id']; ?>')
     })
     $("#tindakanPerawatTab").on("click", function() {
         getTindakanPerawat()
@@ -12,13 +12,19 @@
         if (flag == 1) {
             tarifDataJson = $("#" + container).val();
             tarifData = JSON.parse(tarifDataJson);
+            if (tarifData.amount === null) {
+                tarifData.amount = 0;
+            }
 
             var key = parseInt(billPerawatJson.length)
             billPerawatJson[key] = [];
         } else {
             var key = index;
             var billPerawat = billPerawatJson[index]
+            console.log(billPerawat)
         }
+
+        $("#searchTarifKolaboratif").val(null).trigger("change")
         if (flag == 1) {
             if (type == 1) {
                 var nota_no = $("#" + tableId + "KolaborasiNota").val();
@@ -75,106 +81,190 @@
 
         key += tableId
         if (type == 1) {
-            rowKolaborasi = $("#" + tableId + "Kolaborasi tr").length + 1;
-            $("#" + tableId + "Kolaborasi").append($("<tr id=\"perawatTindakan" + key + "\">"))
+            rowKolaborasi = $("#" + tableId + "Kolaborasi .aprwrow").length + 1;
+            $("#" + tableId + "Kolaborasi").append($("<tr id=\"perawatTindakan" + key + "\" class=\"aprwrow\">"))
         } else if (type == 2) {
-            rowKolaborasi = $("#" + tableId + "Mandiri tr").length + 1;
+            rowKolaborasi = $("#" + tableId + "Mandiri .aprwrow").length + 1;
             $("#" + tableId + "Mandiri").append($("<tr id=\"perawatTindakan" + key + "\">"))
         } else if (type == 3) {
-            rowKolaborasi = $("#" + tableId + "Implementasi tr").length + 1;
+            rowKolaborasi = $("#" + tableId + "Implementasi .aprwrow").length + 1;
             $("#" + tableId + "Implementasi").append($("<tr id=\"perawatTindakan" + key + "\">"))
         }
 
         if (flag == 1) {
-            if (type == 1) {
+            if (tarifData.amount == 0) {
+                if (type == 1) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>>").html(String(rowKolaborasi) + "."))
+                } else if (type == 2) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowMandiri) + "."))
+                } else if (type == 3) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowImplementasi) + "."))
+                }
                 $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowKolaborasi) + "."))
-            } else if (type == 2) {
+                    .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= user()->getFullname(); ?>')))
+                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                        .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    )
+                    .append($("<td colspan=\"3\">")
+                        .append('<input type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
+                        .append('<input type="hidden" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control" >')
+                    )
+                    // .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
+                    // .append($("<td>")
+                    //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                    // )
+                    // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
+                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+
+            } else {
+                if (type == 1) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td rowspan=\"1\">").html(String(rowKolaborasi) + "."))
+                } else if (type == 2) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowMandiri) + "."))
+                } else if (type == 3) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowImplementasi) + "."))
+                }
                 $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowMandiri) + "."))
-            } else if (type == 3) {
-                $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowImplementasi) + "."))
+                    .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= user()->getFullname(); ?>')))
+                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                        .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    )
+                    .append($("<td class=\"text-center\">").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
+                    .append($("<td>")
+                        .append('<input type="text" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control text-center" >')
+                        // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                    )
+                    .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
+                    .append($("<td rowspan=\"1\">").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
+                // datetimepickerbyid(`flatatptreat_date${key}`)
+                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+
+
+                // $("#" + tableId + "Kolaborasi").append($("<tr id=\"perawatTindakan" + key + "desc\" class=\"perawatTindakan" + key + "\">")
+                //     .append($("<td colspan=\"5\">")
+                //         .append(`<div class="form-group m-2"><label>Keterangan</label>
+                //                     <textarea name="description[]" id="atpdescription${key}" placeholder="" value="" class="form-control"></textarea>
+                //                 </div>`)
+                //         // .append('<textarea type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
+                //     )
+                // )
             }
-            $("#perawatTindakan" + key)
-                .append($("<td>").attr("id", "treatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
-                .append($("<td>").attr("id", "treat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
-                .append($("<td>")
-                    .append('<textarea type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
-                )
-                .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
-                .append($("<td>")
-                    .append('<input type="text" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control" >')
-                    .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
-                )
-                .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
+
         } else {
-            if (type == 1) {
+            if (billPerawat.amount == 0) {
+                if (type == 1) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>>").html(String(rowKolaborasi) + "."))
+                } else if (type == 2) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowMandiri) + "."))
+                } else if (type == 3) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowImplementasi) + "."))
+                }
                 $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowKolaborasi) + "."))
-            } else if (type == 2) {
+                    .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html('<?= user()->getFullname(); ?>')))
+                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active" value="${moment().format("DD/MM/YYYY HH:mm")}">`)
+                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                        .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    )
+                    .append($("<td colspan=\"3\">")
+                        .append('<input type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" value="' + billPerawat.description + '" >')
+                        .append('<input type="hidden" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control  text-center" >')
+                    )
+                    // .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
+                    // .append($("<td>")
+                    //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                    // )
+                    // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
+                datetimepickerbyidinitial(`flatatptreat_date${key}`)
+
+
+            } else {
+                if (type == 1) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td rowspan=\"1\">").html(String(rowKolaborasi) + "."))
+                } else if (type == 2) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowMandiri) + "."))
+                } else if (type == 3) {
+                    $("#perawatTindakan" + key)
+                        .append($("<td>").html(String(rowImplementasi) + "."))
+                }
                 $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowMandiri) + "."))
-            } else if (type == 3) {
-                $("#perawatTindakan" + key)
-                    .append($("<td>").html(String(rowImplementasi) + "."))
+                    .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html('<?= user()->getFullname(); ?>')))
+                    .append($("<td>").append(`<input id="flatatptreat_date${key}" type="text" class="form-control flatpickr-input active">`)
+                        .append(`<input id="atptreat_date${key}" type="hidden" class="form-control flatpickr-input d-none" value="${moment().format("YYYY-MM-DD HH:mm")}">`)
+                        .append($("<p>").html('<?= $visit['name_of_clinic']; ?>'))
+                    )
+                    .append($("<td class\"text-center\">").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(billPerawat.amount))).append($("<p>").html("")))
+                    .append($("<td>")
+                        .append('<input type="text" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="' + parseInt(billPerawat.quantity) + '" class="form-control text-center" >')
+                        // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
+                    )
+                    .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(billPerawat.amount_paid))))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
+                datetimepickerbyidinitial(`flatatptreat_date${key}`, moment().format("DD/MM/YYYY HH:mm"))
             }
-            $("#perawatTindakan" + key)
-                .append($("<td>").attr("id", "treatment" + key).html(billPerawat.treatment).append($("<p>").html('<?= $visit['fullname']; ?>')))
-                .append($("<td>").attr("id", "treat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
-                .append($("<td>")
-                    .append('<textarea type="text" name="description[]" id="atpdescription' + key + '" placeholder="" class="form-control" >')
-                )
-                .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(parseFloat(billPerawat.amount))).append($("<p>").html("")))
-                .append($("<td>")
-                    .append('<input type="text" name="quantity[]" id="atpquantity' + key + '" placeholder="" value="1" class="form-control" >')
-                    .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
-                )
-                .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(billPerawat.amount_paid))))
-                .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         }
 
-        $("#perawatTindakan" + key)
-            .append('<input name="treatment[]" id="aradtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
-            .append('<input name="treat_date[]" id="aradtreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="aradsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="aradamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="discount[]" id="araddiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidisat[]" id="aradsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
-            .append('<input name="subsidi[]" id="aradsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+        // datetimepickerbyid(`flatatptreat_date${key}`)
 
-            .append('<input name="bill_id[]" id="aradbill_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="trans_id[]" id="aradtrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="no_registration[]" id="aradno_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="theorder[]" id="aradtheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
-            .append('<input name="visit_id[]" id="aradvisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="org_unit_code[]" id="aradorg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="class_id[]" id="aradclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
-            .append('<input name="class_id_plafond[]" id="aradclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
-            .append('<input name="payor_id[]" id="aradpayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="theid[]" id="aradtheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
-            .append('<input name="thename[]" id="aradthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
-            .append('<input name="theaddress[]" id="aradtheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
-            .append('<input name="status_pasien_id[]" id="aradstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
-            .append('<input name="isRJ[]" id="aradisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
-            .append('<input name="gender[]" id="aradgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
-            .append('<input name="ageyear[]" id="aradageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
-            .append('<input name="agemonth[]" id="aradagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
-            .append('<input name="ageday[]" id="aradageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
-            .append('<input name="kal_id[]" id="aradkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
-            .append('<input name="karyawan[]" id="aradkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
-            .append('<input name="class_room_id[]" id="aradclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
-            .append('<input name="bed_id[]" id="aradbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
-            .append('<input name="clinic_id[]" id="aradclinic_id' + key + '" type="hidden" value="P016" class="form-control" />')
-            .append('<input name="clinic_id_from[]" id="aradclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
-            .append('<input name="exit_date[]" id="aradexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="cashier[]" id="aradcashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
-            .append('<input name="modified_from[]" id="aradmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
-            .append('<input name="islunas[]" id="aradislunas' + key + '" type="hidden" value="0" class="form-control" />')
-            .append('<input name="measure_id[]" id="aradmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="aradtarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+        $("#perawatTindakan" + key)
+            .append('<input name="treatment[]" id="atptreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
+            .append('<input name="treat_date[]" id="atptreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="atpsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="atpamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="discount[]" id="atpdiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+            .append('<input name="subsidisat[]" id="atpsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+            .append('<input name="subsidi[]" id="atpsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
+
+            .append('<input name="bill_id[]" id="atpbill_id' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="trans_id[]" id="atptrans_id' + key + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="no_registration[]" id="atpno_registration' + key + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="theorder[]" id="atptheorder' + key + '" type="hidden" value="' + (billJson.length + 1) + '" class="form-control" />')
+            .append('<input name="visit_id[]" id="atpvisit_id' + key + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="org_unit_code[]" id="atporg_unit_code' + key + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="class_id[]" id="atpclass_id' + key + '" type="hidden" value="<?= $visit['class_id']; ?>" class="form-control" />')
+            .append('<input name="class_id_plafond[]" id="atpclass_id_plafond' + key + '" type="hidden" value="<?= $visit['class_id_plafond']; ?>" class="form-control" />')
+            .append('<input name="payor_id[]" id="atppayor_id' + key + '" type="hidden" value="<?= $visit['payor_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="atpkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="theid[]" id="atptheid' + key + '" type="hidden" value="<?= $visit['pasien_id']; ?>" class="form-control" />')
+            .append('<input name="thename[]" id="atpthename' + key + '" type="hidden" value="<?= $visit['diantar_oleh']; ?>" class="form-control" />')
+            .append('<input name="theaddress[]" id="atptheaddress' + key + '" type="hidden" value="<?= $visit['visitor_address']; ?>" class="form-control" />')
+            .append('<input name="status_pasien_id[]" id="atpstatus_pasien_id' + key + '" type="hidden" value="<?= $visit['status_pasien_id']; ?>" class="form-control" />')
+            .append('<input name="isRJ[]" id="atpisRJ' + key + '" type="hidden" value="<?= $visit['isrj']; ?>" class="form-control" />')
+            .append('<input name="gender[]" id="atpgender' + key + '" type="hidden" value="<?= $visit['gender']; ?>" class="form-control" />')
+            .append('<input name="ageyear[]" id="atpageyear' + key + '" type="hidden" value="<?= $visit['ageyear']; ?>" class="form-control" />')
+            .append('<input name="agemonth[]" id="atpagemonth' + key + '" type="hidden" value="<?= $visit['agemonth']; ?>" class="form-control" />')
+            .append('<input name="ageday[]" id="atpageday' + key + '" type="hidden" value="<?= $visit['ageday']; ?>" class="form-control" />')
+            .append('<input name="kal_id[]" id="atpkal_id' + key + '" type="hidden" value="<?= $visit['kal_id']; ?>" class="form-control" />')
+            .append('<input name="karyawan[]" id="atpkaryawan' + key + '" type="hidden" value="<?= $visit['karyawan']; ?>" class="form-control" />')
+            .append('<input name="class_room_id[]" id="atpclass_room_id' + key + '" type="hidden" value="<?= $visit['class_room_id']; ?>" class="form-control" />')
+            .append('<input name="bed_id[]" id="atpbed_id' + key + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
+            .append('<input name="clinic_id[]" id="atpclinic_id' + key + '" type="hidden" value="P016" class="form-control" />')
+            .append('<input name="clinic_id_from[]" id="atpclinic_id_from' + key + '" type="hidden" value="<?= $visit['clinic_id_from']; ?>" class="form-control" />')
+            .append('<input name="exit_date[]" id="atpexit_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
+            .append('<input name="cashier[]" id="atpcashier' + key + '" type="hidden" value="<?= user_id(); ?>" class="form-control" />')
+            .append('<input name="modified_from[]" id="atpmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
+            .append('<input name="islunas[]" id="atpislunas' + key + '" type="hidden" value="0" class="form-control" />')
+            .append('<input name="measure_id[]" id="atpmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
+            .append('<input name="tarif_id[]" id="atptarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
 
 
 
@@ -515,8 +605,8 @@
                 }
                 ?>
             }
-            $("#atpemployee_id" + key).val('<?= $visit['employee_id']; ?>')
-            $("#atpdoctor" + key).val('<?= $visit['fullname']; ?>')
+            $("#atpemployee_id" + key).val('<?= user()->employee_id; ?>')
+            $("#atpdoctor" + key).val('<?= user()->getFullname(); ?>')
             $("#atpamount" + key).val(tarifData.amount)
             $("#atpnota_no" + key).val(nota_no)
             $("#atpprofesi" + key).val(null)
@@ -555,6 +645,7 @@
                 $("#atpamount_paid_plafond" + key).val($("#atpamount_plafond" + key).val() * dInput)
                 $("#displayamount_paid_plafond" + key).html(formatCurrency($("#atpamount_plafond" + key).val() * dInput))
             })
+            $("#atpmodified_by" + key).val('<?= user()->username; ?>')
         } else {
             $("#atporg_unit_code" + key).val(billPerawat.org_unit_code)
             $("#atpbill_id" + key).val(billPerawat.bill_id)
@@ -707,6 +798,30 @@
                 }
             });
         }
+    }
 
+    function delBillPerawat(identifier, counter) {
+        var billId = counter
+        // var billId = $("#atpbill_id" + counter).val()
+        var btn;
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/delBillPerawat/' + $("#atpbill_id" + counter).val(),
+            type: "DELETE",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                btn = $("#delBillBtn" + billId).html()
+                $("#delBillBtn" + billId).html("Loading...")
+            },
+            success: function(data) {
+                $("#delBillBtn" + billId).html(btn)
+                $("#perawatTindakan" + billId).remove()
+            },
+            error: function() {
+                $("#delBillBtn" + billId).html(btn)
+            }
+        });
     }
 </script>

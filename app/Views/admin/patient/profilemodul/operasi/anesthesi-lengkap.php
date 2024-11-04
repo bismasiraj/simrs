@@ -1,27 +1,28 @@
 <div class="tab-pane fade" id="anesthesi-lengkap">
     <form action="" id="form-laporanAnesthesi-lengkap">
-        <input id="avtclinic_id-laporanAnesthesi-lengkap" name="clinic_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['clinic_id']; ?>" />
-        <input id="avtclass_room_id-laporanAnesthesi-lengkap" name="class_room_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['class_room_id']; ?>" />
-        <input id="avtbed_id-laporanAnesthesi-lengkap" name="bed_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['bed_id']; ?>" />
-        <input id="avtkeluar_id-laporanAnesthesi-lengkap" name="keluar_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['keluar_id']; ?>" />
-        <input id="avtemployee_id-laporanAnesthesi-lengkap" name="employee_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['employee_id']; ?>" />
-        <input id="avtno_registration-laporanAnesthesi-lengkap" name="no_registration" placeholder="" type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
-        <input id="avtvisit_id-laporanAnesthesi-lengkap" name="visit_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['visit_id']; ?>" />
-        <input id="avtorg_unit_code-laporanAnesthesi-lengkap" name="org_unit_code" placeholder="" type="hidden" class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
-        <input id="avtdoctor-laporanAnesthesi-lengkap" name="doctor" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
-        <input id="avtkal_id-laporanAnesthesi-lengkap" name="kal_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['kal_id']; ?>" />
-        <input id="avttheid-laporanAnesthesi-lengkap" name="theid" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-        <input id="avtthename-laporanAnesthesi-lengkap" name="thename" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-        <input id="avttheaddress-laporanAnesthesi-lengkap" name="theaddress" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
-        <input id="avtstatus_pasien_id-laporanAnesthesi-lengkap" name="status_pasien_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
-        <input id="avtisrj-laporanAnesthesi-lengkap" name="isrj" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['isrj']; ?>" />
-        <input id="avtgender-laporanAnesthesi-lengkap" name="gender" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['gender']; ?>" />
-        <input id="avtageyear-laporanAnesthesi-lengkap" name="ageyear" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageyear']; ?>" />
-        <input id="avtagemonth-laporanAnesthesi-lengkap" name="agemonth" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['agemonth']; ?>" />
-        <input id="avtageday-laporanAnesthesi-lengkap" name="ageday" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageday']; ?>" />
-        <input id="avtbody_id-laporanAnesthesi-lengkap" name="body_id" placeholder="" type="hidden" class="form-control block" value="" />
-        <input id="avtmodified_by-laporanAnesthesi-lengkap" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
-        <input id="avttrans_id-laporanAnesthesi-lengkap" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+        <input id="clinic_id-laporanAnesthesi-lengkap" name="clinic_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['clinic_id']; ?>" />
+        <input id="class_room_id-laporanAnesthesi-lengkap" name="class_room_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['class_room_id']; ?>" />
+        <input id="bed_id-laporanAnesthesi-lengkap" name="bed_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['bed_id']; ?>" />
+        <input id="keluar_id-laporanAnesthesi-lengkap" name="keluar_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['keluar_id']; ?>" />
+        <input id="employee_id-laporanAnesthesi-lengkap" name="employee_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['employee_id']; ?>" />
+        <input id="no_registration-laporanAnesthesi-lengkap" name="no_registration" placeholder="" type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
+        <input id="visit_id-laporanAnesthesi-lengkap" name="visit_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['visit_id']; ?>" />
+        <input id="org_unit_code-laporanAnesthesi-lengkap" name="org_unit_code" placeholder="" type="hidden" class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
+        <input id="pasien_diagnosa_id-laporanAnesthesi-lengkap" name="pasien_diagnosa_id" placeholder="" type="hidden" class="form-control block" value="" />
+        <input id="doctor-laporanAnesthesi-lengkap" name="doctor" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+        <input id="kal_id-laporanAnesthesi-lengkap" name="kal_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+        <input id="theid-laporanAnesthesi-lengkap" name="theid" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="thename-laporanAnesthesi-lengkap" name="thename" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="theaddress-laporanAnesthesi-lengkap" name="theaddress" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="status_pasien_id-laporanAnesthesi-lengkap" name="status_pasien_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
+        <input id="isrj-laporanAnesthesi-lengkap" name="isrj" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['isrj']; ?>" />
+        <input id="gender-laporanAnesthesi-lengkap" name="gender" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['gender']; ?>" />
+        <input id="ageyear-laporanAnesthesi-lengkap" name="ageyear" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageyear']; ?>" />
+        <input id="agemonth-laporanAnesthesi-lengkap" name="agemonth" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['agemonth']; ?>" />
+        <input id="ageday-laporanAnesthesi-lengkap" name="ageday" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageday']; ?>" />
+        <input id="body_id-laporanAnesthesi-lengkap" name="body_id" placeholder="" type="hidden" class="form-control block" value="" />
+        <input id="modified_by-laporanAnesthesi-lengkap" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
+        <input id="trans_id-laporanAnesthesi-lengkap" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
         <div id="accordionLengkap" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingUmum">
@@ -40,7 +41,7 @@
                                             <tr>
                                                 <td width="150px"><b>Pasien</b></td>
                                                 <td width="1%">:</td>
-                                                <td><span id=""><?= @$visit['name_of_pasien'] ?></span></td>
+                                                <td><span id=""><?= @$visit['diantar_oleh']; ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td width="150px"><b>ID (KTP)</b></td>
@@ -106,118 +107,23 @@
                             </div>
                             <div class="row mb-4">
                                 <hr>
-                                <h3 id="">
-                                    <b>Vital Sign</b>
-                                </h3>
-                                <div class="col-xs-6 col-sm-6 col-md-12">
-                                    <div class="row mb-2">
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Jenis EWS</label>
-                                                <select class="form-select" name="vs_status_id" id="avtvs_status_id-laporanAnesthesi-lengkap" disabled>
-                                                    <option selected>-- pilih --</option>
-                                                    <option value="1">Dewasa</option>
-                                                    <option value="4">Anak</option>
-                                                    <option value="5">Neonatus</option>
-                                                    <option value="10">Obstric</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>BB(Kg)</label>
-                                                <div class=" position-relative">
-                                                    <input type="text" name="weight" id="avtweight-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-bb-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Tinggi(cm)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="height" id="avtheight-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtheight-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Suhu(°C)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="temperature" id="avttemperature-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avttemperature-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
-                                            <div class="form-group">
-                                                <label>Nadi(/menit)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="nadi" id="avtnadi-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtnadi-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
-                                                    <div class="position-relative">
-                                                        <input type="text" name="tension_upper" id="avttension_upper-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                        <span class="h6" id="badge-avttension_upper-laporanAnesthesi-lengkap"></span>
-                                                    </div>
-                                                    <h4 class="mx-2">/</h4>
-                                                    <div class="position-relative">
-                                                        <input type="text" name="tension_below" id="avttension_below-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                        <span class="h6" id="badge-avttension_below-laporanAnesthesi-lengkap"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Saturasi(SpO2%)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="saturasi" id="avtsaturasi-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtsaturasi-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Nafas/RR(/menit)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="nafas" id="avtnafas-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtnafas-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Diameter Lengan(cm)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="arm_diameter" id="avtarm_diameter-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtarm_diameter-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                            <div class="form-group">
-                                                <label>Penggunaan Oksigen (L/mnt)</label>
-                                                <div class="position-relative">
-                                                    <input type="text" name="oxygen_usage" id="avtoxygen_usage-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap" disabled>
-                                                    <span class="h6" id="badge-avtoxygen_usage-laporanAnesthesi-lengkap"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-sm-12 mt-2">
-                                            <div class="form-group">
-                                                <label>Pemeriksaan</label><textarea name="pemeriksaan" id="avtpemeriksaan-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control" disabled></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h3>Histori Vital Sign</h3>
+                                <table class="table table-striped table-hover">
+                                    <thead class=" table-primary" style="text-align: center;">
+                                        <tr>
+                                            <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                                            <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                                            <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vitalSignBodyLaporanAnesthesiLengkap">
+                                        <?php
+                                        $total = 0;
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="row" id="bodyDiagnosisAnesthesiLengkap">
 
@@ -247,121 +153,208 @@
                 </h2>
                 <div id="flush-collapseMonitoringDurante" class="accordion-collapse collapse" aria-labelledby="flush-headingMonitoringDurante" data-bs-parent="#accordionLengkap">
                     <div class="accordion-body" id="informasiMedis-laporan-monitoring-durante">
-                        <div class="row mb-4">
-                            <hr>
-                            <h3 id="">
-                                <b>Vital Sign</b>
-                            </h3>
-                            <div class="col-xs-6 col-sm-6 col-md-12">
-                                <div class="row mb-2">
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Jenis EWS</label>
-                                            <select class="form-select" name="vs_status_id" id="avtvs_status_id-laporanAnesthesi-lengkap-durante">
-                                                <option selected>-- pilih --</option>
-                                                <option value="1">Dewasa</option>
-                                                <option value="4">Anak</option>
-                                                <option value="5">Neonatus</option>
-                                                <option value="10">Obstric</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>BB(Kg)</label>
-                                            <div class=" position-relative">
-                                                <input type="text" name="weight" id="avtweight-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-bb-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Tinggi(cm)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="height" id="avtheight-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtheight-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Suhu(°C)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="temperature" id="avttemperature-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avttemperature-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
-                                        <div class="form-group">
-                                            <label>Nadi(/menit)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="nadi" id="avtnadi-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtnadi-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group"><label>T.Darah(mmHg)</label>
-                                            <div class="col-sm-12 " style="display: flex;  align-items: center;">
-                                                <div class="position-relative">
-                                                    <input type="text" name="tension_upper" id="avttension_upper-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                    <span class="h6" id="badge-avttension_upper-laporanAnesthesi-lengkap-durante"></span>
-                                                </div>
-                                                <h4 class="mx-2">/</h4>
-                                                <div class="position-relative">
-                                                    <input type="text" name="tension_below" id="avttension_below-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                    <span class="h6" id="badge-avttension_below-laporanAnesthesi-lengkap-durante"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Saturasi(SpO2%)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="saturasi" id="avtsaturasi-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtsaturasi-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Nafas/RR(/menit)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="nafas" id="avtnafas-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtnafas-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Diameter Lengan(cm)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="arm_diameter" id="avtarm_diameter-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtarm_diameter-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Penggunaan Oksigen (L/mnt)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="oxygen_usage" id="avtoxygen_usage-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-durante">
-                                                <span class="h6" id="badge-avtoxygen_usage-laporanAnesthesi-lengkap-durante"></span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div id="vitalSignLaporanAnesthesiLengkap2" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
+                            <div class="card-body">
+                                <form id="formvitalsign-laporanAnesthesi-lengkap2" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                    <div class="modal-body pt0 pb0">
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="anamnase-laporanAnesthesi-lengkap" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S)
+                                                            Anamnesis</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="anamnase-laporanAnesthesi-lengkap-durantee" name="anamnase2" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <h3><b>Vital Sign</b></h3>
+                                                        <hr>
+                                                        <label class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan
+                                                            Fisik</label>
+                                                        <div class="col-xs-6 col-sm-6 col-md-10">
+                                                            <div class="row mb-2">
+                                                                <!--==new -->
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Jenis EWS</label>
+                                                                        <select class="form-select" name="vs_status_id" id="vs_status_id-laporanAnesthesi-lengkap-durantee">
+                                                                            <option value="" selected>-- pilih --
+                                                                            </option>
+                                                                            <option value="1">Dewasa</option>
+                                                                            <option value="4">Anak</option>
+                                                                            <option value="5">Neonatus</option>
+                                                                            <option value="10">Obsetric</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <!--==endofnew -->
+                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>BB(Kg)</label>
+                                                                        <div class=" position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="weight-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-bb-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Tinggi(cm)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="height-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-height-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Suhu(°C)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="temperature-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-temperature-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                                    <div class="form-group">
+                                                                        <label>Nadi(/menit)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="nadi-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-nadi-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                            <div class="position-relative">
+                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="tension_upper-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                                <span class="h6" id="badge-tension_upper-laporanAnesthesi-lengkap-durantee"></span>
+                                                                            </div>
+                                                                            <h4 class="mx-2">/</h4>
+                                                                            <div class="position-relative">
+                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="tension_below-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                                <span class="h6" id="badge-tension_below-laporanAnesthesi-lengkap-durantee"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Saturasi(SpO2%)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="saturasi-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-saturasi-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Nafas/RR(/menit)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="nafas-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-nafas-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Diameter Lengan(cm)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arm_diameter-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-arm_diameter-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="oxygen_usage-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-oxygen_usage-laporanAnesthesi-lengkap-durantee"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Kesadaran</label>
+                                                                        <select class="form-select" name="awareness" id="awareness-laporanAnesthesi-lengkap-durantee" onchange="vitalsignInput(this)">
+                                                                            <option value="0">Sadar</option>
+                                                                            <option value="3">Nyeri</option>
+                                                                            <option value="10">Unrespon</option>
+                                                                        </select>
+                                                                        <span class="h6" id="badge-awareness-laporanAnesthesi-lengkap-durantee"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="container-vitalsign-laporanAnesthesi-lengkap-durantee">
 
-                                    <div class="col-sm-12 mt-2">
-                                        <div class="form-group">
-                                            <label>Pemeriksaan</label><textarea name="pemeriksaan" id="avtpemeriksaan-laporanAnesthesi-lengkap-durante" placeholder="" value="" class="form-control"></textarea>
+                                                                </div>
+                                                                <div class="col-sm-12 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Pemeriksaan</label><textarea name="pemeriksaan" id="pemeriksaan-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="description-laporanAnesthesi-lengkap-durantee" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A)
+                                                            Assesment</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="description-laporanAnesthesi-lengkap-durantee" name="description" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="instruction-laporanAnesthesi-lengkap-durantee" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P)
+                                                            Rencana Penatalaksanaan</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="instruction-laporanAnesthesi-lengkap-durantee" name="instruction" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4">
+                                                        <label for="examination_date-laporanAnesthesi-lengkap-durantee" class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal
+                                                            Periksa</label>
+                                                        <div class="col-sm-10">
+                                                            <div class="input-group" id="examinationdate--laporanAnesthesi-lengkap-durantee">
+                                                                <input id="flatexamination_date-laporanAnesthesi-lengkap-durantee" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                                                <input id="examination_date-laporanAnesthesi-lengkap-durantee" name="examination_date" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--./col-lg-7-->
+                                            </div>
+                                            <div class="col-sm-6" style="display: none;">
+                                                <div class="form-group"><label>Perawat</label><input type="text" name="petugas-laporanAnesthesi-lengkap-durantee" id="petugas-laporanAnesthesi-lengkap-durantee" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
+                                            </div>
                                         </div>
+                                        <span id="total_score-laporanAnesthesi-lengkap-durantee"></span>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
+                        <div class="box-tab-tools text-center mt-4">
+                            <a data-toggle="modal" onclick="setDataVitalSignLaporanAnesthesiLengkap('vitalSignLaporanAnesthesiLengkap2','formvitalsign-laporanAnesthesi-lengkap2')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                Vitalsign</a>
+                        </div>
+                        <h3>Histori Vital Sign</h3>
+                        <table class="table table-striped table-hover">
+                            <thead class=" table-primary" style="text-align: center;">
+                                <tr>
+                                    <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                                    <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                                    <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                    <th class="text-center" style="width: 5%;"></th class="text-center">
+                                    <th class="text-center" style="width: 5%;"></th class="text-center">
+                                </tr>
+                            </thead>
+                            <tbody id="vitalSignBodyLaporanAnesthesiLengkap2">
+                                <?php
+                                $total = 0;
+                                ?>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="accordion-body" id="informasiMedis-laporan-monitoring-durante-date">
                     </div>
@@ -451,122 +444,211 @@
                     </button>
                 </h2>
                 <div id="flush-collapseRecoveryRoomMonitoring" class="accordion-collapse collapse" aria-labelledby="flush-headingRecoveryRoomMonitoring" data-bs-parent="#accordionLengkap">
+                    <div class="accordion-body" id="body-recovery-room-oprs029-oprs033"></div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-room-monitoring"></div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-room-monitoringg">
-                        <div class="row mb-4">
-                            <hr>
-                            <h3><b>Vital Sign</b></h3>
-                            <div class="col-md-12">
-                                <div class="row mb-2">
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Jenis EWS</label>
-                                            <select class="form-select" name="vs_status_id2" id="avtvs_status_id-laporanAnesthesi-lengkap-monitoring">
-                                                <option selected>-- pilih --</option>
-                                                <option value="1">Dewasa</option>
-                                                <option value="4">Anak</option>
-                                                <option value="5">Neonatus</option>
-                                                <option value="10">Obstric</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>BB(Kg)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="weight2" id="avtweight-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-bb-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Tinggi(cm)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="height2" id="avtheight-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtheight-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Suhu(°C)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="temperature2" id="avttemperature-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avttemperature-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Nadi(/menit)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="nadi2" id="avtnadi-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtnadi-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>T.Darah(mmHg)</label>
-                                            <div class="d-flex align-items-center">
-                                                <div class="position-relative">
-                                                    <input type="text" name="tension_upper2" id="avttension_upper-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                    <span class="h6" id="badge-avttension_upper-laporanAnesthesi-lengkap-monitoring"></span>
+                        <div id="vitalSignLaporanAnesthesiLengkap3" class="card border-1 rounded-4 m-4 p-4" style="display: none;">
+                            <div class="card-body">
+                                <form id="formvitalsign-laporanAnesthesi-lengkap3" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                    <div class="modal-body pt0 pb0">
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="anamnase-laporanAnesthesi-lengkap" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(S)
+                                                            Anamnesis</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="anamnase-laporanAnesthesi-lengkap" name="anamnase" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-4">
+                                                        <h3><b>Vital Sign</b></h3>
+                                                        <hr>
+                                                        <label class="col-xs-6 col-sm-6 col-md-2 col-form-label">Pemeriksaan
+                                                            Fisik</label>
+                                                        <div class="col-xs-6 col-sm-6 col-md-10">
+                                                            <div class="row mb-2">
+                                                                <!--==new -->
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Jenis EWS</label>
+                                                                        <select class="form-select" name="vs_status_id2" id="vs_status_id-laporanAnesthesi-lengkap">
+                                                                            <option value="" selected>-- pilih --
+                                                                            </option>
+                                                                            <option value="1">Dewasa</option>
+                                                                            <option value="4">Anak</option>
+                                                                            <option value="5">Neonatus</option>
+                                                                            <option value="10">Obsetric</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <!--==endofnew -->
+                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>BB(Kg)</label>
+                                                                        <div class=" position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight2" id="weight-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-bb-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Tinggi(cm)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="height2" id="height-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-height-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Suhu(°C)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature2" id="temperature-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-temperature-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                                    <div class="form-group">
+                                                                        <label>Nadi(/menit)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi2" id="nadi-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-nadi-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                            <div class="position-relative">
+                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper2" id="tension_upper-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                                <span class="h6" id="badge-tension_upper-laporanAnesthesi-lengkap"></span>
+                                                                            </div>
+                                                                            <h4 class="mx-2">/</h4>
+                                                                            <div class="position-relative">
+                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below2" id="tension_below-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                                <span class="h6" id="badge-tension_below-laporanAnesthesi-lengkap"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Saturasi(SpO2%)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi2" id="saturasi-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-saturasi-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Nafas/RR(/menit)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas2" id="nafas-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-nafas-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Diameter Lengan(cm)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter2" id="arm_diameter-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-arm_diameter-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                        <div class="position-relative">
+                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage2" id="oxygen_usage-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                            <span class="h6" id="badge-oxygen_usage-laporanAnesthesi-lengkap"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Kesadaran</label>
+                                                                        <select class="form-select" name="awareness2" id="awareness-laporanAnesthesi-lengkap" onchange="vitalsignInput(this)">
+                                                                            <option value="0">Sadar</option>
+                                                                            <option value="3">Nyeri</option>
+                                                                            <option value="10">Unrespon</option>
+                                                                        </select>
+                                                                        <span class="h6" id="badge-awareness-laporanAnesthesi-lengkap"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="container-vitalsign-laporanAnesthesi-lengkap">
+
+                                                                </div>
+                                                                <div class="col-sm-12 mt-2">
+                                                                    <div class="form-group">
+                                                                        <label>Pemeriksaan</label><textarea name="pemeriksaan2" id="pemeriksaan-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="description-laporanAnesthesi-lengkap" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A)
+                                                            Assesment</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="description-laporanAnesthesi-lengkap" name="description2" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4" style="display: none">
+                                                        <label for="instruction-laporanAnesthesi-lengkap" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(P)
+                                                            Rencana Penatalaksanaan</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea type="text" class="form-control" id="instruction-laporanAnesthesi-lengkap" name="instruction2" placeholder=""></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 mb-4">
+                                                        <label for="examination_date-laporanAnesthesi-lengkap" class="col-xs-6 col-sm-6 col-md-3 col-form-label">Tanggal
+                                                            Periksa</label>
+                                                        <div class="col-sm-10">
+                                                            <div class="input-group" id="examinationdate--laporanAnesthesi-lengkap">
+                                                                <input id="flatexamination_date-laporanAnesthesi-lengkap" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                                                <input id="examination_date-laporanAnesthesi-lengkap" name="examination_date2" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <h4 class="mx-2">/</h4>
-                                                <div class="position-relative">
-                                                    <input type="text" name="tension_below2" id="avttension_below-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                    <span class="h6" id="badge-avttension_below-laporanAnesthesi-lengkap-monitoring"></span>
-                                                </div>
+                                                <!--./col-lg-7-->
+                                            </div>
+                                            <div class="col-sm-6" style="display: none;">
+                                                <div class="form-group"><label>Perawat</label><input type="text" name="petugas-laporanAnesthesi-lengkap" id="petugas-laporanAnesthesi-lengkap" placeholder="" value="<?= user_id(); ?>" class="form-control"></div>
                                             </div>
                                         </div>
+                                        <span id="total_score-laporanAnesthesi-lengkap"></span>
                                     </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Saturasi(SpO2%)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="saturasi2" id="avtsaturasi-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtsaturasi-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Nafas/RR(/menit)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="nafas2" id="avtnafas-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtnafas-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Diameter Lengan(cm)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="arm_diameter2" id="avtarm_diameter-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtarm_diameter-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3 mt-2">
-                                        <div class="form-group">
-                                            <label>Penggunaan Oksigen (L/mnt)</label>
-                                            <div class="position-relative">
-                                                <input type="text" name="oxygen_usage2" id="avtoxygen_usage-laporanAnesthesi-lengkap-monitoring" placeholder="" value="" class="form-control vitalsignclass-laporanAnesthesi-lengkap-monitoring">
-                                                <span class="h6" id="badge-avtoxygen_usage-laporanAnesthesi-lengkap-monitoring"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 mt-2">
-                                        <div class="form-group">
-                                            <label>Pemeriksaan</label>
-                                            <textarea name="pemeriksaan2" id="avtpemeriksaan-laporanAnesthesi-lengkap-monitoring" placeholder="" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
+                        <div class="box-tab-tools text-center mt-4">
+                            <a data-toggle="modal" onclick="setDataVitalSignLaporanAnesthesiLengkap2('vitalSignLaporanAnesthesiLengkap3','formvitalsign-laporanAnesthesi-lengkap3')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah
+                                Vitalsign</a>
+                        </div>
+                        <h3>Histori Vital Sign</h3>
+                        <table class="table table-striped table-hover">
+                            <thead class=" table-primary" style="text-align: center;">
+                                <tr>
+                                    <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                                    <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                                    <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                                    <th class="text-center" style="width: 5%;"></th class="text-center">
+                                    <th class="text-center" style="width: 5%;"></th class="text-center">
+                                </tr>
+                            </thead>
+                            <tbody id="vitalSignBodyLaporanAnesthesiLengkap3">
+                                <?php
+                                $total = 0;
+                                ?>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-medication"></div>
                     <div class="accordion-body" id="informasiMedis-laporan-recovery-room-monitoring-score">
@@ -578,16 +660,13 @@
 
         </div>
         <div class="col-12 my-3 d-flex justify-content-end gap-2">
-            <!-- <button type="button" id="btn-print-checklist-anestesi" class="btn btn-success">
+            <button type="button" id="btn-print-anestesi-lengkap" class="btn btn-success">
                 <i class="fas fa-print"></i> Cetak
-            </button> -->
+            </button>
             <button type="button" id="btn-save-laporan-anesthesiLengkap" class="btn btn-primary btn-save-operasi"><i class="fas fa-save"></i> Simpan</button>
         </div>
     </form>
 </div>
-
-<script src="<?= base_url('assets/js/default.js') ?>"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script type='text/javascript'>
     var mrJson;
@@ -617,11 +696,12 @@
         bodyIdLengkap = date.toISOString().substring(0, 23);
         bodyIdLengkap = bodyIdLengkap.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T",
             "");
-        $("#avtbody_id-laporanAnesthesi-lengkap").val(bodyIdLengkap)
+        $("#body_id-laporanAnesthesi-lengkap").val(bodyIdLengkap)
+
     })
 
 
-    $("#avtvs_status_id-laporanAnesthesi-lengkap").on("change", function() {
+    $("#vs_status_id-laporanAnesthesi-lengkap").on("change", function() {
         var optionSelected = $("option:selected", this);
         $('.vitalsignclass-laporanAnesthesi-lengkap').each((index, each) => {
             $(each).change(element => {
@@ -640,4 +720,475 @@
             })
         });
     })
+
+    function setDataVitalSignLaporanAnesthesiLengkap(container_id, body) {
+        $("#" + body).find("input, textarea").val(null)
+        $("#" + body).find("#total_score-laporanAnesthesi-lengkap").html("")
+        $("#" + body).find("span.h6").html("")
+        var bodyId = ''
+
+        const date = new Date();
+        bodyId = date.toISOString().substring(0, 23);
+        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        $("#body_id-laporanAnesthesi-lengkap-durantee").val(bodyId)
+        $("#clinic_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['clinic_id']; ?>')
+        $("#trans_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['trans_id']; ?>')
+        $("#class_room_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['class_room_id']; ?>')
+        $("#bed_id-laporanAnesthesi-lengkap-durantee").val()
+        $("#keluar_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['keluar_id']; ?>')
+        $("#employee_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['employee_id']; ?>')
+        $("#no_registration-laporanAnesthesi-lengkap-durantee").val('<?= $visit['no_registration']; ?>')
+        $("#visit_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['visit_id']; ?>')
+        $("#org_unit_code-laporanAnesthesi-lengkap-durantee").val('<?= $visit['org_unit_code']; ?>')
+        $("#doctor-laporanAnesthesi-lengkap-durantee").val('<?= $visit['fullname']; ?>')
+        $("#kal_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['kal_id']; ?>')
+        $("#theid-laporanAnesthesi-lengkap-durantee").val('<?= $visit['pasien_id']; ?>')
+        $("#thename-laporanAnesthesi-lengkap-durantee").val('<?= $visit['diantar_oleh']; ?>')
+        $("#theaddress-laporanAnesthesi-lengkap-durantee").val('<?= $visit['visitor_address']; ?>')
+        $("#status_pasien_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['status_pasien_id']; ?>')
+        $("#isrj-laporanAnesthesi-lengkap-durantee").val('<?= $visit['isrj']; ?>')
+        $("#gender-laporanAnesthesi-lengkap-durantee").val('<?= $visit['gender']; ?>')
+        $("#ageyear-laporanAnesthesi-lengkap-durantee").val('<?= $visit['ageyear']; ?>')
+        $("#agemonth-laporanAnesthesi-lengkap-durantee").val('<?= $visit['agemonth']; ?>')
+        $("#ageday-laporanAnesthesi-lengkap-durantee").val('<?= $visit['ageday']; ?>')
+        $("#examination_date-laporanAnesthesi-lengkap-durantee").val(get_date())
+
+
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 1);
+        } else {
+            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 2);
+        }
+
+        $("#" + container_id).slideDown()
+    }
+    const addRowVitalSigncatatanLaporanAnesthesiLengkap = (examselect, key, container_id, account_id = null) => {
+        let examinationDate = examselect.examination_date ? examselect.examination_date.substring(0, 16) : 'N/A';
+        $('#' + container_id).append($("<tr>")
+                .append($("<td rowspan='7'>").append(examinationDate))
+                .append($("<td rowspan='7'>").html(examselect.petugas))
+                .append($("<td>").html(''))
+                .append($("<td>").html('<b>Tekanan Darah</b>'))
+                .append($("<td>").html('<b>Nadi</b>'))
+                .append($("<td>").html('<b>Nafas/RR</b>'))
+                .append($("<td>").html('<b>Temp</b>'))
+                .append($("<td>").html('<b>SpO2</b>'))
+                .append($("<td rowspan='7'>").html(
+                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap(' + key +
+                    ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
+                    (account_id == '11' ? 'style="display:none;"' : 'style="display:block;"') +
+                    '><i class="fa fa-copy"></i> Copy</button>'
+                ))
+
+                .append($("<td rowspan='7'>").html(
+                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
+                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    (account_id == '11' ? 'style="display:none;"' : '') +
+                    '><i class="fa fa-trash"></i></button>'
+                ))
+
+            )
+            .append($("<tr>")
+                .append($("<td>").html(''))
+                .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+                .append($("<td>").html(examselect.nadi + '/menit'))
+                .append($("<td>").html(examselect.nafas + '/menit'))
+                .append($("<td>").html(examselect.temperature + '/°C'))
+                .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>S</b>"))
+                .append($("<td colspan='5'>").html(examselect.anamnase))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>O</b>"))
+                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>A</b>"))
+                .append($("<td colspan='5'>").html(examselect.description))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>P</b>"))
+                .append($("<td colspan='5'>").html(examselect.instruction))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("Instruksi"))
+                .append($("<td colspan='5'>").html(examselect.instruction))
+            )
+    }
+
+    function copyvitalSignLaporanAnesthesiLengkap(key) {
+        var examselect = vitalsign[key];
+
+        var bodyId = ''
+
+        const date = new Date();
+        bodyId = date.toISOString().substring(0, 23);
+        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+
+        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
+        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
+        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
+        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
+        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter)
+        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
+        $("#body_id-laporanAnesthesi-lengkap").val(examselect.body_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
+        $("#clinic_id-laporanAnesthesi-lengkap").val(examselect.clinic_id)
+        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
+        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
+        $("#employee_id-laporanAnesthesi-lengkap").val(examselect.employee_id)
+        $("flatexamination_date-laporanAnesthesi-lengkap").val(nowtime).trigger("change")
+        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
+        $("#height-laporanAnesthesi-lengkap").val(examselect.height)
+        $("#instruction-laporanAnesthesi-lengkap").val(examselect.instruction)
+        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
+        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
+        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi)
+        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas)
+        $("#no_registraiton-laporanAnesthesi-lengkap").val(examselect.no_registraiton)
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
+        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
+        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
+        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
+        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
+        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature)
+        $("#tension_below-laporanAnesthesi-lengkap").val(examselect.tension_below)
+        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper)
+        $("#teraphy_desc-laporanAnesthesi-lengkap").val(examselect.teraphy_desc)
+        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(examselect.pasien_id)
+        $("#thename-laporanAnesthesi-lengkap").val(examselect.diantar_oleh)
+        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
+        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight)
+
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
+        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(examselect.pasien_diagnosa_id)
+        $("#no_registration-laporanAnesthesi-lengkap").val(examselect.no_registration)
+        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
+        $("#trans_id-laporanAnesthesi-lengkap").val(examselect.trans_id) //==new
+        $("#bill_id-laporanAnesthesi-lengkap").val(examselect.bill_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
+        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
+        $("#in_date-laporanAnesthesi-lengkap").val(examselect.in_date)
+        $("#exit_date-laporanAnesthesi-lengkap").val(examselect.exit_date)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
+        $("#imt_score-laporanAnesthesi-lengkap").val(examselect.imt_score)
+        $("#imt_desc-laporanAnesthesi-lengkap").val(examselect.imt_desc)
+        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
+        $("#medical_treatment-laporanAnesthesi-lengkap").val(examselect.medical_treatment)
+        $("#modified_date-laporanAnesthesi-lengkap").val(examselect.modified_date)
+        $("#modified_by-laporanAnesthesi-lengkap").val(examselect.modified_by)
+        $("#modified_from-laporanAnesthesi-lengkap").val(examselect.modified_from)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
+        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
+        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
+        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
+        $("#thename-laporanAnesthesi-lengkap").val(examselect.thename)
+        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(examselect.theid)
+        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
+        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
+        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
+        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
+        $("#petugas_id-laporanAnesthesi-lengkap").val(examselect.petugas_id)
+        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
+        $("#account_id-laporanAnesthesi-lengkap").val(examselect.account_id)
+        $("#kesadaran-laporanAnesthesi-lengkap").val(examselect.kesadaran)
+        $("#isvalid-laporanAnesthesi-lengkap").val(examselect.isvalid)
+
+        $("#anamnase-laporanAnesthesi-lengkap-durantee").val(examselect.anamnase)
+        $("#description-laporanAnesthesi-lengkap-durantee").val(examselect.description)
+        $("#weight-laporanAnesthesi-lengkap-durantee").val(examselect.weight).trigger("change")
+        $("#height-laporanAnesthesi-lengkap-durantee").val(examselect.height).trigger("change")
+        $("#temperature-laporanAnesthesi-lengkap-durantee").val(examselect.temperature).trigger("change")
+        $("#nadi-laporanAnesthesi-lengkap-durantee").val(examselect.nadi).trigger("change")
+        $("#tension_upper-laporanAnesthesi-lengkap-durantee").val(examselect.tension_upper).trigger("change")
+        $("#tension_lower-laporanAnesthesi-lengkap-durantee").val(examselect.tension_lower).trigger("change")
+        $("#saturasi-laporanAnesthesi-lengkap-durantee").val(examselect.saturasi).trigger("change")
+        $("#nafas-laporanAnesthesi-lengkap-durantee").val(examselect.nafas).trigger("change")
+        $("#arm_diameter-laporanAnesthesi-lengkap-durantee").val(examselect.arm_diameter).trigger("change")
+        $("#oxygen_usage-laporanAnesthesi-lengkap-durantee").val(examselect.oxygen_usage).trigger("change")
+        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").val(examselect.vs_status_id).trigger("change")
+        $("#pemeriksaan-laporanAnesthesi-lengkap-durantee").val(examselect.pemeriksaan).trigger("change")
+
+        $("#vitalSignLaporanAnesthesi-lengkap").slideDown()
+
+
+    }
+
+    function getVitalSignLaporanAnesthesiLengkap(container_id, account_id) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/PatientOperationRequest/getExaminfo',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'account_id': account_id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                vitalsign = data.examInfo
+                $("#" + container_id).html("")
+                vitalsign.forEach((element, key) => {
+                    examselect = vitalsign[key];
+                    addRowVitalSigncatatanLaporanAnesthesiLengkap(examselect, key, container_id,
+                        account_id)
+                });
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+
+    function setDataVitalSignLaporanAnesthesiLengkap2(container_id, body) {
+        $("#" + body).find("input, textarea").val(null)
+        $("#" + body).find("#total_score-laporanAnesthesi-lengkap").html("")
+        $("#" + body).find("span.h6").html("")
+        var bodyId = ''
+
+        const date = new Date();
+        bodyId = date.toISOString().substring(0, 23);
+        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        $("#body_id-laporanAnesthesi-lengkap").val(bodyId)
+        $("#clinic_id-laporanAnesthesi-lengkap").val('<?= $visit['clinic_id']; ?>')
+        $("#trans_id-laporanAnesthesi-lengkap").val('<?= $visit['trans_id']; ?>')
+        $("#class_room_id-laporanAnesthesi-lengkap").val('<?= $visit['class_room_id']; ?>')
+        $("#bed_id-laporanAnesthesi-lengkap").val()
+        $("#keluar_id-laporanAnesthesi-lengkap").val('<?= $visit['keluar_id']; ?>')
+        $("#employee_id-laporanAnesthesi-lengkap").val('<?= $visit['employee_id']; ?>')
+        $("#no_registration-laporanAnesthesi-lengkap").val('<?= $visit['no_registration']; ?>')
+        $("#visit_id-laporanAnesthesi-lengkap").val('<?= $visit['visit_id']; ?>')
+        $("#org_unit_code-laporanAnesthesi-lengkap").val('<?= $visit['org_unit_code']; ?>')
+        $("#doctor-laporanAnesthesi-lengkap").val('<?= $visit['fullname']; ?>')
+        $("#kal_id-laporanAnesthesi-lengkap").val('<?= $visit['kal_id']; ?>')
+        $("#theid-laporanAnesthesi-lengkap").val('<?= $visit['pasien_id']; ?>')
+        $("#thename-laporanAnesthesi-lengkap").val('<?= $visit['diantar_oleh']; ?>')
+        $("#theaddress-laporanAnesthesi-lengkap").val('<?= $visit['visitor_address']; ?>')
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val('<?= $visit['status_pasien_id']; ?>')
+        $("#isrj-laporanAnesthesi-lengkap").val('<?= $visit['isrj']; ?>')
+        $("#gender-laporanAnesthesi-lengkap").val('<?= $visit['gender']; ?>')
+        $("#ageyear-laporanAnesthesi-lengkap").val('<?= $visit['ageyear']; ?>')
+        $("#agemonth-laporanAnesthesi-lengkap").val('<?= $visit['agemonth']; ?>')
+        $("#ageday-laporanAnesthesi-lengkap").val('<?= $visit['ageday']; ?>')
+        $("#examination_date-laporanAnesthesi-lengkap").val(get_date())
+
+
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 1);
+        } else {
+            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 2);
+        }
+
+        $("#" + container_id).slideDown()
+    }
+    const addRowVitalSigncatatanLaporanAnesthesiLengkap2 = (examselect, key, container_id, account_id = null) => {
+        let examinationDate = examselect.examination_date ? examselect.examination_date.substring(0, 16) : 'N/A';
+        $('#' + container_id).append($("<tr>")
+                .append($("<td rowspan='7'>").append(examinationDate))
+                .append($("<td rowspan='7'>").html(examselect.petugas))
+                .append($("<td>").html(''))
+                .append($("<td>").html('<b>Tekanan Darah</b>'))
+                .append($("<td>").html('<b>Nadi</b>'))
+                .append($("<td>").html('<b>Nafas/RR</b>'))
+                .append($("<td>").html('<b>Temp</b>'))
+                .append($("<td>").html('<b>SpO2</b>'))
+                .append($("<td rowspan='7'>").html(
+                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap(' + key +
+                    ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
+                    (account_id == '11' ? 'style="display:none;"' : 'style="display:block;"') +
+                    '><i class="fa fa-copy"></i> Copy</button>'
+                ))
+
+                .append($("<td rowspan='7'>").html(
+                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
+                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    (account_id == '11' ? 'style="display:none;"' : '') +
+                    '><i class="fa fa-trash"></i></button>'
+                ))
+
+            )
+            .append($("<tr>")
+                .append($("<td>").html(''))
+                .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+                .append($("<td>").html(examselect.nadi + '/menit'))
+                .append($("<td>").html(examselect.nafas + '/menit'))
+                .append($("<td>").html(examselect.temperature + '/°C'))
+                .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>S</b>"))
+                .append($("<td colspan='5'>").html(examselect.anamnase))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>O</b>"))
+                .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>A</b>"))
+                .append($("<td colspan='5'>").html(examselect.description))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("<b>P</b>"))
+                .append($("<td colspan='5'>").html(examselect.instruction))
+            )
+            .append($("<tr>")
+                .append($("<td>").html("Instruksi"))
+                .append($("<td colspan='5'>").html(examselect.instruction))
+            )
+    }
+
+    function copyvitalSignLaporanAnesthesiLengkap2(key) {
+        var examselect = vitalsign[key];
+
+        var bodyId = ''
+
+        const date = new Date();
+        bodyId = date.toISOString().substring(0, 23);
+        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+
+        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
+        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
+        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
+        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
+        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter)
+        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
+        $("#body_id-laporanAnesthesi-lengkap").val(examselect.body_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
+        $("#clinic_id-laporanAnesthesi-lengkap").val(examselect.clinic_id)
+        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
+        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
+        $("#employee_id-laporanAnesthesi-lengkap").val(examselect.employee_id)
+        $("flatexamination_date-laporanAnesthesi-lengkap").val(nowtime).trigger("change")
+        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
+        $("#height-laporanAnesthesi-lengkap").val(examselect.height)
+        $("#instruction-laporanAnesthesi-lengkap").val(examselect.instruction)
+        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
+        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
+        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi)
+        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas)
+        $("#no_registraiton-laporanAnesthesi-lengkap").val(examselect.no_registraiton)
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
+        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
+        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
+        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
+        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
+        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature)
+        $("#tension_below-laporanAnesthesi-lengkap").val(examselect.tension_below)
+        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper)
+        $("#teraphy_desc-laporanAnesthesi-lengkap").val(examselect.teraphy_desc)
+        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(examselect.pasien_id)
+        $("#thename-laporanAnesthesi-lengkap").val(examselect.diantar_oleh)
+        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
+        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight)
+
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
+        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(examselect.pasien_diagnosa_id)
+        $("#no_registration-laporanAnesthesi-lengkap").val(examselect.no_registration)
+        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
+        $("#trans_id-laporanAnesthesi-lengkap").val(examselect.trans_id) //==new
+        $("#bill_id-laporanAnesthesi-lengkap").val(examselect.bill_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
+        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
+        $("#in_date-laporanAnesthesi-lengkap").val(examselect.in_date)
+        $("#exit_date-laporanAnesthesi-lengkap").val(examselect.exit_date)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
+        $("#imt_score-laporanAnesthesi-lengkap").val(examselect.imt_score)
+        $("#imt_desc-laporanAnesthesi-lengkap").val(examselect.imt_desc)
+        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
+        $("#medical_treatment-laporanAnesthesi-lengkap").val(examselect.medical_treatment)
+        $("#modified_date-laporanAnesthesi-lengkap").val(examselect.modified_date)
+        $("#modified_by-laporanAnesthesi-lengkap").val(examselect.modified_by)
+        $("#modified_from-laporanAnesthesi-lengkap").val(examselect.modified_from)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
+        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
+        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
+        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
+        $("#thename-laporanAnesthesi-lengkap").val(examselect.thename)
+        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(examselect.theid)
+        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
+        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
+        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
+        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
+        $("#petugas_id-laporanAnesthesi-lengkap").val(examselect.petugas_id)
+        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
+        $("#account_id-laporanAnesthesi-lengkap").val(examselect.account_id)
+        $("#kesadaran-laporanAnesthesi-lengkap").val(examselect.kesadaran)
+        $("#isvalid-laporanAnesthesi-lengkap").val(examselect.isvalid)
+
+        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
+        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
+        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight).trigger("change")
+        $("#height-laporanAnesthesi-lengkap").val(examselect.height).trigger("change")
+        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature).trigger("change")
+        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi).trigger("change")
+        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper).trigger("change")
+        $("#tension_lower-laporanAnesthesi-lengkap").val(examselect.tension_lower).trigger("change")
+        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi).trigger("change")
+        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas).trigger("change")
+        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter).trigger("change")
+        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage).trigger("change")
+        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id).trigger("change")
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan).trigger("change")
+
+        $("#vitalSignLaporanAnesthesi-lengkap").slideDown()
+
+
+    }
+
+    function getVitalSignLaporanAnesthesiLengkap2(container_id, account_id) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/PatientOperationRequest/getExaminfo',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'account_id': account_id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                vitalsign = data.examInfo
+                $("#" + container_id).html("")
+                vitalsign.forEach((element, key) => {
+                    examselect = vitalsign[key];
+                    addRowVitalSigncatatanLaporanAnesthesiLengkap2(examselect, key, container_id,
+                        account_id)
+                });
+            },
+            error: function() {
+
+            }
+        });
+    }
 </script>

@@ -1,4 +1,5 @@
 <?php
+// dd($dokter);
 $this->extend('layout/basiclayout', [
     'title' => $title
 ]) ?>
@@ -53,11 +54,19 @@ $currency_symbol = 'Rp. ';
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs" role="tablist">
                                 <?php if ($giTipe == 0 || $giTipe == '5') { ?>
+                                    <?php if (!user()->checkRoles(['dokter'])) {
+                                    ?>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#biodata" type="button" role="tab" aria-controls="biodata" aria-selected="true"><i class="fa fa-th text-primary"></i> Biodata Pasien</button>
+                                        </li>
+                                    <?php
+                                    } ?>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#biodata" type="button" role="tab" aria-controls="biodata" aria-selected="true"><i class="fa fa-th text-primary"></i> Biodata Pasien</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope text-primary"></i> Rawat Jalan</button>
+                                        <button class="nav-link <?php if (user()->checkRoles(['dokter'])) {
+                                                                ?>
+                                                                active
+                                    <?php
+                                                                } ?>" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_jalan" type="button" role="tab" aria-controls="rawat_jalan" aria-selected="true"><i class="fa fa-stethoscope text-primary"></i> Rawat Jalan</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#rawat_inap" type="button" role="tab" aria-controls="rawat_inap" aria-selected="true"><i class="fa fa-procedures text-primary"></i> Rawat Inap</button>
@@ -444,7 +453,7 @@ if (in_array($giTipe, $ranapTipe)) {
     <?php
     foreach ($clinic as $key => $value) {
     ?>
-        klinikBpjs.push(['<?= $value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>', '<?= $value['sslocation_id']; ?>']);
+        klinikBpjs.push(['<?= @$value['kdpoli']; ?>', '<?= $value['clinic_id']; ?>', '<?= $value['name_of_clinic']; ?>', '<?= @$value['sslocation_id']; ?>']);
     <?php
     }
     ?>

@@ -32,7 +32,6 @@
 
 
         e.preventDefault();
-        tinymce.triggerSave();
 
         let formElement = $('#form-informasi-post-operasi')[0];
         let dataSend = new FormData(formElement);
@@ -68,7 +67,6 @@
                     successSwal('Data berhasil disimpan.');
                     $('#form-informasi-post-operasi')[0].reset();
                     let visit_id = '<?php echo $visit['visit_id']; ?>';
-                    tinymce.remove();
                 } else {
                     console.error('Error saving data:', res);
                 }

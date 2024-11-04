@@ -865,9 +865,9 @@
     //                     $.each(data.error, function(index, value) {
     //                         message += value;
     //                     });
-    //                     errorMsg(message);
+    //                     errorSwal(message);
     //                 } else {
-    //                     successMsg(data.message);
+    //                     successSwal(data.message);
     //                     window.location.reload(true);
     //                 }
     //                 $("#formeditpabtn").button('reset');
@@ -889,7 +889,7 @@
                 },
                 dataType: 'json',
                 success: function(data) {
-                    successMsg(<?php echo "'" . lang('Word.delete_message') . "'"; ?>);
+                    successSwal(<?php echo "'" . lang('Word.delete_message') . "'"; ?>);
                     $("#rincianPasienModel").modal("hide");
                     table.ajax.reload();
                 }
@@ -997,9 +997,9 @@
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(data.message);
+                        successSwal(data.message);
                         $(':input', '#formaddpa')
                             .not(':button, :submit, :reset, :hidden')
                             .prop('disabled', true)

@@ -16,29 +16,9 @@
 
 </head>
 
-<body class="vertical-collpsed">
+<body class="">
     <style>
-        /* Ensure the input background is white */
-        .dateflatpickr {
-            background-color: white;
-            /* Set background color to white */
-        }
 
-        /* If needed, override additional Flatpickr styles */
-        .flatpickr-calendar {
-            background-color: white;
-            /* Set the calendar background color if needed */
-        }
-
-        .flatpickr-day {
-            color: black;
-            /* Ensure text is readable on a white background */
-        }
-
-        .flatpickr-time {
-            background-color: white;
-            /* Set the time picker background color */
-        }
     </style>
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -78,6 +58,7 @@
     <script src="<?php echo base_url(); ?>assets/libs/parsleyjs/parsley.min.js"></script>
 
     <script src="<?php echo base_url(); ?>assets/js/pages/form-validation.init.js"></script>
+    <script src="<?php echo base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
 
     <!-- App js -->
     <script src="<?php echo base_url(); ?>assets/js/app.js"></script>
@@ -90,36 +71,65 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
     <script>
         // Initialize Flatpickr
-        flatpickr(".dateflatpickr", {
-            enableTime: false,
-            dateFormat: "d/m/Y"
-        });
+
+
+
+        $(".dateflatpickr").each(function() {
+            const flatid = $(this).attr("id");
+            const initial = moment().format("DD/MM/YYYY");
+            flatpickrInstances[flatid] = flatpickr("#" + flatid, {
+                enableTime: false,
+                dateFormat: "d/m/Y", // Display format
+            });
+        })
+        // flatpickr(".dateflatpickr", {
+        //     enableTime: true,
+        //     dateFormat: "d/m/Y H:i", // Display format
+        //     defaultDate: nowtime,
+        //     time_24hr: true, // 24-hour time format
+        //     minuteIncrement: 1
+        // });
+        $(".dateflatpickr").prop("readonly", false)
         $(".dateflatpickr").on("change", function() {
             console.log($(this).attr("id"))
             let theid = $(this).attr("id")
+            theid = theid.replace("flat", "")
             let thevalue = $(this).val()
             let formattedDate = moment(thevalue, 'DD/MM/YYYY').format('YYYY-MM-DD');
-            $("input[name='" + theid + "']").val(formattedDate)
+            $("#" + theid).val(formattedDate)
         })
-        $(".dateflatpickr").prop("readonly", false)
-        const now = moment().format('DD/MM/YYYY')
-        $(".dateflatpickr").val(now).trigger("change")
+        $(".dateflatpickr").val(nowdate).trigger("change")
 
 
 
-        flatpickr(".datetimeflatpickr", {
-            enableTime: true,
-            dateFormat: "d/m/Y H:i", // Display format
-            time_24hr: true, // 24-hour time format
-        });
+
+        $(".datetimeflatpickr").each(function() {
+            const flatid = $(this).attr("id");
+            const initial = moment().format("DD/MM/YYYY HH:mm");
+            flatpickrInstances[flatid] = flatpickr("#" + flatid, {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i", // Display format
+                defaultDate: nowtime,
+                time_24hr: true, // 24-hour time format
+                minuteIncrement: 1
+            });
+        })
+        // flatpickr(".datetimeflatpickr", {
+        //     enableTime: true,
+        //     dateFormat: "d/m/Y H:i", // Display format
+        //     defaultDate: nowtime,
+        //     time_24hr: true, // 24-hour time format
+        //     minuteIncrement: 1
+        // });
+        $(".datetimeflatpickr").prop("readonly", false)
         $(".datetimeflatpickr").on("change", function() {
             console.log($(this).attr("id"))
             let theid = $(this).attr("id")
+            theid = theid.replace("flat", "")
             let thevalue = $(this).val()
             let formattedDate = moment(thevalue, 'DD/MM/YYYY HH:mm').format('YYYY-MM-DD HH:mm');
-            $("input[name='" + theid + "']").val(formattedDate)
+            $("#" + theid).val(formattedDate)
         })
-        $(".datetimeflatpickr").val(now)
     </script>
     <?php $this->renderSection('jsContent'); ?>
 </body>

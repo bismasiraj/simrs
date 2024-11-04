@@ -81,7 +81,7 @@
 
     function addRowVitalSign(examselect, key) {
         $("#vitalSignBody").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
+                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
                 .append($("<td rowspan='7'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
@@ -325,9 +325,9 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(data.message);
+                    successSwal(data.message);
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
                     $("#formvitalsignedit").toggle()

@@ -107,6 +107,21 @@ class GroupModel extends Model
         return $found;
     }
 
+    public function getOneGroupForUser(int $userId)
+    {
+        if (null === $found = cache("{$userId}_groups")) {
+            $found = $this->builder()
+                ->select('auth_groups_users.*, auth_groups.name, auth_groups.description')
+                ->join('auth_groups_users', 'auth_groups_users.group_id = auth_groups.id', 'left')
+                ->where('user_id', $userId)
+                ->get()->getResultArray();
+
+            // cache()->save("{$userId}_groups", $found, 300);
+        }
+
+        return @$found[0];
+    }
+
     /**
      * Returns an array of all users that are members of a group.
      *

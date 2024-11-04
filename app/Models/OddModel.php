@@ -52,6 +52,7 @@ class OddModel extends Model
         'valid_user',
         'valid_user_2',
         'received_date',
+        'status_obat'
     ];
 
     // Dates

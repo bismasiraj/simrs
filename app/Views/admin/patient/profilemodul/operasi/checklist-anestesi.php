@@ -30,7 +30,6 @@
 <script>
     $('#btn-save-checklist-anestesi').on('click', function(e) {
         e.preventDefault();
-        tinymce.triggerSave();
 
         let formElement = $('#form-checklist-anestesi')[0];
         let dataSend = new FormData(formElement);
@@ -67,7 +66,6 @@
                     successSwal('Data berhasil disimpan.');
                     $('#form-checklist-anestesi')[0].reset();
                     let visit_id = '<?php echo $visit['visit_id']; ?>';
-                    tinymce.remove();
                 } else {
                     console.error('Error saving data:', res);
                 }
@@ -81,7 +79,6 @@
 
 
     //     e.preventDefault();
-    //     tinymce.triggerSave();
 
     //     let formElement = $('#form-checklist-anestesi')[0];
     //     let dataSend = new FormData(formElement);
@@ -115,8 +112,6 @@
     //             successSwal('Data berhasil disimpan.');
     //             $('#form-checklist-anestesi')[0].reset();
     //             let visit_id = '<?php echo $visit['visit_id']; ?>';
-    //             tinymce.remove();
-
     //         }
     //     });
     // });

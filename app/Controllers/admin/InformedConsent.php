@@ -15,6 +15,37 @@ class InformedConsent extends \App\Controllers\BaseController
         $this->model = new InformedConsentModel();
     }
 
+    // public function getData()
+    // {
+    //     $request = service('request');
+    //     $formData = $request->getJSON(true);
+
+    //     $model = new InformedConsentModel();
+    //     // $data = $this->lowerKey($model->where('visit_id', $formData['visit_id'])->findAll());
+    //     $data = $this->lowerKey($model->query(
+    //         "
+    //         SELECT DISTINCT PARAMETER_ID, BODY_ID, VISIT_ID
+    //         FROM ASSESSMENT_INFORMED_CONCENT WHERE VISIT_ID = '" . $formData['visit_id'] . "'
+    //         "
+    //     )->getResultArray());
+
+    //     return $this->response->setJSON($data);
+    // }
+
+    public function getDataAssesment()
+    {
+        $db = db_connect();
+        $aParam = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER where P_type = 'GEN0017'")->getResultArray());
+        $aValue = $this->lowerKey($db->query("SELECT * from ASSESSMENT_PARAMETER_VALUE where P_type = 'GEN0017'")->getResultArray());
+
+        $data = [
+            'aPram' => $aParam,
+            'aValue' => $aValue,
+        ];
+
+        return $this->response->setJSON($data);
+    }
+
     public function getData()
     {
         $request = service('request');
@@ -22,9 +53,10 @@ class InformedConsent extends \App\Controllers\BaseController
 
         $model = new InformedConsentModel();
 
-        $data = $model->select('visit_id, parameter_id, body_id, MIN(modified_date) as modified_date')
+        $data = $model->select('visit_id, parameter_id, body_id, MIN(modified_date) as modified_date, VALID_USER')
             ->where('visit_id', $formData['visit_id'])
-            ->groupBy(['visit_id', 'parameter_id', 'body_id'])
+            ->where('p_type', 'GEN0017')
+            ->groupBy(['visit_id', 'parameter_id', 'body_id', 'VALID_USER'])
             ->orderBy('modified_date', 'ASC')
             ->findAll();
 
@@ -32,7 +64,6 @@ class InformedConsent extends \App\Controllers\BaseController
 
         return $this->response->setJSON($data);
     }
-
 
     public function getDetail()
     {
@@ -66,7 +97,9 @@ class InformedConsent extends \App\Controllers\BaseController
         $insertData = [];
 
         foreach ($query as $key) {
+
             $valueId = $key['value_id'];
+
             $data = [
                 'org_unit_code' => $formData['org_unit_code'],
                 'visit_id' => $formData['visit_id'],
@@ -78,10 +111,11 @@ class InformedConsent extends \App\Controllers\BaseController
                 'modified_by' => user()->username,
             ];
             $valueScoreKey = 'value_score-' . $valueId;
+
             if (isset($formData[$valueScoreKey])) {
                 $data['value_score'] = $formData[$valueScoreKey];
             } else {
-                $data['value_score'] = 1;
+                $data['value_score'] = '';
             }
 
             $valueDescKey = 'value_desc-' . $valueId;
@@ -154,7 +188,7 @@ class InformedConsent extends \App\Controllers\BaseController
             if (isset($formData[$valueScoreKey])) {
                 $data['value_score'] = $formData[$valueScoreKey];
             } else {
-                $data['value_score'] = 1;
+                $data['value_score'] = 0;
             }
 
             $valueDescKey = 'value_desc-' . $valueId;
@@ -182,8 +216,6 @@ class InformedConsent extends \App\Controllers\BaseController
 
         return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true]);
     }
-
-
 
     public function deleteData()
     {
@@ -229,8 +261,6 @@ class InformedConsent extends \App\Controllers\BaseController
         }
     }
 
-
-
     public function kopprint()
     {
         $db = db_connect();
@@ -240,7 +270,6 @@ class InformedConsent extends \App\Controllers\BaseController
         return $orgUnits;
     }
 
-
     public function getType()
     {
         $db = db_connect();
@@ -249,7 +278,6 @@ class InformedConsent extends \App\Controllers\BaseController
 
         return $this->response->setJSON($data);
     }
-
 
     public function getTablesAll()
     {
@@ -298,6 +326,14 @@ class InformedConsent extends \App\Controllers\BaseController
                 $idColumn = 'class_id';
                 $valColumn = 'name_of_class';
                 break;
+            case 'job_category':
+                $idColumn = 'job_id';
+                $valColumn = 'name_of_job';
+                break;
+            case 'marital_status':
+                $idColumn = 'maritalstatusid';
+                $valColumn = 'name_of_maritalstatus';
+                break;
             case 'none':
                 $idColumn = 'class_id';
                 $valColumn = 'name_of_class';
@@ -314,6 +350,74 @@ class InformedConsent extends \App\Controllers\BaseController
                 'vId' => $vId
             ];
         }, $data);
+
+        return $this->response->setJSON($data);
+    }
+
+    public function getTableByID()
+    {
+        $tableNameRequest = service('request');
+        $nameJson = $tableNameRequest->getJSON(true);
+
+        if (!isset($nameJson['nameTables']) || !isset($nameJson['vId']) || !isset($nameJson['vInfo'])) {
+            return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid request data']);
+        }
+
+        $tableName = $nameJson['nameTables'];
+        $vId = $nameJson['vId'];
+        $vInfo = $nameJson['vInfo'];
+
+        $db = db_connect();
+        $query = $db->query("SELECT * FROM $tableName WHERE $vId = $vInfo ");
+        $data = $query->getResultArray();
+        $data = $this->lowerKey($data);
+
+        switch ($tableName) {
+            case 'sex':
+                $valColumn = 'name_of_gender';
+                break;
+            case 'family_status':
+                $valColumn = 'family_status';
+                break;
+            case 'agama':
+                $valColumn = 'nama_agama';
+                break;
+            case 'JOB_CATEGORY':
+                $valColumn = 'name_of_job';
+                break;
+            case 'class':
+                $valColumn = 'name_of_class';
+                break;
+            case 'class_room':
+                $valColumn = 'name_of_class';
+                break;
+            case 'status_pasien':
+                $valColumn = 'name_of_status_pasien';
+                break;
+            case 'family_type':
+                $valColumn = 'name_of_class';
+                break;
+            case 'job_category':
+                $valColumn = 'name_of_job';
+                break;
+            case 'marital_status':
+                $valColumn = 'name_of_maritalstatus';
+                break;
+            case 'pasien':
+                $valColumn = 'kk_no';
+                break;
+            case 'family':
+                $valColumn = 'mobile';
+                break;
+            case 'none':
+                $valColumn = 'name_of_class';
+                break;
+            default:
+                return $this->response->setStatusCode(400)->setJSON(['error' => 'Unknown table name']);
+        }
+
+
+        $data = array_column($data, $valColumn);
 
         return $this->response->setJSON($data);
     }

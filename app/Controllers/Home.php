@@ -17,8 +17,45 @@ use Myth\Auth\Models\UserModel;
 
 class Home extends BaseController
 {
+    function get_client_ip()
+    {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP'))
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        else if (getenv('HTTP_X_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        else if (getenv('HTTP_X_FORWARDED'))
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        else if (getenv('HTTP_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        else if (getenv('HTTP_FORWARDED'))
+            $ipaddress = getenv('HTTP_FORWARDED');
+        else if (getenv('REMOTE_ADDR'))
+            $ipaddress = getenv('REMOTE_ADDR');
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
     public function coba()
     {
+
+        // $ipaddress = '';
+        // if (getenv('HTTP_CLIENT_IP'))
+        //     $ipaddress = getenv('HTTP_CLIENT_IP');
+        // else if (getenv('HTTP_X_FORWARDED_FOR'))
+        //     $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        // else if (getenv('HTTP_X_FORWARDED'))
+        //     $ipaddress = getenv('HTTP_X_FORWARDED');
+        // else if (getenv('HTTP_FORWARDED_FOR'))
+        //     $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        // else if (getenv('HTTP_FORWARDED'))
+        //     $ipaddress = getenv('HTTP_FORWARDED');
+        // else if (getenv('REMOTE_ADDR'))
+        //     $ipaddress = getenv('REMOTE_ADDR');
+        // else
+        //     $ipaddress = 'UNKNOWN';
+        // return $ipaddress;
+        dd($_SERVER['REMOTE_ADDR']);
         $sql = " SELECT PASIEN_VISITATION.NO_REGISTRATION,   
          PASIEN_VISITATION.VISIT_ID,   
          PASIEN_VISITATION.STATUS_PASIEN_ID,   
@@ -84,6 +121,10 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
         return json_encode($berhasil);
         return json_encode(password_verify(base64_encode(hash('sha384', "Agussalim7", true)), user()->password_hash));
         return json_encode(password_hash(("Agussalim7"), PASSWORD_BCRYPT));
+    }
+    public function refresh()
+    {
+        return view('refresh', []);
     }
     public function homebase()
     {
@@ -291,6 +332,50 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
 
                 // Save the image to the specified path
             }
+        }
+    }
+    public function changePassword()
+    {
+        $userModel = new UserModel();
+        $userId = user()->id;
+        $request = service('request');
+        $sendRequest = $request->getJSON(true);
+
+        $oldPassword = $sendRequest['old_password'];
+        $newPassword =  $sendRequest['new_password'];
+        $confirmPassword =  $sendRequest['confirm_password'];
+
+        if (empty($oldPassword)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Password lama tidak boleh kosong.']);
+        }
+
+        if (empty($newPassword) || empty($confirmPassword)) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Kolom password baru tidak boleh kosong.']);
+        }
+
+        $user = $userModel->find($userId);
+
+        if (!$user) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Pengguna tidak ditemukan.']);
+        }
+
+        if (password_verify(base64_encode(hash('sha384', $oldPassword, true)), user()->password_hash) === false) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Password lama tidak benar.']);
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Password baru dan konfirmasi password tidak cocok.']);
+        }
+
+        $hashedPassword = base64_encode(hash('sha384', $newPassword, true));
+        $data = [
+            'password_hash' => password_hash($hashedPassword, PASSWORD_BCRYPT),
+        ];
+
+        if ($userModel->update($userId, $data)) {
+            return $this->response->setJSON(['success' => true, 'message' => 'Password successfully updated.']);
+        } else {
+            return $this->response->setJSON(['success' => false, 'message' => 'Failed to update password.']);
         }
     }
 }

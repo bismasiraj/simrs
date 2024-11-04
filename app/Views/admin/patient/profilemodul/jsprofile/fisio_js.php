@@ -115,12 +115,15 @@
 
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
-
+        $("#searchTariffisio").val(null).trigger("change")
         var i = $('#fisioChargesBody tr').length + 1;
         var key = 'fisio' + i
         $("#fisioChargesBody").append($("<tr id=\"" + key + "\">")
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", "afisiodisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
+            .append($("<td>").html('<select id="alabemployee_id' + key + '" class="form-select" name="employee_id[]" readonly>' +
+                chargesDropdownDoctor() +
+                `</select>`))
             .append($("<td>").attr("id", "afisiodisplaytreat_date" + key).html(moment().format("DD/MM/YYYY HH:mm")).append($("<p>").html('<?= $visit['name_of_clinic']; ?>')))
             // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
             .append($("<td>").attr("id", "afisiodisplaysell_price" + key).html(formatCurrency(parseFloat(tarifData.amount))).append($("<p>").html("")))
@@ -129,11 +132,6 @@
                 .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
             )
             .append($("<td>").attr("id", "afisiodisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "afisiodisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "afisiodisplayamount_paid_plafond" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "afisiodisplaydiscount" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "afisiodisplaysubsidisat" + key).html(formatCurrency(0)))
-            .append($("<td>").attr("id", "afisiodisplaysubsidi" + key).html(formatCurrency(0)))
             .append($("<td>").append('<button id="afisiosimpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(\'' + key + '\', \'afisio\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="afisioeditDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-fisioel="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-fisioel="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'afisio\', \'' + key + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'afisio\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
         )
 

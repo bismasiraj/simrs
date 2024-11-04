@@ -21,6 +21,20 @@ class Askep extends \App\Controllers\BaseController
         $date = isset($formData->date) ? $formData->date : '';
         $dateSiki = isset($formData->dateSiki) ? $formData->dateSiki : '';
 
+        //check diagnosan id tersedia atau tidak di sdki luaran
+        $checkSDKI = $this->lowerKey($db->query("
+        SELECT
+        DIAGNOSAN_ID
+        FROM ASKEP_SDKI_LUARAN WHERE DIAGNOSAN_ID = '" . $formData->diag_id . "'
+        ")->getResultArray());
+        if (empty($checkSDKI)) {
+            return $this->response->setJSON([
+                'message' => 'Data Kosong',
+                'respon' => false
+            ]);
+        }
+
+
         $queryAskepSdkiPenyebab = $this->lowerKey($db->query("SELECT
                                                             ASKEP_SDKI.DIAGNOSAN_ID AS diag_id
                                                             , 'Penyebab'
@@ -81,6 +95,7 @@ class Askep extends \App\Controllers\BaseController
                                         ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE AS type,
                                         ASKEP_RELATIONAL_TYPE.RELATIONALTYPE AS type_name,
                                         ASKEP_SLKI_KRITERIA.KRITERIA_ID AS diag_val_id,
+                                        ASKEP_SDKI_LUARAN.LUARAN_ID AS luaran,
                                         ASKEP_SLKI_KRITERIA.P_TYPE AS p_type,
                                         ASKEP_SLKI_KRITERIA.KRITERIA AS diag_val_name,
                                         MAX(CASE 
@@ -127,21 +142,40 @@ class Askep extends \App\Controllers\BaseController
                                         ASKEP_RELATIONAL_TYPE.RELATIONAL_TYPE,
                                         ASKEP_RELATIONAL_TYPE.RELATIONALTYPE,
                                         ASKEP_SLKI_KRITERIA.KRITERIA_ID,
+                                        ASKEP_SDKI_LUARAN.LUARAN_ID,
                                         ASKEP_SLKI_KRITERIA.KRITERIA,
                                         ASKEP_SLKI_KRITERIA.P_TYPE;")->getResultArray();
 
 
 
         if (empty($queryAskepSlki)) {
-            $queryAskepSlkiEmpty = $db->query("
-                        select KRITERIA_ID AS diag_val_id from ASKEP_SDKI_LUARAN 
-                        INNER JOIN ASKEP_SLKI_KRITERIA ON ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID
-                        WHERE ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$formData->diag_id' ORDER BY diag_val_id")->getResultArray();
+            $queryAskepSlkiEmpty = $db->query("SELECT 
+                                                    ASKEP_SLKI_KRITERIA.KRITERIA_ID AS diag_val_id, 
+                                                    ASKEP_SDKI_LUARAN.LUARAN_ID AS luaran
+                                                FROM 
+                                                    ASKEP_SDKI_LUARAN 
+                                                INNER JOIN 
+                                                    ASKEP_SLKI_KRITERIA 
+                                                ON 
+                                                    ASKEP_SDKI_LUARAN.LUARAN_ID = ASKEP_SLKI_KRITERIA.LUARAN_ID
+                                                WHERE 
+                                                    ASKEP_SDKI_LUARAN.DIAGNOSAN_ID = '$formData->diag_id' ORDER BY diag_val_id")->getResultArray();
+            // var_dump($formData->diag_id);
+
+
             $criteriaIds = array_column($queryAskepSlkiEmpty, 'diag_val_id');
             $criteriaIds = array_map('intval', $criteriaIds);
+
+            $luaranIds = array_column($queryAskepSlkiEmpty, 'luaran');
+            $luaranIds = array_unique($luaranIds);
+            $firstLuaran = $luaranIds[0] ?? null;
         } else {
             $criteriaIds = array_column($queryAskepSlki, 'diag_val_id');
             $criteriaIds = array_map('intval', $criteriaIds);
+
+            $luaranIds = array_column($queryAskepSlki, 'luaran');
+            $luaranIds = array_unique($luaranIds);
+            $firstLuaran = $luaranIds[0] ?? null;
         }
 
         $queryDropdown = $db->query("SELECT 
@@ -195,7 +229,7 @@ class Askep extends \App\Controllers\BaseController
                                                     )
                                                 )
                                     WHERE 
-                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID IN (" . implode(',', $criteriaIds) . ")  AND ASKEP_SLKI_KRITERIA.LUARAN_ID = 'L.01001'
+                                        ASKEP_SLKI_KRITERIA.KRITERIA_ID IN (" . implode(',', $criteriaIds) . ")  AND ASKEP_SLKI_KRITERIA.LUARAN_ID = '$firstLuaran'
                                     GROUP BY 
                                         ASKEP_SLKI_KRITERIA.KRITERIA_ID,
                                         ASKEP_SLKI_KRITERIA.P_TYPE,
@@ -205,6 +239,8 @@ class Askep extends \App\Controllers\BaseController
                                         ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE
                                     ORDER BY 
                                         ASSESSMENT_PARAMETER_VALUE.VALUE_SCORE ASC;")->getResultArray();
+
+
 
         $slkiData = [];
         foreach ($queryAskepSlki as $slki) {
@@ -219,7 +255,8 @@ class Askep extends \App\Controllers\BaseController
                     'diag_val_id' => $slki['diag_val_id'],
                     'diag_val_name' => $slki['diag_val_name'],
                     'p_type' => $slki['p_type'],
-                    'checked' => $slki['checked'], 'selected' => []
+                    'checked' => $slki['checked'],
+                    'selected' => []
                 ];
             }
         }
@@ -244,61 +281,72 @@ class Askep extends \App\Controllers\BaseController
                                             WHERE document_id = '$formData->id'
                                             ORDER BY INTERVENSI_DATE DESC")->getRowArray()['INTERVENSI_DATE'] ?? null;
 
-        $queryAskepSiki = $db->query("SELECT 
-                                        ASKEP_SIKI.INTERVENSI_ID AS DIAG_ID,
-                                        ASKEP_SIKI.INTERVENSI_NAME AS DIAG_NAME,
-                                        ASKEP_SIKI_TYPE.SIKI_TYPE AS TYPE,
-                                        ASKEP_SIKI_TYPE.SIKITYPE AS TYPE_NAME,
-                                        ASKEP_SIKI_TINDAKAN.TINDAKAN_ID AS DIAG_VAL_ID,
-                                        ASKEP_SIKI_TINDAKAN.TINDAKAN AS DIAG_VAL_NAME,
-                                        MAX(CASE 
-                                            WHEN DATEPART(YEAR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
-                                            AND DATEPART(MONTH, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
-                                            AND DATEPART(DAY, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
-                                            AND DATEPART(HOUR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
-                                            THEN ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
-                                            ELSE ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
-                                        END) AS RESULT_DATE,
-                                        MAX(CASE 
-                                            WHEN ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID IS NOT NULL 
-                                            THEN 1 
-                                            ELSE 0 
-                                        END) AS checked
-                                    FROM 
-                                        ASKEP_SIKI
-                                        INNER JOIN ASKEP_SIKI_TINDAKAN 
-                                            ON ASKEP_SIKI.INTERVENSI_ID = ASKEP_SIKI_TINDAKAN.INTERVENSI_ID
-                                        INNER JOIN ASKEP_SIKI_TYPE 
-                                            ON ASKEP_SIKI_TINDAKAN.SIKI_TYPE = ASKEP_SIKI_TYPE.SIKI_TYPE
-                                        LEFT JOIN ASKEP_SDKI_INTERVENSI_RESULTS 
-                                            ON ASKEP_SIKI_TINDAKAN.TINDAKAN_ID = ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID
-                                            AND ASKEP_SDKI_INTERVENSI_RESULTS.DOCUMENT_ID = '$formData->id'
-                                            AND ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE = 
-                                                COALESCE(
-                                                    (SELECT TOP 1 INTERVENSI_DATE
-                                                    FROM ASKEP_SDKI_INTERVENSI_RESULTS
-                                                    WHERE DOCUMENT_ID = '$formData->id'
-                                                    AND DATEPART(YEAR, INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
-                                                    AND DATEPART(MONTH, INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
-                                                    AND DATEPART(DAY, INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
-                                                    AND DATEPART(HOUR, INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
-                                                    ORDER BY INTERVENSI_DATE DESC),
-                                                    (SELECT TOP 1 INTERVENSI_DATE
-                                                    FROM ASKEP_SDKI_INTERVENSI_RESULTS
-                                                    WHERE DOCUMENT_ID = '$formData->id'
-                                                    ORDER BY INTERVENSI_DATE DESC)
-                                                )
-                                    WHERE 
-                                        ASKEP_SIKI.INTERVENSI_ID IN ('1.01014', '1.01011')
-                                    GROUP BY 
-                                        ASKEP_SIKI.INTERVENSI_ID,
-                                        ASKEP_SIKI.INTERVENSI_NAME,
-                                        ASKEP_SIKI_TYPE.SIKI_TYPE,
-                                        ASKEP_SIKI_TYPE.SIKITYPE,
-                                        ASKEP_SIKI_TINDAKAN.TINDAKAN_ID,
-                                        ASKEP_SIKI_TINDAKAN.TINDAKAN;
+        $queryAskepSikiinter = $db->query("SELECT intervensi_id FROM ASKEP_SDKI_INTERVENSI
+                                            WHERE diagnosan_id = '$formData->diag_id' AND RELATIONAL_TYPE ='I01'")->getResultArray() ?? null;
+        $intervensiIds =  array_column($queryAskepSikiinter, 'intervensi_id');
 
-                            ")->getResultArray();
+        $intervensiIds = array_map(function ($id) {
+            return "'$id'";
+        }, $intervensiIds);
+
+        $intervensiIdsString = implode(',', $intervensiIds);
+        if (!empty($intervensiIdsString)) {
+            $queryAskepSiki = $db->query("SELECT ASKEP_SIKI.INTERVENSI_ID AS DIAG_ID,
+                                            ASKEP_SIKI.INTERVENSI_NAME AS DIAG_NAME,
+                                            ASKEP_SIKI_TYPE.SIKI_TYPE AS TYPE,
+                                            ASKEP_SIKI_TYPE.SIKITYPE AS TYPE_NAME,
+                                            ASKEP_SIKI_TINDAKAN.TINDAKAN_ID AS DIAG_VAL_ID,
+                                            ASKEP_SIKI_TINDAKAN.TINDAKAN AS DIAG_VAL_NAME,
+                                            MAX(CASE 
+                                                WHEN DATEPART(YEAR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+                                                AND DATEPART(MONTH, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+                                                AND DATEPART(DAY, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+                                                AND DATEPART(HOUR, ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+                                                THEN ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+                                                ELSE ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE
+                                            END) AS RESULT_DATE,
+                                            MAX(CASE 
+                                                WHEN ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID IS NOT NULL 
+                                                THEN 1 
+                                                ELSE 0 
+                                            END) AS checked
+                                        FROM 
+                                            ASKEP_SIKI
+                                            INNER JOIN ASKEP_SIKI_TINDAKAN 
+                                                ON ASKEP_SIKI.INTERVENSI_ID = ASKEP_SIKI_TINDAKAN.INTERVENSI_ID
+                                            INNER JOIN ASKEP_SIKI_TYPE 
+                                                ON ASKEP_SIKI_TINDAKAN.SIKI_TYPE = ASKEP_SIKI_TYPE.SIKI_TYPE
+                                            LEFT JOIN ASKEP_SDKI_INTERVENSI_RESULTS 
+                                                ON ASKEP_SIKI_TINDAKAN.TINDAKAN_ID = ASKEP_SDKI_INTERVENSI_RESULTS.TINDAKAN_ID
+                                                AND ASKEP_SDKI_INTERVENSI_RESULTS.DOCUMENT_ID = '$formData->id'
+                                                AND ASKEP_SDKI_INTERVENSI_RESULTS.INTERVENSI_DATE = 
+                                                    COALESCE(
+                                                        (SELECT TOP 1 INTERVENSI_DATE
+                                                        FROM ASKEP_SDKI_INTERVENSI_RESULTS
+                                                        WHERE DOCUMENT_ID = '$formData->id'
+                                                        AND DATEPART(YEAR, INTERVENSI_DATE) = DATEPART(YEAR, '$dateSiki')
+                                                        AND DATEPART(MONTH, INTERVENSI_DATE) = DATEPART(MONTH, '$dateSiki')
+                                                        AND DATEPART(DAY, INTERVENSI_DATE) = DATEPART(DAY, '$dateSiki')
+                                                        AND DATEPART(HOUR, INTERVENSI_DATE) = DATEPART(HOUR, '$dateSiki')
+                                                        ORDER BY INTERVENSI_DATE DESC),
+                                                        (SELECT TOP 1 INTERVENSI_DATE
+                                                        FROM ASKEP_SDKI_INTERVENSI_RESULTS
+                                                        WHERE DOCUMENT_ID = '$formData->id'
+                                                        ORDER BY INTERVENSI_DATE DESC)
+                                                    )
+                                        WHERE 
+                                            ASKEP_SIKI.INTERVENSI_ID IN ($intervensiIdsString)  
+                                        GROUP BY 
+                                            ASKEP_SIKI.INTERVENSI_ID,
+                                            ASKEP_SIKI.INTERVENSI_NAME,
+                                            ASKEP_SIKI_TYPE.SIKI_TYPE,
+                                            ASKEP_SIKI_TYPE.SIKITYPE,
+                                            ASKEP_SIKI_TINDAKAN.TINDAKAN_ID,
+                                            ASKEP_SIKI_TINDAKAN.TINDAKAN;
+                                    ")->getResultArray();
+        } else {
+            $queryAskepSiki = [];
+        };
 
         $slkiData = array_values($slkiData);
         $sdkiPenyebab = $this->lowerKey($queryAskepSdkiPenyebab);
@@ -326,7 +374,10 @@ class Askep extends \App\Controllers\BaseController
         ];
         $formattedResponseData = $this->lowerKey($responseData);
         return $this->response->setStatusCode(200)->setJSON([
-            'message' => $hasData ? 'Data retrieved successfully.' : 'No data found.', 'respon' => $hasData, 'document_id' => isset($formData->id) ? $formData->id : null, 'value' => $formattedResponseData
+            'message' => $hasData ? 'Data retrieved successfully.' : 'No data found.',
+            'respon' => $hasData,
+            'document_id' => isset($formData->id) ? $formData->id : null,
+            'value' => $formattedResponseData
         ]);
     }
 
@@ -349,6 +400,7 @@ class Askep extends \App\Controllers\BaseController
             log_message('debug', 'Delete status: ' . ($deleteStatus ? 'Success' : 'Failed'));
 
             $insertData = [];
+
 
             foreach ($formData as $key => $value) {
                 if (preg_match('/^detail_id_/', $key)) {

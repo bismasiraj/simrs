@@ -11,7 +11,7 @@ $lochea = array_filter($aValue, function ($value) {
 ?>
 <div class="tab-pane" id="nifas" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -19,8 +19,9 @@ $lochea = array_filter($aValue, function ($value) {
             ]); ?>
 
 
+
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
+        <div class="col-lg-10 col-md-10 col-sm-12 mt-4">
             <div class="box-tab-tools text-center">
                 <a data-toggle="modal" onclick="initialAddNifas()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>
@@ -81,8 +82,8 @@ $lochea = array_filter($aValue, function ($value) {
                         <input type="hidden" name="valid_user" id="anifasvalid_user">
                         <input type="hidden" name="valid_pasien" id="anifasvalid_pasien">
                         <input type="hidden" name="valid_date" id="anifasvalid_date">
-                        <input type="hidden" name="valid_date" id="modified_by">
-                        <input type="hidden" name="valid_date" id="modified_date">
+                        <input type="hidden" name="modified_by" id="anifasmodified_by">
+                        <input type="hidden" name="modified_date" id="anifasmodified_date">
                         <div class="card border border-1 rounded-4 m-4 p-4">
                             <div class="card-body">
                                 <div class="mb-3 row">
@@ -105,7 +106,7 @@ $lochea = array_filter($aValue, function ($value) {
                                     </div>
                                     <div class="row mb-4">
                                         <div class="col-xs-12 col-sm-3 col-md-3"><label for="anifaslactation" class="col-form-label mb-4">Mammae/Laktasi:</label></div>
-                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-control" name="lactation" id="anifaslactationss">
+                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-select" name="lactation" id="anifaslactationss">
                                                 <?php
                                                 foreach ($laktasi as $key => $value) {
                                                 ?>
@@ -117,7 +118,7 @@ $lochea = array_filter($aValue, function ($value) {
                                     </div>
                                     <div class="row mb-4">
                                         <div class="col-xs-12 col-sm-3 col-md-3"><label for="anifasuterus" class="col-form-label mb-4">Uterus:</label></div>
-                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-control" name="uterus" id="anifasuterus">
+                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-select" name="uterus" id="anifasuterus">
                                                 <?php
                                                 foreach ($uterus as $key => $value) {
                                                 ?>
@@ -129,7 +130,7 @@ $lochea = array_filter($aValue, function ($value) {
                                     </div>
                                     <div class="row mb-4">
                                         <div class="col-xs-12 col-sm-3 col-md-3"><label for="anifaslochea" class="col-form-label mb-4">LOCHEA:</label></div>
-                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-control" name="lochea" id="anifaslochea">
+                                        <div class="col-xs-12 col-sm-9 col-md-9"><select class="form-select" name="lochea" id="anifaslochea">
                                                 <?php
                                                 foreach ($lochea as $key => $value) {
                                                 ?>

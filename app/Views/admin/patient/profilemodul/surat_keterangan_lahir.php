@@ -25,7 +25,7 @@
                         <input type="hidden" name="org_unit_code" value="<?= @$visit['org_unit_code']; ?>">
                         <input type="hidden" name="no_registration" value="<?= @$visit['no_registration']; ?>">
                         <input type="hidden" name="diagnosa_id" value="<?= @$visit['diagnosa']; ?>">
-                        <input type="hidden" name="mothername" value="<?= @$visit['name_of_pasien']; ?>">
+                        <input type="hidden" name="mothername" value="<?= @$visit['diantar_oleh']; ?>">
                         <input type="hidden" name="doctor" value="<?= @$visit['fullname']; ?>">
                         <input type="hidden" name="class_room_id" value="<?= @$visit['class_room_id']; ?>">
                         <input type="hidden" name="bed_id" value="<?= @$visit['bed_id']; ?>">
@@ -35,7 +35,7 @@
                                 <table class="table table-bordered">
                                     <tr>
                                         <td class="col-2">Nama Pasien</td>
-                                        <td class="col-4"><?= @$visit['name_of_pasien']; ?></td>
+                                        <td class="col-4"><?= @$visit['diantar_oleh']; ?></td>
                                         <td class="col-2">Departemen</td>
                                         <td class="col-4"><?= @$visit['departement']; ?></td>
                                     </tr>

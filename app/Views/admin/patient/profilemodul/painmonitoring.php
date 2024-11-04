@@ -1,6 +1,6 @@
 <div class="tab-pane" id="pain" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -9,7 +9,7 @@
 
 
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12 mt-4">
+        <div class="col-lg-10 col-md-10 col-sm-12 mt-4">
             <div class="box-tab-tools text-center">
                 <a data-toggle="modal" onclick="initialAddapain()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
             </div>

@@ -43,6 +43,7 @@ use App\Models\Assessment\SpiritualModel;
 use App\Models\Assessment\TreatmentPerawatModel;
 use App\Models\Assessment\TriaseDetilModel;
 use App\Models\Assessment\VisionHearingModel;
+use App\Models\BabyModel;
 use App\Models\ClinicModel;
 use App\Models\DietInapModel;
 use App\Models\EducationModel;
@@ -80,7 +81,10 @@ class Assessment extends BaseController
     public function getMapAssessment()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -113,7 +117,10 @@ class Assessment extends BaseController
     public function savePainMonitoring()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getPost();
         foreach ($body as $key => $value) {
@@ -215,62 +222,63 @@ class Assessment extends BaseController
                 }
             }
 
-
-            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
+            if ($parameter_id01 != '0210101') {
+                $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
                                                 where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
-            $p_type = $select[0]['p_type'];
-            if (in_array($select[0]['p_type'], [
-                'ASES025',
-                'ASES026',
-                'ASES027'
-            ])) {
-                // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
-                // return json_encode($select);
-                foreach ($select as $key => $value) {
-                    $valueId = ${$value['p_type'] . $value['parameter_id']};
-                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type='" . $value['p_type'] . "' and parameter_id='" . $value['parameter_id'] . "' and value_score = '$valueId'")->getResultArray());
-                    if (isset($paramvalue[0])) {
-                        $data = [
-                            'org_unit_code' => $org_unit_code,
-                            'visit_id' => $visit_id,
-                            'trans_id' => $trans_id,
-                            'body_id' => $body_id,
-                            'p_type' => $value['p_type'],
-                            'parameter_id' => $value['parameter_id'],
-                            'value_id' => $paramvalue[0]['value_score'],
-                            'value_score' => $paramvalue[0]['value_score'],
-                            'value_desc' => $paramvalue[0]['value_desc'],
-                            'modified_date' => Time::now(),
-                            'modified_by' => $modified_by
-                        ];
-                        $painDetil->insert($data);
+                $p_type = $select[0]['p_type'];
+                if (in_array($select[0]['p_type'], [
+                    'ASES025',
+                    'ASES026',
+                    'ASES027'
+                ])) {
+                    // $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$parameter_id01'")->getResultArray());
+                    // return json_encode($select);
+                    foreach ($select as $key => $value) {
+                        $valueId = ${$value['p_type'] . $value['parameter_id']};
+                        $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type='" . $value['p_type'] . "' and parameter_id='" . $value['parameter_id'] . "' and value_score = '$valueId'")->getResultArray());
+                        if (isset($paramvalue[0])) {
+                            $data = [
+                                'org_unit_code' => $org_unit_code,
+                                'visit_id' => $visit_id,
+                                'trans_id' => $trans_id,
+                                'body_id' => $body_id,
+                                'p_type' => $value['p_type'],
+                                'parameter_id' => $value['parameter_id'],
+                                'value_id' => $paramvalue[0]['value_score'],
+                                'value_score' => $paramvalue[0]['value_score'],
+                                'value_desc' => $paramvalue[0]['value_desc'],
+                                'modified_date' => Time::now(),
+                                'modified_by' => $modified_by
+                            ];
+                            $painDetil->insert($data);
+                        }
                     }
                 }
-            }
 
-            if ($timeIntervensi != '' && $timeIntervensi != null) {
-                $painIntervensi = new PainIntervensiModel();
-                $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
-                foreach ($timeIntervensi as $key => $value) {
-                    // return json_encode(str_replace('T', ' ', $reassessment_date));
+                if ($timeIntervensi != '' && $timeIntervensi != null && isset($timeIntervensi)) {
+                    $painIntervensi = new PainIntervensiModel();
+                    $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
+                    foreach ($timeIntervensi as $key => $value) {
+                        // return json_encode(str_replace('T', ' ', $reassessment_date));
 
-                    $data = [
-                        'body_id' => $body_id,
-                        'intervensi_ke' => $key,
-                        'no_registration' => $no_registration,
-                        'p_type' => $p_type,
-                        'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
-                        'intervensi' => $intervensi[$key],
-                        'rute' => $rute[$key],
-                        'reassessment' => $reAssessment[$key],
-                        'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
-                        'valid' => null,
-                        'petugas' => user()->username,
-                        'modified_date' => Time::now(),
-                        'modified_by' => $modified_by,
-                        'value_id' => $painscalescore[$key]
-                    ];
-                    $painIntervensi->insert($data);
+                        $data = [
+                            'body_id' => $body_id,
+                            'intervensi_ke' => $key,
+                            'no_registration' => $no_registration,
+                            'p_type' => $p_type,
+                            'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
+                            'intervensi' => $intervensi[$key],
+                            'rute' => $rute[$key],
+                            'reassessment' => $reAssessment[$key],
+                            'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
+                            'valid' => null,
+                            'petugas' => user()->username,
+                            'modified_date' => Time::now(),
+                            'modified_by' => $modified_by,
+                            'value_id' => $painscalescore[$key]
+                        ];
+                        $painIntervensi->insert($data);
+                    }
                 }
             }
         }
@@ -284,7 +292,10 @@ class Assessment extends BaseController
     public function getPainMonitoring()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -327,7 +338,10 @@ class Assessment extends BaseController
     public function copyPainMonitoring()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -398,7 +412,10 @@ class Assessment extends BaseController
     public function saveTriage()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -518,7 +535,10 @@ class Assessment extends BaseController
     public function getTriage()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -553,7 +573,10 @@ class Assessment extends BaseController
     public function copyTriage()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -644,7 +667,10 @@ class Assessment extends BaseController
     public function saveApgar()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -721,7 +747,10 @@ class Assessment extends BaseController
     public function getApgar()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -762,7 +791,10 @@ class Assessment extends BaseController
     public function addAssessmentMedis()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -793,54 +825,55 @@ class Assessment extends BaseController
         if ($body_id != '') {
             $dataexam = [];
             $dataexam = [
-                "body_id" => $body_id,
-                "org_unit_code" => $org_unit_code,
-                "pasien_diagnosa_id" => $pasien_diagnosa_id,
-                "no_registration" => $no_registration,
-                "visit_id" => $visit_id,
-                "clinic_id" => $clinic_id,
-                "class_room_id" => $class_room_id,
-                "bed_id" => $bed_id,
-                "in_date" => $in_date,
-                "exit_date" => $exit_date,
-                "keluar_id" => $keluar_id,
+                "body_id" => @$body_id,
+                "org_unit_code" => @$org_unit_code,
+                "pasien_diagnosa_id" => @$pasien_diagnosa_id,
+                "no_registration" => @$no_registration,
+                "visit_id" => @$visit_id,
+                "clinic_id" => @$clinic_id,
+                "class_room_id" => @$class_room_id,
+                "bed_id" => @$bed_id,
+                "in_date" => @$in_date,
+                "exit_date" => @$exit_date,
+                "keluar_id" => @$keluar_id,
                 "examination_date" => str_replace('T', ' ', $date_of_diagnosa),
-                "temperature" => $temperature,
-                "tension_upper" => $tension_upper,
-                "tension_below" => $tension_below,
-                "nadi" => $nadi,
-                "nafas" => $nafas,
-                "weight" => $weight,
-                "height" => $height,
-                "awareness" => $awareness,
-                "saturasi" => $saturasi,
-                "arm_diameter" => $arm_diameter,
-                "anamnase" => $anamnase,
-                "alo_anamnase" => $alloanamnase,
-                "pemeriksaan" => $pemeriksaan,
-                "teraphy_desc" => $teraphy_desc,
-                "instruction" => $instruction,
-                "employee_id" => $employee_id,
-                "description" => $description,
-                "modified_date" => $modified_date,
-                "modified_by" => $modified_by,
-                "modified_from" => $clinic_id,
-                "status_pasien_id" => $status_pasien_id,
-                "ageyear" => $ageyear,
-                "agemonth" => $agemonth,
-                "ageday" => $ageday,
-                "thename" => $thename,
-                "theaddress" => $theaddress,
-                "theid" => $theid,
-                "isrj" => $isrj,
-                "gender" => $gender,
-                "doctor" => $doctor,
-                "petugas_id" => user()->username,
+                "temperature" => @$temperature,
+                "tension_upper" => @$tension_upper,
+                "tension_below" => @$tension_below,
+                "nadi" => @$nadi,
+                "nafas" => @$nafas,
+                "weight" => @$weight,
+                "height" => @$height,
+                "awareness" => @@$awareness,
+                "saturasi" => @$saturasi,
+                "arm_diameter" => @$arm_diameter,
+                "anamnase" => @$anamnase,
+                "alo_anamnase" => @$alloanamnase,
+                "pemeriksaan" => @$pemeriksaan,
+                "teraphy_desc" => @$teraphy_desc,
+                "instruction" => @$instruction,
+                "employee_id" => @$employee_id,
+                "description" => @$description,
+                "modified_date" => @$modified_date,
+                "modified_by" => @$modified_by,
+                "modified_from" => @$clinic_id,
+                "status_pasien_id" => @$status_pasien_id,
+                "ageyear" => @$ageyear,
+                "agemonth" => @$agemonth,
+                "ageday" => @$ageday,
+                "thename" => @$thename,
+                "theaddress" => @$theaddress,
+                "theid" => @$theid,
+                "isrj" => @$isrj,
+                "gender" => @$gender,
+                "doctor" => @$doctor,
+                "petugas_id" => user()->getOneRoles(),
                 "petugas" => user()->getFullname(),
                 'vs_status_id' => '2',
-                'valid_date' => $valid_date,
-                'valid_user' => $valid_user,
-                'valid_pasien' => $valid_pasien
+                'valid_date' => @$valid_date,
+                'valid_user' => @$valid_user,
+                'valid_pasien' => @$valid_pasien,
+                'account_id' => 3
             ];
             foreach ($body as $key => $value) {
                 if (!(is_null(${$key}) || ${$key} == ''))
@@ -898,61 +931,59 @@ class Assessment extends BaseController
 
 
         $data = [
-            'org_unit_code' => $org_unit_code,
-            'pasien_diagnosa_id' => $pasien_diagnosa_id,
-            'no_registration' => $no_registration,
-            'visit_id' => $visit_id,
-            'clinic_id' => $clinic_id,
-            'class_room_id' => $class_room_id,
-            'in_date' => $in_date,
-            'exit_date' => $exit_date,
-            'bed_id' => $bed_id,
-            'keluar_id' => $keluar_id,
+            'org_unit_code' => @$org_unit_code,
+            'pasien_diagnosa_id' => @$pasien_diagnosa_id,
+            'no_registration' => @$no_registration,
+            'visit_id' => @$visit_id,
+            'clinic_id' => @$clinic_id,
+            'class_room_id' => @$class_room_id,
+            'in_date' => @$in_date,
+            'exit_date' => @$exit_date,
+            'bed_id' => @$bed_id,
+            'keluar_id' => @$keluar_id,
             'date_of_diagnosa' => str_replace('T', ' ', $date_of_diagnosa),
-            'report_date' => $report_date,
-            // 'diagnosa_id' => $diagnosa_id,
-            'diagnosa_desc' => $diagnosa_desc,
-            'employee_id' => $employee_id,
-            'diag_cat' => $diag_cat,
-            'anamnase' => $anamnase,
-            'alloanamnase' => $alloanamnase,
-            'description' => $description,
-            'pemeriksaan' => $pemeriksaan,
-            'body_id' => $body_id,
-            'teraphy_desc' => $teraphy_desc,
-            'teraphy_home' => $teraphy_home,
-            'therapy_target' => $therapy_target,
-            'medical_problem' => $medical_problem,
-            'hurt' => $hurt,
-            // 'hurt_type' => $hurt_type,
-            'lab_result' => $lab_result,
-            'ro_result' => $ro_result,
-            'ecg_result' => $ecg_result,
-            'standing_order' => $standing_order,
-            'instruction' => $instruction,
-            'result_id' => $result_id,
-            'modified_date' =>  new RawSql('getdate()'),
+            'report_date' => @$report_date,
+            'diagnosa_desc' => @$diagnosa_desc,
+            'employee_id' => @$employee_id,
+            'diag_cat' => @$diag_cat,
+            'anamnase' => @$anamnase,
+            'alloanamnase' => @$alloanamnase,
+            'description' => @$description,
+            'pemeriksaan' => @$pemeriksaan,
+            'body_id' => @$body_id,
+            'teraphy_desc' => @$teraphy_desc,
+            'teraphy_home' => @$teraphy_home,
+            'therapy_target' => @$therapy_target,
+            'medical_problem' => @$medical_problem,
+            'hurt' => @$hurt,
+            'lab_result' => @$lab_result,
+            'ro_result' => @$ro_result,
+            'ecg_result' => @$ecg_result,
+            'standing_order' => @$standing_order,
+            'instruction' => @$instruction,
+            'result_id' => @$result_id,
+            'modified_date' => new RawSql('getdate()'),
             'modified_by' => user()->username,
-            'modified_from' => $clinic_id,
-            'status_pasien_id' => $status_pasien_id,
-            'ageyear' => $ageyear,
-            'agemonth' => $agemonth,
-            'ageday' => $ageday,
-            'thename' => $thename,
-            'theaddress' => $theaddress,
-            'theid' => $theid,
-            'isrj' => $isrj,
-            'gender' => $gender,
-            'doctor' => $doctor,
-            'nokartu' => $nokartu,
-            'nosep' => $nosep,
-            'tglsep' => $tglsep,
-            'spesialistik' => $spesialistik,
+            'modified_from' => @$clinic_id,
+            'status_pasien_id' => @$status_pasien_id,
+            'ageyear' => @$ageyear,
+            'agemonth' => @$agemonth,
+            'ageday' => @$ageday,
+            'thename' => @$thename,
+            'theaddress' => @$theaddress,
+            'theid' => @$theid,
+            'isrj' => @$isrj,
+            'gender' => @$gender,
+            'doctor' => @$doctor,
+            'nokartu' => @$nokartu,
+            'nosep' => @$nosep,
+            'tglsep' => @$tglsep,
+            'spesialistik' => @$spesialistik,
             'sscondition_id' => new RawSql("newid()"),
-            'valid_date' => $valid_date,
-            'valid_user' => $valid_user,
-            'valid_pasien' => $valid_pasien,
-            'specialist_type_id' => $specialist_type_id
+            'valid_date' => @$valid_date,
+            'valid_user' => @$valid_user,
+            'valid_pasien' => @$valid_pasien,
+            'specialist_type_id' => @$specialist_type_id
         ];
 
 
@@ -971,8 +1002,10 @@ class Assessment extends BaseController
 
 
         $db = db_connect();
-        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where VALUE_SCORE in (2, 3) and P_TYPE = 'GEN0002'")->getResultArray());
+        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where VALUE_SCORE in (2, 3, 4, 5) and P_TYPE = 'GEN0002'")->getResultArray());
 
+
+        // return json_encode($lokalisG0020206);
         $lokalisModel = new LokalisModel();
         foreach ($select as $key => $value) {
             if (isset(${'lokalis' . $value['value_id']}) && $value['value_score'] == 3) {
@@ -1018,6 +1051,23 @@ class Assessment extends BaseController
                     'value_score' => $value['value_score'],
                     'value_desc' => $value['value_desc'],
                     'value_detail' => ${'fisik' . $value['value_id']},
+                    'value_info' => $value['value_info'],
+                    'modified_by' => user()->username
+                ];
+                $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
+                $lokalisModel->insert($data);
+            } else if (isset(${'lokalis' . $value['value_id']}) && ($value['value_score'] == 4 || $value['value_score'] == 5)) {
+                $data = [
+                    'org_unit_code' => $org_unit_code,
+                    'visit_id' => $visit_id,
+                    'trans_id' => $visit_id,
+                    'body_id' => $pasien_diagnosa_id,
+                    'p_type' => $value['p_type'],
+                    'parameter_id' => $value['parameter_id'],
+                    'value_id' => $value['value_id'],
+                    'value_score' => $value['value_score'],
+                    'value_desc' => $value['value_desc'],
+                    'value_detail' => ${'lokalis' . $value['value_id']},
                     'value_info' => $value['value_info'],
                     'modified_by' => user()->username
                 ];
@@ -1085,7 +1135,10 @@ class Assessment extends BaseController
     public function addAssessmentMedisDiagnosa()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return json_encode("asdf");
@@ -1136,7 +1189,10 @@ class Assessment extends BaseController
     public function addDiagnosaKeperawatan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         // return json_encode("asdf");
@@ -1194,7 +1250,10 @@ class Assessment extends BaseController
     public function getAssessmentMedis()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1202,13 +1261,35 @@ class Assessment extends BaseController
         $visit_id = $body['visit_id'];
         $no_registration = $body['nomor'];
         $diag_cat = $body['diagCat'];
+        $norujukan = $body['norujukan'];
+        $isrj = $body['isrj'];
+
+        $stringDiagCat = "";
+        if ($diag_cat != 99) {
+            $stringDiagCat = " and pd.diag_cat = '$diag_cat'";
+        }
 
         $db = db_connect();
-        $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
-        ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
-        from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
-        left join employee_all ea on pd.employee_id = ea.employee_id 
-        left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id' and pd.diag_cat = '$diag_cat'")->getResultArray());
+        if ($isrj == 1) {
+            $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+            ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+            from pasien_diagnosa pd 
+            inner join pasien_visitation pv on pd.visit_id = pv.visit_id
+            left join examination_info ei on ei.body_id = pd.body_id
+            left join employee_all ea on pd.employee_id = ea.employee_id 
+            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and (pd.visit_id = '$visit_id' or pv.norujukan = '$norujukan')" . $stringDiagCat)->getResultArray());
+        } else {
+            $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+            ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+            from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
+            left join employee_all ea on pd.employee_id = ea.employee_id 
+            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id'" . $stringDiagCat)->getResultArray());
+        }
+        // $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
+        // ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+        // from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
+        // left join employee_all ea on pd.employee_id = ea.employee_id 
+        // left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id'" . $stringDiagCat)->getResultArray());
 
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
@@ -1256,7 +1337,10 @@ class Assessment extends BaseController
     public function getAssessmentDocument()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1306,7 +1390,10 @@ class Assessment extends BaseController
     public function saveStabilitas()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1372,7 +1459,10 @@ class Assessment extends BaseController
     public function getStabilitas()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1409,7 +1499,10 @@ class Assessment extends BaseController
     {
         // dd($this->request->is('post'));
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1649,7 +1742,10 @@ class Assessment extends BaseController
     public function getTindakanPerawat()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1670,13 +1766,21 @@ class Assessment extends BaseController
     public function getAssessmentKeperawatan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
         $visit_id = $body['visit_id'];
+        $trans_id = $body['trans_id'];
+        $isrj = $body['isrj'];
+        $norujukan = $body['norujukan'];
         $no_registration = $body['nomor'];
+        $top = $body['top'];
+        $episode = $body['episode'];
 
         // return json_encode($no_registration);
         $db = db_connect();
@@ -1685,51 +1789,54 @@ class Assessment extends BaseController
         // left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' 
         // and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
 
+        if ($episode == 1) {
+            if ($isrj == 1)
+                $where = "and (ex.visit_id = '$visit_id' or pv.norujukan = '$norujukan')";
+            else
+                $where = "and (ex.visit_id = '$visit_id')";
+        } else {
+            $where = '';
+        }
 
-        $selectex = $this->lowerKey($db->query("
-        select ex.*, 
-        c.name_of_clinic, 
-        ea.fullname,
-        gcs.GCS_DESC
-        from examination_info ex 
-        left join employee_all ea on ex.employee_id = ea.employee_id 
-        left join clinic c on ex.clinic_id = c.clinic_id 
-        left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
-        where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' 
-        order by examination_date desc
-        ")->getResultArray()); //havin
+        if ($isrj == 1) {
+            $selectex = $this->lowerKey($db->query("
+            select top($top) ex.*, 
+            c.name_of_clinic, 
+            ea.fullname,
+            gcs.GCS_DESC,
+            case petugas_type when  '11' then 'D'
+            when '13' then 'P' end as kode_PPA
+            from examination_info ex 
+            inner join pasien_visitation pv on pv.visit_id = ex.visit_id
+            left join employee_all ea on ex.employee_id = ea.employee_id 
+            left join clinic c on ex.clinic_id = c.clinic_id
+            left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
+            where ex.no_registration = '$no_registration' $where
+            ")->getResultArray());
+        } else {
+            $selectex = $this->lowerKey($db->query("
+            select top($top) ex.*, 
+            c.name_of_clinic, 
+            ea.fullname,
+            gcs.GCS_DESC,
+            case petugas_type when '11' then 'D'
+            when '13' then 'P' 
+            when '52' then 'B'
+            else 'lain'
+            end as kode_PPA
+            from examination_info ex 
+            inner join pasien_visitation pv on pv.visit_id = ex.visit_id
+            left join employee_all ea on ex.employee_id = ea.employee_id 
+            left join clinic c on ex.clinic_id = c.clinic_id
+            left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
+            where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' 
+            ")->getResultArray());
+        }
+
 
         // return json_encode(count($selectex));
         $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
 
-        // $primaryex = "";
-        // foreach ($selectex as $key => $value) {
-        //     $primaryex .= "'" . $value['pasien_diagnosa_id'] . "',";
-        // }
-        // $primaryex = substr($primaryex, 0, -1);
-        // // return ($primaryex);
-        // $selectdiagnosas = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryex) ")->getResultArray());
-        // $selectprocedures = $this->lowerKey($db->query("select * from pasien_diagnosas where pasien_diagnosa_id in ($primaryex) ")->getResultArray());
-        // $selectlokalis = $this->lowerKey($db->query("select * from assessment_lokalis where body_id in ($primaryex)")->getResultArray());
-
-        // foreach ($selectlokalis as $key => $value) {
-        //     if ($value['value_score'] == 3) {
-        //         $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
-        //         if (file_exists($filepath)) {
-        //             $filedata = file_get_contents($filepath);
-        //             $filedata64 = base64_encode($filedata);
-        //             $selectlokalis[$key]['filedata64'] = $filedata64;
-        //         }
-        //     }
-        // }
-
-        // return json_encode([
-        //     'examInfo' => $selectex,
-        //     'pasienHistory' => $selecthistory,
-        //     // 'papsienDiagnosas' => $selectdiagnosas,
-        //     // 'pasienProcedures' => $selectprocedures,
-        //     // 'lokalis' => $selectlokalis
-        // ]);
         return $this->response->setJSON([
             'examInfo' => $selectex,
             'pasienHistory' => $selecthistory,
@@ -1739,7 +1846,10 @@ class Assessment extends BaseController
     public function savePernapasan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1770,7 +1880,10 @@ class Assessment extends BaseController
     public function getPernapasan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1794,7 +1907,10 @@ class Assessment extends BaseController
     public function saveSirkulasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1820,7 +1936,10 @@ class Assessment extends BaseController
     public function getSirkulasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1843,7 +1962,10 @@ class Assessment extends BaseController
     public function saveNeurosensoris()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1870,7 +1992,10 @@ class Assessment extends BaseController
     public function getNeurosensoris()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1894,7 +2019,10 @@ class Assessment extends BaseController
     public function saveIntegumen()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1921,7 +2049,10 @@ class Assessment extends BaseController
     public function saveAnak()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1948,7 +2079,10 @@ class Assessment extends BaseController
     public function saveNeonatus()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -1975,7 +2109,10 @@ class Assessment extends BaseController
     public function getIntegumen()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -1999,7 +2136,10 @@ class Assessment extends BaseController
     public function saveADL()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2026,7 +2166,10 @@ class Assessment extends BaseController
     public function getADL()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2047,7 +2190,10 @@ class Assessment extends BaseController
     public function saveDekubitus()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2074,7 +2220,10 @@ class Assessment extends BaseController
     public function getDekubitus()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2096,7 +2245,10 @@ class Assessment extends BaseController
     public function savePencernaan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2123,7 +2275,10 @@ class Assessment extends BaseController
     public function getPencernaan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2144,7 +2299,10 @@ class Assessment extends BaseController
     public function savePerkemihan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2171,7 +2329,10 @@ class Assessment extends BaseController
     public function getPerkemihan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2192,7 +2353,10 @@ class Assessment extends BaseController
     public function savePsikologi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2246,7 +2410,10 @@ class Assessment extends BaseController
     public function getPsikologi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2276,7 +2443,10 @@ class Assessment extends BaseController
     public function savegizi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2331,7 +2501,10 @@ class Assessment extends BaseController
     public function getgizi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2360,7 +2533,10 @@ class Assessment extends BaseController
     public function saveeducationForm()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2387,7 +2563,10 @@ class Assessment extends BaseController
     public function geteducationForm()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2408,7 +2587,10 @@ class Assessment extends BaseController
     public function saveeducationIntegration()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2488,7 +2670,10 @@ class Assessment extends BaseController
     public function saveEducationIntegrationPlan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2515,7 +2700,10 @@ class Assessment extends BaseController
     public function saveEducationIntegrationProvision()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2544,7 +2732,10 @@ class Assessment extends BaseController
     public function geteducationIntegration()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2588,10 +2779,73 @@ class Assessment extends BaseController
             'educationProvision' => $eduProvision
         ]);
     }
+    public function geteducationIntegrationAll()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        // $bodyId = $body['body_id'];
+
+        $model = new EducationIntegrationModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+
+        if (count($select) > 0) {
+            // return json_encode($select);
+            $db = db_connect();
+            $queryDetil = "select * from assessment_education_integration_detail where body_id in (";
+            $queryPlan = "select * from assessment_education_plan where body_id in (";
+            $queryProvision = "select * from assessment_education_plan where body_id in (";
+
+            foreach ($select as $key => $value) {
+                $queryDetil .= "'" . $value['body_id'] . "',";
+                $queryPlan .= "'" . $value['body_id'] . "',";
+                $queryProvision .= "'" . $value['body_id'] . "',";
+            }
+            $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+            $queryPlan = substr($queryPlan, 0, strlen($queryPlan) - 1);
+            $queryProvision = substr($queryProvision, 0, strlen($queryProvision) - 1);
+
+            $queryDetil .= ");";
+            $queryPlan .= ") order by body_id, plan_ke;";
+            $queryProvision .= ") order by body_id, plan_ke;";
+
+            $eduDetail = $this->lowerKey($db->query($queryDetil)->getResultArray());
+            $eduPlan = $this->lowerKey($db->query($queryPlan)->getResultArray());
+            $eduProvision = $this->lowerKey($db->query($queryProvision)->getResultArray());
+
+
+            return json_encode([
+                'educationIntegration' => $select,
+                'educationIntegrationDetail' => $eduDetail,
+                'educationPlan' => $eduPlan,
+                'educationProvision' => $eduProvision
+            ]);
+        } else {
+            return json_encode([
+                'educationIntegration' => $select,
+                'educationIntegrationDetail' => [],
+                'educationPlan' => [],
+                'educationProvision' => []
+            ]);
+        }
+    }
     public function saveSeksual()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2618,7 +2872,10 @@ class Assessment extends BaseController
     public function getSeksual()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2639,7 +2896,10 @@ class Assessment extends BaseController
     public function saveSocial()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2666,7 +2926,10 @@ class Assessment extends BaseController
     public function getSocial()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2687,7 +2950,10 @@ class Assessment extends BaseController
     public function saveHearing()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2714,7 +2980,10 @@ class Assessment extends BaseController
     public function getHearing()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2735,7 +3004,10 @@ class Assessment extends BaseController
     public function saveSleeping()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2762,7 +3034,10 @@ class Assessment extends BaseController
     public function getSleeping()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2783,7 +3058,10 @@ class Assessment extends BaseController
     public function saveGcs()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2823,7 +3101,10 @@ class Assessment extends BaseController
     public function getGcs()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2847,7 +3128,10 @@ class Assessment extends BaseController
     public function copyGcs()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2877,7 +3161,10 @@ class Assessment extends BaseController
     public function saveFallRisk()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -2958,7 +3245,10 @@ class Assessment extends BaseController
     public function getFallRisk()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -2997,7 +3287,10 @@ class Assessment extends BaseController
     public function copyFallRisk()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3054,7 +3347,10 @@ class Assessment extends BaseController
     public function saveOrderGizi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -3085,7 +3381,10 @@ class Assessment extends BaseController
     public function deleteOrderGizi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3113,7 +3412,10 @@ class Assessment extends BaseController
     public function getOrderGizi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3133,7 +3435,10 @@ class Assessment extends BaseController
     public function saveTransfer()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -3165,7 +3470,10 @@ class Assessment extends BaseController
     public function getTransfer()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3227,7 +3535,10 @@ class Assessment extends BaseController
     public function saveExaminationInfo()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getPost();
         $dataexam = [];
@@ -3352,6 +3663,28 @@ class Assessment extends BaseController
 
         return json_encode($dataexam);
     }
+    public function verifyCppt()
+    {
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $data = $body['data'];
+        // return json_encode($data[0]);
+
+
+        if (is_array($data)) {
+            if (true) {
+                $db = db_connect();
+                $db->query("update examination_info
+                    set valid_user = '" . user()->username . "',
+                    valid_date = getdate()
+                    where body_id = '" . $data['body_id'] . "'
+                ");
+            }
+        }
+
+        return
+            $this->response->setJSON(['response' => true]);
+    }
     public function verifyAllCppt()
     {
         $body = $this->request->getBody();
@@ -3387,7 +3720,10 @@ class Assessment extends BaseController
     public function getNifasAll()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3406,7 +3742,10 @@ class Assessment extends BaseController
     public function saveNifas()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -3454,7 +3793,10 @@ class Assessment extends BaseController
     public function getPersalinan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -3464,28 +3806,215 @@ class Assessment extends BaseController
         $visit = $body['visit_id'];
 
         $model = new PersalinanModel();
-        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
+        $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->first());
+
+        if (count($select) > 0) {
+            $examModel = new ExaminationModel();
+
+            $exam = $examModel->select("vs_status_id, weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, oxygen_usage, awareness, pain, lochia, proteinuria, body_id, pasien_diagnosa_id")
+                ->where("pasien_diagnosa_id", $select['body_id'])->first();
+
+            $babyModel = new BabyModel();
+            $baby = $babyModel->select("
+            org_unit_code,
+            visit_id,
+            baby_id,
+            
+            inspection_date,
+            baby_ke,
+            no_registration,
+            date_of_birth,
+            partus,
+            indication,
+            birth,
+            gender1,
+            resusitasi,
+            movement,
+            skincolor,
+            turgor,
+            tonus,
+            sound,
+            mororeflex,
+            suckingreflex,
+            holding,
+            necktone,
+            headcircumference,
+            chestcircumference,
+            valid_date,
+            valid_user,
+            valid_pasien
+            ")->where("document_id", $select['body_id'])->findAll();
+
+            if (count($baby) > 0) {
+                $whereIn = '';
+                foreach ($baby as $key => $value) {
+                    $whereIn .= "'" . $value['baby_id'] . "',";
+                }
+                $whereIn = substr($whereIn, 0, -1);
+
+                $exambaby = $examModel->select("vs_status_id, weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, oxygen_usage, awareness, pain, lochia, proteinuria, body_id, pasien_diagnosa_id")
+                    ->where("pasien_diagnosa_id in ($whereIn)")->findAll();
+            }
+        }
+
+
+
         return json_encode([
-            'persalinan' => $select
+            'persalinan' => $select,
+            'exam' => @$exam,
+            'baby' => @$baby,
+            'exambaby' => @$exambaby
         ]);
     }
 
     public function savePersalinan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
 
-        // return json_encode($body);
-        // $body = json_decode($body, true);
+        $data = [];
 
+        foreach ($body as $key => $value) {
+            ${strtolower($key)} = $value;
+            if (!(is_null(${strtolower($key)}) || ${strtolower($key)} == ''))
+                $data[strtolower($key)] = $value;
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($time))
+                $data['time'] = str_replace("T", " ", $time);
+        }
+        $model = new PersalinanModel();
 
+        try {
+            // Attempt to save data
+            $model->save($data);
+
+            if ($exambody_id != '') {
+                $dataexam = [];
+                $dataexam = [
+                    "body_id" => $exambody_id, //harusgenerate
+                    "org_unit_code" => $org_unit_code,
+                    "pasien_diagnosa_id" => $body_id, //document_id nya
+                    "no_registration" => $no_registration,
+                    "visit_id" => $visit_id,
+                    "clinic_id" => 'P002',
+                    "in_date" => $examination_date,
+                    "examination_date" => str_replace('T', ' ', $examination_date),
+                    "temperature" => $temperature,
+                    "tension_upper" => $tension_upper,
+                    "tension_below" => $tension_below,
+                    "nadi" => $nadi,
+                    "nafas" => $nafas,
+                    "weight" => $weight,
+                    "height" => $height,
+                    "awareness" => @$awareness,
+                    "saturasi" => $saturasi,
+                    "arm_diameter" => $arm_diameter,
+                    "oxygen_usage" => $oxygen_usage,
+                    "awareness" => @$awareness,
+                    "pain" => $pain ?? 0,
+                    "lochia" => $lochia ?? 0,
+                    "proteinuria" => $proteinuria ?? 0,
+                    "modified_by" => user()->username,
+                    "modified_from" => "P002",
+                    "petugas_id" => user()->username,
+                    "petugas" => user()->getFullname(),
+                    'vs_status_id' => '2',
+                    'valid_date' => $valid_date,
+                    'valid_user' => $valid_user,
+                    'valid_pasien' => $valid_pasien
+                ];
+                foreach ($dataexam as $key => $value) {
+                    // if (!(is_null(${$key}) || ${$key} == ''))
+                    //     $dataexam[$key] = $value;
+                    if (isset($examination_date))
+                        $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+                    if (isset($temperature))
+                        $dataexam['temperature'] = (float)$dataexam['temperature'];
+                    else
+                        $dataexam['temperature'] = 0;
+
+                    if (isset($tension_upper))
+                        $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
+                    else
+                        $dataexam['tension_upper'] = 0;
+
+                    if (isset($tension_below))
+                        $dataexam['tension_below'] = (float)$dataexam['tension_below'];
+                    else
+                        $dataexam['tension_upper'] = 0;
+
+                    if (isset($nadi))
+                        $dataexam['nadi'] = (float)$dataexam['nadi'];
+                    else
+                        $dataexam['nadi'] = 0;
+
+                    if (isset($nafas))
+                        $dataexam['nafas'] = (float)$dataexam['nafas'];
+                    else
+                        $dataexam['nafas'] = 0;
+
+                    if (isset($weight))
+                        $dataexam['weight'] = (float)$dataexam['weight'];
+                    else
+                        $dataexam['weight'] = 0;
+
+                    if (isset($height))
+                        $dataexam['height'] = (float)$dataexam['height'];
+                    else
+                        $dataexam['height'] = 0;
+
+                    if (isset($arm_diameter))
+                        $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
+                    else
+                        $dataexam['arm_diameter'] = 0;
+
+                    if (isset($saturasi))
+                        $dataexam['saturasi'] = (int)$dataexam['saturasi'];
+                    else
+                        $dataexam['saturasi'] = 0;
+
+                    if (isset($oxygen_usage))
+                        $dataexam['oxygen_usage'] = (int)$dataexam['oxygen_usage'];
+                    else
+                        $dataexam['oxygen_usage'] = 0;
+                }
+                $ex = new ExaminationModel();
+                $ex->save($dataexam);
+            }
+
+            // Return success response
+            return $this->response->setJSON([
+                'status' => 'success',
+                'data' => $data
+            ])->setStatusCode(200); // OK
+        } catch (\Exception $e) {
+            // Return error response
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ])->setStatusCode(500); // Internal Server Error
+        }
+    }
+    public function bayiLahir()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getPost();
 
         $data = [];
 
-        // return ($body['OBJECT_STRANGE']);
         foreach ($body as $key => $value) {
             ${strtolower($key)} = $value;
             if (!(is_null(${strtolower($key)}) || ${strtolower($key)} == ''))
@@ -3496,13 +4025,254 @@ class Assessment extends BaseController
                 $data['time'] = str_replace("T", " ", $time);
         }
 
-        // return json_encode($data);
-
         $model = new PersalinanModel();
 
         $model->save($data);
 
         return json_encode($data);
+    }
+    public function saveBayi()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getPost();
+
+        $data = [];
+
+        foreach ($body as $key => $value) {
+            ${strtolower($key)} = $value;
+            if (!(is_null(${strtolower($key)}) || ${strtolower($key)} == ''))
+                $data[strtolower($key)] = $value;
+        }
+
+        $model = new BabyModel();
+
+        try {
+            // Attempt to save data
+            $model->save($data);
+            if ($exambody_id != '') {
+                $dataexam = [];
+                $dataexam = [
+                    "body_id" => @$exambody_id, //harusgenerate
+                    "org_unit_code" => $org_unit_code,
+                    "pasien_diagnosa_id" => $baby_id, //document_id nya
+                    "no_registration" => $no_registration,
+                    "visit_id" => $visit_id,
+                    "clinic_id" => 'P002',
+                    "in_date" => @$inspection_date,
+                    "examination_date" => str_replace('T', ' ', $inspection_date),
+                    "temperature" => @$temperature,
+                    "tension_upper" => @$tension_upper,
+                    "tension_below" => @$tension_below,
+                    "nadi" => @$nadi,
+                    "nafas" => @$nafas,
+                    "weight" => @$weight,
+                    "height" => @$height,
+                    "awareness" => @$awareness,
+                    "saturasi" => @$saturasi,
+                    "arm_diameter" => @$arm_diameter,
+                    "oxygen_usage" => @$oxygen_usage,
+                    "awareness" => @$awareness,
+                    "pain" => $pain ?? 0,
+                    "lochia" => $lochia ?? 0,
+                    "proteinuria" => @$proteinuria ?? 0,
+                    "modified_by" => user()->username,
+                    "modified_from" => "P002",
+                    "petugas_id" => user()->username,
+                    "petugas" => user()->getFullname(),
+                    'vs_status_id' => '2',
+                    'valid_date' => @$valid_date,
+                    'valid_user' => @$valid_user,
+                    'valid_pasien' => @$valid_pasien
+                ];
+                foreach ($dataexam as $key => $value) {
+                    // if (!(is_null(${$key}) || ${$key} == ''))
+                    //     $dataexam[$key] = $value;
+                    if (isset($examination_date))
+                        $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+                    if (isset($temperature))
+                        $dataexam['temperature'] = (float)$dataexam['temperature'];
+                    else
+                        $dataexam['temperature'] = 0;
+
+                    if (isset($tension_upper))
+                        $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
+                    else
+                        $dataexam['tension_upper'] = 0;
+
+                    if (isset($tension_below))
+                        $dataexam['tension_below'] = (float)$dataexam['tension_below'];
+                    else
+                        $dataexam['tension_upper'] = 0;
+
+                    if (isset($nadi))
+                        $dataexam['nadi'] = (float)$dataexam['nadi'];
+                    else
+                        $dataexam['nadi'] = 0;
+
+                    if (isset($nafas))
+                        $dataexam['nafas'] = (float)$dataexam['nafas'];
+                    else
+                        $dataexam['nafas'] = 0;
+
+                    if (isset($weight))
+                        $dataexam['weight'] = (float)$dataexam['weight'];
+                    else
+                        $dataexam['weight'] = 0;
+
+                    if (isset($height))
+                        $dataexam['height'] = (float)$dataexam['height'];
+                    else
+                        $dataexam['height'] = 0;
+
+                    if (isset($arm_diameter))
+                        $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
+                    else
+                        $dataexam['arm_diameter'] = 0;
+
+                    if (isset($saturasi))
+                        $dataexam['saturasi'] = (int)$dataexam['saturasi'];
+                    else
+                        $dataexam['saturasi'] = 0;
+
+                    if (isset($oxygen_usage))
+                        $dataexam['oxygen_usage'] = (int)$dataexam['oxygen_usage'];
+                    else
+                        $dataexam['oxygen_usage'] = 0;
+                }
+                $ex = new ExaminationModel();
+                $ex->save($dataexam);
+            }
+            // Return success response
+            return $this->response->setJSON([
+                'status' => 'success',
+                'data' => $data
+            ])->setStatusCode(200); // OK
+        } catch (\Exception $e) {
+            // Return error response
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ])->setStatusCode(500); // Internal Server Error
+        }
+    }
+    public function registerBayi()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getPost();
+        foreach ($body as $key => $value) {
+            ${strtolower($key)} = $value;
+            if (!(is_null(${strtolower($key)}) || ${strtolower($key)} == ''))
+                $data[strtolower($key)] = $value;
+        }
+
+        $visit = base64_decode($visit);
+        $visit = json_decode($visit, true);
+
+        // return json_encode($visit['visit_id']);
+
+        $data = [];
+
+
+        $model = new BabyModel();
+
+
+        try {
+
+            if (!isset($bayino) || $bayino == '') {
+                $p = new PasienModel();
+                $bayino = $p->getNorm();
+            }
+
+            // return json_encode($bayino);
+            $db = db_connect();
+            $db->query("insert into pasien (org_unit_code,
+                                name_of_pasien,
+                                no_registration,
+                                pasien_id,
+                                class_id,
+                                place_of_birth,
+                                date_of_birth,
+                                description,
+                                contact_address,
+                                rt,
+                                rw,
+                                kal_id,
+                                phone_number,
+                                mobile,
+                                status_pasien_id,
+                                payor_id,
+                                father,
+                                mother,
+                                spouse,
+                                education_type_code,
+                                job_id,
+                                blood_type_id,
+                                kode_agama,
+                                maritalstatusid,
+                                gender,
+                                coverage_id,
+                                family_status_id,
+                                kk_no,
+                                tmt,
+                                tat,
+                                sspasien_id)
+                                select org_unit_code,
+                                '" . $visit['diantar_oleh'] . ", By',
+                                '$bayino',
+                                pasien_id,
+                                class_id,
+                                'Sampangan',
+                                '$date_of_birth',
+                                description,
+                                contact_address,
+                                rt,
+                                rw,
+                                kal_id,
+                                phone_number,
+                                mobile,
+                                status_pasien_id,
+                                payor_id,
+                                NULL,
+                                '" . $visit['diantar_oleh'] . "',
+                                spouse,
+                                NULL,
+                                NULL,
+                                NULL,
+                                kode_agama,
+                                NULL,
+                                '@$gender',
+                                coverage_id,
+                                family_status_id,
+                                kk_no,
+                                tmt,
+                                tat,
+                                null from pasien where no_registration = '" . $visit['no_registration'] . "'");
+
+
+            // Return success response
+            return $this->response->setJSON([
+                'status' => 'success',
+                'data' => $data
+            ])->setStatusCode(200); // OK
+        } catch (\Exception $e) {
+            // Return error response
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ])->setStatusCode(500); // Internal Server Error
+        }
     }
     public function deletePersalinan($bodyId)
     {
@@ -3522,7 +4292,10 @@ class Assessment extends BaseController
     public function checkpass()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getPost();
@@ -3954,7 +4727,10 @@ class Assessment extends BaseController
     public function saveSkdp()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4108,7 +4884,10 @@ class Assessment extends BaseController
     public function checkSkdp()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4195,7 +4974,10 @@ class Assessment extends BaseController
     public function saveSpri()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -4306,7 +5088,10 @@ class Assessment extends BaseController
     public function checkSpri()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();

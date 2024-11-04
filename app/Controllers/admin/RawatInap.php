@@ -21,7 +21,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getBangsalInfo()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $db = db_connect('default');
@@ -85,7 +88,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getBedInfo()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $db = db_connect('default');
@@ -109,7 +115,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getAkomodasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -161,7 +170,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function saveAkomodasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $bill_id = $this->request->getPost('bill_id');
@@ -197,7 +209,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function postAddAkomodasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -377,7 +392,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function deleteAkomodasi()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -417,7 +435,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function insertSep()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
 
         $body = $this->request->getBody();
@@ -655,7 +676,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getSPRI()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -686,7 +710,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getDiagRujukan()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);
@@ -714,7 +741,10 @@ class RawatInap extends \App\Controllers\BaseController
     public function getRujukanInap()
     {
         if (!$this->request->is('post')) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
         }
         $body = $this->request->getBody();
         $body = json_decode($body, true);

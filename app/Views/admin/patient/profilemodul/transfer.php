@@ -21,7 +21,7 @@ $permission = user()->getPermissions();
 </style>
 <div class="tab-pane" id="transfer" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -29,7 +29,7 @@ $permission = user()->getPermissions();
             ]); ?>
 
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <div id="contentTindakLanjut" class="card border-1 rounded-4 mt-4" style="display: none;">
                 <div class="card-body">
                     <div class="col-md-12 text-end">
@@ -90,6 +90,14 @@ $permission = user()->getPermissions();
                                     <div class="form-group">
                                         <label>Follow Up</label>
                                         <select name="isinternal" id="atransferisinternal" onchange="openTindakLanjutModal()" class="form-control ">
+                                            <option value="2">DIRUJUK</option>
+                                            <option value="3">DI RUJUK KE UNIT LAIN (KONSUL)</option>
+                                            <option value="4">PERAWATAN JALAN (KONTROL)</option>
+                                            <option value="5">RAWAT INAP</option>
+                                            <option value="10">TRANSFER INTERNAL</option>
+                                            <option value="11">Pengobatan Selesai</option>
+                                        </select>
+                                        <!-- <select name="isinternal" id="atransferisinternal" onchange="openTindakLanjutModal()" class="form-control ">
                                             <?php foreach ($followup as $key => $value) {
                                                 if (in_array($value['follow_up'], [10, 5, 2, 3, 4])) {
                                             ?>
@@ -97,7 +105,7 @@ $permission = user()->getPermissions();
                                             <?php
                                                 }
                                             } ?>
-                                        </select>
+                                        </select> -->
                                     </div>
                                 </div>
                             </div>
@@ -142,9 +150,9 @@ $permission = user()->getPermissions();
                                                 <label>Poli Tujuan</label>
                                                 <select name='rujintclinicid' id="rujintclinicid" class="form-control select2 act" style="width:100%">
                                                     <?php $cliniclist = array();
-                                                    foreach ($clinic as $key => $value) {
-                                                        if ($clinic[$key]['stype_id'] == '1') {
-                                                            $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                    foreach (@$clinicAll as $key => $value) {
+                                                        if (@$clinicAll[$key]['stype_id'] == '1') {
+                                                            $cliniclist[@$clinicAll[$key]['clinic_id']] = @$clinicAll[$key]['name_of_clinic'];
                                                         }
                                                     }
                                                     asort($cliniclist);
@@ -223,7 +231,10 @@ $permission = user()->getPermissions();
                                     <div class="form-group">
                                         <label>Tanggal Kontrol</label>
                                         <div class="input-group" id="artglkontrol">
-                                            <input id="artgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>">
+                                            <input id="flatarmartgl_kontrol" type="text" class="form-control datetimeflatpickr" />
+                                            <input id="armartgl_kontrol" type="hidden" id="searchmulai" name="artgl_kontrol">
+
+                                            <!-- <input id="artgl_kontrol" name="tgl_kontrol" type="text" class="form-control" placeholder="yyyy-mm-dd" data-date-format="yyyy-mm-dd" data-provide="datepicker" data-date-autoclose="true" data-date-container='#artglkontrol' value="<?= date('Y-m-d'); ?>"> -->
 
                                             <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
 
@@ -369,7 +380,10 @@ $permission = user()->getPermissions();
                                         <div class="form-group"><label for="skdpkddpjp">Dokter</label>
                                             <div>
                                                 <select name="skdpkddpjp" id="skdpkddpjp" class="form-control" style="width:100%">
-                                                    <?php foreach ($employee as $key => $value) {
+                                                    <?php
+                                                    asort($employee);
+
+                                                    foreach ($employee as $key => $value) {
                                                     ?>
                                                         <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
                                                     <?php
@@ -402,8 +416,10 @@ $permission = user()->getPermissions();
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-4 col-xs-4 mb-3">
-                                        <div class="form-group"><label for="skdptglkontrol">Tgl Rencana Kontrol</label>
-                                            <input type='date' name="skdptglkontrol" class="form-control" id='skdptglkontrol' />
+                                        <div class="form-group">
+                                            <label>Tgl Rencana Kontrol</label>
+                                            <input id="flatskdptglkontrol" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                            <input id="skdptglkontrol" name=" skdptglkontrol" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
                                         </div>
                                     </div>
                                     <div class="row mt-3 mb-3" style="display: none;">
@@ -438,11 +454,18 @@ $permission = user()->getPermissions();
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4 mb-3">
+                            <div class="form-group"><label for="atransfernotes">Keterangan</label>
+                                <textarea type='text' name="notes" class="form-control" id='atransfernotes'>
+                                    </textarea>
+                            </div>
+                        </div>
 
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formsaveatransferbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransferbtn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                             <button type="button" id="formeditatransferid" name="editrm" onclick="enableTindakLanjut()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer btn-edit"><i class="fa fa-edit"></i> <span>Edit</span></button>
                             <button type="button" id="formsignatransferid" name="signrm" onclick="signTindakLanjut()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer1"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                            <button type="button" id="formakomodasiatransferid" name="akomodasirm" onclick="getAkomodasi('<?= $visit['visit_id']; ?>')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-success pull-right formsignatransfer1"><i class="mdi mdi-bed"></i> <span>Akomodasi</span></button>
                             <!-- <button type="button" id="formopenmodaltransferid" name="signrm" onclick="openTindakLanjutModal()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-success pull-right formsignatransfer1"><i class="fa fa-plus"></i> <span>Detail</span></button> -->
                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                         </div>
@@ -517,6 +540,7 @@ $permission = user()->getPermissions();
                                                     <div class="form-group">
                                                         <label for="atransfer1clinic_id">Ruangan</label>
                                                         <select name="clinic_id" id="atransfer1clinic_id" type="hidden" class="form-control" required>
+                                                            <option value="P012">Unit Gawat Darurat</option>
                                                             <?php foreach ($clinic as $key => $value)
                                                                 if ($value['stype_id'] == 3) {
                                                             ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
@@ -554,11 +578,11 @@ $permission = user()->getPermissions();
                                             <!-- Subyektif -->
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer1headingSubyektif">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseSubyektif" aria-expanded="false" aria-controls="atransfer1collapseSubyektif">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseSubyektif" aria-expanded="false" aria-controls="atransfer1collapseSubyektif">
                                                         <b id="transferAsalSubyektifTitle">SUBYEKTIF (S)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer1collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="atransfer1headingSubyektif" data-bs-parent="#accordionTranferAsal" style="">
+                                                <div id="atransfer1collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingSubyektif" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -571,11 +595,11 @@ $permission = user()->getPermissions();
                                             <!-- Obyektif -->
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer1headingVitalSign">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
                                                         <b id="transferAsalObyektifTitle">OBYEKTIF (O)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer1headingVitalSign" data-bs-parent="#accordionTranferAsal" style="">
+                                                <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingVitalSign" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupVitalSigntransferAsal" class="row">
                                                             <div class="row mb-4">
@@ -708,11 +732,11 @@ $permission = user()->getPermissions();
                                             <!-- Assessment -->
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer1headingDiagnosaPerawat">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer1collapseDiagnosaPerawat">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer1collapseDiagnosaPerawat">
                                                         <b id="transferAsalAssessmentTitle">ASESMEN (A)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer1collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="atransfer1headingDiagnosaPerawat" data-bs-parent="#accordionTranferAsal">
+                                                <div id="atransfer1collapseDiagnosaPerawat" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingDiagnosaPerawat">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupDiagnosaPerawattransferAsal" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
                                                             <div class="col-sm-12 col-md-12 col-lg-12">
@@ -747,11 +771,11 @@ $permission = user()->getPermissions();
                                             <!-- Prosedur -->
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer1headingPlanning">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapsePlanning" aria-expanded="false" aria-controls="atransfer1collapsePlanning">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapsePlanning" aria-expanded="false" aria-controls="atransfer1collapsePlanning">
                                                         <b id="transferAsalPlanningTitle">PLANNING (P)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer1collapsePlanning" class="accordion-collapse collapse" aria-labelledby="atransfer1headingPlanning" data-bs-parent="#accordionTranferAsal">
+                                                <div id="atransfer1collapsePlanning" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingPlanning">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -759,53 +783,7 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                         <script>
-                                                            tinymce.init({
-                                                                selector: "#atransfer1instruction",
-                                                                height: 300,
-                                                                plugins: [
-                                                                    "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                                                                    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                                                                    "save table contextmenu directionality emoticons template paste textcolor",
-                                                                ],
-                                                                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                                                                style_formats: [{
-                                                                        title: "Bold text",
-                                                                        inline: "b"
-                                                                    },
-                                                                    {
-                                                                        title: "Red text",
-                                                                        inline: "span",
-                                                                        styles: {
-                                                                            color: "#ff0000"
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        title: "Red header",
-                                                                        block: "h1",
-                                                                        styles: {
-                                                                            color: "#ff0000"
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        title: "Example 1",
-                                                                        inline: "span",
-                                                                        classes: "example1"
-                                                                    },
-                                                                    {
-                                                                        title: "Example 2",
-                                                                        inline: "span",
-                                                                        classes: "example2"
-                                                                    },
-                                                                    {
-                                                                        title: "Table styles"
-                                                                    },
-                                                                    {
-                                                                        title: "Table row 1",
-                                                                        selector: "tr",
-                                                                        classes: "tablerow1"
-                                                                    },
-                                                                ],
-                                                            });
+                                                            //bisma
                                                         </script>
                                                     </div>
                                                 </div>
@@ -925,11 +903,11 @@ $permission = user()->getPermissions();
                                         <div class="accordion" id="accordionTranferTujuan">
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer2headingSubyektif">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseSubyektif" aria-expanded="false" aria-controls="atransfer2collapseSubyektif">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseSubyektif" aria-expanded="false" aria-controls="atransfer2collapseSubyektif">
                                                         <b id="transferTujuanSubyektifTitle">SUBYEKTIF (S)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer2collapseSubyektif" class="accordion-collapse collapse" aria-labelledby="atransfer2headingSubyektif" data-bs-parent="#accordionTranferTujuan" style="">
+                                                <div id="atransfer2collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingSubyektif" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -941,11 +919,11 @@ $permission = user()->getPermissions();
                                             </div>
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer2headingVitalSign">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
                                                         <b id="transferTujuanObyektifTitle">OBYEKTIF (O)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse" aria-labelledby="atransfer2headingVitalSign" data-bs-parent="#accordionTranferTujuan" style="">
+                                                <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingVitalSign" style="">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupVitalSigntransferTujuan" class="row">
                                                             <div class="row mb-4">
@@ -1075,11 +1053,11 @@ $permission = user()->getPermissions();
                                             </div>
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer2headingDiagnosaPerawat">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer2collapseDiagnosaPerawat">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransferiagnosaPerawat" aria-expanded="false" aria-controls="atransfer2collapseDiagnosaPerawat">
                                                         <b id="transferTujuanAssessmentTitle">ASESMEN (A)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer2collapseDiagnosaPerawat" class="accordion-collapse collapse" aria-labelledby="atransfer2headingDiagnosaPerawat" data-bs-parent="#accordionTranferTujuan">
+                                                <div id="atransfer2collapseDiagnosaPerawat" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingDiagnosaPerawat">
                                                     <div class="accordion-body text-muted">
                                                         <div id="groupDiagnosaPerawattransferTujuan" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
                                                             <div class="col-sm-12 col-md-12 col-lg-12">
@@ -1113,11 +1091,11 @@ $permission = user()->getPermissions();
                                             </div>
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="atransfer2headingPlanning">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapsePlanning" aria-expanded="false" aria-controls="atransfer2collapsePlanning">
+                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapsePlanning" aria-expanded="false" aria-controls="atransfer2collapsePlanning">
                                                         <b id="transferTujuanPlanningTitle">PLANNING (P)</b>
                                                     </button>
                                                 </h2>
-                                                <div id="atransfer2collapsePlanning" class="accordion-collapse collapse" aria-labelledby="atransfer2headingPlanning" data-bs-parent="#accordionTranferTujuan">
+                                                <div id="atransfer2collapsePlanning" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingPlanning">
                                                     <div class="accordion-body text-muted">
                                                         <div class="row">
                                                             <div class="col-sm-12 mt-2">
@@ -1125,53 +1103,7 @@ $permission = user()->getPermissions();
                                                             </div>
                                                         </div>
                                                         <script>
-                                                            tinymce.init({
-                                                                selector: "#atransfer2instruction",
-                                                                height: 300,
-                                                                plugins: [
-                                                                    "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                                                                    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                                                                    "save table contextmenu directionality emoticons template paste textcolor",
-                                                                ],
-                                                                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                                                                style_formats: [{
-                                                                        title: "Bold text",
-                                                                        inline: "b"
-                                                                    },
-                                                                    {
-                                                                        title: "Red text",
-                                                                        inline: "span",
-                                                                        styles: {
-                                                                            color: "#ff0000"
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        title: "Red header",
-                                                                        block: "h1",
-                                                                        styles: {
-                                                                            color: "#ff0000"
-                                                                        }
-                                                                    },
-                                                                    {
-                                                                        title: "Example 1",
-                                                                        inline: "span",
-                                                                        classes: "example1"
-                                                                    },
-                                                                    {
-                                                                        title: "Example 2",
-                                                                        inline: "span",
-                                                                        classes: "example2"
-                                                                    },
-                                                                    {
-                                                                        title: "Table styles"
-                                                                    },
-                                                                    {
-                                                                        title: "Table row 1",
-                                                                        selector: "tr",
-                                                                        classes: "tablerow1"
-                                                                    },
-                                                                ],
-                                                            });
+                                                            //bisma
                                                         </script>
                                                     </div>
                                                 </div>
@@ -1214,3 +1146,459 @@ $permission = user()->getPermissions();
         </div>
     </div><!--./row-->
 </div>
+
+<!-- ADD RANAP VIEW -->
+<div id="addRanapModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addRanapModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Akomodasi Rawat Inap</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div id="loadingHistoryrajal"></div>
+                        <table id="ketersediaanTT" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                            <thead class="table-primary">
+                                <tr style="text-align: center">
+                                    <th>Nama Bangsal</th>
+                                    <th>Nama Ruang / Kode JK</th>
+                                    <th>Kelas</th>
+                                    <th>Kapasitas</th>
+                                    <th>Sisa</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="ajaxlist" class="table-group-divider">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Bangsal</label>
+                            <select class="form-select" id="ariclinic_id" name="clinic_id" onchange="changeClinicInap(this.value)">
+                                <?php foreach ($clinicAll as $key => $value) {
+                                    if ($value['stype_id'] == '3') { ?>
+                                        <option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option>
+                                <?php }
+                                } ?>
+                            </select>
+                            <div id="ariclinic_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
+                                <strong>Bangsal</strong> tidak boleh kosong
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Ruang</label>
+                            <select id="ariclass_room_id" class="form-control" name="class_room_id" onchange="changeClassRoomTA(this.value)">
+                            </select>
+                            <div id="ariclass_room_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
+                                <strong>Ruang</strong> tidak boleh kosong
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Nomor TT</label>
+                            <select id="aribed_id" class="form-control" name="bed_id">
+                            </select>
+                            <div id="aribed_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
+                                <strong>Nomor TT</strong> tidak boleh kosong
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Tarif</label>
+                            <input id="aritarif_name" class="form-control" name="tarif_name" type="hidden">
+                            <input id="ariamount_paid" class="form-control" name="amount_paid" type="number" step=".0,1">
+                            <input id="aritarif_id" class="form-control" name="tarif_id" type="hidden">
+                            <input id="aritarif_type" class="form-control" name="tarif_type" type="hidden">
+                            <input id="ariclass_id" class="form-control" name="class_id" type="hidden">
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Dokter DPJP</label>
+                            <select id="ariemployee_id" class="form-control" name="employee_id">
+                                <?php foreach ($employee as $key => $value) { ?>
+                                    <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="form-label" for="formrow-email-input">Jenis Perawatan</label>
+                            <select class="form-select" id="ariclinic_type" name="clinic_type">
+                                <?php foreach ($clinicType as $key => $value) { ?>
+                                    <option value="<?= $clinicType[$key]['clinic_type']; ?>"><?= $clinicType[$key]['clinictype']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <div id="ariclinic_typealert" class="alert alert-danger mb-0" role="alert" style="display: none;">
+                                <strong>Jenis Perawatan</strong> tidak boleh kosong
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label>Tanggal Awal</label>
+                            <div class="input-group" id="arimulai" style="padding:0">
+                                <input id="aritreat_date" name="treat_date" class="form-control" type="datetime-local" onchange="changeAriTreatDate()">
+                                <!-- 
+                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span> -->
+
+                            </div>
+                        </div>
+                        <div class="mb-3 row text-end">
+                            <button id="saveAddAkomodasi" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right" onclick="saveAddAkomodasi()">Simpan <i class=" fas fa-check-circle"></i></button>
+                        </div>
+                    </div>
+                </div><!-- row -->
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- AKOMODASI VIEW -->
+<div id="akomodasiView" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Rawat Inap</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="loadingAkomodasiView"></div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <?php echo view('admin/patient/profilemodul/profilebiodata', [
+                            'visit' => $visit,
+                            'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                            'pasienDiagnosa' => $pasienDiagnosa
+                        ]); ?>
+                    </div>
+                    <div class="col-md-9">
+                        <form id="formAkomodasiView" action="" method="post" class="">
+                            <table id="akomoDasiViewTable" class="table table-bordered table-striped table-centered table-hover mb-4" data-export-title="<?= lang('Word.patient_list'); ?>">
+                                <thead class="table-primary">
+                                    <tr style="text-align: center">
+                                        <th>No</th>
+                                        <th>Bangsal/Dokter/No TT</th>
+                                        <th>Tgl Masuk</th>
+                                        <th>Tgl Keluar</th>
+                                        <th>Jml Hari</th>
+                                        <!-- <th>Jml Hari s/d hari ini</th> -->
+                                        <th>Cara Keluar</th>
+                                        <th>Tarif</th>
+                                        <th>Biaya/Hari</th>
+                                        <th>Total</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="akomodasiViewTableBody" class="table-group-divider">
+                                </tbody>
+                            </table>
+                            <div class="col-sm-12 col-xs-12 mb-4">
+                                <div class="button-items">
+                                    <div class="text-center">
+                                        <button id="formAkomodasiViewBtn" type="submit" class="btn btn-primary waves-effect waves-light" style="display: none;"><i class="fa fa-save"></i><span> Simpan</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="accordion" id="accordionRanap">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingSepRanap">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSepRanap" aria-expanded="true" aria-controls="collapseSepRanap">
+                                        <b>Parameter SEP</b>
+                                    </button>
+                                </h2>
+                                <div id="collapseSepRanap" class="accordion-collapse collapse" aria-labelledby="headingSepRanap" data-bs-parent="#accordionRanap" style="">
+                                    <div class="accordion-body text-muted">
+                                        <div id="ajax_load"></div>
+                                        <div class="row">
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
+                                                    <div>
+                                                        <select name='asalrujukan' id="taasalrujukan" class="form-control select2 act" style="width:100%" disabled>
+                                                            <option value="1">Faskes 1</option>
+                                                            <option value="2">Faskes 2 (RS)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="norujukan">No. Rujukan</label><input id="tanorujukan" name="norujukan" type="text" class="form-control" disabled /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="kdpoli">Poli Rujukan</label>
+                                                    <div>
+                                                        <select name='kdpoli' id="takdpoli" class="form-control select2 act" style="width:100%" disabled>
+                                                            <?php foreach ($inasisPoli as $key => $value) { ?>
+                                                                <option value="<?= $inasisPoli[$key]['kdpoli']; ?>"><?= $inasisPoli[$key]['nmpoli']; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group"><label for="tanggal_rujukan">Tgl Rujukan</label><input type='date' name="tanggal_rujukan" class="form-control" id='tatanggal_rujukan' /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="ppkrujukan">PPK Rujukan</label>
+                                                    <div>
+                                                        <select name='ppkrujukan' id="tappkrujukan" class="form-control select2 act" style="width:100%" disabled>
+                                                            <?php foreach ($inasisFaskes as $key => $value) { ?>
+                                                                <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
+                                                    <select class="form-select" name='diag_awal' id="tadiag_awal" disabled>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12 mb-3">
+                                                <div class="button-items">
+                                                    <div class="d-grid">
+                                                        <button id="getRujukanRanapBtn" type="button" onclick="getRujukanRanap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Get Rujukan</span></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
+                                                <div class="form-group"><label for="conclusion"></label><input id="taconclusion" name="conclusion" type="text" class="form-control" /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="diagnosa_id">Diagnosis RS</label><input id="tadiagnosa_id" name="diagnosa_id" type="text" class="form-control" disabled /></div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3" style="display: none;">
+                                                <div class="form-group"><label for="kdpoli_from"></label><input id="takdpoli_from" name=" kdpoli_from" type="text" class="form-control" /></div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12">
+                                                <div>
+                                                    <h3>Parameter SEP</h3>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="tatujuankunj">Tujuan Kunjungan</label>
+                                                    <div>
+                                                        <select name='tujuankunj' id="tatujuankunj" class="form-control select2 act" style="width:100%">
+                                                            <option value="0">Normal</option>
+                                                            <option value="1">Prosedur</option>
+                                                            <option value="2">Konsul Dokter</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="takdpenunjang">Penunjang</label>
+                                                    <div>
+                                                        <select name='kdpenunjang' id="takdpenunjang" class="form-control select2 act" style="width:100%">
+                                                            <option value="1">Radioterapi</option>
+                                                            <option value="2">Kemoterapi</option>
+                                                            <option value="3">Rehab Medik</option>
+                                                            <option value="4">Rehab Psikososial</option>
+                                                            <option value="5">Transfusi Darah</option>
+                                                            <option value="6">Pelayanan Gigi</option>
+                                                            <option value="7">Laboratorium</option>
+                                                            <option value="8">USG</option>
+                                                            <option value="9">Farmasi</option>
+                                                            <option value="10">Lain-lain</option>
+                                                            <option value="11">MRI</option>
+                                                            <option value="12">Hemodialisa</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="taflagprocedure">Procedure</label>
+                                                    <div>
+                                                        <select name='flagprocedure' id="taflagprocedure" class="form-control select2 act" style="width:100%">
+                                                            <option value="0">Prosedur Tidak Berkelanjutan</option>
+                                                            <option value="1">Prosedur dan Terapi Berkelanjutan</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="taassesmentpelgroup">Assesment Pelayanan</label>
+                                                    <div>
+                                                        <select name='assesmentpel' id="taassesmentpel" class="form-control select2 act" style="width:100%">
+                                                            <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
+                                                            <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
+                                                            <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
+                                                            <option value="4">Atas Instruksi RS</option>
+                                                            <option value="5">Tujuan Kontrol</option>
+                                                            <option value="99">-</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-sm-3 col-xs-12 mb-3">
+                                                <label for="taedit_sep">No. SKDP</label>
+                                                <div class="input-group">
+                                                    <input id="taedit_sep" name="edit_sep" type="text" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button id="getSkdpRanapBtn" class="form-control" onclick="getSKDP()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div> -->
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <label for="taspecimenno">No. SPRI</label>
+                                                <div class="input-group">
+                                                    <input id="taspecimenno" name="specimenno" type="text" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button id="getSpriRanapBtn" class="form-control" onclick="getSPRI()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12 mb-3">
+                                                <div class="form-group"><label for="tano_skpinap">SEP RI</label><input id="tano_skpinap" name="no_skpinap" type="text" class="form-control" disabled /></div>
+                                            </div>
+                                            <div class="row mt-3 mb-3">
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="createSepInapBtn" type="button" onclick="insertSepInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Insert SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="editSepInapBtn" type="button" onclick="editSep()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Update SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="deleteSepInapBtn" type="button" onclick="deleteSepInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-trash"></i> <span>Delete SEP</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        <b>Follow Up</b>
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionRanap">
+                                    <div class="accordion-body text-muted">
+                                        <div class="row">
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="tglRencanaRujukanInap">Tanggal Rencana Rujukan</label>
+                                                    <input class="form-control" type="date" value="" id="tglRencanaRujukanInap">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="ppkRujukanInap">PPK Rujukan</label>
+                                                    <select name='ppkRujukanInap' id="ppkRujukanInap" class="form-control select2 act" style="width:100%">
+                                                        <?php foreach ($inasisFaskes as $key => $value) { ?>
+                                                            <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <label for="diagRujukan">Diagnosa Rujukan</label>
+                                                <div class="input-group">
+                                                    <input id="diagRujukanInap" name="diagRujukan" type="text" class="form-control" />
+                                                    <input id="nameDiagRujukanInap" name="nameDiagRujukan" type="hidden" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button class="form-control" onclick="getDiagRujukan()" type="button"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="poliRujukanInap">Poli Rujukan</label>
+                                                    <select name="poliRujukan" id="poliRujukanInap" class="form-control ">
+                                                        <?php $cliniclist = array();
+                                                        foreach ($clinic as $key => $value) {
+                                                            if ($clinic[$key]['stype_id'] == '1') {
+                                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                                            }
+                                                        }
+                                                        asort($cliniclist);
+                                                        ?>
+                                                        <?php foreach ($cliniclist as $key => $value) { ?>
+                                                            <option value="<?= $key; ?>"><?= $value; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="tipeRujukan">Tipe Rujukan</label>
+                                                    <select name="tipeRujukan" id="tipeRujukanInap" class="form-control ">
+                                                        <option value="0">Penuh</option>
+                                                        <option value="1">Partial</option>
+                                                        <option value="2">Balik PRB</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="noRujukan">Catatan</label>
+                                                    <textarea id="catatanRujukanInap" name="catatanRujukan" type="text" class="form-control">
+                                                    </textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="form-group"><label for="noRujukan">No. Rujukan</label>
+                                                    <input id="noRujukanInap" name="noRujukan" type="text" class="form-control" readonly />
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-3">
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="createSepInap" type="button" onclick="insertRujukanInap()" class="btn btn-primary btn-lg waves-effect waves-light"><i class="fa fa-plus"></i> <span>Simpan Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="editSepInap" type="button" onclick="updateRujukanInap()" class="btn btn-secondary btn-lg waves-effect waves-light"><i class="fa fa-edit"></i> <span>Edit Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                                                <div class="col-sm-4 col-xs-12">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="button-items">
+                                                            <div class="d-grid">
+                                                                <button id="deleteSepInap" type="button" onclick="deleteRujukanInap()" class="btn btn-danger btn-lg waves-effect waves-light"><i class="fa fa-remove"></i> <span>Delete Rujukan</span></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

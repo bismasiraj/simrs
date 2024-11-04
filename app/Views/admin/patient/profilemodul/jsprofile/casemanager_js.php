@@ -1,6 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-
 <script type="text/javascript">
     (function() {
         $("casemanager").on("click", e => {
@@ -19,24 +16,15 @@
 
             $("#btn-create-casemanager").off().on("click", (e) => {
                 e.preventDefault();
-                tinymce.remove();
                 selectParamCasemanager();
                 actionViewParam();
+
+
                 btnSaveAction();
-                // actionParam();
                 $('#btn-save-cm-modal').removeAttr('hidden');
                 $('#btn-edit-cm-modal').attr('hidden', true);
-                $("#create-modal-casemanager").modal("show");
             });
-            $("#close-create-modal").off().on("click", (e) => {
-                tinymce.remove();
-                e.preventDefault();
-                $("#create-modal-casemanager").modal("hide");
-            });
-            $('#create-modal-casemanager').on('shown.bs.modal', function() {
 
-                btnUpdateData();
-            });
 
         });
 
@@ -45,17 +33,26 @@
         const getType = (props) => {
             return new Promise((resolve) => {
                 let entry = entryTypes.find(item => item.entry_id === parseInt(props.code));
-                console.log(entry);
                 if (props) {
-                    console.log(props);
                     if (parseInt(props.code) === 1) {
                         htmlContent = `<input type="text" class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 2) {
                         let labelContent = props.tb ? props.tb : 'Ya, terlaksana';
+                        // htmlContent = `
+                        //     <input type="checkbox" class="form-check-input" id="value_info-${props.valueId}" name="value_info-${props.valueId}" value="1">
+                        //     <label class="form-check-label" for="value_info-${props.valueId}">${labelContent}</label>
+                        // `;
                         htmlContent = `
-                            <input type="checkbox" class="form-check-input" id="value_info-${props.valueId}" name="value_info-${props.valueId}" value="1">
-                            <label class="form-check-label" for="value_info-${props.valueId}">${labelContent}</label>
+                        <div class="row my-1">
+                            <div class="col-8">
+                                <input type="checkbox" class="form-check-input" id="value_info-${props.valueId}" name="value_info-${props.valueId}" value="1">
+                                 <label class="form-check-label" for="value_info-${props.valueId}">${props?.valueDesc}</label>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-check-label badge btn btn-outline-primary btn-sm px-2 py-1" for="value_info-${props.valueId}">${labelContent}</label>
+                            </div>
+                        </div>
                         `;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 3) {
@@ -72,7 +69,17 @@
                             resolve(dataResult);
                         });
                     } else if (parseInt(props.code) === 4) {
-                        htmlContent = `<textarea class="form-control form-thems tinymce-init" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50" >${props.tb}   </textarea>`;
+                        // htmlContent = `<textarea class="form-control form-thems quill-editor-cm-mpp" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50" >${props.tb}   </textarea>`;
+                        if (props?.parameterId.startsWith('CM_B_')) {
+                            console.log('benar');
+                        }
+                        htmlContent =
+                            `
+                            <label class="form-label fw-bold" for="editor-cm-${props.valueId}">${props?.valueDesc}</label>
+                            <input type="hidden" name="value_info-${props.valueId}" id="hidden-value_info_cm-${props.valueId}">
+                            <div id="editor-cm-${props.valueId}" name="value_info-${props.valueId}" style="height: 200px;">${props?.tb}</div>
+                            `;
+
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 5) {
                         htmlContent = `<input class="form-control datetime-input" type="datetime-local" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
@@ -119,34 +126,40 @@
                         resolve(htmlContent);
                     }
                 } else {
-                    htmlContent = `<textarea class="form-control form-thems" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50"></textarea>`;
+                    htmlContent =
+                        `<input type="hidden" name="value_info-${props.valueId}" id="hidden-value_info_cm-${props.valueId}">
+                           <div id="editor-cm-${props.valueId}" name="value_info-${props.valueId}" style="height: 200px;"></div>`;
                     resolve(htmlContent);
                 }
             });
         };
 
+
         const actionViewParam = (props) => {
             let res = <?= json_encode($aValue); ?>;
+
             let filteredData = res.filter(item => item?.p_type === "GEN0019");
             filteredData.sort((a, b) => a.parameter_id.localeCompare(b.parameter_id));
+
+
             let dataHtml = '';
             let promises = [];
 
             filteredData.forEach((e) => {
                 if (!(e.value_score === 9 || e.value_score === 8 || !e.value_score || e.value_desc === "")) {
                     promises.push(getType({
-                        code: e.value_score,
-                        valueId: e.value_id,
-                        tb: e?.value_info
+                        code: e?.value_score,
+                        valueId: e?.value_id,
+                        valueDesc: e?.value_desc,
+                        tb: e?.value_info,
+                        parameterId: e?.parameter_id
                     }).then((htmlContent) => {
-                        let colClass = e.value_score === 4 ? 'col-12' : 'col-6'; // Adjust column class based on value_score
+                        let colClass = !e.parameter_id.startsWith('CM_B_') ? 'col-12' : 'col-6'; // Adjust column class based on value_score
 
                         // Adjusted HTML template with vertical centering and fixed height
+
                         dataHtml += `
-                    <div class="form-group mb-0 pt-4 ${colClass}">
-                        <label for="" class="col-sm-12 col-form-label pr-0 fw-bold bg-light text-dark mb-2" style="font-size: 15px; height: 65px;" data-id="${e.value_id}">
-                            <div class="d-flex justify-content-center text-center align-items-center w-full h-100" style="letter-spacing: .6px;">${e.value_desc}</div>
-                        </label>
+                    <div class="form-group mb-0 ${e.value_score === 4 ? 'pt-4 mb-2' :''} ${colClass}">
                         <div hidden>
                             <input class="form-control disabled" list="datalistOptions" id="value_score" name="value_score-${e.value_id}" value="${e.value_score}">
                             <input class="form-control disabled" list="datalistOptions" id="value_desc" name="value_desc-${e.value_id}" value="${e.value_desc.replace(/^"+|"+$/g, '').replace(/^\\+"|\\+"$/g, '')}">
@@ -161,27 +174,27 @@
                 }
             });
 
-            return Promise.all(promises).then(() => {
-                $("#content-param-casemanager").html(contentHide() + dataHtml);
-
-                if (props?.action === "detail" || props?.action === "edit") {
-                    // Handle detail and edit actions if needed
-                    // Example:
-                    // attachEventListeners();
-                } else {
-                    // Initialize any necessary plugins or libraries
-                    tinymce.remove('textarea.tinymce-init');
-                    tinymce.init({
-                        selector: 'textarea.tinymce-init',
-                        init_instance_callback: function(editor) {}
-                    });
-                }
-
-                return Promise.resolve();
-            });
+            if (props?.action === "detail" || props?.action === "edit") {
+                return Promise.all(promises).then((htmlContents) => {
+                    $("#content-param-casemanager").html(contentHide() + dataHtml);
+                    initializeQuillEditors();
+                }).catch((error) => {
+                    console.error('Error updating content:', error);
+                });
+            } else {
+                return Promise.all(promises).then((htmlContents) => {
+                    $("#content-param-casemanager").html(contentHide() + dataHtml);
+                    // tinymce.remove('textarea.tinymce-init');
+                    // tinymce.init({
+                    //     selector: 'textarea.tinymce-init',
+                    //     init_instance_callback: function(editor) {}
+                    // });
+                    initializeQuillEditors();
+                }).catch((error) => {
+                    console.error('Error updating content:', error);
+                });
+            }
         };
-
-
 
         const contentHide = () => {
             return `
@@ -232,15 +245,17 @@
         const btnSaveAction = () => {
             $("#btn-save-cm-modal").off().on("click", function(e) {
                 e.preventDefault();
-                tinymce.triggerSave();
+                syncQuillEditorsToForm()
+                // let formElement = $('#formDokumentCM');
+                // let dataSend = new FormData(formElement);
 
-                let formElement = document.getElementById('formDokumentCM');
-                let dataSend = new FormData(formElement);
+                let formData = document.querySelector('#formDokumentCM');
+
+                let dataSend = new FormData(formData);
                 let jsonObj = {};
                 dataSend.forEach((value, key) => {
                     jsonObj[key] = value;
                 });
-
                 postData(jsonObj, 'admin/CaseManager/insertData', (res) => {
                     if (res.respon === true) {
                         successSwal('Data berhasil disimpan.');
@@ -248,7 +263,6 @@
                         $("#create-modal-casemanager").modal("hide");
                         $('#formDokumentCM')[0].reset();
                         let visit_id = '<?php echo $visit['visit_id']; ?>';
-                        tinymce.remove();
                         getDataTables({
                             visit_id: visit_id
                         });
@@ -260,8 +274,7 @@
         const btnUpdateData = () => {
             $('#btn-edit-cm-modal').off().on("click", (e) => {
                 e.preventDefault();
-                tinymce.triggerSave();
-
+                syncQuillEditorsToForm()
                 let formElement = document.getElementById('formDokumentCM');
                 let dataSend = new FormData(formElement);
                 let jsonObj = {};
@@ -300,7 +313,6 @@
                             $("#create-modal-casemanager").modal("hide");
                             $('#formDokumentCM')[0].reset();
                             let visit_id = '<?php echo $visit['visit_id']; ?>';
-                            tinymce.remove();
                             getDataTables({
                                 visit_id: visit_id
                             });
@@ -365,7 +377,7 @@
                 return `
             <tr>
                 <td width="1%">${index + 1}</td>
-                <td>${'Dokumentasi Case Manager ' +  moment(date_modified[index]).format("DD-MM-YYYY : hh:mm")}</td>
+                <td>${'Dokumentasi Case Manager-' + bodyId +' ('+ moment(date_modified[index]).format("DD-MM-YYYY : hh:mm") + ')'}</td>
                 <td width="1%"><button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-search-plus"></i> Lihat</button></td>
                 <td width="1%"><button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-edit"></i> Ubah</button></td>
                 <td width="1%"><button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-trash-alt"></i> Hapus</button></td>
@@ -402,7 +414,6 @@
                     body_id: $(this).data('id'),
                     visit_id: $(this).data('visit_id')
                 }, 'admin/CaseManager/getDetail', (res) => {
-                    tinymce.remove();
                     modalViewDetail({
                         data: res
                     });
@@ -416,7 +427,6 @@
                     visit_id: $(this).data('visit_id'),
                     parameter_id: $(this).data('param_id')
                 }, 'admin/CaseManager/getDetail', (res) => {
-                    tinymce.remove();
                     modalViewEdit({
                         data: res
                     });
@@ -502,8 +512,9 @@
         const modalViewDetail = (data) => {
 
             let resultData = data;
-            selectParamCasemanager();
+            // selectParamCasemanager();
             let result = resultData.data[0];
+            console.log(resultData.data);
             actionViewParam({
                 id_param: result.parameter_id,
                 action: "detail"
@@ -527,7 +538,9 @@
                                 promises.push(getType({
                                     code: item.value_score,
                                     valueId: item.value_id,
-                                    tb: item.value_info
+                                    valueDesc: item.value_desc,
+                                    tb: item.value_info,
+                                    parameterId: item?.parameter_id
                                 }).then((htmlContent) => {
                                     let container = $(`#type-container-${item.value_id}`);
                                     if (container.length) {
@@ -542,14 +555,25 @@
                                 promises.push(getType({
                                     code: item.value_score,
                                     valueId: item.value_id,
-                                    tb: item.value_info
+                                    valueDesc: item.value_desc,
+                                    tb: item.value_info,
+                                    parameterId: item?.parameter_id
                                 }).then((htmlContent) => {
                                     let container = $(`#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         if (item.value_score == 4) {
-                                            $(`#value_info-${item.value_id}`).addClass('tinymce');
+                                            const quill = new Quill(
+                                                `#editor-cm-${item.value_id}`, {
+                                                    theme: 'snow',
+                                                    modules: {
+                                                        toolbar: true
+                                                    }
+                                                });
+                                            quill.root.innerHTML = getResultArray[0]
+                                                .value_info;
+                                            quill.enable(false);
                                         }
                                         let content = getResultArray[0].value_info;
                                         if (getResultArray[0].value_score === 2) {
@@ -569,17 +593,9 @@
 
                 return Promise.all(promises);
             }).then(() => {
-                tinymce.init({
-                    selector: 'textarea.tinymce-init',
-                    readonly: true,
-                    init_instance_callback: function(editor) {
-                        let id = editor.id;
-                        let content = $(`#${id}`).val();
-                        editor.setContent(content);
-                    }
-                });
 
-                $("#create-modal-casemanager").find('.form-control').prop('disabled', true);
+
+
                 $("#create-modal-casemanager").find('input[type="radio"]').prop('disabled', true);
                 $("#create-modal-casemanager").find('input[type="checkbox"]').prop('disabled', true);
                 $("#create-modal-casemanager").find('select').prop('disabled', true);
@@ -593,7 +609,7 @@
         const modalViewEdit = (data) => {
 
             let resultData = data;
-            selectParamCasemanager();
+            // selectParamCasemanager();
             let result = resultData.data[0];
 
             actionViewParam({
@@ -618,7 +634,9 @@
                                 promises.push(getType({
                                     code: item.value_score,
                                     valueId: item.value_id,
-                                    tb: item.value_info
+                                    valueDesc: item.value_desc,
+                                    tb: item.value_info,
+                                    parameterId: item?.parameter_id
                                 }).then((htmlContent) => {
                                     let container = $(`#type-container-${item.value_id}`);
                                     if (container.length) {
@@ -634,14 +652,24 @@
                                 promises.push(getType({
                                     code: item.value_score,
                                     valueId: item.value_id,
-                                    tb: item.value_info
+                                    valueDesc: item.value_desc,
+                                    tb: item.value_info,
+                                    parameterId: item?.parameter_id
                                 }).then((htmlContent) => {
                                     let container = $(`#type-container-${item.value_id}`);
                                     if (container.length) {
                                         container.html(htmlContent);
 
                                         if (item.value_score == 4) {
-                                            $(`#value_info-${item.value_id}`).addClass('tinymce');
+                                            const quill = new Quill(
+                                                `#editor-cm-${item.value_id}`, {
+                                                    theme: 'snow',
+                                                    modules: {
+                                                        toolbar: true
+                                                    }
+                                                });
+                                            quill.root.innerHTML = getResultArray[0]
+                                                .value_info;
                                         }
 
                                         let content = getResultArray[0].value_info;
@@ -665,17 +693,9 @@
 
                 return Promise.all(promises);
             }).then(() => {
-                tinymce.init({
-                    selector: 'textarea.tinymce-init',
 
-                    init_instance_callback: function(editor) {
-                        let id = editor.id;
-                        let content = $(`#${id}`).val();
-                        editor.setContent(content);
-                    }
-                });
 
-                $("#create-modal-casemanager").find('.form-control').prop('disabled', false);
+
                 $("#create-modal-casemanager").find('input[type="radio"]').prop('disabled', false);
                 $("#create-modal-casemanager").find('input[type="checkbox"]').prop('disabled', false);
 
@@ -685,6 +705,43 @@
                 btnUpdateData();
             });
         };
+        const initializeQuillEditors = () => {
+            document.querySelectorAll('[id^="editor-cm-"]').forEach((element) => {
+                const editorId = element.id;
+                const hiddenInputId = `hidden-value_info_cm-${editorId.replace('editor-cm-', '')}`;
 
+                if (!element.__quill) {
+                    const quill = new Quill(`#${editorId}`, {
+                        theme: 'snow',
+                        modules: {
+                            toolbar: true
+                        }
+                    });
+                    element.__quill = quill;
+
+                    const hiddenInput = document.querySelector(`#${hiddenInputId}`);
+                    if (hiddenInput) {
+                        if (hiddenInput.value) {
+                            quill.root.innerHTML = hiddenInput.value;
+                        }
+
+
+                        quill.on('text-change', () => {
+                            hiddenInput.value = quill.root.innerHTML;
+                        });
+                    }
+                }
+            });
+        };
+        const syncQuillEditorsToForm = () => {
+            document.querySelectorAll('[id^="editor-cm-"]').forEach((element) => {
+                const editorId = element.id;
+                const hiddenInputId = `hidden-value_info_cm-${editorId.replace('editor-cm-', '')}`;
+                const hiddenInput = document.querySelector(`#${hiddenInputId}`);
+                if (hiddenInput && element.__quill) {
+                    hiddenInput.value = element.__quill.root.innerHTML;
+                }
+            });
+        };
     })();
 </script>

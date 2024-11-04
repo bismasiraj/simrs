@@ -31,7 +31,7 @@ $permissions = user()->getPermissions();
         } ?>
     </div> -->
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -40,63 +40,73 @@ $permissions = user()->getPermissions();
 
 
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <form id="formSearchingTarifCharges" action="" method="post" class="">
                 <div class="box-body row mt-4">
                     <input type="hidden" name="ci_csrf_token" value="">
-                    <!-- <div class="col-sm-6 col-md-3">
-                        <div class="mb-4">
-                            <div class="form-group">
-                                <label>Poli/Bangsal</label><small class="req"> *</small>
-                                <select id="klinik" class="form-control" name="klinik" onchange="showdate(this.value)" autocomplete="off">
-                                    <option value="%">Semua</option>
-                                    <?php $cliniclist = array();
-                                    foreach ($clinic as $key => $value) {
-                                        $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
-                                    }
-                                    asort($cliniclist);
-                                    ?>
-                                    <?php foreach ($cliniclist as $key => $value) { ?>
-                                        <option value="<?= $key; ?>"><?= $value; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
-                            <span class="text-danger" id="error_search_type"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-md-3">
-                        <div class="mb-4">
-                            <div class="form-group">
-                                <label>Relasi</label>
-                                <select name="statuspasien" id="statuspasien" class="form-control">
-                                    <option value="%">Semua</option>
-                                    <?php foreach ($statusPasien as $key => $value) {
-                                        if ($statusPasien[$key]['name_of_status_pasien'] != null && $statusPasien[$key]['name_of_status_pasien'] != '') {
-                                    ?>
-                                            <option value="<?= $statusPasien[$key]['status_pasien_id']; ?>"><?= $statusPasien[$key]['name_of_status_pasien']; ?></option>
-                                    <?php }
-                                    } ?>
-                                </select>
-                            </div>
-                        </div>
-                    </div> -->
-
                     <div class="col-sm-12 col-md-12 mb-4">
-                        <?php if (isset($permissions['tindakanpoli']['c'])) {
-                            if ($permissions['tindakanpoli']['c'] == '1') { ?>
-                                <div class="row" style="display: none">
-
-                                    <div class="col-md-8"><select id="searchTarif" class="form-control" style="width: 100%"></select></div>
-
-                                    <div class="col-md-4">
-                                        <div class="box-tab-tools">
-                                            <a data-toggle="modal" onclick='addBillCharge("searchTarif")' class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> Tambah</a>
-                                        </div>
+                        <div class="row">
+                            <div class="col-md-2 d-none">
+                                <div class="form-group">
+                                    <label for="flatstartDateCharge">Start Date</label>
+                                    <input type="text" id="flatstartDateCharge" class="form-control dateflatpickr">
+                                    <input type="hidden" id="startDateCharge">
+                                </div>
+                            </div>
+                            <div class="col-md-2 d-none">
+                                <div class="form-group">
+                                    <label for="flatendDateCharge">End Date</label>
+                                    <input type="text" id="flatendDateCharge" class="form-control dateflatpickr">
+                                    <input type="hidden" id="endDateCharge">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="notaNoCharge">Nomor Sesi</label>
+                                    <div class="input-group">
+                                        <select id="notaNoCharge" class="form-select">
+                                            <option value="%">Semua</option>
+                                        </select>
                                     </div>
                                 </div>
-                        <?php }
-                        } ?>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="casemixId">Kategori</label>
+                                    <div class="input-group">
+                                        <select id="casemixId" class="form-select ">
+                                            <option value="%">Semua</option>
+                                            <option value="1"> Prosedur Non Bedah </option>
+                                            <option value="2"> Prosedur Bedah </option>
+                                            <option value="3"> Konsultasi </option>
+                                            <option value="4"> Tenaga Ahli </option>
+                                            <option value="5"> Keperawatan </option>
+                                            <option value="6"> Penunjang </option>
+                                            <option value="7"> Radiologi </option>
+                                            <option value="8"> Laboratorium </option>
+                                            <option value="9"> Pelayanan Darah </option>
+                                            <option value="10"> Rehabilitasi </option>
+                                            <option value="11"> Kamar / Akomodasi </option>
+                                            <option value="12"> Rawat Intensif </option>
+                                            <option value="13"> Obat </option>
+                                            <option value="14"> Alkes </option>
+                                            <option value="15"> BMHP </option>
+                                            <option value="16"> Alat Medis </option>
+                                            <option value="17"> Obat Kronis </option>
+                                            <option value="18"> Obat Kemotherpy </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="btn-search-charge"></label>
+                                    <div class="input-group pt-2">
+                                        <button type="button" id="btn-search-charge" class="btn btn-secondary w-100" name="cari"> <i class="fa fa-search"></i>Cari</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -119,65 +129,14 @@ $permissions = user()->getPermissions();
                         <table class="table table-sm table-hover">
                             <thead class="table-primary" style="text-align: center;">
                                 <tr>
-                                    <th class="text-center" rowspan="2" style="width: 2%;">No.</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 5%;">No.</th class="text-center">
                                     <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
-                                    <th class="text-center" rowspan="2" style="width: 10%;">Tgl Tindakan</th class="text-center">
-                                    <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
+                                    <th class="text-center" rowspan="2" style="width: 20%;">Dokter</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 20%;">Tgl Tindakan</th class="text-center">
                                     <th class="text-center" rowspan="2" style="width: 10%;">Nilai</th class="text-center">
-                                    <th class="text-center" rowspan="2" style="width: 5%;">Jml</th class="text-center">
+                                    <th class="text-center" rowspan="2" style="width: 10%;">Jml</th class="text-center">
                                     <th class="text-center" rowspan="2" style="width: 10%;">Total Tagihan</th class="text-center">
-                                    <th class="text-center" colspan="2" style="width: 20%;">Tanggungan pihak ke-3</th class="text-center">
-                                    <th class="text-center" rowspan="2" style="width: auto;">Diskon</th class="text-center">
-                                    <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Satuan</th class="text-center">
-                                    <th class="text-center" rowspan="2" style="width: 10%;">Subsidi Total</th class="text-center">
-                                    <th class="text-center" rowspan="2"></th class="text-center">
-                                    <!-- <th class="text-center" rowspan="2"></th class="text-center"> -->
-                                    <!-- <th class="text-center" rowspan="2">Jenis Pelayanan</th class="text-center">
-                                    <th class="text-center" rowspan="2">Pembulatan</th class="text-center">
-                                    <th class="text-center" colspan="15">Info Detil Billing</th class="text-center">
-                                    <th class="text-center" rowspan="2">Jenis Transaksi</th class="text-center">
-                                    <th class="text-center" rowspan="2">Tgl Keluar</th class="text-center">
-                                    <th class="text-center" rowspan="2">Keterangan</th class="text-center">
-                                    <th class="text-center" colspan="2">Rujukan Dari</th class="text-center">
-                                    <th class="text-center" rowspan="2">Ruang Rawat Inap</th class="text-center">
-                                    <th class="text-center" rowspan="2">Cara Keluar</th class="text-center">
-                                    <th class="text-center" rowspan="2">Tgl Cetak</th class="text-center">
-                                    <th class="text-center" rowspan="2">No Card</th class="text-center">
-                                    <th class="text-center" rowspan="2">Jenis Tenaga Medik</th class="text-center">
-                                    <th class="text-center" rowspan="2">Kasir</th class="text-center">
-                                    <th class="text-center" colspan="3">Modifikasi</th class="text-center">
-                                    <th class="text-center" colspan="3">Info Cetak</th class="text-center">
-                                    <th class="text-center" rowspan="2">ID Transaksi</th class="text-center">
-                                    <th class="text-center" rowspan="2">Closed Poli ID</th class="text-center">
-                                    <th class="text-center" rowspan="2">Locked Billing ID</th class="text-center">
-                                    <th class="text-center" rowspan="2">Setoran</th class="text-center"> -->
-                                </tr>
-                                <tr>
-                                    <th class="text-center">Nilai satuan</th class="text-center">
-                                    <th class="text-center">Total</th class="text-center">
-                                    <!-- <th class="text-center">Netto</th class="text-center">
-                                    <th class="text-center">tagihan</th class="text-center">
-                                    <th class="text-center">Diskon</th class="text-center">
-                                    <th class="text-center">potongan</th class="text-center">
-                                    <th class="text-center">subsidi</th class="text-center">
-                                    <th class="text-center">pembayaran</th class="text-center">
-                                    <th class="text-center">retur</th class="text-center">
-                                    <th class="text-center">Nilai PPN</th class="text-center">
-                                    <th class="text-center">Koreksi</th class="text-center">
-                                    <th class="text-center">Embalace</th class="text-center">
-                                    <th class="text-center">Biaya Jasa</th class="text-center">
-                                    <th class="text-center">Jenis Tarif</th class="text-center">
-                                    <th class="text-center">PPN</th class="text-center">
-                                    <th class="text-center">Pokok jual</th class="text-center">
-                                    <th class="text-center">Margin</th class="text-center">
-                                    <th class="text-center">Pelayanan</th class="text-center">
-                                    <th class="text-center">Dokter</th class="text-center">
-                                    <th class="text-center">oleh</th class="text-center">
-                                    <th class="text-center">Tanggal</th class="text-center">
-                                    <th class="text-center">Dari</th class="text-center">
-                                    <th class="text-center">Oleh</th class="text-center">
-                                    <th class="text-center">tanggal</th class="text-center">
-                                    <th class="text-center">Ke</th class="text-center"> -->
+                                    <th class="text-center" rowspan="2" style="width: 5%"></th class="text-center">
                                 </tr>
                             </thead>
                             <tbody id="chargesBody" class="table-group-divider">
@@ -187,7 +146,7 @@ $permissions = user()->getPermissions();
                             </tbody>
                             <tfoot class="table-group-divider">
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-6"></div>
                                             <label for="tagihan_total" class="col-sm-3 col-form-label text-end"><?php echo "Total" . " : " . $currency_symbol . ""; ?></label>
@@ -200,7 +159,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="subsidi_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Subsidi/Tanggungan/Piutang Pihak Ketiga" . " : " . $currency_symbol . ""; ?></label>
@@ -213,7 +172,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="potongan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Potongan" . " : " . $currency_symbol . ""; ?></label>
@@ -226,7 +185,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="pembulatan_total" class="col-sm-4 col-form-label text-end"><?php echo "Pembulatan" . " : " . $currency_symbol . ""; ?></label>
@@ -239,7 +198,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="pelunasan_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Pelunasan/Angsuran/Titipan/Deposit" . " : " . $currency_symbol . ""; ?></label>
@@ -252,7 +211,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="pembayaran_total" class="col-sm-4 col-form-label text-end"><?php echo "Total Retur Pembayaran" . " : " . $currency_symbol . ""; ?></label>
@@ -265,7 +224,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="totalnya" class="col-sm-4 col-form-label text-end">
@@ -280,7 +239,7 @@ $permissions = user()->getPermissions();
                                     <td></td>
                                 </tr>
                                 <tr>
-                                    <td colspan='11' class="align_right">
+                                    <td colspan='7' class="align_right">
                                         <div class="row">
                                             <div class="col-sm-5"></div>
                                             <label for="inacbg" class="col-sm-4 col-form-label text-end"><?php echo "Tarif INACBG" . " : " . $currency_symbol . ""; ?></label>

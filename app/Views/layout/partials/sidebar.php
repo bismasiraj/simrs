@@ -16,11 +16,10 @@ $basecontroller->checkMenuActive('register');
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title">Menu</li>
-
                 <li class="<?= $basecontroller->checkMenuActive('dashboard'); ?>">
-                    <a href="<?php echo base_url(); ?>admin/admin/dashboard" class="waves-effect">
+                    <a href="<?php echo base_url(); ?>" class="waves-effect">
                         <i class="mdi mdi-view-dashboard"></i>
-                        <span class="badge rounded-pill bg-primary float-end">2</span>
+                        <!-- <span class="badge rounded-pill bg-primary float-end">2</span> -->
                         <span>Dashboard</span>
                     </a>
                 </li>
@@ -40,11 +39,11 @@ $basecontroller->checkMenuActive('register');
                     </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpendaftaran'])) { ?>
-                    <!-- <li class=" <?= $basecontroller->checkMenuActive('search'); ?>">
+                    <li class=" <?= $basecontroller->checkMenuActive('search'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/search">
                             <i class="mdi mdi-calendar-check"></i> <span><?php echo "Pendaftaran"; ?></span>
                         </a>
-                    </li> -->
+                    </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('rajal'); ?>">
@@ -53,12 +52,12 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
+                <li class="<?= $basecontroller->checkMenuActive('ranap'); ?> ">
+                    <a href="<?php echo base_url() ?>admin/patient/ranap">
+                        <i class="mdi mdi-bed" aria-hidden="true"></i> <span> <?php echo lang('Word.ipd_in_patient'); ?></span>
+                    </a>
+                </li>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'customerservices', 'perawat', 'operatorbangsal', 'bangsal', 'dokter'])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('ranap'); ?> ">
-                        <a href="<?php echo base_url() ?>admin/patient/ranap">
-                            <i class="mdi mdi-bed" aria-hidden="true"></i> <span> <?php echo lang('Word.ipd_in_patient'); ?></span>
-                        </a>
-                    </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'vk'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
@@ -68,11 +67,19 @@ $basecontroller->checkMenuActive('register');
                     </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'ibs'])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
+                    <li class="<?= $basecontroller->checkMenuActive('ibs'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/kamaroperasi">
                             <i class="mdi mdi-knife"></i> <span> Kamar Operasi</span>
                         </a>
                     </li>
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'admingizi'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('gizi'); ?>">
+                        <a href="<?php echo base_url() ?>admin/patient/gizi" target="_blank">
+                            <i class="fas fa-utensils"></i> <span><?php echo "Gizi"; ?></span>
+                        </a>
+                    </li>
+
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'operatorpelayananobat'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('farmasi'); ?>">
@@ -81,14 +88,14 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'dokterlab', 'adminlab'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('laboratorium'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/laboratorium">
                             <i class="fas fa-flask"></i> <span><?php echo "Laboratorium"; ?></span>
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'dokterradiologi', 'adminrad'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('radiologi'); ?>">
                         <a href="<?php echo base_url() ?>admin/patient/radiologi">
                             <i class="fas fa-microscope"></i> <span><?php echo lang('Word.radiology'); ?></span>
@@ -108,6 +115,13 @@ $basecontroller->checkMenuActive('register');
                             <i class="fas fa-dungeon"></i> <span><?php echo "Kamar Operasi"; ?></span>
                         </a>
                     </li> -->
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'perawat'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive(menuname: 'pmkp'); ?>">
+                        <a href="<?php echo base_url() ?>admin/patient/pmkp" target="_blank">
+                            <i class="fas fa-medkit"></i> <span><?php echo "PMKP"; ?></span>
+                        </a>
+                    </li>
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
@@ -135,10 +149,10 @@ $basecontroller->checkMenuActive('register');
                         </a>
                         <ul class="sub-menu">
                             <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/foantrol"><i class="mdi mdi-chevron-right"></i>Antrian Online</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="mdi mdi-chevron-right"></i> Register Masuk Ranap</a></li>
+                            <!-- <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="mdi mdi-chevron-right"></i> Register Masuk Ranap</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('registerkeluar'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerkeluar"><i class="mdi mdi-chevron-right"></i> Register Keluar Ranap</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('registerpindah'); ?>"><a href="<?php echo base_url(); ?>admin/report/registerpindah"><i class="mdi mdi-chevron-right"></i> Register Pindah Ranap</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="mdi mdi-chevron-right"></i> Register Pasien Melahirkan</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('registermelahirkan'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermelahirkan"><i class="mdi mdi-chevron-right"></i> Register Pasien Melahirkan</a></li> -->
                         </ul>
                     </li>
                 <?php } ?>
@@ -171,7 +185,7 @@ $basecontroller->checkMenuActive('register');
                             <li class="<?= $basecontroller->checkMenuActive('rmkunjunganranapstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganranapstatus"><i class="mdi mdi-chevron-right"></i> Kunjungan Rawat Inap <p>Per Jenis Pelayanan</p></a></li>
                             <li class="<?= $basecontroller->checkMenuActive('rmkunjunganklinik'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganklinik"><i class="mdi mdi-chevron-right"></i> Kunjungan Rawat Jalan <br>Per Klinik</li>
                             <li class="<?= $basecontroller->checkMenuActive('rmkunjunganstatus'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganstatus"><i class="mdi mdi-chevron-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
-                            <li class="<?= $basecontroller->checkMenuActive('rmkunjunganugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganugd"><i class="mdi mdi-chevron-right"></i> Kunjungan Rawat Jalan <br>Per Status</a></li>
+                            <li class="<?= $basecontroller->checkMenuActive('rmkunjunganugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmkunjunganugd"><i class="mdi mdi-chevron-right"></i> Kunjungan Rawat Jalan <br>IGD</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('rmtopxrajal'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxrajal"><i class="mdi mdi-chevron-right"></i> Top X Diagnosa <br>Rawat Jalan</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('rmtopxranap'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxranap"><i class="mdi mdi-chevron-right"></i> Top X Diagnosa <br>Rawat Inap</a></li>
                             <li class="<?= $basecontroller->checkMenuActive('rmtopxugd'); ?>"><a href="<?php echo base_url(); ?>admin/report/rmtopxugd"><i class="mdi mdi-chevron-right"></i> Top X Diagnosa <br>Unit Gawat Darurat</a></li>
@@ -235,6 +249,91 @@ $basecontroller->checkMenuActive('register');
                         </a>
                         <ul class="-menu">
                             <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?>"><a href="<?php echo base_url(); ?>admin/report/adminlog"><i class="mdi mdi-chevron-right"></i>Log User</a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('get_send'); ?>">
+                        <a href="<?php echo base_url(); ?>admin/Antrian/get_send">
+                            <i class="fas fa-tasks"></i> <span><?php echo "Manajement Antrian"; ?></span>
+                        </a>
+                    </li>
+
+                <?php } ?>
+
+                <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('rl'); ?>">
+                        <a href="#" class="has-arrow waves-effect">
+                            <i class="fas fa-dot-circle"></i><span>Report RL</span>
+                        </a>
+                        <ul class="-menu">
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_1_1"><i
+                                        class="mdi mdi-chevron-right"></i>RL 1.1 Data Dasar Rumah Sakit</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_1_3"><i
+                                        class="mdi mdi-chevron-right"></i>RL 1.3 Tempat Tidur</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_2"><i
+                                        class="mdi mdi-chevron-right"></i>RL 2 Ketenagaan</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_1"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.1 KEGIATAN PELAYANAN RAWAT INAP</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_3"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.3 PELAYANAN GIGI MULUT</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_6"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.6 KEGIATAN PEMBEDAHAN</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_7"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.7 KEGIATAN RADIOLOGI</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_8"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.8 KEGIATAN LABORATORIUM</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_9"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.9 REHABILITASI MEDIK</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_10"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.8 KEGIATAN PELAYANAN KHUSUS</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_11"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.11 KESEHATAN JIWA</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_13"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.13 PENGADAAN OBAT</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_14"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.14 KEGIATAN RUJUKAN</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_3_15"><i
+                                        class="mdi mdi-chevron-right"></i>RL 3.15 CARA BAYAR</a>
+                            </li>
+
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_4_A"><i
+                                        class="mdi mdi-chevron-right"></i>RL 4-A DATA KEADAAN MORBIDITAS PASIEN RAWAT INAP
+                                    RUMAH SAKIT</a>
+                            </li>
+                            <li class="<?= $basecontroller->checkMenuActive('adminlog'); ?> text-wrap"><a
+                                    href="<?php echo base_url(); ?>admin/report/rl_4_B"><i
+                                        class="mdi mdi-chevron-right"></i>RL 4-B DATA KEADAAN MORBIDITAS PASIEN RAWAT JALAN
+                                    RUMAH SAKIT</a>
                             </li>
                         </ul>
                     </li>

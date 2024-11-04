@@ -21,7 +21,7 @@ $permission = user()->getPermissions();
 </style>
 <div class="tab-pane" id="tindaklanjut" role="tabpanel">
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+        <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
                 'visit' => $visit,
                 'pasienDiagnosaAll' => $pasienDiagnosaAll,
@@ -30,7 +30,7 @@ $permission = user()->getPermissions();
 
 
         </div><!--./col-lg-6-->
-        <div class="col-lg-9 col-md-9 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12">
             <form id="formvitalsign" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                 <div class="modal-body pt0 pb0">
                     <input id="aeclinic_id" name="clinic_id" placeholder="" type="text" class="form-control block" value="" style="display: none" />

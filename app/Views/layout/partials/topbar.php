@@ -37,7 +37,11 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </button>
 
             <div class="d-flex justify-content-center align-items-center text-white">
-                <div style="font-size: 1.21875rem;"><?= $title; ?></div>
+                <div style="font-size: 1.21875rem;"><?= $title; ?> <?php if (isset($visit['session_id'])) {
+                                                                    ?>
+                        | Sesi: <?= @$visit['session_id']; ?>
+                    <?php
+                                                                    } ?> </div>
             </div>
 
         </div>
@@ -54,17 +58,21 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </form>
 
             <div class="dropdown d-inline-block d-lg-none ms-2">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="mdi mdi-magnify"></i>
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0" aria-labelledby="page-header-search-dropdown">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
+                    aria-labelledby="page-header-search-dropdown">
 
                     <form class="p-3">
                         <div class="form-group m-0">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                <input type="text" class="form-control" placeholder="Search ..."
+                                    aria-label="Recipient's username">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                    <button class="btn btn-primary" type="submit"><i
+                                            class="mdi mdi-magnify"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -83,11 +91,14 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
             </div>
 
             <div class="dropdown d-inline-block ms-1">
-                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn header-item noti-icon waves-effect"
+                    id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
                     <i class="ti-bell color-white"></i>
                     <!-- <span class="badge text-bg-danger rounded-pill">3</span> -->
                 </button>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                    aria-labelledby="page-header-notifications-dropdown">
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
@@ -196,8 +207,10 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
 
 
             <div class="dropdown d-inline-block">
-                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user" src="<?php echo base_url(); ?>uploads/images/profile_male.png" alt="Header Avatar">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user"
+                        src="<?php echo base_url(); ?>uploads/images/profile_male.png" alt="Header Avatar">
                     <!-- <img class="rounded-circle header-profile-user" src="data:image/jpg;base64," alt="Header Avatar"> -->
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
@@ -206,7 +219,13 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                         <h5><?= user()->username; ?></h5>
                     </div>
                     <hr>
-                    <a class="dropdown-item text-danger" href="<?php echo base_url(); ?>logout"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
+                    <!-- <div class="col-md-12 text-center text-primary modal-change-password pointer">
+                        <h5>Change Password</h5>
+                    </div> -->
+                    <a class="dropdown-item text-secondary modal-change-password pointer"><i class="fa fa-key font-size-17 text-muted align-middle me-1 text-primary "></i> Change Password</a>
+                    <hr>
+                    <a class="dropdown-item text-danger" href="<?php echo base_url(); ?>logout"><i
+                            class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
                 </div>
             </div>
 
@@ -219,7 +238,8 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
         </div>
     </div>
     <div class="toast-container" style="position: absolute; top: 10px; right: 10px;">
-        <div class="toast translate-middle bg-success text-white" id="successToast" style="position:fixed; top:50%; left:50%;">
+        <div class="toast translate-middle bg-success text-white" id="successToast"
+            style="position:fixed; top:50%; left:50%;">
             <div class="alert alert-success alert-dismissible px-4 mb-0 text-center" role="alert">
                 <div class="swal2-icon swal2-success swal2-animate-success-icon" style="display: flex;">
                     <div class="swal2-success-circular-line-left"></div>
@@ -236,11 +256,14 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                 <p id="successToastBody"></p>
             </div>
         </div>
-        <div class="toast translate-middle bg-warning text-white" id="warningToast" style="position:fixed; top:50%; left:50%;">
+        <div class="toast translate-middle bg-warning text-white" id="warningToast"
+            style="position:fixed; top:50%; left:50%;">
             <div class="alert alert-danger alert-dismissible px-4 mb-0 text-center" role="alert">
 
 
-                <div class="swal2-icon swal2-error swal2-animate-error-icon" style="display: flex;"><span class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span class="swal2-x-mark-line-right"></span></span></div>
+                <div class="swal2-icon swal2-error swal2-animate-error-icon" style="display: flex;"><span
+                        class="swal2-x-mark"><span class="swal2-x-mark-line-left"></span><span
+                            class="swal2-x-mark-line-right"></span></span></div>
                 <h5 class="text-danger" id="warningToastHeader">Gagal</h5>
                 <p id="warningToastBody"></p>
             </div>

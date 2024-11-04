@@ -57,19 +57,53 @@ class lainnya extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-rujukan.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-rujukan.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
-            }
+            $select = $this->lowerKey($db->query("SELECT
+                                                    INASIS_KONTROL.NOSEP,  
+                                                    INASIS_KONTROL.TGLRENCKONTROL AS TGL_KONTROL_SELANJUTNYA,  
+                                                    INASIS_KONTROL.POLIKONTROL_KDPOLI,   
+                                                    INASIS_KONTROL.POLIKONTROL_NMPOLI,  
+                                                    INASIS_KONTROL.KODEDOKTER,
+                                                    INASIS_KONTROL.MODIFIED_BY,   
+                                                    INASIS_KONTROL.MODIFIED_DATE,   
+                                                    INASIS_KONTROL.NOSURATKONTROL,
+                                                    INASIS_KONTROL.SURATTYPE,
+                                                    PD.THEID AS NO_bpjS,
+                                                    PD.THENAME AS NAMA,
+                                                    pd.THEADDRESS as alamat,
+                                                    pd.GENDER as jeniskel,
+                                                    PD.NO_REGISTRATION AS NO_RM, 
+                                                    convert(varchar,PV.tgl_lahir,105) as date_of_birth,
+                                                    CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + 
+                                                    CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR,
+                                                    Pd.DIAGNOSA_DESC as diagnosis,
+                                                    PD.DIAGNOSA_ID as kode_diagnosa,
+                                                    pd.TERAPHY_DESC as farmakologi,
+                                                    igt.nama as alasan_kontrol,
+                                                    pd.DOCTOR as dpjp,
+                                                    pv.IN_DATE as tgl_masuk,
+                                                    cr.NAME_OF_CLASS as bangsal,
+                                                    pd.BED_ID no_tt,
+                                                    c.NAME_OF_CLASS as kelas,
+                                                    st.SPECIALIST_TYPE
+
+                                                        FROM INASIS_KONTROL left outer join  pasien_visitation pv on inasis_kontrol.nosep = isnull(pv.no_skp,pv.no_skpinap)
+                                                        inner join pasien_DIAGNOSA pD on INASIS_KONTROL.VISIT_ID = pD.VISIT_ID
+                                                        left outer join INASIS_GET_TINDAKLANJUT igt on  isnull(rencanatl,1) = igt.kode
+                                                        left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+                                                        left outer join class c on c.CLASS_ID = cr.CLASS_ID
+                                                        left outer join SPECIALIST_TYPE st on st.SPECIALIST_TYPE_ID = pd.SPESIALISTIK
+                                                        where  INASIS_KONTROL.NOSEP = '0701R0011218V004912'  --diganti dengan no sep yang berlaku
+                                                        and surattype = '1' -- skdp = 1 , spri = 2
+                                                        and pd.DIAG_CAT =  1")->getResultArray());
+            $kopprintData = $this->kopprint();
+
+
+            return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-rujukan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'kop' => $kopprintData[0],
+                'data' => !$select ? [] : $select[0]
+            ]);
         }
     }
     public function surat_darah($visit, $vactination_id = null)
@@ -378,19 +412,16 @@ class lainnya extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/nadi-suhu.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/nadi-suhu.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
-            }
+            $select = $this->lowerKey($db->query("SELECT * from EXAMINATION_INFO where visit_id = '202408030835470650684' ORDER BY examination_date DESC ")->getResultArray());
+            $kopprintData = $this->kopprint();
+
+
+            return view("admin/patient/profilemodul/formrm/rm/LAINNYA/nadi-suhu.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'kop' => $kopprintData[0],
+                'data' => $select
+            ]);
         }
     }
     public function persalinan($visit, $vactination_id = null)
@@ -485,7 +516,7 @@ class lainnya extends \App\Controllers\BaseController
                "
             )->getResultArray());
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
             $selectinfo = $this->query_template_info($db, '2024052400101208008C3', '202405262033530190C16');
 
             if (isset($select[0])) {
@@ -548,19 +579,21 @@ class lainnya extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select * from hosnic_emr_rj_bedah where visit_id = '" . $visit['visit_id'] . "'")->getResultArray());
-            if (isset($select[0])) {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-lahir.php", [
-                    "visit" => $visit,
-                    'title' => $title,
-                    "val" => $select
-                ]);
-            } else {
-                return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-lahir.php", [
-                    "visit" => $visit,
-                    'title' => $title
-                ]);
-            }
+            $kopprintData = $this->kopprint();
+            $select = $this->lowerKey($db->query("SELECT * from BABY where baby_id = '20240719101812088'")->getResultArray());
+            $pasaran = $this->lowerKey($db->query("SELECT  THE_DAY,nama_hari,pasaran  from DAYS_NUMBER dn, baby b 
+                                                    where convert(date,the_day) = convert(date,date_of_birth) 
+                                                    and b.baby_id = '20240719103013776'")->getResultArray());
+
+            return view("admin/patient/profilemodul/formrm/rm/LAINNYA/surat-lahir.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'kop' => $kopprintData[0],
+                'data' => !empty($select) ? $select[0] : [],
+                'pasaran' => !empty($pasaran) ? $pasaran[0] : [],
+
+            ]);
+            // }
         }
     }
     public function kopprint()
@@ -576,6 +609,7 @@ class lainnya extends \App\Controllers\BaseController
     // lab 
     public function laboratorium_cetak($visit, $vactination_id = null)
     {
+
         $title = "HASIL PEMERIKSAAN LABORATORIUM";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
@@ -583,18 +617,26 @@ class lainnya extends \App\Controllers\BaseController
             $db = db_connect();
             $kopprintData = $this->kopprint();
 
+            //       var_dump($visit);
+            // exit();
+
+
             $dataTables = $this->lowerKey($db->query("SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
-                                                                 PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
-                                                                 reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
-                                                                 k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl FROM sharelis.dbo.hasillis h 
-                                                                 LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE 
-                                                                 database_default AND H.kode_kunjungan = K.Kode_Kunjungan WHERE H.kode_kunjungan LIKE '20240608P013RJ0001' 
-                                                                 AND No_Pasien LIKE '111111' AND reg_date BETWEEN DATEADD(hour, 0, '2024-06-08') AND 
-                                                                 DATEADD(hour, 24, '2024-06-09') GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id,
-                                                                 h.tarif_name, kel_pemeriksaan, urut_bound, PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN,
-                                                                  METODE_PERIKSA, k.Tgl_Periksa, reg_date, norm, k.nama, k.alamat, k.date_of_birth, 
-                                                                  k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl ORDER BY 
-                                                                  urut_bound, kode_kunjungan, tarif_id, kel_pemeriksaan")->getResultArray());
+                                                        PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
+                                                        reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
+                                                        k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl
+                                                        FROM sharelis.dbo.hasillis h
+                                                        LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE 
+                                                        database_default AND H.kode_kunjungan = K.Kode_Kunjungan
+                                                        WHERE H.kode_kunjungan LIKE '" . $visit['nolist'] . "'
+                                                        AND No_Pasien LIKE '" . $visit['no_pasien'] . "'
+                                                        AND reg_date BETWEEN DATEADD(hour, 0, '" . $visit['start_request'] . "')
+                                                        AND DATEADD(hour, 24, COALESCE('" . $visit['end_request'] . "', GETDATE()))
+                                                        GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
+                                                        PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, k.Tgl_Periksa, reg_date, norm,
+                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl
+                                                        ORDER BY urut_bound, kode_kunjungan, tarif_id, kel_pemeriksaan")->getResultArray());
+
 
             $select = $this->lowerKey($db->query("select VISIT_Id, org_unit_code, DESCRIPTION as nama_obat, DESCRIPTION2 as aturan_pakai, MODULE_ID,TREAT_DATE from PASIEN_PRESCRIPTION_DETAIL where 
                                                                 VISIT_ID ='" . $visit['visit_id'] . "' AND ORG_UNIT_CODE ='" . $visit['org_unit_code'] . "'")->getResultArray());
@@ -619,6 +661,7 @@ class lainnya extends \App\Controllers\BaseController
         }
     }
 
+
     // radiologi
     public function radiologi_cetak($visit, $vactination_id = null)
     {
@@ -635,7 +678,7 @@ class lainnya extends \App\Controllers\BaseController
                                                                  TREAT_RESULTS.GENDER, TREAT_RESULTS.KAL_ID, TREAT_RESULTS.BOUND_ID, TREAT_RESULTS.MEASURE_ID, TREAT_RESULTS.DOCTOR_FROM,  TREAT_RESULTS.DOCTOR, C.NAME_OF_CLINIC, TREAT_RESULTS.PRINT_DATE, 
                                                                  TREAT_RESULTS.PRINTED_BY, TREAT_RESULTS.PRINTQ, TREAT_RESULTS.description, TREAT_RESULTS.CONCLUSION,TREAT_RESULTS.THEID,TREAT_RESULTS.NOSEP, 
                                                                  treat_results.isvalid, treat_results.valid_date, treat_results.iskritis FROM TREAT_RESULTS, CLINIC C WHERE 
-                                                                 TREAT_RESULTS.result_id = '2024062710511302274A8' and treat_results.clinic_id = c.clinic_id ORDER BY TREAT_RESULTS.REAGENT_ID, 
+                                                                 TREAT_RESULTS.result_id = '" . $vactination_id . "' and treat_results.clinic_id = c.clinic_id ORDER BY TREAT_RESULTS.REAGENT_ID, 
                                                                  TREAT_RESULTS.BOUND_ID")->getResultArray());
 
             if (isset($visit)) {
@@ -655,6 +698,123 @@ class lainnya extends \App\Controllers\BaseController
 
                 ]);
             }
+        }
+    }
+    public function rajalFisikAndRehab($visit, $vactination_id = null)
+    {
+        $title = "FORMULIR KLAIM RAWAT JALAN LAYANAN KEDOKTERAN FISIK DAN REHABILITASI";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $kopprintData = $this->kopprint();
+
+            $select = $this->lowerKey($db->query("
+                SELECT VISIT_Id, org_unit_code, DESCRIPTION AS nama_obat, DESCRIPTION2 AS aturan_pakai, MODULE_ID, TREAT_DATE 
+                FROM PASIEN_PRESCRIPTION_DETAIL 
+                WHERE VISIT_ID ='" . $visit['visit_id'] . "' 
+                AND ORG_UNIT_CODE ='" . $visit['org_unit_code'] . "'")->getResultArray());
+
+            $pasienData = $this->lowerKey($db->query("SELECT * FROM PASIEN 
+                WHERE NO_REGISTRATION ='" . $visit['no_registration'] . "'")->getRowArray());
+
+            // WHERE visit_id = '20240705P012021119' 
+            $diagnosa = $this->lowerKey($db->query("SELECT TOP 1 * 
+                                        FROM PASIEN_DIAGNOSA 
+                                        WHERE visit_id ='" . $visit['visit_id'] . "' 
+                                        ORDER BY date_of_diagnosa DESC
+                                        ")->getResultArray());
+
+            if ($diagnosa) {
+                $diagnosas = $this->lowerKey($db->query("
+                        SELECT * 
+                        FROM PASIEN_DIAGNOSAS 
+                        WHERE PASIEN_DIAGNOSA_ID = '" . $diagnosa[0]['pasien_diagnosa_id'] . "'
+                    ")->getResultArray());
+
+                if ($diagnosas) {
+                    $diagnosa = ['diagnosa' => $diagnosa[0], 'diagnosas' => $diagnosas[0]];
+                } else {
+                    $diagnosa = ['diagnosa' => $diagnosa[0], 'diagnosas' => []];
+                }
+            } else {
+                $diagnosa = [];
+            }
+
+            if ($pasienData) {
+                $visit = array_merge($visit, $pasienData);
+            }
+
+            return view("admin/patient/profilemodul/formrm/rm/gangguan-pola-jalan.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "data" => $select,
+                'kop' => $kopprintData[0],
+                'diagnosa' => $diagnosa,
+            ]);
+        }
+    }
+
+
+
+    public function requestFisioterapiVisit($visit, $vactination_id = null)
+    {
+        $title = "FORMULIR KLAIM RAWAT JALAN LAYANAN KEDOKTERAN FISIK DAN REHABILITASI";
+
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $kopprintData = $this->kopprint();
+
+            $dataTables = $this->lowerKey(
+                $db->query("SELECT pfd.*, tt.tarif_name 
+                    FROM PASIEN_FISIOTERAPI_DETAIL pfd 
+                    INNER JOIN TREAT_TARIF tt ON pfd.tarif_id = tt.tarif_id 
+                    WHERE pfd.visit_id ='" . $visit['visit_id'] . "'
+                ")->getResultArray()
+            );
+
+            $select = $this->lowerKey($db->query("SELECT VISIT_Id, org_unit_code, DESCRIPTION as nama_obat, DESCRIPTION2 as aturan_pakai, MODULE_ID, TREAT_DATE 
+                                                  FROM PASIEN_PRESCRIPTION_DETAIL 
+                                                  WHERE VISIT_ID ='" . $visit['visit_id'] . "' 
+                                                  AND ORG_UNIT_CODE ='" . $visit['org_unit_code'] . "'")->getResultArray());
+
+            return view("admin/patient/profilemodul/formrm/rm/request-fisoterapi-visit.php", [
+                "visit" => $visit,
+                'title' => $title,
+                "data" => $select,
+                'kop' => $kopprintData[0],
+                'dataTables' => $dataTables,
+            ]);
+        }
+    }
+    public function blood_request_ctk($visit, $vactination_id = null)
+    {
+        $title = "Surat Permintaan Tranfusi Darah";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $select = $this->lowerKey($db->query("SELECT * from BLOOD_REQUEST where VISIT_ID = '202406231817490203553' And BLOOD_REQUEST ='20240722042830570R50'")->getResultArray());
+            if (!empty($select)) {
+                $select = $select[0];
+            }
+            $kopprintData = $this->kopprint();
+
+            $usage_type =  $this->lowerKey($db->query("select * from blood_usage_type")->getResultArray());
+            $measurement =  $this->lowerKey($db->query("select * from measurement")->getResultArray());
+            $blood_type = $this->lowerKey($db->query("select * from blood_type")->getResultArray());
+
+            return view("admin/patient/profilemodul/formrm/rm/LAINNYA/blood_request-cetak.php", [
+                "visit" => $visit,
+                'title' => $title,
+                'data' => $select,
+                'usage_type' => $usage_type,
+                'measurement' => $measurement,
+                'blood_type' => $blood_type,
+                'kop' => $kopprintData[0],
+            ]);
         }
     }
 }

@@ -95,10 +95,10 @@ class AuthController extends Controller
             return redirect()->to(route_to('reset-password') . '?token=' . $this->auth->user()->reset_hash)->withCookies();
         }
 
-        $redirectURL = site_url('/');
+        $redirectURL = site_url('/redirect-to');
         // $redirectURL = session('redirect_url') ?? site_url('/');
         unset($_SESSION['redirect_url']);
-
+        // return "coba";
         return redirect()->to($redirectURL)->withCookies()->with('message', lang('Auth.loginSuccess'));
     }
 
@@ -110,7 +110,7 @@ class AuthController extends Controller
         if ($this->auth->check()) {
             $this->auth->logout();
         }
-
+        // echo '<script>localStorage.removeItem("userLoggedIn");</script>';
         return redirect()->to(site_url('/'));
     }
 

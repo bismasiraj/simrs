@@ -123,7 +123,7 @@
                     <label for="cara_bayar"><b>Cara Bayar :</b></label>
                 </div>
                 <div class="col">
-                    <select class="form-control" name="cara_bayar" id="cara_bayar" style="width: 300px;">
+                    <select class="form-select" name="cara_bayar" id="cara_bayar" style="width: 300px;">
                         <option value="<?= $visit['name_of_status_pasien']; ?>" selected><?= $visit['name_of_status_pasien']; ?></option>
                     </select>
                 </div>
@@ -133,11 +133,11 @@
                     <label for="employee_id"><b>Pengirim :</b></label>
                 </div>
                 <div class="col">
-                    <select class="form-control" name="employee_id" id="employee_id" style="width: 300px;">
+                    <select class="form-select" name="employee_id" id="employee_id" style="width: 300px;">
                         <option value="<?= $visit['employee_id']; ?>" selected><?= $visit['fullname']; ?></option>
                     </select>
                     <!-- <input type="text" name="employee_id" id="employee_id" readonly> -->
-                    <select class="form-control" name="clinic_id" id="clinic_id" style="width: 200px;">
+                    <select class="form-select" name="clinic_id" id="clinic_id" style="width: 200px;">
                         <option value="<?= $visit['clinic_id']; ?>" selected><?= $visit['name_of_clinic']; ?></option>
                     </select>
                     <!-- <input type="text" name="clinic_id" id="clinic_id" readonly> -->

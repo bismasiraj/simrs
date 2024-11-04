@@ -1,6 +1,6 @@
 <script src="<?php echo base_url(); ?>backend/dist/js/moment.min.js"></script>
 <footer class="main-footer">
-    &copy;  <?php echo date('Y'); ?>
+    &copy; <?php echo date('Y'); ?>
     <?php echo $this->customlib->getAppName(); ?> <!-- <?php echo $this->customlib->getAppVersion(); ?> -->
 </footer>
 <div class="control-sidebar-bg"></div>
@@ -9,7 +9,7 @@
     $.widget.bridge('uibutton', $.ui.button);
 </script>
 
-<link href="<?php echo base_url(); ?>backend/toast-alert/toastr.css" rel="stylesheet"/>
+<link href="<?php echo base_url(); ?>backend/toast-alert/toastr.css" rel="stylesheet" />
 <script src="<?php echo base_url(); ?>backend/toast-alert/toastr.js"></script>
 <script src="<?php echo base_url(); ?>backend/bootstrap/js/bootstrap.min.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/select2/select2.full.min.js"></script>
@@ -24,35 +24,34 @@
 <!--language js-->
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/bootstrap-select.min.js"></script>
 <script type="text/javascript">
-    $(function(){
-      $('.languageselectpicker').selectpicker();
-   });
-    
+    $(function() {
+        $('.languageselectpicker').selectpicker();
+    });
 </script>
 <script src="<?php echo base_url(); ?>backend/js/jquery.scrolling-tabs.js"></script>
 <script>
-$('.navlistscroll').scrollingTabs();
+    $('.navlistscroll').scrollingTabs();
 </script>
 <script type="text/javascript">
-     $("#myModalpa").on('hidden.bs.modal', function (e) {
-    console.log("sdfsdfsf");
-     $(".filestyle").next(".dropify-clear").trigger("click");
-  
-     $('form#formaddpa').find('input:text, input:password, input:file, textarea').val('');
-     $('form#formaddpa').find('select option:selected').removeAttr('selected');
-     $('form#formaddpa').find('input:checkbox, input:radio').removeAttr('checked');
- });
-    $(document).ready(function () {
+    $("#myModalpa").on('hidden.bs.modal', function(e) {
+        console.log("sdfsdfsf");
+        $(".filestyle").next(".dropify-clear").trigger("click");
+
+        $('form#formaddpa').find('input:text, input:password, input:file, textarea').val('');
+        $('form#formaddpa').find('select option:selected').removeAttr('selected');
+        $('form#formaddpa').find('input:checkbox, input:radio').removeAttr('checked');
+    });
+    $(document).ready(function() {
         $(".studentsidebar").mCustomScrollbar({
             theme: "minimal"
         });
 
-        $('.studentsideclose, .overlay').on('click', function () {
+        $('.studentsideclose, .overlay').on('click', function() {
             $('.studentsidebar').removeClass('active');
             $('.overlay').fadeOut();
         });
 
-        $('#sidebarCollapse').on('click', function () {
+        $('#sidebarCollapse').on('click', function() {
             $('.studentsidebar').addClass('active');
             $('.overlay').fadeIn();
             $('.collapse.in').toggleClass('in');
@@ -68,11 +67,11 @@ $language      = $this->customlib->getMyLanguage();
 $language_name = $language["short_code"];
 
 if ($language_name != 'en') {
-    ?>
+?>
     <script src="<?php echo base_url(); ?>backend/plugins/datepicker/locales/bootstrap-datepicker.<?php echo $language_name ?>.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/locale/<?php echo $language_name ?>.js"></script>
 
-<?php }?>
+<?php } ?>
 <script src="<?php echo base_url(); ?>backend/datepicker/js/bootstrap-datetimepicker.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js"></script>
 <script src="<?php echo base_url(); ?>backend/dist/js/app.min.js"></script>
@@ -87,70 +86,73 @@ if ($language_name != 'en') {
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/vfs_fonts.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/buttons.print.min.js"></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/buttons.colVis.min.js" ></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/dataTables.responsive.min.js" ></script>
-<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/ss.custom.js" ></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/buttons.colVis.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/datatables/js/ss.custom.js"></script>
 <script src="<?php echo base_url(); ?>backend/dist/datatables/js/datetime-moment.js"></script>
 <script src="<?php echo base_url() ?>backend/plugins/select2/select2.full.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-    $(".dt-body-right a").tooltip();
-});
+    $(document).ready(function() {
+        $(".dt-body-right a").tooltip();
+    });
 </script>
 
 </body>
+
 </html>
 <!-- jQuery 3 -->
 
 <script src="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.min.js"></script>
 <script src="<?php echo base_url() ?>backend/fullcalendar/dist/locale-all.js"></script>
 
-<?php if ($language_name != 'en') {?>
+<?php if ($language_name != 'en') { ?>
     <script src="<?php echo base_url() ?>backend/fullcalendar/dist/locale/<?php echo $language_name ?>.js"></script>
-<?php }?>
+<?php } ?>
 
 <link rel="stylesheet" href="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 <script src="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-<?php
-if ($this->session->flashdata('success_msg')) {
-    ?>
-            successMsg("<?php echo $this->session->flashdata('success_msg'); ?>");
-    <?php
-} else if ($this->session->flashdata('error_msg')) {
-    ?>
-            errorMsg("<?php echo $this->session->flashdata('error_msg'); ?>");
-    <?php
-} else if ($this->session->flashdata('warning_msg')) {
-    ?>
+        <?php
+        if ($this->session->flashdata('success_msg')) {
+        ?>
+            successSwal("<?php echo $this->session->flashdata('success_msg'); ?>");
+        <?php
+        } else if ($this->session->flashdata('error_msg')) {
+        ?>
+            errorSwal("<?php echo $this->session->flashdata('error_msg'); ?>");
+        <?php
+        } else if ($this->session->flashdata('warning_msg')) {
+        ?>
             infoMsg("<?php echo $this->session->flashdata('warning_msg'); ?>");
-    <?php
-} else if ($this->session->flashdata('info_msg')) {
-    ?>
+        <?php
+        } else if ($this->session->flashdata('info_msg')) {
+        ?>
             warningMsg("<?php echo $this->session->flashdata('info_msg'); ?>");
-    <?php
-}
-?>
+        <?php
+        }
+        ?>
     });
 
     function complete_event(id, status) {
         $.ajax({
             url: "<?php echo site_url("admin/calendar/markcomplete/") ?>" + id,
             type: "POST",
-            data: {id: id, active: status},
+            data: {
+                id: id,
+                active: status
+            },
             dataType: 'json',
-            success: function (res)
-            {
+            success: function(res) {
                 if (res.status == "fail") {
                     var message = "";
-                    $.each(res.error, function (index, value) {
+                    $.each(res.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(res.message);
+                    successSwal(res.message);
                     window.location.reload(true);
                 }
             }
@@ -158,7 +160,7 @@ if ($this->session->flashdata('success_msg')) {
     }
 
     function markc(id) {
-        $('#newcheck' + id).change(function () {
+        $('#newcheck' + id).change(function() {
             if (this.checked) {
                 complete_event(id, 'yes');
             } else {
@@ -168,7 +170,7 @@ if ($this->session->flashdata('success_msg')) {
     }
 </script>
 
-<?php $this->load->view('layout/routine_update');?>
+<?php $this->load->view('layout/routine_update'); ?>
 <!-- Button trigger modal -->
 <!-- Modal -->
 <div class="row">
@@ -215,7 +217,7 @@ $bedgroup_list = $this->bedgroup_model->bedGroupFloor();
             type: 'POST',
             data: eventData,
             dataType: "json",
-            success: function (msg) {
+            success: function(msg) {
                 alert(msg);
 
             }
@@ -231,17 +233,17 @@ $bedgroup_list = $this->bedgroup_model->bedGroupFloor();
     d = today.getDate();
     var viewtitle = 'month';
     var pagetitle = "<?php
-if (isset($title)) {
-    echo $title;
-}
-?>";
+                        if (isset($title)) {
+                            echo $title;
+                        }
+                        ?>";
 
     if (pagetitle == "Dashboard") {
         viewtitle = 'agendaWeek';
     }
 
     $calendar.fullCalendar({
-        viewRender: function (view, element) {
+        viewRender: function(view, element) {
             // We make sure that we activate the perfect scrollbar when the view isn't on Month
 
         },
@@ -256,9 +258,9 @@ if (isset($title)) {
         selectable: true,
         selectHelper: true,
         views: {
-            month: {// name of view
+            month: { // name of view
                 titleFormat: 'MMMM YYYY'
-                        // other view-specific options here
+                // other view-specific options here
             },
             week: {
                 titleFormat: " MMMM D YYYY"
@@ -278,28 +280,28 @@ if (isset($title)) {
 
         },
 
-        eventRender: function (event, element) {
+        eventRender: function(event, element) {
             element.attr('title', event.title);
             element.attr('onclick', event.onclick);
             element.attr('data-toggle', 'tooltip');
             if ((!event.url) && (event.event_type != 'task')) {
                 element.attr('title', event.title + '-' + event.description);
-                element.click(function () {
+                element.click(function() {
                     view_event(event.id);
 
                 });
             }
         },
-        dayClick: function (date, jsEvent, view) {
+        dayClick: function(date, jsEvent, view) {
 
             var d = date.format();
             if (!$.fullCalendar.moment(d).hasTime()) {
                 d += ' 05:30';
             }
-           
-<?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_add')) {?>
 
-             var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
+            <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_add')) { ?>
+
+                var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
 
                 $("#input-field").val('');
                 $("#desc-field").text('');
@@ -307,50 +309,56 @@ if (isset($title)) {
 
                     startDate: date,
                     endDate: date,
-                    timePicker: true, timePickerIncrement: 5, locale: {
-                    format: datetime_format
+                    timePicker: true,
+                    timePickerIncrement: 5,
+                    locale: {
+                        format: datetime_format
 
                     }
                 });
 
                 $('#newEventModal').modal('show');
 
-<?php }?>
+            <?php } ?>
             return false;
         }
     });
 
-    $(document).ready(function () {
-         var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
+    $(document).ready(function() {
+        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
 
-        $("#date-field").daterangepicker({timePicker: true, timePickerIncrement: 5, locale: {
+        $("#date-field").daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 5,
+            locale: {
                 format: datetime_format
-            }});
+            }
+        });
 
         $('.patient_list_ajax').select2({
-            ajax: { 
+            ajax: {
                 url: "<?= base_url(); ?>admin/patient/getPatientListAjax",
                 type: "post",
                 dataType: 'json',
                 delay: 250,
-                data: function (params) {
-                   $('#case_reference_idd').val('');
+                data: function(params) {
+                    $('#case_reference_idd').val('');
                     return {
-                    searchTerm: params.term // search term
+                        searchTerm: params.term // search term
                     };
                 },
-                processResults: function (response) {
+                processResults: function(response) {
                     return {
                         results: response
                     };
                 },
                 cache: true
             }
-        }); 
+        });
     });
 
     function datepic() {
-         var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
+        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
 
         $("#date-field").daterangepicker({
             format: datetime_format
@@ -360,9 +368,9 @@ if (isset($title)) {
     function view_event(id) {
         $('.selectevent').find('.cpicker-big').removeClass('cpicker-big').addClass('cpicker-small');
         var base_url = '<?php echo base_url() ?>';
-        if (typeof (id) == 'undefined') {
+        if (typeof(id) == 'undefined') {
             return;
-        } 
+        }
 
         var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
 
@@ -370,7 +378,7 @@ if (isset($title)) {
             url: base_url + 'admin/calendar/view_event/' + id,
             type: 'POST',
             dataType: "json",
-            success: function (msg) {
+            success: function(msg) {
                 $("#event_title").val(msg.event_title);
                 $("#event_desc").text(msg.event_description);
                 $('#eventdates').val(msg.start_date + '-' + msg.end_date);
@@ -388,8 +396,10 @@ if (isset($title)) {
                 $("#eventdates").daterangepicker({
                     startDate: msg.startdate,
                     endDate: msg.enddate,
-                    timePicker: true, timePickerIncrement: 5, locale: {
-                        format: calendar_date_time_format+' hh:mm A'
+                    timePicker: true,
+                    timePickerIncrement: 5,
+                    locale: {
+                        format: calendar_date_time_format + ' hh:mm A'
                     }
                 });
 
@@ -402,47 +412,10 @@ if (isset($title)) {
     }
 
     var calendar_date_time_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'DD', 'm' => 'MM', 'M' => 'MMM', 'Y' => 'YYYY']) ?>';
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-        $("body").delegate(".date", "focusin", function () {
-        var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
-
-        $(this).datepicker({
-                todayHighlight: false,
-                format: date_format,
-                autoclose: true,
-                language: '<?php echo $language_name ?>'
-            });
-        });
-
-        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'HH', 'i' => 'mm']) ?>';
-        
-        $("body").delegate(".datetime", "focusin", function () {
-            $(this).datetimepicker({
-                format: datetime_format,
-                locale:
-                        '<?php echo $language_name ?>',
-
-            });
-        });
-    });
-
-
-    $(document).ready(function (e) {
-        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
-        $("body").delegate(".datetime", "focusin", function () {
-            $(this).datetimepicker({
-                format: datetime_format,
-                locale:
-                        '<?php echo $language_name ?>',
-
-            });
-        });
-        var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
-        var capital_date_format = date_format.toUpperCase();
-        $.fn.dataTable.moment(capital_date_format);
-
-        $("body").delegate(".date", "focusin", function () {
+        $("body").delegate(".date", "focusin", function() {
+            var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
 
             $(this).datepicker({
                 todayHighlight: false,
@@ -451,9 +424,44 @@ if (isset($title)) {
                 language: '<?php echo $language_name ?>'
             });
         });
-        
+
+        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'HH', 'i' => 'mm']) ?>';
+
+        $("body").delegate(".datetime", "focusin", function() {
+            $(this).datetimepicker({
+                format: datetime_format,
+                locale: '<?php echo $language_name ?>',
+
+            });
+        });
+    });
+
+
+    $(document).ready(function(e) {
+        var datetime_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm']) ?>';
+        $("body").delegate(".datetime", "focusin", function() {
+            $(this).datetimepicker({
+                format: datetime_format,
+                locale: '<?php echo $language_name ?>',
+
+            });
+        });
+        var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
+        var capital_date_format = date_format.toUpperCase();
+        $.fn.dataTable.moment(capital_date_format);
+
+        $("body").delegate(".date", "focusin", function() {
+
+            $(this).datepicker({
+                todayHighlight: false,
+                format: date_format,
+                autoclose: true,
+                language: '<?php echo $language_name ?>'
+            });
+        });
+
         var daterange_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY']) ?>';
-        $("body").delegate(".daterange", "focusin", function () {
+        $("body").delegate(".daterange", "focusin", function() {
             $(this).daterangepicker({
                 locale: {
                     format: daterange_format,
@@ -463,21 +471,21 @@ if (isset($title)) {
         });
     });
 
-    $(document).ready(function (e) {
-         var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
-        $("body").on("focusin", ".billDateDisabled",function () {
+    $(document).ready(function(e) {
+        var date_format = '<?php echo $result = strtr($this->customlib->getHospitalDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy']) ?>';
+        $("body").on("focusin", ".billDateDisabled", function() {
             $(this).datepicker({
-                    format: date_format,
-                    setDate: new Date(),
-                      autoclose: true,
-                      todayHighlight: true,
-                      endDate: '+0d',
-                });
+                format: date_format,
+                setDate: new Date(),
+                autoclose: true,
+                todayHighlight: true,
+                endDate: '+0d',
             });
         });
+    });
 
-    $(document).ready(function (e) {
-        $("#addevent_form").on('submit', (function (e) {
+    $(document).ready(function(e) {
+        $("#addevent_form").on('submit', (function(e) {
             $("#addevent_formbtn").button('loading');
             e.preventDefault();
             $.ajax({
@@ -488,17 +496,16 @@ if (isset($title)) {
                 contentType: false,
                 cache: false,
                 processData: false,
-                success: function (res)
-                {
+                success: function(res) {
                     if (res.status == "fail") {
                         var message = "";
-                        $.each(res.error, function (index, value) {
+                        $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
 
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#addevent_formbtn").button('reset');
@@ -507,8 +514,8 @@ if (isset($title)) {
         }));
     });
 
-    $(document).ready(function (e) {
-        $("#updateevent_form").on('submit', (function (e) {
+    $(document).ready(function(e) {
+        $("#updateevent_form").on('submit', (function(e) {
             $("#updateevent_formbtn").button('loading');
             e.preventDefault();
             $.ajax({
@@ -519,16 +526,15 @@ if (isset($title)) {
                 contentType: false,
                 cache: false,
                 processData: false,
-                success: function (res)
-                {
+                success: function(res) {
                     if (res.status == "fail") {
                         var message = "";
-                        $.each(res.error, function (index, value) {
+                        $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#updateevent_formbtn").button('reset');
@@ -538,19 +544,19 @@ if (isset($title)) {
     });
 
     function deleteevent(id, msg) {
-        if (typeof (id) == 'undefined') {
+        if (typeof(id) == 'undefined') {
             return;
         }
-        if (confirm("<?php echo $this->lang->line('are_you_sure_to_delete_this') ?>"+' '+ msg + " !")) {
+        if (confirm("<?php echo $this->lang->line('are_you_sure_to_delete_this') ?>" + ' ' + msg + " !")) {
             $.ajax({
                 url: base_url + 'admin/calendar/delete_event/' + id,
                 type: 'POST',
                 dataType: "json",
-                success: function (res) {
+                success: function(res) {
                     if (res.status == "fail") {
-                        errorMsg(res.message);
+                        errorSwal(res.message);
                     } else {
-                        successMsg(msg + "<?php echo $this->lang->line('delete_message') ?>");
+                        successSwal(msg + "<?php echo $this->lang->line('delete_message') ?>");
                         window.location.reload(true);
                     }
                 }
@@ -558,7 +564,7 @@ if (isset($title)) {
         }
     }
 
-    $("body").on('click', '.cpicker', function () {
+    $("body").on('click', '.cpicker', function() {
         var color = $(this).data('color');
         // Clicked on the same selected color
         if ($(this).hasClass('cpicker-big')) {
@@ -575,9 +581,9 @@ if (isset($title)) {
         }
     });
 
-<?php if (isset($bedid)) {?>
+    <?php if (isset($bedid)) { ?>
         add_inpatient('<?php echo $bedid ?>', '<?php echo $bedgroupid ?>');
-<?php }?>
+    <?php } ?>
 
     function getbedstatus() {
         $("#beddata").button('loading');
@@ -585,14 +591,11 @@ if (isset($title)) {
             url: base_url + 'admin/patient/getBedStatus/',
             type: 'POST',
             data: '',
-            success: function (res) {
+            success: function(res) {
                 $("#ajaxbedstatus").html(res);
                 $("#bed").modal('show');
                 $("#beddata").button('reset');
             }
         })
     }
-    
-    
 </script>
-

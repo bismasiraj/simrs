@@ -7,8 +7,8 @@
         $('#notaNoLab').html(`<option value="%">Semua</option>`)
         getBillPoli(nomor, ke, mulai, akhir, lunas, '<?= $visit['clinic_id']; ?>', rj, status, nota, trans)
     })
-    $("#formSaveBillRadBtn").on("click", function() {
-        $("#radChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
+    $("#formSaveBillPoliBtn").on("click", function() {
+        $("#billPoliChargesBody").find("button.simpanbill:not([disabled])").trigger("click")
     })
     $("#notaNoPoli").on("change", function() {
         filterBillPoli()
@@ -42,6 +42,8 @@
 
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
+
+        $("#searchTarifbillpoli").val(null).trigger("change")
 
         var i = $('#billPoliChargesBody tr').length + 1;
         var key = 'billpoli' + i

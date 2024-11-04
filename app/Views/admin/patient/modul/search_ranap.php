@@ -1,6 +1,12 @@
 <div class="tab-pane tab-content-height
 <?php if ($giTipe == 3) echo "active"; ?>
 " id="rawat_inap">
+    <?php
+    $session = session();
+    $gsPoli = $session->gsPoli;
+    $permissions = user()->getPermissions();
+    $roles = user()->getRoles();
+    ?>
     <form id="form2" action="" method="post" class="">
         <div class="box-body row mt-4 mb-4">
             <input type="hidden" name="ci_csrf_token" value="">
@@ -19,7 +25,7 @@
             <div class="col-sm-6 col-md-2">
                 <div class="form-group">
                     <label>Bangsal</label><small class="req"> *</small>
-                    <select id="iklinik" class="form-control" name="klinik" onchange="showdate(this.value)" autocomplete="off">
+                    <select id="iklinik" class="form-select" name="klinik" onchange="showdate(this.value)" autocomplete="off">
                         <option value="%">Semua</option>
                         <?php $cliniclist = array();
                         foreach ($clinic as $key => $value) {
@@ -42,7 +48,7 @@
                 <span class="text-danger" id="error_search_type"></span>
             </div>
 
-            <div class="col-sm-6 col-md-2">
+            <!-- <div class="col-sm-6 col-md-2">
                 <div class="form-group">
                     <label>Dokter</label>
                     <select id="idokter" class="form-control" name="dokter" onchange="showdate(this.value)">
@@ -61,6 +67,35 @@
                     </select>
                     <span class="text-danger" id="error_doctor"></span>
                 </div>
+            </div> -->
+
+            <div class="col-sm-6 col-md-2">
+                <div class="form-group">
+                    <label>Dokter</label>
+                    <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
+                        <option value="%">Semua</option>
+                        <?php if (!isset($roles['11'])) { ?>
+                        <?php } ?>
+                        <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
+                            <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
+                        <?php
+                        } else {
+                        ?>
+                            <?php $dokterlist = array();
+                            foreach ($dokter as $key => $value) {
+                                foreach ($value as $key1 => $value1) {
+                                    $dokterlist[$key1] = $value1;
+                                }
+                            }
+                            asort($dokterlist);
+                            ?>
+                            <?php foreach ($dokterlist as $key => $value) { ?>
+                                <option value="<?= $key; ?>"><?= $value; ?></option>
+                        <?php }
+                        } ?>
+                    </select>
+                    <span class="text-danger" id="error_doctor"></span>
+                </div>
             </div>
 
 
@@ -68,7 +103,7 @@
                 <div class="form-group">
                     <label>Rujukan Dari</label>
 
-                    <select name="rujukan" id="irujukan" class="form-control">
+                    <select name="rujukan" id="irujukan" class="form-select">
                         <option value="%">Semua</option>
                         <?php foreach ($cliniclist as $key => $value) { ?>
                             <option value="<?= $key; ?>"><?= $value; ?></option>
@@ -80,7 +115,7 @@
             <div class="col-sm-6 col-md-2" style="display: none">
                 <div class="form-group">
                     <label>Relasi</label>
-                    <select name="statuspasien" id="istatuspasien" class="form-control">
+                    <select name="statuspasien" id="istatuspasien" class="form-select">
                         <option value="%">Semua</option>
                         <?php foreach ($statusPasien as $key => $value) {
                             if ($statusPasien[$key]['name_of_status_pasien'] != null && $statusPasien[$key]['name_of_status_pasien'] != '') {
@@ -138,7 +173,7 @@
                     <div class="row">
 
                         <div class="col-md-6">
-                            <select name="keluar_id" id="icarakeluar" class="form-control">
+                            <select name="keluar_id" id="icarakeluar" class="form-select">
                                 <?php foreach ($caraKeluar as $key => $value) {
                                 ?>
                                     <option value="<?= $caraKeluar[$key]['keluar_id']; ?>"><?= $caraKeluar[$key]['cara_keluar']; ?></option>
@@ -148,10 +183,10 @@
                         </div>
 
                         <div class="col-md-3">
-                            <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fa fa-search"></i> Cari</button>
+                            <button id="form2btn" type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100"><i class="fa fa-search"></i> Cari</button>
                         </div>
                         <div class="col-md-3">
-                            <button id="btnHandOver" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 h-100"><i class="fas fa-hand-holding-heart"></i> Handover</button>
+                            <button id="btnHandOver" type="button" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100"><i class="fas fa-hand-holding-heart"></i> HO</button>
                         </div>
                     </div>
                 </div>
@@ -231,7 +266,7 @@
                     <div class="col-md-4">
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Bangsal</label>
-                            <select class="form-control" id="ariclinic_id" name="clinic_id" onchange="changeClinicInap(this.value)">
+                            <select class="form-select" id="ariclinic_id" name="clinic_id" onchange="changeClinicInap(this.value)">
                                 <?php foreach ($clinicInap as $key => $value) { ?>
                                     <option value="<?= $key; ?>"><?= $value; ?></option>
                                 <?php } ?>
@@ -242,7 +277,7 @@
                         </div>
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Ruang</label>
-                            <select id="ariclass_room_id" class="form-control" name="class_room_id" onchange="changeClassRoomTA(this.value)">
+                            <select id="ariclass_room_id" class="form-select" name="class_room_id" onchange="changeClassRoomTA(this.value)">
                             </select>
                             <div id="ariclass_room_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
                                 <strong>Ruang</strong> tidak boleh kosong
@@ -250,7 +285,7 @@
                         </div>
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Nomor TT</label>
-                            <select id="aribed_id" class="form-control" name="bed_id">
+                            <select id="aribed_id" class="form-select" name="bed_id">
                             </select>
                             <div id="aribed_idalert" class="alert alert-danger mb-0" role="alert" style="display: none;">
                                 <strong>Nomor TT</strong> tidak boleh kosong
@@ -266,7 +301,7 @@
                         </div>
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Dokter DPJP</label>
-                            <select id="ariemployee_id" class="form-control" name="employee_id">
+                            <select id="ariemployee_id" class="form-select" name="employee_id">
                                 <?php $dokterlist = array();
                                 foreach ($dokter as $key => $value) {
                                     foreach ($value as $key1 => $value1) {
@@ -283,7 +318,7 @@
 
                         <div class="mb-3 row">
                             <label class="form-label" for="formrow-email-input">Jenis Perawatan</label>
-                            <select class="form-control" id="ariclinic_type" name="clinic_type">
+                            <select class="form-select" id="ariclinic_type" name="clinic_type">
                                 <?php foreach ($clinicType as $key => $value) { ?>
                                     <option value="<?= $clinicType[$key]['clinic_type']; ?>"><?= $clinicType[$key]['clinictype']; ?></option>
                                 <?php } ?>
@@ -436,7 +471,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="asalrujukan">Asal Rujukan</label>
                                                     <div>
-                                                        <select name='asalrujukan' id="taasalrujukan" class="form-control select2 act" style="width:100%" disabled>
+                                                        <select name='asalrujukan' id="taasalrujukan" class="form-select select2 act" style="width:100%" disabled>
                                                             <option value="1">Faskes 1</option>
                                                             <option value="2">Faskes 2 (RS)</option>
                                                         </select>
@@ -449,7 +484,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="kdpoli">Poli Rujukan</label>
                                                     <div>
-                                                        <select name='kdpoli' id="takdpoli" class="form-control select2 act" style="width:100%" disabled>
+                                                        <select name='kdpoli' id="takdpoli" class="form-select select2 act" style="width:100%" disabled>
                                                             <?php foreach ($inasisPoli as $key => $value) { ?>
                                                                 <option value="<?= $inasisPoli[$key]['kdpoli']; ?>"><?= $inasisPoli[$key]['nmpoli']; ?></option>
                                                             <?php } ?>
@@ -473,7 +508,7 @@
                                             </div>
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="diag_awal">Diagnosis Rujukan</label>
-                                                    <select class="form-control" name='diag_awal' id="tadiag_awal" disabled>
+                                                    <select class="form-select" name='diag_awal' id="tadiag_awal" disabled>
                                                     </select>
                                                 </div>
                                             </div>
@@ -501,7 +536,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="tatujuankunj">Tujuan Kunjungan</label>
                                                     <div>
-                                                        <select name='tujuankunj' id="tatujuankunj" class="form-control select2 act" style="width:100%">
+                                                        <select name='tujuankunj' id="tatujuankunj" class="form-select select2 act" style="width:100%">
                                                             <option value="0">Normal</option>
                                                             <option value="1">Prosedur</option>
                                                             <option value="2">Konsul Dokter</option>
@@ -512,7 +547,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="takdpenunjang">Penunjang</label>
                                                     <div>
-                                                        <select name='kdpenunjang' id="takdpenunjang" class="form-control select2 act" style="width:100%">
+                                                        <select name='kdpenunjang' id="takdpenunjang" class="form-select select2 act" style="width:100%">
                                                             <option value="1">Radioterapi</option>
                                                             <option value="2">Kemoterapi</option>
                                                             <option value="3">Rehab Medik</option>
@@ -533,7 +568,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="taflagprocedure">Procedure</label>
                                                     <div>
-                                                        <select name='flagprocedure' id="taflagprocedure" class="form-control select2 act" style="width:100%">
+                                                        <select name='flagprocedure' id="taflagprocedure" class="form-select select2 act" style="width:100%">
                                                             <option value="0">Prosedur Tidak Berkelanjutan</option>
                                                             <option value="1">Prosedur dan Terapi Berkelanjutan</option>
                                                             <option value="99">-</option>
@@ -544,7 +579,7 @@
                                             <div class="col-sm-3 col-xs-12 mb-3">
                                                 <div class="form-group"><label for="taassesmentpelgroup">Assesment Pelayanan</label>
                                                     <div>
-                                                        <select name='assesmentpel' id="taassesmentpel" class="form-control select2 act" style="width:100%">
+                                                        <select name='assesmentpel' id="taassesmentpel" class="form-select select2 act" style="width:100%">
                                                             <option value="1">Poli spesialis tidak tersedia pada hari sebelumnya</option>
                                                             <option value="2">Jam poli telah berakhir pada hari sebelumnya</option>
                                                             <option value="3">Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</option>
@@ -627,7 +662,7 @@
                                             <div class="col-sm-3 col-xs-12">
                                                 <div class="form-group">
                                                     <label for="ppkRujukanInap">PPK Rujukan</label>
-                                                    <select name='ppkRujukanInap' id="ppkRujukanInap" class="form-control select2 act" style="width:100%">
+                                                    <select name='ppkRujukanInap' id="ppkRujukanInap" class="form-select select2 act" style="width:100%">
                                                         <?php foreach ($inasisFaskes as $key => $value) { ?>
                                                             <option value="<?= $inasisFaskes[$key]['kdprovider']; ?>"><?= $inasisFaskes[$key]['nmprovider']; ?></option>
                                                         <?php } ?>
@@ -647,7 +682,7 @@
                                             <div class="col-sm-3 col-xs-12">
                                                 <div class="form-group">
                                                     <label for="poliRujukanInap">Poli Rujukan</label>
-                                                    <select name="poliRujukan" id="poliRujukanInap" class="form-control ">
+                                                    <select name="poliRujukan" id="poliRujukanInap" class="form-select ">
                                                         <?php $cliniclist = array();
                                                         foreach ($clinic as $key => $value) {
                                                             if ($clinic[$key]['stype_id'] == '1') {
@@ -665,7 +700,7 @@
                                             <div class="col-sm-3 col-xs-12">
                                                 <div class="form-group">
                                                     <label for="tipeRujukan">Tipe Rujukan</label>
-                                                    <select name="tipeRujukan" id="tipeRujukanInap" class="form-control ">
+                                                    <select name="tipeRujukan" id="tipeRujukanInap" class="form-select ">
                                                         <option value="0">Penuh</option>
                                                         <option value="1">Partial</option>
                                                         <option value="2">Balik PRB</option>
@@ -733,7 +768,7 @@
                                             <div class="col-sm-2 col-xs-4 mb-3">
                                                 <div class="form-group"><label for="tasprikddpjp">Dokter</label>
                                                     <div>
-                                                        <select name="tasprikddpjp" id="tasprikddpjp" class="form-control" style="width:100%">
+                                                        <select name="tasprikddpjp" id="tasprikddpjp" class="form-select" style="width:100%">
                                                             <?php $dpjplist = array();
                                                             foreach ($dokter as $key => $value) {
                                                                 foreach ($value as $key1 => $value1) {
@@ -760,7 +795,7 @@
                                             <div class="col-sm-2 col-xs-4 mb-3">
                                                 <div class="form-group"><label for="tasprikdpoli">Poli Kontrol</label>
                                                     <div>
-                                                        <select name="tasprikdpoli" id="tasprikdpoli" class="form-control" style="width:100%">
+                                                        <select name="tasprikdpoli" id="tasprikdpoli" class="form-select" style="width:100%">
                                                             <?php
                                                             $clinicList = array();
                                                             foreach ($clinic as $key => $value) {
@@ -859,7 +894,7 @@
                                 <div class="col-sm-6 col-md-2">
                                     <div class="form-group">
                                         <label>Bangsal</label><small class="req"> *</small>
-                                        <select id="handclinic_id" class="form-control" name="clinic_id" onchange="setClassRoom(this.value)" autocomplete="off">
+                                        <select id="handclinic_id" class="form-select" name="clinic_id" onchange="setClassRoom(this.value)" autocomplete="off">
                                             <?php $cliniclist = array();
                                             foreach ($clinic as $key => $value) {
                                                 if ($clinic[$key]['stype_id'] == '3') {
@@ -885,7 +920,7 @@
                                         <label>Ruang</label><small class="req"> *</small>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <select id="handclass_room_id" class="form-control" name="class_room_id" autocomplete="off">
+                                                <select id="handclass_room_id" class="form-select" name="class_room_id" autocomplete="off">
                                                     <option value="%">Semua</option>
                                                 </select>
                                             </div>

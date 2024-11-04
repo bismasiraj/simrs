@@ -1,5 +1,5 @@
-<script type="text/javascript">
-  let BASE_URL = "<?php echo base_url(); ?>"
+<!-- <script type="text/javascript">
+  var BASE_URL = "<?php echo base_url(); ?>"
 
 
   function getData(response, url, beforesend) {
@@ -540,4 +540,4 @@
       </div>
     </div>`);
   };
-</script>
+</script> -->

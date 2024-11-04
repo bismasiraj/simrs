@@ -26,11 +26,22 @@
         });
     })
 
+    $(document).ready(function() {
+        vitalsign.forEach((element, key) => {
+            examselect = vitalsign[key];
+            addRowVitalSign(examselect, key)
+        });
+    })
+
 
     function setDataVitalSign() {
         $("#formvitalsign").find("input, textarea").val(null)
         $("#formvitalsign").find("#avttotal_score").html("")
         $("#formvitalsign").find("span.h6").html("")
+        var initialexam = examForassessment[examForassessment.length - 1]
+        $.each(initialexam, function(key, value) {
+            $("#avt" + key).val(value)
+        })
         var bodyId = ''
 
         const date = new Date();
@@ -57,10 +68,12 @@
         $("#avtageyear").val('<?= $visit['ageyear']; ?>')
         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
         $("#avtageday").val('<?= $visit['ageday']; ?>')
-        $("#flatavtexamination_date").val(nowtime).trigger("change")
+        flatpickrInstances["flatavtexamination_date"].setDate(
+            moment().format("DD/MM/YYYY HH:mm")
+        );
+        $("#flatavtexamination_date").trigger("change");
         $("#avtaccount_id").val(5)
 
-        //havin
         var ageYear = <?= $visit['ageyear']; ?>;
         var ageMonth = <?= $visit['agemonth']; ?>;
         var ageDay = <?= $visit['ageday']; ?>;
@@ -378,10 +391,7 @@
     // console.log(vitalsigndesc)
     // vitalsign = vitalsigndesc
 
-    vitalsign.forEach((element, key) => {
-        examselect = vitalsign[key];
-        addRowVitalSign(examselect, key)
-    });
+
 
     // vitalsign.forEach((element, key) => {
     //     examselect = vitalsign[key];
@@ -499,11 +509,11 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    // errorMsg(message);
+                    // errorSwal(message);
                     errorSwal(message)
                     getVitalSign()
                 } else {
-                    // successMsg(data.message);
+                    // successSwal(data.message);
                     successSwal("Berhasil Simpan Data")
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
@@ -513,7 +523,7 @@
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             error: function(xhr) { // if error occured
-                errorMsg("Error occured.please try again");
+                errorSwal("Error occured.please try again");
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             complete: function() {
@@ -580,7 +590,10 @@
         $("#avtdescription").val(examselect.description)
         $("#avtdoctor").val(examselect.doctor)
         $("#avtemployee_id").val(examselect.employee_id)
-        $("flatavtexamination_date").val(nowtime).trigger("change")
+        flatpickrInstances["flatavtexamination_date"].setDate(
+            moment().format("DD/MM/YYYY HH:mm")
+        );
+        $("#flatavtexamination_date").trigger("change");
         $("#avtgender").val(examselect.gender)
         $("#avtheight").val(examselect.height)
         $("#avtinstruction").val(examselect.instruction)

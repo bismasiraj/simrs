@@ -69,7 +69,7 @@
             }
         })
         $("#fallBody").append($("<tr>")
-            .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
+            .append($("<td>").append((fallselect.examination_date)?.substring(0, 16)))
             .append($("<td>").html(fallselect.modified_by))
             .append($("<td>").html(type))
             .append($("<td>").html(p1))
@@ -82,7 +82,7 @@
         )
         // if (fallselect.valid_user === null) {} else {
         //     $("#fallBody").append($("<tr>")
-        //         .append($("<td>").append((fallselect.examination_date).substring(0, 16)))
+        //         .append($("<td>").append((fallselect.examination_date)?.substring(0, 16)))
         //         .append($("<td>").html(fallselect.modified_by))
         //         .append($("<td>").html(type))
         //         .append($("<td>").html(p1))
@@ -216,7 +216,7 @@
 <script>
     function initialAddafall() {
         $("#afallDocument").html("")
-        addFallRisk(1, 0, 'FallRisk', 'afallDocument')
+        addFallRisk(1, 0, 'FallRisk', 'afallDocument', true, true)
         $("#fallModal").modal("show")
         $("#afallDocument").find("input, select, textarea").prop("disabled", false)
     }

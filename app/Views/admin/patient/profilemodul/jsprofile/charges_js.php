@@ -38,8 +38,8 @@
 
     var nomor = '<?= $visit['no_registration']; ?>';
     var ke = '%'
-    var mulai = '2023-08-01' //tidak terpakai
-    var akhir = '2023-08-31' //tidak terpakai
+    var mulai = '<?= $visit['visit_date'] ?>' //tidak terpakai
+    var akhir = `${moment(new Date()).format("YYYY-MM-DD")}`
     var lunas = '%'
     // var klinik = '<?= $visit['clinic_id']; ?>'
     var klinik = '%'
@@ -57,7 +57,120 @@
         getInacbg(visit)
     })
 </script>
+<script>
+    const reorderBillJson = (billJson) => {
+        billJson.sort((a, b) => {
+            // Compare by casemix_id first
+            if (a.casemix_id !== b.casemix_id) {
+                return a.casemix_id - b.casemix_id;
+            }
+
+            // If casemix_id is the same, compare by treat_date
+            const dateA = new Date(a.treat_date);
+            const dateB = new Date(b.treat_date);
+            return dateA - dateB;
+        });
+
+        return billJson
+    }
+
+    function filterBillCharge() {
+        total = 0;
+        tagihan = 0;
+        subsidi = 0;
+        potongan = 0;
+        pembulatan = 0;
+        pembayaran = 0;
+        retur = 0;
+        $("#chargesBody").html("")
+        var notaNoCharge = $("#notaNoCharge").val()
+        var casemixId = $("#casemixId").val()
+        billJson.forEach((element, key) => {
+            if ((billJson[key].nota_no == notaNoCharge || '%' == notaNoCharge) && (billJson[key].casemix_id == casemixId || '%' == casemixId)) {
+                if ($("#casemix" + billJson[key].casemix_id).length == 0) {
+                    $("#chargesBody").append(
+                        `<tr id="casemix${billJson[key].casemix_id}" class="table-light">
+                            <td colspan="4"><h3>${casemixArray[parseInt(billJson[key].casemix_id) - 1]}</h3></td>
+                            <td colspan="4"><h4 id="displaytotal_casemix${billJson[key].casemix_id}">0.0</h4></td>
+                            <input type="hidden" id="total_casemix${billJson[key].casemix_id}" value="0.0">
+                        </tr>`
+                    )
+                }
+                var i = $('#chargesBody .bill').length + 1;
+                var counter = 'charge' + i
+                addRowBill("chargesBody", "a", key, i, counter)
+                tagihan += parseFloat(billJson[key].tagihan)
+                countCasemix(billJson[key].casemix_id, parseFloat(billJson[key].tagihan))
+
+                //  sum(if(isnull(subsidi),0,subsidi) for all)
+                subsidi += billJson[key].subsidi
+
+                //  sum(if(isnull(potongan),0,potongan) for all)
+                potongan += billJson[key].potongan
+
+                // sum(pembulatannya for all)
+                pembulatan += billJson[key].pembulatan
+
+                // sum(if(isnull(bayar),0,bayar) for all)
+                pembayaran += billJson[key].bayar
+
+                // sum(if(isnull(retur),0,retur) for all)
+                retur += billJson[key].retur
+            }
+        })
+        total += tagihan - (subsidi + potongan) + pembulatan - pembayaran + retur;
+        labtotal += labtagihan - (labsubsidi + labpotongan) + labpembulatan - labpembayaran + labretur;
+        radtotal += radtagihan - (radsubsidi + radpotongan) + radpembulatan - radpembayaran + radretur;
+        billpolitotal += billpolitagihan - (billpolisubsidi + billpolipotongan) + billpolipembulatan - billpolipembayaran + billpoliretur;
+
+        $("#tagihan_total").val(formatCurrency(tagihan));
+        $("#subsidi_total").val(formatCurrency(subsidi));
+        $("#potongan_total").val(formatCurrency(potongan));
+        $("#pembulatan_total").val(formatCurrency(pembulatan));
+        $("#pelunasan_total").val(formatCurrency(pembayaran));
+        $("#retur_total").val(formatCurrency(retur));
+        $("#totalnya").val(formatCurrency(total));
+
+    }
+
+    const countCasemix = (casemix_id, price) => {
+        let jml_sementara = parseFloat($("#total_casemix" + casemix_id).val())
+        let jml_akhir = jml_sementara + price
+        $("#total_casemix" + casemix_id).val(jml_akhir)
+        $("#displaytotal_casemix" + casemix_id).html("Subtotal: Rp. " + formatCurrency(jml_akhir))
+    }
+
+    const chargesDropdownDoctor = () => {
+        let option = '';
+        <?php foreach ($employee as $key => $value) {
+            if ($value['dpjp'] == $visit['kddpjp']) {
+        ?> option += `<option value="<?= $value['employee_id']; ?>" selected> <?= $value['fullname']; ?> </option>`;
+            <?php
+            } else {
+            ?> option += `<option value="<?= $value['employee_id']; ?>"> <?= $value['fullname']; ?> </option>`;
+        <?php
+            }
+        } ?>
+
+        return option;
+    }
+</script>
 <script type='text/javascript'>
+    $("#btn-search-charge").off().on("click", function() {
+        const start = moment($("#startDateCharge").val()).format("YYYY-MM-DD") + " 00:00:01";
+        const end = moment($("#endDateCharge").val()).format("YYYY-MM-DD") + " 23:59:59";
+        getBillPoli(nomor, ke, mulai, akhir, lunas, '%', rj, status, nota, trans, start, end);
+        $("#notaNoCharge").val("%")
+    });
+    $("#notaNoCharge").on("change", function() {
+        $("#casemixId").val('%')
+        filterBillCharge()
+    })
+    $("#casemixId").on("change", function() {
+        $("#notaNoCharge").val('%')
+        filterBillCharge()
+    })
+
     function formatCurrency(total) {
         //Seperates the components of the number
         var components = total.toFixed(2).toString().split(".");
@@ -94,8 +207,10 @@
             beforeSend: function() {
                 $("#labChargesBody").html(loadingScreen())
                 $("#radChargesBody").html(loadingScreen())
+                $("#penunjangChargesBody").html(loadingScreen()) //new 07/10/2024
                 $("#fisioChargesBody").html(loadingScreen())
                 $("#billPoliChargesBody").html(loadingScreen())
+                $("#patologiChargesBody").html(loadingScreen()) //new 10/10/2024
                 $("#chargesBody").html(loadingScreen())
             },
             success: function(data) {
@@ -103,6 +218,8 @@
                 $("#labChargesBody").html("")
                 $("#radChargesBody").html("")
                 $("#fisioChargesBody").html("")
+                $("#penunjangChargesBody").html("") //new 07/10/2024
+                $("#patologiChargesBody").html("") //new 10/10/2024
                 $("#billPoliChargesBody").html("")
                 $("#chargesBody").html("")
                 billJson = data
@@ -139,12 +256,40 @@
                 radpembayaran = 0;
                 radretur = 0;
 
+                penunjangmedistotal = 0; //new 07/10/2024
+                penunjangmedistagihan = 0; //new 07/10/2024
+                penunjangmedissubsidi = 0; //new 07/10/2024
+                penunjangmedispotongan = 0; //new 07/10/2024
+                penunjangmedispembulatan = 0; //new 07/10/2024
+                penunjangmedispembayaran = 0; //new 07/10/2024
+                penunjangmedisretur = 0; //new 07/10/2024
+
+                patologitotal = 0; //new 10/10/2024
+                patologitagihan = 0; //new 10/10/2024
+                patologisubsidi = 0; //new 10/10/2024
+                patologipotongan = 0; //new 10/10/2024
+                patologipembulatan = 0; //new 10/10/2024
+                patologipembayaran = 0; //new 10/10/2024
+                patologiretur = 0; //new 10/10/2024
                 $("#chargesBody").html("")
                 $("#labChargesBody").html("")
                 $("#radChargesBody").html("")
                 $("#fisioChargesBody").html("")
                 $("#billPoliChargesBody").html("")
+                $("#penunjangChargesBody").html("") //new 07/10/2024
+                $("#patologiChargesBody").html("") //new 10/10/2024
+
+                billJson = reorderBillJson(billJson);
                 billJson.forEach((element, key) => {
+                    if ($("#casemix" + billJson[key].casemix_id).length == 0) {
+                        $("#chargesBody").append(
+                            `<tr id="casemix${billJson[key].casemix_id}" class="table-light">
+                                <td colspan="4"><h3>${casemixArray[parseInt(billJson[key].casemix_id) - 1]}</h3></td>
+                                <td colspan="4"><h4 id="displaytotal_casemix${billJson[key].casemix_id}">0.0</h4></td>
+                                <input type="hidden" id="total_casemix${billJson[key].casemix_id}" value="0.0">
+                            </tr>`
+                        )
+                    }
 
                     billJson[key].sell_price = parseFloat(billJson[key].sell_price)
                     // if (!isnullcheck(billJson[key].quantity))
@@ -168,6 +313,8 @@
                     billJson[key].amount_paid = parseFloat((billJson[key].amount_paid))
 
                     tagihan += parseFloat(billJson[key].tagihan)
+
+                    countCasemix(billJson[key].casemix_id, parseFloat(billJson[key].tagihan))
 
                     //  sum(if(isnull(subsidi),0,subsidi) for all)
                     subsidi += billJson[key].subsidi
@@ -214,89 +361,9 @@
                         lunas = 'OPEN!';
                     }
 
-                    // $("#chargesBody").append($("<tr id=\"" + key + "\">")
-                    //     .append($("<td>").html(String(key + 1) + "."))
-                    //     .append($("<td>").attr("id", "treatment" + key).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
-                    //     .append($("<td>").attr("id", "treat_date" + key).html(billJson[key].treat_date.substr(0, 16)).append($("<p>").html(billJson[key].name_of_clinic)))
-                    //     // .append($("<td>").attr("id", "iscetak" + key).html(billJson[key].iscetak))
-                    //     .append($("<td>").attr("id", "sell_price" + key).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
-                    //     .append($("<td>")
-                    //         .append('<input type="text" name="quantity[]" id="aquantity' + key + '" placeholder="" value="' + billJson[key].quantity + '" class="form-control" readonly>')
-                    //         .append($("<p>").html(billJson[key].name_of_status_pasien))
-                    //     )
-                    //     .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(billJson[key].tagihan)))
-                    //     .append($("<td>").attr("id", "displayamount_plafond" + key).html((billJson[key].amount_plafond)))
-                    //     .append($("<td>").attr("id", "displayamount_paid_plafond" + key).html(formatCurrency(billJson[key].amount_paid_plafond)))
-                    //     .append($("<td>").attr("id", "displaydiscount" + key).html(formatCurrency(billJson[key].discount)))
-                    //     .append($("<td>").attr("id", "subsidisat" + key).html(formatCurrency(billJson[key].subsidisat)))
-                    //     .append($("<td>").attr("id", "subsidi" + key).html(formatCurrency(billJson[key].subsidi)))
-                    //     .append($("<td>").append('<button id="simpanBillBtn' + key + '" type="button" onclick="simpanBillCharge(' + key + ', \'a\')" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="editDeleteCharge' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'alab\', ' + key + ')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBill(\'' + key + '\', ' + key + ')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
-                    //     // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
-                    //     // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
-                    //     .append('<input name="treatment[]" id="atreatment' + key + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
-                    //     .append('<input name="treat_date[]" id="atreat_date' + key + '" type="hidden" value="' + billJson[key].treat_date + '" class="form-control" />')
-                    //     .append('<input name="sell_price[]" id="asell_price' + key + '" type="hidden" value="' + billJson[key].sell_price + '" class="form-control" />')
-                    //     .append('<input name="amount_paid[]" id="aamount_paid' + key + '" type="hidden" value="' + billJson[key].amount_paid + '" class="form-control" />')
-                    //     .append('<input name="amount_plafond[]" id="aamount_plafond' + key + '" type="hidden" value="' + billJson[key].amount_plafond + '" class="form-control" />')
-                    //     .append('<input name="discount[]" id="adiscount' + key + '" type="hidden" value="' + billJson[key].discount + '" class="form-control" />')
-                    //     .append('<input name="subsidisat[]" id="asubsidisat' + key + '" type="hidden" value="' + billJson[key].subsidisat + '" class="form-control" />')
-                    //     .append('<input name="subsidi[]" id="asubsidi' + key + '" type="hidden" value="' + billJson[key].subsidi + '" class="form-control" />')
-                    //     .append('<input name="bill_id[]" id="abill_id' + key + '" type="hidden" value="' + billJson[key].bill_id + '" class="form-control" />')
-                    //     .append('<input name="trans_id[]" id="atrans_id' + key + '" type="hidden" value="' + billJson[key].trans_id + '" class="form-control" />')
-                    //     .append('<input name="no_registration[]" id="ano_registration' + key + '" type="hidden" value="' + billJson[key].no_registration + '" class="form-control" />')
-                    //     .append('<input name="theorder[]" id="atheorder' + key + '" type="hidden" value="' + billJson[key].theorder + '" class="form-control" />')
-                    //     .append('<input name="visit_id[]" id="avisit_id' + key + '" type="hidden" value="' + billJson[key].visit_id + '" class="form-control" />')
-                    //     .append('<input name="org_unit_code[]" id="aorg_unit_code' + key + '" type="hidden" value="' + billJson[key].org_unit_code + '" class="form-control" />')
-                    //     .append('<input name="class_id[]" id="aclass_id' + key + '" type="hidden" value="' + billJson[key].class_id + '" class="form-control" />')
-                    //     .append('<input name="class_id_plafond[]" id="aclass_id_plafond' + key + '" type="hidden" value="' + billJson[key].class_id_plafond + '" class="form-control" />')
-                    //     .append('<input name="payor_id[]" id="apayor_id' + key + '" type="hidden" value="' + billJson[key].payor_id + '" class="form-control" />')
-                    //     .append('<input name="karyawan[]" id="akaryawan' + key + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
-                    //     .append('<input name="theid[]" id="atheid' + key + '" type="hidden" value="' + billJson[key].theid + '" class="form-control" />')
-                    //     .append('<input name="thename[]" id="athename' + key + '" type="hidden" value="' + billJson[key].thename + '" class="form-control" />')
-                    //     .append('<input name="theaddress[]" id="atheaddress' + key + '" type="hidden" value="' + billJson[key].theaddress + '" class="form-control" />')
-                    //     .append('<input name="status_pasien_id[]" id="astatus_pasien_id' + key + '" type="hidden" value="' + billJson[key].status_pasien_id + '" class="form-control" />')
-                    //     .append('<input name="isrj[]" id="aisrj' + key + '" type="hidden" value="' + billJson[key].isrj + '" class="form-control" />')
-                    //     .append('<input name="gender[]" id="agender' + key + '" type="hidden" value="' + billJson[key].gender + '" class="form-control" />')
-                    //     .append('<input name="ageyear[]" id="aageyear' + key + '" type="hidden" value="' + billJson[key].ageyear + '" class="form-control" />')
-                    //     .append('<input name="agemonth[]" id="aagemonth' + key + '" type="hidden" value="' + billJson[key].agemonth + '" class="form-control" />')
-                    //     .append('<input name="ageday[]" id="aageday' + key + '" type="hidden" value="' + billJson[key].ageday + '" class="form-control" />')
-                    //     .append('<input name="kal_id[]" id="akal_id' + key + '" type="hidden" value="' + billJson[key].kal_id + '" class="form-control" />')
-                    //     .append('<input name="karyawan[]" id="akaryawan' + key + '" type="hidden" value="' + billJson[key].karyawan + '" class="form-control" />')
-                    //     .append('<input name="class_room_ID[]" id="aclass_room_ID' + key + '" type="hidden" value="' + billJson[key].class_room_ID + '" class="form-control" />')
-                    //     .append('<input name="bed_id[]" id="abed_id' + key + '" type="hidden" value="' + billJson[key].bed_id + '" class="form-control" />')
-                    //     .append('<input name="employee_id_from[]" id="aemployee_id_from' + key + '" type="hidden" value="' + billJson[key].employee_id_from + '" class="form-control" />')
-                    //     .append('<input name="doctor_from[]" id="adoctor_from' + key + '" type="hidden" value="' + billJson[key].doctor_from + '" class="form-control" />')
-                    //     .append('<input name="clinic_id_from[]" id="aclinic_id_from' + key + '" type="hidden" value="' + billJson[key].clinic_id_from + '" class="form-control" />')
-                    //     .append('<input name="exit_date[]" id="aexit_date' + key + '" type="hidden" value="' + billJson[key].exit_date + '" class="form-control" />')
-                    //     .append('<input name="cashier[]" id="acashier' + key + '" type="hidden" value="' + billJson[key].cashier + '" class="form-control" />')
-                    //     .append('<input name="modified_from[]" id="aoleh' + key + '" type="hidden" value="' + billJson[key].modified_from + '" class="form-control" />')
-                    //     .append('<input name="islunas[]" id="aislunas' + key + '" type="hidden" value="' + billJson[key].islunas + '" class="form-control" />')
-                    //     .append('<input name="measure_id[]" id="ameasure_id' + key + '" type="hidden" value="' + billJson[key].measure_id + '" class="form-control" />')
-                    //     .append('<input name="tarif_id[]" id="atarif_id' + key + '" type="hidden" value="' + billJson[key].tarif_id + '" class="form-control" />')
-                    //     .append('<input name="amount[]" id="aamount' + key + '" type="hidden" value="' + billJson[key].amount + '" class="form-control" />')
-                    //     .append('<input name="nota_no[]" id="anota_no' + key + '" type="hidden" value="' + billJson[key].nota_no + '" class="form-control" />')
-                    //     .append('<input name="profesi[]" id="aprofesi' + key + '" type="hidden" value="' + billJson[key].profesi + '" class="form-control" />')
-                    //     .append('<input name="tagihan[]" id="atagihan' + key + '" type="hidden" value="' + billJson[key].tagihan + '" class="form-control" />')
-                    //     .append('<input name="treatment_plafond[]" id="atreatment_plafond' + key + '" type="hidden" value="' + billJson[key].treatment_plafond + '" class="form-control" />')
-                    //     .append('<input name="tarif_type[]" id="atarif_type' + key + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
-
-                    // )
-                    // $("#aquantity" + key).keydown(function(e) {
-                    //     !0 == e.shiftKey && e.preventDefault(), e.keyCode >= 48 && e.keyCode <= 57 || e.keyCode >= 96 && e.keyCode <= 105 || 8 == e.keyCode || 9 == e.keyCode || 37 == e.keyCode || 39 == e.keyCode || 46 == e.keyCode || 190 == e.keyCode || e.preventDefault(), -1 !== $(this).val().indexOf(".") && 190 == e.keyCode && e.preventDefault();
-                    // });
-                    // $('#aquantity' + key).on("input", function() {
-                    //     var dInput = this.value;
-                    //     console.log(dInput);
-                    //     $("#aamount_paid" + key).val($("#aamount" + key).val() * dInput)
-                    //     $("#displayamount_paid" + key).val($("#aamount" + key).val() * dInput)
-                    //     $("#atagihan" + key).val($("#aamount" + key).val() * dInput)
-                    //     $("aamount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
-                    //     $("displayamount_paid_plafond" + key).val($("#aamount_plafond" + key).val() * dInput)
-
-                    // })
-                    var i = $('#chargesBody tr').length + 1;
-                    var counter = 'charge' + i
-                    addRowBill("chargesBody", "a", key, i, counter)
+                    // var i = $('#chargesBody tr').length + 1;
+                    // var counter = 'charge' + i
+                    // addRowBill("chargesBody", "a", key, i, counter)
 
                     if (billJson[key].clinic_id == 'P016') {
                         var i = $('#radChargesBody tr').length + 1;
@@ -322,10 +389,14 @@
                         $("#notaNoPoli").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("billPoliChargesBody", "abillpoli", key, i, counter)
                     }
-
-
+                    var i = $('#chargesBody .bill').length + 1;
+                    var counter = 'charge' + i
+                    $("#notaNoCharge").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
+                    addRowBill("chargesBody", "a", key, i, counter)
 
                 });
+
+
                 total += tagihan - (subsidi + potongan) + pembulatan - pembayaran + retur;
                 labtotal += labtagihan - (labsubsidi + labpotongan) + labpembulatan - labpembayaran + labretur;
                 radtotal += radtagihan - (radsubsidi + radpotongan) + radpembulatan - radpembayaran + radretur;
@@ -362,6 +433,24 @@
                 $("#billpoliretur_total").val(formatCurrency(billpoliretur));
                 $("#billpolitotalnya").val(formatCurrency(billpolitotal));
 
+
+                $("#penunjangmedistagihan_total").val(formatCurrency(penunjangmedistagihan)); //new 07/10/2024
+                $("#penunjangmedissubsidi_total").val(formatCurrency(penunjangmedissubsidi)); //new 07/10/2024
+                $("#penunjangmedispotongan_total").val(formatCurrency(penunjangmedispotongan)); //new 07/10/2024
+                $("#penunjangmedispembulatan_total").val(formatCurrency(penunjangmedispembulatan)); //new 07/10/2024
+                $("#penunjangmedispelunasan_total").val(formatCurrency(penunjangmedispembayaran)); //new 07/10/2024
+                $("#penunjangmedisretur_total").val(formatCurrency(penunjangmedisretur)); //new 07/10/2024
+                $("#penunjangmedistotalnya").val(formatCurrency(penunjangmedistotal)); //new 
+
+
+                $("#patologitagihan_total").val(formatCurrency(patologitagihan)); //new 10/10/2024
+                $("#patologisubsidi_total").val(formatCurrency(patologisubsidi)); //new 10/10/2024
+                $("#patologipotongan_total").val(formatCurrency(patologipotongan)); //new 10/10/2024
+                $("#patologipembulatan_total").val(formatCurrency(patologipembulatan)); //new 10/10/2024
+                $("#patologipelunasan_total").val(formatCurrency(patologipembayaran)); //new 10/10/2024
+                $("#patologiretur_total").val(formatCurrency(patologiretur)); //new 10/10/2024
+                $("#patologitotalnya").val(formatCurrency(patologitotal)); //new 10/10/202407/10/2024
+
                 if (klinik == 'P013') {
                     var seen = {};
                     $('#notaNoLab option').each(function() {
@@ -390,14 +479,20 @@
                         }
                     });
                 }
+                var seen = {};
+                $('#notaNoCharge option').each(function() {
+                    if (seen[$(this).val()]) {
+                        $(this).remove();
+                    } else {
+                        seen[$(this).val()] = true;
+                    }
+                });
             },
             error: function() {
 
             }
         });
     }
-
-
 
     function addBillCharge(container) {
         tarifDataJson = $("#" + container).val();
@@ -615,6 +710,8 @@
                 $("#" + identifier + "quantity" + key).prop("readonly", true)
                 $("#" + identifier + "simpanBillBtn" + key).slideUp()
                 $("#" + identifier + "editDeleteCharge" + key).slideDown()
+                $("#" + identifier + "employee_id" + key).hide()
+                $("#" + identifier + "doctor" + key).show()
 
                 var billInaJson = data
 
@@ -636,36 +733,17 @@
         $("#" + identifier + "quantity" + key).prop("readonly", false)
         $("#" + identifier + "simpanBillBtn" + key).slideDown()
         $("#" + identifier + "editDeleteCharge" + key).slideUp()
+        $("#" + identifier + "employee_id" + key).show()
+        $("#" + identifier + "doctor" + key).hide()
+    }
+
+    function changeFullnameDoctor(identifier, key) {
+        let fullanme = $("#" + identifier + "employee_id" + key + " option:selected").text()
+        $("#" + identifier + "doctor" + key).val(fullanme)
     }
 
     function addRowBill(container, identifier, key, i, counter) {
-        $("#" + container).append($("<tr id=\"" + counter + "\">")
-            .append($("<td>").html(String(i) + "."))
-            .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].doctor)))
-            .append($("<td>").attr("id", identifier + "displaytreat_date" + counter).html(formatedDatetimeFlat(billJson[key].treat_date)).append($("<p>").html(billJson[key].name_of_clinic)))
-            .append($("<td>").attr("id", identifier + "displaysell_price" + counter).html(formatCurrency(billJson[key].sell_price)).append($("<p>").html(lunas)))
-            .append($("<td>")
-                .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + counter + '" placeholder="" value="' + billJson[key].quantity + '" class="form-control" readonly>')
-                .append($("<p>").html(billJson[key].name_of_status_pasien))
-            )
-            .append($("<td>").attr("id", identifier + "displayamount_paid" + counter).html(formatCurrency(billJson[key].tagihan)))
-            .append($("<td>").attr("id", identifier + "displayamount_plafond" + counter).html((billJson[key].amount_plafond)))
-            .append($("<td>").attr("id", identifier + "displayamount_paid_plafond" + counter).html(formatCurrency(billJson[key].amount_paid_plafond)))
-            .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
-            .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
-            .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
-            // .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
-            .append($("<td>")
-                .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
-                    '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
-                    '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
-                    '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
-                    '</div>' +
-                    '</div>')
-            )
-            // .append($("<td>").append('<button type="button" onclick="" class="editbtn" data-row-id="1" autocomplete="off"></button>'))
-            // .append($("<td>").append('<button type="button" onclick="" class="closebtn" data-row-id="1" autocomplete="off"><i class="fa fa-remove"></i></button>'))
+        $("#" + container).append($("<tr id=\"" + container + identifier + key + "\" class=\"" + billJson[key].bill_id + " bill\">")
             .append('<input name="treatment[]" id="' + identifier + 'treatment' + counter + '" type="hidden" value="' + billJson[key].treatment + '" class="form-control" />')
             .append('<input name="treat_date[]" id="' + identifier + 'treat_date' + counter + '" type="hidden" value="' + billJson[key].treat_date + '" class="form-control" />')
             .append('<input name="sell_price[]" id="' + identifier + 'sell_price' + counter + '" type="hidden" value="' + billJson[key].sell_price + '" class="form-control" />')
@@ -699,7 +777,7 @@
             .append('<input name="class_room_id[]" id="' + identifier + 'class_room_id' + counter + '" type="hidden" value="' + billJson[key].class_room_id + '" class="form-control" />')
             .append('<input name="bed_id[]" id="' + identifier + 'bed_id' + counter + '" type="hidden" value="' + billJson[key].bed_id + '" class="form-control" />')
             .append('<input name="employee_id_from[]" id="' + identifier + 'employee_id_from' + counter + '" type="hidden" value="' + billJson[key].employee_id_from + '" class="form-control" />')
-            .append('<input name="employee_id[]" id="' + identifier + 'employee_id' + counter + '" type="hidden" value="' + billJson[key].employee_id + '" class="form-control" />')
+            // .append('<input name="employee_id[]" id="' + identifier + 'employee_id' + counter + '" type="hidden" value="' + billJson[key].employee_id + '" class="form-control" />')
             .append('<input name="doctor_from[]" id="' + identifier + 'doctor_from' + counter + '" type="hidden" value="' + billJson[key].doctor_from + '" class="form-control" />')
             .append('<input name="clinic_id[]" id="' + identifier + 'clinic_id' + counter + '" type="hidden" value="' + billJson[key].clinic_id + '" class="form-control" />')
             .append('<input name="clinic_id_from[]" id="' + identifier + 'clinic_id_from' + counter + '" type="hidden" value="' + billJson[key].clinic_id_from + '" class="form-control" />')
@@ -716,7 +794,229 @@
             .append('<input name="treatment_plafond[]" id="' + identifier + 'treatment_plafond' + counter + '" type="hidden" value="' + billJson[key].treatment_plafond + '" class="form-control" />')
             .append('<input name="tarif_type[]" id="' + identifier + 'tarif_type' + counter + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
 
-        )
+
+            .append($("<td>").html(String(i) + "."))
+            .append($("<td>").attr("id", identifier + "displaytreatment" + counter).html(billJson[key].treatment).append($("<p>").html(billJson[key].name_of_clinic)))
+            .append($("<td>").html('<select id="' + identifier + 'employee_id' + counter + '" class="form-select" name="employee_id[]" style="display: none" onchange="changeFullnameDoctor(\'' + identifier + '\',\'' + counter + '\')" readonly>' +
+                chargesDropdownDoctor() +
+                `</select>` +
+                '<input id="' + identifier + 'doctor' + counter + '" class="form-control" type="text" value="' + billJson[key].doctor + '" readonly>'
+            ))
+            .append($("<td>").attr("id", identifier + "displaytreat_date" + counter).html(formatedDatetimeFlat(billJson[key].treat_date)).append(`<input type="hidden" id="${identifier}treat_date${counter}">`))
+            .append($("<td>").attr("id", identifier + "displaysell_price" + counter).html(formatCurrency(billJson[key]?.sell_price == null || isNaN(billJson[key]?.sell_price) ? 0.0 : billJson[key]?.sell_price)).append($("<p>").html(lunas)))
+            .append($("<td>")
+                .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + counter + '" placeholder="" value="' + billJson[key]?.quantity + '" class="form-control" readonly data-id="' + identifier + 'quantity' + billJson[key].bill_id + '">')
+                .append($("<p>").html(billJson[key].name_of_status_pasien))
+            )
+            .append($("<td>").attr("id", identifier + "displayamount_paid" + counter).attr("data-id", identifier + 'displayamount_paid' + billJson[key].bill_id).html(formatCurrency(billJson[key].tagihan))))
+        // .append($("<td>").attr("id", identifier + "displayamount_plafond" + counter).html((billJson[key].amount_plafond)))
+        // .append($("<td>").attr("id", identifier + "displayamount_paid_plafond" + counter).html(formatCurrency(billJson[key].amount_paid_plafond)))
+        // .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
+        // .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
+        // .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
+        // .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+        if (billJson[key].islunas == 0 || billJson[key].islunas == null) {
+            // if (true)
+            if (identifier == 'arad') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("rad", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> <?php if (user()->checkPermission("rad", "u")) {
+                                    ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            <?php
+                                    } ?> '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\',\'' + identifier + '\', \'' + counter + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalExpertise" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'arad' ? 'style="display: block"' : 'style="display: none"') +
+                            '><?php if (user()->checkRoles(["dokterrad"])) {
+                                ?>Ekspertise<?php
+                                        } else {
+                                            ?>Hasil<?php
+                                                } ?></button>' + //havin
+                            <?php if (user()->checkPermission("rad", "d")) {
+                            ?> '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'alab') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("lab", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> <?php if (user()->checkPermission("lab", "u")) {
+                                    ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            <?php
+                                    } ?> '<button id="' + identifier + 'bridge' + counter + '" ' + 'data-bill="' + billJson[key].bill_id +
+                            '" ' + 'onclick="actionModalBridge(\'' + encodeURIComponent(JSON.stringify(billJson[key])) +
+                            '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalBridge" ' +
+                            'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            '>File</button>' + //faris
+                            <?php if (user()->checkPermission("lab", "d")) {
+                            ?> '<button id="delBillBtn' + container + identifier + key + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'afisio') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("fisio", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> <?php if (user()->checkPermission("fisio", "u")) {
+                                    ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            <?php
+                                    } ?> <?php if (user()->checkPermission("fisio", "d")) {
+                                            ?> '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'abillpoli') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("tindakanmedis", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> <?php if (user()->checkPermission("tindakanmedis", "u")) {
+                                    ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            <?php
+                                    } ?> <?php if (user()->checkPermission("tindakanmedis", "d")) {
+                                            ?> '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'apenunjangmedis') { //new 07/10/2024
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("rad", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalPenunjangMedis(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\',\'' + 'apenunjangMedis' + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalPenunjangMedis" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'apenunjangmedis' ? 'style="display: block"' : 'style="display: none"') +
+                            '>Hasil</button>' + //havin
+                            <?php if (user()->checkPermission("rad", "d")) {
+                            ?> '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'apatologi') { //new 10/10/2024
+
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            <?php if (user()->checkPermission("rad", "c")) {
+                            ?> '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            <?php
+                            } ?> '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalPatologi(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\',\'' + 'apatologi' + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalPatologi" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'apatologi' ? 'style="display: block"' : 'style="display: none"') +
+                            '>Hasil</button>' + //havin
+                            <?php if (user()->checkPermission("rad", "d")) {
+                            ?> '<button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            <?php
+                            } ?> '</div>' +
+                            '</div>')
+                    )
+            } else {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalExpertise" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'arad' ? 'style="display: block"' : 'style="display: none"') +
+                            '><?php if (user()->checkRoles(["dokterrad"])) {
+                                ?>Ekspertise<?php
+                                        } else {
+                                            ?>Hasil<?php
+                                                } ?></button>' + //havin
+                            '<button id="' + identifier + 'bridge' + counter + '" ' + 'data-bill="' + billJson[key].bill_id +
+                            '" ' + 'onclick="actionModalBridge(\'' + encodeURIComponent(JSON.stringify(billJson[key])) +
+                            '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalBridge" ' +
+                            'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'alab' ? 'style="display: block"' : 'style="display: none"') +
+                            '>Bridge</button>' + //faris
+                            '<button id="' + identifier + 'delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            '</div>' +
+                            '</div>')
+                    )
+            }
+        } else {
+            if (identifier == 'arad') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\',\'' + identifier + '\', \'' + counter + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalExpertise" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off">Hasil</button>' +
+                            '</div>' +
+                            '</div>')
+                    )
+            } else if (identifier == 'alab') {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<button id="' + identifier + 'bridge' + counter + '" ' + 'data-bill="' + billJson[key].bill_id +
+                            '" ' + 'onclick="actionModalBridge(\'' + encodeURIComponent(JSON.stringify(billJson[key])) +
+                            '\')" ' +
+                            '</div>' +
+                            '</div>')
+                    )
+            } else {
+                $("#" + container + identifier + key)
+                    .append($("<td>")
+                        .append('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">' +
+                            '<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">simpan</button>' +
+                            '<button id="' + identifier + 'editDeleteCharge' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button>' +
+                            '<button id="' + identifier + 'expertise' + counter + '" ' + 'data-bill="' + billJson[key].bill_id + '" ' + 'onclick="actionModalExpertise(\'' + encodeURIComponent(JSON.stringify(billJson[key])) + '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalExpertise" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'arad' ? 'style="display: block"' : 'style="display: none"') +
+                            '><?php if (user()->checkRoles(["dokterrad"])) {
+                                ?>Ekspertise<?php
+                                        } else {
+                                            ?>Hasil<?php
+                                                } ?></button>' + //havin
+                            '<button id="' + identifier + 'bridge' + counter + '" ' + 'data-bill="' + billJson[key].bill_id +
+                            '" ' + 'onclick="actionModalBridge(\'' + encodeURIComponent(JSON.stringify(billJson[key])) +
+                            '\')" ' +
+                            'type="button" data-bs-toggle="modal" data-bs-target="#modalBridge" ' +
+                            'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
+                            (identifier === 'alab' ? 'style="display: block"' : 'style="display: none"') +
+                            '>Bridge</button>' + //faris
+                            '<button id="' + identifier + 'delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button>' +
+                            '</div>' +
+                            '</div>')
+                    )
+            }
+        }
+
+        $('#' + identifier + 'employee_id' + counter).val(billJson[key].employee_id)
 
 
         $("#" + identifier + "quantity" + counter).keydown(function(e) {
@@ -743,6 +1043,7 @@
         if (container == 'chargesBody') {
             $('#' + identifier + 'simpanBillBtn' + counter + '').slideUp()
             $('#' + identifier + 'editDeleteCharge' + counter + '').slideUp()
+            $('#' + identifier + 'delBillBtn' + counter + '').slideUp()
         }
         if (billJson[key].clinic_id == 'P013') {
             labtagihan += parseFloat(billJson[key].tagihan)
@@ -751,6 +1052,12 @@
             labpembulatan += billJson[key].pembulatan
             labpembayaran += billJson[key].bayar
             labretur += billJson[key].retur
+        }
+        if (billJson[key].clinic_id == 'P023') {
+            var i = $('#patologiChargesBody tr').length + 1;
+            var counter = 'patologimedis' + i
+            $("#notaNoPatologi").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
+            addRowBill("patologiChargesBody", "apatologi", key, i, counter)
         }
         if (billJson[key].clinic_id == 'P016') {
             radtagihan += parseFloat(billJson[key].tagihan)
@@ -786,31 +1093,34 @@
             },
             success: function(data) {
                 $("#delBillBtn" + billId).html(btn)
-                alert(data.message)
-                var nomor = '<?= $visit['no_registration']; ?>';
-                var ke = '%'
-                var mulai = '2023-08-01' //tidak terpakai
-                var akhir = '2023-08-31' //tidak terpakai
-                var lunas = '%'
-                // var klinik = '<?= $visit['clinic_id']; ?>'
-                var klinik = '%'
-                var rj = '%'
-                var status = '%'
-                var nota = '%'
-                var trans = '<?= $visit['trans_id']; ?>'
 
-                billJson = [];
-                $("#chargesBody").html("");
-                tagihan = 0.0;
-                subsidi = 0.0;
-                potongan = 0.0;
-                pembulatan = 0.0;
-                pembayaran = 0.0;
-                retur = 0.0;
-                total = 0.0;
-                lastOrder = 0;
+                $("." + billId).remove()
 
-                getBillPoli(nomor, ke, mulai, akhir, lunas, klinik, rj, status, nota, trans);
+                // alert(data.message)
+                // var nomor = '<?= $visit['no_registration']; ?>';
+                // var ke = '%'
+                // var mulai = '2023-08-01' //tidak terpakai
+                // var akhir = '2023-08-31' //tidak terpakai
+                // var lunas = '%'
+                // // var klinik = '<?= $visit['clinic_id']; ?>'
+                // var klinik = '%'
+                // var rj = '%'
+                // var status = '%'
+                // var nota = '%'
+                // var trans = '<?= $visit['trans_id']; ?>'
+
+                // billJson = [];
+                // $("#chargesBody").html("");
+                // tagihan = 0.0;
+                // subsidi = 0.0;
+                // potongan = 0.0;
+                // pembulatan = 0.0;
+                // pembayaran = 0.0;
+                // retur = 0.0;
+                // total = 0.0;
+                // lastOrder = 0;
+
+                // getBillPoli(nomor, ke, mulai, akhir, lunas, klinik, rj, status, nota, trans);
 
             },
             error: function() {

@@ -125,10 +125,335 @@
 </head>
 <!-- new -->
 <!-- new -->
+<div id="1_4-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <div class="row mb-3 align-items-center">
+                    <div class="col-2 d-flex">
+                        <img class="mt-2 mx-auto" src="<?= base_url('assets/img/logo.png') ?>" style="width: 90px; height: 90px;">
+                    </div>
+                    <div class="col-10">
+                        <h5><?= @$kop['name_of_org_unit'] ?></h5>
+                        <b><?= @$kop['contact_address'] ?></b>
+                        <br>
+                        <b><?= 'Telp ' . @$kop['phone'] . ' Fax: ' . @$kop['fax'] ?></b>
+                    </div>
+                </div>
+                <!-- endof template kop -->
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-1_4">
+
+                    </tbody>
+                </table>
+
+                <b class="ps-2">*Saya telah membaca dan sepenuhnya setuju dengan setiap pernyataan yang terdapat pada formulir ini dan menandatangani tanpa paksaan dan dengan kesadaran penuh.</b>
+                <br>
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-1_4">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B01-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B01">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-B01">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B01">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B02-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B02">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-B02">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B02">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B03-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B03">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-B03">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B03">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B04-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B04">
+
+                </div>
+
+                <table class="table table-borderless mt-4">
+                    <tbody id="data-table-B04">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B04">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B05-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B05">
+
+                </div>
+
+                <table class="table table-borderless mt-4">
+                    <tbody id="data-table-B05">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B05">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="B06-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-B06">
+
+                </div>
+
+                <table class="table table-borderless mt-4">
+                    <tbody id="data-table-B06">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-B06">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="C01-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop-3.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-C01">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-C01">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-C01">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="C02-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-C02">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-C02">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-C02">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
+<div id="C03-content" hidden>
+
+    <body>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="p-2" id="data-informasi-C03">
+
+                </div>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-table-C03">
+
+                    </tbody>
+                </table>
+
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-C03">
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </body>
+</div>
 <div id="E01-content" hidden>
 
     <body>
-        <!-- Halaman 1 -->
         <div class="page">
             <div class="container-fluid mt-5">
                 <div class="row pb-3">
@@ -255,24 +580,18 @@
 <div id="E02-content" hidden>
 
     <body>
-        <!-- Halaman 1 -->
         <div class="page">
             <div class="container-fluid mt-5">
                 <div class="row pb-3">
                     <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
+                        <img class="mt-2" src="<?= base_url("assets/img/logo.png") ?>" width="90px">
                     </div>
                     <div class="col text-center">
                         <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
                         <p><?= @$kop["contact_address"] ?></p>
                     </div>
                     <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
+                        <img class="mt-2" src="<?= base_url("assets/img/paripurna.png") ?>" width="90px">
                     </div>
                 </div>
                 <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
@@ -421,10 +740,6 @@
                                 <div align="center" id="qr-saksi-E02"></div>
                                 <p><span id="saksi-E02"></span></p>
                             </td>
-                            <!-- <td style="vertical-align: top;">
-                                <p style="margin-top: 10px; margin-bottom: 5px;">SAKSI II</p>
-                                <p style="margin: 93px;">(……………………………)</p>
-                            </td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -2115,8 +2430,21 @@
 
 
                 <!-- template table -->
-                <?= view("admin/patient/profilemodul/template/template-info-2.php", ['nama_tindakan' => 'GENERAL ANESTESIA']); ?>
+                <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => 'GENERAL ANESTESIA', 'id' => 'F02']); ?>
                 <!-- endof template table -->
+
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view("admin/patient/profilemodul/template/template-kop.php"); ?>
+                <!-- endof template kop -->
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
 
             </div>
         </div>
@@ -2137,6 +2465,7 @@
                 <!-- endof template table -->
             </div>
         </div>
+
     </body>
 </div>
 <div id="F04-content" hidden>
@@ -3162,6 +3491,17 @@
                 <!-- endof template table -->
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
+                <!-- template kop -->
+                <?= view("admin/patient/profilemodul/template/template-kop.php"); ?>
+                <!-- endof template kop -->
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+            </div>
+        </div>
     </body>
 </div>
 <div id="F37-content" hidden>
@@ -3184,6 +3524,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F38-content" hidden>
@@ -3199,6 +3555,22 @@
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' =>
                 ' PEMASANGAN INFUS', 'tindakan' => false, 'id' => 'F38']); ?>
                 <!-- endof template table -->
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
             </div>
         </div>
     </body>
@@ -3223,6 +3595,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F40-content" hidden>
@@ -3242,7 +3630,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F41-content" hidden>
@@ -3258,6 +3661,22 @@
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' =>
                 ' PASANG ATAU AFF TAMPON HIDUNG', 'tindakan' => false, 'id' => 'F41']); ?>
                 <!-- endof template table -->
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
             </div>
         </div>
     </body>
@@ -3282,6 +3701,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F43-content" hidden>
@@ -3297,6 +3732,22 @@
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' =>
                 'APPENDEKTOMI', 'tindakan' => false, 'id' => 'F43']); ?>
                 <!-- endof template table -->
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
             </div>
         </div>
     </body>
@@ -3318,7 +3769,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F45-content" hidden>
@@ -3339,7 +3805,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3362,7 +3843,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F47-content" hidden>
@@ -3384,7 +3880,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F48-content" hidden>
@@ -3405,7 +3916,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3427,7 +3953,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3449,7 +3990,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3476,7 +4032,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3507,7 +4078,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3534,8 +4120,38 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
 
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F54-content" hidden>
@@ -3566,7 +4182,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F55-content" hidden>
@@ -3592,7 +4223,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3623,7 +4269,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3655,7 +4316,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3682,7 +4358,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3710,7 +4401,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F60-content" hidden>
@@ -3737,7 +4443,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F61-content" hidden>
@@ -3764,7 +4485,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
     </body>
 </div>
 <div id="F62-content" hidden>
@@ -3790,7 +4526,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -3807,180 +4558,21 @@
                 ) ?>
                 <!-- endof template kop -->
 
-                <table class="table table-bordered mt-3">
-                    <tbody>
-                        <tr>
-                            <td colspan="3" valign="center" width="720">
-                                <p class="">Yang bertandatangan dibawah ini :</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Nama</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">:
-                                    &nbsp;..........................................................................................................................................
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Umur</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">: &nbsp;................. tahun. Laki laki / Perempuan</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Alamat</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">:
-                                    &nbsp;..........................................................................................................................................
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" valign="bottom" width="720">
-                                <p class="">Dengan ini menyatakan <strong>SETUJU </strong>untuk dilakukan perawatan di
-                                    Unit Rawat Intensif terhadap diri saya sendiri / Istri / Suami / Anak / Ayah / Ibu
-                                    saya* dengan</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Nama</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">:
-                                    &nbsp;..........................................................................................................................................
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Umur</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">: &nbsp;................. tahun. Laki laki / Perempuan</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="bottom" width="130">
-                                <p class="">Alamat</p>
-                            </td>
-                            <td colspan="2" valign="bottom" width="590">
-                                <p class="">:
-                                    &nbsp;..........................................................................................................................................
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" valign="bottom" width="720">
-                                <p class="">Saya menyatakan mengerti :</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3" valign="bottom" width="720">
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>1.&nbsp;</span>
-                                    <!--[endif]-->Bahwa berdasarkan penjelasan dokter / petugas di Unit Rawat Intensif,
-                                    selama perawatan di ruang intensif dapat terjadi perubahan kondisi termasuk
-                                    perubahan, tekanan darah, reaksi obat (alergi), henti jantung, kerusakan otak,
-                                    kerusakan saraf, kelumpuhan, bahkan kematian. Saya menyadari hal ini, risiko serta
-                                    komplikasi lain yang mungkin dapat terjadi.
-                                </p>
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>2.&nbsp;</span>
-                                    <!--[endif]-->Bahwa dalam ilmu kedokteran, bukan merupakan ilmu pengetahuan yang
-                                    pasti (exact science) dan saya menyadari tidak seorangpun dapat menjajikan atau
-                                    menjamin sesuatu yang berhubungan dengan tindakan medis di Unit Rawat Intensif.
-                                </p>
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>3.&nbsp;</span>
-                                    <!--[endif]-->Bahwa obat-obatan yang digunakan sebelum prosedur di Unit Rawat
-                                    Intensif dapat saja menimbulkan komplikasi, oleh karena itu sudah menjadi kewajiban
-                                    dan tanggung jawab saya untuk memberikan informasi kepada dokter semua obat-obatan
-                                    yang saya sendiri/Istri /Suami/Anak/Ayah/Ibu gunakan, termasuk aspirin, kontrasepsi
-                                    narkotik dan lain-lain.
-                                </p>
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>4.&nbsp;</span>
-                                    <!--[endif]-->Bahwa selama pasien dirawat di Unit Rawat Intensif, dapat dilakukan
-                                    tindakan medis sesuai kondisi pasien berdasarkan pertimbangan medis termasuk
-                                    intubasi, pemakaian ventilator, kateter vena central arteri line serta transfusi
-                                    darah atau produk-produk darah.
-                                </p>
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>5.&nbsp;</span>
-                                    <!--[endif]-->Bahwa dokter Unit Rawat Intensif yang bertugas dapat melakukan
-                                    konsultasi atau mendapat bantuan dari dokter lain sesuai kebutuhan.
-                                </p>
-                                <p class="" align="justify">
-                                    <!-- [if !supportLists]--><span>6.&nbsp;</span>
-                                    <!--[endif]-->Bahwa apabila staf Unit Rawat Intensif yang bertugas mengalami luka
-                                    tusuk atau terpapar cairan tubuh pasien, pasien setuju untuk diperiksa darahnya.
-                                </p>
-                                <p class="" align="justify">&nbsp;</p>
-                                <p class="" align="justify">Saya menyadari dan mengerti sepenuhnya bahwa pada tindakan
-                                    medis, berbagai resiko dan komplikasi yang tidak didiskusikan sebelumya mungkin
-                                    dapat timbul.</p>
-                                <p class="" align="justify">&nbsp;</p>
-                                <p class="" align="justify">Saya juga menyadari selama berlangsungnya tindakan tersebut,
-                                    ada kemungkinan timbulnya kondisi yang tidak terduga dimana hal tersebut memerlukan
-                                    tindakan-tindakan perluasan yang berhubungan dengana perawatan yang sedang
-                                    dilakukan, untuk itu saya menyetujui dilakukanya tindakan tersebut apabila
-                                    diperlukan.</p>
-                                <p class="" align="justify">&nbsp;</p>
-                                <p class="" align="justify">Selanjutnya saya menyadari bahwa tidak ada jaminan atas
-                                    janji-janji yang diberikan kepada saya sehubungan dengan hasil dari segala tindakan
-                                    dan atau perawatan.</p>
-                                <p class="" align="justify">Demikianlah permohonan ini saya buat dengan kesadaran dan
-                                    tanpa paksaan.</p>
-                                <p class="" align="justify">&nbsp;</p>
-                                <p class="" align="justify"><?= $kop["kota"] ?>, tanggal
-                                    ..........................................., jam .............. WIB</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" valign="top" width="360">
-                                <p class="">Saksi-saksi</p>
-                                <p class="">
-                                    <!-- [if !supportLists]--><span>1.&nbsp;</span>
-                                    <!--[endif]-->Keluarga
-                                </p>
-                                <p class="">&nbsp;</p>
-                                <p class="">&nbsp;</p>
-                                <p class="">( ....................................)</p>
-                            </td>
-                            <td valign="top" width="360">
-                                <p class="" align="center">
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yang
-                                    membuat pernyataan</p>
-                                <p class="" align="center">&nbsp;</p>
-                                <p class="">&nbsp;</p>
-                                <p class="" align="center">&nbsp;</p>
-                                <p class="" align="center">
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(....................................)
-                                </p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" valign="top" width="360">
-                                <p class="">
-                                    <!-- [if !supportLists]--><span>2.&nbsp;</span>
-                                    <!--[endif]-->Petugas
-                                </p>
-                                <p class="">&nbsp;</p>
-                                <p class="">&nbsp;</p>
-                                <p class="">( ....................................)</p>
-                            </td>
-                            <td valign="top" width="360">
-                                <p class="" align="center">&nbsp;</p>
-                            </td>
-                        </tr>
+                <table class="table table-bordered mt-3 mb-0">
+                    <tbody id="data-informasi-F63">
+
+                    </tbody>
+                </table>
+                <div class="border border-1">
+                    <table class="table table-borderless mt-3">
+                        <tbody id="data-table-F63">
+
+                        </tbody>
+                    </table>
+                </div>
+                <table class="table table-borderless mt-3">
+                    <tbody id="data-ttd-F63">
+
                     </tbody>
                 </table>
                 <p class="">*) <em>Coret yang tidak dipilih</em></p>
@@ -4008,7 +4600,7 @@
                 <!-- template table -->
                 <?= view(
                     "admin/patient/profilemodul/template/template-info.php",
-                    ["nama_tindakan" => "FOTOTERAPI", "tindakan" => false]
+                    ["nama_tindakan" => "FOTOTERAPI", "tindakan" => false, "id" => "F64"]
                 ) ?>
                 <!-- endof template table -->
 
@@ -4060,6 +4652,7 @@
                         "CPAP (Continuous Positive Airway Pressure)",
                         "tindakan" => false,
                         "kelas" => true,
+                        "id" => "F65"
                     ]
                 ) ?>
                 <!-- endof template table -->
@@ -4111,6 +4704,7 @@
                         "nama_tindakan" => "VAKSINASI",
                         "tindakan" => false,
                         "kelas" => true,
+                        "id" => "F66"
                     ]
                 ) ?>
                 <!-- endof template table -->
@@ -4161,6 +4755,7 @@
                         "nama_tindakan" => "KMC/KANGOROO MOTHER CARE",
                         "tindakan" => false,
                         "kelas" => true,
+                        "id" => "F67"
                     ]
                 ) ?>
                 <!-- endof template table -->
@@ -4204,142 +4799,26 @@
                     "admin/patient/profilemodul/template/template-kop.php"
                 ) ?>
                 <!-- endof template kop -->
-                <table class="table table-bordered mt-3">
-                    <tbody>
-                        <tr>
-                            <td valign="top" width="723">
-                                <p align="center"><strong>FORMULIR IJIN KLIEN</strong></p>
-                                <p align="center"><strong>UNTUK PEMERIKSAAN ANTI HIV</strong></p>
-                                <p align="center"><strong><em>(NFORMED CONSENT)</em></strong></p>
-                                <p align="center"><strong><em>&nbsp;</em></strong></p>
-                                <p align="justify">Sebelum menanda tangani &nbsp;formulir ijin ini, perlu diketahui
-                                    bahwa :</p>
-                                <p class="16" align="justify">
-                                    <!-- [if !supportLists]--><span>-&nbsp;</span>
-                                    <!--[endif]-->Anda mempunyai hak untuk berperan serta dalam tes/pemeriksaan dengan
-                                    dasar kerahasiaan
-                                </p>
-                                <p class="16" align="justify">
-                                    <!-- [if !supportLists]--><span>-&nbsp;</span>
-                                    <!--[endif]-->Anda mempunyai hak menarik ijin dari tes/pemeriksaan, kapanpun sebelum
-                                    tes tersebut dilaksananan
-                                </p>
+                <div class="border border-1 p-2" id="data-table-F68">
 
-                                <table class="table table-bordered mt-3">
-                                    <colgroup>
-                                        <col style="width: 99.8617%;">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <p>Saya telah menerima informasi dan konseling menyangkut hal-hal
-                                                    berikut ini :</p>
-                                                <p class="15">
-                                                    <!-- [if !supportLists]--><span>a.&nbsp;</span>
-                                                    <!--[endif]-->Keberadaan, kegunaan dan tujuan dari tes/pemeriksaan
-                                                    anti HIV
-                                                </p>
-                                                <p class="15">
-                                                    <!-- [if !supportLists]--><span>b.&nbsp;</span>
-                                                    <!--[endif]-->Apa yang dapat dan tidak dapat diberitahukan dari
-                                                    tes/pemeriksaan anti HIV
-                                                </p>
-                                                <p class="15">
-                                                    <!-- [if !supportLists]--><span>c.&nbsp;</span>
-                                                    <!--[endif]-->Keuntungan serta resiko dari tes /pemeriksaan anti HIV
-                                                    dan dari mengetahui hasil tes/pemeriksaan anti HIV
-                                                </p>
-                                                <p class="15">
-                                                    <!-- [if !supportLists]--><span>d.&nbsp;</span>
-                                                    <!--[endif]-->Pemahaman dari positif, negatif, negatif palsu,
-                                                    positif palsu dan hasil meragukan serta dampak dari masa jendela
-                                                </p>
-                                                <p class="15">
-                                                    <!-- [if !supportLists]--><span>e.&nbsp;</span>
-                                                    <!--[endif]-->Pengukuran untuk pencegahan dari pemaparan dan
-                                                    penularan oleh HIV
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                </div>
 
-                                <table class="table table-bordered mt-3">
-                                    <colgroup>
-                                        <col style="width: 99.8617%;">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <p align="justify">Saya, dengan sukarela menyetujui untuk menjalani
-                                                    tes/pemeriksaan anti HIV dengan ketentuanbahwa hasil tes tersebut
-                                                    akan tetap dirahasiakan dan terbuka hanya kepada saya seorang.</p>
-                                                <p align="justify">Saya menyetujui untuk menerima pelayanan konseling
-                                                    setelah menjalani tes/pemeriksaan untuk mendiskusikan hasil-hasil
-                                                    tes/pemeriksaan anti HIV saya dengan cara-cara mengurangi risiko
-                                                    terkena HIV atau menyebarluaskan kepada orang lain untuk masa yang
-                                                    akan datang</p>
-                                                <p align="justify">Saya mengerti bahwa pelayanan kesehatan saya di
-                                                    klinik ini tidak akan mempengaruhi keputusan saya secara negatif
-                                                    terhadap tes atau tidak menjalani tes atau hasil tes anti HIV saya
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table class="table table-bordered mt-3">
-                                    <colgroup>
-                                        <col style="width: 99.8617%;">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <p>Saya, dengan ini mengijinkan untuk dilaksanankan tes/pemeriksaan anti
-                                                    HIV</p>
-                                                <p>&nbsp;</p>
-                                                <p>_________________________ __________________ _________________</p>
-                                                <p>Tandatangan/cap jempol klien Tandatangan konselor Tanggal</p>
-                                                <p>&nbsp;</p>
-                                                <p>Untuk anak di bawah umur</p>
-                                                <p>Saya _______________________________ orang tua/wali
-                                                    /pengasuh/teman/saudara terdekat*, memberikan ijin untuk
-                                                    melaksanakan tes/pemeriksaan anti HIV (*coret yang tidak perlu)</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="table table-bordered mt-3">
-                    <tbody>
-                        <tr>
-                            <td valign="top" width="727">
-                                <p align="center"><strong>&nbsp;</strong></p>
-                                <p align="center"><strong>&nbsp;</strong></p>
-                                <p align="center"><strong>FORMULIR PENOLAKAN TES SKRINING HIV</strong></p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">Saya yang bertandatangan di bawah ini telah diberi penjelasan dan
-                                    kegunaan dari pemeriksaan skrining HIV serta prosedurnya, namun saya tidak bersedia
-                                    atau belum siap untuk melakukan pemeriksaan HIV.</p>
-                                <p align="justify">Demikian surat pernyataan ini kami buatkan untuk dipergunakan
-                                    seperlunya</p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">&nbsp;</p>
-                                <p>Yang memberi pernyataan Petugas</p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">&nbsp;</p>
-                                <p align="justify">&nbsp;</p>
-                                <p>...........................................
-                                    .............................................</p>
-                                <p align="center">&nbsp;</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+                <!-- endof template kop -->
+                <div class="border border-1 p-2" id="data-tindakan-F68">
+
+                </div>
+
 
             </div>
         </div>
@@ -4372,7 +4851,22 @@
             </div>
         </div>
 
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
     </body>
 </div>
@@ -4513,7 +5007,22 @@
 
             </div>
         </div>
+        <div class="page">
+            <div class="container-fluid">
 
+
+                <!-- template kop -->
+                <?= view(
+                    "admin/patient/profilemodul/template/template-kop.php"
+                ) ?>
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
+
+
+            </div>
+        </div>
 
 
     </body>
@@ -4638,23 +5147,36 @@
 <script>
     $(document).ready(function() {
         getDataStart()
-        let data1 = <?= json_encode($visit) ?>;
-        let visitation = <?= json_encode($visitation[0]) ?>;
-        console.log(data1);
     });
 
     const getDataStart = () => {
         let data1 = <?= json_encode($visit) ?>;
+
         let param = data1?.parameter_id;
-
-
         if (param !== undefined) {
             let lastPart;
 
+            // if (typeof param === 'string') {
+            //     if (param.includes('_')) {
+            //         let parts = param.split('_');
+            //         lastPart = parts[parts.length - 1];
+            //     } else {
+            //         lastPart = param;
+            //     }
+            // } else if (typeof param === 'number') {
+            //     lastPart = param.toString();
+            // } else {
+            //     console.error('Parameter ID is not valid or undefined.');
+            // }
+
             if (typeof param === 'string') {
-                if (param.includes('_')) {
+                if (param.startsWith('RM_9_')) {
+                    // Remove 'RM_9_' and return the rest
+                    lastPart = param.slice(5); // 'RM_9_'.length = 5
+                } else if (param.includes('_')) {
                     let parts = param.split('_');
-                    lastPart = parts[parts.length - 1];
+                    // Join all parts after the first one
+                    lastPart = parts.slice(1).join('_');
                 } else {
                     lastPart = param;
                 }
@@ -4689,7 +5211,6 @@
     };
 
     const contentData = (result) => {
-
         let visitation = <?= json_encode($visitation[0]) ?>;
         let visit = <?= json_encode($visit['visit']) ?>;
         let resultDataLine = [];
@@ -4698,7 +5219,1416 @@
             return str.trim().replace(/^"+|"+$/g, '').replace(/^\\+"|\\+"$/g, '').replace(/<p>|<\/p>/g, '');
         }
         //new
-        if (result.data[0].parameter_id === "RM_9_E01") {
+
+        if (result.data[0].parameter_id === "RM_9_1_4") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_1_4');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+            const headerTeks = [0, 1, 2, 21];
+            aValue.forEach((element, index) => {
+                if (headerTeks.includes(index)) {
+                    dataContent +=
+                        `
+                        <h5 class="${index == 21 ? 'text-start ps-2' : 'text-center'} ${[0,21].includes(index) ? 'mt-3' :''} ${index == 2 ? 'mb-3' : ''}">${element.value_info}</h5>
+                        `;
+                } else {
+                    dataContent +=
+                        `
+                        <tr>
+                            <td class="py-0" colspan="2">${element.value_desc +' '+ element.value_info}</td>
+                        </tr>
+                        `;
+                }
+            });
+
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Petugas Pendaftaran</td>
+                        <td class="py-0 text-center">Yang membuat pernyataan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pendaftar-1_4"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pasien-1_4"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">nama jelas</td>
+                        <td class="py-0 text-center">nama jelas</td>
+                    </tr>
+                    `;
+
+
+            $("#data-table-1_4").html(dataContent);
+            $("#data-ttd-1_4").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pendaftar-1_4`);
+            let element1 = document.getElementById(`ttd-pasien-1_4`);
+
+            if (element) {
+                generateQRCode(`ttd-pendaftar-1_4`, visit.fullname, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-pasien-1_4`, visit.diantar_oleh, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B01") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B01');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+            getDataIdTables({
+                id: result?.data[3]?.value_info,
+                score: result?.data[3]?.value_score,
+                vId: result?.data[3]?.value_id,
+                element: "#jenis-kelamin"
+            })
+            getDataIdTables({
+                id: result?.data[6]?.value_info,
+                score: result?.data[6]?.value_score,
+                vId: result?.data[6]?.value_id,
+                element: "#status-pernikahan"
+            })
+            getDataIdTables({
+                id: result?.data[7]?.value_info,
+                score: result?.data[7]?.value_score,
+                vId: result?.data[7]?.value_id,
+                element: "#agama"
+            })
+            getDataIdTables({
+                id: result?.data[8]?.value_info,
+                score: result?.data[8]?.value_score,
+                vId: result?.data[8]?.value_id,
+                element: "#pekerjaan"
+            })
+            getDataIdTables({
+                id: result?.data[11]?.value_info,
+                score: result?.data[11]?.value_score,
+                vId: result?.data[11]?.value_id,
+                element: "#hubungan-dengan-pasien"
+            })
+
+
+            getDataIdTables({
+                id: result?.data[24]?.value_info,
+                score: result?.data[24]?.value_score,
+                vId: result?.data[24]?.value_id,
+                element: "#pasien-ranap"
+            })
+
+
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[14].value_info],
+                value_id: aValue[14].value_info,
+                element: "#jenis-kelamin2"
+            })
+            getDataByID({
+                table: 'agama',
+                value_info: visit[aValue[18].value_info],
+                value_id: aValue[18].value_info,
+                element: "#agama2"
+            })
+            getDataByID({
+                table: 'job_category',
+                value_info: visit[aValue[19].value_info],
+                value_id: aValue[19].value_info,
+                element: "#pekerjaan2"
+            })
+
+            getDataByID({
+                table: 'marital_status',
+                value_info: visit[aValue[17].value_info],
+                value_id: aValue[17].value_info,
+                element: "#status-pernikahan2"
+            })
+            getDataByID({
+                table: 'status_pasien',
+                value_info: visit[aValue[25].value_info],
+                value_id: aValue[25].value_info,
+                element: "#status-pasien"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+            dataContent +=
+                `
+                    <tr>
+                        <th colspan="3">${aValue[1].value_info}</th>
+                    </tr>
+                    `;
+            result.data.slice(2, 12).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                    <tr>
+                        <th colspan="3">${aValue[12].value_info}</th>
+                    </tr>
+                    `;
+            aValue.slice(13, 23).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+2}">${visit[element.value_info] !== null ? visit[element.value_info] : '-'}</td>
+                    </tr>
+                    `;
+            });
+            dataTTD +=
+                `
+                    <tr>
+                        <th class="py-0" colspan="2">${aValue[23].value_info}</th>
+                    </tr>
+                    <tr>
+                        <td class="py-0" colspan="2">${aValue[24].value_desc +' '} <span id="pasien-ranap"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" colspan="2">${aValue[25].value_desc + ' '} <span id="status-pasien"></span></td>
+                    </tr>
+                    `;
+
+            aValue.slice(26, 30).forEach((element, index) => {
+                dataTTD +=
+                    `
+                    <tr>
+                        <td class="py-0" colspan="2">${element.value_desc +' '+ element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Petugas Pendaftaran</td>
+                        <td class="py-0 text-center">Yang membuat pernyataan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pendaftar"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pasien"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">nama jelas</td>
+                        <td class="py-0 text-center">nama jelas</td>
+                    </tr>
+                    `;
+
+            $("#data-informasi-B01").html(dataInformasi);
+            $("#data-table-B01").html(dataContent);
+            $("#data-ttd-B01").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pendaftar`);
+            let element1 = document.getElementById(`ttd-pasien`);
+
+            if (element) {
+                generateQRCode(`ttd-pendaftar`, result?.data[2].value_info, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-pasien`, visit.name_of_pasien, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B02") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B02');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+
+            getDataByID({
+                table: 'job_category',
+                value_info: result?.data[2]?.value_info,
+                value_id: 'job_id',
+                element: "#pekerjaan-1-B02"
+            })
+
+            getDataByID({
+                table: 'job_category',
+                value_info: visit[aValue[10].value_info],
+                value_id: aValue[10].value_info,
+                element: "#pekerjaan-2-B02"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(1, 5).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-1-B02'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                    <tr>
+                        <th colspan="3">${aValue[6].value_info}</th>
+                    </tr>
+                    `;
+            aValue.slice(7, 11).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-B02'}">${visit[element.value_info] !== null ? visit[element.value_info] : '-'}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                    <tr>
+                        <td class="py-2" colspan="3">${aValue[11].value_info}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[12].value_desc +' ' + moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" colspan="3">${result.data[13].value_desc + ' ' + result.data[12].value_info}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[14].value_info +' '}</td>
+                    </tr>
+            `;
+            dataTTD +=
+                `
+                    <tr>
+                        <td width="50%"></td>
+                        <td class="py-0 text-center" colspan="2">Yang membuat pernyataan</td>
+                    </tr>
+                    <tr>
+                        <td width="50%"></td>
+                        <td class="py-0" colspan="2">
+                            <div class="d-flex justify-content-center">
+                                <span id="ttd-pernyataan-B02"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%"></td>
+                        <td class="py-0 text-center" colspan="2">${visit[aValue[7].value_info]}</td>
+                    </tr>
+            `;
+
+            $("#data-informasi-B02").html(dataInformasi);
+            $("#data-table-B02").html(dataContent);
+            $("#data-ttd-B02").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-B02`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-B02`, visit[aValue[7].value_info], 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B03") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B03');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+            getDataIdTables({
+                id: result.data[2].value_info,
+                score: result.data[2].value_score,
+                vId: result.data[2].value_id,
+                element: "#jenis-kelamin-B03"
+            })
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[12].value_info],
+                value_id: aValue[12].value_info,
+                element: "#jenis-kelamin-2-B03"
+            })
+            getDataIdTables({
+                id: result.data[4].value_info,
+                score: result.data[4].value_score,
+                vId: result.data[4].value_id,
+                element: "#pekerjaan-B03"
+            })
+            getDataIdTables({
+                id: result.data[7].value_info,
+                score: result.data[7].value_score,
+                vId: result.data[7].value_id,
+                element: "#selaku-B03"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(1, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-B03'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                <tr>
+                    <td colspan="3">${aValue[8].value_info}</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-center">${aValue[9].value_info}</th>
+                </tr>
+                <tr>
+                    <th colspan="3">${aValue[5].value_info}</th>
+                </tr>
+            `;
+
+            aValue.slice(11, 14).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-B03'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+            aValue.slice(14, 16).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" colspan="3">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            result.data.slice(16, 28).forEach((element, index) => {
+                if (element.value_info === "1") {
+                    dataContent +=
+                        `
+                    <tr>
+                        <td class="py-0" colspan="3">${element.value_desc}</td>
+                    </tr>
+                    `;
+                }
+
+            });
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Dokter</td>
+                        <td class="py-0 text-center">Yang Menyatakan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-dokter-B03"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-B03"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2"></td>
+                        <td class="py-2"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="py-0 text-center">Tenaga Medis</td>
+                        <td class="py-0 text-center">Saksi,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-medis-B03"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-saksi-B03"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-B03").html(dataInformasi);
+            $("#data-table-B03").html(dataContent);
+            $("#data-ttd-B03").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-B03`);
+            let element1 = document.getElementById(`ttd-dokter-B03`);
+            let element2 = document.getElementById(`ttd-medis-B03`);
+            let element3 = document.getElementById(`ttd-saksi-B03`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-B03`, visit.name_of_pasien, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-dokter-B03`, visit.fullname, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-medis-B03`, visit.fullname, 100, 100);
+            }
+            if (element3) {
+                generateQRCode(`ttd-saksi-B03`, result.data[1].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B04") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B04');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+            getDataIdTables({
+                id: result.data[2].value_info,
+                score: result.data[2].value_score,
+                vId: result.data[2].value_id,
+                element: "#jenis-kelamin-B04"
+            })
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[12].value_info],
+                value_id: aValue[12].value_info,
+                element: "#jenis-kelamin-2-B04"
+            })
+            getDataIdTables({
+                id: result.data[4].value_info,
+                score: result.data[4].value_score,
+                vId: result.data[4].value_id,
+                element: "#pekerjaan-B04"
+            })
+            getDataIdTables({
+                id: result.data[7].value_info,
+                score: result.data[7].value_score,
+                vId: result.data[7].value_id,
+                element: "#selaku-B04"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(1, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-B04'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                <tr>
+                    <td colspan="3">${aValue[8].value_info}</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-center">${aValue[9].value_info}</th>
+                </tr>
+                <tr>
+                    <th colspan="3">${aValue[5].value_info}</th>
+                </tr>
+            `;
+
+            aValue.slice(11, 14).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-B04'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+            dataContent +=
+                `
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[14].value_info}</td>
+                    </tr>
+                `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Dokter</td>
+                        <td class="py-0 text-center">Yang Menyatakan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-dokter-B04"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-B04"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2"></td>
+                        <td class="py-2"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="py-0 text-center">Tenaga Medis</td>
+                        <td class="py-0 text-center">Saksi,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-medis-B04"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-saksi-B04"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-B04").html(dataInformasi);
+            $("#data-table-B04").html(dataContent);
+            $("#data-ttd-B04").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-B04`);
+            let element1 = document.getElementById(`ttd-dokter-B04`);
+            let element2 = document.getElementById(`ttd-medis-B04`);
+            let element3 = document.getElementById(`ttd-saksi-B04`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-B04`, visit.name_of_pasien, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-dokter-B04`, visit.fullname, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-medis-B04`, visit.fullname, 100, 100);
+            }
+            if (element3) {
+                generateQRCode(`ttd-saksi-B04`, result.data[1].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B05") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B05');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+            getDataIdTables({
+                id: result.data[2].value_info,
+                score: result.data[2].value_score,
+                vId: result.data[2].value_id,
+                element: "#jenis-kelamin-B05"
+            })
+            // getDataByID({
+            //     table: 'sex',
+            //     value_info: visit[aValue[12].value_info],
+            //     value_id: aValue[12].value_info,
+            //     element: "#jenis-kelamin-2-B05"
+            // })
+            getDataIdTables({
+                id: result.data[4].value_info,
+                score: result.data[4].value_score,
+                vId: result.data[4].value_id,
+                element: "#pekerjaan-B05"
+            })
+            getDataIdTables({
+                id: result.data[7].value_info,
+                score: result.data[7].value_score,
+                vId: result.data[7].value_id,
+                element: "#hubungan-dengan-pasien-B05"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(1, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-B05'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+
+            aValue.slice(8, 11).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-B05'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+            dataContent +=
+                `
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[11].value_info}</td>
+                    </tr>
+                `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0" width="50%"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center" width="50%"></td>
+                        <td class="py-0 text-center">Yang Membuat Pernyataan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" width="50%"></td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-B05"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center" width="50%"></td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
+                    </tr>
+
+            `;
+
+
+            $("#data-informasi-B05").html(dataInformasi);
+            $("#data-table-B05").html(dataContent);
+            $("#data-ttd-B05").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-B05`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-B05`, result.data[1].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_B06") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_B06');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+            getDataIdTables({
+                id: result.data[2].value_info,
+                score: result.data[2].value_score,
+                vId: result.data[2].value_id,
+                element: "#jenis-kelamin-B06"
+            })
+
+            getDataIdTables({
+                id: result.data[4].value_info,
+                score: result.data[4].value_score,
+                vId: result.data[4].value_id,
+                element: "#pekerjaan-B06"
+            })
+            getDataIdTables({
+                id: result.data[7].value_info,
+                score: result.data[7].value_score,
+                vId: result.data[7].value_id,
+                element: "#hubungan-dengan-pasien-B06"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+            `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;">Yang bertandatangan dibawah ini</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(1, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-B06'}">${element.value_info}</td>
+                    </tr>
+                `;
+            });
+
+            aValue.slice(8, 11).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-B06'}">${visit[element.value_info]}</td>
+                    </tr>
+                `;
+            });
+
+            dataContent +=
+                `
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[11].value_info}</td>
+                    </tr>
+            `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0" width="50%"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center" width="50%"></td>
+                        <td class="py-0 text-center">Yang Membuat Pernyataan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0" width="50%"></td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-B06"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center" width="50%"></td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-B06").html(dataInformasi);
+            $("#data-table-B06").html(dataContent);
+            $("#data-ttd-B06").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-B06`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-B06`, result.data[1].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_C01") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_C01');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+
+            getDataIdTables({
+                id: result.data[3].value_info,
+                score: result.data[3].value_score,
+                vId: result.data[3].value_id,
+                element: "#jenis-kelamin-C01"
+            })
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[14].value_info],
+                value_id: aValue[14].value_info,
+                element: "#jenis-kelamin-2-C01"
+            })
+            getDataIdTables({
+                id: result.data[5].value_info,
+                score: result.data[5].value_score,
+                vId: result.data[5].value_id,
+                element: "#pekerjaan-C01"
+            })
+            getDataIdTables({
+                id: result.data[8].value_info,
+                score: result.data[8].value_score,
+                vId: result.data[8].value_id,
+                element: "#selaku-C01"
+            })
+
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;" colspan="2">${aValue[1].value_info}</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(2, 9).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-C01'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                <tr>
+                    <td colspan="3">${aValue[9].value_info}</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-center">${aValue[10].value_info}</th>
+                </tr>
+                <tr>
+                    <td class="py-0" style="width: 200px;">${result.data[11].value_desc}</td>
+                    <td class="py-0" width="1%">:</td>
+                    <td class="py-0">${result.data[11].value_info}</td>
+                </tr>
+                <tr>
+                    <td class="py-0" style="width: 200px;">${aValue[12].value_info}</td>
+                    <td class="py-0" width="1%">:</td>
+                    <th class="py-0"></th>
+                </tr>
+            `;
+
+            aValue.slice(13, 16).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-C01'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+
+            dataContent +=
+                `
+                    <tr>
+                        <td class="py-0" colspan="3">${aValue[16].value_info}</td>
+                    </tr>
+            `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Dokter</td>
+                        <td class="py-0 text-center">Yang Menyatakan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-dokter-C01"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-C01"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2"></td>
+                        <td class="py-2"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">Saksi,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-saksi-C01"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-C01").html(dataInformasi);
+            $("#data-table-C01").html(dataContent);
+            $("#data-ttd-C01").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-C01`);
+            let element1 = document.getElementById(`ttd-dokter-C01`);
+            let element2 = document.getElementById(`ttd-saksi-C01`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-C01`, visit.name_of_pasien, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-dokter-C01`, visit.fullname, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-saksi-C01`, result.data[2].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_C02") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_C02');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+
+            getDataIdTables({
+                id: result.data[3].value_info,
+                score: result.data[3].value_score,
+                vId: result.data[3].value_id,
+                element: "#jenis-kelamin-C02"
+            })
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[12].value_info],
+                value_id: aValue[12].value_info,
+                element: "#jenis-kelamin-2-C02"
+            })
+            getDataIdTables({
+                id: result.data[5].value_info,
+                score: result.data[5].value_score,
+                vId: result.data[5].value_id,
+                element: "#pekerjaan-C02"
+            })
+            getDataIdTables({
+                id: result.data[8].value_info,
+                score: result.data[8].value_score,
+                vId: result.data[8].value_id,
+                element: "#menyatakan-C02"
+            })
+            getDataByID({
+                table: 'class_room',
+                value_info: visit[aValue[13].value_info],
+                value_id: aValue[13].value_info,
+                element: "#dirawat-di-ruang-2-C02"
+            })
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;" colspan="2">${aValue[1].value_info}</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(2, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-C02'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                <tr>
+                    <td colspan="3">${aValue[8].value_desc + ' '}<span id="menyatakan-C02">${aValue[8].value_info}</span></td>
+                </tr>
+
+            `;
+
+            aValue.slice(9, 15).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-C02'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" colspan="3">${aValue[15].value_info}</td>
+                </tr>
+
+            `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Saksi,</td>
+                        <td class="py-0 text-center">Yang Menyatakan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-saksi-C02"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-C02"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2"></td>
+                        <td class="py-2"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">Dokter</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-dokter-C02"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-C02").html(dataInformasi);
+            $("#data-table-C02").html(dataContent);
+            $("#data-ttd-C02").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-C02`);
+            let element1 = document.getElementById(`ttd-dokter-C02`);
+            let element2 = document.getElementById(`ttd-saksi-C02`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-C02`, visit.name_of_pasien, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-dokter-C02`, visit.fullname, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-saksi-C02`, result.data[2].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_C03") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_C03');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+
+            getDataIdTables({
+                id: result.data[3].value_info,
+                score: result.data[3].value_score,
+                vId: result.data[3].value_id,
+                element: "#jenis-kelamin-C03"
+            })
+            getDataByID({
+                table: 'sex',
+                value_info: visit[aValue[12].value_info],
+                value_id: aValue[12].value_info,
+                element: "#jenis-kelamin-2-C03"
+            })
+            getDataIdTables({
+                id: result.data[5].value_info,
+                score: result.data[5].value_score,
+                vId: result.data[5].value_id,
+                element: "#pekerjaan-C03"
+            })
+            getDataIdTables({
+                id: result.data[8].value_info,
+                score: result.data[8].value_score,
+                vId: result.data[8].value_id,
+                element: "#menyatakan-C03"
+            })
+            getDataByID({
+                table: 'class_room',
+                value_info: visit[aValue[13].value_info],
+                value_id: aValue[13].value_info,
+                element: "#dirawat-di-ruang-2-C03"
+            })
+            dataInformasi +=
+                `
+                <h5 class="text-center">${aValue[0].value_info}</h5>
+            
+                `;
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" style="width: 200px;" colspan="2">${aValue[1].value_info}</td>
+                    <td class="py-0"></td>
+                </tr>
+            `;
+            result.data.slice(2, 8).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-C03'}">${element.value_info}</td>
+                    </tr>
+                    `;
+            });
+            dataContent +=
+                `
+                <tr>
+                    <td colspan="3">${aValue[8].value_desc + ' '}<span id="menyatakan-C03">${aValue[8].value_info}</span></td>
+                </tr>
+
+            `;
+
+            aValue.slice(9, 15).forEach((element, index) => {
+                dataContent +=
+                    `
+                    <tr>
+                        <td class="py-0" style="width: 200px;">${element.value_desc}</td>
+                        <td class="py-0" width="1%">:</td>
+                        <td class="py-0" id="${generateSlug(element.value_desc)+'-2-C03'}">${visit[element.value_info]}</td>
+                    </tr>
+                    `;
+            });
+
+            dataContent +=
+                `
+                <tr>
+                    <td class="py-0" colspan="3">${aValue[15].value_info}</td>
+                </tr>
+
+            `;
+
+            dataTTD +=
+                `
+                    <tr>
+                        <td class="py-0"></td>
+                        <td class="py-0 text-center">${<?= json_encode($kop['kota']); ?>+ ', '+ moment().format("DD-MM-YYYY")}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">Saksi,</td>
+                        <td class="py-0 text-center">Yang Menyatakan,</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-saksi-C03"></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-pernyataan-C03"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center">(${result.data[2].value_info})</td>
+                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2"></td>
+                        <td class="py-2"></td>
+                    </tr>
+
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">Dokter</td>
+                    </tr>
+                    <tr>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span></span>
+                            </div>
+                        </td>
+                        <td class="py-0">
+                            <div class="d-flex justify-content-center">
+                            <span id="ttd-dokter-C03"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-0 text-center"></td>
+                        <td class="py-0 text-center">(${visit.fullname})</td>
+                    </tr>
+            `;
+
+
+            $("#data-informasi-C03").html(dataInformasi);
+            $("#data-table-C03").html(dataContent);
+            $("#data-ttd-C03").html(dataTTD);
+
+            let element = document.getElementById(`ttd-pernyataan-C03`);
+            let element1 = document.getElementById(`ttd-dokter-C03`);
+            let element2 = document.getElementById(`ttd-saksi-C03`);
+
+            if (element) {
+                generateQRCode(`ttd-pernyataan-C03`, visit.name_of_pasien, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-dokter-C03`, visit.fullname, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-saksi-C03`, result.data[2].value_info, 100, 100);
+            }
+
+        } else if (result.data[0].parameter_id === "RM_9_E01") {
 
             const startId = "G017E0117";
             const endId = "G017E0123";
@@ -4712,8 +6642,7 @@
                 const itemIdNum = parseInt(item.value_id.slice(-2));
                 let trimmedValueDesc = trimQuotesAndSpaces(item.value_desc);
                 if (trimmedValueDesc !== "" && itemIdNum >= startNum && itemIdNum <= endNum) {
-                    resultDataLine +=
-                        `<tr><td>${rowIndex}. <b>${trimmedValueDesc}</b>. ${hasival_info}</td></tr>`;
+                    resultDataLine += `<tr><td>${rowIndex}. <b>${trimmedValueDesc}</b>. ${hasival_info}</td></tr>`;
                     rowIndex++;
                 }
             });
@@ -4789,12 +6718,11 @@
             // $(".selaku-E01").html(result.data[14].value_info)
             // $(".p_name_of_gender-E01").html(result?.data[11]?.value_info);
             $(".p_name_of_pasien-E01").html(result?.data[9]?.value_info || "-");
-            $(".p_date_of_birth-E01").html(!result?.data[10]?.value_info ? "-" : moment(result?.data[10]?.value_info)
-                .format("DD-MM-YYYY"));
+            $(".p_date_of_birth-E01").html(!result?.data[10]?.value_info ? "-" : moment(result?.data[10]?.value_info).format("DD-MM-YYYY"));
             $(".p_contact_address-E01").html(result?.data[12]?.value_info || "-");
             $(".p_noTlp-E01").html(result?.data[13]?.value_info || "-");
 
-            // actionCetak();
+            actionCetak();
 
         } else if (result.data[0].parameter_id === "RM_9_E02") {
             let avalue = <?= json_encode($AValue) ?>;
@@ -4803,8 +6731,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1)
             // content
             aValueTabels.map((item, index) => {
                 return $(`#content-${index+1}-E02`).html(item.value_info)
@@ -4844,9 +6771,9 @@
                 let visitData = visitInfo[visitVal];
 
                 tablesdown.push(`<tr>
-                            <td class="p-1">${item.value_desc}</td>
-                            <td class="p-1">: ${visitData}</td>
-                    </tr>`);
+                        <td class="p-1">${item.value_desc}</td>
+                        <td class="p-1">: ${visitData}</td>
+                </tr>`);
             });
 
             $("#content-tables-down-E02").html(tablesdown.join(''));
@@ -4859,9 +6786,9 @@
                 const item = value[i];
 
                 datatabels.push(`<tr>
-                        <td class="p-1">${item.value_desc}</td>
-                        <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
-                    </tr>`);
+                    <td class="p-1">${item.value_desc}</td>
+                    <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
+                </tr>`);
 
                 if (item.value_id === "G017E0210") {
                     stopLoop = true;
@@ -4898,7 +6825,7 @@
             }
 
             new QRCode(document.getElementById(`qr-doctor-E02`), {
-                text: visit?.visit?.fullname_from,
+                text: visit?.visit?.sspractitioner_name,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -4925,7 +6852,7 @@
 
             $("#saksi-E02").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
             $("#menyatakan-E02").html(value[0]?.value_info)
-            $("#doctor-E02").html(visit?.visit?.fullname_from)
+            $("#doctor-E02").html(visit?.visit?.sspractitioner_name)
             $("#date-E02").html(moment(new Date()).format("DD-MMM-YYYY"))
         } else if (result.data[0].parameter_id === "RM_9_E03") {
             let avalue = <?= json_encode($AValue) ?>;
@@ -4934,8 +6861,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1)
             $(".contentIsi-E03").html(`${value[4].value_desc} : ${value[4].value_info}`)
 
             $(".name_of_pasien-E03").html(visit?.visit.name_of_pasien)
@@ -4953,9 +6879,9 @@
                 const item = value[i];
 
                 datatabels.push(`<tr>
-                    <td class="p-1">${item.value_desc}</td>
-                    <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
-                </tr>`);
+                <td class="p-1">${item.value_desc}</td>
+                <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
+            </tr>`);
 
                 if (item.value_id === "G017E0305") {
                     stopLoop = true;
@@ -5037,11 +6963,11 @@
                 let trimmedValueDesc = trimQuotesAndSpaces(item.value_desc);
                 if (trimmedValueDesc !== "" && itemIdNum >= startNum && itemIdNum <= endNum) {
                     resultDataLine += `<tr>
-                                    <td class="text-left p-2 fit">${rowIndex}</td>
-                                    <td class="text-left p-2 fit">${trimmedValueDesc}</td>
-                                    <td class="text-left p-2 fit isi-informasi">${item.value_info}</td>
-                                    <td class="text-left p-2 fit tanda"><div id="qrcode-${item.value_id}-E04"></div></td>
-                                </tr>`;
+                                <td class="text-left p-2 fit">${rowIndex}</td>
+                                <td class="text-left p-2 fit">${trimmedValueDesc}</td>
+                                <td class="text-left p-2 fit isi-informasi">${item.value_info}</td>
+                                <td class="text-left p-2 fit tanda"><div id="qrcode-${item.value_id}-E04"></div></td>
+                            </tr>`;
                     rowIndex++;
                 }
             });
@@ -5063,7 +6989,7 @@
 
             // ttd
             new QRCode(document.getElementById(`qr-docter-E04`), {
-                text: visit?.fullname_from,
+                text: visit?.sspractitioner_name,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -5103,7 +7029,7 @@
             let hasil = "";
 
             let aValue = data2.filter(item => item.value_desc === "");
-            $(".fullname_from-E04").html(visit?.fullname_from);
+            $(".sspractitioner_name-E04").html(visit?.sspractitioner_name);
             $(".pemberi_informasi-E04").html(result?.data[3].value_info.replace(/<p>|<\/p>/g, ''));
             $(".Penerima_Informasi-E04").html(result?.data[4].value_info.replace(/<p>|<\/p>/g, ''));
             $("#content-13-E04").html(aValue[3]?.value_info);
@@ -5142,8 +7068,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
             $(".contentIsi-E03").html(`${value[4].value_desc} : ${value[4].value_info}`)
 
             $(".name-E05").html(visit?.visit.diantar_oleh)
@@ -5231,8 +7156,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
             $("#val_visit_name_E06").html(visit?.visit.diantar_oleh)
             $("#val_visit_age_E06").html(visit?.visit.age)
             $("#val_visit_gender_E06").html(visit?.visit.name_of_gender)
@@ -5310,8 +7234,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
 
             $("#content_visit_name_E07").html(visit?.visit.diantar_oleh)
             $("#content_visit_register_E07").html(visit?.visit.no_registration)
@@ -5435,8 +7358,7 @@
 
             // text ttd
             $("#text-keluarga-E08").html(!result.data[0].valid_other ? "-" : result.data[0].valid_other)
-            $("#text-pernyataan-E08").html(!result.data[1].value_info ? "-" : result.data[1].value_info.replace(
-                /<p>|<\/p>/g, ''))
+            $("#text-pernyataan-E08").html(!result.data[1].value_info ? "-" : result.data[1].value_info.replace(/<p>|<\/p>/g, ''))
             $("#text-Perawat-E08").html(!result.data[0].valid_user ? "-" : result.data[0].valid_user)
 
 
@@ -5447,8 +7369,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
 
             $(".content_visit_room_E09").html(visit?.visit.class_room_id ?? "-")
             $(".content_visit_register_E09").html(visit?.visit.no_registration ?? "-")
@@ -5534,8 +7455,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E10").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E10").html(visit?.visit.gendername)
@@ -5620,8 +7540,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E11").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E11").html(visit?.visit.gendername)
@@ -5706,8 +7625,7 @@
             let aValueTabels = avalue.filter(item => item.value_score === 8);
             let valValue = avalue.filter(item => item.value_score === 9);
 
-            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item
-                .value_score === 1 || item.value_score === 4)
+            let value = result.data.filter(item => item.value_score === 3 || item.value_score === 7 || item.value_score === 1 || item.value_score === 4)
 
             $(".visit_name_E12").html(visit?.visit.diantar_oleh)
             $(".visit_gender_E12").html(visit?.visit.gendername)
@@ -5794,6 +7712,12 @@
 
 
 
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F02") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: 'F02'
+            });
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F03") {
             renderDynamicContent({
                 result: result,
@@ -5806,7 +7730,6 @@
                 visit: visit,
                 code: 'F04'
             });
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F05") {
             renderDynamicContent2({
                 result: result,
@@ -5990,30 +7913,30 @@
 
                 dataContent +=
                     `<tr class="px-3">
-                            <td style="width: 40px; vertical-align: text-top;">${index+1}. </td>
-                            <td>
-                                <p class="mb-0">${element.value_desc}</p>
-                                <p>${element.value_info}</p>
-                            </td>
-                        </tr>`;
+                        <td style="width: 40px; vertical-align: text-top;">${index+1}. </td>
+                        <td>
+                            <p class="mb-0">${element.value_desc}</p>
+                            <p>${element.value_info}</p>
+                        </td>
+                    </tr>`;
             });
             dataContent +=
                 `<tr class="px-3">
-                        <td style="width: 40px; vertical-align: text-top;">6. </td>
-                        <td>
-                            <p>${concatenatedResult}</p>
-                        </td>
-                    </tr>`;
+                    <td style="width: 40px; vertical-align: text-top;">6. </td>
+                    <td>
+                        <p>${concatenatedResult}</p>
+                    </td>
+                </tr>`;
             aValue.slice(9, 10).forEach((element, index) => {
 
                 dataContent +=
                     `<tr class="px-3">
-                            <td style="width: 40px; vertical-align: text-top;">${index+7}. </td>
-                            <td>
-                                <p class="mb-0">${element.value_desc}</p>
-                                <p class="mb-0">${element.value_info}</p>
-                            </td>
-                        </tr>`;
+                        <td style="width: 40px; vertical-align: text-top;">${index+7}. </td>
+                        <td>
+                            <p class="mb-0">${element.value_desc}</p>
+                            <p class="mb-0">${element.value_info}</p>
+                        </td>
+                    </tr>`;
             });
 
             $("#data-table-F25A").html(dataContent);
@@ -6130,12 +8053,11 @@
 
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F40") {
-            renderDynamicContent({
+            renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F40'
             });
-
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F41") {
             renderDynamicContent({
@@ -6151,14 +8073,12 @@
                 code: 'F42'
             });
 
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F43") {
             renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F43'
             });
-
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F44") {
             renderDynamicContent2({
@@ -6167,14 +8087,12 @@
                 code: 'F44'
             });
 
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F45") {
             renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F45'
             });
-
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F46") {
             renderDynamicContent2({
@@ -6183,14 +8101,12 @@
                 code: 'F46'
             });
 
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F47") {
             renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F47'
             });
-
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F48") {
             renderDynamicContent2({
@@ -6199,7 +8115,6 @@
                 code: 'F48'
             });
 
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F49") {
             renderDynamicContent2({
                 result: result,
@@ -6207,14 +8122,12 @@
                 code: 'F49'
             });
 
-
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F50") {
             renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F50'
             });
-
 
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F51") {
             renderDynamicContent2({
@@ -6310,6 +8223,358 @@
             });
 
 
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F63") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_F63');
+            let dataContent = '';
+            let dataInformasi = '';
+            let dataTTD = '';
+
+            getDataIdTables({
+                id: result?.data[6]?.value_info,
+                score: result?.data[6]?.value_score,
+                vId: result?.data[6]?.value_id,
+                element: "#selaku"
+            })
+
+            dataInformasi +=
+                `<tr class="px-3">
+                        <td colspan="3">
+                            <p class="mb-0 text-center fw-bold">${aValue[0].value_info}</p>
+                        </td>
+                    </tr>`;
+            dataInformasi +=
+                `<tr class="px-3">
+                        <td colspan="3">
+                            <p class="mb-0">${aValue[1].value_info}</p>
+                        </td>
+                    </tr>`;
+
+            result.data.slice(2, 6).forEach((element, index) => {
+
+                dataInformasi +=
+                    `<tr class="px-3">
+                        <td style="width:200px">
+                            <p class="mb-0">${element.value_desc}</p>
+                        </td>
+                        <td style="width:1%">:</>
+                        <td>
+                            <p class="mb-0">${element.value_info}</p>
+                        </td>
+                    </tr>`;
+            });
+
+            dataInformasi +=
+                `<tr class="px-3">
+                        <td colspan="3">
+                            <p class="mb-0">${aValue[6].value_desc + ' '}<span id="selaku"></span>   </p>
+                        </td>
+                    </tr>`;
+
+            aValue.slice(7, 11).forEach((element, index) => {
+
+                dataInformasi +=
+                    `<tr class="px-3">
+                        <td style="width:200px">
+                            <p class="mb-0">${element.value_desc}</p>
+                        </td>
+                        <td style="width:1%">:</>
+                        <td>
+                            <p class="mb-0">${visit[element.value_info]}</p>
+                        </td>
+                    </tr>`;
+            });
+            dataInformasi +=
+                `<tr class="px-3">
+                    <td colspan="3">
+                        <p class="mb-0">${aValue[11].value_info}</p>
+                    </td>
+                </tr>`;
+
+            aValue.slice(12, 22).forEach((element, index) => {
+
+                dataContent +=
+                    `<tr class="px-3">
+                        <td>
+                            <p class="mb-0">${element.value_info}</p>
+                        </td>
+                    </tr>`;
+            });
+            dataContent +=
+                `
+                <tr class="px-3">
+                    <td>
+                        <p class="mb-0">${<?= json_encode($kop['kota']); ?>+',' +moment(visit.date_of_birth).format("DD-MMM-YYYY")}</p>
+                    </td>
+                </tr>;
+            `;
+            dataTTD +=
+                `
+                <tr class="px-3">
+                    <td width="50%">
+                        <p class="mb-0">Saksi-Saksi</p>
+                    </td>
+                    <td width="50%">
+                        <p class="mb-0">Yang menyatakan</p>
+                    </td>
+                </tr>;
+                <tr class="px-3">
+                    <td width="50%" id="ttd-saksi"></td>
+                    <td width="50%" id="ttd-menyatakan"></td>
+                </tr>;
+                <tr class="px-3">
+                    <td width="50%">
+                        <p class="mb-0">(${result.data[2].value_info})</p>
+                    </td>
+                    <td width="50%">
+                        <p class="mb-0">(${visit.name_of_pasien})</p>
+                    </td>
+                </tr>;
+                <tr class="px-3">
+                    <td width="50%">
+                        <p class="mb-0">Petugas</p>
+                    </td>
+                    <td width="50%">
+                        <p class="mb-0"></p>
+                    </td>
+                </tr>;
+                <tr class="px-3">
+                    <td width="50%">
+                        <p class="mb-0" id="ttd-petugas"></p>
+                    </td>
+                    <td width="50%">
+                        <p class="mb-0"></p>
+                    </td>
+                </tr>;
+                <tr class="px-3">
+                    <td width="50%">
+                        <p class="mb-0">(${visit.fullname})</p>
+                    </td>
+                    <td width="50%">
+                        <p class="mb-0"></p>
+                    </td>
+                </tr>;
+            `;
+            $("#data-informasi-F63").html(dataInformasi);
+            $("#data-table-F63").html(dataContent);
+            $("#data-ttd-F63").html(dataTTD);
+
+            let element = document.getElementById(`ttd-saksi`);
+            let element1 = document.getElementById(`ttd-menyatakan`);
+            let element2 = document.getElementById(`ttd-petugas`);
+
+            if (element) {
+                generateQRCode(`ttd-saksi`, result?.data[2].value_info, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-menyatakan`, visit.name_of_pasien, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-petugas`, visit.fullname, 100, 100);
+            }
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F64") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: 'F64'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F65") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: 'F65'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F66") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: 'F66'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F67") {
+            renderDynamicContent2({
+                result: result,
+                visit: visit,
+                code: 'F67'
+            });
+
+
+        } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F68") {
+            let data2 = <?= json_encode($AValue) ?>;
+            let hasil = "";
+            let aValue = data2.filter(item => item?.p_type === "GEN0017" && item?.parameter_id === 'RM_9_F68');
+            let dataInformasi = '';
+            let dataTindakan = '';
+
+            getDataIdTables({
+                id: result?.data[6]?.value_info,
+                score: result?.data[6]?.value_score,
+                vId: result?.data[6]?.value_id,
+                element: "#selaku"
+            })
+            dataInformasi +=
+                `
+                <table class="table table-borderless mt-3">
+                    <tr class="px-3 text-center">
+                        <th colspan="3">
+                            <p class="mb-0">${aValue[0].value_info}</p>
+                        </th>
+                    </tr>
+                    <tr class="px-3">
+                        <td colspan="3">
+                            <p>${aValue[1].value_desc}</p>
+                            <p>${aValue[1].value_info}</p>
+                        </td>
+                    </tr>
+                </table>
+               
+                <table class="table table-bordered mt-3">
+                    <tr class="px-3">
+                        <td colspan="3">
+                            <p>${aValue[2].value_desc}</p>
+                            <p>${aValue[2].value_info}</p>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table table-bordered mt-3">
+                    <tr class="px-3">
+                        <td colspan="3">
+                            <p>${aValue[3].value_desc}</p>
+                            <p>${aValue[3].value_info}</p>
+                        </td>
+                    </tr>
+                </table>
+            `;
+
+            dataInformasi += `
+                <div class="border border-1 mt-3">
+                    <table class="table table-borderless">
+                        <tr class="px-3">
+                            <td colspan="3">
+                                <p>${aValue[4].value_desc}</p>
+                                <p>${aValue[4].value_info}</p>
+                            </td>
+                        </tr> 
+            `;
+            if (visit.ageyear >= 18) {
+                dataInformasi += `<tr class="px-3">
+                            <td width="33.3%" class="py-0">
+                                <p class="mb-3 text-center">${visit.name_of_pasien}</p>
+                            </td>
+                            <td width="33.3%" class="py-0">
+                                <p class="mb-3 text-center">${visit.fullname}</p>
+                            </td>
+                            <td width="33.3%" class="py-0">
+                                <p class="mb-3 text-center">${moment().format("DD-MM-YYYY")}</p>
+                            </td>
+                        </tr>
+                        <tr class="px-3">
+                            <td class="py-0">
+                                <div class="d-flex justify-content-center">
+                                    <p class="mb-0 text-center" id="ttd-klien"></p>
+                                </div>
+                            </td>
+                            <td class="py-0">
+                                <div class="d-flex justify-content-center">
+                                    <p class="mb-0 text-center" id="ttd-konselor"></p>
+                                </div
+                            </td>
+                            <td class="py-0">
+                                <p class="mb-0"></p>
+                            </td>
+                        </tr>
+
+                        <tr class="px-3">
+                            <td class="py-0">
+                                <p class="mb-0 text-center">Tandatangan Klien</p>
+                            </td>
+                            <td class="py-0">
+                                <p class="mb-0 text-center">Tandatangan Konselor</p>
+                            </td>
+                            <td class="py-0">
+                                <p class="mb-0 text-center">Tanggal</p>
+                            </td>
+                        </tr>`;
+            } else {
+                dataInformasi += `
+                        <tr class="px-3">
+                            <td colspan="3">
+                                <p>${aValue[5].value_info}</p>
+                            </td>
+                        </tr>
+                        <tr class="px-3">
+                            <td colspan="3">
+                                <p>${result.data[6].value_desc + ' '} <span id="selaku"></span> ${aValue[7].value_info + ' '}</p>
+                            </td>
+                        </tr>
+
+                    `;
+            }
+            dataInformasi += `
+                    </table>
+                </div>
+            `;
+            dataTindakan += `
+
+                    <table class="table table-borderless">
+                        <tr class="px-3">
+                            <td colspan="2" class="text-center">
+                                <p class="fw-bold">FORMULIR PENOLAKAN TES SKRINING HIV</p>
+                                <p>Saya yang bertandatangan di bawah ini telah diberi penjelasan dan kegunaan dari pemeriksaan skrining HIV serta prosedurnya, namun saya tidak bersedia atau belum siap untuk melakukan pemeriksaan HIV. Demikian surat pernyataan ini kami buatkan untuk dipergunakan seperlunya</p>
+                            </td>
+                        </tr>
+                        <tr class="px-3">
+                            <td width="50%" class="text-center">Yang memberi pernyataan</td>
+                            <td width="50%" class="text-center">Petugas</td>
+                        </tr>
+                        <tr class="px-3">
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                <p id="ttd-penolakan-1"></p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                <p id="ttd-penolakan-2"></p>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="px-3">
+                            <td class="text-center">${visit.name_of_pasien}</td>
+                            <td class="text-center">${visit.fullname}</td>
+                        </tr>
+                    </table>
+            `;
+
+            $("#data-table-F68").html(dataInformasi);
+            $("#data-tindakan-F68").html(dataTindakan);
+            let element = document.getElementById(`ttd-klien`);
+            let element1 = document.getElementById(`ttd-konselor`);
+            let element2 = document.getElementById(`ttd-penolakan-1`);
+            let element3 = document.getElementById(`ttd-penolakan-2`);
+
+            if (element) {
+                generateQRCode(`ttd-klien`, visit.fullname, 100, 100);
+            }
+            if (element1) {
+                generateQRCode(`ttd-konselor`, visit.name_of_pasien, 100, 100);
+            }
+            if (element2) {
+                generateQRCode(`ttd-penolakan-1`, visit.name_of_pasien, 80, 80);
+            }
+            if (element3) {
+                generateQRCode(`ttd-penolakan-2`, visit.name_of_pasien, 80, 80);
+            }
+
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F69") {
             renderDynamicContent2({
                 result: result,
@@ -6367,7 +8632,7 @@
 
 
         }
-        // actionCetak()
+        actionCetak()
     }
 
     const renderDynamicContent = (props) => {
@@ -6381,8 +8646,7 @@
         result.data.forEach((item, index) => {
             let hasival_info = item.value_info;
             if (item.value_desc !== "") {
-                resultDataLine +=
-                    `<tr><td>${index + 1}. <b>${item.value_desc}</b>. ${hasival_info.replace(/<p>|<\/p>/g, '')}</td></tr>`;
+                resultDataLine += `<tr><td>${index + 1}. <b>${item.value_desc}</b>. ${hasival_info.replace(/<p>|<\/p>/g, '')}</td></tr>`;
             }
         });
         let data2 = <?= json_encode($AValue) ?>;
@@ -6396,13 +8660,13 @@
                     if (index === 0) {
                         dataInformasi +=
                             `<tr>
-                                <th colspan="3" class="text-center">${aValue[index].value_info}</th>
-                            </tr>`;
+                            <th colspan="3" class="text-center">${aValue[index].value_info}</th>
+                        </tr>`;
                     } else {
                         dataInformasi +=
                             `<tr>
-                                <th colspan="3" class="text-center">${element.value_desc}</th>
-                            </tr>`;
+                            <th colspan="3" class="text-center">${element.value_desc}</th>
+                        </tr>`;
                     }
 
                 } else {
@@ -6417,10 +8681,10 @@
                     } else {
                         dataInformasi +=
                             `<tr>
-                                    <td style="width: 250px;">${element.value_desc}</td>
-                                    <td width="1%">:</td>
-                                    <td>${element.value_info}</td>
-                                </tr>`;
+                                <td style="width: 250px;">${element.value_desc}</td>
+                                <td width="1%">:</td>
+                                <td>${element.value_info}</td>
+                            </tr>`;
                     }
 
                 }
@@ -6428,40 +8692,40 @@
             result.data.slice(6, 17).forEach((element, index) => {
                 dataTable +=
                     `<tr>
-                                    <td valign="top" width="37">
-                                        <p class="mb-1" align="center">${index + 1}</p>
-                                    </td>
-                                    <td colspan="2" valign="top" width="228">
-                                        <p class="mb-1">${element.value_desc}</p>
-                                    </td>
-                                    <td valign="top" width="300">
-                                        <p class="mb-1">${element.value_info}</p>
-                                    </td>
-                                    <td valign="top" width="162">
-                                        <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
-                                    </td>
-                                </tr>`;
+                        <td valign="top" width="37">
+                            <p class="mb-1" align="center">${index + 1}</p>
+                        </td>
+                        <td colspan="2" valign="top" width="228">
+                            <p class="mb-1">${element.value_desc}</p>
+                        </td>
+                        <td valign="top" width="300">
+                            <p class="mb-1">${element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
             });
             let avalueIndex = 1;
             result.data.slice(17, 20).forEach((element, index) => {
                 if (index == 2) {
                     dataTable2 +=
                         `<tr>
-                            <td colspan="5" valign="top" width="565">
-                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
-                            </td>
-                        </tr>`;
+                        <td colspan="5" valign="top" width="565">
+                            <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                        </td>
+                    </tr>`;
                 } else {
                     dataTable2 +=
                         `<tr>
-                            <td colspan="4" valign="top" width="565">
-                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
-                            </td>
-                            <td valign="top" width="162">
-                                <p class="" align="center">Tanda tangan</p>
-                                <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
-                            </td>
-                        </tr>`;
+                        <td colspan="4" valign="top" width="565">
+                            <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="" align="center">Tanda tangan</p>
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
                 }
 
                 avalueIndex++;
@@ -6500,29 +8764,30 @@
                 }
             });
         } else {
+
             result.data.slice(0, 4).forEach((element, index) => {
                 if (index < 1) {
                     dataInformasi +=
                         `<tr>
-                                <th colspan="3" class="text-center">${aValue[index].value_info}</th>
-                            </tr>`;
+                            <th colspan="3" class="text-center">${aValue[index].value_info}</th>
+                        </tr>`;
 
                 } else {
                     if (index === 1) {
                         let dokter = <?= json_encode($visit['visit']['fullname']); ?>;
                         dataInformasi +=
                             `<tr>
-                                <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
-                                <td width="1%">:</td>
-                                <td>${dokter}</td>
-                            </tr>`;
+                            <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
+                            <td width="1%">:</td>
+                            <td>${dokter}</td>
+                        </tr>`;
                     } else {
                         dataInformasi +=
                             `<tr>
-                                <td style="width: 250px;">${element.value_desc}</td>
-                                <td width="1%">:</td>
-                                <td>${element.value_info}</td>
-                            </tr>`;
+                            <td style="width: 250px;">${element.value_desc}</td>
+                            <td width="1%">:</td>
+                            <td>${element.value_info}</td>
+                        </tr>`;
                     }
 
                 }
@@ -6532,19 +8797,19 @@
             result.data.slice(4, 15).forEach((element, index) => {
                 dataTable +=
                     `<tr>
-                            <td valign="top" width="37">
-                                <p class="mb-1" align="center">${index + 1}</p>
-                            </td>
-                            <td colspan="2" valign="top" width="228">
-                                <p class="mb-1">${element.value_desc}</p>
-                            </td>
-                            <td valign="top" width="300">
-                                <p class="mb-1">${element.value_info}</p>
-                            </td>
-                            <td valign="top" width="162">
-                                <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
-                            </td>
-                        </tr>`;
+                        <td valign="top" width="37">
+                            <p class="mb-1" align="center">${index + 1}</p>
+                        </td>
+                        <td colspan="2" valign="top" width="228">
+                            <p class="mb-1">${element.value_desc}</p>
+                        </td>
+                        <td valign="top" width="300">
+                            <p class="mb-1">${element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
             });
             dataTable += ``;
             let avalueIndex = 1;
@@ -6552,21 +8817,21 @@
                 if (index == 2) {
                     dataTable2 +=
                         `<tr>
-                                <td colspan="5" valign="top" width="565">
-                                    <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
-                                </td>
-                            </tr>`;
+                            <td colspan="5" valign="top" width="565">
+                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                            </td>
+                        </tr>`;
                 } else {
                     dataTable2 +=
                         `<tr>
-                            <td colspan="4" valign="top" width="565">
-                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
-                            </td>
-                            <td valign="top" width="162">
-                                <p class="" align="center">Tanda tangan</p>
-                                <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
-                            </td>
-                        </tr>`;
+                        <td colspan="4" valign="top" width="565">
+                            <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="" align="center">Tanda tangan</p>
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
                 }
 
                 avalueIndex++
@@ -6609,19 +8874,14 @@
 
 
 
-        $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]
-            ?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
-        $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]
-            ?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+        $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+        $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
         $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
 
 
         $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
         $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
         $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
-        //     $(".contact_address-" + tableId).html(visit.contact_address);
-        //     $(".no_registration-" + tableId).html(visit.no_registration);
-        //     $(".noTlp-" + tableId).html(!visit.phone_number ? "-" : visit.phone_number);
     }
 
     const renderDynamicContent2 = (props) => {
@@ -6633,108 +8893,105 @@
         let dataTable = '';
         let dataTable2 = '';
 
-        getDataIdTables({
-            id: result?.data[24]?.value_info,
-            score: result?.data[24]?.value_score,
-            vId: result?.data[24]?.value_id,
-            element: ".kelamin-setuju" + props.code
-        })
-        getDataIdTables({
-            id: result?.data[26]?.value_info,
-            score: result?.data[26]?.value_score,
-            vId: result?.data[26]?.value_id,
-            element: "#selaku-" + props.code
-        })
+        let formSetuju = document.querySelector('#form-setuju-' + props.code);
+        let formMenolak = document.querySelector('#form-menolak-' + props.code);
 
-        getDataIdTables({
-            id: result?.data[37]?.value_info,
-            score: result?.data[37]?.value_score,
-            vId: result?.data[37]?.value_id,
-            element: ".kelamin-menolak" + props.code
-        })
-        getDataIdTables({
-            id: result?.data[39]?.value_info,
-            score: result?.data[39]?.value_score,
-            vId: result?.data[39]?.value_id,
-            element: "#selaku-2-" + props.code
-        })
+        if (result.data.length > 40) {
 
+            getDataIdTables({
+                id: result?.data[24]?.value_info,
+                score: result?.data[24]?.value_score,
+                vId: result?.data[24]?.value_id,
+                element: ".kelamin-setuju" + props.code
+            })
+            getDataIdTables({
+                id: result?.data[26]?.value_info,
+                score: result?.data[26]?.value_score,
+                vId: result?.data[26]?.value_id,
+                element: "#selaku-" + props.code
+            })
 
-        let data2 = <?= json_encode($AValue) ?>;
-        let aValue = data2.filter(item => item.value_desc === "");
-        aValue.forEach(item => {
-            hasil += `<p id="${item?.value_id}">${item?.value_info}</p> `;
-        });
+            getDataIdTables({
+                id: result?.data[37]?.value_info,
+                score: result?.data[37]?.value_score,
+                vId: result?.data[37]?.value_id,
+                element: ".kelamin-menolak" + props.code
+            })
+            getDataIdTables({
+                id: result?.data[39]?.value_info,
+                score: result?.data[39]?.value_score,
+                vId: result?.data[39]?.value_id,
+                element: "#selaku-2-" + props.code
+            })
 
-        result.data.slice(0, 5).forEach((element, index) => {
-            if (index < 1) {
-                let hasival_info = element.value_info;
-                let dateTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
-
-                if (dateTimeRegex.test(hasival_info)) {
-                    let dateTimeMatch = hasival_info.match(dateTimeRegex);
-                    if (dateTimeMatch) {
-                        let dateTime = moment(dateTimeMatch[0]).format('DD MM YYYY HH:mm');
-                        hasival_info = hasival_info.replace(dateTimeMatch[0], dateTime);
-                    }
-                }
-
-                dataInformasi +=
-                    `<tr>
-                    <th colspan="3" class="text-center">${hasival_info}</th>
-                </tr>`;
+            if (result.data[25].value_info !== "") {
+                formMenolak?.setAttribute('hidden', true)
             } else {
-                if (index === 1) {
-                    let dokter = <?= json_encode($visit["visit"]["fullname"]) ?>;
-                    dataInformasi +=
-                        `<tr>
-                        <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
-                        <td width="1%">:</td>
-                        <td>${dokter}</td>
-                    </tr>`;
-                } else {
-                    let hasival_info = element.value_info;
-                    let dateTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
-
-                    if (dateTimeRegex.test(hasival_info)) {
-                        let dateTimeMatch = hasival_info.match(dateTimeRegex);
-                        if (dateTimeMatch) {
-                            let dateTime = moment(dateTimeMatch[0]).format('DD MMM YYYY HH:mm');
-                            hasival_info = hasival_info.replace(dateTimeMatch[0], dateTime);
-                        }
-                    }
-
-                    dataInformasi +=
-                        `<tr>
-                        <td style="width: 250px;">${element.value_desc}</td>
-                        <td width="1%">:</td>
-                        <td>${hasival_info}</td>
-                    </tr>`;
-                }
+                formSetuju?.setAttribute('hidden', true)
             }
-        });
-        result.data.slice(5, 16).forEach((element, index) => {
-            dataTable +=
-                `<tr>
-                    <td valign="top" width="37">
-                        <p class="mb-1" align="center">${index + 1}</p>
-                    </td>
-                    <td colspan="2" valign="top" width="228">
-                        <p class="mb-1">${element.value_desc}</p>
-                    </td>
-                    <td valign="top" width="300">
-                        <p class="mb-1">${element.value_info}</p>
-                    </td>
-                    <td valign="top" width="162">
-                        <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
-                    </td>
-                </tr>`;
-        });
-        let avalueIndex = 1;
-        result.data.slice(17, 20).forEach((element, index) => {
-            if (index != 2) {
-                dataTable2 +=
+
+
+            let data2 = <?= json_encode($AValue) ?>;
+            let aValue = data2.filter(item => item.value_desc === "");
+            aValue.forEach(item => {
+                hasil += `<p id="${item?.value_id}">${item?.value_info}</p> `;
+            });
+
+            result.data.slice(0, 5).forEach((element, index) => {
+                if (index < 1) {
+
+                } else {
+                    if (index === 1) {
+                        let dokter = <?= json_encode($visit["visit"]["fullname"]) ?>;
+                        dataInformasi +=
+                            `<tr>
+                                <td style="width: 250px;">Dokter Pelaksana Tindakan</td>
+                                <td width="1%">:</td>
+                                <td>${dokter}</td>
+                            </tr>`;
+                    } else {
+                        let hasival_info = element.value_info;
+                        let dateTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
+
+                        if (dateTimeRegex.test(hasival_info)) {
+                            let dateTimeMatch = hasival_info.match(dateTimeRegex);
+                            if (dateTimeMatch) {
+                                let dateTime = moment(dateTimeMatch[0]).format('DD MMM YYYY HH:mm');
+                                hasival_info = hasival_info.replace(dateTimeMatch[0], dateTime);
+                            }
+                        }
+
+                        dataInformasi +=
+                            `<tr>
+                                <td style="width: 250px;">${element.value_desc}</td>
+                                <td width="1%">:</td>
+                                <td>${hasival_info}</td>
+                            </tr>`;
+                    }
+                }
+            });
+            result.data.slice(5, 16).forEach((element, index) => {
+                dataTable +=
                     `<tr>
+                        <td valign="top" width="37">
+                            <p class="mb-1" align="center">${index + 1}</p>
+                        </td>
+                        <td colspan="2" valign="top" width="228">
+                            <p class="mb-1">${element.value_desc}</p>
+                        </td>
+                        <td valign="top" width="300">
+                            <p class="mb-1">${element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
+            });
+            let avalueIndex = 1;
+            result.data.slice(17, 20).forEach((element, index) => {
+                if (index != 2) {
+                    dataTable2 +=
+                        `<tr>
                             <td colspan="4" valign="top" width="565">
                                 <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
                             </td>
@@ -6743,96 +9000,334 @@
                                 <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
                             </td>
                         </tr>`;
-            } else {
-                dataTable2 +=
-                    `<tr>
+                } else {
+                    dataTable2 +=
+                        `<tr>
                             <td colspan="5" valign="top">
                                 <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
                             </td>
                         </tr>`;
-            }
+                }
 
-            avalueIndex++;
-        });
+                avalueIndex++;
+            });
 
 
 
-        $("#data-" + props.code).html(resultDataLine);
-        $("#hasil-Avalue-desc").html(hasil);
-        $("#data-informasi-" + props.code).html(dataInformasi);
-        $("#data-table-" + props.code).html(dataTable);
-        $("#data-table2-" + props.code).html(dataTable2);
+            $("#data-" + props.code).html(resultDataLine);
+            $("#hasil-Avalue-desc").html(hasil);
+            $("#data-informasi-" + props.code).html(dataInformasi);
+            $("#data-table-" + props.code).html(dataTable);
+            $("#data-table2-" + props.code).html(dataTable2);
 
-        result?.data?.slice(5, 16).forEach(e => {
-            let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+            result?.data?.slice(5, 16).forEach(e => {
+                let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+                if (element) {
+                    new QRCode(element, {
+                        text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
+                        width: 50,
+                        height: 50,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            });
+            result?.data?.slice(17, 19).forEach(e => {
+                let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+                if (element) {
+                    new QRCode(element, {
+                        text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
+                        width: 50,
+                        height: 50,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            });
+
+
+
+
+
+            $("#nama-tindakan-setuju-" + props.code).html((result.data[21].value_info));
+            $("#umur-tindakan-setuju-" + props.code).html((result.data[22].value_info));
+            $("#alamat-tindakan-setuju-" + props.code).html((result.data[23].value_info));
+
+            $("#nama-tindakan-menolak-" + props.code).html((result.data[21].value_info));
+            $("#umur-tindakan-menolak-" + props.code).html((result.data[22].value_info));
+            $("#alamat-tindakan-menolak-" + props.code).html((result.data[23].value_info));
+
+            $("#pihak-menyatakan-" + props.code).html((result.data[21].value_info));
+            $("#pihak-keluarga-" + props.code).html((result.data[21].value_info));
+            $("#pihak-medis-" + props.code).html((props.visit['fullname']));
+            $("#pihak-menyatakan2-" + props.code).html((result.data[21].value_info));
+            $("#pihak-keluarga2-" + props.code).html((result.data[21].value_info));
+            $("#pihak-medis2-" + props.code).html((props.visit['fullname']));
+
+            let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`);
+            let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${ props.code}`);
+            let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${ props.code}`);
+            let element3 = document.getElementById(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`);
+            let element4 = document.getElementById(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`);
+            let element5 = document.getElementById(`qrcode-tandatangan-pihak-medis2-${ props.code}`);
+
             if (element) {
-                new QRCode(element, {
-                    text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
-                    width: 50,
-                    height: 50,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+                generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`, result?.data[21].value_info);
             }
-        });
-        result?.data?.slice(17, 19).forEach(e => {
-            let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+            if (element1) {
+
+                generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, result?.data[21].value_info);
+            }
+            if (element2) {
+                generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[21].value_info);
+            }
+            if (element3) {
+                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[21].value_info);
+            }
+            if (element4) {
+                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[21].value_info);
+            }
+            if (element5) {
+                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, result?.data[21].value_info);
+            }
+
+            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#umur-tindakan-setuju-2-" + props.code).html((props.visit['age']));
+            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['contact_address']));
+            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+
+            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#umur-tindakan-menolak-2-" + props.code).html((props.visit['age']));
+            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['contact_address']));
+            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+
+            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+            $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
+
+
+            $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
+            $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
+            $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
+
+        } else {
+
+            getDataIdTables({
+                id: result?.data[18]?.value_info,
+                score: result?.data[18]?.value_score,
+                vId: result?.data[18]?.value_id,
+                element: ".kelamin-setuju" + props.code
+            })
+            getDataIdTables({
+                id: result?.data[20]?.value_info,
+                score: result?.data[20]?.value_score,
+                vId: result?.data[20]?.value_id,
+                element: "#selaku-" + props.code
+            })
+
+            getDataIdTables({
+                id: result?.data[31]?.value_info,
+                score: result?.data[31]?.value_score,
+                vId: result?.data[31]?.value_id,
+                element: ".kelamin-menolak" + props.code
+            })
+            getDataIdTables({
+                id: result?.data[33]?.value_info,
+                score: result?.data[33]?.value_score,
+                vId: result?.data[33]?.value_id,
+                element: "#selaku-2-" + props.code
+            })
+
+            if (result.data[19].value_info !== "") {
+                formMenolak?.setAttribute('hidden', 'true');
+            } else {
+                formSetuju?.setAttribute('hidden', 'true');
+            }
+
+            let data2 = <?= json_encode($AValue) ?>;
+            let aValue = data2.filter(item => item.value_desc === "");
+            aValue.forEach(item => {
+                hasil += `<p id="${item?.value_id}">${item?.value_info}</p> `;
+            });
+
+            result.data.slice(0, 4).forEach((element, index) => {
+                if (index < 1) {
+                    //
+                } else {
+                    if (index === 1) {
+                        dataInformasi +=
+                            `<tr>
+                                <td style="width: 250px;">Perawat Pelaksana Tindakan</td>
+                                <td width="1%">:</td>
+                                <td>${element.value_info}</td>
+                            </tr>`;
+                    } else {
+                        let hasival_info = element.value_info;
+                        let dateTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
+
+                        if (dateTimeRegex.test(hasival_info)) {
+                            let dateTimeMatch = hasival_info.match(dateTimeRegex);
+                            if (dateTimeMatch) {
+                                let dateTime = moment(dateTimeMatch[0]).format('DD MMM YYYY HH:mm');
+                                hasival_info = hasival_info.replace(dateTimeMatch[0], dateTime);
+                            }
+                        }
+
+                        dataInformasi +=
+                            `<tr>
+                                <td style="width: 250px;">${element.value_desc}</td>
+                                <td width="1%">:</td>
+                                <td>${hasival_info}</td>
+                            </tr>`;
+                    }
+                }
+            });
+            result.data.slice(4, 10).forEach((element, index) => {
+                dataTable +=
+                    `<tr>
+                        <td valign="top" width="37">
+                            <p class="mb-1" align="center">${index + 1}</p>
+                        </td>
+                        <td colspan="2" valign="top" width="228">
+                            <p class="mb-1">${element.value_desc}</p>
+                        </td>
+                        <td valign="top" width="300">
+                            <p class="mb-1">${element.value_info}</p>
+                        </td>
+                        <td valign="top" width="162">
+                            <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                        </td>
+                    </tr>`;
+            });
+            let avalueIndex = 1;
+            result.data.slice(10, 13).forEach((element, index) => {
+                if (index != 2) {
+                    dataTable2 +=
+                        `<tr>
+                            <td colspan="4" valign="top" width="565">
+                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                            </td>
+                            <td valign="top" width="162">
+                                <p class="" align="center">Tanda tangan</p>
+                                <p class="mb-1" align="center" id="qrcode-${element.value_id}-${props.code}"></p>
+                            </td>
+                        </tr>`;
+                } else {
+                    dataTable2 +=
+                        `<tr>
+                            <td colspan="5" valign="top">
+                                <p class="">${element.value_info == "" ? aValue[avalueIndex].value_info : element.value_info}</p>
+                            </td>
+                        </tr>`;
+                }
+
+                avalueIndex++;
+            });
+
+
+
+            $("#data-" + props.code).html(resultDataLine);
+            $("#hasil-Avalue-desc").html(hasil);
+            $("#data-informasi-" + props.code).html(dataInformasi);
+            $("#data-table-" + props.code).html(dataTable);
+            $("#data-table2-" + props.code).html(dataTable2);
+
+            result?.data?.slice(4, 10).forEach(e => {
+                let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+                if (element) {
+                    new QRCode(element, {
+                        text: result?.data[3].value_info.replace(/<p>|<\/p>/g, ''),
+                        width: 50,
+                        height: 50,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            });
+            result?.data?.slice(10, 12).forEach(e => {
+                let element = document.getElementById(`qrcode-${e.value_id}-${props.code}`);
+                if (element) {
+                    new QRCode(element, {
+                        text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
+                        width: 50,
+                        height: 50,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                }
+            });
+
+
+
+
+
+            $("#nama-tindakan-setuju-" + props.code).html((result.data[15].value_info));
+            $("#umur-tindakan-setuju-" + props.code).html((result.data[16].value_info));
+            $("#alamat-tindakan-setuju-" + props.code).html((result.data[17].value_info));
+            $("#pihak-menyatakan-" + props.code).html((result.data[15].value_info));
+            $("#pihak-keluarga-" + props.code).html((result.data[15].value_info));
+            $("#pihak-medis-" + props.code).html((result.data[1].value_info));
+            $("#pihak-menyatakan2-" + props.code).html((result.data[15].value_info));
+            $("#pihak-keluarga2-" + props.code).html((result.data[15].value_info));
+            $("#pihak-medis2-" + props.code).html((result.data[1].value_info));
+
+            $("#nama-tindakan-menolak-" + props.code).html((result.data[15].value_info));
+            $("#umur-tindakan-menolak-" + props.code).html((result.data[16].value_info));
+            $("#alamat-tindakan-menolak-" + props.code).html((result.data[17].value_info));
+
+
+            let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`);
+            let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${ props.code}`);
+            let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${ props.code}`);
+            let element3 = document.getElementById(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`);
+            let element4 = document.getElementById(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`);
+            let element5 = document.getElementById(`qrcode-tandatangan-pihak-medis2-${ props.code}`);
+
             if (element) {
-                new QRCode(element, {
-                    text: result?.data[2].value_info.replace(/<p>|<\/p>/g, ''),
-                    width: 50,
-                    height: 50,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+                generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`, result?.data[15].value_info);
             }
-        });
+            if (element1) {
+
+                generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, result?.data[15].value_info);
+            }
+            if (element2) {
+                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, result?.data[1].value_info);
+            }
+            if (element3) {
+                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[15].value_info);
+            }
+            if (element4) {
+
+                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[15].value_info);
+            }
+            if (element5) {
+                generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[1].value_info);
+            }
+
+            $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#umur-tindakan-setuju-2-" + props.code).html((props.visit['age']));
+            $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['contact_address']));
+            $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+
+            $("#nama-tindakan-menolak-2-" + props.code).html((props.visit['name_of_pasien']));
+            $("#umur-tindakan-menolak-2-" + props.code).html((props.visit['age']));
+            $("#alamat-tindakan-menolak-2-" + props.code).html((props.visit['contact_address']));
+            $("#kelamin-tindakan-menolak-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
+
+            $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
+            $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
+            $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
 
 
+            $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
+            $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
+            $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
 
-
-
-        $("#nama-tindakan-setuju-" + props.code).html((result.data[21].value_info));
-        $("#umur-tindakan-setuju-" + props.code).html((result.data[22].value_info));
-        $("#alamat-tindakan-setuju-" + props.code).html((result.data[23].value_info));
-        $("#pihak-menyatakan-" + props.code).html((result.data[21].value_info));
-
-
-        let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`);
-        let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${ props.code}`);
-        let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${ props.code}`);
-
-        if (element) {
-            generateQRCode(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`, result?.data[21].value_info);
         }
-        if (element1) {
-
-            generateQRCode(`qrcode-tandatangan-pihak-keluarga-${ props.code}`, result?.data[21].value_info);
-        }
-        if (element2) {
-            generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[21].value_info);
-        }
-
-        $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
-        $("#umur-tindakan-setuju-2-" + props.code).html((props.visit['age']));
-        $("#alamat-tindakan-setuju-2-" + props.code).html((props.visit['contact_address']));
-        $("#kelamin-tindakan-setuju-2-" + props.code).html((props.visit['gender']) == 2 ? 'Perempuan' : 'Laki-Laki');
-
-        $("#text-petugas-" + props.code).html("(" + (result.data[0]?.valid_user !== null && result.data[0]
-            ?.valid_user !== undefined ? result.data[0]?.valid_user : "") + ")");
-        $("#text-pasien-" + props.code).html("(" + (result.data[0]?.valid_pasien !== null && result.data[0]
-            ?.valid_pasien !== undefined ? result.data[0]?.valid_pasien : "") + ")");
-        $("#code-" + props.code).html(result.data[0].parameter_id.replaceAll(' ', '').replace(/_/g, ' '));
-
-
-        $(".name_of_pasien-" + props.code).html(props.visit.name_of_pasien);
-        $(".date_of_birth-" + props.code).html(moment(props.visit.date_of_birth).format("DD-MM-YYYY"));
-        $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
-        //     $(".contact_address-" + tableId).html(visit.contact_address);
-        //     $(".no_registration-" + tableId).html(visit.no_registration);
-        //     $(".noTlp-" + tableId).html(!visit.phone_number ? "-" : visit.phone_number);
 
 
     }
@@ -6843,7 +9338,6 @@
         let aValueTabels = data2.filter(item => item.value_score === 3 || item.value_score === 7);
 
         let matchedItem = aValueTabels.find(item => item.value_id === props.vId);
-
         if (matchedItem) {
             postData({
                 nameTables: matchedItem.value_info,
@@ -6859,8 +9353,7 @@
 
         const renderData = (data, item, props) => {
             if (data && data.length > 0) {
-                let matchedItem = data.find(resItem => resItem.score === item.value_score && resItem.id == props
-                    .id && resItem.vId == props.vId);
+                let matchedItem = data.find(resItem => resItem.score === item.value_score && resItem.id == props.id && resItem.vId == props.vId);
 
                 if (matchedItem && matchedItem.val !== undefined) {
                     $(props.element).html(matchedItem.val);
@@ -6872,19 +9365,53 @@
             }
         };
     };
-    const generateQRCode = (elementId, text) => {
+
+    const getDataByID = (props) => {
+        if (props.value_info === '' || props.value_info === undefined || props.value_info === null) {
+            props.value_info = '0'
+        }
+        if (props.value_id === '' || props.value_id === undefined || props.value_id === null) {
+            props.value_id = '0'
+        }
+        postData({
+            nameTables: props.table, // nama table
+            vInfo: props.value_info, // value
+            vId: props.value_id // nama pk
+        }, 'admin/InformedConsent/getTableByID', (res) => {
+            if (res !== undefined || res !== null || res !== '') {
+                $(props.element).html(res);
+            } else {
+                $(props.element).html("-");
+            }
+
+        });
+    }
+
+    const generateQRCode = (elementId, text, width = 50, height = 50) => {
         let element = document.getElementById(elementId);
         if (element) {
             new QRCode(element, {
                 text: text.replace(/<p>|<\/p>/g, ''),
-                width: 50,
-                height: 50,
+                width: width,
+                height: height,
                 colorDark: "#000000",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
     };
+
+    function generateSlug(input) {
+        return input
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]+/g, '')
+            .replace(/--+/g, '-')
+            .substring(0, 50);
+    }
+
     //new
     const actionCetak = () => {
         setTimeout(() => {

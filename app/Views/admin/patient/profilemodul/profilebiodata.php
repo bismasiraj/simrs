@@ -1,10 +1,11 @@
-<div class="card bg-light border border-1 rounded-4 mt-4">
+<div class="card bg-light border border-1 rounded-4 mt-4 biodata">
     <div class="card-body">
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 table-biodata-header">
-            <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?> (<?= $visit['no_registration']; ?>)</h3>
+            <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14"><?= $visit['diantar_oleh']; ?>
+                (<?= $visit['no_registration']; ?>)</h3>
             <hr>
             <?php
-
+            $file = '';
             if ($visit['gender'] == '1') {
                 $file = "uploads\images\profile_male.png";
             } else if ($visit['gender'] == '2') {
@@ -12,9 +13,11 @@
             }
 
             ?>
-            <img width="115" height="115" class="rounded-circle avatar-lg" src="<?php echo base_url(); ?><?php echo $file ?>">
+            <img width="115" height="115" class="rounded-circle avatar-lg"
+                src="<?php echo base_url(); ?><?php echo $file ?>">
 
-        </div><!--./col-lg-5-->
+        </div>
+        <!--./col-lg-5-->
         <div class="col-lg-12 col-md-12 col-sm-12">
             <table class="table">
                 <tr>
@@ -64,6 +67,23 @@
                     <td class="alergi"> - </td>
                 </tr>
             </table>
+            <hr>
+            <table class="table">
+                <div id="data-render-assTbc" class="data-render-assTbc">
+                    <tr>
+                        <td colspan="2" class="skriningsuspect-header fw-bold">
+                            <div id="text-content-assTbc" class="btn btn-link pointer btn-show-tbc add">SKRINING SUSPECT
+                                TBC
+                            </div>
+                        </td>
+
+                    </tr>
+                </div>
+            </table>
+            <div class="row text-center d-none">
+                <button type="button" name="save" data-loading-text="processing" class="btn btn-primary pull-right"
+                    onclick="updateWaktu(5)"><i class="fa fa-check-circle"></i> <span>Selesai</span></button>
+            </div>
             <?php if (false) {
                 // if (empty($pasienDiagnosa)) {
             ?>
@@ -139,6 +159,7 @@
             } else { ?>
 
             <?php } ?>
-        </div><!--./col-lg-7-->
+        </div>
+        <!--./col-lg-7-->
     </div>
 </div>

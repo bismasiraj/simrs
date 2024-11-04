@@ -14,12 +14,12 @@ $group = user()->getRoles();
     var retur = 0.0;
     var total = 0.0;
     var lastOrder = 0;
-    var cpptjson = [];
-    cpptjson = <?= json_encode($exam); ?>;
+    // var cpptjson = [];
+    // cpptjson = <?= json_encode($exam); ?>;
 
 
     $("#cpptTab").on("click", function() {
-        getAssessmentKeperawatan()
+        $("#cpptSearchBtn").trigger("click")
     })
 
     function cpptInput(prop) {
@@ -170,6 +170,8 @@ $group = user()->getRoles();
         $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
         $("#cpptObyektifTitle").html("OBYEKTIF (O)")
         $("#cpptPlanningTitle").html("PLANNING (P)")
+        $("#cpptVitalSign").show()
+
         // $("#acpptaccount_id3").is("checked", function() {})
     })
     $("#acpptaccount_id4").on("change", function() {
@@ -181,45 +183,93 @@ $group = user()->getRoles();
         $("#cpptSubyektifTitle").html("SITUATION (S)")
         $("#cpptObyektifTitle").html("BACKGROUND (B)")
         $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
+        // $("#cpptVitalSign").hide()
         // $("#acpptaccount_id4").is("checked", function() {})
     })
 
     function addRowCPPT(examselect, key) {
         if (examselect.account_id == "3") {
             $("#cpptBody").append($("<tr>")
-                    .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
-                    .append($("<td rowspan='7'>").html(examselect.petugas))
-                    .append($("<td>").html(''))
-                    .append($("<td>").html('<b>Tekanan Darah</b>'))
-                    .append($("<td>").html('<b>Nadi</b>'))
-                    .append($("<td>").html('<b>Nafas/RR</b>'))
-                    .append($("<td>").html('<b>Temp</b>'))
-                    .append($("<td>").html('<b>SpO2</b>'))
-                    .append($("<td rowspan='7'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                        '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                    .append($("<td rowspan='7'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
-                )
-                .append($("<tr>")
-                    .append($("<td>").html(''))
-                    .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
-                    .append($("<td>").html(examselect.nadi + '/menit'))
-                    .append($("<td>").html(examselect.nafas + '/menit'))
-                    .append($("<td>").html(examselect.temperature + '/°C'))
-                    .append($("<td>").html(examselect.saturasi + '/SpO2%'))
-                )
+                .append($("<td rowspan='8'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html(''))
+                // .append($("<td>").html('<b>Tekanan Darah</b>'))
+                // .append($("<td>").html('<b>Nadi</b>'))
+                // .append($("<td>").html('<b>Nafas/RR</b>'))
+                // .append($("<td>").html('<b>Temp</b>'))
+                // .append($("<td>").html('<b>SpO2</b>'))
+
+                .append($("<td rowspan='8'>")
+                    .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                            '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
+                            <?php if (user()->checkRoles(['dokter', 'superuser', 'admin'])) {
+                            ?> + '<button type="button" onclick="verifyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-signature">Verify</i></button>'
+                            <?php
+                            } ?>
+                        )
+                    ))
+                .append($("<td rowspan='8'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+            )
+            // .append($("<tr>")
+            //     .append($("<td>").html(''))
+            //     .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+            //     .append($("<td>").html(examselect.nadi + '/menit'))
+            //     .append($("<td>").html(examselect.nafas + '/menit'))
+            //     .append($("<td>").html(examselect.temperature + '/°C'))
+            //     .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+            // )
         } else {
-            // $("#cpptBody").append($("<tr>"))
+            $("#cpptBody").append($("<tr>")
+                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html(''))
+                // .append($("<td>").html('<b>Tekanan Darah</b>'))
+                // .append($("<td>").html('<b>Nadi</b>'))
+                // .append($("<td>").html('<b>Nafas/RR</b>'))
+                // .append($("<td>").html('<b>Temp</b>'))
+                // .append($("<td>").html('<b>SpO2</b>'))
+
+                .append($("<td rowspan='6'>")
+                    .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                            '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
+                            <?php if (user()->checkRoles(['dokter', 'superuser', 'admin'])) {
+                            ?> + '<button type="button" onclick="verifyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-signature">Verify</i></button>'
+                            <?php
+                            } ?>
+                        )
+                    ))
+                .append($("<td rowspan='6'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+            )
 
         }
 
         if (examselect.account_id == "3") {
             $("#cpptBody")
                 .append($("<tr>")
+                    .append($("<td rowspan='7'>").html(examselect.kode_ppa))
                     .append($("<td>").html("<b>S</b>"))
                     .append($("<td colspan='5'>").html(examselect.anamnase))
                 )
+
                 .append($("<tr>")
-                    .append($("<td>").html("<b>O</b>"))
+                    .append($("<td rowspan=\"3\">").html("<b>O</b>"))
+                    .append($("<td>").html('<b>Tekanan Darah</b>'))
+                    .append($("<td>").html('<b>Nadi</b>'))
+                    .append($("<td>").html('<b>Nafas/RR</b>'))
+                    .append($("<td>").html('<b>Temp</b>'))
+                    .append($("<td>").html('<b>SpO2</b>'))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+                    .append($("<td>").html(examselect.nadi + '/menit'))
+                    .append($("<td>").html(examselect.nafas + '/menit'))
+                    .append($("<td>").html(examselect.temperature + '/°C'))
+                    .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+                )
+                .append($("<tr>")
+                    // .append($("<td>").html("<b>O</b>"))
                     .append($("<td colspan='5'>").html(examselect.pemeriksaan))
                 )
                 .append($("<tr>")
@@ -237,13 +287,9 @@ $group = user()->getRoles();
         } else {
             $("#cpptBody")
                 .append($("<tr>")
-                    .append($("<td rowspan='5'>").append((examselect.examination_date).substring(0, 16)))
-                    .append($("<td rowspan='5'>").html(examselect.petugas))
+                    .append($("<td rowspan='5'>").html(examselect.kode_ppa))
                     .append($("<td>").html("<b>S</b>"))
                     .append($("<td colspan='5'>").html(examselect.anamnase))
-                    .append($("<td rowspan='5'>").html('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
-                        '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
-                    .append($("<td rowspan='5'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>B</b>"))
@@ -261,7 +307,6 @@ $group = user()->getRoles();
                     .append($("<td>").html("Instruksi"))
                     .append($("<td colspan='5'>").html(examselect.instruction))
                 )
-
         }
     }
 
@@ -303,11 +348,14 @@ $group = user()->getRoles();
 
 
     const editCppt = async (key) => {
+        $("#acpptModal").modal("hide")
+
         var examselect = examForassessment[key];
 
         $.each(examselect, function(key, value) {
             $("#acppt" + key).val(value)
         })
+
         // var editor = tinymce.get('acpptinstruction')
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
         $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change");
@@ -325,11 +373,23 @@ $group = user()->getRoles();
         getFallRisk(examselect.body_id, "bodyFallRiskCppt")
         getGcs(examselect.body_id, "bodyGcsCppt")
 
-        disableacppt()
+        if ($("#acpptvalid_user").val() == '' || $("#acpptvalid_user").val() == null) {
+            enableacppt()
+        } else {
+            if (<?= json_encode(user()->checkRoles(['superuser'])) ?>) {
+                enableacppt()
+            } else {
+                disableacppt()
+            }
+        }
+        if ($("#acpptpetugas_type").val() == '13') {
+            $("#groupDiagnosaPerawatCppt").show()
+        } else {
+            $("#groupDiagnosaPerawatCppt").hide()
+        }
 
-        $("#cpptDivForm").slideDown()
 
-
+        $("#acpptModal").modal("show")
     }
 
     function copyCppt(key) {
@@ -407,6 +467,7 @@ $group = user()->getRoles();
         $("#acpptdoctor").val(examselect.doctor)
         $("#acpptkal_id").val(examselect.kal_id)
         $("#acpptpetugas_id").val(examselect.petugas_id)
+        $("#acpptpetugas_type").val(examselect.petugas_type)
         $("#acpptpetugas").val(examselect.petugas)
         $("#acpptaccount_id").val(examselect.account_id)
         $("#acpptkesadaran").val(examselect.kesadaran)
@@ -436,8 +497,12 @@ $group = user()->getRoles();
         $("#formeditacpptid").slideUp()
     }
 
-    $("#formcppt").on('submit', (function(e) {
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
+    const removeCppt = () => {
+
+    }
+
+    $("#formsaveacpptbtnid").on('click', (function(e) {
+        let clicked_submit_btn = $(this)
         e.preventDefault();
 
         if ($("#acpptclinic_id").val() == null) {
@@ -446,13 +511,13 @@ $group = user()->getRoles();
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/patient/editExam',
                 type: "POST",
-                data: new FormData(this),
+                data: new FormData(document.getElementById("formaddacppt")),
                 dataType: 'json',
                 contentType: false,
                 cache: false,
                 processData: false,
                 beforeSend: function() {
-                    clicked_submit_btn.button('loading');
+                    $(this).html('<i class="spinner-border spinner-border-sm"></i>')
                 },
                 success: function(data) {
                     if (data.status == "fail") {
@@ -460,35 +525,36 @@ $group = user()->getRoles();
                         $.each(data.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(data.message);
+                        successSwal(data.message);
                         if (data.type == 'insert') {
-                            cpptjson.push(data.data)
+                            examForassessment.push(data.data)
                             setDataCPPT()
-                            var len = cpptjson.length
+                            var len = examForassessment.length
                             addRowCPPT(data.data, len)
                         } else {
                             console.log(data.type)
                             $("#cpptBody").html("")
                             setDataCPPT()
-                            cpptjson.forEach((element, key) => {
-                                console.log("json: " + cpptjson[key].body_id + " & data: " + data.data.body_id)
-                                if (cpptjson[key].body_id == data.data.body_id) {
-                                    cpptjson[key] = data.data
+                            examForassessment.forEach((element, key) => {
+                                console.log("json: " + examForassessment[key].body_id + " & data: " + data.data.body_id)
+                                if (examForassessment[key].body_id == data.data.body_id) {
+                                    examForassessment[key] = data.data
                                 }
                                 addRowCPPT(data.data, key)
                             });
+                            $("#acpptModal").modal("hide")
                         }
                     }
-                    clicked_submit_btn.button('reset');
+                    $(this).html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
+                    $(this).html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
                 },
                 complete: function() {
-                    clicked_submit_btn.button('reset');
+                    $(this).html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
                 }
             });
         }
@@ -498,10 +564,26 @@ $group = user()->getRoles();
 <script>
     function initialAddacppt() {
         const date = new Date();
-        bodyId = date.toISOString().substring(0, 23);
-        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        // bodyId = date.toISOString().substring(0, 23);
+        // bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
+        bodyId = '<?= $visit['session_id']; ?>'
+
+        let isnew = false;
+        $.each(examForassessment, function(key, value) {
+            if (value.body_id == bodyId) {
+                isnew = true;
+            }
+        })
+        if (isnew) {
+            return alert("Anda sudah pernah membuat dokumen CPPT pada sesi " + bodyId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
+        }
 
         $("#formaddacppt").find("input, textarea").val(null)
+        let initialexam = examForassessment[examForassessment.length - 1]
+        let lastBodyId = initialexam.body_id
+        $.each(initialexam, function(key, value) {
+            $("#acppt" + key).val(value)
+        })
         $("#bodyFallRiskCppt").html("")
         $("#bodyGcsCppt").html("")
         $("#bodyDiagPerawatCppt").html("")
@@ -517,7 +599,7 @@ $group = user()->getRoles();
         $("#acpptvisit_id").val('<?= $visit['visit_id']; ?>')
         $("#acpptbill_id").val(null)
         <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) { ?>
-            $('#acpptclinic_id').val('<?= $visit['class_room_id']; ?>')
+            $('#acpptclinic_id').val('<?= $visit['clinic_id']; ?>')
         <?php } else { ?>
             $('#acpptclinic_id').val('<?= $visit['clinic_id']; ?>')
         <?php } ?>
@@ -531,7 +613,8 @@ $group = user()->getRoles();
         $("#acpptin_date").val('<?= $visit['in_date']; ?>')
         $("#acpptexit_date").val('<?= $visit['exit_date']; ?>')
         $("#acpptkeluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#flatacpptexamination_date").val(nowtime).trigger("change")
+        flatpickrInstances["flatacpptexamination_date"].setDate(moment().format("DD/MM/YYYY HH:mm"))
+        $("#flatacpptexamination_date").trigger("change")
         $("#acpptmodified_date").val(get_date())
         $("#acpptmodified_by").val('<?= user()->username; ?>')
         $("#acpptmodified_from").val('<?= $visit['clinic_id']; ?>')
@@ -547,6 +630,12 @@ $group = user()->getRoles();
         $("#acpptdoctor").val('<?= $visit['fullname']; ?>')
         $("#acpptkal_id").val('<?= $visit['kal_id']; ?>')
         $("#acpptpetugas_id").val('<?= user()->username; ?>')
+        $("#acpptpetugas_type").val('<?= user()->getOneRoles(); ?>')
+        if ($("#acpptpetugas_type").val() == '13') {
+            $("#groupDiagnosaPerawatCppt").show()
+        } else {
+            $("#groupDiagnosaPerawatCppt").hide()
+        }
         $("#acpptpetugas").val('<?= user()->getFullname(); ?>')
         $("#acpptaccount_id").val(<?= isset($group[11]) ? 3 : 4 ?>)
 
@@ -584,16 +673,80 @@ $group = user()->getRoles();
         $("#acpptisvalid").val(0)
 
         $("#acpptAddDocument").slideUp()
-        $("#cpptDivForm").slideDown()
+        $("#acpptModal").modal("show")
         enableacppt()
         fillRiwayatAcppt()
+
+        // getFallRisk(lastBodyId, "bodyFallRiskCppt")
+        copyFallRisk(1, 0, 'acpptbody_id', 'bodyFallRiskCppt', false)
+        // getGcs(lastBodyId, "bodyGcsCppt")
+        copyGcs(1, 0, 'acpptbody_id', 'bodyGcsCppt', false)
     }
 
     const hideCppt = () => {
-        $("#cpptDivForm").slideUp()
+        $("#aacpptModal").modal("hide")
     }
 </script>
 <script>
+    function getCppt(top = 10, episode = 1) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'trans_id': '<?= $visit['trans_id']; ?>',
+                'nomor': '<?= $visit['no_registration']; ?>',
+                'isrj': '<?= $visit['isrj']; ?>',
+                'norujukan': '<?= $visit['norujukan']; ?>',
+                'top': top,
+                'episode': episode
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            beforeSend: function() {
+                $("#cpptDivForm").hide()
+                getLoadingscreen("contentCppt", "loadContentCppt")
+                getLoadingscreen("contentAssessmentPerawat", "loadContentAssessmentPerawat")
+                $("#cpptBody").html(loadingScreen())
+                $("#vitalSignBody").html(loadingScreen())
+            },
+            processData: false,
+            success: function(data) {
+                $("#cpptBody").html(tempTablesNull())
+                $("#vitalSignBody").html(tempTablesNull())
+                examForassessment = data.examInfo
+                riwayatAll = data.pasienHistory
+
+                examSelected = [];
+
+                // $.each(examForassessment, function(key, value) {
+                var vsStatusId = [1, 4, 5];
+
+                //     if (vsStatusId.includes(value.vs_status_id)) {
+                //         fillDataArp(key)
+                //         disableARP()
+                //     }
+                // })
+                // fillDataArp(examForassessment.length)
+
+
+
+                if (examForassessment.length > 0) {
+                    displayTableAssessmentKeperawatan();
+                    displayTableAssessmentKeperawatanForVitalSign();
+                }
+
+
+                fillRiwayatArp()
+            },
+            error: function() {
+                $("#cpptBody").html(tempTablesNull())
+                $("#vitalSignBody").html(tempTablesNull())
+            }
+        });
+    }
+
     function enableacppt() {
         $("#formsaveacpptbtnid").slideDown()
         $("#formeditacpptid").slideUp()
@@ -607,11 +760,17 @@ $group = user()->getRoles();
 
     function disableacppt() {
 
-        if ($("#acpptvalid_user").val() == '') {
-            $("#formsaveacpptbtnid").slideUp()
-            $("#formeditacpptid").slideDown()
-            $("#formsignacpptid").slideUp()
-        } else {
+        if ($("#acpptmodified_by").val() == '<?= user()->username; ?>' || <?= json_encode(user()->checkRoles(['superuser'])) ?>)
+            if ($("#acpptvalid_user").val() == '' || $("#acpptvalid_user").val() == null) {
+                $("#formsaveacpptbtnid").slideUp()
+                $("#formeditacpptid").slideDown()
+                $("#formsignacpptid").slideUp()
+            } else {
+                $("#formsaveacpptbtnid").slideUp()
+                $("#formeditacpptid").slideUp()
+                $("#formsignacpptid").slideUp()
+            }
+        else {
             $("#formsaveacpptbtnid").slideUp()
             $("#formeditacpptid").slideUp()
             $("#formsignacpptid").slideUp()
@@ -645,7 +804,14 @@ $group = user()->getRoles();
         })
         $("#acpptclinic_id").html('<option value="' + ex.clinic_id + '">' + ex.name_of_clinic + '</option>')
         $("#acpptemployee_id").html('<option value="' + ex.employee_id + '">' + ex.fullname + '</option>')
-        $("#flatacpptexamination_date").val(formatedDatetimeFlat(ex.examination_date))
+        flatpickrInstances["flatacpptexamination_date"].setDate(formatedDatetimeFlat(ex.examination_date))
+        $("#flatacpptexamination_date").trigger("change")
+
+        if ($("#acpptpetugas_type").val() == '13') {
+            $("#groupDiagnosaPerawatCppt").show()
+        } else {
+            $("#groupDiagnosaPerawatCppt").hide()
+        }
 
         await checkSignSignature("formaddacppt", "acpptbody_id", "formsaveacpptbtnid", 1)
 
@@ -677,9 +843,12 @@ $group = user()->getRoles();
 
 <script>
     $("#formsaveacpptbtnid").on('click', (function(e) {
-        tinyMCE.triggerSave();
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
+        // tinyMCE.triggerSave();
+        // let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
+
+        $("#formaddacppt").find("button.btn-save:visible").trigger("click")
+
         $.ajax({
             url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
             type: "POST",
@@ -689,7 +858,7 @@ $group = user()->getRoles();
             cache: false,
             processData: false,
             beforeSend: function() {
-                clicked_submit_btn.button('loading');
+                // clicked_submit_btn.button('loading');
             },
             success: function(data) {
                 var isNewDocument = 0
@@ -699,8 +868,16 @@ $group = user()->getRoles();
                         isNewDocument = 1
                     }
                 })
-                if (isNewDocument != 1)
-                    examForassessment.push(data)
+                // if (isNewDocument != 1)
+                //     examForassessment.push(data)
+                if (isNewDocument != 1) {
+                    let examNew = Array();
+                    examNew.push(data)
+                    $.each(examForassessment, function(key, value) {
+                        examNew.push(examForassessment[key])
+                    })
+                    examForassessment = examNew
+                }
 
                 $("#cpptBody").html("")
                 examForassessment.forEach((element, key) => {
@@ -713,11 +890,11 @@ $group = user()->getRoles();
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                // clicked_submit_btn.button('reset');
+                errorSwal(xhr);
             },
             complete: function() {
-                clicked_submit_btn.button('reset');
+                // clicked_submit_btn.button('reset');
             }
         });
     }));
@@ -731,11 +908,45 @@ $group = user()->getRoles();
             postData({
                 data: dataMap
             }, 'admin/rm/assessment/verifyAllCppt', (res) => {
-                getAssessmentKeperawatan()
-                if (res.respon) {
+                getCppt()
+                if (res.response) {
                     console.log(res)
                 }
             })
         }
+    })
+
+    const verifyCppt = (key) => {
+        var examselect = examForassessment[key];
+
+        postData({
+            data: examselect
+        }, 'admin/rm/assessment/verifyCppt', (res) => {
+            // getCppt()
+            if (res.response) {
+                examselect.valid_user = '<?= user()->username; ?>'
+                examselect.valid_date = nowtime
+                console.log(res)
+            }
+            $.each(examForassessment, function(key, value) {
+                if (value.body_id == examselect.body_id) {
+                    examForassessment[key] = examselect
+                    isNewDocument = 1
+                }
+            })
+            $("#cpptBody").html("")
+            examForassessment.forEach((element, key) => {
+                if (element.account_id == '3' || element.account_id == '4') {
+                    examselect = examForassessment[key];
+                    addRowCPPT(examselect, key)
+                }
+            });
+        })
+    }
+
+    $("#cpptSearchBtn").on("click", function() {
+        let top = $("#cpptTop").val()
+        let episode = $("#cpptEpisode").val()
+        getCppt(top, episode)
     })
 </script>

@@ -15,16 +15,16 @@ class BatchingBridgingModel extends Model
     protected $useSoftDeletes = false;
 
     protected $allowedFields = [
-        'NO_REGISTRATION',
-        'TRANS_ID',
+        'no_registration',
+        'trans_id',
         'url',
-        'METHOD',
-        'PARAMETER',
-        'RESULT',
-        'STATUS',
-        'CREATED_DATE',
-        'MODIFIED_DATE',
-        'TIPE'
+        'method',
+        'parameter',
+        'result',
+        'status',
+        'created_date',
+        'modified_date',
+        'tipe'
     ];
 
     // Dates

@@ -1,13 +1,18 @@
 <?php
 $aValueParent = array();
 foreach ($aValue as $key => $value) {
-    $aValueParent[$value['parameter_id']]['parameter_id'] = $value['parameter_id'];
-    $aValueParent[$value['parameter_id']]['p_type'] = $value['p_type'];
+    $aValueParent[@$value['parameter_id']]['parameter_id'] = @$value['parameter_id'];
+    $aValueParent[@$value['parameter_id']]['p_type'] = @$value['p_type'];
 }
+$weight = 0;
+$height = 0;
+foreach ($exam as $key => $value) {
+    $weight = $value['weight'];
+    $height = $value['height'];
+}
+// dd($weight);
 ?>
 <script type='text/javascript'>
-    var doctors = <?= json_encode($employee); ?>;
-    var clinics = <?= json_encode($clinic); ?>;
     var mrJson;
     var tagihan = 0.0;
     var subsidi = 0.0;
@@ -16,10 +21,13 @@ foreach ($aValue as $key => $value) {
     var pembayaran = 0.0;
     var retur = 0.0;
     var total = 0.0;
+    var berat = parseFloat("<?= $weight; ?>");
+    var tinggi = parseFloat("<?= $height; ?>");
     var lastOrder = 0;
+    var doctors = <?= json_encode($employee); ?>;
+    var clinics = <?= json_encode($clinic); ?>;
     var examForassessment = <?= json_encode($exam); ?>;
     var avalue = <?= json_encode($aValue); ?>;
-    console.log(avalue);
     var aparameter = <?= json_encode($aParameter); ?>;
     var atype = <?= json_encode($aType); ?>;
     var avalueparent = <?= json_encode($aValueParent); ?>;
@@ -59,10 +67,12 @@ foreach ($aValue as $key => $value) {
     var educationIntegrationDetailAll;
     var educationIntegrationPlanAll = [];
     var educationIntegrationProvisionAll = [];
-    var tarifData = []
+    var tarifData = [];
     var addUnuDiag;
     var addUnuProc;
     var gcsDetailAll;
+    var btnLoadingHtml = `'<i class="spinner-border spinner-border-sm"></i>'`;
+
 
     $("#formeditfallriskbtn").on("click", function() {
         $("#formeditfallriskbtn").slideUp()
@@ -75,7 +85,39 @@ foreach ($aValue as $key => $value) {
         $("#formfallriskmedis").find("iput, select, textarea").prop("disabled", true)
     })
 </script>
+<script>
+    $(document).ready(function() {
+        $('input, textarea, select').each(function() {
+            const key = $(this).attr('id'); // Use ID or placeholder as key
 
+            $(this).on('input', function() {
+                localStorage.setItem(key, $(this).val());
+            });
+        });
+    });
+</script>
+<script>
+    let casemixArray = [
+        "Prosedur Non Bedah",
+        "Prosedur Bedah",
+        "Konsultasi",
+        "Tenaga Ahli",
+        "Keperawatan",
+        "Penunjang",
+        "Radiologi",
+        "Laboratorium",
+        "Pelayanan Darah",
+        "Rehabilitasi",
+        "Kamar / Akomodasi",
+        "Rawat Intensif",
+        "Obat",
+        "Alkes",
+        "BMHP",
+        "Alat Medis",
+        "Obat Kronis",
+        "Obat Kemotherpy",
+    ];
+</script>
 <script>
     const changeEws = (divId) => {
         $("#" + divId).find("input").each(
@@ -83,11 +125,61 @@ foreach ($aValue as $key => $value) {
         )
     }
 </script>
+<script>
+    $(document).ready(function() {
+        getAssessmentMedis(99)
+    })
+</script>
+<script type="text/javascript">
+    function getAssessmentMedis(diagCat) {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentMedis',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'diagCat': diagCat,
+                'norujukan': '<?= $visit['norujukan']; ?>',
+                'isrj': '<?= $visit['isrj']; ?>'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function(e) {
+                getLoadingscreen("contentAssessmentMedis", "loadContentAssessmentMedis")
+            },
+            success: function(data) {
+                pasienDiagnosaAll = data.pasienDiagnosa
+                riwayatAll = data.pasienHistory
+                diagnosasAll = data.pasienDiagnosas
+                proceduresAll = data.pasienProcedures
+                lokalisAll = data.lokalis
+
+                if (pasienDiagnosaAll.length > 0) {
+                    if (diagCat == 99) {
+                        fillDataProfileRM(pasienDiagnosaAll.length - 1)
+                    } else {
+                        fillDataArm(pasienDiagnosaAll.length - 1)
+                        fillRiwayat()
+                        // $("#formaddarmbtn").slideUp()
+                    }
+                }
+            },
+            error: function() {
+
+            }
+        });
+    }
+</script>
+
+
+
 <!-- PAIN MONITORING -->
 <script>
-    const addPainMonitoring = async (flag, index, document_id, container, isaddbutton = true) => {
+    const addPainMonitoring = async (flag, index, document_id, container, isaddbutton = true, isrefresh = false) => {
         <?php foreach ($aParent as $key => $value) { ?>
-            <?php if ($value['parent_id'] == '002') { ?>
+            <?php if (@$value['parent_id'] == '002') { ?>
                 var documentId = $("#" + document_id).val()
                 var bodyId = '';
                 if (flag == 1) {
@@ -109,7 +201,7 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    '<select class="form-control" name="parameter_id01" id="atypeASES02101' + bodyId + '" onchange="aValueParamPain(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\')">' +
+                    '<select class="form-select" name="parameter_id01" id="atypeASES02101' + bodyId + '" onchange="aValueParamPain(\'<?= @$value['parent_id']; ?>\',this.value, \'' + bodyId + '\')">' +
                     <?php foreach ($aValue as $key => $value1) { ?> <?php if ($value1['parameter_id'] == '01' && $value1['p_type'] == 'ASES021') { ?> '<option value="<?= $value1['value_id']; ?>"><?= $value1['value_desc']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
@@ -162,7 +254,7 @@ foreach ($aValue as $key => $value) {
                     '</form>'
                 )
 
-                datetimepickerbyid("flatases022examination_date" + bodyId)
+                datetimepickerbyidinitial("flatases022examination_date" + bodyId)
 
                 $("#formPainMonitoringSignBtn" + bodyId).on("click", function() {
                     addSignUserSatelite("formPainMonitoring" + bodyId, "ases022", bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn" + bodyId, 4, 1, 1, "Monitoring Nyeri")
@@ -212,6 +304,9 @@ foreach ($aValue as $key => $value) {
                     postDataForm(new FormData(this), 'admin/rm/assessment/savePainMonitoring', (response) => {
                         console.log(response)
                         if (response.status === 'success') {
+                            if (isrefresh) {
+                                getPainMonitoringAll()
+                            }
                             if ($("#ases022valid_user" + bodyId).val() == '') {
                                 $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
                                 $("#formPainMonitoringEditBtn" + bodyId).slideDown();
@@ -302,10 +397,10 @@ foreach ($aValue as $key => $value) {
                             // $('#atypeASES02101' + bodyId).prop("disabled", true)
                             $("#ases022body_id" + bodyId).val(bodyId)
                             // $('#formPainMonitoring' + bodyId + ' option').prop("disabled", true)
-                            aValueParamPain('<?= $value['parent_id']; ?>', value.value_id, bodyId, flag)
-                            aValueParamPain('<?= $value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
+                            aValueParamPain('<?= @$value['parent_id']; ?>', value.value_id, bodyId, flag)
+                            aValueParamPain('<?= @$value['parent_id']; ?>', $('#atypeASES02101' + bodyId).val(), bodyId, flag)
                         } else {
-                            aValueParamPain('<?= $value['parent_id']; ?>', value.p_type, bodyId, flag)
+                            aValueParamPain('<?= @$value['parent_id']; ?>', value.p_type, bodyId, flag)
                         }
                     })
                     let painIntervensiSelected = painIntervensi.filter(item => item.body_id == bodyId)
@@ -314,7 +409,7 @@ foreach ($aValue as $key => $value) {
                     }
                     $.each(painIntervensi, function(key1, value1) {
                         if (value1.body_id == bodyId)
-                            addIntervensi('<?= $value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
+                            addIntervensi('<?= @$value['parent_id']; ?>', value1.p_type, bodyId, key1, flag)
                     });
                     await checkSignSignature("formPainMonitoring" + bodyId, "ases022body_id" + bodyId, "formPainMonitoringSaveBtn", 4)
                     if ($("#ases022valid_user" + bodyId).val() == '') {
@@ -454,7 +549,7 @@ foreach ($aValue as $key => $value) {
                     // var formattedInitialDate = initialDate.toISOString().slice(0, 16);
 
 
-                    addIntervensi('<?= $value['parent_id']; ?>', p_type, body_id, 0, 1)
+                    addIntervensi('<?= @$value['parent_id']; ?>', p_type, body_id, 0, 1)
 
                     // Set the value of the input field to the formatted initial date
                     // document.getElementById("timeIntervensi" + body_id + '0').value = formattedInitialDate;
@@ -831,7 +926,7 @@ foreach ($aValue as $key => $value) {
 <script type="text/javascript">
     function addTriage(flag, index, document_id, container, isaddbutton = true) {
         <?php foreach ($aParent as $key => $value) { ?>
-            <?php if ($value['parent_id'] == '004') { ?>
+            <?php if (@$value['parent_id'] == '004') { ?>
                 var bodyId = '';
                 var documentId = $("#" + document_id).val()
                 if (flag == 1) {
@@ -853,9 +948,9 @@ foreach ($aValue as $key => $value) {
                     '</div>' +
                     '<div class="col-md-9">' +
                     '<div class="form-check mb-3">' +
-                    // '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" >' +
-                    '<select class="form-control" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= $value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
-                    <?php foreach ($aType as $key1 => $value1) { ?> <?php if ($value1['parent_id'] == $value['parent_id']) { ?> '<option value="<?= $value1['p_type']; ?>"><?= $value1['p_description']; ?></option>' +
+                    // '<select class="form-select" name="p_type" id="aParamTriage' + bodyId + '" >' +
+                    '<select class="form-select" name="p_type" id="aParamTriage' + bodyId + '" onchange="aValueParamTriage(\'<?= @$value['parent_id']; ?>\',this.value, \'' + bodyId + '\', 1)">' +
+                    <?php foreach ($aType as $key1 => $value1) { ?> <?php if ($value1['parent_id'] == @$value['parent_id']) { ?> '<option value="<?= $value1['p_type']; ?>"><?= $value1['p_description']; ?></option>' +
                         <?php } ?> <?php } ?> '</select>' +
                     '</div>' +
                     '</div>' +
@@ -927,7 +1022,7 @@ foreach ($aValue as $key => $value) {
                         <div class="col-md-3"><h5 class="font-size-14 mb-4 badge bg-primary">Score Triase:</h5>
                         </div>
                             <div class="col-md-9"><div class="form-check mb-3">
-                                <select class="form-control" name="total_score" id="aTriageTotalScore` + bodyId + `">
+                                <select class="form-select" name="total_score" id="aTriageTotalScore` + bodyId + `">
                                     <option value="1">ATS 1</option>
                                     <option value="2">ATS 2</option>
                                     <option value="3">ATS 3</option>
@@ -996,7 +1091,7 @@ foreach ($aValue as $key => $value) {
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
                             clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
+                            errorSwal(xhr);
                         },
                         complete: function() {
                             clicked_submit_btn.button('reset');
@@ -1027,7 +1122,7 @@ foreach ($aValue as $key => $value) {
                             $('#step2' + value.parameter_id + value.value_id + bodyId).prop("checked", true)
                             $('#step3' + value.parameter_id + value.value_id + bodyId).prop("checked", true)
                             // $('#formTriage' + bodyId + ' option').prop("disabled", true)
-                            aValueParamTriage('<?= $value['parent_id']; ?>', triage[index].p_type, bodyId, flag)
+                            aValueParamTriage('<?= @$value['parent_id']; ?>', triage[index].p_type, bodyId, flag)
                         }
                         $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", true)
                     })
@@ -1104,10 +1199,8 @@ foreach ($aValue as $key => $value) {
                         });
                     }
                 });
-
             }
         })
-
     }
 
     function getTriage(bodyId, container) {
@@ -1188,14 +1281,14 @@ foreach ($aValue as $key => $value) {
 <script type="text/javascript">
     function addApgar(flag, index, document_id, container, isaddbutton = true) {
         <?php $apgarType = array_filter($aType, function ($value) {
-            return $value['parent_id'] == '005';
+            return @$value['parent_id'] == '005';
         });
         usort($apgarType, function ($a, $b) {
             return $a['p_type'] <=> $b['p_type'];
         });;
         ?>
         <?php foreach ($aParent as $key => $value) { ?>
-            <?php if ($value['parent_id'] == '005') { ?>
+            <?php if (@$value['parent_id'] == '005') { ?>
                 var bodyId = '';
                 var documentId = $("#" + document_id).val()
                 if (flag == 1) {
@@ -1246,7 +1339,7 @@ foreach ($aValue as $key => $value) {
                             foreach ($aParameter as $key2 => $value2) {
                                 if ($value2['p_type'] == $value1['p_type']) {
 
-                            ?> '<td><select id="<?= $value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>' + bodyId + '" name="<?= $value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>" class="form-control">' +
+                            ?> '<td><select id="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>' + bodyId + '" name="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>" class="form-control" onchange="totalApgar(\'<?= @$value2['parameter_id']; ?>\', \'' + bodyId + '\')">' +
                                     <?php foreach ($aValue as $key3 => $value3) {
                                         if ($value3['parameter_id'] == $value2['parameter_id'] && $value3['p_type'] == $value1['p_type']) {
                                     ?> '<option value="<?= $value3['value_id']; ?>"><?= $value3['value_desc']; ?></option>' +
@@ -1260,6 +1353,16 @@ foreach ($aValue as $key => $value) {
                     <?php
                         }
                     } ?> '</tr>' + '</tbody>' +
+                    `<tfoot>
+                        <tr>
+                            <td>Total Score</td>
+                            <td id="totalapgar00501${bodyId}">6</td>
+                            <td id="totalapgar00502${bodyId}">6</td>
+                            <td id="totalapgar00503${bodyId}">6</td>
+                            <td id="totalapgar00504${bodyId}">6</td>
+                            <td id="totalapgar00505${bodyId}">6</td>
+                        </tr>
+                    </tfoot>` +
                     '</table>' +
                     '</div>' +
                     '<div class="panel-footer text-end mb-4">' +
@@ -1321,7 +1424,7 @@ foreach ($aValue as $key => $value) {
                         error: function(xhr) { // if error occured
                             alert("Error occured.please try again");
                             clicked_submit_btn.button('reset');
-                            errorMsg(xhr);
+                            errorSwal(xhr);
                         },
                         complete: function() {
                             clicked_submit_btn.button('reset');
@@ -1347,7 +1450,7 @@ foreach ($aValue as $key => $value) {
                     $.each(apgarDetil, function(key, value) {
 
                         if (value.body_id == bodyId) {
-                            $("#005" + value.p_type + value.parameter_id + value.body_id).val(value.value_id)
+                            $("#005" + value.p_type + value.parameter_id + value.body_id).val(value.value_id).trigger('change')
                         }
                     })
                     checkSign("formApgar" + bodyId)
@@ -1364,6 +1467,20 @@ foreach ($aValue as $key => $value) {
 
     }
 
+    function totalApgar(parameterId, bodyId) {
+        let menit1 = parseInt((String)($(`#005ASES032${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES032${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        menit1 = 2 - menit1
+        console.log(menit1)
+        let menit5 = parseInt((String)($(`#005ASES033${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES033${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        menit5 = 2 - menit5
+        console.log(menit5)
+        let menit10 = parseInt((String)($(`#005ASES034${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES034${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        menit10 = 2 - menit10
+        console.log(menit10)
+        let total = menit1 + menit5 + menit10
+        $(`#totalapgar005${parameterId}${bodyId}`).html(total)
+    }
+
     function aValueParamApgar(parent_id, p_type, body_id, flag) {
         $("#apgarp_type" + body_id).val(p_type)
         $("#bodyAssessment" + parent_id + body_id).html("")
@@ -1373,7 +1490,7 @@ foreach ($aValue as $key => $value) {
 
         var counter = 0;
         <?php foreach ($aType as $key => $value) {
-            if ($value['parent_id'] == '005') {
+            if (@$value['parent_id'] == '005') {
         ?>
         <?php
             }
@@ -1451,10 +1568,10 @@ foreach ($aValue as $key => $value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyApgarPerawat").html("")
                         addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
-                    }
-                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyApgarMedis").html("")
-                        addApgar(0, key, "armpasien_diagnosa_id", "bodyApgarMedis", false)
+                    } else {
+                        addApgar(0, key, "bayibaby_id", container, false)
                     }
                 })
             },
@@ -1491,7 +1608,7 @@ foreach ($aValue as $key => $value) {
             '<h5 class="font-size-14 mb-4 badge bg-primary">Indikator:</h5>' +
             '</div>' +
             '<div class="col-md-3">' +
-            '<select class="form-control" id="stabilitas' + bodyId + '" name="stabilitas">' +
+            '<select class="form-select" id="stabilitas' + bodyId + '" name="stabilitas">' +
             <?php foreach ($aValue as $key1 => $value1) {
                 if ($value1['p_type'] == 'GEN0012') {
             ?> '<option value="<?= $value1['value_id']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc']; ?>' +
@@ -1585,7 +1702,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -1688,6 +1805,7 @@ foreach ($aValue as $key => $value) {
                 billPerawatJson = data
                 $("#chargesBodyPerawat").html("")
                 $("#chargesBodyPerawatMandiri").html("")
+                $("#tindakanBodyPerawatKolaborasi").html("")
                 $.each(billPerawatJson, function(key, value) {
                     addBillChargePerawat('', value.treatment_type, 0, key, 'tindakanBodyPerawat')
                 })
@@ -1719,37 +1837,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Pernapasan"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES041') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES041') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -1759,44 +1877,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES041' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES041' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -1887,7 +2005,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -1917,17 +2035,17 @@ foreach ($aValue as $key => $value) {
             })
             var napasDetil = napas[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES041') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES041') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(napas.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(napas.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (napasDetil.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (napasDetil.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES041' && $value1['value_score'] == '99') {
                             ?>
@@ -1985,7 +2103,7 @@ foreach ($aValue as $key => $value) {
 
 <!-- FALL RISK -->
 <script type="text/javascript">
-    const addFallRisk = async (flag, index, document_id, container, isaddbutton = true) => {
+    const addFallRisk = async (flag, index, document_id, container, isaddbutton = true, isrefresh = false) => {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -2133,12 +2251,14 @@ foreach ($aValue as $key => $value) {
                         $("#formFallRiskSignBtn" + bodyId).slideDown()
                         clicked_submit_btn.button('reset');
                         checkSign("formFallRisk" + bodyId)
-
+                        if (isrefresh) {
+                            getFallRiskAll()
+                        }
                     },
                     error: function(xhr) { // if error occured
                         alert("Error occured.please try again");
                         clicked_submit_btn.button('reset');
-                        errorMsg(xhr);
+                        errorSwal(xhr);
                     },
                     complete: function() {
                         clicked_submit_btn.button('reset');
@@ -2253,12 +2373,23 @@ foreach ($aValue as $key => $value) {
 
         var total = 0;
 
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == p_type && value.parameter_id != '08') {
-                var valuenya = parseInt($("#score" + parent_id + value.p_type + value.parameter_id + bodyId).html())
-                total += valuenya
-            }
-        });
+        if (p_type == 'ASES019') {
+            $.each(aparameter, function(key, value) {
+                if (value.p_type == p_type && value.parameter_id != '07') {
+                    var valuenya = parseInt($("#score" + parent_id + value.p_type + value.parameter_id + bodyId).html())
+                    total += valuenya
+                }
+            });
+        } else {
+            $.each(aparameter, function(key, value) {
+                if (value.p_type == p_type && value.parameter_id != '08') {
+                    var valuenya = parseInt($("#score" + parent_id + value.p_type + value.parameter_id + bodyId).html())
+                    total += valuenya
+                }
+            });
+        }
+
+
 
 
         // for (var key in fallRiskScore) {
@@ -2328,6 +2459,9 @@ foreach ($aValue as $key => $value) {
                     } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyFallRiskMedis").html("")
                         addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
+                    } else if (value.document_id == $("#acpptbody_id").val()) {
+                        $("#bodyFallRiskMedis").html("")
+                        addFallRisk(0, key, "acpptbody_id", "bodyFallRiskCppt", false)
                     }
                 })
             },
@@ -2358,37 +2492,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Sirkulasi"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES039') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES039') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2398,44 +2532,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES039' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES039' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2526,7 +2660,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2551,17 +2685,17 @@ foreach ($aValue as $key => $value) {
             $("#formSirkulasi" + bodyId).find("input, textarea, select").prop("disabled", true)
             var sirkulasi = sirkulasiAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES039') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES039') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(sirkulasi.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(sirkulasi.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (sirkulasi.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (sirkulasi.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES039' && $value1['value_score'] == '99') {
                             ?>
@@ -2634,37 +2768,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Neurosensoris"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES038') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES038') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2674,44 +2808,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES038' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES038' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2785,7 +2919,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2820,17 +2954,17 @@ foreach ($aValue as $key => $value) {
 
             var neuro = neuroAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES038') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES038') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(neuro.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(neuro.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (neuro.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (neuro.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES038' && $value1['value_score'] == '99') {
                             ?>
@@ -2901,37 +3035,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Anak"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES045') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES045') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2940,51 +3074,51 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
-                                                                                            if ($value['parameter_id'] == '14') {
+                                                                                            if (@$value['parameter_id'] == '14') {
                                                                                                 break;
                                                                                             }
                                                                                         }
                                                                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES045' && in_array($value['parameter_id'], array('14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES045' && in_array(@$value['parameter_id'], array('14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -2993,11 +3127,11 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
                                                                                         }
@@ -3066,7 +3200,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3094,17 +3228,17 @@ foreach ($aValue as $key => $value) {
             })
             var anak = anakAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES045') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES045') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(anak.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(anak.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (anak.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (anak.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES045' && $value1['value_score'] == '99') {
                             ?>
@@ -3184,37 +3318,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Neonatus"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES050') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES050') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3223,51 +3357,51 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
-                                                                                            if ($value['parameter_id'] == '09') {
+                                                                                            if (@$value['parameter_id'] == '09') {
                                                                                                 break;
                                                                                             }
                                                                                         }
                                                                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES050' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES050' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3276,11 +3410,11 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
                                                                                         }
@@ -3349,7 +3483,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3377,17 +3511,17 @@ foreach ($aValue as $key => $value) {
             })
             var neonatus = neonatusAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES050') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES050') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(neonatus.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(neonatus.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (neonatus.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (neonatus.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES050' && $value1['value_score'] == '99') {
                             ?>
@@ -3467,37 +3601,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Aktivitas dan Latihan"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES016') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES016') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option value="99">-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                    if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                                 ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3507,44 +3641,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '06') {
+                                                                                    if (@$value['parameter_id'] == '06') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES016' && in_array($value['parameter_id'], array('07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES016' && in_array(@$value['parameter_id'], array('07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option value="99">-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                    if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                                 ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3626,7 +3760,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3671,17 +3805,17 @@ foreach ($aValue as $key => $value) {
 
             var adl = adlAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES016') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES016') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(adl.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(adl.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (adl.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (adl.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES016' && $value1['value_score'] == '99') {
                             ?>
@@ -3774,37 +3908,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Dekubitus"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES047') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES047') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3814,44 +3948,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES047' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES047' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -3928,7 +4062,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3956,17 +4090,17 @@ foreach ($aValue as $key => $value) {
 
             var digest = dekubitusAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES047') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES047') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (digest.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES047' && $value1['value_score'] == '99') {
                             ?>
@@ -4039,37 +4173,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Pencernaan"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES040') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES040') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -4079,44 +4213,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES040' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES040' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -4193,7 +4327,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4221,17 +4355,17 @@ foreach ($aValue as $key => $value) {
 
             var digest = digestAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES040') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES040') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (digest.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES040' && $value1['value_score'] == '99') {
                             ?>
@@ -4407,8 +4541,8 @@ foreach ($aValue as $key => $value) {
                                         )
                                     )
                         .append('<div class="panel-footer text-end mb-4">' +
-                            '<button type="submit" id="formPerkemihanSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
-                            '<button style="margin-right: 10px" type="button" id="formPerkemihanEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
+                            '<button type="submit" id="formPerkemihanSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                            '<button style="margin-right: 10px" type="button" id="formPerkemihanEditBtn' + bodyId + '" onclick="" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                             '</div>')
 
                     )
@@ -4420,33 +4554,30 @@ foreach ($aValue as $key => $value) {
             <?php foreach ($aValue as $key1 => $value1) {
                 if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
             ?> $("#<?= $value1['p_type'] . $value1['parameter_id'] ?>" + bodyId).change(function() {
-                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
+                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
 
                         if ($(this).is(":checked")) {
-                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                         } else {
-                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideUp()
+                            console.log($(this).val())
+                            $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).hide()
                         }
                     }); <?php
                     }
                 } ?>
 
-            $("#formPerkemihan" + bodyId).append('<input name="org_unit_code" id="perkemihanorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
-            .append('<input name="visit_id" id="perkemihanvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
-            .append('<input name="trans_id" id="perkemihantrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
-            .append('<input name="body_id" id="perkemihanbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
-            .append('<input name="document_id" id="perkemihandocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
-            .append('<input name="no_registration" id="perkemihanno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
-            .append('<input name="p_type" id="perkemihanp_type' + bodyId + '" type="hidden" value="ASES042 " class="form-control" />')
-            .append('<input name="valid_date" class="valid_date" id="perkemihanvalid_date' + bodyId + '" type="hidden"  />')
-            .append('<input name="valid_user" class="valid_user" id="perkemihanvalid_user' + bodyId + '" type="hidden"  />')
-            .append('<input name="valid_pasien" class="valid_pasien" id="perkemihanvalid_pasien' + bodyId + '" type="hidden"  />')
-
+            $("#formPerkemihan" + bodyId).append('<input name="org_unit_code" id="Perkemihansorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+            .append('<input name="visit_id" id="Perkemihansvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
+            .append('<input name="trans_id" id="Perkemihanstrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
+            .append('<input name="body_id" id="Perkemihansbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
+            .append('<input name="document_id" id="Perkemihansdocument_id' + bodyId + '" type="hidden" value="' + $("#arpbody_id").val() + '" class="form-control" />')
+            .append('<input name="no_registration" id="Perkemihansno_registration' + bodyId + '" type="hidden" value="<?= $visit['no_registration']; ?>" class="form-control" />')
+            .append('<input name="p_type" id="Perkemihansp_type' + bodyId + '" type="hidden" value="ASES042 " class="form-control" />')
 
             $("#formPerkemihanEditBtn" + bodyId).on("click", function() {
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
-                $("#formPerkemihanSaveBtn" + bodyId).slideDown()
-                $("#formPerkemihanEditBtn" + bodyId).slideUp()
+                $("#formPerkemihanSaveBtn" + bodyId).show()
+                $("#formPerkemihanEditBtn" + bodyId).hide()
             })
 
             $("#formPerkemihan" + bodyId).on('submit', (function(e) {
@@ -4465,11 +4596,9 @@ foreach ($aValue as $key => $value) {
                     },
                     success: function(data) {
                         $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
-                        $("#formPerkemihanSaveBtn" + bodyId).slideUp()
-                        $("#formPerkemihanEditBtn" + bodyId).slideDown()
+                        $("#formPerkemihanSaveBtn" + bodyId).hide()
+                        $("#formPerkemihanEditBtn" + bodyId).show()
                         clicked_submit_btn.button('reset');
-                        checkSign("formPerkemihan" + bodyId)
-
                     },
                     error: function(xhr) { // if error occured
                         alert("Error occured.please try again");
@@ -4485,15 +4614,10 @@ foreach ($aValue as $key => $value) {
 
             if (flag == 1) {
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", false)
-                $("#formPerkemihanSaveBtn" + bodyId).slideDown()
-                $("#formPerkemihanEditBtn" + bodyId).slideUp()
+                $("#formPerkemihanSaveBtn" + bodyId).show()
+                $("#formPerkemihanEditBtn" + bodyId).hide()
 
             } else {
-                var maindataset = perkemihanAll[index]
-
-                $.each(maindataset, function(key, value) {
-                    $("#perkemihan" + key + bodyId).val(value)
-                })
                 var perkemihan = perkemihanAll[index];
                 <?php foreach ($aParameter as $key => $value) {
                     if ($value['p_type'] == 'ASES042') {
@@ -4510,7 +4634,7 @@ foreach ($aValue as $key => $value) {
                                 <?php foreach ($aValue as $key1 => $value1) {
                                     if ($value1['p_type'] == 'ASES042 ' && $value1['value_score'] == '99') {
                                 ?>
-                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).slideDown()
+                                        $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId).show()
                                         $('#<?= $value1['p_type'] . $value1['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId).val(perkemihan.<?= strtolower($value1['value_info']); ?>)
                                 <?php
                                     }
@@ -4521,12 +4645,11 @@ foreach ($aValue as $key => $value) {
                     }
                 } ?>
                 $("#formPerkemihan" + bodyId).find("input, textarea, select").prop("disabled", true)
-                $("#formPerkemihanSaveBtn" + bodyId).slideUp()
-                $("#formPerkemihanEditBtn" + bodyId).slideDown()
-                checkSign("formPerkemihan" + bodyId)
+                $("#formPerkemihanSaveBtn" + bodyId).hide()
+                $("#formPerkemihanEditBtn" + bodyId).show()
             }
             index++
-            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
         }
 
         function getPerkemihan(bodyId) {
@@ -4559,7 +4682,7 @@ foreach ($aValue as $key => $value) {
         }
 </script>
 
-// PSIKOLOGI
+<!-- // PSIKOLOGI -->
 <script type="text/javascript">
     function addPsikologi(flag, index) {
         var bodyId = '';
@@ -4578,37 +4701,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Psikologi Spiritual"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES035') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES035') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -4618,44 +4741,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES035' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES035' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -4673,10 +4796,10 @@ foreach ($aValue as $key => $value) {
                                 .append($('<h4 class="card-title">Kondisi Pasien</h4>')))
                             .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
                                 .append($('<table class="table table-hover">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'GIZI001') {
+                                                                                    if (@$value['p_type'] == 'GIZI001') {
                                                                                 ?>
                                             .append($('<tr>')
-                                                .append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))
+                                                .append($('<td>').html('<div class="form-check"><input name="<?= @$value['p_type'] . @$value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="val<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="val<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '"><?= @$value['parameter_desc']; ?></label></div>'))
                                             ) <?php
                                                                                     }
                                                                                 } ?>
@@ -4753,7 +4876,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4775,17 +4898,17 @@ foreach ($aValue as $key => $value) {
             })
             var psikologi = psikologiAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES035') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES035') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(psikologi.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(psikologi.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (psikologi.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (psikologi.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES035' && $value1['value_score'] == '99') {
                             ?>
@@ -4845,7 +4968,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// SEKSUAL
+<!-- // SEKSUAL -->
 <script type="text/javascript">
     function addSeksual(flag, index) {
         var bodyId = '';
@@ -4864,37 +4987,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Seksual"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES043') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES043') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -4904,44 +5027,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES043' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES043' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5037,7 +5160,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5058,17 +5181,17 @@ foreach ($aValue as $key => $value) {
             })
             var digest = seksualAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES043') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES043') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (digest.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES043' && $value1['value_score'] == '99') {
                             ?>
@@ -5121,7 +5244,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// SOCIAL
+<!-- // SOCIAL -->
 <script type="text/javascript">
     function addSocial(flag, index) {
         var bodyId = '';
@@ -5140,37 +5263,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Social"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES037') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES037') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5180,44 +5303,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES037' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES037' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5294,7 +5417,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5316,17 +5439,17 @@ foreach ($aValue as $key => $value) {
             })
             var digest = socialAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES037') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES037') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (digest.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES037' && $value1['value_score'] == '99') {
                             ?>
@@ -5381,7 +5504,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// HEARING
+<!-- // HEARING -->
 <script type="text/javascript">
     function addHearing(flag, index) {
         var bodyId = '';
@@ -5400,37 +5523,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Hearing"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES044') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES044') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5440,44 +5563,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES044' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES044' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5559,7 +5682,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5584,17 +5707,17 @@ foreach ($aValue as $key => $value) {
 
             var digest = hearingAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES044') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES044') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(digest.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (digest.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (digest.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES044' && $value1['value_score'] == '99') {
                             ?>
@@ -5643,7 +5766,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// SLEEPING
+<!-- // SLEEPING -->
 <script type="text/javascript">
     function addSleeping(flag, index) {
         var bodyId = '';
@@ -5662,37 +5785,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Sleeping"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES046') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES046') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5702,44 +5825,44 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES046' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES046' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -5826,7 +5949,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5852,17 +5975,17 @@ foreach ($aValue as $key => $value) {
 
             var sleeping = sleepingAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES046') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES046') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(sleeping.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(sleeping.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (sleeping.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (sleeping.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES046' && $value1['value_score'] == '99') {
                             ?>
@@ -5912,7 +6035,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// GIZI
+<!-- // GIZI -->
 <script type="text/javascript">
     function addGizi(flag, index, document_id, container) {
         var documentId = $("#" + document_id).val()
@@ -5969,11 +6092,11 @@ foreach ($aValue as $key => $value) {
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
-                                                                        if ($value['p_type'] == 'GIZI001') {
+                                                                        if (@$value['p_type'] == 'GIZI001') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= @$value['p_type'] . @$value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '"><?= @$value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -5989,11 +6112,11 @@ foreach ($aValue as $key => $value) {
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
-                                                                        if ($value['p_type'] == 'GIZI002') {
+                                                                        if (@$value['p_type'] == 'GIZI002') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= @$value['p_type'] . @$value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '"><?= @$value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6012,14 +6135,14 @@ foreach ($aValue as $key => $value) {
                                     .append('<label for="giziGIZI004' + bodyId + '" class="col-form-label mb-4">Mukosa mulut / lidah</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI004" id="giziGIZI004' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GIZI004' && $value['parameter_id'] == '01') {
-                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-select" name="GIZI004" id="giziGIZI004' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                if (@$value['p_type'] == 'GIZI004' && @$value['parameter_id'] == '01') {
+                                                                                                                            ?>
+                                                .append('<option value="<?= @$value['value_score']; ?>"><?= @$value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                    }
-                                                                                                                                } ?>
+                                                                                                                                }
+                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6030,11 +6153,11 @@ foreach ($aValue as $key => $value) {
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
-                                                                        if ($value['p_type'] == 'GIZI005') {
+                                                                        if (@$value['p_type'] == 'GIZI005') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= @$value['p_type'] . @$value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '"><?= @$value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6048,11 +6171,11 @@ foreach ($aValue as $key => $value) {
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
                                     .append($('<table class="">') <?php foreach ($aParameter as $key => $value) {
-                                                                        if ($value['p_type'] == 'GIZI007') {
+                                                                        if (@$value['p_type'] == 'GIZI007') {
                                                                     ?>
-                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= $value['p_type'] . $value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= $value['p_type'] . $value['parameter_id']; ?>' + bodyId + '"><?= $value['parameter_desc']; ?></label></div>'))) <?php
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    } ?>
+                                                .append($('<tr>').append($('<td>').html('<div class="form-check"><input name="<?= @$value['p_type'] . @$value['parameter_id']; ?>" class="form-check-input" type="checkbox" id="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '" value="1"><label class="form-check-label" for="gizi<?= @$value['p_type'] . @$value['parameter_id']; ?>' + bodyId + '"><?= @$value['parameter_desc']; ?></label></div>'))) <?php
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6062,14 +6185,14 @@ foreach ($aValue as $key => $value) {
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="GIZI00801" id="giziGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                        if ($value['p_type'] == 'GIZI008' && $value['parameter_id'] == '01') {
-                                                                                                                                    ?>
-                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-select" name="GIZI00801" id="giziGIZI00801' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                    if (@$value['p_type'] == 'GIZI008' && @$value['parameter_id'] == '01') {
+                                                                                                                                ?>
+                                                .append('<option value="<?= @$value['value_score']; ?>"><?= @$value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                        }
-                                                                                                                                    } ?>
+                                                                                                                                    }
+                                                                                                                                } ?>
                                     )
                                 )
                             )
@@ -6085,7 +6208,7 @@ foreach ($aValue as $key => $value) {
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="age_cat" id="giziage_cat' + bodyId + '">')
+                                    .append($('<select class="form-select" name="age_cat" id="giziage_cat' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -6102,7 +6225,7 @@ foreach ($aValue as $key => $value) {
                             )
                             .append($('<div class="row">')
                                 .append('<label for="gizimt' + bodyId + '" class="col-md-4 col-form-label mb-4">IMT</label>')
-                                .append('<div class="col-md-8"><select class="form-control" type="text" id="gizimt' + bodyId + '" name="imt" placeholder="" readonly></select></div>')
+                                .append('<div class="col-md-8"><select class="form-select" type="text" id="gizimt' + bodyId + '" name="imt" placeholder="" readonly></select></div>')
                             )
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">')
@@ -6112,14 +6235,14 @@ foreach ($aValue as $key => $value) {
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step1_score_imt" id="gizistep1_score_imt' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                    if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '01') {
-                                                                                                                                                ?>
-                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-select" name="step1_score_imt" id="gizistep1_score_imt' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                if (@$value['p_type'] == 'GIZI009' && @$value['parameter_id'] == '01') {
+                                                                                                                                            ?>
+                                                .append('<option value="<?= @$value['value_score']; ?>"><?= @$value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                    }
-                                                                                                                                                } ?>
+                                                                                                                                                }
+                                                                                                                                            } ?>
                                     )
                                 )
                             )
@@ -6128,14 +6251,14 @@ foreach ($aValue as $key => $value) {
                                     .append('<label for="gizistep2_score_wightloss' + bodyId + '" class="col-form-label mb-4">Step 2|Skor Penurunan BB</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step2_score_wightloss" id="gizistep2_score_wightloss' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                                if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '02') {
-                                                                                                                                                            ?>
-                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-select" name="step2_score_wightloss" id="gizistep2_score_wightloss' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                            if (@$value['p_type'] == 'GIZI009' && @$value['parameter_id'] == '02') {
+                                                                                                                                                        ?>
+                                                .append('<option value="<?= @$value['value_score']; ?>"><?= @$value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                                }
-                                                                                                                                                            } ?>
+                                                                                                                                                            }
+                                                                                                                                                        } ?>
                                     )
                                 )
                             )
@@ -6144,14 +6267,14 @@ foreach ($aValue as $key => $value) {
                                     .append('<label for="gizistep3_score_acute_disease' + bodyId + '" class="col-form-label mb-4">Step 3|Skor Efek Penyakit Akut</label>')
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="step3_score_acute_disease" id="gizistep3_score_acute_disease' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
-                                                                                                                                                                        if ($value['p_type'] == 'GIZI009' && $value['parameter_id'] == '03') {
-                                                                                                                                                                    ?>
-                                                .append('<option value="<?= $value['value_score']; ?>"><?= $value['value_desc']; ?></option>')
+                                    .append($('<select class="form-select" name="step3_score_acute_disease" id="gizistep3_score_acute_disease' + bodyId + '">') <?php foreach ($aValue as $key => $value) {
+                                                                                                                                                                    if (@$value['p_type'] == 'GIZI009' && @$value['parameter_id'] == '03') {
+                                                                                                                                                                ?>
+                                                .append('<option value="<?= @$value['value_score']; ?>"><?= @$value['value_desc']; ?></option>')
 
                                         <?php
-                                                                                                                                                                        }
-                                                                                                                                                                    } ?>
+                                                                                                                                                                    }
+                                                                                                                                                                } ?>
                                     )
                                 )
                             )
@@ -6168,7 +6291,7 @@ foreach ($aValue as $key => $value) {
 
                                 )
                                 .append($('<div class="col-xs-12 col-sm-8 col-md-8">')
-                                    .append($('<select class="form-control" name="score_desc" id="giziscore_desc' + bodyId + '">')
+                                    .append($('<select class="form-select" name="score_desc" id="giziscore_desc' + bodyId + '">')
                                         .append('<option value="21">Anak 0 - 24 Bulan</option>')
                                         .append('<option value="22">Anak 24 - 60 Bulan</option>')
                                         .append('<option value="23">Anak 5 - 18 tahun</option>')
@@ -6331,7 +6454,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6496,7 +6619,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// EDUCATION FORM
+<!-- // EDUCATION FORM -->
 <script type="text/javascript">
     function addEducationForm(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
@@ -6516,37 +6639,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Education Form"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">') <?php foreach ($aParameter as $key => $value) {
-                                                                                        if ($value['p_type'] == 'GEN0013') {
-                                                                                    ?> <?php if ($value['entry_type'] == 1) {
+                                                                                        if (@$value['p_type'] == 'GEN0013') {
+                                                                                    ?> <?php if (@$value['entry_type'] == 1) {
                                                                                         ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                            } else if ($value['entry_type'] == 2) {
+                                                                                            } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                    if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                     }
                                                                                                 } ?>
                                         ) <?php
-                                                                                            } else if ($value['entry_type'] == 3) {
+                                                                                            } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                    if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                    if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -6554,52 +6677,52 @@ foreach ($aValue as $key => $value) {
                                                 )
                                             )
                                         ) <?php
-                                                                                            } else if ($value['entry_type'] == 4) {
+                                                                                            } else if (@$value['entry_type'] == 4) {
                                             ?>
-                                        .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-12 mb-4"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                        .append($('<div class="row mb-4">')
+                                            .append('<label class="col-md-4 col-form-label"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-12 mb-4"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder="" row="8"></textarea></div>')
                                         ) <?php
                                                                                             }
                                             ?> <?php }
-                                                                                        if ($value['parameter_id'] == '09') {
+                                                                                        if (@$value['parameter_id'] == '09') {
                                                                                             break;
                                                                                         }
                                                                                     }
                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6" style="display: none">') <?php foreach ($aParameter as $key => $value) {
-                                                                                                            if ($value['p_type'] == 'GEN0013' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                                        ?> <?php if ($value['entry_type'] == 1) {
+                                                                                                            if (@$value['p_type'] == 'GEN0013' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                                        ?> <?php if (@$value['entry_type'] == 1) {
                                                                                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                                                } else if ($value['entry_type'] == 2) {
+                                                                                                                } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                                        if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                                         }
                                                                                                                     } ?>
                                         ) <?php
-                                                                                                                } else if ($value['entry_type'] == 3) {
+                                                                                                                } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                                        if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -6624,12 +6747,12 @@ foreach ($aValue as $key => $value) {
         )
 
         <?php foreach ($aParameter as $key => $value) {
-            if ($value['p_type'] == 'GEN0013') {
-        ?> <?php if ($value['entry_type'] == 4) {
+            if (@$value['p_type'] == 'GEN0013') {
+        ?> <?php if (@$value['entry_type'] == 4) {
             ?>
-                    // console.log("#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId)
+                    // console.log("#<?= @$value['p_type'] . @$value['parameter_id'] ?>" + bodyId)
                     // tinymce.init({
-                    //     selector: "#<?= $value['p_type'] . $value['parameter_id'] ?>" + bodyId,
+                    //     selector: "#<?= @$value['p_type'] . @$value['parameter_id'] ?>" + bodyId,
                     //     height: 300,
                     //     plugins: [
                     //         "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
@@ -6710,7 +6833,6 @@ foreach ($aValue as $key => $value) {
 
 
         $("#formEducationForm" + bodyId).on('submit', (function(e) {
-            tinyMCE.triggerSave();
             setTimeout(function() {}, 1)
             $("#EducationFormsdocument_id" + bodyId).val($("#" + document_id).val())
             let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -6740,7 +6862,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6765,53 +6887,8 @@ foreach ($aValue as $key => $value) {
             $("#formEducationFormEditBtn" + bodyId).slideUp()
             $("#formEducationForm" + bodyId).find("input, textarea, select").prop("disabled", false)
 
-            tinymce.init({
-                selector: "#GEN001302" + bodyId,
-                height: 300,
-                plugins: [
-                    "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                    "save table contextmenu directionality emoticons template paste textcolor",
-                ],
-                toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                style_formats: [{
-                        title: "Bold text",
-                        inline: "b"
-                    },
-                    {
-                        title: "Red text",
-                        inline: "span",
-                        styles: {
-                            color: "#ff0000"
-                        }
-                    },
-                    {
-                        title: "Red header",
-                        block: "h1",
-                        styles: {
-                            color: "#ff0000"
-                        }
-                    },
-                    {
-                        title: "Example 1",
-                        inline: "span",
-                        classes: "example1"
-                    },
-                    {
-                        title: "Example 2",
-                        inline: "span",
-                        classes: "example2"
-                    },
-                    {
-                        title: "Table styles"
-                    },
-                    {
-                        title: "Table row 1",
-                        selector: "tr",
-                        classes: "tablerow1"
-                    },
-                ],
-            });
+            initializeQuillEditorsById("GEN001302" + bodyId)
+
         } else {
 
             var maindataset = educationFormAll[index]
@@ -6821,72 +6898,26 @@ foreach ($aValue as $key => $value) {
             })
             var EducationForm = educationFormAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'GEN0013') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'GEN0013') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower($value['column_name']); ?>)
-                        <?php if ($value['entry_type'] == 4) {
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower(@$value['column_name']); ?>)
+                        <?php if (@$value['entry_type'] == 4) {
                         ?>
-                            setTimeout(function() {
-                                tinymce.init({
-                                    selector: "#GEN001302" + bodyId,
-                                    height: 300,
-                                    plugins: [
-                                        "advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker",
-                                        "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-                                        "save table contextmenu directionality emoticons template paste textcolor",
-                                    ],
-                                    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
-                                    style_formats: [{
-                                            title: "Bold text",
-                                            inline: "b"
-                                        },
-                                        {
-                                            title: "Red text",
-                                            inline: "span",
-                                            styles: {
-                                                color: "#ff0000"
-                                            }
-                                        },
-                                        {
-                                            title: "Red header",
-                                            block: "h1",
-                                            styles: {
-                                                color: "#ff0000"
-                                            }
-                                        },
-                                        {
-                                            title: "Example 1",
-                                            inline: "span",
-                                            classes: "example1"
-                                        },
-                                        {
-                                            title: "Example 2",
-                                            inline: "span",
-                                            classes: "example2"
-                                        },
-                                        {
-                                            title: "Table styles"
-                                        },
-                                        {
-                                            title: "Table row 1",
-                                            selector: "tr",
-                                            classes: "tablerow1"
-                                        },
-                                    ],
-                                });
-
-                                $("#GEN001302" + bodyId)
-                            }, 2000);
                         <?php
                         } ?>
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '4') {
                     ?>
-                        if (EducationForm.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(EducationForm.<?= strtolower(@$value['column_name']); ?>)
+                        initializeQuillEditorsById("GEN001302" + bodyId, EducationForm.<?= strtolower(@$value['column_name']); ?>)
+                    <?php
+                    } else if (@$value['entry_type'] == '2') {
+                    ?>
+                        if (EducationForm.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'GEN0013 ' && $value1['value_score'] == '99') {
                             ?>
@@ -6950,9 +6981,10 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// EDUCATION INTEGRATION
+<!-- // EDUCATION INTEGRATION -->
 <script type="text/javascript">
-    function addEducationIntegration(flag, index) {
+    function addEducationIntegration(flag, index, document_id, container, isaddbutton = true) {
+        var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -6964,45 +6996,46 @@ foreach ($aValue as $key => $value) {
         <?php
         $ptype = 'ASES049';
         ?>
-        $("#bodyEducationIntegration").append(
+
+        $("#" + container).append(
             $('<form id="formEducationIntegration' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
-                    .append($('<h4 class="card-title">').html("EducationIntegration"))
+                    .append($('<h4 class="card-title">').html("Edukasi Integrasi"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == $ptype) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == $ptype) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="049<?= $value['parameter_id'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="049<?= @$value['parameter_id'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -7010,21 +7043,21 @@ foreach ($aValue as $key => $value) {
                                                 )
                                             )
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 4) {
+                                                                                        } else if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>'
-                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>'
+                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                             )) <?php
-                                                                                        } else if ($value['entry_type'] == 5) {
-                                                                                        } else if ($value['entry_type'] == 6) {
+                                                                                        } else if (@$value['entry_type'] == 5) {
+                                                                                        } else if (@$value['entry_type'] == 6) {
                                                 ?>
                                         .append($('<div class="row">')
                                             .append($('<div class="col-md-4">')
-                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                                .append($('<h5 class="font-size-14 mb-4"><?= @$value['parameter_desc']; ?></h5>'))
                                             )
                                             .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                 ?>
                                                         .append($('<div class="form-check mb-3">' +
                                                             '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="checkbox" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
@@ -7036,14 +7069,14 @@ foreach ($aValue as $key => $value) {
                                                                                             } ?>
                                             )
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 7) {
+                                                                                        } else if (@$value['entry_type'] == 7) {
                                             ?>
                                         .append($('<div class="row">')
                                             .append($('<div class="col-md-4">')
-                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                                .append($('<h5 class="font-size-14 mb-4"><?= @$value['parameter_desc']; ?></h5>'))
                                             )
                                             .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                 ?>
                                                         .append($('<div class="form-check mb-3">' +
                                                             '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="radio" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
@@ -7056,44 +7089,44 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         } ?> <?php }
-                                                                                            if ($value['parameter_id'] == '09') {
+                                                                                            if (@$value['parameter_id'] == '09') {
                                                                                                 break;
                                                                                             }
                                                                                         }
                                                                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == $ptype  && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == $ptype  && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -7101,21 +7134,21 @@ foreach ($aValue as $key => $value) {
                                                 )
                                             )
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 4) {
+                                                                                        } else if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>'
-                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>'
+                                                .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                             )) <?php
-                                                                                        } else if ($value['entry_type'] == 5) {
-                                                                                        } else if ($value['entry_type'] == 6) {
+                                                                                        } else if (@$value['entry_type'] == 5) {
+                                                                                        } else if (@$value['entry_type'] == 6) {
                                                 ?>
                                         .append($('<div class="row">')
                                             .append($('<div class="col-md-4">')
-                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                                .append($('<h5 class="font-size-14 mb-4"><?= @$value['parameter_desc']; ?></h5>'))
                                             )
                                             .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                 ?>
                                                         .append($('<div class="form-check mb-3">' +
                                                             '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="checkbox" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">>' +
@@ -7127,14 +7160,14 @@ foreach ($aValue as $key => $value) {
                                                                                             } ?>
                                             )
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 7) {
+                                                                                        } else if (@$value['entry_type'] == 7) {
                                             ?>
                                         .append($('<div class="row">')
                                             .append($('<div class="col-md-4">')
-                                                .append($('<h5 class="font-size-14 mb-4"><?= $value['parameter_desc']; ?></h5>'))
+                                                .append($('<h5 class="font-size-14 mb-4"><?= @$value['parameter_desc']; ?></h5>'))
                                             )
                                             .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                 ?>
                                                         .append($('<div class="form-check mb-3">' +
                                                             '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="radio" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">' +
@@ -7161,7 +7194,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguageBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7180,7 +7213,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
@@ -7199,7 +7232,7 @@ foreach ($aValue as $key => $value) {
                                 .append($('<tbody id="educationIntegrationLanguageProvisionBody' + bodyId + '">'))
                             )
                             .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationProvision(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide" style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
                                 '</div>)'))
                         )
                         .append('<div class="panel-footer text-end mb-4">' +
@@ -7218,6 +7251,7 @@ foreach ($aValue as $key => $value) {
             $("#formEducationIntegrationSaveBtn" + bodyId).slideDown()
             $("#formEducationIntegrationEditBtn" + bodyId).slideUp()
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
+            $("#formEducationIntegration" + bodyId + " .btn-to-hide").slideDown()
         })
         $("#formEducationIntegrationCetakBtn" + bodyId).on("click", function() {
             var win = window.open('<?= base_url() . '/admin/rm/keperawatan/edukasi_integrasi/' . base64_encode(json_encode($visit)); ?>' + '/' + bodyId, '_blank');
@@ -7269,6 +7303,8 @@ foreach ($aValue as $key => $value) {
                     $("#formEducationIntegrationSaveBtn" + bodyId).slideUp()
                     $("#formEducationIntegrationEditBtn" + bodyId).slideDown()
                     $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", true)
+                    $("#formEducationIntegration" + bodyId + " .btn-to-hide").slideUp()
+
                     clicked_submit_btn.button('reset');
                     checkSign("formEducationIntegration" + bodyId)
 
@@ -7276,7 +7312,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7288,8 +7324,9 @@ foreach ($aValue as $key => $value) {
         if (flag == 1) {
             $("#formEducationIntegrationSaveBtn" + bodyId).slideDown()
             $("#formEducationIntegrationEditBtn" + bodyId).slideUp()
-            $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
+            $("#formEducationIntegration" + bodyId + " .btn-to-hide").slideDown()
 
+            $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
         } else {
             var eduInt = educationIntegrationAll[index];
 
@@ -7300,28 +7337,28 @@ foreach ($aValue as $key => $value) {
                 if (value.body_id == eduInt.body_id) {
                     if (value.p_type == 'ASES049') {
                         <?php foreach ($aParameter as $key => $value) {
-                            if ($value['p_type'] == $ptype) {
-                                if ($value['entry_type'] == 3) {
+                            if (@$value['p_type'] == $ptype) {
+                                if (@$value['entry_type'] == 3) {
                         ?>
-                                    if (value.parameter_id == '<?= $value['parameter_id']; ?>')
+                                    if (value.parameter_id == '<?= @$value['parameter_id']; ?>')
                                         $("#" + value.p_type + value.parameter_id + bodyId).val(value.value_score)
                                     <?php
                                 }
-                                if ($value['entry_type'] == 6) {
+                                if (@$value['entry_type'] == 6) {
                                     foreach ($aValue as $key1 => $value1) {
-                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                        if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                     ?>
-                                            if (value.parameter_id == '<?= $value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
+                                            if (value.parameter_id == '<?= @$value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
                                                 $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true)
                                         <?php
                                         }
                                     }
                                 }
-                                if ($value['entry_type'] == 7) {
+                                if (@$value['entry_type'] == 7) {
                                     foreach ($aValue as $key1 => $value1) {
-                                        if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                        if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                         ?>
-                                            if (value.parameter_id == '<?= $value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
+                                            if (value.parameter_id == '<?= @$value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
                                                 $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true)
                         <?php
                                         }
@@ -7346,6 +7383,8 @@ foreach ($aValue as $key => $value) {
             })
             $("#formEducationIntegrationSaveBtn" + bodyId).slideUp()
             $("#formEducationIntegrationEditBtn" + bodyId).slideDown()
+            $("#formEducationIntegration" + bodyId + " .btn-to-hide").slideUp()
+
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", true)
 
             checkSign("formEducationIntegration" + bodyId)
@@ -7359,8 +7398,8 @@ foreach ($aValue as $key => $value) {
         $("#educationIntegrationLanguageBody" + bodyId).append($('<tr>')
             .append($('<td>')
                 .append($('<select id="GEN0014Bahasa' + bodyId + rowcount + '" name="GEN0014Bahasa[]" class="form-control">') <?php foreach ($aParameter as $key => $value) {
-                                                                                                                                    if ($value['p_type'] == 'GEN0014')
-                                                                                                                                        echo '.append(\'<option value="' . $value['parameter_id'] . '">' . $value['parameter_desc'] . '</option>\')';
+                                                                                                                                    if (@$value['p_type'] == 'GEN0014')
+                                                                                                                                        echo '.append(\'<option value="' . @$value['parameter_id'] . '">' . @$value['parameter_desc'] . '</option>\')';
                                                                                                                                 } ?>)
             )
             .append($('<td>')
@@ -7491,7 +7530,7 @@ foreach ($aValue as $key => $value) {
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -7527,7 +7566,7 @@ foreach ($aValue as $key => $value) {
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
                 clicked_submit_btn.button('reset');
-                errorMsg(xhr);
+                errorSwal(xhr);
             },
             complete: function() {
                 clicked_submit_btn.button('reset');
@@ -7568,9 +7607,9 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// GCS
+<!-- // GCS -->
 <script type="text/javascript">
-    const addGcs = async (flag, index, document_id, container, isaddbutton = true) => {
+    const addGcs = async (flag, index, document_id, container, isaddbutton = true, isrefresh = false) => {
         var bodyId = '';
         var documentId = $("#" + document_id).val()
         if (flag == 1) {
@@ -7597,23 +7636,23 @@ foreach ($aValue as $key => $value) {
                         </div>`)
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'GEN0011') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'GEN0011') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?> <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                                 ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option value="0">-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                             ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>">[<?= $value1['value_score']; ?>] <?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                                                             }
@@ -7623,7 +7662,7 @@ foreach ($aValue as $key => $value) {
                                         ) <?php
                                                                                         }
                                             ?> <?php }
-                                                                                    if ($value['parameter_id'] == '09') {
+                                                                                    if (@$value['parameter_id'] == '09') {
                                                                                         break;
                                                                                     }
                                                                                 }
@@ -7659,7 +7698,7 @@ foreach ($aValue as $key => $value) {
                             </div>
                         </div>`)
                     .append('<div class="panel-footer text-end mb-4">' +
-                        '<button type="submit" id="formGcsSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
+                        '<button style="margin-right: 10px" type="submit" id="formGcsSaveBtn' + bodyId + '" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>' +
                         '<button style="margin-right: 10px" type="button" id="formGcsEditBtn' + bodyId + '" onclick="" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-edit"><i class="fa fa-history"></i> <span>Edit</span></button>' +
                         '<button style="margin-right: 10px" type="button" id="formGcsSignBtn' + bodyId + '" onclick="" name="sign" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning btn-sign"><i class="fa fa-signature"></i> <span>Sign</span></button>' +
                         '</div>')
@@ -7806,11 +7845,15 @@ foreach ($aValue as $key => $value) {
                     }
                     $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
                     clicked_submit_btn.button('reset');
+
+                    if (isrefresh) {
+                        getGcsAll()
+                    }
                 },
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7828,22 +7871,22 @@ foreach ($aValue as $key => $value) {
             var maindataset = gcsAll[index]
 
             $.each(maindataset, function(key, value) {
-                $("#gcs" + key + bodyId).val(value)
+                $("#gcs" + key + bodyId).val(value).trigger("change")
             })
             $("#flatgcsexamination_date" + bodyId).val(formatedDatetimeFlat(maindataset.examination_date))
             var gcs = gcsAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'GEN0011') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'GEN0011') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(gcs.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(gcs.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (gcs.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (gcs.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'GEN0011' && $value1['value_score'] == '99') {
                             ?>
@@ -7949,8 +7992,12 @@ foreach ($aValue as $key => $value) {
                         addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
                     }
                     if (value.document_id == $("#armpasien_diagnosa_id").val()) {
-                        $("#bodyGcsMedis").html()
+                        $("#bodyGcsMedis").html("")
                         addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
+                    }
+                    if (value.document_id == $("#acpptbody_id").val()) {
+                        $("#bodyGcsCppt").html("")
+                        addGcs(0, key, "acpptbody_id", "bodyGcsCppt", false)
                     }
                 })
             },
@@ -7961,7 +8008,7 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// INTEGUMEN
+<!-- // INTEGUMEN -->
 <script type="text/javascript">
     function addIntegumen(flag, index, document_id, container) {
         var bodyId = '';
@@ -7982,37 +8029,37 @@ foreach ($aValue as $key => $value) {
                     .append($('<h4 class="card-title">').html("Integumen"))
                     .append($('<div class="mb-3 row">')
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES036') {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES036') {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -8021,51 +8068,51 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
-                                                                                            if ($value['parameter_id'] == '09') {
+                                                                                            if (@$value['parameter_id'] == '09') {
                                                                                                 break;
                                                                                             }
                                                                                         }
                                                                                                 ?>
                         )
                         .append($('<div class="col-xs-12 col-sm-6 col-md-6">') <?php foreach ($aParameter as $key => $value) {
-                                                                                    if ($value['p_type'] == 'ASES036' && in_array($value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
-                                                                                ?> <?php if ($value['entry_type'] == 1) {
+                                                                                    if (@$value['p_type'] == 'ASES036' && in_array(@$value['parameter_id'], array('09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'))) {
+                                                                                ?> <?php if (@$value['entry_type'] == 1) {
                                                                                     ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></div>')
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 2) {
+                                                                                        } else if (@$value['entry_type'] == 2) {
                                             ?>
                                         .append($('<div class="form-group col-md-12">')
                                             .append($('<div class="row">')
-                                                .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" value="1"></div>')
+                                                .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                                .append('<div class="col-md-8"><input class="form-check-input" type="checkbox" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" value="1"></div>')
                                             ) <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id'] && $value1['value_score'] == '99') {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id'] && $value1['value_score'] == '99') {
                                                 ?>
-                                                    .append($('<div id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
+                                                    .append($('<div id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>group' + bodyId + '"  class="row" style="display: none;">')
                                                         .append('<label class="col-md-4 col-form-label mb-4"><?= $value1['value_desc']; ?></label>')
-                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
+                                                        .append('<div class="col-md-8"><input class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?><?= $value1['value_id'] ?>' + bodyId + '" name="<?= $value1['value_info'] ?>" placeholder=""></div>')
                                                     ) <?php
                                                                                                 }
                                                                                             } ?>
                                         ) <?php
-                                                                                        } else if ($value['entry_type'] == 3) {
+                                                                                        } else if (@$value['entry_type'] == 3) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
                                             .append($('<div class="col-md-8">')
-                                                .append($('<select id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" class="form-control">')
+                                                .append($('<select id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" class="form-control">')
                                                     .append('<option>-</option>') <?php foreach ($aValue as $key1 => $value1) {
-                                                                                                if ($value1['p_type'] == $value['p_type'] && $value1['parameter_id'] == $value['parameter_id']) {
+                                                                                                if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                     ?>
                                                             .append('<option value="<?= $value1['value_score']; ?>"><?= $value1['value_desc'] ?></option>') <?php
                                                                                                                                                         }
@@ -8074,11 +8121,11 @@ foreach ($aValue as $key => $value) {
                                             )
                                         ) <?php
                                                                                         }
-                                                                                        if ($value['entry_type'] == 4) {
+                                                                                        if (@$value['entry_type'] == 4) {
                                             ?>
                                         .append($('<div class="row">')
-                                            .append('<label class="col-md-4 col-form-label mb-4"><?= $value['parameter_desc']; ?></label>')
-                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId + '" name="<?= $value['column_name'] ?>" placeholder=""></textarea></div>')
+                                            .append('<label class="col-md-4 col-form-label mb-4"><?= @$value['parameter_desc']; ?></label>')
+                                            .append('<div class="col-md-8"><textarea class="form-control" type="text" id="<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId + '" name="<?= @$value['column_name'] ?>" placeholder=""></textarea></div>')
                                         ) <?php
                                                                                         } ?> <?php }
                                                                                         }
@@ -8141,7 +8188,7 @@ foreach ($aValue as $key => $value) {
                 error: function(xhr) { // if error occured
                     alert("Error occured.please try again");
                     clicked_submit_btn.button('reset');
-                    errorMsg(xhr);
+                    errorSwal(xhr);
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -8162,17 +8209,17 @@ foreach ($aValue as $key => $value) {
         } else {
             var integumen = integumenAll[index];
             <?php foreach ($aParameter as $key => $value) {
-                if ($value['p_type'] == 'ASES036') {
-                    // if ($value['entry_type'] == '3') {
-                    if (in_array($value['entry_type'], [1, 3, 4])) {
+                if (@$value['p_type'] == 'ASES036') {
+                    // if (@$value['entry_type'] == '3') {
+                    if (in_array(@$value['entry_type'], [1, 3, 4])) {
             ?>
-                        $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).val(integumen.<?= strtolower($value['column_name']); ?>)
+                        $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).val(integumen.<?= strtolower(@$value['column_name']); ?>)
                     <?php
 
-                    } else if ($value['entry_type'] == '2') {
+                    } else if (@$value['entry_type'] == '2') {
                     ?>
-                        if (integumen.<?= strtolower($value['column_name']); ?> == 1) {
-                            $('#<?= $value['p_type'] . $value['parameter_id'] ?>' + bodyId).prop("checked", true)
+                        if (integumen.<?= strtolower(@$value['column_name']); ?> == 1) {
+                            $('#<?= @$value['p_type'] . @$value['parameter_id'] ?>' + bodyId).prop("checked", true)
                             <?php foreach ($aValue as $key1 => $value1) {
                                 if ($value1['p_type'] == 'ASES036' && $value1['value_score'] == '99') {
                             ?>
@@ -8223,9 +8270,9 @@ foreach ($aValue as $key => $value) {
     }
 </script>
 
-// DIAG NURSE
+<!-- // DIAG NURSE -->
 <script>
-    function addRowDiagPerawat(
+    function addRowDiagPerawatBasic(
         container,
         bodyId,
         diag_id = null,
@@ -8455,4 +8502,170 @@ foreach ($aValue as $key => $value) {
     //         })
     //     });
     // }
+</script>
+<script>
+    function satuSehatLogin() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>satusehat/loginInternal',
+            type: "POST",
+            data: JSON.stringify({
+                'username': 'usi'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                localStorage.setItem('jwtauth', data.token)
+                getSatuSehatToken()
+            },
+            error: function(xhr) { // if error occured
+                alert("Error occured.please try again");
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function getSatuSehatToken() {
+        var jwtauth = localStorage.getItem('jwtauth')
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/satusehat/getToken',
+            type: "GET",
+            headers: {
+                Authorization: 'Bearer ' + jwtauth
+            },
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#asspasien_idsearch").html('<i class="spinner-border spinner-border-sm"></i>')
+            },
+            success: function(data) {
+                console.log(data)
+                // var aksestoken = data.access_token
+                // console.log(aksestoken)
+                localStorage.setItem('ssToken', data)
+                alert("Get Token Satu Sehat Berhasil, silahkan ulangi proses bridging satu sehat kembali")
+            },
+            error: function(xhr) {
+                alert(xhr);
+                satuSehatLogin()
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+            },
+            complete: function() {
+                $("#asspasien_idsearch").html('<i class="fa fa-search"></i>')
+
+            }
+        });
+    }
+
+    function updateWaktu(task) {
+        // var statusantrean = $("#pvstatusantrean").val()
+        // if (statusantrean == '2' + (String)(checktask) || (statusantrean == '11' && task == 1)) {
+        if (true) {
+            $.ajax({
+                url: '<?php echo base_url(); ?>api/antrianbpjs/updateWaktu',
+                type: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+                },
+                data: JSON.stringify({
+                    "norm": '<?= $visit['no_registration']; ?>',
+                    "kodebooking": '<?= $visit['trans_id']; ?>',
+                    "taskid": task,
+                    "waktu": Date.now()
+                }),
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    $(".updateWaktu5Btn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting ... </span>')
+                },
+                success: function(data) {
+                    console.log("Tambah Antrean " + data.metadata.message)
+
+                    if (data.metadata.code == 200) {
+                        $(".updateWaktu5Btn").html(`<i class="fa fa-check-circle"></i> <span>Berhasil</span></button>`)
+                        alert("Update Waktu Task-ID 5 Berhasil")
+                        // $("#arstatusantrean").val('2' + (String)(task))
+                        // executeWaktuUpdate()
+                    } else {
+                        alert("Posting Update Waktu Antrean BPJS kode " + task + " Gagal: " + data.metadata.message)
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status == '401') {
+                        getSatuSehatToken()
+                    } else {
+                        alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                    }
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                },
+                complete: function() {
+                    $("#postingSS").html('<i class="fa fa-check-circle"></i> <span> Posting </span>')
+                }
+
+            });
+        }
+
+    }
+
+    function executeWaktuUpdate() {
+        var statusantrean = $("#arstatusantrean").val()
+        var task = '';
+        if (statusantrean == '23') {
+            task = '4'
+        } else if (statusantrean == '24') {
+            task = '5'
+        }
+        if (task != '') {
+            updateWaktu(task)
+        }
+
+        $.ajax({
+            url: '<?php echo base_url(); ?>api/antrianbpjs/updateStatusAntraenPV',
+            type: "POST",
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('jwtauth'),
+            },
+            data: JSON.stringify({
+                "norm": '<?= $visit['no_registration']; ?>',
+                "kodebooking": '<?= $visit['trans_id']; ?>',
+                "taskid": $("#arstatusantrean").val(),
+                "waktu": Date.now()
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+                $("#formaddpvbtn").html('<i class="spinner-border spinner-border-sm"></i><span> Posting Update Waktu ... </span>')
+            },
+            success: function(data) {
+                console.log("Update Waktu Selesai")
+            },
+            error: function(xhr) {
+                if (xhr.status == '401') {
+                    getSatuSehatToken()
+                } else {
+                    alert("Update Waktu Antrean BPJS: " + xhr.statusText)
+                }
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            },
+            complete: function() {
+                $("#formaddpvbtn").html('<i class="fa fa-check-circle"></i> <span> Simpan </span>')
+            }
+
+        });
+    }
 </script>
