@@ -115,7 +115,7 @@
                 <td colspan="2"><?= $visit['contact_address']; ?></td>
                 <td width="20%">Dokter</td>
                 <td width="1%">:</td>
-                <td><?= $visit['fullname_from']; ?></td>
+                <td id="dokter_penunjang_cetak"></td>
             </tr>
         </table>
         <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;" class="mb-2"></div>
@@ -142,10 +142,15 @@
 
 </body>
 <script>
+    var doctor = '';
     $(document).ready(function(e) {
         let items = <?= json_encode($bound ?? []); ?>;
         let data = <?= json_encode($val ?? []); ?>;
 
+
+        doctor = data[0]?.doctor
+        console.log(doctor);
+        $('#dokter_penunjang_cetak').html(data[0]?.doctor)
         const FilterBound = [{
                 name: "CHECK UP",
                 value: 1
@@ -364,19 +369,18 @@
             });
         }
 
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: doctor,
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
 
     })
 </script>
-<script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: `<?= $visit['fullname_from']; ?>`,
-        width: 70,
-        height: 70,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
-</script>
+
 
 <style>
     @media print {

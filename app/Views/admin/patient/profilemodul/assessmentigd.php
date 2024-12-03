@@ -65,7 +65,7 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['dekubitus'] = 1;
     $menu['stabilitas'] = 0;
     $menu['edukasiintegrasi'] = 0;
-    $menu['formedukasi'] = 0;
+    $menu['formedukasi'] = 1;
     $menu['gcs'] = 1;
     $menu['integumen'] = 1;
     $menu['anak'] = 1;
@@ -221,13 +221,15 @@ if ($visit['clinic_id'] == 'P012') {
                             <div class="col-sm-6 mb-2">
                                 <div class="form-group"><label>Judul Edukasi</label>
                                     <select type="text" name="treatment_type" id="eduplantreatment_type" placeholder="" value="" class="form-control">
-                                        <option value="1">Pengertian penyakit</option>
-                                        <option value="2">Gizi</option>
-                                        <option value="3">Farmasi</option>
-                                        <option value="4">Rehabilitasi Medik</option>
-                                        <option value="5">Nyeri dan Manajemen Nyeri</option>
-                                        <option value="6">Pencegahan dan Pengendalian Infeksi</option>
-                                        <option value="7">Pelayanan Saat Pelayanan di RS</option>
+                                        <option value="0491501">Hak dan Kewajiban pasien</option>
+                                        <option value="0491502">Diagnosa, Tanda dan Gejala</option>
+                                        <option value="0491503">Diet</option>
+                                        <option value="0491504">Obat-obat yang didapat</option>
+                                        <option value="0491505">Penggunaan alat medis yang aman dan efektif</option>
+                                        <option value="0491506">Rehabilitasi Medik</option>
+                                        <option value="0491507">Manajemen Nyeri</option>
+                                        <option value="0491508">Pencegahan dan pengendalian infeksi</option>
+                                        <option value="0491509">Lain-lain</option>
                                     </select>
                                 </div>
                             </div>
@@ -304,19 +306,19 @@ if ($visit['clinic_id'] == 'P012') {
                                 <div class="form-group"><label for="employee_id">Metode Edukasi</label>
                                     <div class="row p-3">
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodLeaflet" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" value="1" id="eduplaneducation_methodLeaflet" checked="">
                                             <label class="form-check-label" for="eduplaneducation_methodLeaflet">
                                                 Leaflet
                                             </label>
                                         </div>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodDemonstrasi" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" value="2" id="eduplaneducation_methodDemonstrasi" checked="">
                                             <label class="form-check-label" for="eduplaneducation_methodDemonstrasi">
                                                 Demonstrasi
                                             </label>
                                         </div>
                                         <div class="form-check mb-3">
-                                            <input class="form-check-input" type="radio" name="education_method" id="eduplaneducation_methodWawancara" checked="">
+                                            <input class="form-check-input" type="radio" name="education_method" value="3" id="eduplaneducation_methodWawancara" checked="">
                                             <label class="form-check-label" for="eduplaneducation_methodWawancara">
                                                 Wawancara
                                             </label>
@@ -325,7 +327,7 @@ if ($visit['clinic_id'] == 'P012') {
                                 </div>
                             </div>
                             <div class="col-sm-12">
-                                <div class="form-group mb-2"><label>Penjelasan Metode Evaluasi</label><input type="text" name="EDUCAITON_EVALUATION" id="eduplaneducaiton_evaluation" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
+                                <div class="form-group mb-2"><label>Penjelasan Metode Evaluasi</label><input type="text" name="EDUCATION_EVALUATION" id="eduplaneducation_evaluation" placeholder="" value="" class="form-control" onfocus="this.value=''"></div>
                             </div>
                         </div>
                     </div><!--./row-->

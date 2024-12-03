@@ -123,6 +123,7 @@ class TreatmentBillModel extends Model
         'tipetarif',
         'treatment',
         'treatment_plafond',
+        'body_id'
     ];
 
 

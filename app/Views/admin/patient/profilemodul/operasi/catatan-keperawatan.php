@@ -136,24 +136,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arm_diameter-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-arm_diameter-catatanKeperawatan"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="oxygen_usage-catatanKeperawatan" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-oxygen_usage-catatanKeperawatan"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
@@ -334,7 +317,6 @@
 </div>
 
 <script type='text/javascript'>
-    var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
     var visit = '<?= $visit['visit_id']; ?>'
@@ -427,7 +409,7 @@
                     errorSwal(message)
                     getVitalSign()
                 } else {
-                    // successSwal(data.message);
+                    // successMsg(data.message);
                     successSwal(data.message)
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
@@ -447,9 +429,10 @@
     }));
 
     function setDataVitalSignKeperawatan() {
-        $("#formvitalsign-catatanKeperawatan").find("input, textarea").val(null)
-        $("#formvitalsign-catatanKeperawatan").find("#total_score-catatanKeperawatan").html("")
-        $("#formvitalsign-catatanKeperawatan").find("span.h6").html("")
+        $("#vitalSignKeperawatan").find("input, textarea").val(null)
+        $("#vitalSignKeperawatan").find("#total_score-catatanKeperawatan").html("")
+        $("#vitalSignKeperawatan").find("span.h6").html("")
+        $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 0);
         var bodyId = ''
 
         const date = new Date();
@@ -478,23 +461,19 @@
         $("#ageday-catatanKeperawatan").val('<?= $visit['ageday']; ?>')
         $("#examination_date-catatanKeperawatan").val(get_date())
 
-        //havin
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
+        // var ageYear = <?= $visit['ageyear']; ?>;
+        // var ageMonth = <?= $visit['agemonth']; ?>;
+        // var ageDay = <?= $visit['ageday']; ?>;
 
-        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-            $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 3);
-        } else if (ageYear >= 18) {
-            $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 1);
-        } else {
-            $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 2);
-        }
-        console.log('before enable');
+        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+        //     $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 3);
+        // } else if (ageYear >= 18) {
+        //     $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 1);
+        // } else {
+        //     $("#vs_status_id-catatanKeperawatan").prop("selectedIndex", 2);
+        // }
         enableVitalSignKeperawatan()
-        console.log('after enable');
         $("#vitalSignKeperawatan").slideDown()
-        console.log('after slide down');
     }
 
 
@@ -582,10 +561,7 @@
                 data = scoreFunction('pernapasan', value);
                 setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
                 break;
-            case "oxygen_usage-catatanKeperawatan":
-                data = scoreFunction('oksigen', value);
-                setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-                break;
+
             case "weight-catatanKeperawatan":
                 if (value < 10) {
                     value = 10.00;
@@ -639,9 +615,7 @@
         $("#tension_below-catatanKeperawatan").prop("disabled", true)
         $("#saturasi-catatanKeperawatan").prop("disabled", true)
         $("#nafas-catatanKeperawatan").prop("disabled", true)
-        $("#arm_diameter-catatanKeperawatan").prop("disabled", true)
         $("#anamnase-catatanKeperawatan").prop("disabled", true)
-        $("#oxygen_usage-catatanKeperawatan").prop("disabled", true)
         $("#vs_status_id-catatanKeperawatan").prop("disabled", true)
         $("#pemeriksaan-catatanKeperawatan").prop("disabled", true)
         $("#teraphy_desc-catatanKeperawatan").prop("disabled", true)
@@ -682,8 +656,6 @@
         $("#tension_below-catatanKeperawatan").prop("disabled", false)
         $("#saturasi-catatanKeperawatan").prop("disabled", false)
         $("#nafas-catatanKeperawatan").prop("disabled", false)
-        $("#arm_diameter-catatanKeperawatan").prop("disabled", false)
-        $("#oxygen_usage-catatanKeperawatan").prop("disabled", false)
         $("#vs_status_id-catatanKeperawatan").prop("disabled", false)
         $("#anamnase-catatanKeperawatan").prop("disabled", false)
         $("#pemeriksaan-catatanKeperawatan").prop("disabled", false)
@@ -719,7 +691,7 @@
         var examselect = vitalsign[key];
 
         var bodyId = ''
-
+        const nowtime = moment(examselect.examination_date).format("DD/MM/YYYY HH:mm");
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
@@ -728,7 +700,6 @@
         $("#agemonth-catatanKeperawatan").val(examselect.agemonth)
         $("#ageyear-catatanKeperawatan").val(examselect.ageyear)
         $("#anamnase-catatanKeperawatan").val(examselect.anamnase)
-        $("#arm_diameter-catatanKeperawatan").val(examselect.arm_diameter)
         $("#bed_id-catatanKeperawatan").val(examselect.bed_id)
         $("#body_id-catatanKeperawatan").val(examselect.body_id)
         $("#class_room_id-catatanKeperawatan").val(examselect.class_room_id)
@@ -736,7 +707,7 @@
         $("#description-catatanKeperawatan").val(examselect.description)
         $("#doctor-catatanKeperawatan").val(examselect.doctor)
         $("#employee_id-catatanKeperawatan").val(examselect.employee_id)
-        $("flatexamination_date-catatanKeperawatan").val(nowtime).trigger("change")
+        $("#flatexamination_date-catatanKeperawatan").val(nowtime).trigger("change")
         $("#gender-catatanKeperawatan").val(examselect.gender)
         $("#height-catatanKeperawatan").val(examselect.height)
         $("#instruction-catatanKeperawatan").val(examselect.instruction)
@@ -747,7 +718,6 @@
         $("#nafas-catatanKeperawatan").val(examselect.nafas)
         $("#no_registraiton-catatanKeperawatan").val(examselect.no_registraiton)
         $("#org_unit_code-catatanKeperawatan").val(examselect.org_unit_code)
-        $("#oxygen_usage-catatanKeperawatan").val(examselect.oxygen_usage)
         $("#vs_status_id-catatanKeperawatan").val(examselect.vs_status_id)
         $("#pemeriksaan-catatanKeperawatan").val(examselect.pemeriksaan)
         $("#petugas-catatanKeperawatan").val(examselect.petugas)
@@ -776,7 +746,6 @@
         $("#keluar_id-catatanKeperawatan").val(examselect.keluar_id)
         $("#imt_score-catatanKeperawatan").val(examselect.imt_score)
         $("#imt_desc-catatanKeperawatan").val(examselect.imt_desc)
-        $("#oxygen_usage-catatanKeperawatan").val(examselect.oxygen_usage)
         $("#pemeriksaan-catatanKeperawatan").val(examselect.pemeriksaan)
         $("#medical_treatment-catatanKeperawatan").val(examselect.medical_treatment)
         $("#modified_date-catatanKeperawatan").val(examselect.modified_date)
@@ -809,38 +778,18 @@
         $("#tension_lower-catatanKeperawatan").val(examselect.tension_lower).trigger("change")
         $("#saturasi-catatanKeperawatan").val(examselect.saturasi).trigger("change")
         $("#nafas-catatanKeperawatan").val(examselect.nafas).trigger("change")
-        $("#arm_diameter-catatanKeperawatan").val(examselect.arm_diameter).trigger("change")
-        $("#oxygen_usage-catatanKeperawatan").val(examselect.oxygen_usage).trigger("change")
         $("#vs_status_id-catatanKeperawatan").val(examselect.vs_status_id).trigger("change")
         $("#pemeriksaan-catatanKeperawatan").val(examselect.pemeriksaan).trigger("change")
 
         $("#vitalSignDocument").slideDown()
         enableVitalSign()
-        //=new
-        // data1 = getAdultScore('nadi', examselect.nadi);
-        // data2 = getAdultScore('suhu', examselect.temperature);
-        // data3 = getAdultScore('saturasi', examselect.saturasi);
-        // data4 = getAdultScore('pernapasan', examselect.nafas);
-        // data5 = getAdultScore('oksigen', examselect.oxygen_usage);
-        // data6 = getAdultScore('darah', examselect.tension_upper);
 
-        // let totalSkor = data1.score + data2.score + data3.score + data4.score + data5.score + data6.score;
-        // document.getElementById('total_score').textContent = 'Total Skor: ' + totalSkor;
-        //endofnew
-
-        // $("#cpptModal").modal("show")
-        // $("#formsavebtnid").show()
-        // $("#formeditid").hide()
     }
     var vitalsigndesc = []
 
     var i = 0
 
-    // for (let index = vitalsign.length; index >= 0; index--) {
-    //     vitalsigndesc.push(vitalsign[index]);
-    // }
-    // console.log(vitalsigndesc)
-    // vitalsign = vitalsigndesc
+
 
     vitalsign.forEach((element, key) => {
         examselect = vitalsign[key];
@@ -887,9 +836,7 @@
             $("#tension_below-catatanKeperawatan").val(examselect.tension_below)
             $("#saturasi-catatanKeperawatan").val(examselect.saturasi)
             $("#nafas-catatanKeperawatan").val(examselect.nafas)
-            $("#arm_diameter-catatanKeperawatan").val(examselect.arm_diameter)
             $("#anamnase-catatanKeperawatan").val(examselect.anamnase)
-            $("#oxygen_usage-catatanKeperawatan").val(examselect.oxygen_usage)
             $("#vs_status_id-catatanKeperawatan").val(examselect.vs_status_id)
             $("#pemeriksaan-catatanKeperawatan").val(examselect.pemeriksaan)
             $("#teraphy_desc-catatanKeperawatan").val(examselect.teraphy_desc)

@@ -20,15 +20,17 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
-    <script src="<?= base_url('/assets/js/default.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
+    <script src="<?= base_url('/assets/js/default.js') ?>"></script>
     <style>
     .form-control:disabled,
     .form-control[readonly] {
@@ -111,30 +113,42 @@
                 </tr>
             </tbody>
         </table>
-        <div class="d-flex flex-wrap mb-3">
+        <div class="d-flex flex-wrap mb-3 contain-tabels">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="align-middle text-uppercase ">TGL/JAM</th>
-                        <th rowspan="2" class="align-middle text-uppercase">KESADARAN</th>
-                        <th colspan="2" class="align-middle text-uppercase text-center">CAIRAN MASUK</th>
-                        <th colspan="6" class="align-middle text-uppercase text-center">CAIRAN Keluar</th>
-                        <th rowspan="2" class="align-middle text-uppercase">Infus</th>
-                        <th rowspan="2" class="align-middle text-uppercase">Tranfusi</th>
-                        <th rowspan="2" class="align-middle text-uppercase">Tetesan</th>
-                        <th rowspan="2" class="align-middle text-uppercase">Botol Ke</th>
-                        <th rowspan="2" class="align-middle text-uppercase">Nama petugas</th>
-                        <th rowspan="2" class="align-middle text-uppercase">paraf</th>
+                        <th rowspan="3" class="align-middle text-uppercase ">TGL/JAM</th>
+                        <th rowspan="3" class="align-middle text-uppercase">Berat</th>
+                        <th colspan="7" class="align-middle text-uppercase text-center">PEMASUKAN</th>
+                        <th colspan="8" class="align-middle text-uppercase text-center">PENGLUARAN</th>
+                        <th rowspan="3" class="align-middle text-uppercase">Kesimpulan</th>
+
+
+                        <th rowspan="3" class="align-middle text-uppercase">Nama petugas</th>
+                        <th rowspan="3" class="align-middle text-uppercase">paraf</th>
                     </tr>
                     <tr>
-                        <th class="text-uppercase">Oral</th>
-                        <th class="text-uppercase">Perenteral</th>
-                        <th class="text-uppercase">Urine</th>
-                        <th class="text-uppercase">Muntah</th>
-                        <th class="text-uppercase">NGT</th>
-                        <th class="text-uppercase">BAB</th>
-                        <th class="text-uppercase">DRAIN </th>
-                        <th class="text-uppercase">DRAIN II</th>
+                        <th class="text-uppercase align-middle" colspan="2">Oral</th>
+                        <th class="text-uppercase align-middle" colspan="2">ENTERAL</th>
+                        <th class="text-uppercase align-middle" colspan="2">Perenteral</th>
+                        <th rowspan="2" class="align-middle text-uppercase">Total Cairan Masuk</th>
+                        <th class="text-uppercase align-middle" colspan="2">Muntah</th>
+                        <th rowspan="2" class="align-middle text-uppercase">Drain Wsd</th>
+                        <th rowspan="2" class="align-middle ">BAK (cc) Warna</th>
+                        <th rowspan="2" class="align-middle text-uppercase">BAB</th>
+                        <th rowspan="2" class="align-middle ">NGT (cc)</th>
+                        <th rowspan="2" class="align-middle ">RWL (cc)</th>
+                        <th rowspan="2" class="align-middle text-uppercase">Total Cairan Keluar</th>
+                    </tr>
+                    <tr>
+                        <th>Jenis</th>
+                        <th>jml (cc)</th>
+                        <th>Jenis</th>
+                        <th>jml (cc)</th>
+                        <th>Jenis Cairan</th>
+                        <th>jml (cc)</th>
+                        <th>Jenis</th>
+                        <th>jml (cc)</th>
                     </tr>
                 </thead>
                 <tbody id="data_tables">
@@ -177,151 +191,138 @@ const renderDiagnosa = () => {
 const dataRender = () => {
     let result = <?= json_encode($dataTabels); ?>;
     let aValue = <?= json_encode($aValue); ?>;
-
     let filteredDataValue = aValue?.filter(item => item?.p_type === "GEN0023");
 
     const fluidTypeMapping = {
         "G0230301": "oral",
+        "G0230309": "enteral",
         "G0230302": "parenteral",
-        "G0230303": "urine",
-        "G0230304": "muntah",
-        "G0230305": "ngt",
-        "G0230306": "bab",
-        "G0230307": "drain",
-        "G0230308": "drain2",
-        "G0230309": "infus",
-        "G0230310": "tranfusi",
+        // "G0230303": "urine",
+        // "G0230304": "muntah",
+        // "G0230305": "ngt",
+        // "G0230306": "bab",
+        // "G0230307": "drain",
+        // "G0230308": "drain2",
+        // "G0230310": "tranfusi",
     };
 
     const groupData = (data) => {
         const grouped = {};
-        data.forEach(item => {
-            const dateKey = moment(new Date(item.examination_date)).format("DD-MM-YYYY HH")
 
+
+        data.forEach(item => {
+            const dateKey = moment(new Date(item.examination_date)).format("DD-MM-YYYY HH");
             if (!grouped[dateKey]) {
                 grouped[dateKey] = [];
             }
             grouped[dateKey].push(item);
         });
-        return grouped;
-    };
 
-    const groupByAwarenessAndType = (data) => {
-        const grouped = {};
-        data.forEach(item => {
-            const key = `${item.awareness}-${item.fluid_type}`;
-            if (!grouped[key]) {
-                grouped[key] = {
-                    oral: 0,
-                    parenteral: 0,
-                    urine: 0,
-                    muntah: 0,
-                    ngt: 0,
-                    bab: 0,
-                    drain: 0,
-                    drain2: 0,
-                    infus: 0,
-                    tranfusi: 0,
-                    drip_rate: 0,
-                    botle_amount: 0,
-                    items: []
-                };
-            }
-            let columnKey = fluidTypeMapping[item.fluid_type];
-            if (columnKey) {
-                grouped[key][columnKey] += item.fluid_amount || 0;
-            }
-
-            grouped[key].drip_rate += item.drip_rate ? parseInt(item.drip_rate, 10) : 0;
-            grouped[key].botle_amount += item.botle_amount || 0;
-            grouped[key].items.push(item);
+        Object.keys(grouped).forEach(dateKey => {
+            grouped[dateKey].sort((a, b) => new Date(b.examination_date) - new Date(a
+                .examination_date));
         });
         return grouped;
     };
 
     const groupedData = groupData(result);
     let data = '';
-    let total = {
-        oral: 0,
-        parenteral: 0,
-        urine: 0,
-        muntah: 0,
-        ngt: 0,
-        bab: 0,
-        drain: 0,
-        drain2: 0,
-        infus: 0,
-        tranfusi: 0,
-        drip_rate: 0,
-        botle_amount: 0
-    };
+
 
     Object.keys(groupedData).forEach(dateKey => {
+        console.log(groupedData);
+
         const group = groupedData[dateKey];
 
-        const dateHeader = dateKey.replace('T', ' ');
-        data += `<tr><td colspan="20" class="text-center fw-bold">${dateHeader}</td></tr>`;
+        let pemasukan = {
+            oral: {
+                jenis: [],
+                jumlah: 0
+            },
+            enteral: {
+                jenis: [],
+                jumlah: 0
+            },
+            parenteral: {
+                jenis: [],
+                jumlah: 0
+            },
 
-        const groupedByAwarenessAndType = groupByAwarenessAndType(group);
-        Object.keys(groupedByAwarenessAndType).forEach(key => {
-            const groupDetails = groupedByAwarenessAndType[key];
-            const [awarenessCode, fluidTypeCode] = key.split('-');
+            totalMasuk: 0
+        };
 
-            let awarenessDesc = filteredDataValue.find(e => e?.value_id === awarenessCode)
-                ?.value_desc || awarenessCode;
+        let pengeluaran = {
+            muntah: {
+                jenis: [],
+                jumlah: 0
+            },
+            drain: 0,
+            bak: 0,
+            bab: 0,
+            ngt: 0,
+            rwl: 0,
+            totalKeluar: 0
+        };
 
-            data += `<tr>
-                <td>${moment(group[0].examination_date).format("DD/MM/YYYY HH:mm")}</td>
-                <td>${awarenessDesc}</td>
-                <td>${groupDetails.oral || ''}</td>  
-                <td>${groupDetails.parenteral || ''}</td> 
-                <td>${groupDetails.urine || ''}</td> 
-                <td>${groupDetails.muntah || ''}</td> 
-                <td>${groupDetails.ngt || ''}</td> 
-                <td>${groupDetails.bab || ''}</td> 
-                <td>${groupDetails.drain || ''}</td> 
-                <td>${groupDetails.drain2 || ''}</td> 
-                <td>${groupDetails.infus || ''}</td> 
-                <td>${groupDetails.tranfusi || ''}</td> 
-                <td>${groupDetails.drip_rate}</td>
-                <td>${groupDetails.botle_amount}</td>
-                <td>${groupDetails.items[0].valid_user ?? ""}</td>
-                <td>${groupDetails.items[0].valid_user ?? ""}</td>
-            </tr>`;
-
-            total.oral += groupDetails.oral || 0;
-            total.parenteral += groupDetails.parenteral || 0;
-            total.urine += groupDetails.urine || 0;
-            total.muntah += groupDetails.muntah || 0;
-            total.ngt += groupDetails.ngt || 0;
-            total.bab += groupDetails.bab || 0;
-            total.drain += groupDetails.drain || 0;
-            total.drain2 += groupDetails.drain2 || 0;
-            total.infus += groupDetails.infus || 0;
-            total.tranfusi += groupDetails.tranfusi || 0;
-            total.drip_rate += groupDetails.drip_rate || 0;
-            total.botle_amount += groupDetails.botle_amount || 0;
+        group.forEach(item => {
+            let fluidType = fluidTypeMapping[item.fluid_type];
+            if (fluidType && fluidType !== "muntah") {
+                pemasukan[fluidType].jenis.push(item?.fluid_category);
+                pemasukan[fluidType].jumlah += item.fluid_amount || 0;
+                pemasukan.totalMasuk += item.fluid_amount || 0;
+            } else {
+                if (item.fluid_type === "G0230304") {
+                    pengeluaran.muntah.jenis.push(item.fluid_category);
+                    pengeluaran.muntah.jumlah += item.fluid_amount || 0;
+                }
+                if (item.fluid_type === "G0230311") {
+                    pengeluaran.drain += item.fluid_amount || 0;
+                } else if (item.fluid_type === "G0230312") {
+                    pengeluaran.bak += item.fluid_amount || 0;
+                } else if (item.fluid_type === "G0230313") {
+                    pengeluaran.bab += item.fluid_amount || 0;
+                }
+                pengeluaran.totalKeluar += item.fluid_amount || 0;
+            }
         });
+
+        function removeDuplicatesAndJoin(array) {
+            return [...new Set(array)].join(', ');
+        }
+
+
+        let oralJenis = removeDuplicatesAndJoin(pemasukan.oral.jenis)
+        let enteralJenis = removeDuplicatesAndJoin(pemasukan.enteral.jenis);
+        let parenteralJenis = removeDuplicatesAndJoin(pemasukan.parenteral.jenis);
+        let muntahJenis = removeDuplicatesAndJoin(pengeluaran.muntah.jenis);
+
+        const kesimpulan = pemasukan.totalMasuk - pengeluaran.totalKeluar;
+        const dateHeader = group[0].examination_date.replace('T', ' ');
+        data +=
+            `<tr><td colspan="20" class="text-center fw-bold">${moment(dateHeader).format("DD/MM/YYYY HH:mm")}</td></tr>`;
+        data += `<tr>
+            <td>${moment(group[0].examination_date).format("DD/MM/YYYY HH:mm")}</td>
+            <td>${/^[0-9]+$/.test(group[0].awareness) ? parseInt(group[0].awareness, 10) : ''}</td>
+            <td>${oralJenis}</td>
+            <td>${pemasukan.oral.jumlah}</td>
+            <td>${enteralJenis}</td>
+            <td>${pemasukan.enteral.jumlah}</td>
+            <td>${parenteralJenis}</td>
+            <td>${pemasukan.parenteral.jumlah}</td>
+            <td class='fw-bold'>${pemasukan.totalMasuk}</td>
+            <td>${muntahJenis}</td>
+            <td>${pengeluaran.muntah.jumlah}</td>
+            <td>${pengeluaran.drain}</td>
+            <td>${pengeluaran.bak}</td>
+            <td>${pengeluaran.bab}</td>
+            <td>${pengeluaran.ngt}</td>
+            <td>${pengeluaran.rwl}</td>
+            <td class='fw-bold'>${pengeluaran.totalKeluar}</td>
+            <td class='fw-bold'>${kesimpulan >= 0 ? '+' : ''}${kesimpulan}</td>
+            <td>${group[0].nama_petugas || ''}</td>
+            <td>${group[0].paraf || ''}</td>
+        </tr>`;
     });
-
-
-    data += `<tr class="fw-bold">
-                <td colspan="2" class="text-center">JUMLAH TOTAL</td>
-                <td>${total.oral}</td>
-                <td>${total.parenteral}</td>
-                <td>${total.urine}</td>
-                <td>${total.muntah}</td>
-                <td>${total.ngt}</td>
-                <td>${total.bab}</td>
-                <td>${total.drain}</td>
-                <td>${total.drain2}</td>
-                <td>${total.infus}</td>
-                <td>${total.tranfusi}</td>
-                <td>${total.drip_rate}</td>
-                <td>${total.botle_amount}</td>
-                <td></td>
-                <td></td>
-            </tr>`;
 
     $("#data_tables").html(data);
 };
@@ -339,6 +340,17 @@ const dataRender = () => {
         /* Sesuaikan dengan lebar kertas A4 */
     }
 
+    .contain-tabels {
+        width: 100%;
+        max-width: 210mm;
+        font-size: 12px;
+    }
+
+    @media (max-width: 210mm) {
+        .contain-tabels {
+            font-size: 10px;
+        }
+    }
 
     body {
         margin: 0;

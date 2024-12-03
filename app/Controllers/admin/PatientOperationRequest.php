@@ -23,12 +23,14 @@ use APP\Models\AssessmentAnesthesiaModel;
 use App\Models\AssessmentAnesthesiaRecoveryModel;
 use APP\Models\AssessmentOperationDrainModel;
 use App\Models\DiagnosaModel;
+use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienDiagnosasModel;
 use CodeIgniter\Controller;
 use CodeIgniter\Database\RawSql;
+use DateTime;
 use Exception;
 
 class PatientOperationRequest extends \App\Controllers\BaseController
@@ -115,6 +117,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $dataBromage = $this->lowerKey($dataBromage);
         $dataPraOperasi = $this->lowerKey($getDataAssessmentOperationPraModel->where('body_id', $formData->id)->first() ?? []);
         $dataDiagnosas = $this->lowerKey($db->query("select * from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $formData->id . "'")->getResultArray() ?? []);
+        $vitalSignTerakhir = $this->lowerKey($db->query("select top 1 * from examination_info where visit_id = '" . $formData->visit_id . "' order by examination_date desc ")->getRowArray() ?? []);
         if (!empty($formData->visit_id)) {
             $sqlTreatment = "
                 SELECT TREATMENT_OBAT.BRAND_ID, TREATMENT_OBAT.treat_date, goods.name, TREATMENT_OBAT.QUANTITY, goods.isalkes 
@@ -162,7 +165,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 'ventilasi' => $dataVentilasi[0] ?? [],
                 'jalan_napas' => $dataJalanNapas[0] ?? [],
             ],
-            'diagnosas' => $dataDiagnosas
+            'diagnosas' => $dataDiagnosas,
+            'exam_info' => $vitalSignTerakhir
 
         ];
 
@@ -738,64 +742,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
             // Process AssessmentInstrument
             $instrumenModel = new AssessmentInstrumentModel();
-            // if (isset($formData['instrumen']) && is_array($formData['instrumen'])) {
-            //     $instrumenModel->where('body_id', $formData['body_id_instrument'] ?? '')->delete();
-            //     // $instrumenData = [];
-            //     if (empty($formData['body_id_instrument'])) {
-            //         $formData['body_id_instrument'] = $this->get_bodyid();
-            //     }
 
-            //     foreach ($formData['instrumen'] as $instrumen) {
-            //         $instrumenData = [
-            //             'org_unit_code' => $formData['org_unit_code'],
-            //             'visit_id' => $formData['visit_id'],
-            //             'trans_id' => $formData['trans_id'],
-            //             'body_id' => $formData['body_id_instrument'],
-            //             'document_id' => $formData['document_id'],
-            //             'examination_date' => null,
-            //             'modified_by' => user()->username,
-            //             'modified_date' => null,
-            //             'brand_id' => '1',
-            //             'brand_name' => 'aa',
-            //             'quantity_before' => 1,
-            //             'quantity_after' => 2,
-            //             'quantity_intra' => 3,
-            //             'quantity_additional' => 4
-            //         ];
-            //         // $instrumenData = [
-            //         //     'org_unit_code' => $formData['org_unit_code'],
-            //         //     'visit_id' => $formData['visit_id'],
-            //         //     'trans_id' => $formData['trans_id'],
-            //         //     'body_id' => $formData['body_id_instrument'],
-            //         //     'document_id' => $formData['document_id'],
-            //         //     'examination_date' => date("Y-m-d H:i:s"),
-            //         //     'modified_by' => user()->username,
-            //         //     'modified_date' => date("Y-m-d H:i:s"),
-            //         //     'brand_id' => $instrumen['brand_id'],
-            //         //     'brand_name' => $instrumen['brand_name'],
-            //         //     'quantity_before' => intval($instrumen['quantity_before']),
-            //         //     'quantity_after' => intval($instrumen['quantity_after']),
-            //         //     'quantity_intra' => intval($instrumen['quantity_intra']),
-            //         //     'quantity_additional' => intval($instrumen['quantity_additional'])
-            //         // ];
-            //         // echo '<pre>';
-            //         // var_dump($instrumenData);
-            //         // die();
-            //         $insertResult = $instrumenModel->insert($instrumenData);
-
-            //         if (!$insertResult) {
-            //             throw new \Exception('Failed to insert Instrumen.');
-            //         }
-            //     }
-
-            //     // if (!empty($instrumenData)) {
-            //     //     $insertBatchResult = $instrumenModel->insertBatch($instrumenData);
-
-            //     //     if (!$insertBatchResult) {
-            //     //         throw new \Exception('Failed to insert batch of AssessmentInstrument.');
-            //     //     }
-            //     // }
-            // }
 
             if (isset($formData['instrumen']) && is_array($formData['instrumen']) && !empty($formData['instrumen'])) {
                 $instrumenModel->where('document_id', $data['document_id'])->delete();
@@ -825,12 +772,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $instrumenModel->insert($dataInstrumen);
                 }
             }
-            // echo '<pre>';
-            // var_dump(count($formData['instrumen']));
-            // var_dump(count($formData['instrumen2']));
-            // $check =  isset($formData['instrumen2']) && is_array($formData['instrumen2']) && !empty($formData['instrumen2']) && count($formData['instrumen']) == count($formData['instrumen2']);
-            // var_dump($check);
-            // die();
+
             if (isset($formData['instrumen2']) && is_array($formData['instrumen2']) && !empty($formData['instrumen2']) && count($formData['instrumen']) == count($formData['instrumen2'])) {
                 $instrumenModel->where('document_id', $data['document_id'])->delete();
                 if (empty($formData['body_id_instrument'])) {
@@ -970,7 +912,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
 
             // Process Examination
-            $examinationModel = new ExaminationModel();
+            $examinationModel = new ExaminationDetailModel();
 
             if (isset($formData['vitailsign']) && is_array($formData['vitailsign']) && isset($formData['vitailsign']['vs_status_id']) && in_array($formData['vitailsign']['vs_status_id'], ['1', '4', '5', '10'])) {
                 $vitalsignData = [];
@@ -993,14 +935,15 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $vitalsignData['cardiovasculer'] = $formData['gen0022_02'] ?? null;
                 $vitalsignData['respiration'] = $formData['gen0022_03'] ?? null;
 
+
                 if (isset($vitalsignData['pasien_diagnosa_id'])) {
-                    // $existingVitalsignEntry = $examinationModel->where('pasien_diagnosa_id', $vitalsignData['pasien_diagnosa_id'])->where('account_id', '10')->first();
-                    $existingVitalsignEntry = $examinationModel->where('pasien_diagnosa_id', $vitalsignData['pasien_diagnosa_id'])->where('body_id', $vitalsignData['body_id'])->where('account_id', '10')->first();
-                    // echo '<pre>';
-                    // var_dump($vitalsignData);
-                    // die();
+
+                    $existingVitalsignEntry = $this->lowerKey($db->query("select * from EXAMINATION_DETAIL 
+                    where EXAMINATION_DETAIL.document_id = '" . $vitalsignData['pasien_diagnosa_id'] . "' AND examination_detail.body_id = '" . $vitalsignData['body_id'] . "' AND examination_detail.account_id = 10 order by examination_detail.EXAMINATION_DATE desc
+                    ")->getRowArray() ?? []);
+
                     if (!empty($existingVitalsignEntry)) {
-                        $updateVitalsignResult = $examinationModel->where('body_id', $vitalsignData['body_id'])
+                        $updateVitalsignResult = $examinationModel->where('body_id', $existingVitalsignEntry['body_id'])
                             ->set($vitalsignData)
                             ->update();
 
@@ -1009,6 +952,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         }
                     } else {
                         $vitalsignData['body_id'] = $this->get_bodyid();
+                        $vitalsignData['document_id'] = $vitalsignData['pasien_diagnosa_id'];
 
                         $insertVitalsignResult = $examinationModel->insert($vitalsignData);
 
@@ -1208,9 +1152,20 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $db->transStart();
         try {
             // Update or insert data in PatientOperationCheck
+            $existData = $this->lowerKey($patientOperationCheckModel->where('document_id', $data['document_id'])->first() ?? []);
+
             if ($db->table('ASSESSMENT_OPERATION_CHECK')->where('document_id', $data['document_id'])->countAllResults() > 0) {
+                $data['examination_date'] = $existData['examination_date'];
+                $data['modified_date'] =  $existData['modified_date'];
+
                 $patientOperationCheckModel->update($data['document_id'], $data);
+                if (!$patientOperationCheckModel->update($data['document_id'], $data)) {
+                    // Handle update error
+                    throw new Exception('Error updating record: ' . implode(", ", $patientOperationCheckModel->errors()));
+                }
             } else {
+                $data['examination_date'] = $data['modified_date'] = $date;
+                $data['modified_by'] = user()->username;
                 $patientOperationCheckModel->insert($data);
             }
 
@@ -1384,16 +1339,16 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         }
 
         if (isset($data['start_operation'])) {
-            $data['start_operation'] = date('Y-m-d H:i:s', strtotime($data['start_operation']));
+            $data['start_operation'] = $this->formatDateString($data['start_operation']);
         }
         if (isset($data['end_operation'])) {
-            $data['end_operation'] = date('Y-m-d H:i:s', strtotime($data['end_operation']));
+            $data['end_operation'] = $this->formatDateString($data['end_operation']);
         }
         if (isset($data['modified_date'])) {
-            $data['modified_date'] = date('Y-m-d H:i:s', strtotime($data['modified_date']));
+            $data['modified_date'] = $this->formatDateString($data['modified_date']);
         }
         if (isset($data['patologi_date'])) {
-            $data['patologi_date'] = date('Y-m-d H:i:s', strtotime($data['patologi_date']));
+            $data['patologi_date'] = $this->formatDateString($data['patologi_date']);
         }
 
 
@@ -1633,20 +1588,24 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $bloodmodel->where('document_id', $body_id)->delete();
 
             foreach ($bloodblood_request as $key => $value) {
+                // $existBlood = $this->lowerKey($db->query("select * from blood_request where blood_request =  '" . $bloodrequest_date[$key] . "'")->getResultArray() ?? []);
                 $datablood = [
                     'org_unit_code' => $bloodorg_unit_code[$key],
                     'blood_request' => $bloodblood_request[$key],
-                    'no_registration' => '021732',
+                    'no_registration' => $bloodno_registration[$key],
                     'visit_id' => $bloodvisit_id[$key],
                     'trans_id' => $bloodtrans_id[$key],
                     'document_id' => $body_id,
                     'request_date' => $bloodrequest_date[$key],
-                    'blood_type_id' => $blood_type[$key], //new 12/10/2024
-                    'using_time' => $usingtime[$key], //new 12/10/2024
+                    'blood_type_id' => $blood_type_id[$key],
+                    'using_time' => $usingtime[$key],
                     'blood_usage_type' => $bloodblood_usage_type[$key],
                     'blood_quantity' => $bloodblood_quantity[$key],
                     'measure_id' => $bloodmeasure_id[$key],
-                    'descriptions' => $blooddescriptions[$key]
+                    'descriptions' => $bloodtransfusion_start[$key],
+                    'transfusion_start' => @$bloodtransfusion_start[$key] ?? null,
+                    'transfusion_end' => @$bloodtransfusion_end[$key] ?? null,
+                    'reaction_desc' => @$bloodreaction_desc[$key] ?? null,
                 ];
                 $bloodmodel->insert($datablood);
             }
@@ -1715,7 +1674,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
 
             if (isset($formData['vitailsign']) && is_array($formData['vitailsign']) && !empty($formData['vitailsign']) && isset($formData['vitailsign']['vs_status_id'])  && in_array($formData['vitailsign']['vs_status_id'], ['1', '4', '5', '10'])) {
-                $examinationModel = new ExaminationModel();
+                $examinationModel = new ExaminationDetailModel();
 
                 if (isset($formData['vitailsign']) && is_array($formData['vitailsign'])) {
                     $vitalsignData = [];
@@ -1736,12 +1695,21 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $vitalsignData['general_condition'] = $formData['gen0022_01'] ?? null; //keadaan mmum
                     $vitalsignData['cardiovasculer'] = $formData['gen0022_02'] ?? null;
                     $vitalsignData['respiration'] = $formData['gen0022_03'] ?? null;
+                    $vitalsignData['document_id'] = $vitalsignData['pasien_diagnosa_id'] ?? null;
+
 
                     if (isset($vitalsignData['pasien_diagnosa_id'])) {
 
-                        $existingVitalsignEntry = $examinationModel->where('pasien_diagnosa_id', $vitalsignData['pasien_diagnosa_id'])->where('body_id', $vitalsignData['body_id'])->where('account_id', '11')->first();
+                        $existingVitalsignEntry = $this->lowerKey($db->query("
+                        select * from EXAMINATION_DETAIL 
+                        where EXAMINATION_DETAIL.document_id = '" . $vitalsignData['pasien_diagnosa_id'] . "' 
+                        AND examination_detail.body_id = '" . $vitalsignData['body_id'] . "' 
+                        AND examination_detail.account_id = 11 
+                        order by examination_detail.EXAMINATION_DATE desc
+                        ")->getRowArray() ?? []);
+
                         if (!empty($existingVitalsignEntry)) {
-                            $updateVitalsignResult = $examinationModel->where('body_id', $vitalsignData['body_id'])
+                            $updateVitalsignResult = $examinationModel->where('body_id', $existingVitalsignEntry['body_id'])
                                 ->set($vitalsignData)
                                 ->update();
 
@@ -1828,36 +1796,36 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         }
 
         if (isset($data['start_operation'])) {
-            $data['start_operation'] = date('Y-m-d H:i:s', strtotime($data['start_operation']));
+            $data['start_operation'] = $this->formatDateString($data['start_operation']);
         }
         if (isset($data['end_operation'])) {
-            $data['end_operation'] = date('Y-m-d H:i:s', strtotime($data['end_operation']));
+            $data['end_operation'] = $this->formatDateString($data['end_operation']);
         }
 
         if (isset($data['modified_date'])) {
-            $data['modified_date'] = date('Y-m-d H:i:s', strtotime($data['modified_date']));
+            $data['modified_date'] = $this->formatDateString($data['modified_date']);
         }
         if (isset($data['start_anesthesia'])) {
-            $data['start_anesthesia'] = date('Y-m-d H:i:s', strtotime($data['start_anesthesia']));
+            $data['start_anesthesia'] = $this->formatDateString($data['start_anesthesia']);
         }
         if (isset($data['end_anesthesia'])) {
-            $data['end_anesthesia'] = date('Y-m-d H:i:s', strtotime($data['end_anesthesia']));
+            $data['end_anesthesia'] = $this->formatDateString($data['end_anesthesia']);
         }
         if (isset($data['observation_date'])) {
-            $data['observation_date'] = date('Y-m-d H:i:s', strtotime($data['observation_date']));
+            $data['observation_date'] = $this->formatDateString($data['observation_date']);
         }
         if (isset($data['surgeryEnd'])) {
-            $data['surgeryEnd'] = date('Y-m-d H:i:s', strtotime($data['surgeryEnd']));
+            $data['surgeryEnd'] = $this->formatDateString($data['surgeryEnd']);
         }
         if (isset($data['surgeryStart'])) {
-            $data['surgeryStart'] = date('Y-m-d H:i:s', strtotime($data['surgeryStart']));
+            $data['surgeryStart'] = $this->formatDateString($data['surgeryStart']);
         }
 
         $db = db_connect();
         $db->transStart();
 
         try {
-            // Uncomment and test if necessary
+
             $model = new AssessmentAnesthesiaModel();
             $existingRecord = $model->where('document_id', $data['document_id'])->first();
 
@@ -1867,9 +1835,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $result = $model->where(['body_id' => $existingRecord['BODY_ID']])
                     ->set($data)
                     ->update();
-                // echo '<pre>';
-                // var_dump($model->error());
-                // die();
+
                 if (!$result) throw new Exception('Failed to update main record.');
                 $message = 'Data updated successfully.';
             } else {
@@ -1881,7 +1847,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
 
             if (isset($formData['vitailsign']) && is_array($formData['vitailsign']) && !empty($formData['vitailsign']) && !empty($formData['vitailsign']['vs_status_id'])) {
-                $examinationModel = new ExaminationModel();
+                $examinationModel = new ExaminationDetailModel();
                 $vitalsignData = [];
                 foreach ($formData['vitailsign'] as $key => $value) {
                     if ($key === 'examination_date') {
@@ -1890,14 +1856,17 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         $vitalsignData[strtolower($key)] = $value;
                     }
                 }
-                $vitalsignData['pasien_diagnosa_id'] = $data['body_id'];
+                $vitalsignData['document_id'] = $data['body_id'];
                 $vitalsignData['account_id'] = '12';
                 $vitalsignData['modified_by'] = user()->username;
                 $vitalsignData['modified_date'] = date("Y-m-d H:i:s");
                 $vitalsignData['examination_date'] = date("Y-m-d H:i:s");
 
-                if (isset($vitalsignData['pasien_diagnosa_id'])) {
-                    $existingVitalsignEntry = $examinationModel->where('pasien_diagnosa_id', $vitalsignData['pasien_diagnosa_id'])->where('account_id', '12')->first();
+                if (isset($vitalsignData['document_id'])) {
+                    // jika hanya 1 data
+                    // $existingVitalsignEntry = $examinationModel->where('document_id', $vitalsignData['document_id'])->where('account_id', '12')->first();
+                    // jika data multiple
+                    $existingVitalsignEntry = $examinationModel->where('document_id', $vitalsignData['document_id'])->where('body_id', $vitalsignData['body_id'])->where('account_id', '12')->first();
 
                     if (!empty($existingVitalsignEntry)) {
                         $vitalsignData['examination_date'] = $existingVitalsignEntry['EXAMINATION_DATE'];
@@ -1921,26 +1890,36 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
 
             if (isset($formData['vitailsign2']) && is_array($formData['vitailsign2']) && !empty($formData['vitailsign2']) && !empty($formData['vitailsign2']['vs_status_id2'])) {
-                $examinationModel = new ExaminationModel();
+                $examinationModel = new ExaminationDetailModel();
                 $vitalsignData2 = [];
                 foreach ($formData['vitailsign2'] as $key => $value) {
-                    // Remove the number 2 from the key names
-                    $newKey = str_replace('2', '', strtolower($key));
+                    // Remove the trailing '2' from the key if present
+                    $newKey = (substr($key, -1) === '2') ? substr($key, 0, -1) : $key;
 
-                    if ($newKey === 'examination_date') {
-                        $vitalsignData2[$newKey] = date('Y-m-d\TH:i:s', strtotime($value));
+                    if (in_array($newKey, ['vs_status_id', 'saturasi', 'temperature_score', 'tension_upper_score', 'tension_below_score', 'nadi_score', 'nafas_score', 'saturasi_score', 'awareness', 'pain', 'lochia', 'general_condition', 'cardiovascular', 'respiration', 'proteinuria'])) {
+                        $vitalsignData[$newKey] = (int)$value;
+                    } elseif (in_array($newKey, ['examination_date', 'modified_date'])) {
+                        $vitalsignData[$newKey] = date('Y-m-d H:i:s', strtotime($value));
+                    } elseif (in_array($newKey, ['temperature', 'tension_upper', 'tension_below', 'nadi', 'nafas', 'weight', 'height', 'arm_diameter', 'oxygen_usage'])) {
+                        $vitalsignData[$newKey] = number_format((float)$value, 2, '.', '');
+                    } elseif (in_array($newKey, ['body_id', 'document_id', 'no_registration', 'visit_id', 'trans_id', 'clinic_id', 'account_id', 'modified_by'])) {
+                        $vitalsignData[$newKey] = (string)$value;
                     } else {
-                        $vitalsignData2[$newKey] = $value;
+                        $vitalsignData[$newKey] = $value;
                     }
+
+                    $vitalsignData2[strtolower($newKey)] = ($newKey === 'examination_date') ? date('Y-m-d H:i:s', strtotime($value)) : $vitalsignData[$newKey];
                 }
-                $vitalsignData2['pasien_diagnosa_id'] = $data['body_id'];
+
+
+                $vitalsignData2['document_id'] = $data['body_id'];
                 $vitalsignData2['account_id'] = '13';
                 $vitalsignData2['modified_by'] = user()->username;
                 $vitalsignData2['modified_date'] = date("Y-m-d H:i:s");
                 $vitalsignData2['examination_date'] = date("Y-m-d H:i:s");
 
-                if (isset($vitalsignData2['pasien_diagnosa_id'])) {
-                    $existingVitalsignEntry2 = $examinationModel->where('pasien_diagnosa_id', $vitalsignData2['pasien_diagnosa_id'])->where('body_id', $vitalsignData2['body_id'])->where('account_id', '13')->first();
+                if (isset($vitalsignData2['document_id'])) {
+                    $existingVitalsignEntry2 = $examinationModel->where('document_id', $vitalsignData2['document_id'])->where('body_id', $vitalsignData2['body_id'])->where('account_id', '13')->first();
 
                     if (!empty($existingVitalsignEntry2)) {
                         $vitalsignData2['examination_date'] = $existingVitalsignEntry2['EXAMINATION_DATE'];
@@ -1959,10 +1938,19 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         // }
                     } else {
                         $vitalsignData2['body_id'] = $this->get_bodyid();
+
                         $ex = $examinationModel->insert($vitalsignData2);
+
                         if (!$ex) {
                             throw new \Exception('Failed to insert vital sign 2');
                         }
+
+                        // if (!$ex) {
+                        //     $dbError = $examinationModel->error(); // Get the error information
+                        //     echo '<pre>';
+                        //     var_dump($dbError); // Display the error details
+                        //     die();
+                        // }
                     }
                 } else {
                     throw new \Exception('Body ID is required.');
@@ -1973,12 +1961,13 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             if (isset($formData['diagnosa']) && is_array($formData['diagnosa'])) {
 
                 $pds = new PasienDiagnosasModel();
-                $pds->where('pasien_diagnosa_id', $formData['body_id'])->delete();
+
+                $pds->where('pasien_diagnosa_id', $formData['pasien_diagnosa_id'])->delete();
                 $diagnosaData = [];
                 foreach ($formData['diagnosa'] as $diagnosis) {
-                    if (is_array($diagnosis) && isset($diagnosis['pasien_diagnosa_id'])) {
+                    if (is_array($diagnosis)) {
                         $diagnosaData[] = [
-                            'pasien_diagnosa_id' => $diagnosis['pasien_diagnosa_id'],
+                            'pasien_diagnosa_id' => $formData['pasien_diagnosa_id'],
                             'diagnosa_id' => $diagnosis['diag_id'],
                             'diagnosa_name' => $diagnosis['diag_name'],
                             'diag_cat' => $diagnosis['diag_cat'],
@@ -1990,8 +1979,11 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         throw new Exception('Invalid diagnosis data format.');
                     }
                 }
+
                 if (!empty($diagnosaData)) {
+
                     $insertPDS = $pds->insertBatch($diagnosaData);
+
                     if (!$insertPDS) {
                         throw new \Exception('Failed to insert diagnosis');
                     }
@@ -2442,6 +2434,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $data[$key] = $formData[$key];
             }
         }
+
+        // var_dump($data);
         $data['examination_date'] = $date;
         $data['modified_date'] = $date;
         $data['modified_by'] = user()->username;
@@ -2490,7 +2484,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $formData = $this->request->getJSON();
 
         $anesthesiaModel = new AssessmentAnesthesiaModel();
-        $examinationModel = new ExaminationModel();
+        $examinationDetailModel = new ExaminationDetailModel();
 
         $anesthesiaData = $anesthesiaModel->where('document_id', $formData->document_id)->first();
 
@@ -2508,10 +2502,10 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         $visitId = $anesthesiaData['visit_id'];
 
-        $examinationQuery = $examinationModel->where('visit_id', $visitId)
+        $examinationQuery = $examinationDetailModel->where('visit_id', $visitId)
             ->groupStart()
-            ->where('pasien_diagnosa_id', $anesthesiaData['body_id'])
-            ->orWhere('pasien_diagnosa_id', $anesthesiaData['document_id'])
+            ->where('document_id', $anesthesiaData['body_id'])
+            ->orWhere('document_id', $formData->document_id)
             ->groupEnd()
             ->where('clinic_id', 'P002')
             ->where('modified_date >=', $startAnesthesia)
@@ -2521,15 +2515,13 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $filter = strtolower($formData->filter);
             if ($filter === 'all') {
                 $examinationQuery->where('account_id >=', 10)
-                    ->where('account_id <=', 15)
-                    ->where('account_id !=', 13);
+                    ->where('account_id <=', 12);
             } else {
                 $examinationQuery->where('account_id', $formData->filter);
             }
         }
 
         $examinationData = $examinationQuery->findAll();
-
         if (!empty($examinationData)) {
             $examinationData = $this->lowerKey($examinationData);
         } else {
@@ -2746,10 +2738,9 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $selectex = $this->lowerKey($db->query("
         select ex.*, 
         c.name_of_clinic, 
-        ea.fullname,
+        '' as fullname,
         gcs.GCS_DESC
-        from examination_info ex 
-        left join employee_all ea on ex.employee_id = ea.employee_id 
+        from examination_detail ex 
         left join clinic c on ex.clinic_id = c.clinic_id 
         left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
         where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' and ex.vs_status_id IN(1,4,5,10) and ex.account_id = '$account_id'
@@ -2763,5 +2754,28 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'examInfo' => $selectex,
             'pasienHistory' => $selecthistory,
         ]);
+    }
+
+    private function formatDateString($dateString)
+    {
+        // Define possible formats
+        $formats = ['d/m/Y H:i', 'Y-m-d H:i', 'd-m-Y H:i', 'm/d/Y H:i'];
+
+        // Attempt to parse the date with each format
+        $date = null;
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $dateString);
+            if ($date !== false) {
+                break; // Exit loop once a valid date is found
+            }
+        }
+
+        // If parsing was successful, return the formatted date
+        if ($date) {
+            return $date->format('Y-m-d H:i');
+        } else {
+            // If no valid date was found, return an error message or false
+            return false; // Or you can return "Invalid date format" or handle the error as needed
+        }
     }
 }

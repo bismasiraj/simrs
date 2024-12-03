@@ -33,7 +33,12 @@ class GiziModel extends Model
         'modified_by',
         'valid_date',
         'valid_user',
-        'valid_pasiem'
+        'valid_pasien',
+        'height',
+        'weight',
+        'weight_ideal',
+        'fa_value',
+        'fs_value',
     ];
 
     protected $useTimestamps = true;

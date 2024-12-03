@@ -650,46 +650,47 @@ foreach ($aValue as $key => $value) {
 
         $.each(examForassessment, function(key, value) {
             var pd = examForassessment[key]
-            if (key == index) {
-                $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                    .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
-                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.anamnase)))
-                    .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                        value.temperature + '°C; ' +
-                        value.nadi + '/menit; ' +
-                        value.tension_upper + 'mmHg; ' +
-                        value.tension_below + 'mmHg; ' +
-                        value.saturasi + 'SpO2%; ' +
-                        value.nafas + '/menit; ' +
-                        value.arm_diameter + 'cm; ')))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                )
-                $('html, body').animate({
-                    scrollTop: 0
-                }, 800);
-            } else {
-                $("#assessmentKeperawatanHistoryBody").append($("<tr>")
-                    .append($("<td>"))
-                    .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
-                    .append($("<td>").append($("<b>").html(value.name_of_clinic)))
-                    .append($("<td>").append($("<b>").html(value.anamnase)))
-                    .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
-                        value.temperature + '°C; ' +
-                        value.nadi + '/menit; ' +
-                        value.tension_upper + 'mmHg; ' +
-                        value.tension_below + 'mmHg; ' +
-                        value.saturasi + 'SpO2%; ' +
-                        value.nafas + '/menit; ' +
-                        value.arm_diameter + 'cm; ')))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($("<b>").html()))
-                    .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
-                )
-            }
+            if (value.account_id == '2')
+                if (key == index) {
+                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
+                        .append($("<td>").append($("<b>").append('<i class="mdi mdi-arrow-collapse-right" style="font-size: large"></i>')))
+                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
+                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                        .append($("<td>").append($("<b>").html(value.anamnase)))
+                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
+                            value.temperature + '°C; ' +
+                            value.nadi + '/menit; ' +
+                            value.tension_upper + 'mmHg; ' +
+                            value.tension_below + 'mmHg; ' +
+                            value.saturasi + 'SpO2%; ' +
+                            value.nafas + '/menit; ' +
+                            value.arm_diameter + 'cm; ')))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
+                    )
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 800);
+                } else {
+                    $("#assessmentKeperawatanHistoryBody").append($("<tr>")
+                        .append($("<td>"))
+                        .append($("<td>").append($("<b>").html(formatedDatetimeFlat(value.examination_date))))
+                        .append($("<td>").append($("<b>").html(value.name_of_clinic)))
+                        .append($("<td>").append($("<b>").html(value.anamnase)))
+                        .append($("<td>").append($("<b>").html('BB: ' + value.weight + 'Kg; TB: ' + value.height + 'cm; ' +
+                            value.temperature + '°C; ' +
+                            value.nadi + '/menit; ' +
+                            value.tension_upper + 'mmHg; ' +
+                            value.tension_below + 'mmHg; ' +
+                            value.saturasi + 'SpO2%; ' +
+                            value.nafas + '/menit; ' +
+                            value.arm_diameter + 'cm; ')))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($("<b>").html()))
+                        .append($("<td>").append($('<button class="btn btn-success" onclick="fillDataArp(' + key + ')">').html("Lihat")))
+                    )
+                }
         })
         vsStatusId = [2, 7];
 

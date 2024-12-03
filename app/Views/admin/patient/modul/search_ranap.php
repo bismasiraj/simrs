@@ -229,6 +229,7 @@
                         <th>Rujukan dari/Tgl Masuk s/d Tgl Keluar</th>
                         <th>No Tgl Lahir - Umur</th>
                         <th>Ditagihkan ke Kelas / Hak Kelas</th>
+                        <th>Ranap Bersama</th>
                     </tr>
                 </thead>
                 <tbody id="bodydata2" class="table-group-divider">
@@ -345,7 +346,7 @@
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="akomodasiView" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+<div id="akomodasiView" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -870,7 +871,7 @@
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="handoverModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyRajalModal" aria-hidden="true">
+<div id="handoverModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content rounded-4">
             <div class="modal-header">
@@ -1027,3 +1028,184 @@
         </div><!-- /.modal-content rounded-4 -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div id="historyCpptList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="historyCpptList" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0">Pilih sesi kunjungan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addSessionRanap" class="box-tab-tools text-center mb-4"></div>
+                <div class="d-flex mb-3">
+                    <button type="button" class="btn btn-sm btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#raberModal" id="btnRaberModal"><i class="fas fa-people-carry"></i> Rawat Bersama</button>
+                </div>
+                <div id="loadingHistoryrajal"></div>
+                <table id="historyCpptTable" class="table table-bordered table-striped table-centered table-hover" data-export-title="<?= lang('Word.patient_list'); ?>">
+                    <thead class="table-primary">
+                        <tr>
+                            <th class="text-center" style="width: 10%;">Tanggal & Jam</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Petugas</th class="text-center">
+                            <th class="text-center" colspan="6" style="width: 70%;">SOAP</th class="text-center">
+                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                        </tr>
+                    </thead>
+                    <tbody id="historyCpptBody" class="table-group-divider">
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.modal-content rounded-4 -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="raberModal" tabindex="-1" aria-labelledby="childModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="childModalLabel">Dokter Konsultasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 75vh; overflow-y: auto;">
+                <form action="" class="row" method="post" id="formRaberRanap">
+                    <input type="hidden" name="visit_id" id="raber_visit_id">
+                    <input type="hidden" name="employee_id" id="raber_employee_id">
+                    <input type="hidden" name="doctor" id="raber_doctor">
+                    <input type="hidden" name="specialist_type_id" id="raber_specialist_type_id">
+                    <div class="col-6" id="left_col-raber">
+                        <div class="form-group mb-3">
+                            <label for="select_doctor_to" class="form-label fw-bold mb-1">DPJP To</label>
+                            <select id="select_doctor_to" class="form-select" name="employee_id_to" onchange="showdate(this.value)">
+                                <?php if (!isset($roles['11'])) { ?>
+                                <?php } ?>
+                                <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
+                                    <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
+                                <?php
+                                } else {
+                                ?>
+                                    <?php $dokterlist = array();
+                                    foreach ($dokter as $key => $value) {
+                                        foreach ($value as $key1 => $value1) {
+                                            $dokterlist[$key1] = $value1;
+                                        }
+                                    }
+                                    asort($dokterlist);
+                                    ?>
+                                    <?php foreach ($dokterlist as $key => $value) { ?>
+                                        <option value="<?= $key; ?>"><?= $value; ?></option>
+                                <?php }
+                                } ?>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="select_department_ranap" class="form-label fw-bold mb-1">Department To</label>
+                            <select id="select_department_ranap" class="form-select" name="specialist_type_id_to" autocomplete="off">
+
+                            </select>
+
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="select_consul_type" class="form-label fw-bold mb-1">Consultation Type</label>
+                            <select name="consul_type" id="select_consul_type" class="form-select">
+                                <option value="1">Konsulan</option>
+                                <option value="2">Rawat Bersama</option>
+                                <option value="3">Rawat Alih</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="consultation_date_raber" class="form-label fw-bold mb-1">Consultation Date</label>
+                            <input type="date" name="document_date" id="consultation_date_raber" class="form-control bg-white dateflatpickr-ranap">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="consultation_desc_raber" class="form-label fw-bold mb-1">Consultation Desc</label>
+                            <textarea name="description" id="consultation_desc_raber" class="form-control quill-editor-raber" rows="5"></textarea>
+                        </div>
+                        <button type="button" id="formsignarmraber" name="signrm" onclick="signarm()" data-loading-text="processing" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                    </div>
+                    <div class="col-6" id="right_col_raber">
+                        <div class="form-group mb-3">
+                            <label for="response_date_raber" class="form-label fw-bold mb-1">Response Date </label>
+                            <input type="date" name="respon_date" id="response_date_raber" class="form-control bg-white dateflatpickr-ranap">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="response_desc_raber" class="form-label fw-bold mb-1">Response Desc</label>
+                            <textarea name="description_to" id="response_desc_raber" class="form-control quill-editor-raber" rows="5"></textarea>
+                        </div>
+                        <button type="button" id="formsignarmraber2" name="signrm" onclick="signarm()" data-loading-text="processing" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btn-cancel-raber" hidden>Batalkan</button>
+                <button type="button" class="btn btn-primary" id="btn-save-raber"><i class="fas fa-save"></i> Simpan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade show" id="digitalSignModal" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content sign-modal-content rounded-4 shadow-lg">
+            <div class="modal-header sign-modal-header">
+                <h5 class="modal-title" id="myModalLabel">Digital Signature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div><!--./modal-header-->
+            <div class="modal-body sign-modal-body pt-4 pb-4">
+                <form id="digitalSignForm" action="" method="post">
+                    <input type="hidden" name="csrf_test_name" value="8caeffc8cc53af393bf38c6fcee31d82"> <input type="hidden" name="valid_date" id="signvalid_date" value="armvalid_date">
+                    <input type="hidden" name="valid_user" id="signvalid_user" value="armvalid_user">
+                    <input type="hidden" name="valid_pasien" id="signvalid_pasien" value="armvalid_pasien">
+                    <input type="hidden" name="tombolsave" id="signtombolsave" value="formsavearmbtn">
+                    <input type="hidden" name="formId" id="signform" value="formaddarm">
+                    <input type="hidden" name="container" id="signcontainer" value="arm">
+                    <input type="hidden" name="docs_type" id="signdocs_type" value="2"> <!-- tipe dokumen per modul, nanti mulai nya dari 7 -->
+                    <input type="hidden" name="sign_id" id="signsign_id" value="202411291452130129a46"> <!-- body id dari dokumen -->
+                    <!-- <input type="hidden" name="user_type" id="signuser_type"> -->
+                    <input type="hidden" name="sign_ke" id="signsign_ke" value="1"> <!-- statis 1 -->
+                    <input type="hidden" name="title" id="signtitle" value="ASESMEN MEDIS ANAK RAWAT INAP"> <!-- Judul dokumen -->
+                    <input type="hidden" name="sign_path" id="signsign_path" value="faris: 2024-11-29 15:57">
+
+                    <div id="signmedis">
+                        <div id="displayuser_id" class="form-group" style="">
+                            <label for="user_id">Username</label>
+                            <input id="user_id" type="text" class="form-control" name="user_id" placeholder="Username">
+                        </div>
+                        <div id="displaypassword" class="form-group" style="">
+                            <label for="password">Password</label>
+                            <input id="password" type="password" name="password" class="form-control" placeholder="Password">
+                        </div>
+                        <div id="displaysignnik" class="form-group" style="display: none;">
+                            <label for="signnik">NIK</label>
+                            <input id="signnik" type="text" class="form-control" name="nik" placeholder="NIK">
+                        </div>
+                        <div id="displaysignname" class="form-group" style="display: none;">
+                            <label for="signname">Nama</label>
+                            <input id="signname" type="text" class="form-control" name="name" placeholder="Nama Wali">
+                        </div>
+                        <div id="displaysignno_registration" class="form-group" style="display: none;">
+                            <label for="signno_registration">Nomor RM</label>
+                            <input id="signno_registration" type="text" class="form-control" name="no_registration" placeholder="Nomor RM">
+                        </div>
+                        <div id="displaysigndatepasien" class="form-group" style="display: none;">
+                            <label for="signdatepasien">Tanggal Lahir (YYYYMMDD)</label>
+                            <input id="signdatepasien" type="text" name="datebirth" class="form-control" placeholder="YYYYMMDD">
+                        </div>
+                        <div id="displayttd" class="col-xl-12 col-lg-12 col-md-12 text-center mt-4" style="display: none;">
+                            <canvas id="canvas" style="border: 1px solid #000;" width="300" height="300"></canvas>
+                            <input type="hidden" name="tandatangansign" id="tandatangansign">
+                            <div class="col-md-12 col-xm-12 m-1 text-center">
+                                <button id="openttdmodal" class="btn btn-secondary" type="button"> Ubah TTD</button>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary btn-block">submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

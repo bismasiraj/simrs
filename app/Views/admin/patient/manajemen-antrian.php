@@ -175,8 +175,11 @@ const getDataAntrian = () => {
 
 const renderTabelsAntrian = (data) => {
     let result = "";
+    let isFirstLoketPendaftaran = true;
 
-    data?.data?.map(item => {
+    data?.data?.forEach(item => {
+        const isLoketPendaftaran = item.display_room.includes("LOKET PENDAFTARAN");
+
         const clinicOptions = data.poli.map(poli =>
             `<option value="${poli.clinic_id}" ${item?.clinic_id === poli.clinic_id ? 'selected' : ''} data-clinic-name="${poli.name_of_clinic}">
                 ${poli.name_of_clinic}
@@ -195,21 +198,28 @@ const renderTabelsAntrian = (data) => {
             </option>`
         ).join('');
 
+        const disableClinicAndDoctor = isLoketPendaftaran;
+        const disableDisplayIp = isLoketPendaftaran && !isFirstLoketPendaftaran;
+
+        if (isLoketPendaftaran && isFirstLoketPendaftaran) isFirstLoketPendaftaran = false;
+
         result += `<tr>
                         <td>
                             <input type="hidden" name="display_id" value="${item.display_id}" />
-                            ${item?.display_room}
+                            ${item.display_room}
                         </td>
                         <td>
-                            <select class="form-select" id="clinicSelect_${item?.clinic_id}" name="clinic_id" onchange="updateDoctors(this)">
+                            <select class="form-select" id="clinicSelect_${item?.clinic_id}" name="clinic_id" onchange="updateDoctors(this)" ${disableClinicAndDoctor ? 'disabled' : ''}>
                                 ${selectOptions}
                                 ${clinicOptions}
                             </select>
                             <input type="hidden" name="name_of_clinic" id="clinic_name_${item?.clinic_id}" value="${item.name_of_clinic ?? ''}" />
                         </td>
-                        <td><input name="display_ip" id="display_ip_${item?.clinic_id}" class="form-control" value="${item.display_ip ?? ""}"></td>
                         <td>
-                            <select class="form-select" id="doctorSelect_${item?.clinic_id}" onchange="updateDoctorName(this)" name="fullname">
+                            <input name="display_ip" id="display_ip_${item?.clinic_id}" class="form-control" value="${item.display_ip ?? ""}" ${disableDisplayIp ? 'readonly' : ''}>
+                        </td>
+                        <td>
+                            <select class="form-select" id="doctorSelect_${item?.clinic_id}" onchange="updateDoctorName(this)" name="fullname" ${disableClinicAndDoctor ? 'disabled' : ''}>
                                 <option value="">Pilih Dokter</option>
                                 ${doctorOptions}
                             </select>
@@ -217,7 +227,7 @@ const renderTabelsAntrian = (data) => {
                             <input type="hidden" name="employee_code" id="employee_code_${item?.clinic_id}" value="${item.employee_code ?? ''}" />
                         </td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm checkbox-toggle pull-right w-100 form2btn">
+                            <button type="button" class="btn btn-outline-primary btn-sm checkbox-toggle pull-right w-100 form2btn" ${disableDisplayIp ? 'disabled' : ''}>
                                 <i class="fas fa-check"></i> Save
                             </button>
                         </td>
@@ -227,6 +237,10 @@ const renderTabelsAntrian = (data) => {
     $("#bodydata-antrian").html(result);
     setupForm2BtnListeners();
 };
+
+
+
+
 const updateDoctors = (selectElement) => {
     const selectedClinicId = selectElement.value;
     const row = $(selectElement).closest('tr');
@@ -284,7 +298,6 @@ const setupForm2BtnListeners = () => {
             name_of_clinic
         }, 'admin/antrian/updateAntrian', (res) => {
             $('.form2btn').prop('disabled', false).html('<i class="fas fa-check"></i> Save');
-
             if (res?.respon === true) {
                 successSwal(res?.message);
             } else {

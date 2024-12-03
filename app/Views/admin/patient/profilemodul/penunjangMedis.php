@@ -84,7 +84,6 @@ $result = array_change_key_case($result);
                                         <table class="table table-striped table-hover">
                                             <thead class="table-primary" style="text-align: center;">
                                                 <tr>
-                                                    <th class="text-center" style="width: 10%;">Tanggal</th class="text-center">
                                                     <th class="text-center" style="width: 10%;">Kode</th class="text-center">
                                                     <th class="text-center" style="width: auto;">Nama Tindakan</th class="text-center">
                                                     <th class="text-center" style="width: 1%;">Hasil</th class="text-center">
@@ -106,7 +105,7 @@ $result = array_change_key_case($result);
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label for="">Nomor Sesi</label>
-                                                        <select id="notaNoPenunjangMedis" class="form-select" style="width: 100%">
+                                                        <select id="notaNoPenunjangMedis" class="form-control" style="width: 100%">
                                                             <option value="%">Semua</option>
                                                         </select>
                                                     </div>
@@ -173,10 +172,10 @@ $result = array_change_key_case($result);
                 <h3 class="modal-title" id="modalPenunjangMedisLabel">Hasil Penunjang Medis</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="ModalBodyPenunjangMedis" style="height: 75vh; overflow-y: auto;">
+            <div class="modal-body" id="ModalBodyPenunjangMedis" style="max-height: 670px !important; overflow-y: auto;">
                 <form action="" id="formModalPenunjang" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="name_of_pasien" value="<?= $visit['diantar_oleh']; ?>">
-                    <input type="hidden" name="age" value="<?= $visit['age']; ?>">
+                    <input type="hidden" name="age" value="<?= $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr'; ?>">
                     <input type="hidden" name="contact_address" value="<?= $visit['visitor_address']; ?>">
                     <input type="hidden" name="gendername" value="<?= $visit['gendername']; ?>">
                     <input type="hidden" name="no_registration" value="<?= $visit['no_registration']; ?>">
@@ -213,7 +212,7 @@ $result = array_change_key_case($result);
                         <tr>
                             <td width="20%">Umur</td>
                             <td width="1%">:</td>
-                            <td><?= $visit['age']; ?></td>
+                            <td><?= $visit['ageyear'] . 'th ' . $visit['agemonth'] . 'bln ' . $visit['ageday'] . 'hr'; ?></td>
                             <td>LP: <?= $visit['gendername']; ?></td>
                             <td width="20%">Tanggal</td>
                             <td width="1%">:</td>

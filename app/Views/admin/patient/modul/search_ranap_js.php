@@ -12,10 +12,195 @@
     var jsonBed;
     var sAkom;
     var caraKeluar;
+    var is_keluar_id;
+
+    const quillEditor = document.querySelectorAll('.quill-editor-raber');
+
+    quillEditor.forEach(function(editor, index) {
+        new Quill(editor, {
+            theme: 'snow',
+        });
+    });
+    flatpickr('.dateflatpickr-ranap', {
+        dateFormat: 'Y-m-d h:i',
+        defaultDate: moment().format('YYYY-MM-DD HH:mm'),
+        enableTime: true,
+        time_24hr: true,
+        onChange: function(selectedDates, dateStr, instance) {
+            console.log(selectedDates);
+        }
+    });
+    $('#historyCpptList').on('shown.bs.modal', function() {
+        if (is_keluar_id != 0) {
+            $('#btnRaberModal').hide();
+        } else {
+            $('#btnRaberModal').show();
+        }
+    });
+    $('#btnRaberModal').off().on('click', function(e) {
+
+        let visit_id = $(this).attr('visit_id');
+        let employee_id = <?= json_encode(user()->employee_id); ?>;
+        postData({
+            employee_id: employee_id,
+            visit_id: visit_id
+        }, 'admin/PasienKonsulan/getPasienKonsulan', (res) => {
+
+            if (res.respon) {
+                removeAttrDisabledAndReset();
+                if (res.data.body_id) {
+                    $('#right_col_raber').removeAttr('hidden');
+
+                    $('#select_doctor_to').val(res.data.employee_id_to)
+                    $('#select_consul_type').val(res.data.consul_type)
+                    $('#consultation_date_raber').val(res.data.document_date)
+                    $('#consultation_desc_raber').val(res.data.description)
+
+                    $('#response_date_raber').val(res.data.respon_date)
+                    $('#response_desc_raber').val(res.data.description_to)
+
+                    initializeSpecialistType('select_department_ranap', 'raberModal', res?.data.specialist_type_id_to)
+                    if (res.data.employee_id == '41') {
+                        $('#response_date_raber').attr('disabled', true)
+                        $('#response_desc_raber').attr('disabled', true)
+                        $('#btn-save-raber').attr('hidden', res.data.respon_date);
+                        $('#btn-cancel-raber').attr('hidden', res.data.respon_date);
+                    }
+                    if (res.data.employee_id_to == '41') {
+                        $('#select_doctor_to').attr('disabled', true)
+                        $('#select_department_ranap').attr('disabled', true)
+                        $('#select_consul_type').attr('disabled', true)
+                        $('#consultation_date_raber').attr('disabled', true)
+                        $('#consultation_desc_raber').attr('disabled', true)
+                    }
+                    deleteRaber({
+                        body_id: res?.data.body_id
+                    })
+
+                } else {
+                    $('#btn-cancel-raber').attr('hidden', true);
+                    $('#right_col_raber').attr('hidden', true);
+                    $('#raber_doctor').val(res?.data.doctor);
+                    $('#raber_employee_id').val(res?.data.employee_id);
+                    $('#raber_specialist_type_id').val(res?.data.specialist_type_id);
+                    initializeSpecialistType('select_department_ranap', 'raberModal')
+                }
+
+            }
+        });
+    })
+
+    const deleteRaber = (props) => {
+        $('#btn-cancel-raber').off().on('click', function(e) {
+            const id = props?.body_id;
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success ms-2",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+                title: "Apa anda yakin?",
+                text: "Anda tidak akan dapat mengembalikannya!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Ya, Hapus!",
+                cancelButtonText: "Batal!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    postData({
+                        body_id: id
+                    }, 'admin/PasienKonsulan/delete', (res) => {
+
+                        if (res.respon) {
+                            successSwal(res.message)
+                            $("#formRaberRanap")[0].reset()
+                            $("#raberModal").modal("hide")
+                        } else {
+                            errorSwal(res.message)
+                        }
+
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Dibatalkan",
+                        text: "File Anda aman :)",
+                        icon: "error"
+                    });
+                }
+            });
+        })
+    }
+
+    function signarm() {
+        // $('#digitalSignModal').css('display', 'block');
+    }
+
+    function removeAttrDisabledAndReset() {
+        $('#select_doctor_to').removeAttr('disabled')
+        $('#select_department_ranap').removeAttr('disabled')
+        $('#select_consul_type').removeAttr('disabled')
+        $('#consultation_date_raber').removeAttr('disabled')
+        $('#consultation_desc_raber').removeAttr('disabled')
+        $('#response_date_raber').removeAttr('disabled')
+        $('#response_desc_raber').removeAttr('disabled')
+
+        $('#formRaberRanap').trigger('reset')
+    }
+
+    function initializeSpecialistType(theid, modalParent, data = null) {
+        let initialvalue = data;
+        postData({
+
+        }, 'admin/PasienKonsulan/getSpecialistType', (result) => {
+            $("#" + theid).select2({
+                theme: "bootstrap-5",
+                // tags: true,
+                dropdownParent: '#' + modalParent,
+                placeholder: "Pilih Departement",
+                allowClear: true,
+                data: result?.data
+            });
+
+            if (initialvalue != null) {
+                $("#" + theid).val(initialvalue).trigger('change');
+            }
+
+        });
+
+    }
+
+
+    $('#btn-save-raber').off().on('click', function(e) {
+        let formData = document.querySelector('#formRaberRanap');
+        let dataSend = new FormData(formData);
+        let jsonObj = {};
+
+        dataSend.forEach((value, key) => {
+            jsonObj[key] = value;
+        });
+        let selectedDoctorTo = $('#select_doctor_to option:selected').text();
+        jsonObj['doctor_to'] = selectedDoctorTo;
+
+        postData(jsonObj, 'admin/PasienKonsulan/insert', (res) => {
+
+            if (res.respon) {
+                successSwal(res.message)
+                $("#formRaberRanap")[0].reset()
+                $("#raberModal").modal("hide")
+            }
+        });
+
+    })
 
     $("#form2").on('submit', (function(e) {
 
         e.preventDefault();
+        is_keluar_id = new FormData(this).getAll('keluar_id')[0];
         $("#form2btn").html('<i class="spinner-border spinner-border-sm"></i>')
         // initDatatable('ajaxlist', 'admin/patient/getopddatatable', new FormData(this), [], 100);
         $.ajax({
@@ -27,15 +212,33 @@
             cache: false,
             processData: false,
             success: function(data) {
+
                 tableRanap.clear().draw()
                 data.data.forEach((element, key) => {
+                    let consul_type = element[8];
+                    let color = '';
+                    if (consul_type === 1) {
+                        element[8] = '<i class="fas fa-user-md" style="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">KONSULAN</p>';
+                        color = '#fff3cd';
+                    } else if (consul_type === 2) {
+                        element[8] = '<i class="fas fa-people-carry" styl="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT BERSAMA</p>';
+                        color = '#d1e6dd';
+                    } else if (consul_type === 3) {
+                        element[8] = '<i class="fas fa-people-arrows" sty="font-size: 20px !important;"></i> <p style="font-size: 10px !important" class="fw-bold mb-0">RAWAT ALIH</p>';
+                        color = '#cfe2ff';
+                    } else {
+                        element[8] = '-';
+                    }
                     // stringcolumn += '<tr class="table tablecustom-light">';
                     // element.forEach((element1, key1) => {
                     //     stringcolumn += "<td>" + element1 + "</td>";
                     // });
                     // stringcolumn += '</tr>'
 
-                    tableRanap.row.add(element).draw()
+                    let rowNode = tableRanap.row.add(element).draw().node();
+                    if (consul_type) {
+                        rowNode.style.backgroundColor = color;
+                    }
                 });
                 $("#form2btn").html('<i class="fa fa-search"></i> Cari')
             },
@@ -1769,4 +1972,185 @@
     $("#afterHandoverCheckAll").on("change", function(e) {
         checkAllAfterHandover($(this).prop("checked"))
     })
+</script>
+
+<script>
+    const listSesi = (visit, norm, base64json) => {
+        $('#raber_visit_id').val(visit)
+        $('#btnRaberModal').attr('visit_id', visit);
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'trans_id': '',
+                'nomor': norm,
+                'isrj': 0,
+                'norujukan': '',
+                'top': 100,
+                'episode': ''
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            beforeSend: function() {
+                $("#historyCpptList").modal("show")
+                $("#addSessionRanap").html(`<a data-toggle="modal" onclick="redirectToProfileBySession('${visit}','${base64json}')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>`)
+                $("#historyCpptBody").html(loadingScreen())
+
+                $("#cpptDivForm").hide()
+                getLoadingscreen("contentCppt", "loadContentCppt")
+                getLoadingscreen("contentAssessmentPerawat", "loadContentAssessmentPerawat")
+                $("#cpptBody").html(loadingScreen())
+                $("#vitalSignBody").html(loadingScreen())
+            },
+            processData: false,
+            success: function(data) {
+                $("#historyCpptBody").html("")
+                let examForassessment = data.examInfo
+
+                if (examForassessment.length > 0) {
+                    $.each(examForassessment, function(key, value) {
+                        if (value.account_id == 3) { //} || value.account_id == 4) {
+                            let pd = examForassessment[key]
+                            addRowCPPT(value, key, base64json)
+                        }
+                    })
+                }
+
+
+                fillRiwayatArp()
+            },
+            error: function() {
+                $("#cpptBody").html(tempTablesNull())
+                $("#vitalSignBody").html(tempTablesNull())
+            }
+        });
+    }
+
+    const redirectToProfileBySession = (visit, base64json, body_id = null) => {
+        if (body_id == null)
+            window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json, '_blank');
+        else
+            window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json + '/' + body_id, '_blank');
+
+        $("#historyCpptList").modal("hide")
+    }
+
+    const addRowCPPT = (examselect, key, base64json) => {
+        if (examselect.account_id == "3") {
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='8'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html(''))
+                // .append($("<td>").html('<b>Tekanan Darah</b>'))
+                // .append($("<td>").html('<b>Nadi</b>'))
+                // .append($("<td>").html('<b>Nafas/RR</b>'))
+                // .append($("<td>").html('<b>Temp</b>'))
+                // .append($("<td>").html('<b>SpO2</b>'))
+
+                .append($("<td rowspan='8' colspan='2'>")
+                    .append(examselect.modified_by == 'bismasiraj' ? $('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect.visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id + '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Pilih Sesi</i></button>') : ''
+                    ))
+                // .append($("<td rowspan='8'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+            )
+            // .append($("<tr>")
+            //     .append($("<td>").html(''))
+            //     .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+            //     .append($("<td>").html(examselect.nadi + '/menit'))
+            //     .append($("<td>").html(examselect.nafas + '/menit'))
+            //     .append($("<td>").html(examselect.temperature + '/°C'))
+            //     .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+            // )
+        } else {
+            $("#historyCpptBody").append($("<tr>")
+                .append($("<td rowspan='6'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td>").html(examselect.petugas))
+                .append($("<td colspan='6'>").html(''))
+                // .append($("<td>").html('<b>Tekanan Darah</b>'))
+                // .append($("<td>").html('<b>Nadi</b>'))
+                // .append($("<td>").html('<b>Nafas/RR</b>'))
+                // .append($("<td>").html('<b>Temp</b>'))
+                // .append($("<td>").html('<b>SpO2</b>'))
+
+                .append($("<td rowspan='6'>")
+                    .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                        .append('<button type="button" onclick="copyCppt(' + key + ')" class="btn btn-primary" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
+                            '<button type="button" onclick="editCppt(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'
+                            <?php if (user()->checkRoles(['dokter', 'superuser', 'admin'])) {
+                            ?> + '<button type="button" onclick="verifyCppt(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-signature">Verify</i></button>'
+                            <?php
+                            } ?>
+                        )
+                    ))
+                .append($("<td rowspan='6'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+            )
+
+        }
+
+        if (examselect.account_id == "3") {
+            $("#historyCpptBody")
+                .append($("<tr>")
+                    .append($("<td rowspan='7'>").html(examselect.kode_ppa))
+                    .append($("<td>").html("<b>S</b>"))
+                    .append($("<td colspan='5'>").html(examselect.anamnase))
+                )
+
+                .append($("<tr>")
+                    .append($("<td rowspan=\"3\">").html("<b>O</b>"))
+                    .append($("<td>").html('<b>Tekanan Darah</b>'))
+                    .append($("<td>").html('<b>Nadi</b>'))
+                    .append($("<td>").html('<b>Nafas/RR</b>'))
+                    .append($("<td>").html('<b>Temp</b>'))
+                    .append($("<td>").html('<b>SpO2</b>'))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html(examselect.tension_upper + '/' + examselect.tension_below + 'mmHg'))
+                    .append($("<td>").html(examselect.nadi + '/menit'))
+                    .append($("<td>").html(examselect.nafas + '/menit'))
+                    .append($("<td>").html(examselect.temperature + '/°C'))
+                    .append($("<td>").html(examselect.saturasi + '/SpO2%'))
+                )
+                .append($("<tr>")
+                    // .append($("<td>").html("<b>O</b>"))
+                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>A</b>"))
+                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>P</b>"))
+                    .append($("<td colspan='5'>").html(examselect.instruction))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("Instruksi"))
+                    .append($("<td colspan='5'>").html(examselect.instruction))
+                )
+        } else {
+            $("#historyCpptBody")
+                .append($("<tr>")
+                    .append($("<td rowspan='5'>").html(examselect.kode_ppa))
+                    .append($("<td>").html("<b>S</b>"))
+                    .append($("<td colspan='5'>").html(examselect.anamnase))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>B</b>"))
+                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>A</b>"))
+                    .append($("<td colspan='5'>").html(examselect.teraphy_desc))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("<b>R</b>"))
+                    .append($("<td colspan='5'>").html(examselect.instruction))
+                )
+                .append($("<tr>")
+                    .append($("<td>").html("Instruksi"))
+                    .append($("<td colspan='5'>").html(examselect.instruction))
+                )
+        }
+    }
 </script>

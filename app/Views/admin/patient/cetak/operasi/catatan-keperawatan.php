@@ -1,8 +1,3 @@
-<?php
-// echo "<pre>";
-// var_dump($visit);
-// die();
-?>
 <!doctype html>
 <html lang="en">
 
@@ -158,33 +153,33 @@
                 <tr>
                     <td width="25%">
                         <b>Tekanan Darah</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_atas'] . '/' . @$val['tensi_bawah']; ?> mmHg</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['tensi_atas'] ?? 0 . '/' . @$val['tensi_bawah'] ?? 0; ?> mmHg</p>
                     </td>
                     <td width="25%">
                         <b>Denyut Nadi</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['nadi']; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['nadi'] ?? 0; ?> x/m</p>
                     </td>
                     <td width="25%">
                         <b>Suhu Tubuh</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['suhu']; ?> &degC</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['suhu'] ?? 0; ?> &degC</p>
                     </td>
                     <td width="25%">
                         <b>Respiration Rate</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['respirasi']; ?> x/m</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['respirasi'] ?? 0; ?> x/m</p>
                     </td>
                 </tr>
                 <tr>
                     <td width="25%">
                         <b>Berat Badan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['bb']; ?> kg</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['bb'] ?? 0; ?> kg</p>
                     </td>
                     <td width="25%">
                         <b>Tinggi Badan</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['tb']; ?> cm</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['tb'] ?? 0; ?> cm</p>
                     </td>
                     <td width="25%">
                         <b>SpO2</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['saturasi']; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['saturasi'] ?? 0; ?></p>
                     </td>
                     <td width="25%">
                         <b>BMI</b>

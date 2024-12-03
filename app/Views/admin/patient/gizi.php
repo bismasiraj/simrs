@@ -1,11 +1,32 @@
 <?php
 
-$this->extend('layout/nosidelayout', [
-    'orgunit' => $orgunit,
-    'img_time' => $img_time
-]);
+// $this->extend('layout/nosidelayout', [
+//     'orgunit' => $orgunit,
+//     'img_time' => $img_time
+// ]);
+$this->extend('layout/basiclayout', [
+    'orgunit' => @$orgunit,
+    'img_time' => @$img_time
+])
 
 ?>
+<?php $this->section('cssContent') ?>
+<!-- DataTables -->
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+<!-- Responsive datatable examples -->
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<?php $this->endSection() ?>
+
+<?php $this->section('topbar') ?>
+<?php echo view('layout/partials/topbar.php', [
+    'title' => @$title,
+    'pagetitle' => 'dashboard',
+    'subtitle' => 'dashboard',
+]); ?>
+<?php $this->endSection() ?>
+
 <?php $this->section('content'); ?>
 <div class="content-wrapper">
     <section>
@@ -67,7 +88,7 @@ $this->extend('layout/nosidelayout', [
                                 </div>
                                 <hr>
                                 <form action="" method="post" id="formGiziAll">
-                                    <table class="table table-bordered">
+                                    <table class="table table-bordered" id="tableGiziAll">
                                         <thead class="table-primary">
                                             <tr>
                                                 <th width="1%" rowspan="2" class="text-center align-middle">No.</th>
@@ -218,6 +239,8 @@ $this->extend('layout/nosidelayout', [
 </div>
 <?php $this->endSection(); ?>
 <?php $this->section('jsContent'); ?>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function() {
         let bangsal = '';
@@ -245,15 +268,15 @@ $this->extend('layout/nosidelayout', [
 
     (function() {
 
-
         const arrayBentuk = <?= json_encode($diet_type); ?>;
+
         $.each(arrayBentuk, function(key, value) {
             $("#bentukmultibox2").append(`<div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="dtype` + key + `" value="` + key + `">
-                        <label class="form-check-label" for="dtype` + key + `">
-                            ` + value + `
-                        </label>
-                    </div>`)
+                    <input class="form-check-input" type="checkbox" id="dtype` + key + `" value="` + key + `">
+                    <label class="form-check-label" for="dtype` + key + `">
+                        ` + value + `
+                    </label>
+                </div>`)
         })
 
 
@@ -455,8 +478,6 @@ $this->extend('layout/nosidelayout', [
                                 data_diet: data_diet,
                                 date: date,
                             });
-                            $('#containerTableGizi').html(templateHtml);
-
 
                             actionCetak();
                             validasi();
@@ -525,7 +546,6 @@ $this->extend('layout/nosidelayout', [
                             });
                             $('#containerTableGizi').html(templateHtml);
 
-
                             actionCetak();
                             validasi();
                             actionCetakAll({
@@ -552,20 +572,7 @@ $this->extend('layout/nosidelayout', [
         }
 
         const dataTemplate = (props) => {
-            // console.log(props?.date);
-            // const visit = props.data.map(each => {
-            //     const doc = new DOMParser().parseFromString(each[1], 'text/html');
-            //     const nama_pasien = doc.querySelector('a').textContent;
-            //     const visit_id = doc.querySelector('a').getAttribute('href').split("profileranap/")[1].split('/')[0];
 
-            //     const clinic = each[4].split(/<br>/)[0] ?? '';
-
-            //     return {
-            //         nama_pasien,
-            //         visit_id,
-            //         clinic
-            //     };
-            // });
             const mergedData = props?.data.map(item => {
                 const dietData = props?.data_diet.find(diet => diet.visit_id === item.visit_id);
 
@@ -581,10 +588,16 @@ $this->extend('layout/nosidelayout', [
                 // If both have data or both are null, maintain original order (0)
                 return 0;
             });
+            const table = $('#containerTableGizi').closest('table').DataTable({
+                dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                stateSave: true,
+                "bDestroy": true
+            });
+            table.clear();
             let dataHtml = '';
             mergedData.forEach((item, index) => {
                 const formattedDate = moment(props?.date).format('YYYY-MM-DD')
-                dataHtml += `
+                dataHtml = `
                     <tr>
                         <input type="hidden" name="visit_id[]" value="${item.visit_id}">
                         <td class="text-center align-middle ${item.keluar_id == 1 ? 'bg-danger' : ''}">${index+1}</td>
@@ -637,125 +650,34 @@ $this->extend('layout/nosidelayout', [
                         </td>
                         <td class="text-center align-middle">
                             <div class="btn-group-vertical">
-                                <button type="button" data-value='${item?.data != null ? JSON.stringify(item?.data) : ''}' data-date="${formattedDate}" data-clinic="${item?.clinic}" class="btn btn-sm btn-success btn-cetak" ${item?.data == null || item?.keluar_id == 1 ? 'disabled' : ''}><i class="fas fa-print"></i> Cetak</button>
+                                <button type="button" data-value='${item?.data != null ? JSON.stringify(item?.data) : ''}' data-date="${formattedDate}" data-clinic="${item?.name_of_clinic}" class="btn btn-sm btn-success btn-cetak" ${item?.data == null || item?.keluar_id == 1 ? 'disabled' : ''}><i class="fas fa-print"></i> Cetak</button>
                                 <button type="button" data-value="${item?.thename}" date-pagi="${item?.data?.valid_date_pagi ?? 'null'}" date-siang="${item?.data?.valid_date_siang ?? 'null'}" date-malam="${item?.data?.valid_date_malam ??'null'}" data-date="${formattedDate}" data-visit="${item?.visit_id}" class="btn btn-sm btn-primary btn-validasi" ${item?.data == null || item?.keluar_id == 1 ? 'disabled' : ''}>${item?.data?.valid_date_pagi || item?.data?.valid_date_siang || item?.data?.valid_date_malam ? '<i class="far fa-check-circle"></i> Done' : '<i class="fas fa-file-signature"></i> Sign'}</button>
                             </div>
                         </td>
                     </tr>
                     `;
-
+                table.row.add($(dataHtml));
             });
-            props.container = dataHtml;
-            return props.container
+            table.draw();
+
         }
-        // const dataTemplate = (props) => {
-        //     // console.log(props?.date);
-        //     const visit = props.data.map(each => {
-        //         const doc = new DOMParser().parseFromString(each[1], 'text/html');
-        //         const nama_pasien = doc.querySelector('a').textContent;
-        //         const visit_id = doc.querySelector('a').getAttribute('href').split("profileranap/")[1].split('/')[0];
 
-        //         const clinic = each[4].split(/<br>/)[0] ?? '';
-
-        //         return {
-        //             nama_pasien,
-        //             visit_id,
-        //             clinic
-        //         };
-        //     });
-        //     const mergedData = visit.map(item => {
-        //         const dietData = props?.data_diet.find(diet => diet.visit_id === item.visit_id);
-
-        //         return {
-        //             ...item,
-        //             data: dietData || null
-        //         };
-        //     });
-
-        //     let dataHtml = '';
-        //     mergedData.forEach((item, index) => {
-        //         const formattedDate = moment(props?.date).format('YYYY-MM-DD')
-        //         dataHtml += `
-        //             <tr>
-        //                 <input type="hidden" name="visit_id[]" value="${item.visit_id}">
-        //                 <td class="text-center align-middle">${index+1}</td>
-        //                 <td class="text-center align-middle">${item.nama_pasien}</td>
-        //                 <td>
-        //                     <div class="d-flex flex-column gap-2">
-        //                         <span class="py-1">BENTUK</span>
-        //                         <span class="py-1">JENIS</span>
-        //                         <span class="py-1">MINERAL</span>
-        //                         <span class="py-1">EXTRA</span>
-        //                     </div>
-        //                 </td>
-        //                 <td>
-        //                     <div class="d-flex flex-column gap-2">
-        //                         <input type="text" class="form-control form-control-sm" name="dtypedesc_pagi[]" id="ordergizi_all_dtype_pagi_` + index + 1 + `_display" onfocus="isiBentukGizi2('dtype_pagi_` + index + 1 + `')" value="${item?.data?.dtype_pagi ?? ''}" ${item?.data?.valid_date_pagi ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="hidden" id="ordergizi_all_dtype_pagi_` + index + 1 + `" name="dtype_pagi[]" class="form-control" onfocus="isiBentukGizi('dtype_pagi` + index + 1 + `')" ${item?.data?.valid_date_pagi ? 'readonly style="pointer-events: none;"' : ''}>
-
-
-        //                         <input type="text" name="pantangan_pagi[]" id="ordergizi_all_pantangan_pagi_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_pagi_` + index + 1 + `')" value="${item?.data?.pantangan_pagi ?? ''}" ${item?.data?.valid_date_pagi ? 'readonly style="pointer-events: none;"' : ''}>
-
-        //                         <input type="text" class="form-control form-control-sm" name="mineral_pagi[]" value="${item?.data?.dtype_iddesc ?? ''}" ${item?.data?.valid_date_pagi ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="text" class="form-control form-control-sm" name="ekstra_pagi[]" value="${item?.data?.penunggu_pagi ?? ''}" ${item?.data?.valid_date_pagi ? 'readonly style="pointer-events: none;"' : ''}>
-        //                     </div>
-        //                 </td>
-        //                 <td>
-        //                     <div class="d-flex flex-column gap-2">
-        //                         <input type="text" class="form-control form-control-sm" name="dtypedesc_siang[]" id="ordergizi_all_dtype_siang_` + index + 1 + `_display" onfocus="isiBentukGizi2('dtype_siang_` + index + 1 + `')" value="${item?.data?.dtype_siang ?? ''}" ${item?.data?.valid_date_siang ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="hidden" id="ordergizi_all_dtype_siang_` + index + 1 + `" name="dtype_siang[]" class="form-control" onfocus="isiBentukGizi('dtype_siang` + index + 1 + `')" ${item?.data?.valid_date_siang ? 'readonly style="pointer-events: none;"' : ''}>
-
-
-        //                         <input type="text" name="pantangan_siang[]" id="ordergizi_all_pantangan_siang_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_siang_` + index + 1 + `')" value="${item?.data?.pantangan_siang ?? ''}" ${item?.data?.valid_date_siang ? 'readonly style="pointer-events: none;"' : ''}>
-
-        //                         <input type="text" class="form-control form-control-sm" name="mineral_siang[]" value="${item?.data?.dtype_siangdesc ?? ''}" ${item?.data?.valid_date_siang ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="text" class="form-control form-control-sm" name="ekstra_siang[]" value="${item?.data?.penunggu_siang ?? ''}" ${item?.data?.valid_date_siang ? 'readonly style="pointer-events: none;"' : ''}>
-        //                     </div>
-        //                 </td>
-        //                 <td>
-        //                     <div class="d-flex flex-column gap-2">
-        //                         <input type="text" class="form-control form-control-sm" name="dtypedesc_malam[]" id="ordergizi_all_dtype_malam_` + index + 1 + `_display" onfocus="isiBentukGizi2('dtype_malam_` + index + 1 + `')" value="${item?.data?.dtype_malam ?? ''}" ${item?.data?.valid_date_malam ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="hidden" id="ordergizi_all_dtype_malam_` + index + 1 + `" name="dtype_malam[]" class="form-control" onfocus="isiBentukGizi('dtype_malam` + index + 1 + `')" ${item?.data?.valid_date_malam ? 'readonly style="pointer-events: none;"' : ''}>
-
-        //                         <input type="text" name="pantangan_malam[]" id="ordergizi_all_pantangan_malam_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_malam_` + index + 1 + `')" value="${item?.data?.pantangan_malam ?? ''}" ${item?.data?.valid_date_malam ? 'readonly style="pointer-events: none;"' : ''}>
-
-        //                         <input type="text" class="form-control form-control-sm" name="mineral_malam[]" value="${item?.data?.dtype_malamdesc ?? ''}" ${item?.data?.valid_date_malam ? 'readonly style="pointer-events: none;"' : ''}>
-        //                         <input type="text" class="form-control form-control-sm" name="ekstra_malam[]" value="${item?.data?.penunggu_malam ?? ''}" ${item?.data?.valid_date_malam ? 'readonly style="pointer-events: none;"' : ''}>
-        //                     </div>
-        //                 </td>
-        //                 <td class="text-center align-middle">
-        //                     <div class="btn-group-vertical">
-        //                         <button type="button" data-value='${item?.data != null ? JSON.stringify(item?.data) : ''}' data-date="${formattedDate}" data-clinic="${item?.clinic}" class="btn btn-sm btn-success btn-cetak" ${item?.data == null ? 'disabled' : ''}><i class="fas fa-print"></i> Cetak</button>
-        //                         <button type="button" data-value="${item?.nama_pasien}" date-pagi="${item?.data?.valid_date_pagi ?? 'null'}" date-siang="${item?.data?.valid_date_siang ?? 'null'}" date-malam="${item?.data?.valid_date_malam ??'null'}" data-date="${formattedDate}" data-visit="${item?.visit_id}" class="btn btn-sm btn-primary btn-validasi" ${item?.data == null ? 'disabled' : ''}>${item?.data?.valid_date_pagi || item?.data?.valid_date_siang || item?.data?.valid_date_malam ? '<i class="far fa-check-circle"></i> Done' : '<i class="fas fa-file-signature"></i> Sign'}</button>
-        //                     </div>
-        //                 </td>
-        //             </tr>
-        //             `;
-
-        //     });
-        //     props.container = dataHtml;
-        //     return props.container
-        // }
 
         const getData = (props) => {
             const visit = props.data.map(each => {
                 return each.visit_id
             });
-            // const visit = props.data.map(each => {
-            //     const doc = new DOMParser().parseFromString(each[1], 'text/html');
-            //     return doc.querySelector('a').getAttribute('href').split("profileranap/")[1].split('/')[0];
-            // });
 
             return new Promise((resolve, reject) => {
-                // resolve(visit);
+
                 postData({
                     date: props?.date,
                     visit_id: visit
                 }, 'admin/DietInap/getData', (res) => {
                     if (res.respon) {
-                        resolve(res.data); // Resolve the promise with the data
+                        resolve(res.data);
                     } else {
-                        reject(new Error('Failed to fetch data')); // Reject on error
+                        reject(new Error('Failed to fetch data'));
                     }
                 });
             });
@@ -770,7 +692,7 @@ $this->extend('layout/nosidelayout', [
                         acc[item.dtype_id] = item.dtype_id; // Set key-value pair
                         return acc;
                     }, {});
-                    console.log(arrayBentuk);
+
                 } else {
 
                 }
@@ -779,27 +701,24 @@ $this->extend('layout/nosidelayout', [
 
         const cetakGiziAll = (props) => {
 
-            // Construct the URL
-            // var url = '<?= base_url() . 'admin/DietInap/cetakAll/'; ?>' + btoa(props.data);
+
             var url = '<?= base_url() . 'admin/DietInap/cetakAll/'; ?>' + props?.shift + '/' + props?.date + '/' + props.clinic + '/' + btoa(props.data);
 
             // Redirect to the URL
-            window.open(url, '_blank'); // Open in a new tab
+            window.open(url, '_blank');
         }
         const cetakGizi = (props) => {
 
-            // Construct the URL
-            // var url = '<?= base_url() . 'admin/DietInap/cetak/'; ?>' + btoa(props.data);
             var url = '<?= base_url() . 'admin/DietInap/cetak/'; ?>' + props?.shift + '/' + props?.date + '/' + props.clinic + '/' + btoa(props.data);
 
             // Redirect to the URL
-            window.open(url, '_blank'); // Open in a new tab
+            window.open(url, '_blank');
         }
         const actionCetakAll = (props) => {
             $('#cetakGiziAll').off().on('click', function(e) {
                 $("#cetakOrderGiziAll").modal('show')
                 $('#cetak_gizi_all_pagi').off().on('click', function(e) {
-                    console.log($(this).data('type'));
+
                     cetakGiziAll({
                         shift: $(this).data('type'),
                         data: JSON.stringify(props?.data_diet),
@@ -808,7 +727,7 @@ $this->extend('layout/nosidelayout', [
                     })
                 })
                 $('#cetak_gizi_all_siang').off().on('click', function(e) {
-                    console.log($(this).data('type'));
+
                     cetakGiziAll({
                         shift: $(this).data('type'),
                         data: JSON.stringify(props?.data_diet),
@@ -817,7 +736,7 @@ $this->extend('layout/nosidelayout', [
                     })
                 })
                 $('#cetak_gizi_all_malam').off().on('click', function(e) {
-                    console.log($(this).data('type'));
+
                     cetakGiziAll({
                         shift: $(this).data('type'),
                         data: JSON.stringify(props?.data_diet),
@@ -868,7 +787,7 @@ $this->extend('layout/nosidelayout', [
                     // console.log(3, data);
                     $("#cetakOrderGizi").modal('show')
                     $('#cetak_gizi_pagi').off().on('click', function(e) {
-                        console.log($(this).data('type'));
+
                         cetakGizi({
                             shift: $(this).data('type'),
                             data: data,
@@ -877,7 +796,7 @@ $this->extend('layout/nosidelayout', [
                         })
                     })
                     $('#cetak_gizi_siang').off().on('click', function(e) {
-                        console.log($(this).data('type'));
+
                         cetakGizi({
                             shift: $(this).data('type'),
                             data: data,
@@ -886,7 +805,7 @@ $this->extend('layout/nosidelayout', [
                         })
                     })
                     $('#cetak_gizi_malam').off().on('click', function(e) {
-                        console.log($(this).data('type'));
+
                         cetakGizi({
                             shift: $(this).data('type'),
                             data: data,
@@ -943,9 +862,11 @@ $this->extend('layout/nosidelayout', [
                             'admin/DietInap/validasi', (res) => {
                                 if (res.status) {
                                     successSwal(res.message);
+                                    $("#validasiOrderGizi").modal('hide')
                                     renderData();
                                 } else {
                                     errorSwal(res.message);
+                                    $("#validasiOrderGizi").modal('hide')
                                     renderData();
                                 }
                             }

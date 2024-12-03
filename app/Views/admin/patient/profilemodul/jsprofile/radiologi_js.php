@@ -641,3 +641,19 @@
 
     })
 </script>
+<script>
+    const quillEditor = document.querySelectorAll('.quill-textarea-radiologi');
+
+    quillEditor.forEach(function(editor, index) {
+        const quill = new Quill(editor, {
+            theme: 'snow',
+        });
+
+        const hiddenInput = document.getElementById(`${editor.id}-hidden`);
+
+        quill.on('text-change', () => {
+            const quillContent = quill.root.innerHTML; // Get the current content of the Quill editor
+            hiddenInput.value = quillContent; // Update the hidden input value
+        });
+    });
+</script>

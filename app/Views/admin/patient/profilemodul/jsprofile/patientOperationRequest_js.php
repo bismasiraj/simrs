@@ -1,3 +1,23 @@
+<style>
+    .outline-white-bg {
+        /* box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.5); */
+        background-color: #fff
+    }
+
+    .outline-warning-bg {
+        /* box-shadow: inset 0 0 0 3px rgba(255, 193, 7, 0.7); */
+        background-color: #fff5cc;
+    }
+
+    .outline-danger-bg {
+        background-color: #ffcccc
+            /* box-shadow: inset 0 0 0 3px rgba(220, 53, 69, 0.7); */
+    }
+</style>
+
+
+
+
 <script type="text/javascript">
     let treatmentData = [];
     let historyPasien = [];
@@ -241,7 +261,7 @@
                     $(this).attr('disabled', 'disabled');
                 });
 
-                let isChecked = $("#patient_category_id-permintaan_operasi").prop('checked') ? 1 : 0;
+                let isChecked = $('input[name="patient_category_id"]:checked').val();
                 jsonObj['patient_category_id'] = isChecked;
                 let operationType = $("#operation_type-permintaan_operasi").val();
                 jsonObj['operation_type'] = operationType;
@@ -279,8 +299,10 @@
                     jsonObj[key] = value;
                 });
 
-                let isChecked = $("#patient_category_id-permintaan_operasi").prop('checked') ? 1 : 0;
+                let isChecked = $('input[name="patient_category_id"]:checked').length ? $(
+                    'input[name="patient_category_id"]:checked').val() : null;
                 jsonObj['patient_category_id'] = isChecked;
+
                 let operationType = $("#operation_type-permintaan_operasi").val();
                 jsonObj['operation_type'] = operationType;
 
@@ -852,7 +874,7 @@
                 })
                 $("#container-tab").slideUp();
                 $("#container-tab").slideDown();
-                // initializeFlatpickrOperasi()
+                initializeFlatpickrOperasi()
             });
         }; //new update 1/08
 
@@ -900,8 +922,8 @@
                 });
 
 
-                let isChecked = $("#patient_category_id-permintaan_operasi").prop('checked') ? 1 :
-                    0;
+                let isChecked = $('input[name="patient_category_id"]:checked').length ? $(
+                    'input[name="patient_category_id"]:checked').val() : null;
                 jsonObj['patient_category_id'] = isChecked;
                 let operationType = $("#operation_type-permintaan_operasi").val();
                 jsonObj['operation_type'] = operationType;
@@ -1375,7 +1397,11 @@
                     if (value) {
                         jsonObj[key] = value;
                     }
+                    // if (moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm'], true).isValid()) {
+                    //     jsonObj[key] = moment(value, ['YYYY-MM-DDTHH:mm', 'DD/MM/YYYYTHH:mm']).format('YYYY-MM-DDTHH:mm');
+                    // }
                 });
+
                 jsonObj['document_id'] = props.vactination_id;
                 // Extract diagnosa fields
                 let diag_cat = dataSend.getAll('diag_cat[]');
@@ -2000,7 +2026,7 @@
                     }
                 });
 
-                jsonObj.vitailsign['body_id'] = dataSend.get('body_id');
+                jsonObj.vitailsign['body_id'] = dataSend.get('body_id_durantee');
                 jsonObj.vitailsign['clinic_id'] = 'P002';
                 jsonObj.vitailsign['class_room_id'] = dataSend.get('class_room_id');
                 jsonObj.vitailsign['bed_id'] = dataSend.get('bed_id');
@@ -2067,7 +2093,7 @@
 
 
                 $("#loading-indicator").show();
-
+                console.log(jsonObj);
                 postData(jsonObj, 'admin/PatientOperationRequest/insertAnestesiaLengkap', (res) => {
                     if (res.respon === true) {
                         successSwal('Data berhasil diperbarui.');
@@ -2138,7 +2164,6 @@
 
                 $("#create-modal-permintaan-operasi").modal("show");
                 $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(visit));
-
                 $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
                 // $('#form-permintaan-operasi')[0].reset();
 
@@ -2178,16 +2203,25 @@
                 $('#start_anestesi-permintaan_operasi').val(visit.start_anestesi);
                 $('#end_anestesi-permintaan_operasi').val(visit.end_anestesi);
                 $('#result_id-permintaan_operasi').val(visit.result_id);
-                $('#clinic_id-permintaan_operasi').val(visit.clinic_id);
+                $('#clinic_id-permintaan_operasi').val("P002");
                 $('#transaksi-permintaan_operasi').val(0);
                 $('#layan-permintaan_operasi').val(visit.layan);
-                let currentDateTime = moment().format("YYYY-MM-DDTHH:mm");
+                let currentDateTime = moment(new Date()).format("DD/MM/YYYY HH:mm")
                 $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
+                $("#start_operation-permintaan_operasi").val(moment($(
+                    "#flatstart_operation-permintaan_operasi").val(), ["YYYY-MM-DD HH:mm",
+                    "DD/MM/YYYY HH:mm"
+                ]).format("DD-MM-YYYY HH:mm"))
                 $('#rooms_id-permintaan_operasi').val(visit?.rooms_id);
-                $('#clinic_id_from-permintaan_operasi').val(visit.clinic_id);
+                $('#clinic_id_from-permintaan_operasi').val("P002");
                 $('#class_room_id-permintaan_operasi').val(visit.class_room_id);
-                $('#patient_category_id-permintaan_operasi').prop('checked', visit
-                    .patient_category_id);
+                const categoryId = visit.patient_category_id ?? 0;
+
+                $('#patient_category_id-elektif').prop('checked', categoryId === 0);
+                $('#patient_category_id-cyto').prop('checked', categoryId === 1);
+                $('#patient_category_id-emergency').prop('checked', categoryId === 2);
+
+
                 $('#operation_type-permintaan_operasi').val("");
 
 
@@ -2202,7 +2236,7 @@
                     table_name: 'clinic',
                     column_name: 'name_of_clinic',
                     column_id: 'clinic_id',
-                    id: visit.clinic_id,
+                    id: "visit.clinic_id",
                     element_id: 'clinic_id_from-permintaan_operasi_name'
                 })
 
@@ -2225,13 +2259,22 @@
             });
         }
 
+        function formatToIDRResult(value) {
+            const parsedValue = Math.floor(parseFloat(value));
+            return parsedValue.toLocaleString('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            });
+        }
+
         const renderDropdownTreatment = () => {
             let data = treatmentData;
 
             let result = "";
             data.forEach((item) => {
                 result +=
-                    `<option value="${item.tarif_id}" data-operation-type="${item.operation_type}">${item.tarif_name}</option>`;
+                    `<option value="${item.tarif_id}" data-operation-type="${item.operation_type}">${item.tarif_name} (${item?.name_of_class} - ${formatToIDRResult(item?.amount_paid ?? 0)})</option>`;
             });
 
             $("#tarif_id-permintaan_operasi").html(
@@ -2436,10 +2479,19 @@
                     <div class="col-md-4">
                         <label>Emergency / Elektif</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="patient_category_id-permintaan_operasi" name="patient_category_id">
-                            <label class="form-check-label" for="patient_category_id-permintaan_operasi">Cyto</label>
+                            <input class="form-check-input" type="radio" id="patient_category_id-elektif" name="patient_category_id" value="0" checked>
+                            <label class="form-check-label" for="patient_category_id-elektif">Elektif</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="patient_category_id-cyto" name="patient_category_id" value="1">
+                            <label class="form-check-label" for="patient_category_id-cyto">Cyto</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="patient_category_id-emergency" name="patient_category_id" value="2">
+                            <label class="form-check-label" for="patient_category_id-emergency">Emergency</label>
                         </div>
                     </div>
+                    
                 </div>
 
                 <!-- Grup 3: Emergency / Elektif -->
@@ -2482,7 +2534,6 @@
             let resultData = data;
             let result = resultData.data[0];
 
-
             $("#dropdown-param-tindakan-operasi").html("");
             $('#content-param-permintaan-operasi').html(getTemplatePermintaanOperasi(result));
             $("#formDate-tindakan-oprasi-2").html("").attr("class", "col-md-1")
@@ -2490,7 +2541,6 @@
             $('#btn-save-permintaan-operasi-modal').attr('hidden', true);
             $('#btn-edit-permintaan-operasi-modal').attr('hidden', true);
             $('#btn-updateAndInsert-permintaan-operasi-modal').attr('hidden', true);
-
 
             $('#org_unit_code-permintaan_operasi').val(result.org_unit_code);
             $('#visit_id-permintaan_operasi').val(result.visit_id);
@@ -2526,17 +2576,24 @@
             $('#clinic_id-permintaan_operasi').val(result.clinic_id);
             $('#transaksi-permintaan_operasi').val(result.transaksi);
             $('#layan-permintaan_operasi').val(result.layan);
-            let currentDateTime = moment(result.start_operation).format("YYYY-MM-DDTHH:mm");
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
             $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-            $('#patient_category_id-permintaan_operasi').prop('checked', result.patient_category_id);
+
+            $('#patient_category_id-elektif').prop('checked', visit.patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', visit.patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', visit.patient_category_id === 2);
+
             $('#operation_type-permintaan_operasi').val(result.operation_type);
             $('#vactination_id-permintaan_operasi').val(result.vactination_id);
             $("#trans_id-permintaan_operasi").val(result?.trans_id)
             $("#flatstart_operation-permintaan_operasi").attr("disabled", true)
-            $("#patient_category_id-permintaan_operasi").attr("disabled", true)
+
+            $('#patient_category_id-elektif').attr("disabled", true)
+            $('#patient_category_id-cyto').attr("disabled", true)
+            $('#patient_category_id-emergency').attr("disabled", true)
             const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
 
             $("#operation_type_name-permintaan_operasi").val(foundData?.treatment);
@@ -2617,12 +2674,16 @@
             $('#clinic_id-permintaan_operasi').val(result.clinic_id);
             $('#transaksi-permintaan_operasi').val(result.transaksi);
             $('#layan-permintaan_operasi').val(result.layan);
-            let currentDateTime = moment(result.start_operation).format("YYYY-MM-DDTHH:mm");
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
+            $("#start_operation-permintaan_operasi").val(moment(currentDateTime).format("YYYY-MM-DD HH:mm"))
             $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-            $('#patient_category_id-permintaan_operasi').prop('checked', result.patient_category_id);
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
+
             $('#operation_type-permintaan_operasi').val(result.operation_type);
 
             const foundData = treatmentData.find(item => item.operation_type === `${result.operation_type}`);
@@ -2673,7 +2734,7 @@
 
             })
 
-            let currentDateTime = moment(new Date(result.start_operation)).format("YYYY-MM-DDTHH:mm");
+            let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
 
             let currentDateTimeEnd = moment(result?.end_operation ? new Date(result?.end_operation) : new Date())
                 .format("DD/MM/YYYY HH:mm");
@@ -2731,7 +2792,11 @@
             $("#flatend_operation-permintaan_operasi").val(currentDateTimeEnd).trigger("change");
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
             $('#class_room_id-permintaan_operasi').val(result.class_room_id);
-            $('#patient_category_id-permintaan_operasi').prop('checked', result.patient_category_id);
+
+            $('#patient_category_id-elektif').prop('checked', result.patient_category_id === 0);
+            $('#patient_category_id-cyto').prop('checked', result.patient_category_id === 1);
+            $('#patient_category_id-emergency').prop('checked', result.patient_category_id === 2);
+
             $('#operation_type-permintaan_operasi').val(result.operation_type);
 
 
@@ -3322,12 +3387,15 @@
                                 <hr>
                                 <table id="tablediagnosa" class="table">
                                     <thead>
-                                        <th class="text-center" style="width: 20%">Jenis Darah</th>
-                                        <th class="text-center" style="width: 10%">Jumlah</th>
+                                        <th class="text-center" style="width: 12%">Jenis Darah</th>
+                                        <th class="text-center" style="width: 5%">Jumlah</th>
                                         <th class="text-center" style="width: 10%">Satuan Ukuran</th>
-                                        <th class="text-center" style="width: 10%">Golongan Darah</th>
-                                        <th class="text-center" style="width: 30%">Keterangan</th>
-                                        <th class="text-center" style="width: 19%">Waktu Penggunaan</th>
+                                        <th class="text-center" style="width: 9%">Golongan Darah</th>
+                                        <th class="text-center" style="width: 23%">Keterangan</th>
+                                        <th class="text-center" style="width: 10%">Waktu Penggunaan</th>
+                                        <th class="text-center" style="width: 10%">Transfusion Start</th>
+                                        <th class="text-center" style="width: 10%">Transfusion End</th>
+                                        <th class="text-center" style="width: 10%">Reaction Desc</th>
                                         <th class="text-center" style="width: 1%"></th>
                                     </thead>
                                     <tbody id="bodyBloodRequest">
@@ -3417,7 +3485,6 @@
                 addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id);
             });
 
-
             const formId = 'formPraOperasi';
             const primaryKey = data?.body_id;
             const formSaveBtn = 'formPraOperasiSaveBtn';
@@ -3443,7 +3510,6 @@
             //     checkSignSignature1(formId, primaryKey, formSaveBtn, '7');
             // }
         }
-
         //---------bbb
         const catatanKeperawatanPraOperasi = async (props) => {
             let visit = <?= json_encode($visit) ?>;
@@ -3807,6 +3873,8 @@
                     $(this).prop('disabled', true);
                 }
             });
+
+
             $("button[name='signperi']").off().on("click", function() {
                 const buttonId = $(this).data('button-id');
                 const signKe = $(this).data('sign-ke');
@@ -4300,7 +4368,12 @@
                                         `;
                 } else if (currentValueoprs008_03 === '1') {
                     radioButtonsHtml008_03 = `<div class="form-radio-group">
-                                                <label><input type="radio" name="${nameAttributeoprs008_03}" value="1" checked> Emergency</label>
+                                                                    <label><input type="radio" name="${nameAttributeoprs008_03}" value="1" checked> Cyto</label>
+                                                                </div>
+                                                            `;
+                } else if (currentValueoprs008_03 === '2') {
+                    radioButtonsHtml008_03 = `<div class="form-radio-group">
+                                                <label><input type="radio" name="${nameAttributeoprs008_03}" value="2" checked> Emergency</label>
                                             </div>
                                         `;
                 }
@@ -4324,7 +4397,6 @@
                 addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id);
             });
             if (diagnosas) {
-
                 diagnosas.forEach((item, index) => {
                     if (item.diag_cat == 13) {
                         addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id,
@@ -4952,8 +5024,6 @@
 
             $('#weight-laporanAnesthesi-lengkap').val(props?.exam_info.weight)
             $('#height-laporanAnesthesi-lengkap').val(props?.exam_info.height)
-            console.log($('#weight-laporanAnesthesi-lengkap').val());
-            console.log($('#height-laporanAnesthesi-lengkap').val());
 
             $("#informasiMedis-laporan-durante-signature").html(ttdAll);
             $('#informasiMedis-laporan-output').html(output)
@@ -4979,11 +5049,12 @@
             $("#urine_amount_val").val(data?.assessment_anesthesia?.urine_amount ?? 0)
             if (data?.assessment_anesthesia?.start_anesthesia) {
                 $("#anesthesiaStart").val(moment(data?.assessment_anesthesia.start_anesthesia).format(
-                    'YYYY-MM-DDTHH:mm'));
+                    'DD/MM/YYYYTHH:mm'));
+                // 'YYYY-MM-DDTHH:mm'));
             }
             if (data?.assessment_anesthesia?.end_anesthesia) {
                 $("#anesthesiaEnd").val(moment(data?.assessment_anesthesia.end_anesthesia).format(
-                    'YYYY-MM-DDTHH:mm'));
+                    'DD/MM/YYYYTHH:mm'));
             }
 
             let startOperation = pasienOperasiSelected?.start_operation;
@@ -5236,9 +5307,7 @@
                                     `<option value="${item['value_id']}" data-score="${item?.value_score}" data-desc="${item?.value_desc}"  ${props?.get_data?.['value_desc_'+props?.parameter_id] == item?.value_desc ? 'selected': ''}>${item?.value_desc}</option>`
                                 ).join('');
                             } else {
-                                // if (props?.p_type == 'OPRS008') {
-                                //     console.log(props?.get_data?.[props?.column_name?.toLowerCase()]);
-                                // }
+
                                 selectOptions = matchedData?.map(item =>
                                     `<option value="${item[valueProp]}" ${(props?.get_data?.[props?.column_name?.toLowerCase()] ?? "") === item[valueProp] ? 'selected' : ''}>${item?.value_desc}</option>`
                                 ).join('');
@@ -5479,130 +5548,195 @@
 
         const createDropdownTables = (props) => {
             let content = '';
-
-            // Clear the existing content
             $("#dropdown-param-tindakan-operasi").html('');
-            // const taskIds = props?.map(item => item.task_id);
-            // const employeeIds = props?.map(item => item.employee_id);
-            // taskIds.unshift()
-            const employeeOptions = getDropdownOptions(getShiftIdForDropdown(name));
+            const extractGroupName = (taskName) => {
+                if (taskName.startsWith("Asisten Anestesi")) {
+                    return "Asisten Anestesi";
+                }
+                if (taskName === "Asisten Dokter") {
+                    return taskName;
+                }
+                return taskName.split(" ")[0];
+            };
+
+            const groupedTasks = tasksValue.data.reduce((groups, item) => {
+                const groupName = extractGroupName(item.task);
+                if (!groups[groupName]) groups[groupName] = [];
+                groups[groupName].push(item);
+                return groups;
+            }, {});
+
+
+            const groupedEmployees = employesValue.data.reduce((groups, item) => {
+                let groupLabel;
+                switch (item.shift_id) {
+                    case 1:
+                        groupLabel = "Dokter Operator";
+                        break;
+                    case 2:
+                        groupLabel = "Dokter Anestesi";
+                        break;
+                    case 3:
+                        groupLabel = "Perawat";
+                        break;
+                    case 4:
+                        groupLabel = "Asisten Anestesi";
+                        break;
+                    default:
+                        groupLabel = "Other"; // For any unexpected shift_id
+                }
+                if (!groups[groupLabel]) groups[groupLabel] = [];
+                groups[groupLabel].push(item);
+                return groups;
+            }, {});
+
+            const generateTaskOptions = (selectedId) => {
+                return Object.keys(groupedTasks).map(group => `
+                            <optgroup label="${group}">
+                                ${groupedTasks[group].map(item => `
+                                    <option value="${item.task_id}" ${item.task_id == selectedId ? 'selected' : ''}>${item.task}</option>
+                                `).join('')}
+                            </optgroup>
+                        `).join('');
+            };
+
+            const generateEmployeeOptions = (selectedId) => {
+                return Object.keys(groupedEmployees).map(group => `
+            <optgroup label="${group}">
+                ${groupedEmployees[group].map(item => `
+                    <option value="${item.employee_id}" ${item.employee_id == selectedId ? 'selected' : ''}>${item.fullname}</option>
+                `).join('')}
+            </optgroup>
+        `).join('');
+            };
 
             let droppdown = `
-                <table class="table table-borderless" id="data-dropdown">
-                    ${props?.map(e => `
-                        <tr class="bg-light">
-                            <td>
-                                <select class="form-select task-dropdown" name="groupedTasks_option[]">
-                                    ${tasksValue.data.map(item => `<option value="${item.task_id}" ${item.task_id == e.task_id ? 'selected' :''}>${item.task}</option>`)}
-                                </select>
-                            </td>
-                            <td rowspan="2" width="1%">
-                                <button type="button" class="btn btn-danger btn-sm delete-dropdown" style="height:80px;width:50px;"><i class="fas fa-trash-alt fa-2xl"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select class="form-select employee-dropdown" name="employee_option[]">
-                            ${employesValue.data.map(item => `<option value="${item.employee_id}" ${item.employee_id == e.employee_id ? 'selected' :''}>${item.fullname}</option>`)}
-                                </select>
-                            </td>
-                        </tr>
-                    `).join('')}
-                        <tr class="bg-light">
-                            <td>
-                                <select class="form-select task-dropdown" name="groupedTasks_option[]">
-                                    <option>pilih</option>
-                                    ${tasksValue.data.map(item => `<option value="${item.task_id}">${item.task}</option>`)}
-                                </select>
-                            </td>
-                            <td rowspan="2" width="1%">
-                                <button type="button" class="btn btn-danger btn-sm delete-dropdown" style="height:80px;width:50px;"><i class="fas fa-trash-alt fa-2xl"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select class="form-select employee-dropdown" name="employee_option[]">
-                                    <option>pilih</option>
-                                    ${employesValue.data.map(item => `<option value="${item.employee_id}">${item.fullname}</option>`)}
-                                </select>
-                            </td>
-                        </tr>
-                </table>
-                <div class="d-flex my-3">
-                    <button type="button" class="btn btn-success w-100 add-dropdown" style="height:50px;"><i class="fas fa-plus fa-2xl"></i></button>
-                </div>
-            `;
+                        <table class="table table-borderless" id="data-dropdown">
+                            <tbody>
+                                ${props?.map(e => `
+                                    <tr class="bg-light">
+                                        <td>
+                                            <select class="form-select task-dropdown" name="groupedTasks_option[]">
+                                                ${generateTaskOptions(e.task_id)}
+                                            </select>
+                                        </td>
+                                        <td rowspan="2" width="1%">
+                                            <button type="button" class="btn btn-danger btn-sm delete-dropdown" style="height:80px;width:50px;"><i class="fas fa-trash-alt fa-2xl"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select class="form-select employee-dropdown" name="employee_option[]">
+                                                ${generateEmployeeOptions(e.employee_id)}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <div class="d-flex my-3">
+                            <button type="button" class="btn btn-success w-100 add-dropdown" style="height:50px;"><i class="fas fa-plus fa-2xl"></i></button>
+                        </div>
+                    `;
 
-            // Additional form contents
-            let contentFormEsekusi =
-                `<table class="table table-borderless">
-                    <tr>
-                        <td>
-                            <select class="form-select btn-sm" name="form-action-pelayanan" id="form-action-pelayanan">
-                                <option value="0">Terjadwal</option>
-                                <option value="1">Proses Oprasi</option>
-                                <option value="2">Selesai Oprasi</option>
-                                <option value="3">Tunda Oprasi</option>
-                                <option value="4">Batal Oprasi</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-                `;
-            let TransaksiContent =
-                `<table class="table table-borderless">
-                    <tr>
-                        <td>
-                            <select class="form-select btn-sm" name="transaksi-permintaan_operasi" id="transaksi-permintaan_operasi">
-                                <option value="0">Belum Transaksi</option>
-                                <option value="1">Transaksi</option>
-                            </select>
-                        </td>
-                    </tr>
-                </table>
-                `;
+            let contentFormEsekusi = `
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>
+                                    <select class="form-select btn-sm" name="form-action-pelayanan" id="form-action-pelayanan">
+                                        <option value="0">Terjadwal</option>
+                                        <option value="1">Proses Oprasi</option>
+                                        <option value="2">Selesai Oprasi</option>
+                                        <option value="3">Tunda Oprasi</option>
+                                        <option value="4">Batal Oprasi</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    `;
 
-            // Update the content of the container
-            $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi +
-                TransaksiContent);
-            // actionDropdownContentTindakan();
+            let TransaksiContent = `
+                        <table class="table table-borderless">
+                            <tr>
+                                <td>
+                                    <select class="form-select btn-sm" name="transaksi-permintaan_operasi" id="transaksi-permintaan_operasi">
+                                        <option value="0">Belum Transaksi</option>
+                                        <option value="1">Transaksi</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    `;
+
+            $("#dropdown-param-tindakan-operasi").html(content + droppdown + contentFormEsekusi + TransaksiContent);
+
             $('#dropdown-param-tindakan-operasi').on('click', '.delete-dropdown', function() {
-                $(this).closest('tr').next().remove(); // Remove the previous row
+                $(this).closest('tr').next().remove(); // Remove the next row
                 $(this).closest('tr').remove(); // Remove the current row
             });
 
-            // Add button click event handler
             $('#dropdown-param-tindakan-operasi').on('click', '.add-dropdown', function() {
-                // Clone the task row (first part of the template)
-                let dataDropdownContent =
-                    `
-                        <tr class="bg-light">
-                            <td>
-                                <select class="form-select task-dropdown" name="groupedTasks_option[]">
-                                    <option>pilih</option>
-                                    ${tasksValue.data.map(item => `<option value="${item.task_id}">${item.task}</option>`)}
-                                </select>
-                            </td>
-                            <td rowspan="2" width="1%">
-                                <button type="button" class="btn btn-danger btn-sm delete-dropdown" style="height:80px;width:50px;"><i class="fas fa-trash-alt fa-2xl"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <select class="form-select employee-dropdown" name="employee_option[]">
-                                    <option>pilih</option>
-                                    ${employesValue.data.map(item => `<option value="${item.employee_id}">${item.fullname}</option>`)}
-                                </select>
-                            </td>
-                        </tr>
-                `;
+                let selectedTasks = $('.task-dropdown').map(function() {
+                    return $(this).val();
+                }).get();
+
+                if (selectedTasks.includes('pilih') || selectedTasks.includes(null)) {
+                    return;
+                }
+
+                let newTaskOptions = Object.keys(groupedTasks).map(group => `
+                            <optgroup label="${group}">
+                                ${groupedTasks[group].filter(item => !selectedTasks.includes(item.task_id)).map(item => `
+                                    <option value="${item.task_id}">${item.task}</option>
+                                `).join('')}
+                            </optgroup>
+                        `).join('');
+
+                let newTaskOptionsEmployee = Object.keys(groupedEmployees).map(group => `
+                            <optgroup label="${group}">
+                                ${groupedEmployees[group].filter(item => !selectedTasks.includes(item.employee_id)).map(item => `
+                                    <option value="${item.employee_id}">${item.fullname}</option>
+                                `).join('')}
+                            </optgroup>
+                        `).join('');
+
+                if (!newTaskOptions.trim()) {
+                    alert('Semua task sudah dipilih, tidak ada task baru yang dapat ditambahkan!');
+                    return;
+                }
+
+                let dataDropdownContent = `
+                            <tr class="bg-light">
+                                <td>
+                                    <select class="form-select task-dropdown" name="groupedTasks_option[]">
+                                        <option value="pilih">pilih</option>
+                                        ${newTaskOptions}
+                                    </select>
+                                </td>
+                                <td rowspan="2" width="1%">
+                                    <button type="button" class="btn btn-danger btn-sm delete-dropdown" style="height:80px;width:50px;"><i class="fas fa-trash-alt fa-2xl"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select class="form-select employee-dropdown" name="employee_option[]">
+                                        <option value="pilih">pilih</option>
+                                        ${newTaskOptionsEmployee}
+                                    </select>
+                                </td>
+                            </tr>
+                        `;
+
                 $('#data-dropdown tbody').append(dataDropdownContent);
-                // Optional: Reinitialize select2 for newly added elements
+
                 initializeSelect2();
             });
 
             initializeSelect2();
         };
+
+
+
 
         const getDropdownOptions = (shiftId) => {
             let options = '';
@@ -5627,14 +5761,23 @@
                 let treatment = treatmentData.find(t => t.tarif_id === item?.tarif_id);
                 let treatmentName = treatment ? treatment.tarif_name : "-";
                 let treatmentPrice = treatment ? (treatment.amount_paid ?? '0') : "0";
-                hasil += `<tr>
+
+                hasil += `<tr class="${
+                                item?.patient_category_id === 0 ? 'outline-white-bg' :
+                                item?.patient_category_id === 1 ? 'outline-warning-bg' :
+                                item?.patient_category_id === 2 ? 'outline-danger-bg' : ''
+                                }">
+
                 <td>${index + 1}</td>
-                <td>${convertDate(moment(item?.start_operation).format("DD/MM/YYYY HH:mm"))}</td>
-                <td class="operation_action cursor-pointer pointer" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}">${treatmentName}</td>
-                <td>Rp. ${treatmentPrice}</td>
+                <td>${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}</td>
+                <td class="operation_action cursor-pointer pointer text-primary fw-bold text-decoration-underline" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}"
+                 data-visit_id="${item?.visit_id}"><strong>${treatmentName}</strong></td>
+                <td>${formatToIDRResult(treatmentPrice)}</td>
                 <td>${item?.doctor ?? "-"}</td>
                 <td>
                     ${item?.terlayani === 0 ? `
+                    <?php if (user()->checkPermission("pasienoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
                         <button type="button" class="btn btn-sm btn-info btn-show-detail-requestOperation" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                            <i class="far fa-eye"></i> Lihat
                         </button>
@@ -5644,16 +5787,26 @@
                         <button type="button" class="btn btn-sm btn-danger btn-show-delete-requestOperation" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                           <i class="far fa-trash-alt"></i> Hapus
                         </button>
+                        <?php } ?>
+
+                        <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
                         <button type="button" class="btn btn-sm btn-success btn-show-assesment-requestOperation" data-date="${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}" data-treatname="${treatmentName}" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                            <i class="far fa-file-alt"></i> Asssesment
                         </button>
+                        <?php } ?>
                         ` : `
+                         <?php if (user()->checkPermission("pasienoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
                         <button type="button" class="btn btn-sm btn-info btn-show-detail-requestOperation" data-noregis="${item?.no_registration}"  data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                             <i class="far fa-eye"></i> Lihat
                         </button>
+                        <?php } ?>
+
+                         <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
                         <button type="button" class="btn btn-sm btn-success btn-show-assesment-requestOperation" data-date="${moment(item?.start_operation).format("DD/MM/YYYY HH:mm")}" data-treatname="${treatmentName}" data-noregis="${item?.no_registration}" id="${item?.vactination_id}" data-id="${item?.vactination_id}" data-visit_id="${item?.visit_id}" data-index="${index}">
                            <i class="far fa-file-alt"></i> Asssesment
                         </button>
+                        <?php } ?>
                     `}
                 </td>
             </tr>`;

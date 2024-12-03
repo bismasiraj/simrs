@@ -58,6 +58,10 @@ $menu = [
     'gizi' => 1,
     'cairan' => 1,
     'penunjang' => 1,
+    'riwayatHamil' => 1,
+    'permintaandarah' => 1,
+    'pemeriksaanSaraf' => 1,
+    'pemeriksaanKulit' => 1,
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
@@ -234,6 +238,10 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="jadwalFisioTab" class="nav-link border-bottom" href="#jadwalFisiomodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Jadwal Fisio</a></li>
                                             <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
+                                        if ($menu['permintaandarah'] == 1) { ?>
+                                            <li class="nav-item"><a id="PermintaanDarahTab" class="nav-link border-bottom" href="#permintaanDarah" data-bs-toggle="tab" aria-expanded="true" role="tab">Permintaan Darah</a></li>
+                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
+                                        <?php }
                                         if ($menu['rekammedis'] == 1) { ?>
                                             <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Resume Medis</a></li>
                                             <!-- <li class="nav-item"><a id="rekammedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-hospital-alt text-primary"></i> Resume Medis</a></li> -->
@@ -328,6 +336,12 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="persalinanTab" class="nav-link border-bottom" href="#persalinan" data-bs-toggle="tab" aria-expanded="true" role="tab">Laporan Persalinan</a></li>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['riwayatHamil'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="riwayatHamilTab" class="nav-link border-bottom"
+                                                    href="#riwayatHamil" data-bs-toggle="tab" aria-expanded="true"
+                                                    role="tab">Riwayat Hamil</a></li>
+                                        <?php } ?>
                                         <?php if ($menu['casemanager'] == 1) {
                                         ?>
                                             <li class="nav-item"><a id="casemanagerTab" class="nav-link border-bottom" href="#casemanager" data-bs-toggle="tab" aria-expanded="true" role="tab">MPP</a></li>
@@ -531,17 +545,17 @@ $currency_symbol = 'Rp. ';
                                                                                 <tbody>
                                                                                     <?php
                                                                                     $i = 0;
-                                                                                    foreach ($exam as $key => $value) {
+                                                                                    foreach ($examDetail as $key => $value) {
                                                                                     ?>
                                                                                         <tr>
-                                                                                            <td><?= substr($exam[$key]['examination_date'], 0, 13); ?></td>
-                                                                                            <td><?= $exam[$key]['weight']; ?></td>
-                                                                                            <td><?= $exam[$key]['temperature']; ?></td>
-                                                                                            <td><?= $exam[$key]['height']; ?></td>
-                                                                                            <td><?= $exam[$key]['nadi']; ?></td>
-                                                                                            <td><?= $exam[$key]['tension_upper'] . ' / ' . $exam[$key]['tension_below']; ?></td>
-                                                                                            <td><?= $exam[$key]['saturasi']; ?></td>
-                                                                                            <td><?= $exam[$key]['nafas']; ?></td>
+                                                                                            <td><?= substr($examDetail[$key]['examination_date'], 0, 13); ?></td>
+                                                                                            <td><?= $examDetail[$key]['weight']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['temperature']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['height']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['nadi']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['tension_upper'] . ' / ' . $examDetail[$key]['tension_below']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['saturasi']; ?></td>
+                                                                                            <td><?= $examDetail[$key]['nafas']; ?></td>
                                                                                             <?php if (isset($permissions['profilexam']['u'])) {
                                                                                                 if ($permissions['profilexam']['u'] == '1') { ?>
                                                                                                     <td><a href='#' onclick='editExamFunc(<?= $key; ?>)' class='btn btn-default btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-edit'></i></a></td>
@@ -1137,6 +1151,42 @@ $currency_symbol = 'Rp. ';
                                             ]); ?>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['pemeriksaanKulit'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/pemeriksaan-kulit.php', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['pemeriksaanSaraf'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/pemeriksaan-saraf.php', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['permintaandarah'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/permintaan_darah', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['informedconcent'] == 1) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/informedConsent', [
@@ -1185,7 +1235,18 @@ $currency_symbol = 'Rp. ';
                                             ]) ?>
                                         <?php
                                         } ?>
-
+                                        <?php if ($menu['riwayatHamil'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/riwayat-Hamil.php', [
+                                                'title' => '',
+                                                'visit' => $visit,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                            ]) ?>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['gizi'] == 1) {
                                         ?>
                                             <?php echo view('admin\patient\profilemodul\gizi.php', [
@@ -1313,13 +1374,13 @@ $currency_symbol = 'Rp. ';
         var color = ['#f56954', '#00a65a', '#f39c12', '#2f4074', '#00c0ef', '#3c8dbc', '#d2d6de', '#b7b83f'];
 
         var label = [
-            <?php foreach ($exam as $key => $value) { ?> '<?= substr($exam[$key]['examination_date'], 0, 13); ?>',
+            <?php foreach ($examDetail as $key => $value) { ?> '<?= substr($examDetail[$key]['examination_date'], 0, 13); ?>',
             <?php } ?>
         ];
         var datasheet = [{
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['weight']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['weight']; ?>,
                     <?php } ?>
                 ],
                 label: 'Berat',
@@ -1328,8 +1389,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['temperature']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['temperature']; ?>,
                     <?php } ?>
                 ],
                 label: 'Suhu',
@@ -1338,8 +1399,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['height']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['height']; ?>,
                     <?php } ?>
                 ],
                 label: 'Tinggi',
@@ -1348,8 +1409,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['nadi']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['nadi']; ?>,
                     <?php } ?>
                 ],
                 label: 'Nadi',
@@ -1358,8 +1419,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['tension_upper']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['tension_upper']; ?>,
                     <?php } ?>
                 ],
                 label: 'Sistol',
@@ -1368,8 +1429,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['tension_below']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['tension_below']; ?>,
                     <?php } ?>
                 ],
                 label: 'Diastol',
@@ -1378,8 +1439,8 @@ $currency_symbol = 'Rp. ';
             },
             {
                 data: [
-                    <?php foreach ($exam as $key => $value) { ?>
-                        <?= $exam[$key]['nafas']; ?>,
+                    <?php foreach ($examDetail as $key => $value) { ?>
+                        <?= $examDetail[$key]['nafas']; ?>,
                     <?php } ?>
                 ],
                 label: 'Nafas',
@@ -2534,6 +2595,63 @@ if ($menu['persalinan'] == 1) {
         'aValue' => $aValue,
     ]);
 }
+if ($menu['riwayatHamil'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/riwayatHamil_js.php', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa
+    ]);
+}
+if ($menu['pemeriksaanKulit'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/pemeriksaanKulit_js.php', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa
+    ]);
+}
+if ($menu['pemeriksaanKulit'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/pemeriksaanSaraf_js.php', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa
+    ]);
+}
 if ($menu['eklaim'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/eklaim_js', [
         'visit' => $visit,
@@ -2543,7 +2661,16 @@ if ($menu['eklaim'] == 1) {
         'aValue' => $aValue,
     ]);
 } ?>
-
+<?php
+if ($menu['permintaandarah'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/permintaan_darah_js', [
+        'visit' => $visit,
+        'aParent' => $aParent,
+        'aType' => $aType,
+        'aParameter' => $aParameter,
+        'aValue' => $aValue,
+    ]);
+} ?>
 <?php if ($menu['gizi'] == 1) {
 ?>
     <?php echo view('admin\patient\profilemodul\jsprofile\gizi_js.php', [
@@ -2605,7 +2732,6 @@ if ($menu['eklaim'] == 1) {
         'employee' => $employee,
         'pasienDiagnosaAll' => $pasienDiagnosaAll,
         'pasienDiagnosa' => $pasienDiagnosa,
-
     ]);
 }
 $this->endSection() ?>

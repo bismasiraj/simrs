@@ -852,106 +852,6 @@
                 </table>
             </div>
         </div>
-        <div class="page">
-            <div class="container-fluid mt-5">
-                <div class="row pb-3">
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
-                    </div>
-                    <div class="col text-center">
-                        <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop["contact_address"] ?></p>
-                    </div>
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
-                    </div>
-                </div>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
-
-                <div class="row">
-                    <h4 class="text-center">SURAT PERSETUJUAN PEMBERIAN VAKSINASI</h4>
-                </div>
-                <div class="row">
-                    <p class="text-start">Yang bertandatangan di bawah ini :</p>
-                </div>
-                <table class="1 pb-2">
-                    <tbody id="content_tabels-E02" class="content_tabels-E03">
-                        <tr>
-                            <td class="p-1">Nama</td>
-                            <td class="p-1">: <?= @$visit["name_of_pasien"] ?></td>
-                        </tr>
-                        <tr>
-                            <td class="p-1">Umur</td>
-                            <td class="p-1">:
-                                <?php if (!empty($visit["date_of_birth"])) : ?>
-                                    <?= date(
-                                        "d/m/Y",
-                                        strtotime($visit["date_of_birth"])
-                                    ) ?>
-                                <?php else : ?>
-                                    -
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="p-1">Alamat</td>
-                            <td class="p-1">: <?= @$visit["no_registration"] ?></td>
-                        </tr>
-                        <tr>
-                            <td class="p-1">Selaku Ayah/ Ibu/ Nenek/ Wali/ Lainnya</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="row">
-                    <p class="text-start contentIsi-E03" id="contentIsi-E03">Menyatakan persetujuan untuk diberikan
-                        Vaksinasi amti virus</p>
-                    <p>terhadap Pasien/ anak :</p>
-                </div>
-                <table class="2 pb-2">
-                    <tbody>
-                        <tr>
-                            <td class="p-1">Nama</td>
-                            <td class="p-1">: <span class="name_of_pasien-E03"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="p-1">Umur</td>
-                            <td class="p-1">: <span class="age-E03"></span>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-                <div class="row pb-4">
-                    <div class="col-md-3 offset-md-7 text-right" align="right">
-                        Surakarta,<span class="date-E03"></span>
-                    </div>
-                </div>
-
-                <table class="tabel text-center pt-2" style="width: 720px; height: 200px; margin: auto;">
-                    <tbody>
-                        <tr>
-                            <td style="vertical-align: top;">
-                                <p style="margin-top: 10px; margin-bottom: 5px;">SAKSI</p>
-                                <div align="center" id="qr-saksi-2-E03"></div>
-                                <p><span class="saksi-E03"></span></p>
-                            </td>
-                            <td style="vertical-align: top;">
-                                <p style="margin-top: 10px; margin-bottom: 5px;">Yang Menyatakan,</p>
-                                <div align="center" id="qr-menyarakan-2-E03"></div>
-                                <p><span class="menyatakan-E03"></span></p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </body>
 </div>
 
@@ -1729,87 +1629,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Halaman 2 -->
-        <div class="page">
-            <div class="container-fluid mt-5">
-                <div class="row pb-3">
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
-                    </div>
-                    <div class="col text-center">
-                        <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop["contact_address"] ?></p>
-                    </div>
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
-                    </div>
-                </div>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
-
-                <div class="mt-4">
-                    <table class="table table-bordered">
-                        <tbody>
-                            <tr>
-                                <td width="36">Ruang</td>
-                                <td width="214"><span class="content_visit_room_E09"></span></td>
-                                <td width="67">No. RM</td>
-                                <td colspan="2" width="225"><span class="content_visit_register_E09"></span></td>
-                            </tr>
-                            <tr>
-                                <td width="36">Nama</td>
-                                <td width="214"><span class="content_visit_name_E09"></span></td>
-                                <td width="67">Umur</td>
-                                <td width="144"><span class="content_visit_age_E09"></span></td>
-                                <td width="81" class="text-center"><span class="content_visit_gender_E09"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="text-center my-4">
-                        <h6><strong>SURAT PERSETUJUAN PEMBERIAN</strong></h6>
-                        <h6><strong>SUSU FORMULA</strong></h6>
-                    </div>
-
-                    <p>Yang bertandatangan di bawah ini:</p>
-                    <p>Nama: <span class="content_val_1_E09"></span> </p>
-                    <p>Umur: <span class="content_val_2_E09"></span></p>
-                    <p>Alamat: <span class="content_val_3_E09"></span></p>
-                    <p>Adalah : <span class="content_val_4_E09"></span></p>
-                    <p>Menyatakan persetujuan untuk pemberian Susu Formula terhadap Pasien/ anak:</p>
-                    <p>Nama: <span class="content_visit_name_E09"></span></p>
-                    <p>Umur: <span class="content_visit_age_E09"></span></p>
-
-                    <div class="text-end">
-                        <p>Surakarta, <span class="date_E09"></span></p>
-                    </div>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="text-center">
-                                    <p>Saksi</p>
-                                    <div id="qr_valid_2_E09" align="center"></div>
-
-                                    <div class="mt-4">(<span class="valid_E09"></span>)</div>
-                                </td>
-                                <td class="text-center">
-                                    <p>Yang Menyatakan,</p>
-                                    <div id="qr_val_2_E09" align="center"></div>
-
-                                    <div class="mt-4">(<span class="val_E09"></span>)</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </body>
 </div>
 
@@ -1911,100 +1730,6 @@
             </div>
         </div>
 
-        <!-- Halaman 2 -->
-        <div class="page">
-            <div class="container-fluid mt-5">
-                <div class="row pb-3">
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
-                    </div>
-                    <div class="col text-center">
-                        <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop["contact_address"] ?></p>
-                    </div>
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
-                    </div>
-                </div>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
-
-                <div class="mt-4">
-                    <div class="text-center mb-4">
-                        <h6><strong>SURAT PENOLAKAN PEMBERIAN VAKSINASI</strong></h6>
-                    </div>
-
-                    <p>Yang bertandatangan di bawah ini :</p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="20%">Nama</td>
-                                <td width="5%"><span id="content_val_1_E10" class="content_val_1_E10"></span></td>
-                                <td width="75%"><span id="content_val_2_E10" class="content_val_2_E10"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span id="content_val_3_E10" class="content_val_3_E10"></span></td>
-
-                            </tr>
-                            <tr>
-                                <td>Alamat</td>
-                                <td><span id="content_val_4_E10" class="content_val_4_E10"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Selaku</td>
-                                <td><span id="content_val_5_E10" class="content_val_5_E10"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <p>Menyatakan menolak untuk diberikan Vaksinasi : <span id="content_val_6_E10" class="content_val_6_E10"></span></p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="5%">Nama</td>
-                                <td width="20%"><span class="pb-5 visit_name_E10"></span></td>
-                                <td width="75%"><span class="visit_gender_E10"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span class="visit_age_E10"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-
-                    <div class="text-end mt-4">
-                        <p>Surakarta, <span class="date_E10"></span></p>
-                    </div>
-
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="text-center">
-                                    <p>Saksi</p>
-                                    <div id="qr_valid_2_E10" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E10"></span>)</div>
-                                </td>
-                                <td class="text-center">
-                                    <p>Yang Menyatakan,</p>
-                                    <div id="qr_val_2_E10" align="center"></div>
-
-                                    <div class="mt-4">(<span class="val_E10"></span>)</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </body>
 </div>
 
@@ -2107,101 +1832,6 @@
             </div>
         </div>
 
-        <!-- Halaman 2 -->
-        <div class="page">
-            <div class="container-fluid mt-5">
-                <div class="row pb-3">
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
-                    </div>
-                    <div class="col text-center">
-                        <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop["contact_address"] ?></p>
-                    </div>
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
-                    </div>
-                </div>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
-
-                <div class="mt-4">
-                    <div class="text-center mb-4">
-                        <h6><strong>SURAT PERSETUJUAN</strong></h6>
-                        <h6><strong>SHK (Skrining Hipotiroid Kongenital)</strong></h6>
-                    </div>
-
-                    <p>Yang bertandatangan di bawah ini :</p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="20%">Nama</td>
-                                <td width="5%"><span id="content_val_1_E11" class="content_val_1_E11"></span></td>
-                                <td width="75%"><span id="content_val_2_E11" class="content_val_2_E11"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span id="content_val_3_E11" class="content_val_3_E11"></span></td>
-
-                            </tr>
-                            <tr>
-                                <td>Alamat</td>
-                                <td><span id="content_val_4_E11" class="content_val_4_E11"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Selaku</td>
-                                <td><span id="content_val_5_E11" class="content_val_5_E11"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <p>Menyatakan persetujuan untuk dilakukan SHK (Skrining Hipotiroid Kongenital) terhadap Pasien/
-                        anak:</p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="5%">Nama</td>
-                                <td width="20%"><span class="pb-5 visit_name_E11"></span></td>
-                                <td width="75%"><span class="visit_gender_E11"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span class="visit_age_E11"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="text-end mt-4">
-                        <p>Surakarta, <span class="date_E11"></span></p>
-                    </div>
-
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="text-center">
-                                    <p>Saksi</p>
-                                    <div id="qr_valid_2_E11" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E11"></span>)</div>
-                                </td>
-                                <td class="text-center">
-                                    <p>Yang Menyatakan,</p>
-                                    <div id="qr_val_2_E11" align="center"></div>
-
-                                    <div class="mt-4">(<span class="val_E11"></span>)</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </body>
 </div>
 
@@ -2303,102 +1933,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Halaman 2 -->
-        <div class="page">
-            <div class="container-fluid mt-5">
-                <div class="row pb-3">
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/logo.png"
-                                                ) ?>" width="90px">
-                    </div>
-                    <div class="col text-center">
-                        <h3><?= @$kop["name_of_org_unit"] ?></h3>
-                        <!-- <h3>Surakarta</h3> -->
-                        <p><?= @$kop["contact_address"] ?></p>
-                    </div>
-                    <div class="col-auto text-center">
-                        <img class="mt-2" src="<?= base_url(
-                                                    "assets/img/paripurna.png"
-                                                ) ?>" width="90px">
-                    </div>
-                </div>
-                <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
-
-                <div class="mt-4">
-                    <div class="text-center mb-4">
-                        <h6><strong>SURAT PENOLAKAN SHK (Skrining Hipotiroid Kongenital)</strong></h6>
-
-                    </div>
-
-                    <p>Yang bertandatangan di bawah ini :</p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="20%">Nama</td>
-                                <td width="5%"><span id="content_val_1_E12" class="content_val_1_E12"></span></td>
-                                <td width="75%"><span id="content_val_2_E12" class="content_val_2_E12"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span id="content_val_3_E12" class="content_val_3_E12"></span></td>
-
-                            </tr>
-                            <tr>
-                                <td>Alamat</td>
-                                <td><span id="content_val_4_E12" class="content_val_4_E12"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Selaku</td>
-                                <td><span id="content_val_5_E12" class="content_val_5_E12"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <p>Menyatakan menolak untuk dilakukan SHK (Skrining Hipotiroid Kongenital)
-                        terhadap Pasien/ anak :</p>
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td width="5%">Nama</td>
-                                <td width="20%"><span class="pb-5 visit_name_E12"></span></td>
-                                <td width="75%"><span class="visit_gender_E12"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Umur</td>
-                                <td><span class="visit_age_E12"></span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="text-end mt-4">
-                        <p>Surakarta, <span class="date_E12"></span></p>
-                    </div>
-
-
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="text-center">
-                                    <p>Saksi</p>
-                                    <div id="qr_valid_2_E12" align="center"></div>
-                                    <div class="mt-4">(<span class="valid_E12"></span>)</div>
-                                </td>
-                                <td class="text-center">
-                                    <p>Yang Menyatakan,</p>
-                                    <div id="qr_val_2_E12" align="center"></div>
-
-                                    <div class="mt-4">(<span class="val_E12"></span>)</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </body>
 </div>
 
@@ -2481,6 +2015,19 @@
                 <!-- template table -->
                 <?= view("admin/patient/profilemodul/template/template-info.php", ['nama_tindakan' => 'REGIONAL ANESTESIA', 'tindakan' => false, 'id' => 'F04']); ?>
                 <!-- endof template table -->
+
+            </div>
+        </div>
+        <div class="page">
+            <div class="container-fluid">
+
+                <!-- template kop -->
+                <?= view("admin/patient/profilemodul/template/template-kop-2.php", ['heading' => 'Rekam Medis Rawat Jalan/Darurat/Inap']); ?>
+                <!-- endof template kop -->
+
+                <!-- template tindakan dokter -->
+                <?= view("admin/patient/profilemodul/template/template-tindakan-dokter.php"); ?>
+                <!-- endof template tindakan dokter -->
 
             </div>
         </div>
@@ -5451,8 +4998,8 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="py-0 text-center">(${result?.data[2].modified_by})</td>
                         <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
                     </tr>
                     <tr>
                         <td class="py-0 text-center">nama jelas</td>
@@ -5468,10 +5015,10 @@
             let element1 = document.getElementById(`ttd-pasien`);
 
             if (element) {
-                generateQRCode(`ttd-pendaftar`, result?.data[2].value_info, 100, 100);
+                generateQRCode(`ttd-pendaftar`, result?.data[2].modified_by, 100, 100);
             }
             if (element1) {
-                generateQRCode(`ttd-pasien`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pasien`, result?.data[2].value_info, 100, 100);
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B02") {
@@ -5567,7 +5114,7 @@
                     </tr>
                     <tr>
                         <td width="50%"></td>
-                        <td class="py-0 text-center" colspan="2">${visit[aValue[7].value_info]}</td>
+                        <td class="py-0 text-center" colspan="2">${result.data[1].value_info}</td>
                     </tr>
             `;
 
@@ -5578,7 +5125,7 @@
             let element = document.getElementById(`ttd-pernyataan-B02`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B02`, visit[aValue[7].value_info], 100, 100);
+                generateQRCode(`ttd-pernyataan-B02`, result.data[1].value_info, 100, 100);
             }
 
         } else if (result.data[0].parameter_id === "RM_9_B03") {
@@ -5706,7 +5253,7 @@
                     </tr>
                     <tr>
                         <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
                     </tr>
                     <tr>
                         <td class="py-2"></td>
@@ -5730,7 +5277,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${result?.data[1].modified_by})</td>
                         <td class="py-0 text-center">(${result.data[1].value_info})</td>
                     </tr>
             `;
@@ -5746,13 +5293,13 @@
             let element3 = document.getElementById(`ttd-saksi-B03`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B03`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pernyataan-B03`, result?.data[1].value_info, 100, 100);
             }
             if (element1) {
                 generateQRCode(`ttd-dokter-B03`, visit.fullname, 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-medis-B03`, visit.fullname, 100, 100);
+                generateQRCode(`ttd-medis-B03`, result?.data[1].modified_by, 100, 100);
             }
             if (element3) {
                 generateQRCode(`ttd-saksi-B03`, result.data[1].value_info, 100, 100);
@@ -5870,7 +5417,7 @@
                     </tr>
                     <tr>
                         <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
                     </tr>
                     <tr>
                         <td class="py-2"></td>
@@ -5894,7 +5441,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="py-0 text-center">(${visit.fullname})</td>
+                        <td class="py-0 text-center">(${result?.data[1].modified_by})</td>
                         <td class="py-0 text-center">(${result.data[1].value_info})</td>
                     </tr>
             `;
@@ -5910,13 +5457,13 @@
             let element3 = document.getElementById(`ttd-saksi-B04`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-B04`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pernyataan-B04`, result.data[1].value_info, 100, 100);
             }
             if (element1) {
                 generateQRCode(`ttd-dokter-B04`, visit.fullname, 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-medis-B04`, visit.fullname, 100, 100);
+                generateQRCode(`ttd-medis-B04`, result?.data[1].modified_by, 100, 100);
             }
             if (element3) {
                 generateQRCode(`ttd-saksi-B04`, result.data[1].value_info, 100, 100);
@@ -6258,7 +5805,7 @@
                     </tr>
                     <tr>
                         <td class="py-0 text-center">(${visit.fullname})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
+                        <td class="py-0 text-center">(${result.data[1].value_info})</td>
                     </tr>
                     <tr>
                         <td class="py-2"></td>
@@ -6297,7 +5844,7 @@
             let element2 = document.getElementById(`ttd-saksi-C01`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-C01`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pernyataan-C01`, result.data[1].value_info, 100, 100);
             }
             if (element1) {
                 generateQRCode(`ttd-dokter-C01`, visit.fullname, 100, 100);
@@ -6418,8 +5965,8 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="py-0 text-center">(${result.data[2].modified_by})</td>
                         <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
                     </tr>
                     <tr>
                         <td class="py-2"></td>
@@ -6458,13 +6005,13 @@
             let element2 = document.getElementById(`ttd-saksi-C02`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-C02`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pernyataan-C02`, result.data[2].value_info, 100, 100);
             }
             if (element1) {
                 generateQRCode(`ttd-dokter-C02`, visit.fullname, 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-saksi-C02`, result.data[2].value_info, 100, 100);
+                generateQRCode(`ttd-saksi-C02`, result.data[2].modified_by, 100, 100);
             }
 
         } else if (result.data[0].parameter_id === "RM_9_C03") {
@@ -6579,8 +6126,8 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="py-0 text-center">(${result.data[2].modified_by})</td>
                         <td class="py-0 text-center">(${result.data[2].value_info})</td>
-                        <td class="py-0 text-center">(${visit.name_of_pasien})</td>
                     </tr>
                     <tr>
                         <td class="py-2"></td>
@@ -6619,13 +6166,13 @@
             let element2 = document.getElementById(`ttd-saksi-C03`);
 
             if (element) {
-                generateQRCode(`ttd-pernyataan-C03`, visit.name_of_pasien, 100, 100);
+                generateQRCode(`ttd-pernyataan-C03`, result.data[2].value_info, 100, 100);
             }
             if (element1) {
                 generateQRCode(`ttd-dokter-C03`, visit.fullname, 100, 100);
             }
             if (element2) {
-                generateQRCode(`ttd-saksi-C03`, result.data[2].value_info, 100, 100);
+                generateQRCode(`ttd-saksi-C03`, result.data[2].modified_by, 100, 100);
             }
 
         } else if (result.data[0].parameter_id === "RM_9_E01") {
@@ -6669,7 +6216,7 @@
 
             // ttd
             let petugas = new QRCode(document.getElementById(`qrcode-petugas-E01`), {
-                text: result.data[0]?.valid_user ?? "petugas",
+                text: result.data[0]?.valid_user ?? result.data[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -6686,7 +6233,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            $("#text-petugas-E01").html(`(${result.data[0]?.valid_user ?? ""})`);
+            $("#text-petugas-E01").html(`(${result.data[0]?.valid_user ?? result.data[0]?.modified_by})`);
             $("#text-pasien-E01").html(`(${result?.data[9]?.value_info || "-"})`);
 
             // content
@@ -6841,7 +6388,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr-saksi-E02`), {
-                text: !value[0]?.valid_other ? "-" : value[0]?.valid_other,
+                text: !value[0]?.valid_other ? result.data[0]?.modified_by : value[0]?.valid_other,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -6850,7 +6397,7 @@
             });
 
 
-            $("#saksi-E02").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
+            $("#saksi-E02").html(!value[0]?.valid_other ? result.data[0]?.modified_by : value[0]?.valid_other)
             $("#menyatakan-E02").html(value[0]?.value_info)
             $("#doctor-E02").html(visit?.visit?.sspractitioner_name)
             $("#date-E02").html(moment(new Date()).format("DD-MMM-YYYY"))
@@ -6867,7 +6414,7 @@
             $(".name_of_pasien-E03").html(visit?.visit.name_of_pasien)
             $(".age-E03").html(visit?.visit.age)
             $(".date-E03").html(moment(new Date()).format("DD-MMM-YYYY"))
-            $(".saksi-E03").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
+            $(".saksi-E03").html(value[0]?.valid_other ?? result.data[0]?.modified_by)
             $(".menyatakan-E03").html(value[0]?.value_info)
 
 
@@ -6879,9 +6426,9 @@
                 const item = value[i];
 
                 datatabels.push(`<tr>
-                <td class="p-1">${item.value_desc}</td>
-                <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
-            </tr>`);
+                    <td class="p-1">${item.value_desc}</td>
+                    <td class="p-1" id="value-info-${item.value_id}">: ${item.value_info}</td>
+                </tr>`);
 
                 if (item.value_id === "G017E0305") {
                     stopLoop = true;
@@ -6918,15 +6465,7 @@
             }
 
             new QRCode(document.getElementById(`qr-saksi-1-E03`), {
-                text: !value[0]?.valid_other ? "-" : value[0]?.valid_other,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-saksi-2-E03`), {
-                text: !value[0]?.valid_other ? "-" : value[0]?.valid_other,
+                text: value[0]?.valid_other ?? result.data[0]?.modified_by,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -6934,14 +6473,6 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr-menyarakan-1-E03`), {
-                text: value[0]?.value_info,
-                width: 50,
-                height: 50,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr-menyarakan-2-E03`), {
                 text: value[0]?.value_info,
                 width: 50,
                 height: 50,
@@ -7007,7 +6538,7 @@
             });
 
             new QRCode(document.getElementById(`qrcode-keluarga-E04`), {
-                text: result?.data[0].valid_other ?? "other",
+                text: result?.data[0].valid_other ?? result.data[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7016,7 +6547,7 @@
             });
 
             new QRCode(document.getElementById(`qrcode-bidan-E04`), {
-                text: result?.data[0].valid_user ?? "user",
+                text: result?.data[0].valid_user ?? result.data[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7079,8 +6610,8 @@
             $(".register-E05").html(visit?.visit.no_registration)
 
             $(".date-E05").html(moment(new Date()).format("DD-MMM-YYYY"))
-            $("#valid_other_ttd-E05").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
-            $("#valid_user-ttd-E05").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
+            $("#valid_other_ttd-E05").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
+            $("#valid_user-ttd-E05").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
             $("#val-ttd-E05").html(value[0]?.value_info)
             $("#doctor-ttd-E05").html(!visit?.visit?.fullname ? "-" : visit?.visit?.fullname)
 
@@ -7124,7 +6655,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr-valid_other-E05`), {
-                text: !value[0]?.valid_other ? "-" : value[0]?.valid_other,
+                text: !value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -7132,7 +6663,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr-valid_user-E05`), {
-                text: !value[0]?.valid_user ? "-" : value[0]?.valid_user,
+                text: !value[0]?.valid_user ? value[0]?.modified_by : value[0]?.valid_user,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -7164,8 +6695,8 @@
 
 
             $("#date_E06").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $("#text_valid_other_E06").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
-            $("#text_valid_user_E06").html(!value[0]?.valid_other ? "-" : value[0]?.valid_other)
+            $("#text_valid_other_E06").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
+            $("#text_valid_user_E06").html(!value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other)
             $("#text_val_content_E06").html(value[0]?.value_info)
 
 
@@ -7209,7 +6740,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr_valid_other_E06`), {
-                text: !value[0]?.valid_other ? "-" : value[0]?.valid_other,
+                text: !value[0]?.valid_other ? value[0]?.modified_by : value[0]?.valid_other,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -7217,7 +6748,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr_valid_user_E06`), {
-                text: !value[0]?.valid_user ? "-" : value[0]?.valid_user,
+                text: !value[0]?.valid_user ? value[0]?.modified_by : value[0]?.valid_user,
                 width: 50,
                 height: 50,
                 colorDark: "#000000",
@@ -7332,7 +6863,7 @@
 
             // ttd
             new QRCode(document.getElementById(`qrcode-keluarga-E08`), {
-                text: !result.data[0].valid_other ? "-" : result.data[0].valid_other,
+                text: !result.data[0].valid_other ? result.data[0]?.modified_by : result.data[0].valid_other,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7348,7 +6879,7 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qrcode-Perawat-E08`), {
-                text: !result.data[0].valid_user ? "-" : result.data[0].valid_user,
+                text: !result.data[0].valid_user ? result.data[0]?.modified_by : result.data[0].valid_user,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7357,9 +6888,9 @@
             });
 
             // text ttd
-            $("#text-keluarga-E08").html(!result.data[0].valid_other ? "-" : result.data[0].valid_other)
+            $("#text-keluarga-E08").html(!result.data[0].valid_other ? result.data[0]?.modified_by : result.data[0].valid_other)
             $("#text-pernyataan-E08").html(!result.data[1].value_info ? "-" : result.data[1].value_info.replace(/<p>|<\/p>/g, ''))
-            $("#text-Perawat-E08").html(!result.data[0].valid_user ? "-" : result.data[0].valid_user)
+            $("#text-Perawat-E08").html(!result.data[0].valid_user ? result.data[0]?.modified_by : result.data[0].valid_user)
 
 
         } else if (result.data[0].parameter_id === "RM_9_E09") {
@@ -7379,8 +6910,8 @@
 
 
             $(".date_E09").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E09").html(value[0]?.valid_other ?? "-")
-            $(".val_E09").html(value[0]?.value_info ?? "-")
+            $(".valid_E09").html(value[0]?.valid_other ?? value[0]?.modified_by)
+            $(".val_E09").html(value[0]?.value_info ?? value[0]?.modified_by)
 
 
             //tabels content
@@ -7414,7 +6945,7 @@
 
 
             new QRCode(document.getElementById(`qr_valid_1_E09`), {
-                text: value[0]?.valid_other ?? "-",
+                text: value[0]?.valid_other ?? '-',
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7429,22 +6960,7 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            new QRCode(document.getElementById(`qr_valid_2_E09`), {
-                text: value[0]?.valid_other ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_2_E09`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+
 
 
 
@@ -7463,7 +6979,7 @@
 
 
             $(".date_E10").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E10").html(value[0]?.valid_other ?? "-")
+            $(".valid_E10").html(value[0]?.valid_other ?? value[0]?.modified_by)
             $(".val_E10").html(value[0]?.value_info ?? "-")
 
 
@@ -7499,7 +7015,7 @@
 
 
             new QRCode(document.getElementById(`qr_valid_1_E10`), {
-                text: value[0]?.valid_other ?? "-",
+                text: value[0]?.valid_other ?? value[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7514,22 +7030,7 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            new QRCode(document.getElementById(`qr_valid_2_E10`), {
-                text: value[0]?.valid_other ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_2_E10`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+
 
 
 
@@ -7548,7 +7049,7 @@
 
 
             $(".date_E11").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E11").html(value[0]?.valid_other ?? "-")
+            $(".valid_E11").html(value[0]?.valid_other ?? value[0]?.modified_by)
             $(".val_E11").html(value[0]?.value_info ?? "-")
 
 
@@ -7584,7 +7085,7 @@
 
 
             new QRCode(document.getElementById(`qr_valid_1_E11`), {
-                text: value[0]?.valid_other ?? "-",
+                text: value[0]?.valid_other ?? value[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7592,22 +7093,6 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
             new QRCode(document.getElementById(`qr_val_1_E11`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_valid_2_E11`), {
-                text: value[0]?.valid_other ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_2_E11`), {
                 text: value[0]?.value_info ?? "-",
                 width: 80,
                 height: 80,
@@ -7633,7 +7118,7 @@
 
 
             $(".date_E12").html(moment(new Date()).format("DD-MMM-YYYY HH:mm"))
-            $(".valid_E12").html(value[0]?.valid_other ?? "-")
+            $(".valid_E12").html(value[0]?.valid_other ?? value[0]?.modified_by)
             $(".val_E12").html(value[0]?.value_info ?? "-")
 
 
@@ -7669,7 +7154,7 @@
 
 
             new QRCode(document.getElementById(`qr_valid_1_E12`), {
-                text: value[0]?.valid_other ?? "-",
+                text: value[0]?.valid_other ?? value[0]?.modified_by,
                 width: 80,
                 height: 80,
                 colorDark: "#000000",
@@ -7684,22 +7169,7 @@
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });
-            new QRCode(document.getElementById(`qr_valid_2_E12`), {
-                text: value[0]?.valid_other ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-            new QRCode(document.getElementById(`qr_val_2_E12`), {
-                text: value[0]?.value_info ?? "-",
-                width: 80,
-                height: 80,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+
 
 
 
@@ -7725,7 +7195,7 @@
                 code: 'F03'
             });
         } else if (result.data[0].parameter_id.replaceAll(' ', '') === "RM_9_F04") {
-            renderDynamicContent({
+            renderDynamicContent2({
                 result: result,
                 visit: visit,
                 code: 'F04'
@@ -8764,7 +8234,12 @@
                 }
             });
         } else {
+            const result2 = result.filter(item => item.value_desc.toLowerCase().includes("menolak"));
 
+            // Extract the value_info from the found object(s)
+            const valueInfo = result2.map(item => item.value_info);
+
+            console.log(valueInfo);
             result.data.slice(0, 4).forEach((element, index) => {
                 if (index < 1) {
                     dataInformasi +=
@@ -8895,8 +8370,19 @@
 
         let formSetuju = document.querySelector('#form-setuju-' + props.code);
         let formMenolak = document.querySelector('#form-menolak-' + props.code);
-
+        console.log(result.data);
         if (result.data.length > 40) {
+            const result2 = result.data.filter(item => item.value_desc.toLowerCase().includes("menolak"));
+            const valueInfo2 = result2.map(item => item.value_info);
+
+
+            if (valueInfo2[0] !== "") {
+                $(formSetuju).attr('hidden', true);
+                $(formMenolak).removeAttr('hidden');
+            } else {
+                $(formMenolak).attr('hidden', true);
+                $(formSetuju).removeAttr('hidden');
+            }
 
             getDataIdTables({
                 id: result?.data[24]?.value_info,
@@ -8924,11 +8410,11 @@
                 element: "#selaku-2-" + props.code
             })
 
-            if (result.data[25].value_info !== "") {
-                formMenolak?.setAttribute('hidden', true)
-            } else {
-                formSetuju?.setAttribute('hidden', true)
-            }
+            // if (result.data[25].value_info !== "") {
+            //     formMenolak?.setAttribute('hidden', true)
+            // } else {
+            //     formSetuju?.setAttribute('hidden', true)
+            // }
 
 
             let data2 = <?= json_encode($AValue) ?>;
@@ -9055,20 +8541,22 @@
             $("#umur-tindakan-setuju-" + props.code).html((result.data[22].value_info));
             $("#alamat-tindakan-setuju-" + props.code).html((result.data[23].value_info));
 
-            $("#nama-tindakan-menolak-" + props.code).html((result.data[21].value_info));
-            $("#umur-tindakan-menolak-" + props.code).html((result.data[22].value_info));
-            $("#alamat-tindakan-menolak-" + props.code).html((result.data[23].value_info));
+            $("#nama-tindakan-menolak-" + props.code).html((result.data[34].value_info));
+            $("#umur-tindakan-menolak-" + props.code).html((result.data[35].value_info));
+            $("#alamat-tindakan-menolak-" + props.code).html((result.data[36].value_info));
 
             $("#pihak-menyatakan-" + props.code).html((result.data[21].value_info));
             $("#pihak-keluarga-" + props.code).html((result.data[21].value_info));
             $("#pihak-medis-" + props.code).html((props.visit['fullname']));
-            $("#pihak-menyatakan2-" + props.code).html((result.data[21].value_info));
-            $("#pihak-keluarga2-" + props.code).html((result.data[21].value_info));
+
+            $("#pihak-menyatakan2-" + props.code).html((result.data[34].value_info));
+            $("#pihak-keluarga2-" + props.code).html((result.data[34].value_info));
             $("#pihak-medis2-" + props.code).html((props.visit['fullname']));
 
             let element = document.getElementById(`qrcode-tandatangan-pihak-menyatakan-${ props.code}`);
             let element1 = document.getElementById(`qrcode-tandatangan-pihak-keluarga-${ props.code}`);
             let element2 = document.getElementById(`qrcode-tandatangan-pihak-medis-${ props.code}`);
+
             let element3 = document.getElementById(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`);
             let element4 = document.getElementById(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`);
             let element5 = document.getElementById(`qrcode-tandatangan-pihak-medis2-${ props.code}`);
@@ -9084,13 +8572,13 @@
                 generateQRCode(`qrcode-tandatangan-pihak-medis-${ props.code}`, result?.data[21].value_info);
             }
             if (element3) {
-                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[21].value_info);
+                generateQRCode(`qrcode-tandatangan-pihak-menyatakan2-${ props.code}`, result?.data[34].value_info);
             }
             if (element4) {
-                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[21].value_info);
+                generateQRCode(`qrcode-tandatangan-pihak-keluarga2-${ props.code}`, result?.data[34].value_info);
             }
             if (element5) {
-                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, result?.data[21].value_info);
+                generateQRCode(`qrcode-tandatangan-pihak-medis2-${ props.code}`, props.visit['fullname']);
             }
 
             $("#nama-tindakan-setuju-2-" + props.code).html((props.visit['name_of_pasien']));
@@ -9113,6 +8601,17 @@
             $(".name_of_gender-" + props.code).html(props.visit.name_of_gender);
 
         } else {
+            const result2 = result.data.filter(item => item.value_desc.toLowerCase().includes("menolak"));
+            const valueInfo2 = result2.map(item => item.value_info);
+
+
+            if (valueInfo2[0] !== "") {
+                $(formSetuju).attr('hidden', true);
+                $(formMenolak).removeAttr('hidden');
+            } else {
+                $(formMenolak).attr('hidden', true);
+                $(formSetuju).removeAttr('hidden');
+            }
 
             getDataIdTables({
                 id: result?.data[18]?.value_info,
@@ -9140,11 +8639,11 @@
                 element: "#selaku-2-" + props.code
             })
 
-            if (result.data[19].value_info !== "") {
-                formMenolak?.setAttribute('hidden', 'true');
-            } else {
-                formSetuju?.setAttribute('hidden', 'true');
-            }
+            // if (result.data[19].value_info !== "") {
+            //     formMenolak?.setAttribute('hidden', 'true');
+            // } else {
+            //     formSetuju?.setAttribute('hidden', 'true');
+            // }
 
             let data2 = <?= json_encode($AValue) ?>;
             let aValue = data2.filter(item => item.value_desc === "");

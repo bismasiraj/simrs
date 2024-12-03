@@ -95,7 +95,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>BB(Kg)</label>
                                                                 <div class=" position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="avtweight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="weight" id="avtweight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-bb"></span>
                                                                 </div>
                                                             </div>
@@ -104,7 +104,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Tinggi(cm)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="avtheight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="height" id="avtheight" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtheight"></span>
                                                                 </div>
                                                             </div>
@@ -113,7 +113,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Suhu(°C)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="avttemperature" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="temperature" id="avttemperature" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avttemperature"></span>
                                                                 </div>
                                                             </div>
@@ -122,7 +122,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Nadi(/menit)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="avtnadi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="nadi" id="avtnadi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtnadi"></span>
                                                                 </div>
                                                             </div>
@@ -131,12 +131,12 @@ $permission = user()->getPermissions();
                                                             <div class="form-group"><label>T.Darah(mmHg)</label>
                                                                 <div class="col-sm-12 " style="display: flex;  align-items: center;">
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="avttension_upper" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <input onchange="" type="text" name="tension_upper" id="avttension_upper" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                         <span class="h6" id="badge-avttension_upper"></span>
                                                                     </div>
                                                                     <h4 class="mx-2">/</h4>
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="avttension_below" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <input onchange="" type="text" name="tension_below" id="avttension_below" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                         <span class="h6" id="badge-avttension_below"></span>
                                                                     </div>
                                                                 </div>
@@ -146,7 +146,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Saturasi(SpO2%)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="avtsaturasi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="saturasi" id="avtsaturasi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtsaturasi"></span>
                                                                 </div>
                                                             </div>
@@ -155,7 +155,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Nafas/RR(/menit)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="avtnafas" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="nafas" id="avtnafas" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtnafas"></span>
                                                                 </div>
                                                             </div>
@@ -164,7 +164,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Diameter Lengan(cm)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="avtarm_diameter" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="arm_diameter" id="avtarm_diameter" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtarm_diameter"></span>
                                                                 </div>
                                                             </div>
@@ -173,7 +173,7 @@ $permission = user()->getPermissions();
                                                             <div class="form-group">
                                                                 <label>Penggunaan Oksigen (L/mnt)</label>
                                                                 <div class="position-relative">
-                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="avtoxygen_usage" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                    <input onchange="" type="text" name="oxygen_usage" id="avtoxygen_usage" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
                                                                     <span class="h6" id="badge-avtoxygen_usage"></span>
                                                                 </div>
                                                             </div>
@@ -181,7 +181,7 @@ $permission = user()->getPermissions();
                                                         <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                             <div class="form-group">
                                                                 <label>Kesadaran</label>
-                                                                <select class="form-select" name="awareness" id="avtawareness" onchange="vitalsignInput(this)">
+                                                                <select class="form-select" name="awareness" id="avtawareness" onchange="">
                                                                     <option value="0">Sadar</option>
                                                                     <option value="3">Nyeri</option>
                                                                     <option value="10">Unrespon</option>
@@ -194,7 +194,7 @@ $permission = user()->getPermissions();
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Nyeri</label>
-                                                                    <select class="form-select" name="pain" id="prslexampain" onchange="vitalsignInput(this)">
+                                                                    <select class="form-select" name="pain" id="prslexampain" onchange="">
                                                                         <option value="0">Normal</option>
                                                                         <option value="3">Abnormal</option>
                                                                     </select>
@@ -204,7 +204,7 @@ $permission = user()->getPermissions();
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Discharge/Lokia</label>
-                                                                    <select class="form-select" name="lochia" id="prslexamlochia" onchange="vitalsignInput(this)">
+                                                                    <select class="form-select" name="lochia" id="prslexamlochia" onchange="">
                                                                         <option value="0">Normal</option>
                                                                         <option value="3">Abnormal</option>
                                                                     </select>
@@ -214,12 +214,75 @@ $permission = user()->getPermissions();
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>Proteinuria (Perhari)</label>
-                                                                    <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
+                                                                    <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="">
                                                                         <option value="0">-</option>
                                                                         <option value="2">+</option>
                                                                         <option value="3">++</option>
                                                                     </select>
                                                                     <span class="h6" id="badge-prslexamproteinuria"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Cervix</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="cervix" id="avtcervix" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtcervix"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>DJJ</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="djj" id="avtdjj" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtdjj"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>TFU</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="tfu" id="avttfu" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avttfu"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Letak Anak</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="child_potition" id="avtchild_potition" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtchild_potition"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Bunyi Jantung</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="heart_sound" id="avtheart_sound" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtheart_sound"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Oedema</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="oedema" id="avtoedema" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtoedema"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Urine</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="urine" id="avturine" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avturine"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         <?php
@@ -234,7 +297,53 @@ $permission = user()->getPermissions();
                                                         </div> -->
                                                     </div>
                                                 </div>
+                                                <?php if ($visit['specialist_type_id'] == '1.05') {
+                                                ?>
+                                                    <label class="col-xs-6 col-sm-6 col-md-2 col-form-label">HIS</label>
+                                                    <div class="col-xs-6 col-sm-6 col-md-10">
+                                                        <div class="row mb-2">
+
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Freq</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="his_freq" id="avthis_freq" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avthis_freq"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Lama</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="his_duration" id="avthis_duration" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avthis_duration"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Kekuatan</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="his_power" id="avthis_power" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avthis_power"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                                <div class="form-group">
+                                                                    <label>Simetri</label>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="" type="text" name="his_simetry" id="avthis_simetry" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avthis_simetry"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
                                             </div>
+
                                             <div class="row mt-4 mb-4" style="display: none">
                                                 <label for="avtdescription" class="col-xs-6 col-sm-6 col-md-3 col-form-label">(A) Assesment</label>
                                                 <div class="col-sm-10">
@@ -310,8 +419,3 @@ $permission = user()->getPermissions();
     </div><!--./row-->
 </div>
 <!-- -->
-
-<?= view('admin/patient/profilemodul/jsprofile/vitalsign_js', [
-    'title' => 'Test',
-    'visit' => $visit,
-]); ?>

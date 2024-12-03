@@ -1,5 +1,4 @@
 <script type='text/javascript'>
-    var mrJson;
     var tagihan = 0.0;
     var subsidi = 0.0;
     var potongan = 0.0;

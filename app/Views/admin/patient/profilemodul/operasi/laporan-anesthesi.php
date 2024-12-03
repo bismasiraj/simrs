@@ -137,24 +137,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arm_diameter-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-arm_diameter-laporanAnesthesi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="oxygen_usage-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-oxygen_usage-laporanAnesthesi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
@@ -256,7 +239,6 @@
 </div>
 
 <script type='text/javascript'>
-    var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
     var visit = '<?= $visit['visit_id']; ?>'
@@ -348,11 +330,11 @@
                     $.each(data.error, function(index, value) {
                         message += value;
                     });
-                    // errorSwal(message);
+                    // errorMsg(message);
                     errorSwal(message)
                     getVitalSign()
                 } else {
-                    // successSwal(data.message);
+                    // successMsg(data.message);
                     successSwal(data.message)
                     disableVitalSign()
                     $("#formvitalsignsubmit").toggle()
@@ -362,7 +344,7 @@
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             error: function(xhr) { // if error occured
-                errorSwal("Error occured.please try again");
+                errorMsg("Error occured.please try again");
                 clicked_submit_btn.html("<?php echo lang('Word.save'); ?>");
             },
             complete: function() {
@@ -372,9 +354,10 @@
     }));
 
     function setDataVitalSignLaporanAnesthesi() {
-        $("#formvitalsign-laporanAnesthesi").find("input, textarea").val(null)
-        $("#formvitalsign-laporanAnesthesi").find("#total_score-laporanAnesthesi").html("")
-        $("#formvitalsign-laporanAnesthesi").find("span.h6").html("")
+        $("#vitalSignLaporanAnesthesi").find("input, textarea").val(null)
+        $("#vitalSignLaporanAnesthesi").find("#total_score-laporanAnesthesi").html("")
+        $("#vitalSignLaporanAnesthesi").find("span.h6").html("")
+        $("#vs_status_id-laporanAnesthesi").prop("selectedIndex", 0);
         var bodyId = ''
 
         const date = new Date();
@@ -403,7 +386,6 @@
         $("#ageday-laporanAnesthesi").val('<?= $visit['ageday']; ?>')
         $("#examination_date-laporanAnesthesi").val(get_date())
 
-        //havin
         var ageYear = <?= $visit['ageyear']; ?>;
         var ageMonth = <?= $visit['agemonth']; ?>;
         var ageDay = <?= $visit['ageday']; ?>;
@@ -422,7 +404,7 @@
 
     const addRowVitalSigncatatanLaporanAnesthesi = (examselect, key) => {
         $("#vitalSignBodyLaporanAnesthesi").append($("<tr>")
-                .append($("<td rowspan='7'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='7'>").append((examselect.examination_date).substring(0, 16)))
                 .append($("<td rowspan='7'>").html(examselect.petugas))
                 .append($("<td>").html(''))
                 .append($("<td>").html('<b>Tekanan Darah</b>'))
@@ -504,10 +486,7 @@
                 data = scoreFunction('pernapasan', value);
                 setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
                 break;
-            case "oxygen_usage-laporanAnesthesi":
-                data = scoreFunction('oksigen', value);
-                setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-                break;
+
             case "weight-laporanAnesthesi":
                 if (value < 10) {
                     value = 10.00;
@@ -561,9 +540,7 @@
         $("#tension_below-laporanAnesthesi").prop("disabled", true)
         $("#saturasi-laporanAnesthesi").prop("disabled", true)
         $("#nafas-laporanAnesthesi").prop("disabled", true)
-        $("#arm_diameter-laporanAnesthesi").prop("disabled", true)
         $("#anamnase-laporanAnesthesi").prop("disabled", true)
-        $("#oxygen_usage-laporanAnesthesi").prop("disabled", true)
         $("#vs_status_id-laporanAnesthesi").prop("disabled", true)
         $("#pemeriksaan-laporanAnesthesi").prop("disabled", true)
         $("#teraphy_desc-laporanAnesthesi").prop("disabled", true)
@@ -604,8 +581,6 @@
         $("#tension_below-laporanAnesthesi").prop("disabled", false)
         $("#saturasi-laporanAnesthesi").prop("disabled", false)
         $("#nafas-laporanAnesthesi").prop("disabled", false)
-        $("#arm_diameter-laporanAnesthesi").prop("disabled", false)
-        $("#oxygen_usage-laporanAnesthesi").prop("disabled", false)
         $("#vs_status_id-laporanAnesthesi").prop("disabled", false)
         $("#anamnase-laporanAnesthesi").prop("disabled", false)
         $("#pemeriksaan-laporanAnesthesi").prop("disabled", false)
@@ -641,7 +616,7 @@
         var examselect = vitalsign[key];
 
         var bodyId = ''
-
+        const nowtime = moment(examselect.examination_date).format("DD/MM/YYYY HH:mm");
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
@@ -650,7 +625,6 @@
         $("#agemonth-laporanAnesthesi").val(examselect.agemonth)
         $("#ageyear-laporanAnesthesi").val(examselect.ageyear)
         $("#anamnase-laporanAnesthesi").val(examselect.anamnase)
-        $("#arm_diameter-laporanAnesthesi").val(examselect.arm_diameter)
         $("#bed_id-laporanAnesthesi").val(examselect.bed_id)
         $("#body_id-laporanAnesthesi").val(examselect.body_id)
         $("#class_room_id-laporanAnesthesi").val(examselect.class_room_id)
@@ -658,7 +632,7 @@
         $("#description-laporanAnesthesi").val(examselect.description)
         $("#doctor-laporanAnesthesi").val(examselect.doctor)
         $("#employee_id-laporanAnesthesi").val(examselect.employee_id)
-        $("flatexamination_date-laporanAnesthesi").val(nowtime).trigger("change")
+        $("#flatexamination_date-laporanAnesthesi").val(nowtime).trigger("change")
         $("#gender-laporanAnesthesi").val(examselect.gender)
         $("#height-laporanAnesthesi").val(examselect.height)
         $("#instruction-laporanAnesthesi").val(examselect.instruction)
@@ -669,7 +643,6 @@
         $("#nafas-laporanAnesthesi").val(examselect.nafas)
         $("#no_registraiton-laporanAnesthesi").val(examselect.no_registraiton)
         $("#org_unit_code-laporanAnesthesi").val(examselect.org_unit_code)
-        $("#oxygen_usage-laporanAnesthesi").val(examselect.oxygen_usage)
         $("#vs_status_id-laporanAnesthesi").val(examselect.vs_status_id)
         $("#pemeriksaan-laporanAnesthesi").val(examselect.pemeriksaan)
         $("#petugas-laporanAnesthesi").val(examselect.petugas)
@@ -698,7 +671,6 @@
         $("#keluar_id-laporanAnesthesi").val(examselect.keluar_id)
         $("#imt_score-laporanAnesthesi").val(examselect.imt_score)
         $("#imt_desc-laporanAnesthesi").val(examselect.imt_desc)
-        $("#oxygen_usage-laporanAnesthesi").val(examselect.oxygen_usage)
         $("#pemeriksaan-laporanAnesthesi").val(examselect.pemeriksaan)
         $("#medical_treatment-laporanAnesthesi").val(examselect.medical_treatment)
         $("#modified_date-laporanAnesthesi").val(examselect.modified_date)
@@ -731,143 +703,120 @@
         $("#tension_lower-laporanAnesthesi").val(examselect.tension_lower).trigger("change")
         $("#saturasi-laporanAnesthesi").val(examselect.saturasi).trigger("change")
         $("#nafas-laporanAnesthesi").val(examselect.nafas).trigger("change")
-        $("#arm_diameter-laporanAnesthesi").val(examselect.arm_diameter).trigger("change")
-        $("#oxygen_usage-laporanAnesthesi").val(examselect.oxygen_usage).trigger("change")
         $("#vs_status_id-laporanAnesthesi").val(examselect.vs_status_id).trigger("change")
         $("#pemeriksaan-laporanAnesthesi").val(examselect.pemeriksaan).trigger("change")
 
         $("#vitalSignLaporanAnesthesi").slideDown()
         enableVitalSignLaporanAnesthesi()
         //=new
-        // data1 = getAdultScore('nadi', examselect.nadi);
-        // data2 = getAdultScore('suhu', examselect.temperature);
-        // data3 = getAdultScore('saturasi', examselect.saturasi);
-        // data4 = getAdultScore('pernapasan', examselect.nafas);
-        // data5 = getAdultScore('oksigen', examselect.oxygen_usage);
-        // data6 = getAdultScore('darah', examselect.tension_upper);
 
-        // let totalSkor = data1.score + data2.score + data3.score + data4.score + data5.score + data6.score;
-        // document.getElementById('total_score').textContent = 'Total Skor: ' + totalSkor;
-        //endofnew
-
-        // $("#cpptModal").modal("show")
-        // $("#formsavebtnid").show()
-        // $("#formeditid").hide()
     }
     var vitalsigndesc = []
 
     var i = 0
 
-    // for (let index = vitalsign.length; index >= 0; index--) {
-    //     vitalsigndesc.push(vitalsign[index]);
-    // }
-    // console.log(vitalsigndesc)
-    // vitalsign = vitalsigndesc
-    $(function() {
-        vitalsign.forEach((element, key) => {
-            examselect = vitalsign[key];
-            addRowVitalSigncatatanLaporanAnesthesi(examselect, key)
-        });
-
-        vitalsign.forEach((element, key) => {
-            examselect = vitalsign[key];
-
-            if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
-
-                disableVitalSignLaporanAnesthesi()
-                $("#formvitalsignsubmit-laporanAnesthesi").hide()
-                $("#formvitalsignedit-laporanAnesthesi").show()
-
-                $("#clinic_id-laporanAnesthesi").val(examselect.clinic_id)
-                $("#class_room_id-laporanAnesthesi").val(examselect.class_room_id)
-                $("#bed_id-laporanAnesthesi").val(examselect.bed_id)
-                $("#keluar_id-laporanAnesthesi").val(examselect.keluar_id)
-                $("#employee_id-laporanAnesthesi").val(examselect.employee_id)
-                $("#no_registration-laporanAnesthesi").val(examselect.no_registration)
-                $("#visit_id-laporanAnesthesi").val(examselect.visit_id)
-                $("#org_unit_code-laporanAnesthesi").val(examselect.org_unit_code)
-                $("#doctor-laporanAnesthesi").val(examselect.fullname)
-                $("#kal_id-laporanAnesthesi").val(examselect.kal_id)
-                $("#theid-laporanAnesthesi").val(examselect.pasien_id)
-                $("#thename-laporanAnesthesi").val(examselect.diantar_oleh)
-                $("#theaddress-laporanAnesthesi").val(examselect.visitor_address)
-                $("#status_pasien_id-laporanAnesthesi").val(examselect.status_pasien_id)
-                $("#isrj-laporanAnesthesi").val(examselect.isrj)
-                $("#gender-laporanAnesthesi").val(examselect.gender)
-                $("#ageyear-laporanAnesthesi").val(examselect.ageyear)
-                $("#agemonth-laporanAnesthesi").val(examselect.agemonth)
-                $("#ageday-laporanAnesthesi").val(examselect.ageday)
-                $("#body_id-laporanAnesthesi").val(examselect.body_id)
-
-                $("#examination_date-laporanAnesthesi").val(examselect.examination_date)
-                $("#petugas-laporanAnesthesi").val(examselect.petugas)
-                $("#weight-laporanAnesthesi").val(examselect.weight)
-                $("#height-laporanAnesthesi").val(examselect.height)
-                $("#temperature-laporanAnesthesi").val(examselect.temperature)
-                $("#nadi-laporanAnesthesi").val(examselect.nadi)
-                $("#tension_upper-laporanAnesthesi").val(examselect.tension_upper)
-                $("#tension_below-laporanAnesthesi").val(examselect.tension_below)
-                $("#saturasi-laporanAnesthesi").val(examselect.saturasi)
-                $("#nafas-laporanAnesthesi").val(examselect.nafas)
-                $("#arm_diameter-laporanAnesthesi").val(examselect.arm_diameter)
-                $("#anamnase-laporanAnesthesi").val(examselect.anamnase)
-                $("#oxygen_usage-laporanAnesthesi").val(examselect.oxygen_usage)
-                $("#vs_status_id-laporanAnesthesi").val(examselect.vs_status_id)
-                $("#pemeriksaan-laporanAnesthesi").val(examselect.pemeriksaan)
-                $("#teraphy_desc-laporanAnesthesi").val(examselect.teraphy_desc)
-                $("#description-laporanAnesthesi").val(examselect.description)
-                $("#clinic_id-laporanAnesthesi").val(examselect.clinic_id)
-                $("#trans_id-laporanAnesthesi").val(examselect.trans_id) //==new
-                $("#class_room_id-laporanAnesthesi").val(examselect.class_room_id)
-                $("#bed_id-laporanAnesthesi").val(examselect.bed_id)
-                $("#keluar_id-laporanAnesthesi").val(examselect.keluar_id)
-                $("#employee_id-laporanAnesthesi").val(examselect.employee_id)
-                $("#no_registraiton-laporanAnesthesi").val(examselect.no_registraiton)
-                $("#visit_id-laporanAnesthesi").val(examselect.visit_id)
-                $("#org_unit_code-laporanAnesthesi").val(examselect.org_unit_code)
-                $("#doctor-laporanAnesthesi").val(examselect.doctor)
-                $("#kal_id-laporanAnesthesi").val(examselect.kal_id)
-                $("#theid-laporanAnesthesi").val(examselect.theid)
-                $("#thename-laporanAnesthesi").val(examselect.thename)
-                $("#theaddress-laporanAnesthesi").val(examselect.theaddress)
-                $("#status_pasien_id-laporanAnesthesi").val(examselect.status_pasien_id)
-                $("#isrj-laporanAnesthesi").val(examselect.isrj)
-                $("#gender-laporanAnesthesi").val(examselect.gender)
-                $("#ageyear-laporanAnesthesi").val(examselect.ageyear)
-                $("#agemonth-laporanAnesthesi").val(examselect.agemonth)
-                $("#ageday-laporanAnesthesi").val(examselect.ageday)
-                $("#instruction-laporanAnesthesi").val(examselect.instruction)
-            }
-
-            if (typeof $("#body_id-laporanAnesthesi").val() !== 'undefined' || $(
-                    "#body_id-laporanAnesthesi")
-                .val() == "-laporanAnesthesi") {
-                $("#clinic_id-laporanAnesthesi").val('<?= $visit['clinic_id']; ?>')
-                $("#trans_id-laporanAnesthesi").val('<?= $visit['trans_id']; ?>') //==new
-                $("#class_room_id-laporanAnesthesi").val('<?= $visit['class_room_id']; ?>')
-                $("#bed_id-laporanAnesthesi").val()
-                $("#keluar_id-laporanAnesthesi").val('<?= $visit['keluar_id']; ?>')
-                $("#employee_id-laporanAnesthesi").val('<?= $visit['employee_id']; ?>')
-                $("#no_registration-laporanAnesthesi").val('<?= $visit['no_registration']; ?>')
-                $("#visit_id-laporanAnesthesi").val('<?= $visit['visit_id']; ?>')
-                $("#org_unit_code-laporanAnesthesi").val('<?= $visit['org_unit_code']; ?>')
-                $("#doctor-laporanAnesthesi").val('<?= $visit['fullname']; ?>')
-                $("#kal_id-laporanAnesthesi").val('<?= $visit['kal_id']; ?>')
-                $("#theid-laporanAnesthesi").val('<?= $visit['pasien_id']; ?>')
-                $("#thename-laporanAnesthesi").val('<?= $visit['diantar_oleh']; ?>')
-                $("#theaddress-laporanAnesthesi").val('<?= $visit['visitor_address']; ?>')
-                $("#status_pasien_id-laporanAnesthesi").val('<?= $visit['status_pasien_id']; ?>')
-                $("#isrj-laporanAnesthesi").val('<?= $visit['isrj']; ?>')
-                $("#gender-laporanAnesthesi").val('<?= $visit['gender']; ?>')
-                $("#ageyear-laporanAnesthesi").val('<?= $visit['ageyear']; ?>')
-                $("#agemonth-laporanAnesthesi").val('<?= $visit['agemonth']; ?>')
-                $("#ageday-laporanAnesthesi").val('<?= $visit['ageday']; ?>')
 
 
-            }
-        });
+    vitalsign.forEach((element, key) => {
+        examselect = vitalsign[key];
+        addRowVitalSigncatatanLaporanAnesthesi(examselect, key)
+    });
 
-    })
+    vitalsign.forEach((element, key) => {
+        examselect = vitalsign[key];
+
+        if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
+
+            disableVitalSignLaporanAnesthesi()
+            $("#formvitalsignsubmit-laporanAnesthesi").hide()
+            $("#formvitalsignedit-laporanAnesthesi").show()
+
+            $("#clinic_id-laporanAnesthesi").val(examselect.clinic_id)
+            $("#class_room_id-laporanAnesthesi").val(examselect.class_room_id)
+            $("#bed_id-laporanAnesthesi").val(examselect.bed_id)
+            $("#keluar_id-laporanAnesthesi").val(examselect.keluar_id)
+            $("#employee_id-laporanAnesthesi").val(examselect.employee_id)
+            $("#no_registration-laporanAnesthesi").val(examselect.no_registration)
+            $("#visit_id-laporanAnesthesi").val(examselect.visit_id)
+            $("#org_unit_code-laporanAnesthesi").val(examselect.org_unit_code)
+            $("#doctor-laporanAnesthesi").val(examselect.fullname)
+            $("#kal_id-laporanAnesthesi").val(examselect.kal_id)
+            $("#theid-laporanAnesthesi").val(examselect.pasien_id)
+            $("#thename-laporanAnesthesi").val(examselect.diantar_oleh)
+            $("#theaddress-laporanAnesthesi").val(examselect.visitor_address)
+            $("#status_pasien_id-laporanAnesthesi").val(examselect.status_pasien_id)
+            $("#isrj-laporanAnesthesi").val(examselect.isrj)
+            $("#gender-laporanAnesthesi").val(examselect.gender)
+            $("#ageyear-laporanAnesthesi").val(examselect.ageyear)
+            $("#agemonth-laporanAnesthesi").val(examselect.agemonth)
+            $("#ageday-laporanAnesthesi").val(examselect.ageday)
+            $("#body_id-laporanAnesthesi").val(examselect.body_id)
+
+            $("#examination_date-laporanAnesthesi").val(examselect.examination_date)
+            $("#petugas-laporanAnesthesi").val(examselect.petugas)
+            $("#weight-laporanAnesthesi").val(examselect.weight)
+            $("#height-laporanAnesthesi").val(examselect.height)
+            $("#temperature-laporanAnesthesi").val(examselect.temperature)
+            $("#nadi-laporanAnesthesi").val(examselect.nadi)
+            $("#tension_upper-laporanAnesthesi").val(examselect.tension_upper)
+            $("#tension_below-laporanAnesthesi").val(examselect.tension_below)
+            $("#saturasi-laporanAnesthesi").val(examselect.saturasi)
+            $("#nafas-laporanAnesthesi").val(examselect.nafas)
+            $("#anamnase-laporanAnesthesi").val(examselect.anamnase)
+            $("#vs_status_id-laporanAnesthesi").val(examselect.vs_status_id)
+            $("#pemeriksaan-laporanAnesthesi").val(examselect.pemeriksaan)
+            $("#teraphy_desc-laporanAnesthesi").val(examselect.teraphy_desc)
+            $("#description-laporanAnesthesi").val(examselect.description)
+            $("#clinic_id-laporanAnesthesi").val(examselect.clinic_id)
+            $("#trans_id-laporanAnesthesi").val(examselect.trans_id) //==new
+            $("#class_room_id-laporanAnesthesi").val(examselect.class_room_id)
+            $("#bed_id-laporanAnesthesi").val(examselect.bed_id)
+            $("#keluar_id-laporanAnesthesi").val(examselect.keluar_id)
+            $("#employee_id-laporanAnesthesi").val(examselect.employee_id)
+            $("#no_registraiton-laporanAnesthesi").val(examselect.no_registraiton)
+            $("#visit_id-laporanAnesthesi").val(examselect.visit_id)
+            $("#org_unit_code-laporanAnesthesi").val(examselect.org_unit_code)
+            $("#doctor-laporanAnesthesi").val(examselect.doctor)
+            $("#kal_id-laporanAnesthesi").val(examselect.kal_id)
+            $("#theid-laporanAnesthesi").val(examselect.theid)
+            $("#thename-laporanAnesthesi").val(examselect.thename)
+            $("#theaddress-laporanAnesthesi").val(examselect.theaddress)
+            $("#status_pasien_id-laporanAnesthesi").val(examselect.status_pasien_id)
+            $("#isrj-laporanAnesthesi").val(examselect.isrj)
+            $("#gender-laporanAnesthesi").val(examselect.gender)
+            $("#ageyear-laporanAnesthesi").val(examselect.ageyear)
+            $("#agemonth-laporanAnesthesi").val(examselect.agemonth)
+            $("#ageday-laporanAnesthesi").val(examselect.ageday)
+            $("#instruction-laporanAnesthesi").val(examselect.instruction)
+        }
+
+        if (typeof $("#body_id-laporanAnesthesi").val() !== 'undefined' || $(
+                "#body_id-laporanAnesthesi")
+            .val() == "-laporanAnesthesi") {
+            $("#clinic_id-laporanAnesthesi").val('<?= $visit['clinic_id']; ?>')
+            $("#trans_id-laporanAnesthesi").val('<?= $visit['trans_id']; ?>') //==new
+            $("#class_room_id-laporanAnesthesi").val('<?= $visit['class_room_id']; ?>')
+            $("#bed_id-laporanAnesthesi").val()
+            $("#keluar_id-laporanAnesthesi").val('<?= $visit['keluar_id']; ?>')
+            $("#employee_id-laporanAnesthesi").val('<?= $visit['employee_id']; ?>')
+            $("#no_registration-laporanAnesthesi").val('<?= $visit['no_registration']; ?>')
+            $("#visit_id-laporanAnesthesi").val('<?= $visit['visit_id']; ?>')
+            $("#org_unit_code-laporanAnesthesi").val('<?= $visit['org_unit_code']; ?>')
+            $("#doctor-laporanAnesthesi").val('<?= $visit['fullname']; ?>')
+            $("#kal_id-laporanAnesthesi").val('<?= $visit['kal_id']; ?>')
+            $("#theid-laporanAnesthesi").val('<?= $visit['pasien_id']; ?>')
+            $("#thename-laporanAnesthesi").val('<?= $visit['diantar_oleh']; ?>')
+            $("#theaddress-laporanAnesthesi").val('<?= $visit['visitor_address']; ?>')
+            $("#status_pasien_id-laporanAnesthesi").val('<?= $visit['status_pasien_id']; ?>')
+            $("#isrj-laporanAnesthesi").val('<?= $visit['isrj']; ?>')
+            $("#gender-laporanAnesthesi").val('<?= $visit['gender']; ?>')
+            $("#ageyear-laporanAnesthesi").val('<?= $visit['ageyear']; ?>')
+            $("#agemonth-laporanAnesthesi").val('<?= $visit['agemonth']; ?>')
+            $("#ageday-laporanAnesthesi").val('<?= $visit['ageday']; ?>')
+
+
+        }
+    });
 
     function getVitalSignLaporanAnesthesi() {
         $.ajax({

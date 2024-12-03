@@ -7401,6 +7401,398 @@ class Report extends \App\Controllers\BaseController
             'header' => $header
         ]);
     }
+    public function rl_1_1post()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $db = db_connect();
+
+        $mulai = $this->request->getPost('mulai');
+        $akhir = $this->request->getPost('akhir');
+        // var_dump($mulai);
+
+        $data = $this->lowerKey($db->query("SELECT  ORGANIZATIONUNIT.ORG_UNIT_CODE ,
+                                                                ORGANIZATIONUNIT.NAME_OF_ORG_UNIT ,
+                                                                ORGANIZATIONUNIT.CONTACT_ADDRESS ,
+                                                                ORGANIZATIONUNIT.KAL_ID ,
+                                                                ORGANIZATIONUNIT.PHONE ,
+                                                                ORGANIZATIONUNIT.POSTAL_CODE ,
+                                                                ORGANIZATIONUNIT.DISPLAY ,
+                                                                ORGANIZATIONUNIT.OBJECT_CATEGORY_ID ,
+                                                                ORGANIZATIONUNIT.HIRARKI_ID ,
+                                                                ORGANIZATIONUNIT.OTHER_CODE ,
+                                                                ORGANIZATIONUNIT.EMPLOYEE_ID ,
+                                                                ORGANIZATIONUNIT.ORG_TYPE ,
+                                                                ORGANIZATIONUNIT.CLASS_ID ,
+                                                                ORGANIZATIONUNIT.BY_ID ,
+                                                                ORGANIZATIONUNIT.PENETAP_ID ,
+                                                                ORGANIZATIONUNIT.email,
+                                                                ORGANIZATIONUNIT.SK ,
+                                                                ORGANIZATIONUNIT.FAX ,
+                                                                ORGANIZATIONUNIT.DIRECT_PARENT ,
+                                                                ORGANIZATIONUNIT.MAIN_PARENT ,
+                                                                ORGANIZATIONUNIT.WHOLE_PARENT ,
+                                                                ORGANIZATIONUNIT.MODIFIED_DATE ,
+                                                                ORGANIZATIONUNIT.MODIFIED_BY ,
+                                                                ORGANIZATIONUNIT.MODIFIED_FROM,
+                                                                ORGANIZATIONUNIT.WEBSITE,
+                                                                    ORGANIZATIONUNIT.ACCREDITATION,
+                                                                ORGANIZATIONUNIT.ACCREDIT_STATUS,
+                                                                ORGANIZATIONUNIT.SK_STATUS  ,
+                                                                 ORGANIZATIONUNIT.KODE_KOTA,
+                                                                 ORGANIZATIONUNIT.kota,
+
+                                                        organizationunit.REGISTRATION_DATE ,
+                                                        organizationunit.LUAS_TANAH,
+                                                        organizationunit.LUAS_BANGUNAN ,
+                                                        organizationunit.SK_MASA,
+                                                        organizationunit.ACCREDITATION_DATE ,
+                                                        organizationunit.TT_VVIP ,
+                                                        organizationunit.TT_VIP ,
+                                                        organizationunit.TT_1 ,
+                                                        organizationunit.TT_2,
+                                                        organizationunit.TT_3,
+                                                        --organizationunit.TT_non,
+                                                        organizationunit.DR_SPA ,
+                                                        organizationunit.DR_SPOG ,
+                                                        organizationunit.dr_sppd ,
+                                                        organizationunit.dr_spb ,
+                                                        organizationunit.dr_sprad ,
+                                                        organizationunit.dr_sprm ,
+                                                        organizationunit.dr_span ,
+                                                        organizationunit.dr_spjp,
+                                                        organizationunit.dr_spm ,
+                                                        organizationunit.dr_sptht,
+                                                        organizationunit.dr_spkj ,
+                                                        organizationunit.dr_um,
+                                                        organizationunit.drg ,
+                                                        organizationunit.drg_sp ,
+                                                        organizationunit.prwt,
+                                                        organizationunit.bdn,
+                                                        organizationunit.far,
+                                                        organizationunit.tkes ,
+                                                        organizationunit.tNONkes,
+                                                        organizationunit.sk_date
+                                                                FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+
+        $resultToJson =  [
+            [
+                "no" => "1.",
+                "name" => "No. Kode Rumah Sakit",
+                "data" => isset($data['org_unit_code']) ? $data['org_unit_code'] : null
+            ],
+            [
+                "no" => "2.",
+                "name" => "Tanggal Registrasi",
+                "data" => isset($data['registration_date']) ? $data['registration_date'] : null
+            ],
+            [
+                "no" => "3.",
+                "name" => "Nama Rumah Sakit",
+                "data" => isset($data['name_of_org_unit']) ? $data['org_type'] : null
+            ],
+            [
+                "no" => "4.",
+                "name" => "Jenis Rumah Sakit",
+                "data" => isset($data['org_type']) ? $data['org_type'] : null
+            ],
+            [
+                "no" => "5.",
+                "name" => "Kelas Rumah Sakit",
+                "data" => isset($data['class_id']) ? $data['class_id'] : null
+            ],
+            [
+                "no" => "6.",
+                "name" => "Nama Direktur",
+                "data" => isset($data['direct_parent']) ? $data['direct_parent'] : null
+            ],
+            [
+                "no" => "7.",
+                "name" => "Penyelenggara",
+                "data" => isset($data['name_of_org_unit']) ? $data['name_of_org_unit'] : null
+            ],
+            [
+                "no" => "8.",
+                "name" => "Alamat / Lokasi",
+                "data" => isset($data['contact_address']) ? $data['contact_address'] : null
+            ],
+            [
+                "no" => "8.1.",
+                "name" => "Kota/Kab",
+                "data" => isset($data['kota']) ? $data['kota'] : null
+            ],
+            [
+                "no" => "8.2.",
+                "name" => "Kode Pos",
+                "data" => isset($data['postal_code']) ? $data['postal_code'] : null
+            ],
+            [
+                "no" => "8.3.",
+                "name" => "Telepon",
+                "data" => isset($data['phone']) ? $data['phone'] : null
+            ],
+            [
+                "no" => "8.4.",
+                "name" => "Fax",
+                "data" => isset($data['fax']) ? $data['fax'] : null
+            ],
+            [
+                "no" => "8.5.",
+                "name" => "e-Mail",
+                "data" => isset($data['email']) ? $data['email'] : null
+            ],
+            [
+                "no" => "8.6.",
+                "name" => "No. telp bagian",
+                "data" => isset($data['phone']) ? $data['phone'] : null
+            ],
+            [
+                "no" => "8.7.",
+                "name" => "Website",
+                "data" => isset($data['website']) ? $data['website'] : null
+            ],
+            [
+                "no" => "9.",
+                "name" => "Luas Rumah Sakit",
+                "data" => ""
+            ],
+            [
+                "no" => "9.1.",
+                "name" => "Luas Tanah",
+                "data" => isset($data['luas_tanah']) ? $data['luas_tanah'] : null
+            ],
+            [
+                "no" => "9.2.",
+                "name" => "Luas Bangunan",
+                "data" => isset($data['luas_bangunan']) ? $data['luas_bangunan'] : null
+            ],
+            [
+                "no" => "10.",
+                "name" => "Surat izin/penetapan",
+                "data" => ""
+            ],
+            [
+                "no" => "10.1.",
+                "name" => "No. SK",
+                "data" => isset($data['sk']) ? $data['sk'] : null
+            ],
+            [
+                "no" => "10.2.",
+                "name" => "Tanggal",
+                "data" => isset($data['sk_date']) ? $data['sk_date'] : null
+            ],
+            [
+                "no" => "10.3.",
+                "name" => "Oleh",
+                "data" => isset($data['luas_bangunan']) ? $data['luas_bangunan'] : null
+            ],
+            [
+                "no" => "10.4.",
+                "name" => "Status SK",
+                "data" => ""
+            ],
+            [
+                "no" => "10.5.",
+                "name" => "Berlaku hingga",
+                "data" => isset($data['sk_masa']) ? $data['sk_masa'] : null
+            ],
+            [
+                "no" => "11.",
+                "name" => "Status Penyelenggaraan Swasta",
+                "data" => ""
+            ],
+            [
+                "no" => "12.",
+                "name" => "Akreditasi",
+                "data" => ""
+            ],
+            [
+                "no" => "12.1.",
+                "name" => "Pentahapan",
+                "data" => match (@$data['accreditation']) {
+                    0 => 'Belum diidentifikasi',
+                    1 => '5 Pelayanan',
+                    2 => '12 Pelayanan',
+                    3 => '16 Pelayanan',
+                    default => 'Tidak diketahui',
+                },
+            ],
+            [
+                "no" => "12.2.",
+                "name" => "Status",
+                "data" => match (@$data['accredit_status']) {
+                    0 => 'Belum diidentifikasi',
+                    1 => 'Penuh',
+                    2 => 'Bersyarat',
+                    3 => 'Gagal',
+                    4 => 'Belum',
+                    default => '',
+                },
+            ],
+            [
+                "no" => "12.3.",
+                "name" => "Tanggal",
+                "data" => isset($data['accreditation_date']) ? $data['accreditation_date'] : null
+            ],
+            [
+                "no" => "13.",
+                "name" => "Tempat Tidur",
+                "data" => ""
+            ],
+            [
+                "no" => "13.1.",
+                "name" => "Kls VVIP",
+                "data" => isset($data['tt_vvip']) ? $data['tt_vvip'] : null
+            ],
+            [
+                "no" => "13.2.",
+                "name" => "Kls VIP",
+                "data" => isset($data['tt_vip']) ? $data['tt_vip'] : null
+            ],
+            [
+                "no" => "13.3.",
+                "name" => "Kls I",
+                "data" => isset($data['tt_1']) ? $data['tt_1'] : null
+            ],
+            [
+                "no" => "13.4.",
+                "name" => "Kls II",
+                "data" => isset($data['tt_2']) ? $data['tt_2'] : null
+            ],
+            [
+                "no" => "13.5.",
+                "name" => "Kls III",
+                "data" => isset($data['tt_3']) ? $data['tt_3'] : null
+            ],
+            [
+                "no" => "13.6.",
+                "name" => "Non Kelas",
+                "data" => ""
+            ],
+            [
+                "no" => "14.",
+                "name" => "Tenaga Medis",
+                "data" => ""
+            ],
+            [
+                "no" => "14.1.",
+                "name" => "Dokter Sp.A",
+                "data" => isset($data['dr_spa']) ? $data['dr_spa'] : null
+            ],
+            [
+                "no" => "14.2.",
+                "name" => "Dokter Sp.OG",
+                "data" => isset($data['dr_spog']) ? $data['dr_spog'] : null
+            ],
+            [
+                "no" => "14.3.",
+                "name" => "Dokter Sp.PD",
+                "data" => isset($data['dr_sppd']) ? $data['dr_sppd'] : null
+            ],
+            [
+                "no" => "14.4.",
+                "name" => "Dokter Sp.B",
+                "data" => isset($data['dr_spb']) ? $data['dr_spb'] : null
+            ],
+            [
+                "no" => "14.5.",
+                "name" => "Dokter Sp.Rad",
+                "data" => isset($data['dr_sprad']) ? $data['dr_sprad'] : null
+            ],
+            [
+                "no" => "14.6.",
+                "name" => "Dokter Sp.RM",
+                "data" => isset($data['dr_sprm']) ? $data['dr_sprm'] : null
+            ],
+            [
+                "no" => "14.7.",
+                "name" => "Dokter Sp.An",
+                "data" => isset($data['dr_span']) ? $data['dr_span'] : null
+            ],
+            [
+                "no" => "14.8.",
+                "name" => "Dokter Sp.JP",
+                "data" => isset($data['dr_spjp']) ? $data['dr_spjp'] : null
+            ],
+            [
+                "no" => "14.9.",
+                "name" => "Dokter Sp.M",
+                "data" => isset($data['dr_spm']) ? $data['dr_spm'] : null
+            ],
+            [
+                "no" => "14.10.",
+                "name" => "Dokter Sp.THT",
+                "data" => isset($data['dr_sptht']) ? $data['dr_sptht'] : null
+            ],
+            [
+                "no" => "14.11.",
+                "name" => "Dokter Sp.KJ",
+                "data" => isset($data['dr_spkj']) ? $data['dr_spkj'] : null
+            ],
+            [
+                "no" => "14.12.",
+                "name" => "Dokter Umum",
+                "data" => isset($data['dr_um']) ? $data['dr_um'] : null
+            ],
+            [
+                "no" => "14.13.",
+                "name" => "Dokter Gigi",
+                "data" => isset($data['drg']) ? $data['drg'] : null
+            ],
+            [
+                "no" => "14.14.",
+                "name" => "Dokter Gigi Sps",
+                "data" => isset($data['drg_sp']) ? $data['drg_sp'] : null
+            ],
+            [
+                "no" => "14.15.",
+                "name" => "Perawat",
+                "data" => isset($data['prwt']) ? $data['prwt'] : null
+            ],
+            [
+                "no" => "14.16.",
+                "name" => "Bidan",
+                "data" => isset($data['bdn']) ? $data['bdn'] : null
+            ],
+            [
+                "no" => "14.17.",
+                "name" => "Farmasi",
+                "data" => isset($data['far']) ? $data['far'] : null
+            ],
+            [
+                "no" => "14.18.",
+                "name" => "Tenaga Kes Lain",
+                "data" => isset($data['tkes']) ? $data['tkes'] : null
+            ],
+            [
+                "no" => "15.",
+                "name" => "Tenaga non Kesehatan",
+                "data" => isset($data['tnonkes']) ? $data['tnonkes'] : null
+            ],
+
+        ];
+
+        $dt_data     = array();
+        if (!empty($resultToJson)) {
+            foreach ($resultToJson as $index => $rows) {
+                $row = [];
+
+                $row[] = $rows['no'];
+                $row[] = $rows['name'];
+                $row[] = $rows['data'];
+
+
+
+                $dt_data[] = $row;
+            }
+        }
+
+        $json_data = array(
+            "body"            => $dt_data
+        );
+        echo json_encode($json_data);
+    }
     public function rl_1_3()
     {
         $giTipe = 7;

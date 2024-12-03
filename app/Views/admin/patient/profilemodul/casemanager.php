@@ -15,8 +15,8 @@
                         </div>
                         <div class="panel-group" id="tableInfCon">
                             <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">Dokumentasi Case Manager</h3>
-                            <table class="table table-bordered table-hover table-centered" style="text-align: center">
-                                <thead class="table-primary">
+                            <table class="table table-bordered table-hover table-centered" id="table_case_manager" style="text-align: center">
+                                <thead>
                                     <tr>
                                         <th scope="col">No</th>
                                         <th scope="col">Dokumen</th>
@@ -26,12 +26,7 @@
                                         <th scope="col" width="1%"><i class="fas fa-print"></i></th>
                                     </tr>
                                 </thead>
-                                <tbody id="bodydataCM" class="table-group-divider">
-
-                                    <tr>
-                                        <td colspan="6">Data Kosong</td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="bodydataCM" class="table-group-divider"></tbody>
                             </table>
                         </div>
                     </div>

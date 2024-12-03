@@ -33,7 +33,7 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            'login' => ['except' => ['/satusehat', 'antrian/*']]
+            'login' => ['except' => ['/satusehat', 'antrian/*', 'pendaftaran/*']]
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',

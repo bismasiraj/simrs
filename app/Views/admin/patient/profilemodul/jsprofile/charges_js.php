@@ -700,6 +700,7 @@
                 'tagihan': $("#" + identifier + "tagihan" + key).val(),
                 'treatment_plafond': $("#" + identifier + "treatment_plafond" + key).val(),
                 'tarif_type': $("#" + identifier + "tarif_type" + key).val(),
+                'body_id': $("#" + identifier + "body_id" + key).val(),
             }),
             dataType: 'json',
             contentType: false,
@@ -793,6 +794,7 @@
             .append('<input name="tagihan[]" id="' + identifier + 'tagihan' + counter + '" type="hidden" value="' + billJson[key].tagihan + '" class="form-control" />')
             .append('<input name="treatment_plafond[]" id="' + identifier + 'treatment_plafond' + counter + '" type="hidden" value="' + billJson[key].treatment_plafond + '" class="form-control" />')
             .append('<input name="tarif_type[]" id="' + identifier + 'tarif_type' + counter + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
+            .append('<input name="body_id[]" id="' + identifier + 'body_id' + counter + '" type="hidden" value="' + billJson[key].tarif_type + '" class="form-control" />')
 
 
             .append($("<td>").html(String(i) + "."))
@@ -808,13 +810,15 @@
                 .append('<input type="text" name="quantity[]" id="' + identifier + 'quantity' + counter + '" placeholder="" value="' + billJson[key]?.quantity + '" class="form-control" readonly data-id="' + identifier + 'quantity' + billJson[key].bill_id + '">')
                 .append($("<p>").html(billJson[key].name_of_status_pasien))
             )
-            .append($("<td>").attr("id", identifier + "displayamount_paid" + counter).attr("data-id", identifier + 'displayamount_paid' + billJson[key].bill_id).html(formatCurrency(billJson[key].tagihan))))
+            .append($("<td>").attr("id", identifier + "displayamount_paid" + counter).attr("data-id", identifier + 'displayamount_paid' + billJson[key].bill_id).html(formatCurrency(billJson[key].tagihan)))
+        )
         // .append($("<td>").attr("id", identifier + "displayamount_plafond" + counter).html((billJson[key].amount_plafond)))
         // .append($("<td>").attr("id", identifier + "displayamount_paid_plafond" + counter).html(formatCurrency(billJson[key].amount_paid_plafond)))
         // .append($("<td>").attr("id", identifier + "displaydiscount" + counter).html(formatCurrency(billJson[key].discount)))
         // .append($("<td>").attr("id", identifier + "subsidisat" + counter).html(formatCurrency(billJson[key].subsidisat)))
         // .append($("<td>").attr("id", identifier + "subsidi" + counter).html(formatCurrency(billJson[key].subsidi)))
         // .append($("<td>").append('<button id="' + identifier + 'simpanBillBtn' + counter + '" type="button" onclick="simpanBillCharge(\'' + counter + '\', \'' + identifier + '\')" class="btn btn-info waves-effect waves-light simpanbill" data-row-id="1" autocomplete="off" style="display: none">Simpan</button><div id="' + identifier + 'editDeleteCharge' + counter + '" class="btn-group-vertical" role="group" aria-label="Vertical button group"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + counter + '" type="button" onclick="editBillCharge(\'' + identifier + '\', \'' + counter + '\')"class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + counter + '" type="button" onclick="delBill(\'' + identifier + '\', \'' + counter + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+
         if (billJson[key].islunas == 0 || billJson[key].islunas == null) {
             // if (true)
             if (identifier == 'arad') {

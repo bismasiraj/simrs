@@ -3,6 +3,7 @@
     let transfer = <?= json_encode($exam); ?>;
     let exam1 = [];
     let exam2 = [];
+    let exam3 = [];
     let transferdesc = []
     let visitTransfer = []
     var i = 0
@@ -26,6 +27,7 @@
         var bodyId = get_bodyid()
         var bodyId1 = get_bodyid()
         var bodyId2 = get_bodyid()
+        var bodyId3 = get_bodyid()
 
         $("#atransferbody_id").val(bodyId)
         $("#atransferorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
@@ -34,6 +36,7 @@
         $("#atransfertrans_id").val('<?= $visit['trans_id']; ?>')
         $("#atransferdocument_id").val(bodyId1)
         $("#atransferdocument_id2").val(bodyId2)
+        $("#atransferdocument_id3").val(bodyId3)
         $("#atransferexamination_date").val(get_date())
         <?php if ($visit['isrj'] == '0') {
         ?>
@@ -52,32 +55,6 @@
             moment().format("DD/MM/YYYY HH:mm")
         );
         $("#flatatransferexamination_date").trigger("change");
-
-
-        // if (data != null) {
-        //     $.each(data, function(keyt, value) {
-        //         $("#atransfer" + keyt).val(value)
-        //         if (keyt == 'employee_id') {
-        //             // $("#atransferemployee_id").html("")
-        //             $("#atransferemployee_id").append(value.employee_id)
-        //         }
-        //     })
-        //     let isinternal = $("#atransferisinternal").val()
-        //     if (isinternal == 10) {
-        //         bodyId1 = $("#atransferdocument_id").val()
-        //         bodyId2 = $("#atransferdocument_id2").val()
-
-        //         setDatatransfer(bodyId1, bodyId2);
-        //     }
-        //     if (isinternal == 3) {
-        //         getRujukInternal()
-        //         setDataRujukInternal()
-        //     }
-        //     if (isinternal == 4) {
-
-        //     }
-        // }
-
 
         enableTindakLanjut()
     }
@@ -125,6 +102,10 @@
 
         $("#formakomodasiatransferid").slideUp()
 
+        $("#atransferclinic_id_group").slideUp()
+        $("#atransferclinic_id_to_group").slideUp()
+        $("#atransferstabilitas").slideUp()
+        $("#atransferinternal").slideUp()
         $("#atransferrujukaninternalgroup").hide()
         $("#atransferrujukaninternalgroup").find("input, select, textarea").val(null)
         $("#atransferrujukaneksternalgroups").hide()
@@ -137,7 +118,11 @@
         $("#atransfertransferinternalgroup").find("input, select, textarea").val(null)
         if (isinternal == 10) {
             $("#atransferservice_needs_group").slideUp()
-            setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id2").val())
+            $("#atransferclinic_id_group").slideDown()
+            $("#atransferclinic_id_to_group").slideDown()
+            $("#atransferstabilitas").slideDown()
+            $("#atransferinternal").slideDown()
+            setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id3").val())
         } else if (isinternal == 3) {
             let visitselected = {};
             $.each(visitTransfer, function(key, value) {
@@ -150,8 +135,11 @@
         } else if (isinternal == 2) {
             $("#atransferservice_needs_group").slideUp()
             await setDataRujukEksternal()
+            setDataCpptEksternal($("#atransferdocument_id").val(), $("#atransferdocument_id2").val(), $("#atransferdocument_id3").val())
+            $("#atransferinternal").slideDown()
         } else if (isinternal == 4) {
             $("#atransferservice_needs_group").slideUp()
+            $("#atransferinternal").slideDown()
             await setDataSkdp()
         } else if (isinternal == 5) {
             $("#atransferservice_needs_group").slideDown()
@@ -208,7 +196,7 @@
             cache: false,
             processData: false,
             beforeSend: function() {
-                clicked_submit_btn.button('loading');
+                clicked_submit_btn.html('loading');
             },
             success: function(data) {
                 successSwal("Data berhasil disimpan")
@@ -247,16 +235,17 @@
         });
         let isinternal = $("#atransferisinternal").val()
         if (isinternal == 10) {
-            setDatatransfer($("#atransferdocument_id").val(), $("#atransferdocument_id2").val())
-            $("#atransfertransferinternalgroup").find(".btn-save").each(function() {
-                $(this).trigger("click")
-            })
+
+            $("#atransferinternal").slideDown()
+            $("#atransferstabilitas").slideDown()
+            saveCpptTransfer()
         }
         if (isinternal == 3) {
             postRujukInternal()
         }
         if (isinternal == 2) {
             postRujukan()
+            saveCpptTransfer()
         }
         if (isinternal == 4) {
             saveSkdp()
@@ -291,6 +280,7 @@
                 $("#transferBodyHistory").html(tempTablesNull())
                 transfer = data.transfer
                 examForassessment = data.examinfo
+                examForassessmentDetail = data.examDetail
                 visitTransfer = data.visit
 
                 $("#transferBodyHistory").html("")
@@ -314,16 +304,25 @@
     //ini untuk 
     const addRowHistoryTL = (examselect, key) => {
 
+        console.log(examselect)
         let isinternal = examselect.isinternal
 
         let employee = <?= json_encode($employee); ?>;
 
         if (isinternal == 10) {
-            $.each(examForassessment, function(key, value) {
+            $.each(examForassessmentDetail, function(key, value) {
                 if (value.body_id == examselect.document_id) {
+                    console.log('masuk1')
+                    console.log(value.body_id)
                     exam1 = value
                 } else if (value.body_id == examselect.document_id2) {
+                    console.log('masuk2')
+                    console.log(value.body_id)
                     exam2 = value
+                } else if (value.body_id == examselect.document_id3) {
+                    console.log('masuk3')
+                    console.log(value.body_id)
+                    exam3 = value
                 }
             })
             $("#transferBodyHistory").append($("<tr>")
@@ -358,15 +357,30 @@
                 .append($("<tr>")
                     .append($("<td colspan=\"6\">").html("-"))
                 )
-            if (Object.keys(exam2).length > 0)
+            // if (Object.keys(exam2).length > 0)
+            //     $("#transferBodyHistory")
+            //     .append($("<tr>")
+            //         .append($("<td>").html(exam2?.name_of_clinic))
+            //         .append($("<td>").html(exam2?.tension_upper + '/' + exam2?.tension_below + 'mmHg'))
+            //         .append($("<td>").html(exam2?.nadi + '/menit'))
+            //         .append($("<td>").html(exam2?.nafas + '/menit'))
+            //         .append($("<td>").html(exam2?.temperature + '/°C'))
+            //         .append($("<td>").html(exam2?.saturasi + '/SpO2%'))
+            //     )
+            // else
+            //     $("#transferBodyHistory")
+            //     .append($("<tr>")
+            //         .append($("<td colspan=\"6\">").html("-"))
+            //     )
+            if (Object.keys(exam3).length > 0)
                 $("#transferBodyHistory")
                 .append($("<tr>")
-                    .append($("<td>").html(exam2?.name_of_clinic))
-                    .append($("<td>").html(exam2?.tension_upper + '/' + exam2?.tension_below + 'mmHg'))
-                    .append($("<td>").html(exam2?.nadi + '/menit'))
-                    .append($("<td>").html(exam2?.nafas + '/menit'))
-                    .append($("<td>").html(exam2?.temperature + '/°C'))
-                    .append($("<td>").html(exam2?.saturasi + '/SpO2%'))
+                    .append($("<td>").html(exam3?.name_of_clinic))
+                    .append($("<td>").html(exam3?.tension_upper + '/' + exam3?.tension_below + 'mmHg'))
+                    .append($("<td>").html(exam3?.nadi + '/menit'))
+                    .append($("<td>").html(exam3?.nafas + '/menit'))
+                    .append($("<td>").html(exam3?.temperature + '/°C'))
+                    .append($("<td>").html(exam3?.saturasi + '/SpO2%'))
                 )
             else
                 $("#transferBodyHistory")
@@ -398,23 +412,83 @@
                 .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
         } else if (isinternal == 2) {
+            $.each(examForassessmentDetail, function(key, value) {
+                if (value.body_id == examselect.document_id) {
+                    console.log('masuk1')
+                    console.log(value.body_id)
+                    exam1 = value
+                } else if (value.body_id == examselect.document_id2) {
+                    console.log('masuk2')
+                    console.log(value.body_id)
+                    exam2 = value
+                } else if (value.body_id == examselect.document_id3) {
+                    console.log('masuk3')
+                    console.log(value.body_id)
+                    exam3 = value
+                }
+            })
             $("#transferBodyHistory").append($("<tr>")
-                .append($("<td>").append(formatedDatetimeFlat(examselect?.examination_date)))
-                .append($("<td>").html(examselect?.petugas))
-                .append($("<td>").html(getFollowUpName(examselect?.isinternal)))
-                .append($("<td colspan=\"2\">").html(examselect?.org_id))
-                .append($("<td colspan=\"2\">").html(examselect?.org_name))
-                .append($("<td colspan=\"2\">").html(examselect?.name_of_clinic))
-                // .append($("<td>").html('<b>Nafas/RR</b>'))
-                // .append($("<td>").html('<b>Temp</b>'))
-                // .append($("<td>").html('<b>SpO2</b>'))
-                .append($("<td>").html('<div class="btn-group-vertical">' +
+                .append($("<td rowspan='4'>").append((examselect.examination_date)?.substring(0, 16)))
+                .append($("<td rowspan='4'>").html(examselect.petugas))
+                .append($("<td rowspan='4'>").html(getFollowUpName(examselect.isinternal)))
+                .append($("<td>").html('<b>Departemen</b>'))
+                .append($("<td>").html('<b>Tekanan Darah</b>'))
+                .append($("<td>").html('<b>Nadi</b>'))
+                .append($("<td>").html('<b>Nafas/RR</b>'))
+                .append($("<td>").html('<b>Temp</b>'))
+                .append($("<td>").html('<b>SpO2</b>'))
+                .append($("<td rowspan='4'>").html('<div class="btn-group-vertical">' +
                     '<button type="button" onclick="copytransfer(' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-copy">Copy</i></button>' +
                     '<button type="button" onclick="editDataTindakLanjut(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>' +
                     '<button type="button" onclick="cetakCpptTransfer(' + key + ')" class="btn btn-light" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Cetak</i></button>' +
                     '</div>'))
-                .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
+                .append($("<td rowspan='4'>").html('<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
             )
+            if (Object.keys(exam1).length > 0)
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td>").html(exam1?.name_of_clinic))
+                    .append($("<td>").html(exam1?.tension_upper + '/' + exam1?.tension_below + 'mmHg'))
+                    .append($("<td>").html(exam1?.nadi + '/menit'))
+                    .append($("<td>").html(exam1?.nafas + '/menit'))
+                    .append($("<td>").html(exam1?.temperature + '/°C'))
+                    .append($("<td>").html(exam1?.saturasi + '/SpO2%'))
+                )
+            else
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td colspan=\"6\">").html("-"))
+                )
+            if (Object.keys(exam2).length > 0)
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td>").html(exam2?.name_of_clinic))
+                    .append($("<td>").html(exam2?.tension_upper + '/' + exam2?.tension_below + 'mmHg'))
+                    .append($("<td>").html(exam2?.nadi + '/menit'))
+                    .append($("<td>").html(exam2?.nafas + '/menit'))
+                    .append($("<td>").html(exam2?.temperature + '/°C'))
+                    .append($("<td>").html(exam2?.saturasi + '/SpO2%'))
+                )
+            else
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td colspan=\"6\">").html("-"))
+                )
+            if (Object.keys(exam3).length > 0)
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td>").html(exam3?.name_of_clinic))
+                    .append($("<td>").html(exam3?.tension_upper + '/' + exam3?.tension_below + 'mmHg'))
+                    .append($("<td>").html(exam3?.nadi + '/menit'))
+                    .append($("<td>").html(exam3?.nafas + '/menit'))
+                    .append($("<td>").html(exam3?.temperature + '/°C'))
+                    .append($("<td>").html(exam3?.saturasi + '/SpO2%'))
+                )
+            else
+                $("#transferBodyHistory")
+                .append($("<tr>")
+                    .append($("<td colspan=\"6\">").html("-"))
+                )
         } else if (isinternal == 4) {
             $("#transferBodyHistory").append($("<tr>")
                 .append($("<td>").append(formatedDatetimeFlat(examselect.examination_date)))
@@ -457,107 +531,106 @@
 
 <!-- TRANSFER INTERNAL -->
 <script>
-    const setDatatransfer = (bodyId1, bodyId2) => {
+    const setDatatransfer = (bodyId1, bodyId3) => {
         $("#formakomodasiatransferid").slideDown()
-        console.log("bodyId1: " + bodyId1)
-        console.log("bodyId2: " + bodyId2)
         $("#formaddatransfer1").find("input, textarea").val(null)
-        var initialexam = examForassessment[examForassessment.length - 1]
-        $.each(initialexam, function(key, value) {
-            $("#atransfer1" + key).val(value)
-        })
-        $("#atransfer1body_id").val(bodyId1)
-        $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
-        $("#atransfer1class_room_id").val('<?= $visit['class_room_id']; ?>')
-        $("#atransfer1bed_id").val()
-        $("#atransfer1keluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#atransfer1employee_id").val('<?= $visit['employee_id']; ?>')
-        $("#atransfer1no_registration").val('<?= $visit['no_registration']; ?>')
-        $("#atransfer1visit_id").val('<?= $visit['visit_id']; ?>')
-        $("#atransfer1org_unit_code").val('<?= $visit['org_unit_code']; ?>')
-        $("#atransfer1doctor").val('<?= $visit['fullname']; ?>')
-        $("#atransfer1kal_id").val('<?= $visit['kal_id']; ?>')
-        $("#atransfer1theid").val('<?= $visit['pasien_id']; ?>')
-        $("#atransfer1thename").val('<?= $visit['diantar_oleh']; ?>')
-        $("#atransfer1theaddress").val('<?= $visit['visitor_address']; ?>')
-        $("#atransfer1status_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
-        $("#atransfer1isrj").val('<?= $visit['isrj']; ?>')
-        $("#atransfer1gender").val('<?= $visit['gender']; ?>')
-        $("#atransfer1ageyear").val('<?= $visit['ageyear']; ?>')
-        $("#atransfer1agemonth").val('<?= $visit['agemonth']; ?>')
-        $("#atransfer1ageday").val('<?= $visit['ageday']; ?>')
-        $("#atransfer1examination_date").val(get_date())
-        $("#atransfer1vs_status_id").val(1)
-        $("#atransfer1account_id").val(3)
-        flatpickrInstances["flatatransfer1examination_date"].setDate(
-            moment().format("DD/MM/YYYY HH:mm")
-        );
-        $("#flatatransfer1examination_date").trigger("change");
+        var initialcppt = examForassessment[examForassessment.length - 1]
+        var initialexam = examForassessmentDetail[examForassessmentDetail.length - 1]
+        let exam = [];
+
+        let isnew = false;
 
 
-        $("#formaddatransfer2").find("input, textarea").val(null)
-        var initialexam = examForassessment[examForassessment.length - 1]
-        $.each(initialexam, function(key, value) {
-            $("#atransfer2" + key).val(value)
-        })
-        $("#atransfer2body_id").val(bodyId2)
-        // $("#atransfer2clinic_id").val('<?= $visit['clinic_id']; ?>')
-        $("#atransfer2class_room_id").val('<?= $visit['class_room_id']; ?>')
-        $("#atransfer2bed_id").val()
-        $("#atransfer2keluar_id").val('<?= $visit['keluar_id']; ?>')
-        $("#atransfer2employee_id").val('<?= $visit['employee_id']; ?>')
-        $("#atransfer2no_registration").val('<?= $visit['no_registration']; ?>')
-        $("#atransfer2visit_id").val('<?= $visit['visit_id']; ?>')
-        $("#atransfer2org_unit_code").val('<?= $visit['org_unit_code']; ?>')
-        $("#atransfer2doctor").val('<?= $visit['fullname']; ?>')
-        $("#atransfer2kal_id").val('<?= $visit['kal_id']; ?>')
-        $("#atransfer2theid").val('<?= $visit['pasien_id']; ?>')
-        $("#atransfer2thename").val('<?= $visit['diantar_oleh']; ?>')
-        $("#atransfer2theaddress").val('<?= $visit['visitor_address']; ?>')
-        $("#atransfer2status_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
-        $("#atransfer2isrj").val('<?= $visit['isrj']; ?>')
-        $("#atransfer2gender").val('<?= $visit['gender']; ?>')
-        $("#atransfer2ageyear").val('<?= $visit['ageyear']; ?>')
-        $("#atransfer2agemonth").val('<?= $visit['agemonth']; ?>')
-        $("#atransfer2ageday").val('<?= $visit['ageday']; ?>')
-        $("#atransfer2examination_date").val(get_date())
-        $("#atransfer2vs_status_id").val(1)
-        $("#atransfer2account_id").val(3)
-        flatpickrInstances["flatatransfer2examination_date"].setDate();
-        $("#flatatransfer2examination_date").trigger("change");
 
-
-        $("#atransfer1ollapseVitalSign").find("#atransfer1total_score").html("")
-        $("#atransfer1ollapseVitalSign").find("span.h6").html("")
-
-        $("#atransfer2collapseVitalSign").find("#atransfer2total_score").html("")
-        $("#atransfer2collapseVitalSign").find("span.h6").html("")
-
-        $("#atransfertransferinternalgroup").slideDown()
+        // buat cek dokumen cppt ada yang induknya si transfer enggak
         $.each(examForassessment, function(key, value) {
             if (value.body_id == bodyId1) {
-                exam1 = value
-            } else if (value.body_id == bodyId2) {
-                exam2 = value
+                exam = value
             }
         })
 
-        console.log(exam1)
-        coba = exam1
-        if (typeof(exam1.body_id) !== 'undefined') {
-            $.each(exam1, function(keyt, value) {
+        if (typeof(exam.body_id) !== 'undefined') {
+            isnew = false
+            $.each(exam, function(keyt, value) {
                 $("#atransfer1" + keyt).val(value)
                 $("#atransfer1" + keyt).prop("disabled", false)
             })
             $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
-        }
-        if (typeof(exam2.body_id) !== 'undefined') {
-            $.each(exam2, function(keyt, value) {
-                $("#atransfer2" + keyt).val(value)
-                $("#atransfer2" + keyt).prop("disabled", false)
+        } else {
+            isnew = true
+            $.each(initialexam, function(key, value) {
+                $("#atransfer1" + key).val(value)
             })
-            $("#atransfer2collapseVitalSign").find("input, select").trigger("change")
+
+            $.each(initialexam, function(key, value) {
+                $("#atransfer3" + key).val(value)
+            })
+
+            $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
+            $("#atransfer1class_room_id").val('<?= $visit['class_room_id']; ?>')
+            $("#atransfer1bed_id").val()
+            $("#atransfer1keluar_id").val('<?= $visit['keluar_id']; ?>')
+            $("#atransfer1employee_id").val('<?= $visit['employee_id']; ?>')
+            $("#atransfer1no_registration").val('<?= $visit['no_registration']; ?>')
+            $("#atransfer1visit_id").val('<?= $visit['visit_id']; ?>')
+            $("#atransfer1org_unit_code").val('<?= $visit['org_unit_code']; ?>')
+            $("#atransfer1doctor").val('<?= $visit['fullname']; ?>')
+            $("#atransfer1kal_id").val('<?= $visit['kal_id']; ?>')
+            $("#atransfer1theid").val('<?= $visit['pasien_id']; ?>')
+            $("#atransfer1thename").val('<?= $visit['diantar_oleh']; ?>')
+            $("#atransfer1theaddress").val('<?= $visit['visitor_address']; ?>')
+            $("#atransfer1status_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
+            $("#atransfer1isrj").val('<?= $visit['isrj']; ?>')
+            $("#atransfer1gender").val('<?= $visit['gender']; ?>')
+            $("#atransfer1ageyear").val('<?= $visit['ageyear']; ?>')
+            $("#atransfer1agemonth").val('<?= $visit['agemonth']; ?>')
+            $("#atransfer1ageday").val('<?= $visit['ageday']; ?>')
+            $("#atransfer1examination_date").val(get_date())
+            $("#atransfer1vs_status_id").val(1)
+            $("#atransfer1account_id").val(3)
+            $("#acpptpetugas_type").val('<?= user()->getOneRoles(); ?>')
         }
+
+
+        if (!isnew) {
+            $.each(examForassessmentDetail, function(key, value) {
+                if (value.body_id == bodyId1) {
+                    exam1 = value
+                    console.log('exam1')
+                }
+                // else if (value.body_id == bodyId2) {
+                //     exam2 = value
+                // } 
+                else if (value.body_id == bodyId3) {
+                    exam3 = value
+                    console.log('exam3')
+                }
+            })
+            if (typeof(exam1.body_id) !== 'undefined') {
+                $.each(exam1, function(keyt, value) {
+                    $("#atransfer1" + keyt).val(value)
+                    $("#atransfer1" + keyt).prop("disabled", false)
+                })
+                $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
+            }
+
+            if (typeof(exam3.body_id) !== 'undefined') {
+                $.each(exam3, function(keyt, value) {
+                    $("#atransfer3" + keyt).val(value)
+                    $("#atransfer3" + keyt).prop("disabled", false)
+                })
+                $("#atransfer3collapseVitalSign").find("input, select").trigger("change")
+            }
+        }
+
+
+
+        $("#atransfer1body_id").val(bodyId1)
+        $("#atransfer3body_id").val(bodyId3)
+
+
+        $("#atransfer2VitalSign").hide()
+
 
         getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
 
@@ -703,6 +776,8 @@
             $("#atransferbody_id1").val(transferselect.document_id1)
         if (typeof(transferselect.document_id2) !== 'undefined')
             $("#atransferbody_id2").val(transferselect.document_id2)
+        if (typeof(transferselect.document_id2) !== 'undefined')
+            $("#atransferbody_id3").val(transferselect.document_id3)
 
         getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
         // addDerajatStabilitas(1, 0, "atransferbody_id", "transferDerajatBody")
@@ -726,7 +801,182 @@
         var win = window.open('<?= base_url() . '/admin/rm/keperawatan/transfer_internal/' . base64_encode(json_encode($visit)); ?>' + '/' + transferselect.body_id, '_blank');
 
     }
+
+    const saveCpptTransfer = () => {
+        console.log($("#atransfer1anamnase").val())
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/saveTransferInternal',
+            type: "POST",
+            data: JSON.stringify({
+                "body_id": $("#atransfer1body_id").val(),
+                "org_unit_code": $("#atransfer1org_unit_code").val(),
+                "pasien_diagnosa_id": $("#atransfer1pasien_diagnosa_id").val(),
+                "diagnosa_id": $("#atransfer1diagnosa_id").val(),
+                "no_registration": $("#atransfer1no_registration").val(),
+                "visit_id": $("#atransfer1visit_id").val(),
+                "bill_id": $("#atransfer1bill_id").val(),
+                "clinic_id": $("#atransferclinic_id").val(),
+                "class_room_id": $("#atransfer1class_room_id").val(),
+                "bed_id": $("#atransfer1bed_id").val(),
+                "in_date": $("#atransfer1in_date").val(),
+                "exit_date": $("#atransfer1exit_date").val(),
+                "keluar_id": $("#atransfer1keluar_id").val(),
+                "examination_date": $("#atransferexamination_date").val(),
+                "anamnase": $("#atransfer1anamnase").val(),
+                "alo_anamnase": $("#atransfer1alo_anamnase").val(),
+                "pemeriksaan": $("#atransfer1pemeriksaan").val(),
+                "teraphy_desc": $("#atransfer1teraphy_desc").val(),
+                "instruction": $("#atransfer1instruction").val(),
+                "medical_treatment": $("#atransfer1medical_treatment").val(),
+                "employee_id": $("#atransferemployee_id").val(),
+                "description": $("#atransfer1description").val(),
+                "modified_date": $("#atransfer1modified_date").val(),
+                "modified_by": $("#atransfer1modified_by").val(),
+                "modified_from": $("#atransfer1modified_from").val(),
+                "status_pasien_id": $("#atransfer1status_pasien_id").val(),
+                "ageyear": $("#atransfer1ageyear").val(),
+                "agemonth": $("#atransfer1agemonth").val(),
+                "ageday": $("#atransfer1ageday").val(),
+                "thename": $("#atransfer1thename").val(),
+                "theaddress": $("#atransfer1theaddress").val(),
+                "theid": $("#atransfer1theid").val(),
+                "isrj": $("#atransfer1isrj").val(),
+                "gender": $("#atransfer1gender").val(),
+                "doctor": $("#atransfer1doctor").val(),
+                "kal_id": $("#atransfer1kal_id").val(),
+                "petugas_id": $("#atransfer1petugas_id").val(),
+                "petugas": $("#atransfer1petugas").val(),
+                "account_id": $("#atransfer1account_id").val(),
+                "isvalid": $("#atransfer1isvalid").val(),
+                "vs_status_id": $("#atransfer1vs_status_id").val(),
+                "valid_date": $("#atransfer1valid_date").val(),
+                "valid_user": $("#atransfer1valid_user").val(),
+                "valid_pasien": $("#atransfer1valid_pasien").val(),
+                "petugas_type": $("#atransfer1petugas_type").val(),
+
+                "body_id1": $("#atransfer1body_id").val(),
+                "temperature1": $("#atransfer1temperature").val(),
+                "tension_upper1": $("#atransfer1tension_upper").val(),
+                "tension_below1": $("#atransfer1tension_below").val(),
+                "nadi1": $("#atransfer1nadi").val(),
+                "nafas1": $("#atransfer1nafas").val(),
+                "weight1": $("#atransfer1weight").val(),
+                "height1": $("#atransfer1height").val(),
+                "imt_score1": $("#atransfer1imt_score").val(),
+                "imt_desc1": $("#atransfer1imt_desc").val(),
+                "saturasi1": $("#atransfer1saturasi").val(),
+                "arm_diameter1": $("#atransfer1arm_diameter").val(),
+                "oxygen_usage1": $("#atransfer1oxygen_usage").val(),
+                "oxygen_usage_score1": $("#atransfer1oxygen_usage_score").val(),
+                "temperature_score1": $("#atransfer1temperature_score").val(),
+                "tension_upper_score1": $("#atransfer1tension_upper_score").val(),
+                "tension_below_score1": $("#atransfer1tension_below_score").val(),
+                "nadi_score1": $("#atransfer1nadi_score").val(),
+                "nafas_score1": $("#atransfer1nafas_score").val(),
+                "saturasi_score1": $("#atransfer1saturasi_score").val(),
+                "awareness1": $("#atransfer1awareness").val(),
+                "pain1": $("#atransfer1pain").val(),
+                "lochia1": $("#atransfer1lochia").val(),
+                "general_condition1": $("#atransfer1general_condition").val(),
+                "cardiovasculer1": $("#atransfer1cardiovasculer").val(),
+                "respiration1": $("#atransfer1respiration").val(),
+                "proteinuria1": $("#atransfer1proteinuria").val(),
+
+                "body_id2": $("#atransfer2body_id").val(),
+                "temperature2": $("#atransfer2temperature").val(),
+                "tension_upper2": $("#atransfer2tension_upper").val(),
+                "tension_below2": $("#atransfer2tension_below").val(),
+                "nadi2": $("#atransfer2nadi").val(),
+                "nafas2": $("#atransfer2nafas").val(),
+                "weight2": $("#atransfer2weight").val(),
+                "height2": $("#atransfer2height").val(),
+                "imt_score2": $("#atransfer2imt_score").val(),
+                "imt_desc2": $("#atransfer2imt_desc").val(),
+                "saturasi2": $("#atransfer2saturasi").val(),
+                "arm_diameter2": $("#atransfer2arm_diameter").val(),
+                "oxygen_usage2": $("#atransfer2oxygen_usage").val(),
+                "oxygen_usage_score2": $("#atransfer2oxygen_usage_score").val(),
+                "temperature_score2": $("#atransfer2temperature_score").val(),
+                "tension_upper_score2": $("#atransfer2tension_upper_score").val(),
+                "tension_below_score2": $("#atransfer2tension_below_score").val(),
+                "nadi_score2": $("#atransfer2nadi_score").val(),
+                "nafas_score2": $("#atransfer2nafas_score").val(),
+                "saturasi_score2": $("#atransfer2saturasi_score").val(),
+                "awareness2": $("#atransfer2awareness").val(),
+                "pain2": $("#atransfer2pain").val(),
+                "lochia2": $("#atransfer2lochia").val(),
+                "general_condition2": $("#atransfer2general_condition").val(),
+                "cardiovasculer2": $("#atransfer2cardiovasculer").val(),
+                "respiration2": $("#atransfer2respiration").val(),
+                "proteinuria2": $("#atransfer2proteinuria").val(),
+
+                "body_id3": $("#atransfer3body_id").val(),
+                "temperature3": $("#atransfer3temperature").val(),
+                "tension_upper3": $("#atransfer3tension_upper").val(),
+                "tension_below3": $("#atransfer3tension_below").val(),
+                "nadi3": $("#atransfer3nadi").val(),
+                "nafas3": $("#atransfer3nafas").val(),
+                "weight3": $("#atransfer3weight").val(),
+                "height3": $("#atransfer3height").val(),
+                "imt_score3": $("#atransfer3imt_score").val(),
+                "imt_desc3": $("#atransfer3imt_desc").val(),
+                "saturasi3": $("#atransfer3saturasi").val(),
+                "arm_diameter3": $("#atransfer3arm_diameter").val(),
+                "oxygen_usage3": $("#atransfer3oxygen_usage").val(),
+                "oxygen_usage_score3": $("#atransfer3oxygen_usage_score").val(),
+                "temperature_score3": $("#atransfer3temperature_score").val(),
+                "tension_upper_score3": $("#atransfer3tension_upper_score").val(),
+                "tension_below_score3": $("#atransfer3tension_below_score").val(),
+                "nadi_score3": $("#atransfer3nadi_score").val(),
+                "nafas_score3": $("#atransfer3nafas_score").val(),
+                "saturasi_score3": $("#atransfer3saturasi_score").val(),
+                "awareness3": $("#atransfer3awareness").val(),
+                "pain3": $("#atransfer3pain").val(),
+                "lochia3": $("#atransfer3lochia").val(),
+                "general_condition3": $("#atransfer3general_condition").val(),
+                "cardiovasculer3": $("#atransfer3cardiovasculer").val(),
+                "respiration3": $("#atransfer3respiration").val(),
+                "proteinuria3": $("#atransfer3proteinuria").val(),
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {},
+            success: function(data) {
+                successSwal("Data berhasil disimpan")
+                // let isNewDocument = 0
+                // $.each(transfer, function(key, value) {
+                //     if (value.body_id == data.body_id) {
+                //         transfer[key] = data
+                //         isNewDocument = 1
+                //     }
+                // })
+                // if (isNewDocument != 1)
+                //     transfer.push(data)
+                // $("#transferBodyHistory").html("")
+                // transfer.forEach((element, key) => {
+                //     addRowHistoryTL(transfer[key], key)
+                // });
+                // if (data.status == "fail") {
+                //     var message = "";
+                //     $.each(data.error, function(index, value) {
+                //         message += value;
+                //     });
+                //     errorSwal(message);
+                // } else {
+                //     successSwal(data.message);
+                // }
+                disableTindakLanjut()
+            },
+            error: function(xhr) { // if error occured
+                errorSwal("Error occured.please try again");
+            },
+            complete: function() {}
+        });
+    }
 </script>
+
 
 <!-- CPPT Awal -->
 <script>
@@ -744,33 +994,7 @@
         $("#formeditatransfer1id").slideUp()
     }
 
-    $("#formaddatransfer1").on('submit', (function(e) {
-        e.preventDefault();
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
-            type: "POST",
-            data: new FormData(this),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-            },
-            success: function(data) {
-                disableTindakLanjut1()
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-                errorSwal(xhr);
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
-    }));
+
     $("#formeditatransfer1id").on("click", function() {
         $("#formaddatransfer1").find("input, textarea, select").prop("disabled", false)
         $("#formsaveatransfer1btnid").slideDown()
@@ -796,48 +1020,7 @@
         $("#formeditatransfer2id").slideUp()
     }
 
-    $("#formaddatransfer2").on('submit', (function(e) {
-        e.preventDefault();
-        let clicked_submit_btn = $(this).closest('form').find(':submit');
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
-            type: "POST",
-            data: new FormData(document.getElementById('formaddatransfer2')),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-                clicked_submit_btn.button('loading');
-                $("#form1btn").html('<i class="spinner-border spinner-border-sm"></i>')
-            },
-            success: function(data) {
-                disableTindakLanjut2()
-                // $("#formsavearpbtn").slideUp()
-                // $("#formeditarp").slideDown()
-                // var isNewDocument = 0
-                // $.each(examForassessment, function(key, value) {
-                //     if (value.body_id == data.body_id) {
-                //         examForassessment[key] = data
-                //         isNewDocument = 1
-                //     }
-                // })
-                // if (isNewDocument != 1)
-                //     examForassessment.push(data)
-                $("#formaddatransfer2").find("input, textarea, select").prop("disabled", true)
 
-                // disableacppt()
-            },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
-                clicked_submit_btn.button('reset');
-                errorSwal(xhr);
-            },
-            complete: function() {
-                clicked_submit_btn.button('reset');
-            }
-        });
-    }));
     $("#formeditatransfer2id").on("click", function() {
         $("#formaddatransfer2").find("input, textarea, select").prop("disabled", false)
         $("#formsaveatransfer2btnid").slideDown()
@@ -1463,8 +1646,42 @@
     const setDataRujukEksternal = async (data = null) => {
         let diag_id = null
         let diag_name = null
-        initializeDiagSelect2("ardiag_id1", diag_id, diag_name, null, "atransferrujukaneksternalgroups")
 
+        //initiate diagnosa
+        let modalParentId;
+        if ("atransferrujukaneksternalgroups" == null) {
+            modallParentId = $(this).parent()
+        } else {
+            modalParentId = $("#" + "atransferrujukaneksternalgroups")
+        }
+        $("#" + "ardiag_id1").select2({
+            placeholder: "Input Diagnosa",
+            dropdownParent: modalParentId,
+            theme: 'bootstrap-5',
+            ajax: {
+                url: '<?= base_url(); ?>admin/patient/getDiagnosisListAjax',
+                type: "post",
+                dataType: 'json',
+                delay: 50,
+                data: function(params) {
+                    return {
+                        searchTerm: params.term,
+                    };
+                },
+                processResults: function(response) {
+                    $("#" + "ardiag_id1").val(null).trigger('change');
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
+        if (diag_id != null) {
+            var option = new Option(initialname, diag_id, true, true);
+            $("#" + "ardiag_id1").append(option).trigger('change');
+        }
+        //end initiate diagnosa
         flatpickrInstances["flatarmartgl_kontrol"].setDate(
             moment().format("DD/MM/YYYY HH:mm")
         );
@@ -1494,6 +1711,120 @@
 
 
         $("#atransferrujukaneksternalgroups").slideDown()
+    }
+    const setDataCpptEksternal = (bodyId1, bodyId2, bodyId3) => {
+        $("#formakomodasiatransferid").slideDown()
+        $("#formaddatransfer1").find("input, textarea").val(null)
+        var initialcppt = examForassessment[examForassessment.length - 1]
+        var initialexam = examForassessmentDetail[examForassessmentDetail.length - 1]
+        let exam = [];
+
+        let isnew = false;
+
+        $("#atransfertransferinternalgroup").slideDown()
+
+
+        // buat cek dokumen cppt ada yang induknya si transfer enggak
+        $.each(examForassessment, function(key, value) {
+            if (value.body_id == bodyId1) {
+                exam = value
+            }
+        })
+        if (typeof(exam.body_id) !== 'undefined') {
+            isnew = false
+            $.each(exam, function(keyt, value) {
+                $("#atransfer1" + keyt).val(value)
+                $("#atransfer1" + keyt).prop("disabled", false)
+            })
+            $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
+        } else {
+            isnew = true
+            $.each(initialexam, function(key, value) {
+                $("#atransfer1" + key).val(value)
+            })
+            $.each(initialexam, function(key, value) {
+                $("#atransfer2" + key).val(value)
+            })
+            $.each(initialexam, function(key, value) {
+                $("#atransfer3" + key).val(value)
+            })
+
+            $("#atransfer1clinic_id").val('<?= $visit['clinic_id']; ?>')
+            $("#atransfer1class_room_id").val('<?= $visit['class_room_id']; ?>')
+            $("#atransfer1bed_id").val()
+            $("#atransfer1keluar_id").val('<?= $visit['keluar_id']; ?>')
+            $("#atransfer1employee_id").val('<?= $visit['employee_id']; ?>')
+            $("#atransfer1no_registration").val('<?= $visit['no_registration']; ?>')
+            $("#atransfer1visit_id").val('<?= $visit['visit_id']; ?>')
+            $("#atransfer1org_unit_code").val('<?= $visit['org_unit_code']; ?>')
+            $("#atransfer1doctor").val('<?= $visit['fullname']; ?>')
+            $("#atransfer1kal_id").val('<?= $visit['kal_id']; ?>')
+            $("#atransfer1theid").val('<?= $visit['pasien_id']; ?>')
+            $("#atransfer1thename").val('<?= $visit['diantar_oleh']; ?>')
+            $("#atransfer1theaddress").val('<?= $visit['visitor_address']; ?>')
+            $("#atransfer1status_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
+            $("#atransfer1isrj").val('<?= $visit['isrj']; ?>')
+            $("#atransfer1gender").val('<?= $visit['gender']; ?>')
+            $("#atransfer1ageyear").val('<?= $visit['ageyear']; ?>')
+            $("#atransfer1agemonth").val('<?= $visit['agemonth']; ?>')
+            $("#atransfer1ageday").val('<?= $visit['ageday']; ?>')
+            $("#atransfer1examination_date").val(get_date())
+            $("#atransfer1vs_status_id").val(1)
+            $("#atransfer1account_id").val(3)
+            $("#acpptpetugas_type").val('<?= user()->getOneRoles(); ?>')
+        }
+
+
+        if (!isnew) {
+            $.each(examForassessmentDetail, function(key, value) {
+                if (value.body_id == bodyId1) {
+                    exam1 = value
+                } else if (value.body_id == bodyId2) {
+                    exam2 = value
+                } else if (value.body_id == bodyId3) {
+                    exam3 = value
+                }
+            })
+            if (typeof(exam1.body_id) !== 'undefined') {
+                $.each(exam1, function(keyt, value) {
+                    $("#atransfer1" + keyt).val(value)
+                    $("#atransfer1" + keyt).prop("disabled", false)
+                })
+                $("#atransfer1collapseVitalSign").find("input, select").trigger("change")
+            }
+            if (typeof(exam2.body_id) !== 'undefined') {
+                $.each(exam2, function(keyt, value) {
+                    $("#atransfer2" + keyt).val(value)
+                    $("#atransfer2" + keyt).prop("disabled", false)
+                })
+                $("#atransfer2collapseVitalSign").find("input, select").trigger("change")
+            }
+
+            if (typeof(exam3.body_id) !== 'undefined') {
+                $.each(exam3, function(keyt, value) {
+                    $("#atransfer3" + keyt).val(value)
+                    $("#atransfer3" + keyt).prop("disabled", false)
+                })
+                $("#atransfer3collapseVitalSign").find("input, select").trigger("change")
+            }
+        }
+
+
+        $("#atransfer1body_id").val(bodyId1)
+        $("#atransfer2body_id").val(bodyId2)
+        $("#atransfer3body_id").val(bodyId3)
+
+
+
+        $("#atransfer2VitalSign").show()
+
+
+        getStabilitas($("#atransferbody_id").val(), "transferDerajatBody")
+
+
+        // $("#atransfertransferinternalgroup").slideDown()
+
+        enableTindakLanjut()
     }
 
     function postRujukan() {

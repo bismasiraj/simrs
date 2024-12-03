@@ -10,7 +10,6 @@ class CairanModel extends Model
     protected $primaryKey = 'body_id';
 
     protected $useAutoIncrement = false;
-
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
     protected $allowedFields = [
@@ -33,7 +32,8 @@ class CairanModel extends Model
         'modified_by',
         'valid_date',
         'valid_user',
-        'valid_pasien'
+        'valid_pasien',
+        'fluid_category'
     ];
 
     // Dates

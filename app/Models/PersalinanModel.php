@@ -39,6 +39,7 @@ class PersalinanModel extends Model
         'amiotic_membrane',
         'cotyledon',
         'insertion',
+        'weight_placenta',
         'modified_date',
         'modified_by',
         'valid_date',

@@ -95,6 +95,10 @@
                             <label for="password">Password</label>
                             <input id="password" type="password" name="password" class="form-control" placeholder="Password">
                         </div>
+                        <div id="displaysignnik" class="form-group">
+                            <label for="signnik">NIK</label>
+                            <input id="signnik" type="text" class="form-control" name="nik" placeholder="NIK">
+                        </div>
                         <div id="displaysignname" class="form-group">
                             <label for="signname">Nama</label>
                             <input id="signname" type="text" class="form-control" name="name" placeholder="Nama Wali">
@@ -107,6 +111,15 @@
                             <label for="signdatepasien">Tanggal Lahir (YYYYMMDD)</label>
                             <input id="signdatepasien" type="text" name="datebirth" class="form-control" placeholder="YYYYMMDD">
                         </div>
+                        <div id="displayttd" class="col-xl-12 col-lg-12 col-md-12 text-center mt-4">
+                            <canvas id="canvas" style="border: 1px solid #000;" width="300" height="300"></canvas>
+                            <input type="hidden" name="tandatangansign" id="tandatangansign">
+                            <div class="col-md-12 col-xm-12 m-1 text-center">
+                                <button id="openttdmodal" class="btn btn-secondary" type="button"> Ubah TTD</button>
+                            </div>
+                        </div>
+
+
                     </div>
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary btn-block">submit</button>
@@ -206,6 +219,31 @@
                         <button type="submit" class="btn btn-primary btn-block">submit</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tandatanganDialog" role="dialog">
+    <div class="modal-dialog modal-dialog-centered  modal-fullscreen" role="document">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title">Digital Signature</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!--./modal-header-->
+            <div class="modal-body pt-4 pb-4">
+                <div id="rowcanvas" class="col-xl-12 col-lg-12 col-md-12 text-center mt-4">
+                    <canvas id="canvasttd" style="border: 1px solid #000;" width="700" height="700"></canvas>
+                    <input type="hidden" name="lokalis" id="lokalisttd">
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button id="submitttd" class="btn btn-primary" type="button"> SUBMIT</button>
+                <button id="undottd" class="btn btn-secondary" type="button"> UNDO</button>
+                <button id="clearttd" class="btn btn-danger" type="button"> CLEAR</button>
             </div>
         </div>
     </div>

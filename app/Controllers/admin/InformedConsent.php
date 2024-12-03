@@ -421,4 +421,33 @@ class InformedConsent extends \App\Controllers\BaseController
 
         return $this->response->setJSON($data);
     }
+
+    public function getParameterOption()
+    {
+        $request = service('request');
+        $formData = $request->getJSON();
+
+        $db = db_connect();
+        $sql = "
+                SELECT 'sex' AS category, 'gender' AS id, name_of_gender AS name FROM SEX
+                UNION
+                SELECT 'family_status' AS category, 'family_status_id' AS id, FAMILY_STATUS AS name FROM FAMILY_STATUS
+                UNION
+                SELECT 'agama' AS category, 'kode_agama' AS id, nama_agama AS name FROM AGAMA
+                UNION
+                SELECT 'class' AS category, 'class_id' AS id, name_of_class AS name FROM CLASS
+                UNION
+                SELECT 'job_category' AS category, 'job_id' AS id, name_of_job AS name FROM JOB_CATEGORY
+                UNION
+                SELECT 'marital_status' AS category, 'marital_status_id' AS id, name_of_maritalstatus AS name FROM MARITAL_STATUS
+                UNION
+                SELECT 'status_pasien' AS category, 'status_pasien_id' AS id, name_of_status_pasien AS name FROM STATUS_PASIEN
+
+        ";
+        $result = $this->lowerKey($db->query($sql)->getResultArray() ?? []);
+
+        return $this->response->setJSON([
+            'data' => $result
+        ]);
+    }
 }

@@ -180,15 +180,15 @@
                         <tr>
                             <td class="p-1">
                                 <b>Kelas</b>
-                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['class_id']; ?></p>
+                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_class_plafond']; ?></p>
                             </td>
                             <td class="p-1">
                                 <b>Bangsal/Kamar</b>
-                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['class_room_id']; ?></p>
+                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['name_of_clinic']; ?></p>
                             </td>
                             <td class="p-1">
                                 <b>Bed</b>
-                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['bed']; ?></p>
+                                <p class="m-0 mt-1 p-0"><?= @$visit['visit']['class_room']; ?></p>
                             </td>
                         </tr>
                     </tbody>
@@ -220,14 +220,16 @@
                         </tr>
                     </thead>
                     <tbody id="data-table-CM_A_01">
-                        <?php foreach ($data1 as $key => $row) : ?>
-                            <tr>
-                                <td class="py-0" width="1%"><?= $key + 1; ?></td>
-                                <td class="py-0" width="1%"><?= empty($row['value_info']) ? $row['value_info'] : '&#10003;'; ?></td>
-                                <td class="py-0" width="59%"><?= $row['value_desc']; ?></td>
-                                <td class="py-0" width="39%"><?= $row['desc']; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($data1)) : ?>
+                            <?php foreach ($data1 as $key => $row) : ?>
+                                <tr>
+                                    <td class="py-0" width="1%"><?= $key + 1; ?></td>
+                                    <td class="py-0" width="1%"><?= empty($row['value_info']) ? $row['value_info'] : '&#10003;'; ?></td>
+                                    <td class="py-0" width="59%"><?= $row['value_desc']; ?></td>
+                                    <td class="py-0" width="39%"><?= $row['desc']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
 
@@ -243,13 +245,15 @@
                         </tr>
                     </thead>
                     <tbody id="data-table-CM_A_02">
-                        <?php foreach ($data2 as $key => $row) : ?>
-                            <tr>
-                                <td class="py-0" width="1%"><?= $key + 1; ?></td>
-                                <td class="py-0" width="59%"><?= $row['value_desc']; ?></td>
-                                <td class="py-0" width="40%"><?= $row['value_info']; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($data2)) : ?>
+                            <?php foreach ($data2 as $key => $row) : ?>
+                                <tr>
+                                    <td class="py-0" width="1%"><?= $key + 1; ?></td>
+                                    <td class="py-0" width="59%"><?= $row['value_desc']; ?></td>
+                                    <td class="py-0" width="40%"><?= $row['value_info']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
 
@@ -265,13 +269,15 @@
                         </tr>
                     </thead>
                     <tbody id="data-ttd-CM_A_03">
-                        <?php foreach ($data3 as $key => $row) : ?>
-                            <tr>
-                                <td class="py-0" width="1%"><?= $key + 1; ?></td>
-                                <td class="py-0" width="1%"><?= empty($row['value_info']) ? $row['value_info'] : '&#10003;'; ?></td>
-                                <td class="py-0" width="58%"><?= $row['value_desc']; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($data3)) : ?>
+                            <?php foreach ($data3 as $key => $row) : ?>
+                                <tr>
+                                    <td class="py-0" width="1%"><?= $key + 1; ?></td>
+                                    <td class="py-0" width="1%"><?= empty($row['value_info']) ? $row['value_info'] : '&#10003;'; ?></td>
+                                    <td class="py-0" width="58%"><?= $row['value_desc']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
                 <h5 class="text-center">Dokumentasi Case Manager - Form B</h5>
@@ -288,14 +294,16 @@
                         </tr>
                     </thead>
                     <tbody id="data-table-CM_B_01">
-                        <?php foreach ($data4 as $key4 => $row4) : ?>
-                            <tr>
-                                <td class="py-0" width="15%"><?= date_format(date_create($row4['modified_date']), 'd-m-Y H:i'); ?></td>
-                                <td class="py-0" width="35%"><?= $row4['implementasi']; ?></td>
-                                <td class="py-0" width="35%"><?= $row4['catatan']; ?></td>
-                                <td class="py-0" width="15%"><?= $row4['modified_by']; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <?php if (!empty($data4)) : ?>
+                            <?php foreach ($data4 as $key4 => $row4) : ?>
+                                <tr>
+                                    <td class="py-0" width="15%"><?= date_format(date_create($row4['modified_date']), 'd-m-Y H:i'); ?></td>
+                                    <td class="py-0" width="35%"><?= $row4['implementasi']; ?></td>
+                                    <td class="py-0" width="35%"><?= $row4['catatan']; ?></td>
+                                    <td class="py-0" width="15%"><?= $row4['modified_by']; ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
                 <br>

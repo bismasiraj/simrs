@@ -6,25 +6,87 @@
 </div>
 <script>
     $.widget.bridge('uibutton', $.ui.button);
+
+    function loadScript(src, callback) {
+        var script = document.createElement('script');
+        script.src = src;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    // Fungsi untuk memuat beberapa script secara berurutan
+    function loadMultipleScripts(scripts, finalCallback) {
+        var index = 0;
+
+        function loadNextScript() {
+            if (index < scripts.length) {
+                loadScript(scripts[index], function() {
+                    index++;
+                    loadNextScript(); // Panggil fungsi ini untuk memuat script berikutnya
+                });
+            } else {
+                finalCallback(); // Semua script telah dimuat
+            }
+        }
+
+        loadNextScript(); // Mulai memuat script pertama
+    }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Daftar script yang akan dimuat secara dinamis
+        var scripts = [
+            '<?php echo base_url(); ?>backend/toast-alert/toastr.js', // jQuery
+            '<?php echo base_url(); ?>backend/bootstrap/js/bootstrap.min.js', // Bootstrap
+            '<?php echo base_url(); ?>assets/libs/simplebar/simplebar.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/dist/js/raphael-min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/morris/morris.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/sparkline/jquery.sparkline.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/jvectormap/jquery-jvectormap-world-mill-en.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/knob/jquery.knob.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/datepicker/bootstrap-datepicker.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/dist/js/app.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/js/jquery.scrolling-tabs.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/jvectormap/jquery-jvectormap-world-mill-en.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/daterangepicker/daterangepicker.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/datepicker/bootstrap-datepicker.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/js/jquery.scrolling-tabs.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+            '<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js', // Bootstrap
+        ];
 
+        // Memuat beberapa script secara berurutan
+        loadMultipleScripts(scripts, function() {
+            console.log('Semua library telah dimuat!');
+
+            // Setelah semua script dimuat, Anda bisa mulai menggunakan library tersebut
+            $(document).ready(function() {
+                console.log('jQuery telah dimuat, sekarang bisa digunakan!');
+
+                // Gunakan axios untuk contoh penggunaan
+                axios.get('https://jsonplaceholder.typicode.com/posts')
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.log('Error:', error);
+                    });
+            });
+        });
+    });
+</script>
 <link href="<?php echo base_url(); ?>backend/toast-alert/toastr.css" rel="stylesheet" />
-<script src="<?php echo base_url(); ?>backend/toast-alert/toastr.js"></script>
-<script src="<?php echo base_url(); ?>backend/bootstrap/js/bootstrap.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/dist/js/raphael-min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/morris/morris.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/sparkline/jquery.sparkline.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/knob/jquery.knob.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/daterangepicker/daterangepicker.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/datepicker/bootstrap-datepicker.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js"></script>
-<script src="<?php echo base_url(); ?>backend/dist/js/app.min.js"></script>
 
-<script src="<?php echo base_url(); ?>backend/js/jquery.scrolling-tabs.js"></script>
+<script src="<?php echo base_url(); ?>"></script>
 <script>
     $('.navlistscroll').scrollingTabs();
 </script>

@@ -69,10 +69,7 @@
                             resolve(dataResult);
                         });
                     } else if (parseInt(props.code) === 4) {
-                        // htmlContent = `<textarea class="form-control form-thems quill-editor-cm-mpp" id="value_info-${props.valueId}" name="value_info-${props.valueId}" rows="4" cols="50" >${props.tb}   </textarea>`;
-                        if (props?.parameterId.startsWith('CM_B_')) {
-                            console.log('benar');
-                        }
+
                         htmlContent =
                             `
                             <label class="form-label fw-bold" for="editor-cm-${props.valueId}">${props?.valueDesc}</label>
@@ -342,7 +339,9 @@
             postData({
                 visit_id: props.visit_id
             }, 'admin/CaseManager/getData', (res) => {
+
                 if (res.length >= 1) {
+
                     renderTables(res);
                 } else {
                     $("#bodydataCM").html(tempTablesNull())
@@ -353,11 +352,13 @@
             });
         };
         const renderTables = (data) => {
+
             let res = <?= json_encode($aParameter); ?>;
             let fill = res?.filter(item => item?.p_type === "GEN0019");
+
             let groupedData = {};
-            let dataResult = [];
             let date_modified = [];
+
             filterUniqueByBodyId(data).forEach((item, index) => {
                 const key = `${item.body_id}-${item.parameter_id.replaceAll(' ', '')}-${item.visit_id}`;
                 const modifiedDate = item.modified_date;
@@ -367,31 +368,40 @@
                 groupedData[key].push(item);
                 date_modified.push(modifiedDate)
             });
+
             const tableRows = Object.keys(groupedData).map((key, index) => {
                 const [bodyId, parameterId, visitId] = key.split("-");
                 const trimmedParameterId = parameterId.trim();
                 const parameterItem = fill.find(param => param.parameter_id.replaceAll(' ', '') === (
-                    trimmedParameterId === "13" ?
-                    "RM_9_F03" : trimmedParameterId));
+                    trimmedParameterId === "13" ? "RM_9_F03" : trimmedParameterId
+                ));
                 const parameterDesc = parameterItem ? parameterItem.parameter_desc : "-";
                 return `
-            <tr>
-                <td width="1%">${index + 1}</td>
-                <td>${'Dokumentasi Case Manager-' + bodyId +' ('+ moment(date_modified[index]).format("DD-MM-YYYY : hh:mm") + ')'}</td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-search-plus"></i> Lihat</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-edit"></i> Ubah</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-trash-alt"></i> Hapus</button></td>
-                <td width="1%"><button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-print"></i> Print</button></td>
-            </tr>
-            `;
+                    <tr>
+                        <td width="1%">${index + 1}</td>
+                        <td>${'Dokumentasi Case Manager-' + bodyId + ' (' + moment(date_modified[index]).format("DD-MM-YYYY : hh:mm") + ')'}</td>
+                        <td width="1%"><button type="button" class="btn btn-sm btn-info btn-show-detail" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-search-plus"></i> Lihat</button></td>
+                        <td width="1%"><button type="button" class="btn btn-sm btn-primary btn-show-edit" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}"><i class="fas fa-edit"></i> Ubah</button></td>
+                        <td width="1%"><button type="button" class="btn btn-sm btn-danger btn-show-delete" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-trash-alt"></i> Hapus</button></td>
+                        <td width="1%"><button type="button" class="btn btn-sm btn-secondary btn-show-print" id="${bodyId}" data-id="${bodyId}" data-visit_id="${visitId}" data-param_id="${trimmedParameterId}" data-param_desc="${parameterDesc}"><i class="fas fa-print"></i> Print</button></td>
+                    </tr>
+                    `;
             }).join('');
 
             $("#bodydataCM").html(tableRows);
+
+            const table = $('#bodydataCM').closest('table').DataTable({
+                dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                stateSave: true,
+                "bDestroy": true
+            });
+
             getDataRead();
             getDataEdit();
             deleteModal();
             actionCetak();
         };
+
 
         function filterUniqueByBodyId(data) {
             let seen = {}; // Object to track seen body_ids

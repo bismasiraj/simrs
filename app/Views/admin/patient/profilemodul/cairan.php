@@ -55,12 +55,19 @@
 
                 <div class="panel-group table-responsive" id="cairan">
                     <h3 class="text-uppercase font-weight-bold mt-0 pt-2">Cairan</h3>
-                    <table class="table table-bordered table-hover table-centered text-center">
-                        <thead id="bodydatagen0023" class="table-group-divider">
+                    <table class="table table-bordered table-hover table-centered text-center" id="tableDat-cairan0023">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Tipe Cairan</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodydatagen0023">
                             <tr>
                                 <td colspan="3">Data Kosong</td>
                             </tr>
-                        </thead>
+                        </tbody>
                     </table>
                 </div>
                 <div class="col-md-12 d-flex align-items-end justify-content-end">
@@ -97,7 +104,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    id="close-create-modal">Keluar</button>
+                    id="close-cairan-modal">Keluar</button>
                 <button type="button" class="btn btn-primary" id="btn-save-gen0023-modal">Simpan</button>
             </div>
         </div>

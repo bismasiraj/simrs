@@ -5,10 +5,7 @@
         getEducationIntegrationAll()
     })
 
-
-
     function addRoweducationintegration(educationintegrationselect, key) {
-
         $("#educationintegrationBody").append($("<tr>")
             .append($("<td>").append(formatedDatetimeFlat(educationintegrationselect.examination_date)))
             .append($("<td>").html(educationintegrationselect.modified_by))
@@ -24,11 +21,11 @@
 
     function addEducationIntegrationMenu() {
         $("#bodyEducationIntegration").html("")
-        addEducationIntegration(1, 0, 'EducationIntegration', 'educationIntegrationBody')
+        addEducationIntegration(1, 0, 'EducationIntegration', 'educationIntegrationBody', false)
     }
 
     function editeducationintegration(key) {
-        $("#bodyEducationIntegration").html("")
+        $("#educationIntegrationBody").html("")
         // var examselect = examForassessment[key];
 
         // $.each(examselect, function(key, value) {
@@ -174,14 +171,65 @@
                 educationIntegrationPlanAll = data.educationPlan
                 educationIntegrationProvisionAll = data.educationProvision
 
-                $.each(educationIntegrationAll, function(key, value) {
-                    // addEducationIntegration(1, 0, 'EducationIntegration', 'aeducationintegrationDocument')
+                // educationIntegrationAll[]
+                if (educationIntegrationAll.length > 0) {
+                    editeducationintegration(educationIntegrationAll.length - 1)
+                } else {
+                    addEducationIntegrationMenu(1, 0, 'EducationIntegration', 'educationIntegrationBody')
+                }
+                // $.each(educationIntegrationAll, function(key, value) {
+                //     // addEducationIntegration(1, 0, 'EducationIntegration', 'aeducationintegrationDocument')
 
-                    addRoweducationintegration(value, key)
-                })
+                //     addRoweducationintegration(value, key)
+                // })
             },
             error: function() {
                 $("#educationintegrationBody").html(tempTablesNull())
+            }
+        });
+    }
+</script>
+<script>
+    const addEdducationFormIntegration = (bodyIdContainer, value_id) => {
+        $("#aeducationintegrationDocument").html('')
+        $("#educationintegrationModal").modal('show')
+        getEducationFormIntegration(bodyIdContainer, 'aeducationintegrationDocument', value_id)
+    }
+
+    const getEducationFormIntegration = (bodyIdContainer, container, value_id) => {
+        $("#" + container).html("")
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getEducationFormIntegration',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': visit,
+                'nomor': nomor,
+                'body_id': $("#" + bodyIdContainer).val(),
+                'value_id': value_id
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(data) {
+                educationFormAll = data.educationForm
+
+                let isexist = 0;
+
+
+                $.each(educationFormAll, function(key, value) {
+                    if (value.value_id == value_id) {
+                        addEducationForm(0, key, bodyIdContainer, "aeducationintegrationDocument", false, value_id)
+                        isexist = 1
+                    }
+                })
+
+                if (isexist == 0) {
+                    addEducationForm(1, 1, bodyIdContainer, 'aeducationintegrationDocument', false, value_id)
+                }
+            },
+            error: function() {
+                addEducationForm(1, 1, bodyIdContainer, 'aeducationintegrationDocument', false, value_id)
             }
         });
     }

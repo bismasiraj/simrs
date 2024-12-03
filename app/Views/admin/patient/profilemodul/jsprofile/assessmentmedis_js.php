@@ -100,7 +100,7 @@
         // if (<?= ($visit['clinic_id'] == 'P012' && is_null($visit['class_room_id'])) ? true : false; ?>  ) {
         assessmentMedisType = 3
 
-        $("#formaddarmbtn").trigger("click")
+        // $("#formaddarmbtn").trigger("click")
         appendCetakMedis(accMedisName)
         // appendRtlAccordion(accMedisName);
 
@@ -240,89 +240,7 @@
             if (value.p_type == 'GEN0002') {
                 $.each(avalue, function(key1, value1) {
                     if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
-                        $.each(mapAssessment, function(key2, value2) {
-                            // if (value2.doc_id == value1.value_id && value2.specialist_type_id == specialistLokalis) {
-                            //     // window[value.doc_id](accMedisName)
-                            //     var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
-                            //     const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
-                            //     var ctx = canvas.getContext('2d');
-                            //     var drawing = false;
-                            //     var line = []; // Store points for the current line being drawn
-                            //     let drawingHistory = [];
-
-                            //     var img = new Image();
-                            //     img.onload = function() {
-                            //         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            //     };
-                            //     img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
-
-                            //     canvas.addEventListener('mousedown', startDrawing);
-                            //     canvas.addEventListener('mousemove', draw);
-                            //     canvas.addEventListener('mouseup', stopDrawing);
-                            //     canvas.addEventListener('mouseout', stopDrawing);
-
-                            //     function startDrawing(e) {
-                            //         drawing = true;
-                            //         draw(e);
-                            //         line = []; // Clear the current line
-                            //         line.push({
-                            //             x: e.offsetX,
-                            //             y: e.offsetY
-                            //         }); // Add the starting point of the line
-                            //     }
-
-                            //     function draw(e) {
-                            //         if (!drawing) return;
-
-                            //         ctx.lineWidth = 2;
-                            //         ctx.lineCap = 'round';
-                            //         ctx.strokeStyle = '#000';
-
-                            //         const x = e.offsetX;
-                            //         const y = e.offsetY;
-
-                            //         ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-                            //         ctx.stroke();
-                            //         ctx.beginPath();
-                            //         ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
-                            //         line.push({
-                            //             x,
-                            //             y
-                            //         }); // Add the current point to the line
-                            //     }
-
-                            //     function stopDrawing() {
-                            //         drawing = false;
-                            //         ctx.beginPath();
-                            //         drawingHistory.push(line);
-                            //     }
-                            //     $("#clear" + value1.value_id).on("click", function() {
-                            //         ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            //         drawingHistory = []; // Clear the drawing history
-                            //         img.onload = function() {
-                            //             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            //         };
-                            //         img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
-                            //     })
-                            //     $("#undo" + value1.value_id).on("click", function() {
-                            //         if (drawingHistory.length > 0) {
-                            //             // Remove the last line from the drawing history
-                            //             drawingHistory.pop();
-                            //             // Clear the canvas
-                            //             ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            //             // Redraw the remaining lines
-                            //             drawingHistory.forEach(line => {
-                            //                 for (let i = 1; i < line.length; i++) {
-                            //                     ctx.beginPath();
-                            //                     ctx.moveTo(line[i - 1].x, line[i - 1].y);
-                            //                     ctx.lineTo(line[i].x, line[i].y);
-                            //                     ctx.stroke();
-                            //                 }
-                            //             });
-                            //         }
-                            //     })
-                            // }
-                        })
+                        $.each(mapAssessment, function(key2, value2) {})
                     }
                 })
             }
@@ -472,6 +390,9 @@
 
         var accMedisName = "accordionAssessmentMedis"
 
+        $("#formaddarm input").val(null)
+        $("#formaddarm select").val(null)
+        $("#formaddarm textarea").val(null)
 
         if (assessmentMedisType == 1) {
             $("#armTitle").html("Resume Medis")
@@ -511,6 +432,7 @@
             );
             $("#accordionAssessmentMedis").html("")
 
+
             let mappingContentMap = JSON.parse(req);
             const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
             const updatedMappingContentMap = mappingContentMap.map(item => {
@@ -524,6 +446,7 @@
                 }
                 return item;
             });
+
             const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
             $.each(sortedMappingContentMap, function(key, value) {
                 if (value.doc_type == 1) {
@@ -533,6 +456,7 @@
                 // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
             })
         }
+
 
         <?php if (user()->checkPermission("assessmentmedis", "c") || user()->checkPermission("assessmentmedis", "u")) {
         ?>
@@ -551,13 +475,11 @@
         if (isnew) {
             return alert("Anda sudah pernah membuat dokumen Assessment Medis pada sesi " + pasienDiagnosaId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
         }
+        // console.log(flatpickrInstances["flatarmdate_of_diagnosa"])
 
         // pasienDiagnosaId = date.toISOString().substring(0, 23);
         // pasienDiagnosaId = pasienDiagnosaId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
-        $("#formaddarm input").val(null)
-        $("#formaddarm select").val(null)
-        $("#formaddarm textarea").val(null)
 
         $("#formaddarmqrcode1").html("")
 
@@ -623,18 +545,15 @@
                     }
             }
         } ?>
-        $("#armclinic_id").val(clinicSelect[0].clinic_id)
 
         var initialexam = examForassessment[examForassessment.length - 1]
         $.each(initialexam, function(key, value) {
             $("#arm" + key).val(value)
         })
+        $("#armclinic_id").val(clinicSelect[0].clinic_id)
         $('#armbody_id').val(null)
         $('#armpasien_diagnosa_id').val(pasienDiagnosaId)
 
-        console.log($('#armpasien_diagnosa_id').val())
-        // $("#armweight").val(berat)
-        // $("#armheight").val(tinggi)
         $('#lainnyaListLink').append(
             '<li class="list-group-item"></li>')
         $("#armemployee_id").html('<option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>')
@@ -770,6 +689,11 @@
         }
         fillRiwayat()
         // getSirkulasi(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+
+        if (pasienDiagnosa.specialist_type_id == '1.12')
+            groupeActionInTabKulit()
+        if (pasienDiagnosa.specialist_type_id == '1.16')
+            groupeActionInTabSaraf()
         getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
         getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
         getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
@@ -2597,6 +2521,78 @@
     `;
         appendAccordionItem(accordionId, accordionContent);
         // addPainMonitoring(1, 0, 'armpasien_diagnosa_id', 'bodyPainMonitoringMedis')
+    }
+
+    function appendDermatologiAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpdermatologi_Group" class="accordion-item">
+            <h2 class="accordion-header" id="dermatologiMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
+                    <b>DERMATOVENEROLOGI</b>
+                </button>
+            </h2>
+            <div id="collapsedermatologiMedis" class="accordion-collapse collapse" aria-labelledby="dermatologiMedis"  style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="FormAssessmen_Dermatovenerologi">
+                                <div id="contentAssessmen_Dermatovenerologi_Hide">
+                                </div>
+                                <div id="contentAssessmen_Dermatovenerologi_Show"></div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        id="close-pemeriksaanKulit-modal">Keluar</button>
+                                    <button type="button" class="btn btn-primary" id="btn-action-dermatovenerologi">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+        appendAccordionItem(accordionId, accordionContent);
+        let visit = <?= json_encode($visit) ?>;
+
+        templateDermatovenerologi({
+            visit: visit
+        })
+    }
+
+    function appendSarafAccordion(accordionId) {
+        var accordionContent = `
+        <div id="arpdermatologi_Group" class="accordion-item">
+            <h2 class="accordion-header" id="dermatologiMedis">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsedermatologiMedis" aria-expanded="true" aria-controls="collapsedermatologiMedis">
+                    <b>NEUROLOGI</b>
+                </button>
+            </h2>
+            <div id="collapsedermatologiMedis" class="accordion-collapse collapse" aria-labelledby="dermatologiMedis"  style="">
+                <div class="accordion-body text-muted">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="FormAssessmen_Neurologi">
+                                <div id="contentAssessmen_Neurologi_Hide">
+                                </div>
+                                <div id="contentAssessmen_Neurologi_Show"></div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                        id="close-pemeriksaanSaraf-modal">Keluar</button>
+                                    <button type="button" class="btn btn-primary" id="btn-action-neurologi">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+        appendAccordionItem(accordionId, accordionContent);
+        let visit = <?= json_encode($visit) ?>;
+
+        templateNeurologi({
+            visit: visit
+        })
     }
 </script>
 

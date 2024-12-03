@@ -1,9 +1,29 @@
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script> -->
+<?php
+$db = db_connect();
+$queryAssessment = "
+        SELECT 'sex' AS category, gender AS id, name_of_gender AS name FROM SEX
+        UNION
+        SELECT 'family_status' AS category, family_status_id AS id, FAMILY_STATUS AS name FROM FAMILY_STATUS
+        UNION
+        SELECT 'agama' AS category, kode_agama AS id, nama_agama AS name FROM AGAMA
+        UNION
+        SELECT 'class' AS category, class_id AS id, name_of_class AS name FROM CLASS
+        UNION
+        SELECT 'job_category' AS category, job_id AS id, name_of_job AS name FROM JOB_CATEGORY
+        UNION
+        SELECT 'marital_status' AS category, maritalstatusid AS id, name_of_maritalstatus AS name FROM MARITAL_STATUS
+        UNION
+        SELECT 'status_pasien' AS category, status_pasien_id AS id, name_of_status_pasien AS name FROM STATUS_PASIEN
+
+    ";
+$options = $db->query($queryAssessment)->getResultArray();
+
+?>
 <script type="text/javascript">
     (function() {
         let aPramInf = []
         let aValueInf = []
+        var options = <?= json_encode($options); ?>;
         $(document).ready(function() {
             getDataTable();
 
@@ -108,20 +128,16 @@
                                 <label class="form-check-label" for="value_info-${props.valueId}">${props?.nameCheck}</label>`;
                         resolve(htmlContent);
                     } else if (parseInt(props.code) === 3) {
-                        postData({
-                            nameTables: props?.tb,
-                            score: "3",
-                            vId: props?.valueId
-                        }, 'admin/InformedConsent/getTablesAll', (res) => {
-                            let dataResult =
-                                `<select class="form-control" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
-                            res.forEach(item => {
-                                dataResult +=
-                                    `<option value="${item.id}">${item.val}</option>`;
-                            });
-                            dataResult += `</select>`;
-                            resolve(dataResult);
+                        const option = options.filter(item => item.category === props?.tb);
+                        let dataResult =
+                            `<select class="form-select" id="value_info-${props.valueId}" name="value_info-${props.valueId}">`;
+                        option.forEach(item => {
+                            dataResult +=
+                                `<option value="${item.id}" ${props?.tb == item.id ? 'selected' : ''}>${item.name}</option>`;
                         });
+                        dataResult += `</select>`;
+                        resolve(dataResult);
+
                     } else if (parseInt(props.code) === 4) {
                         htmlContent =
                             `<input type="hidden" name="value_info-${props.valueId}" id="hidden-value_info-${props.valueId}">
@@ -225,11 +241,7 @@
             } else {
                 return Promise.all(promises).then((htmlContents) => {
                     $("#content-param").html(contentHide() + dataHtml);
-                    // tinymce.remove('textarea.tinymce-init');
-                    // tinymce.init({
-                    //     selector: 'textarea.tinymce-init',
-                    //     init_instance_callback: function(editor) {}
-                    // });
+
                     initializeQuillEditors();
                 }).catch((error) => {
                     console.error('Error updating content:', error);

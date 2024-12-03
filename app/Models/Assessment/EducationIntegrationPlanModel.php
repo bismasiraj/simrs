@@ -24,7 +24,7 @@ class EducationIntegrationPlanModel extends Model
         'education_provision',
         'education_target',
         'education_method',
-        'educaiton_evaluation',
+        'EDUCATION_EVALUATION',
         'status',
         'modified_date',
         'modified_by',

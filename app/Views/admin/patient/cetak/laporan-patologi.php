@@ -109,7 +109,7 @@
                 <td colspan="2"><?= $visit['contact_address']; ?></td>
                 <td width="20%">Dokter Pengirim</td>
                 <td width="1%">:</td>
-                <td><?= $visit['fullname_from']; ?></td>
+                <td><?= @$val['doctor']; ?></td>
             </tr>
             <tr>
                 <td width="20%">No Sampel</td>

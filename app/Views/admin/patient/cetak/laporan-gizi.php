@@ -183,8 +183,8 @@
             </tr>
             <tr>
                 <td width="50%">
-                    <b>BMI</b><br>
-                    <small><?= $val['antropometri']; ?></small>
+                    <b>BBI</b><br>
+                    <small><?= $val['weight_ideal']; ?></small>
                 </td>
             </tr>
             <tr>

@@ -375,7 +375,8 @@
 
         if (Array.isArray(bloodOptions)) {
             const bloodOptionsHtml = bloodOptions.map(option =>
-                `<option value="${option.value}" ${option.value == bloodselected.blood_usage_type ? 'selected' : ''}>${option.desc}</option>`).join('');
+                `<option value="${option.value}" ${option.value == bloodselected.blood_usage_type ? 'selected' : ''}>${option.desc}</option>`
+            ).join('');
 
             $("#" + container).append(`
             <tr id="apoblood${bodyId}">
@@ -400,7 +401,7 @@
                     </select>
                 </td>
                 <td>
-                    <select name="blood_type[]" id="apoblood_type${bodyId}" type="text" class="form-select">
+                    <select name="blood_type_id[]" id="apoblood_type_id${bodyId}" type="text" class="form-select">
                         <option value="0">-</option>
                         <option value="1">A</option>
                         <option value="2">B</option>
@@ -417,8 +418,30 @@
                     <input type="text" name="blooddescriptions[]" id="apoblooddescriptions${bodyId}" class="form-control" value="${bloodselected?.descriptions ?? ''}">
                 </td>
                 <td>
-                    <input type="date" name="usingtime[]" id="apousingtime${bodyId}" class="form-control " value="${bloodselected?.descriptions ?? ''}">
+                    <input type="text" id="apousingtime${bodyId}" name="using_time[]" id="flatapousingtime${bodyId}" class="form-control datepicker-darah" value="${bloodselected?.using_time ? moment(bloodselected?.using_time).format("YYYY-MM-DD HH:mm"): moment().format("YYYY-MM-DD HH:mm")}">
                 </td>
+                 ${bloodselected?.terlayani == 1 ? `
+                <td>
+                    <input type="text" name="transfusion_start[]" class="form-control bg-white datepicker-darah" 
+                    value="${moment(bloodselected?.transfusion_start, 'YYYY-MM-DD HH:mm', true).isValid() 
+                            ? moment(bloodselected?.transfusion_start).format('YYYY-MM-DD HH:mm') 
+                            : moment().format('YYYY-MM-DD HH:mm')}">
+                </td>
+                <td>
+                    <input type="text" name="transfusion_end[]" class="form-control bg-white datepicker-darah" 
+                    value="${moment(bloodselected?.transfusion_end, 'YYYY-MM-DD HH:mm', true).isValid() 
+                            ? moment(bloodselected?.transfusion_end).format('YYYY-MM-DD HH:mm') 
+                            : moment().format('YYYY-MM-DD HH:mm')}">
+                </td>
+                <td>
+                    <input type="text" name="reaction_desc[]" class="form-control" value="${bloodselected?.reaction_desc ?? ''}">
+                </td>
+                ` : 
+                `
+                <td></td>
+                <td></td>
+                <td></td>
+                `}
                 <td>
                     <a href="#" onclick="$('#apoblood${bodyId}').remove(); return false;" class="btn closebtn btn-">
                         <i class="fa fa-trash"></i>
@@ -426,12 +449,14 @@
                 </td>
             </tr>
         `);
-
-            // $.each(bloodselected, (key, value) => {
-            //     $.each(value, (key1, value1) => {
-            //         $("#apoblood" + key1 + bodyId).val(value1);
-            //     });
-            // });
+            flatpickr('.datepicker-darah', {
+                dateFormat: 'Y-m-d H:i',
+                enableTime: true,
+                time_24hr: true,
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log(selectedDates);
+                }
+            });
         } else {
             console.error('Expected bloodOptions to be an array, but got:', bloodOptions);
         }

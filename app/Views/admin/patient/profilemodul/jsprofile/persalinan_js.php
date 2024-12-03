@@ -115,7 +115,7 @@
 
 <script>
     const initiatePersalinan = () => {
-        $("#formPersalinan").find("input, select, textarea").val(null)
+        $("#formPersalinan").find("input:not([type='radio']), select, textarea").val(null);
         flatpickrInstances["flatprslexamination_date"].setDate(
             moment().format("DD/MM/YYYY HH:mm")
         );
@@ -198,8 +198,11 @@
         let select = babyAll[key];
         let selectexam = {};
         $.each(babyExamAll, function(key, value) {
-            if (value.pasien_diagnosa_id == select.baby_id) {
+            console.log(value.document_id)
+            console.log(select.baby_id)
+            if (value.document_id == select.baby_id) {
                 selectexam = value;
+                console.log(selectexam)
             }
         })
 
@@ -207,13 +210,16 @@
 
         $.each(select, function(key, value) {
             $("#bayi" + key).val(value)
-            $("#bayi" + key + "" + value).prop("checked", true)
-            // $('input[type="radio"][name="' + key + '"][value="' + value + '"]').prop("checked", true)
+            // $("#bayi" + key + "" + value).prop("checked", true)
         })
 
         $.each(selectexam, function(key, value) {
             $("#bayiexam" + key).val(value)
         })
+
+        if ($("#bayiexambody_id").val() == '') {
+            $("#bayiexambody_id").val(get_bodyid())
+        }
 
         $("#flatbayidate_of_birth").val(formatedDatetimeFlat(select?.date_of_birth)).trigger("change")
         $("#bayivisit").val(`<?= base64_encode(json_encode($visit)); ?>`)
@@ -377,21 +383,9 @@
                     } else if (res.status === "success") {
                         successSwal('Data berhasil diperbarui.');
                         var isNewDocument = 0
-                        var data = res.data
-                        $.each(babyAll, function(key, value) {
-                            if (value.bayi_id == data.bayi_id) {
-                                babyAll[key] = data
-                                isNewDocument = 1
-                            }
-                        })
-                        if (isNewDocument != 1)
-                            babyAll.push(data)
+                        var norm = res.data
+                        $("#bayibabyno").val(norm)
 
-                        $("#prslBayiBody").html("")
-                        $.each(babyAll, function(key, value) {
-                            addRowBayiLahir(value, key)
-                        })
-                        disableBayi();
                     }
                     $("#formBayiRegisterBtn").html(btnHtml)
                 },

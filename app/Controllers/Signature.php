@@ -8,6 +8,8 @@ use App\Models\Assessment\GcsModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\DocsSignedModel;
 use App\Models\ExaminationModel;
+use App\Models\FamilyModel;
+use App\Models\FamilyPasienModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienModel;
 use App\Models\RsaKeyModel;
@@ -284,6 +286,9 @@ class Signature extends BaseController
         if ($user_type == 1) {
             $checkpass = $this->checkpass($dataForm['user_id'] ?? null, $dataForm['password'] ?? null);
         } else if ($user_type == 2) {
+
+
+
             $pModel = new PasienModel();
             $select = $pModel->select("no_registration")
                 ->where("left(replace(replace(REPLACE(convert(varchar,date_of_birth,121),'-',''),':',''),' ',''),8) = " . $dataForm['datebirth'] . "")
@@ -293,6 +298,67 @@ class Signature extends BaseController
                 $checkpass = true;
             } else {
                 $checkpass = false;
+            }
+
+            $data = explode(',', (string)$tandatangansign);
+
+            $encodedLokalis = $data[1];
+            $decodedLokalis = base64_decode($encodedLokalis);
+            $lokalisPath = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($lokalisPath)) {
+                mkdir($lokalisPath, 0777, true);
+            }
+
+            $filenameLokalis = $nik . '.gif';
+            $fullPathLokalis = $lokalisPath . $filenameLokalis;
+            if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
+                $model = new PasienModel();
+                $db = [
+                    'no_registration' => $no_registration,
+                    'sign_file' => $filenameLokalis
+                ];
+                if ($model->save($db)) {
+                    $checkpass = true;
+                } else {
+                    $checkpass = false;
+                }
+                // return json_encode($db);
+            } else {
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
+            }
+        } else {
+
+            $data = explode(',', (string)$tandatangansign);
+
+            $encodedLokalis = $data[1];
+            $decodedLokalis = base64_decode($encodedLokalis);
+            $lokalisPath = WRITEPATH . 'uploads/signatures/';
+            if (!is_dir($lokalisPath)) {
+                mkdir($lokalisPath, 0777, true);
+            }
+
+            $filenameLokalis = $nik . '.gif';
+            $fullPathLokalis = $lokalisPath . $filenameLokalis;
+            if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
+                $model = new FamilyPasienModel();
+                $db = [
+                    'org_unit_code' => '3372096',
+                    'no_registration' => $no_registration,
+                    'family_id' => 1,
+                    'family_status_id' => '99',
+                    'fullname' => $name,
+                    'sign_file' => $filenameLokalis,
+                    'nik' => $nik,
+                    'modified_by' => user()->username
+                ];
+                if ($model->save($db)) {
+                    $checkpass = true;
+                } else {
+                    $checkpass = false;
+                }
+                // return json_encode($db);
+            } else {
+                return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
             }
         }
 
@@ -541,5 +607,65 @@ class Signature extends BaseController
         }
 
         return json_encode(['error' => 'Authentication failed']);
+    }
+
+    public function getSignPict()
+    {
+        if (!$this->request->is('post')) {
+            return json_encode(['error' => 'wrong method']);
+        }
+
+        // Get JSON body from request
+        $body = $this->request->getBody();
+        $jsonData = json_decode($body, true);
+
+        // Check if JSON decoding was successful
+        if ($jsonData === null && json_last_error() !== JSON_ERROR_NONE) {
+            // Handle JSON decoding error
+            return json_encode(['error' => 'Invalid JSON data']);
+        }
+
+        // Initialize empty arrays for formData and docData
+        $dataForm = [];
+        $dataDoc = [];
+
+        // Process signData
+        if (isset($jsonData["signData"]) && is_array($jsonData["signData"])) {
+            foreach ($jsonData["signData"] as $key => $value) {
+                ${strtolower($key)} = $value;
+                // if (!is_null($value) && $value !== '') {
+                //     $dataForm[strtolower($key)] = $value;
+                // }
+            }
+        }
+
+        if ($user_type == 2) {
+            $pasien = new PasienModel();
+            $data = $this->lowerKeyOne($family->where("no_registration", $no_registration)->first());
+
+            $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+            if (file_exists($filepath)) {
+                $filedata = file_get_contents($filepath);
+                $filedata64 = base64_encode($filedata);
+                $data['sign_file'] = $filedata64;
+            }
+        } else if ($user_type == 3) {
+            $family = new FamilyPasienModel();
+            $data = $this->lowerKeyOne($family->where("nik", $nik)->first());
+
+            $filepath = WRITEPATH . 'uploads/signatures/' . $data['sign_file'];
+            if (file_exists($filepath)) {
+                $filedata = file_get_contents($filepath);
+                $filedata64 = base64_encode($filedata);
+                $data['sign_file'] = $filedata64;
+            }
+        }
+
+
+
+        return json_encode($data);
+
+        // Return error or checkpass result
+        return json_encode(['error' => 'Login failed or invalid credentials']);
     }
 }

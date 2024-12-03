@@ -48,6 +48,7 @@ use App\Models\ClinicModel;
 use App\Models\DietInapModel;
 use App\Models\EducationModel;
 use App\Models\EmployeeAllModel;
+use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
 use App\Models\InasisKontrolModel;
 use App\Models\NifasModel;
@@ -826,6 +827,7 @@ class Assessment extends BaseController
             $dataexam = [];
             $dataexam = [
                 "body_id" => @$body_id,
+                "document_id" => @$body_id,
                 "org_unit_code" => @$org_unit_code,
                 "pasien_diagnosa_id" => @$pasien_diagnosa_id,
                 "no_registration" => @$no_registration,
@@ -873,7 +875,7 @@ class Assessment extends BaseController
                 'valid_date' => @$valid_date,
                 'valid_user' => @$valid_user,
                 'valid_pasien' => @$valid_pasien,
-                'account_id' => 3
+                'account_id' => 1
             ];
             foreach ($body as $key => $value) {
                 if (!(is_null(${$key}) || ${$key} == ''))
@@ -927,6 +929,8 @@ class Assessment extends BaseController
             }
             $ex = new ExaminationModel();
             $ex->save($dataexam);
+            $exd = new ExaminationDetailModel();
+            $exd->save($dataexam);
         }
 
 
@@ -1272,16 +1276,19 @@ class Assessment extends BaseController
         $db = db_connect();
         if ($isrj == 1) {
             $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
-            ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+            eid.weight, eid.height, eid.temperature, eid.nadi, eid.tension_upper, eid.tension_below, eid.saturasi, eid.nafas, eid.arm_diameter, eid.saturasi, eid.vs_status_id, eid.awareness
             from pasien_diagnosa pd 
             inner join pasien_visitation pv on pd.visit_id = pv.visit_id
             left join examination_info ei on ei.body_id = pd.body_id
+            left join examination_detail eid on ei.body_id = eid.document_id
             left join employee_all ea on pd.employee_id = ea.employee_id 
-            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and (pd.visit_id = '$visit_id' or pv.norujukan = '$norujukan')" . $stringDiagCat)->getResultArray());
+            left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' 
+            and (pd.visit_id = '$visit_id' or pv.norujukan = '$norujukan')" . $stringDiagCat)->getResultArray());
         } else {
             $selectpd = $this->lowerKey($db->query("select pd.*, c.name_of_clinic, ea.fullname,
-            ei.weight, ei.height, ei.temperature, ei.nadi, ei.tension_upper, ei.tension_below, ei.saturasi, ei.nafas, ei.arm_diameter, ei.saturasi, ei.vs_status_id, ei.awareness
+            eid.weight, eid.height, eid.temperature, eid.nadi, eid.tension_upper, eid.tension_below, eid.saturasi, eid.nafas, eid.arm_diameter, eid.saturasi, eid.vs_status_id, eid.awareness
             from pasien_diagnosa pd left join examination_info ei on ei.body_id = pd.body_id
+            left join examination_detail eid on ei.body_id = eid.document_id
             left join employee_all ea on pd.employee_id = ea.employee_id 
             left join clinic c on pd.clinic_id = c.clinic_id where pd.no_registration = '$no_registration' and pd.visit_id = '$visit_id'" . $stringDiagCat)->getResultArray());
         }
@@ -1775,7 +1782,7 @@ class Assessment extends BaseController
         $body = $this->request->getBody();
         $body = json_decode($body, true);
         $visit_id = $body['visit_id'];
-        $trans_id = $body['trans_id'];
+        // $trans_id = $body['trans_id'];
         $isrj = $body['isrj'];
         $norujukan = $body['norujukan'];
         $no_registration = $body['nomor'];
@@ -1800,22 +1807,169 @@ class Assessment extends BaseController
 
         if ($isrj == 1) {
             $selectex = $this->lowerKey($db->query("
-            select top($top) ex.*, 
+            select top($top) 
+            ex.body_id,
+            ex.org_unit_code,
+            ex.pasien_diagnosa_id,
+            ex.diagnosa_id,
+            ex.no_registration,
+            ex.visit_id,
+            ex.bill_id,
+            ex.clinic_id,
+            ex.class_room_id,
+            ex.bed_id,
+            ex.in_date,
+            ex.exit_date,
+            ex.keluar_id,
+            ex.examination_date,
+            exd.temperature,
+            exd.tension_upper,
+            exd.tension_below,
+            exd.nadi,
+            exd.nafas,
+            exd.weight,
+            exd.height,
+            exd.imt_score,
+            exd.imt_desc,
+            exd.saturasi,
+            exd.arm_diameter,
+
+            exd.oxygen_usage,
+            exd.oxygen_usage_score,
+            exd.temperature_score,
+            exd.tension_upper_score,
+            exd.tension_below_score,
+            exd.nadi_score,
+            exd.nafas_score,
+            exd.saturasi_score,
+            exd.awareness,
+            exd.pain,
+            exd.lochia,
+            exd.general_condition,
+            exd.cardiovasculer,
+            exd.respiration,
+            exd.proteinuria,
+            exd.vs_status_id,
+
+            ex.anamnase,
+            ex.alo_anamnase,
+            ex.pemeriksaan,
+            ex.teraphy_desc,
+            ex.instruction,
+            ex.medical_treatment,
+            ex.employee_id,
+            ex.description,
+            ex.modified_date,
+            ex.modified_by,
+            ex.modified_from,
+            ex.status_pasien_id,
+            ex.ageyear,
+            ex.agemonth,
+            ex.ageday,
+            ex.thename,
+            ex.theaddress,
+            ex.theid,
+            ex.isrj,
+            ex.gender,
+            ex.doctor,
+            ex.kal_id,
+            ex.petugas_id,
+            ex.petugas,
+            ex.account_id,
+            ex.isvalid,
+            ex.valid_date,
+            ex.valid_user,
+            ex.valid_pasien,
+            ex.petugas_type,
             c.name_of_clinic, 
             ea.fullname,
             gcs.GCS_DESC,
             case petugas_type when  '11' then 'D'
             when '13' then 'P' end as kode_PPA
             from examination_info ex 
+            left join examination_detail exd on ex.body_id = exd.document_id
             inner join pasien_visitation pv on pv.visit_id = ex.visit_id
             left join employee_all ea on ex.employee_id = ea.employee_id 
             left join clinic c on ex.clinic_id = c.clinic_id
             left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
             where ex.no_registration = '$no_registration' $where
+            order by examination_date desc
             ")->getResultArray());
         } else {
             $selectex = $this->lowerKey($db->query("
-            select top($top) ex.*, 
+            select top($top)
+            ex.body_id,
+            ex.org_unit_code,
+            ex.pasien_diagnosa_id,
+            ex.diagnosa_id,
+            ex.no_registration,
+            ex.visit_id,
+            ex.bill_id,
+            ex.clinic_id,
+            ex.class_room_id,
+            ex.bed_id,
+            ex.in_date,
+            ex.exit_date,
+            ex.keluar_id,
+            ex.examination_date,
+            exd.temperature,
+            exd.tension_upper,
+            exd.tension_below,
+            exd.nadi,
+            exd.nafas,
+            exd.weight,
+            exd.height,
+            exd.imt_score,
+            exd.imt_desc,
+            exd.saturasi,
+            exd.arm_diameter,
+            exd.oxygen_usage,
+            exd.oxygen_usage_score,
+            exd.temperature_score,
+            exd.tension_upper_score,
+            exd.tension_below_score,
+            exd.nadi_score,
+            exd.nafas_score,
+            exd.saturasi_score,
+            exd.awareness,
+            exd.pain,
+            exd.lochia,
+            exd.general_condition,
+            exd.cardiovasculer,
+            exd.respiration,
+            exd.proteinuria,
+            ex.petugas_type,
+
+            ex.anamnase,
+            ex.alo_anamnase,
+            ex.pemeriksaan,
+            ex.teraphy_desc,
+            ex.instruction,
+            ex.medical_treatment,
+            ex.employee_id,
+            ex.description,
+            ex.modified_date,
+            ex.modified_by,
+            ex.modified_from,
+            ex.status_pasien_id,
+            ex.ageyear,
+            ex.agemonth,
+            ex.ageday,
+            ex.thename,
+            ex.theaddress,
+            ex.theid,
+            ex.isrj,
+            ex.gender,
+            ex.doctor,
+            ex.kal_id,
+            ex.petugas_id,
+            ex.petugas,
+            ex.account_id,
+            ex.isvalid,
+            ex.vs_status_id,
+            ex.valid_date,
+            ex.valid_user,
+            ex.valid_pasien,
             c.name_of_clinic, 
             ea.fullname,
             gcs.GCS_DESC,
@@ -1825,11 +1979,132 @@ class Assessment extends BaseController
             else 'lain'
             end as kode_PPA
             from examination_info ex 
+            left join examination_detail exd on ex.body_id = exd.document_id
             inner join pasien_visitation pv on pv.visit_id = ex.visit_id
             left join employee_all ea on ex.employee_id = ea.employee_id 
             left join clinic c on ex.clinic_id = c.clinic_id
             left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
             where ex.no_registration = '$no_registration' and ex.visit_id = '$visit_id' 
+            order by examination_date desc
+            ")->getResultArray());
+        }
+
+
+        // return json_encode(count($selectex));
+        $selecthistory = $this->lowerKey($db->query("select * from pasien_history where no_registration = '$no_registration'")->getResultArray());
+
+        return $this->response->setJSON([
+            'examInfo' => $selectex,
+            'pasienHistory' => $selecthistory,
+        ]); //havin
+    }
+    public function getVitalSign()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        // $trans_id = $body['trans_id'];
+        $isrj = $body['isrj'];
+        $norujukan = $body['norujukan'];
+        $no_registration = $body['nomor'];
+
+        // return json_encode($no_registration);
+        $db = db_connect();
+        // $selectex = $this->lowerKey($db->query("select ex.*, c.name_of_clinic, ea.fullname 
+        // from examination_info ex left join employee_all ea on ex.employee_id = ea.employee_id 
+        // left join clinic c on ex.clinic_id = c.clinic_id where no_registration = '$no_registration' 
+        // and visit_id = '$visit_id' order by examination_date desc")->getResultArray());
+        if ($isrj == 1)
+            $where = "and (ex.visit_id = '$visit_id' or pv.norujukan = '$norujukan')";
+        else
+            $where = "and (ex.visit_id = '$visit_id')";
+
+
+        if ($isrj == 1) {
+            $selectex = $this->lowerKey($db->query("
+            select
+            exd.body_id,
+            exd.no_registration,
+            exd.visit_id,
+            exd.examination_date,
+            exd.temperature,
+            exd.tension_upper,
+            exd.tension_below,
+            exd.nadi,
+            exd.nafas,
+            exd.weight,
+            exd.height,
+            exd.imt_score,
+            exd.imt_desc,
+            exd.saturasi,
+            exd.arm_diameter,
+
+            exd.oxygen_usage,
+            exd.oxygen_usage_score,
+            exd.temperature_score,
+            exd.tension_upper_score,
+            exd.tension_below_score,
+            exd.nadi_score,
+            exd.nafas_score,
+            exd.saturasi_score,
+            exd.awareness,
+            exd.pain,
+            exd.lochia,
+            exd.general_condition,
+            exd.cardiovasculer,
+            exd.respiration,
+            exd.proteinuria,
+            exd.vs_status_id
+            from examination_detail exd
+            inner join pasien_visitation pv on pv.visit_id = exd.visit_id
+            left outer join ASSESSMENT_GCS gcs on ex.BODY_ID = gcs.DOCUMENT_ID
+            where ex.no_registration = '$no_registration' $where
+            ")->getResultArray());
+        } else {
+            $selectex = $this->lowerKey($db->query("
+            select
+            exd.body_id,
+            exd.no_registration,
+            exd.visit_id,
+            exd.examination_date,
+            exd.temperature,
+            exd.tension_upper,
+            exd.tension_below,
+            exd.nadi,
+            exd.nafas,
+            exd.weight,
+            exd.height,
+            exd.imt_score,
+            exd.imt_desc,
+            exd.saturasi,
+            exd.arm_diameter,
+
+            exd.oxygen_usage,
+            exd.oxygen_usage_score,
+            exd.temperature_score,
+            exd.tension_upper_score,
+            exd.tension_below_score,
+            exd.nadi_score,
+            exd.nafas_score,
+            exd.saturasi_score,
+            exd.awareness,
+            exd.pain,
+            exd.lochia,
+            exd.general_condition,
+            exd.cardiovasculer,
+            exd.respiration,
+            exd.proteinuria,
+            exd.vs_status_id
+            from examination_detail exd
+            inner join pasien_visitation pv on pv.visit_id = exd.visit_id
+            where exd.no_registration = '$no_registration' and exd.visit_id = '$visit_id' 
             ")->getResultArray());
         }
 
@@ -2584,6 +2859,31 @@ class Assessment extends BaseController
             'educationForm' => $select
         ]);
     }
+    public function geteducationFormIntegration()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        // return json_encode($body['visit_id']);
+
+        $visit = $body['visit_id'];
+        $bodyId = $body['body_id'];
+        $value_id = $body['value_id'];
+
+        $model = new EducationFormModel();
+        $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->where("value_id", $value_id)->select("*")->findAll());
+
+        return json_encode([
+            'educationForm' => $select
+        ]);
+    }
     public function saveeducationIntegration()
     {
         if (!$this->request->is('post')) {
@@ -2693,7 +2993,7 @@ class Assessment extends BaseController
 
         $model = new EducationIntegrationPlanModel();
 
-        $model->insert($data);
+        $model->save($data);
 
         return json_encode($data);
     }
@@ -3456,10 +3756,6 @@ class Assessment extends BaseController
             if (isset($examination_date))
                 $data['examination_date'] = str_replace("T", " ", $examination_date);
         }
-        // $data['org_unit_code'] = '330710';
-        // $data['visit_id'] = '202405231955390970F26';
-
-        // return json_encode($data);
 
         $model = new PasienTransferModel();
 
@@ -3499,16 +3795,34 @@ class Assessment extends BaseController
         foreach ($select as $key => $value) {
             $queryDetil .= "'" . $value['document_id'] . "',";
         }
-        foreach ($select as $key => $value) {
-            $queryDetil .= "'" . $value['document_id2'] . "',";
-        }
         $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
 
         $queryDetil .= ");";
 
         $examinfo = $this->lowerKey($db->query($queryDetil)->getResultArray());
 
-        $queryVisit = "select *, c.name_of_clinic, ea.fullname from pasien_visitation ei left join clinic c on c.clinic_id = ei.clinic_id left join employee_all ea on ei.employee_id = ea.employee_id
+        $queryDetil = "select * from examination_detail ei 
+        where body_id in (";
+
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id'] . "',";
+        }
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id2'] . "',";
+        }
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id3'] . "',";
+        }
+        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+
+        $queryDetil .= ");";
+
+        $examDetail = $this->lowerKey($db->query($queryDetil)->getResultArray());
+
+
+
+
+        $queryVisit = "select ei.*, c.name_of_clinic, ea.fullname from pasien_visitation ei left join clinic c on c.clinic_id = ei.clinic_id left join employee_all ea on ei.employee_id = ea.employee_id
         where visit_id in (";
 
         foreach ($select as $key => $value) {
@@ -3516,6 +3830,9 @@ class Assessment extends BaseController
         }
         foreach ($select as $key => $value) {
             $queryVisit .= "'" . $value['document_id2'] . "',";
+        }
+        foreach ($select as $key => $value) {
+            $queryDetil .= "'" . $value['document_id3'] . "',";
         }
         $queryVisit = substr($queryVisit, 0, strlen($queryVisit) - 1);
 
@@ -3528,10 +3845,319 @@ class Assessment extends BaseController
         return json_encode([
             'transfer' => $select,
             'examinfo' => $examinfo,
-            'visit' => $visit
+            'visit' => $visit,
+            'examDetail' => $examDetail
         ]);
     }
+    public function saveTransferInternal()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
 
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        $body_id = $body['body_id'];
+        $org_unit_code = $body['org_unit_code'];
+        $pasien_diagnosa_id = $body['pasien_diagnosa_id'];
+        $diagnosa_id = @$body['diagnosa_id'];
+        $description = @$body['description'];
+        $valid_date = @$body['valid_date'];
+        $valid_user = @$body['valid_user'];
+        $valid_pasien = @$body['valid_pasien'];
+        $no_registration = $body['no_registration'];
+        $visit_id = $body['visit_id'];
+        $bill_id = $body['bill_id'];
+        $clinic_id = $body['clinic_id'];
+        $class_room_id = $body['class_room_id'];
+        $bed_id = $body['bed_id'];
+        $in_date = $body['in_date'];
+        $exit_date = $body['exit_date'];
+        $keluar_id = $body['keluar_id'];
+        $examination_date = $body['examination_date'];
+        $anamnase = $body['anamnase'];
+        $alo_anamnase = $body['alo_anamnase'];
+        $pemeriksaan = $body['pemeriksaan'];
+        $teraphy_desc = $body['teraphy_desc'];
+        $instruction = $body['instruction'];
+        $medical_treatment = $body['medical_treatment'];
+        $employee_id = @$body['employee_id'];
+        $modified_date = $body['modified_date'];
+        $modified_by = $body['modified_by'];
+        $modified_from = $body['modified_from'];
+        $status_pasien_id = $body['status_pasien_id'];
+        $ageyear = $body['ageyear'];
+        $agemonth = $body['agemonth'];
+        $ageday = $body['ageday'];
+        $thename = $body['thename'];
+        $theaddress = $body['theaddress'];
+        $theid = $body['theid'];
+        $isrj = $body['isrj'];
+        $gender = $body['gender'];
+        $doctor = $body['doctor'];
+        $kal_id = $body['kal_id'];
+        $petugas_id = $body['petugas_id'];
+        $petugas = $body['petugas'];
+        $account_id = $body['account_id'];
+        $isvalid = $body['isvalid'];
+        $vs_status_id = $body['vs_status_id'];
+        $petugas_type = @$body['petugas_type'];
+
+        $body_id1 = $body['body_id1'];
+        $temperature1 = $body['temperature1'];
+        $tension_upper1 = $body['tension_upper1'];
+        $tension_below1 = $body['tension_below1'];
+        $nadi1 = $body['nadi1'];
+        $nafas1 = $body['nafas1'];
+        $weight1 = $body['weight1'];
+        $height1 = $body['height1'];
+        $imt_score1 = $body['imt_score1'];
+        $imt_desc1 = $body['imt_desc1'];
+        $saturasi1 = $body['saturasi1'];
+        $arm_diameter1 = $body['arm_diameter1'];
+        $oxygen_usage1 = $body['oxygen_usage1'];
+        $oxygen_usage_score1 = @$body['oxygen_usage_score1'];
+        $temperature_score1 = @$body['temperature_score1'];
+        $tension_upper_score1 = @$body['tension_upper_score1'];
+        $tension_below_score1 = @$body['tension_below_score1'];
+        $nadi_score1 = @$body['nadi_score1'];
+        $nafas_score1 = @$body['nafas_score1'];
+        $saturasi_score1 = @$body['saturasi_score1'];
+        $awareness1 = $body['awareness1'];
+        $pain1 = @$body['pain1'];
+        $lochia1 = @$body['lochia1'];
+        $general_condition1 = @$body['general_condition1'];
+        $cardiovasculer1 = @$body['cardiovasculer1'];
+        $respiration1 = @$body['respiration1'];
+        $proteinuria1 = @$body['proteinuria1'];
+
+        $body_id2 = $body['body_id2'];
+        $temperature2 = $body['temperature2'];
+        $tension_upper2 = $body['tension_upper2'];
+        $tension_below2 = $body['tension_below2'];
+        $nadi2 = $body['nadi2'];
+        $nafas2 = $body['nafas2'];
+        $weight2 = $body['weight2'];
+        $height2 = $body['height2'];
+        $imt_score2 = @$body['imt_score2'];
+        $imt_desc2 = @$body['imt_desc2'];
+        $saturasi2 = @$body['saturasi2'];
+        $arm_diameter2 = $body['arm_diameter2'];
+        $oxygen_usage2 = $body['oxygen_usage2'];
+        $oxygen_usage_score2 = @$body['oxygen_usage_score2'];
+        $temperature_score2 = @$body['temperature_score2'];
+        $tension_upper_score2 = @$body['tension_upper_score2'];
+        $tension_below_score2 = @$body['tension_below_score2'];
+        $nadi_score2 = @$body['nadi_score2'];
+        $nafas_score2 = @$body['nafas_score2'];
+        $saturasi_score2 = @$body['saturasi_score2'];
+        $awareness2 = @$body['awareness2'];
+        $pain2 = @$body['pain2'];
+        $lochia2 = @$body['lochia2'];
+        $general_condition2 = @$body['general_condition2'];
+        $cardiovasculer2 = @$body['cardiovasculer2'];
+        $respiration2 = @$body['respiration2'];
+        $proteinuria2 = @$body['proteinuria2'];
+
+        $body_id3 = $body['body_id3'];
+        $temperature3 = $body['temperature3'];
+        $tension_upper3 = $body['tension_upper3'];
+        $tension_below3 = $body['tension_below3'];
+        $nadi3 = $body['nadi3'];
+        $nafas3 = $body['nafas3'];
+        $weight3 = $body['weight3'];
+        $height3 = $body['height3'];
+        $imt_score3 = @$body['imt_score3'];
+        $imt_desc3 = @$body['imt_desc3'];
+        $saturasi3 = @$body['saturasi3'];
+        $arm_diameter3 = $body['arm_diameter3'];
+        $oxygen_usage3 = $body['oxygen_usage3'];
+        $oxygen_usage_score3 = @$body['oxygen_usage_score3'];
+        $temperature_score3 = @$body['temperature_score3'];
+        $tension_upper_score3 = @$body['tension_upper_score3'];
+        $tension_below_score3 = @$body['tension_below_score3'];
+        $nadi_score3 = @$body['nadi_score3'];
+        $nafas_score3 = @$body['nafas_score3'];
+        $saturasi_score3 = @$body['saturasi_score3'];
+        $awareness3 = @$body['awareness3'];
+        $pain3 = @$body['pain3'];
+        $lochia3 = @$body['lochia3'];
+        $general_condition3 = @$body['general_condition3'];
+        $cardiovasculer3 = @$body['cardiovasculer3'];
+        $respiration3 = @$body['respiration3'];
+        $proteinuria3 = @$body['proteinuria3'];
+
+        $data = [];
+
+        $data = [
+            'body_id' => $body_id,
+            'org_unit_code' => $org_unit_code,
+            'pasien_diagnosa_id' => $pasien_diagnosa_id,
+            'diagnosa_id' => $diagnosa_id,
+            'no_registration' => $no_registration,
+            'visit_id' => $visit_id,
+            'bill_id' => $bill_id,
+            'clinic_id' => $clinic_id,
+            'class_room_id' => $class_room_id,
+            'bed_id' => $bed_id,
+            'in_date' => $in_date,
+            'exit_date' => $exit_date,
+            'keluar_id' => $keluar_id,
+            'examination_date' => $examination_date,
+            'anamnase' => $anamnase,
+            'alo_anamnase' => $alo_anamnase,
+            'pemeriksaan' => $pemeriksaan,
+            'teraphy_desc' => $teraphy_desc,
+            'instruction' => $instruction,
+            'medical_treatment' => $medical_treatment,
+            'employee_id' => $employee_id,
+            'description' => $description,
+            'modified_date' => $modified_date,
+            'modified_by' => $modified_by,
+            'modified_from' => $modified_from,
+            'status_pasien_id' => $status_pasien_id,
+            'ageyear' => $ageyear,
+            'agemonth' => $agemonth,
+            'ageday' => $ageday,
+            'thename' => $thename,
+            'theaddress' => $theaddress,
+            'theid' => $theid,
+            'isrj' => $isrj,
+            'gender' => $gender,
+            'doctor' => $doctor,
+            'kal_id' => $kal_id,
+            'petugas_id' => $petugas_id,
+            'petugas' => $petugas,
+            'account_id' => $account_id,
+            'isvalid' => $isvalid,
+            'vs_status_id' => $vs_status_id,
+            'valid_date' => $valid_date,
+            'valid_user' => $valid_user,
+            'valid_pasien' => $valid_pasien,
+            'petugas_type' => $petugas_type,
+        ];
+
+        $model = new ExaminationModel();
+        $model->save($data);
+
+        $modelDetail = new ExaminationDetailModel();
+        $data1 = [
+            'no_registration' => $no_registration,
+            'visit_id' => $visit_id,
+            'account_id' => $account_id,
+            'examination_date' => $examination_date,
+            'body_id' => $body_id1,
+            'vs_status_id' => $vs_status_id,
+            'temperature' => (float)$temperature1,
+            'tension_upper' => (float)$tension_upper1,
+            'tension_below' => (float)$tension_below1,
+            'nadi' => (float)$nadi1,
+            'nafas' => (float)$nafas1,
+            'weight' => (float)$weight1,
+            'height' => (float)$height1,
+            'imt_score' => (float)$imt_score1,
+            'imt_desc' => (float)$imt_desc1,
+            'saturasi' => (int)$saturasi1,
+            'arm_diameter' => (float)$arm_diameter1,
+            'oxygen_usage' => (float)$oxygen_usage1,
+            'oxygen_usage_score' => (float)$oxygen_usage_score1,
+            'temperature_score' => (int)$temperature_score1,
+            'tension_upper_score' => (int)$tension_upper_score1,
+            'tension_below_score' => (int)$tension_below_score1,
+            'nadi_score' => (int)$nadi_score1,
+            'nafas_score' => (int)$nafas_score1,
+            'saturasi_score' => (int)$saturasi_score1,
+            'awareness' => (int)$awareness1,
+            'pain' => (int)$pain1,
+            'lochia' => (int)$lochia1,
+            'general_condition' => $general_condition1,
+            'cardiovasculer' => (int)$cardiovasculer1,
+            'respiration' => (int)$respiration1,
+            'proteinuria' => (int)$proteinuria1,
+        ];
+
+        $modelDetail->save($data1);
+        // return json_encode($data1);
+        // $data2 = [
+        //     'no_registration' => $no_registration,
+        //     'visit_id' => $visit_id,
+        //     'account_id' => $account_id,
+        //     'examination_date' => $examination_date,
+        //     'body_id' => $body_id2,
+        //     'vs_status_id' => $vs_status_id,
+        //     'temperature' => (float)$temperature2,
+        //     'tension_upper' => (float)$tension_upper2,
+        //     'tension_below' => (float)$tension_below2,
+        //     'nadi' => (float)$nadi2,
+        //     'nafas' => (float)$nafas2,
+        //     'weight' => (float)$weight2,
+        //     'height' => (float)$height2,
+        //     'imt_score' => (float)$imt_score2,
+        //     'imt_desc' => (float)$imt_desc2,
+        //     'saturasi' => (int)$saturasi2,
+        //     'arm_diameter' => (float)$arm_diameter2,
+        //     'oxygen_usage' => (float)$oxygen_usage2,
+        //     'oxygen_usage_score' => (float)$oxygen_usage_score2,
+        //     'temperature_score' => (int)$temperature_score2,
+        //     'tension_upper_score' => (int)$tension_upper_score2,
+        //     'tension_below_score' => (int)$tension_below_score2,
+        //     'nadi_score' => (int)$nadi_score2,
+        //     'nafas_score' => (int)$nafas_score2,
+        //     'saturasi_score' => (int)$saturasi_score2,
+        //     'awareness' => (int)$awareness2,
+        //     'pain' => (int)$pain2,
+        //     'lochia' => (int)$lochia2,
+        //     'general_condition' => $general_condition2,
+        //     'cardiovasculer' => (int)$cardiovasculer2,
+        //     'respiration' => (int)$respiration2,
+        //     'proteinuria' => (int)$proteinuria2,
+        // ];
+        // $modelDetail->save($data2);
+
+        $data3 = [
+            'no_registration' => $no_registration,
+            'visit_id' => $visit_id,
+            'account_id' => $account_id,
+            'examination_date' => $examination_date,
+            'body_id' => $body_id3,
+            'vs_status_id' => $vs_status_id,
+            'temperature' => (float)$temperature3,
+            'tension_upper' => (float)$tension_upper3,
+            'tension_below' => (float)$tension_below3,
+            'nadi' => (float)$nadi3,
+            'nafas' => (float)$nafas3,
+            'weight' => (float)$weight3,
+            'height' => (float)$height3,
+            'imt_score' => (float)$imt_score3,
+            'imt_desc' => (float)$imt_desc3,
+            'saturasi' => (int)$saturasi3,
+            'arm_diameter' => (float)$arm_diameter3,
+            'oxygen_usage' => (float)$oxygen_usage3,
+            'oxygen_usage_score' => (float)$oxygen_usage_score3,
+            'temperature_score' => (int)$temperature_score3,
+            'tension_upper_score' => (int)$tension_upper_score3,
+            'tension_below_score' => (int)$tension_below_score3,
+            'nadi_score' => (int)$nadi_score3,
+            'nafas_score' => (int)$nafas_score3,
+            'saturasi_score' => (int)$saturasi_score3,
+            'awareness' => (int)$awareness3,
+            'pain' => (int)$pain3,
+            'lochia' => (int)$lochia3,
+            'general_condition' => $general_condition3,
+            'cardiovasculer' => (int)$cardiovasculer3,
+            'respiration' => (int)$respiration3,
+            'proteinuria' => (int)$proteinuria3,
+        ];
+
+        $modelDetail->save($data3);
+
+
+        return json_encode($data);
+    }
     public function saveExaminationInfo()
     {
         if (!$this->request->is('post')) {
@@ -3596,6 +4222,9 @@ class Assessment extends BaseController
 
         $ex = new ExaminationModel();
         $ex->save($dataexam);
+        $dataexam['document_id'] = $dataexam['body_id'];
+        $exd = new ExaminationDetailModel();
+        $exd->save($dataexam);
 
         $pasienHistory = new PasienHistoryModel();
 
@@ -3660,6 +4289,73 @@ class Assessment extends BaseController
         }
 
 
+
+        return json_encode($dataexam);
+    }
+    public function saveVitalSign()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+        $body = $this->request->getPost();
+        $dataexam = [];
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $dataexam[$key] = $value;
+            if (isset($examination_date))
+                $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($temperature) && $temperature != '')
+                $dataexam['temperature'] = (float)$dataexam['temperature'];
+            else
+                $dataexam['temperature'] = null;
+
+            if (isset($tension_upper) && $tension_upper != '')
+                $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
+            else
+                $dataexam['tension_upper'] = null;
+
+            if (isset($tension_below) && $tension_below != '')
+                $dataexam['tension_below'] = (float)$dataexam['tension_below'];
+            else
+                $dataexam['tension_below'] = null;
+
+            if (isset($nadi) && $nadi != '')
+                $dataexam['nadi'] = (float)$dataexam['nadi'];
+            else
+                $dataexam['nadi'] = null;
+
+            if (isset($nafas) && $nafas != '')
+                $dataexam['nafas'] = (float)$dataexam['nafas'];
+            else
+                $dataexam['nafas'] = null;
+
+            if (isset($weight) && $weight != '')
+                $dataexam['weight'] = (float)$dataexam['weight'];
+            else
+                $dataexam['weight'] = null;
+
+            if (isset($height) && $height != '')
+                $dataexam['height'] = (float)$dataexam['height'];
+            else
+                $dataexam['height'] = null;
+
+            if (isset($arm_diameter) && $arm_diameter != '')
+                $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
+            else
+                $dataexam['arm_diameter'] = null;
+
+            if (isset($saturasi) && $saturasi != '')
+                $dataexam['saturasi'] = (int)$dataexam['saturasi'];
+            else
+                $dataexam['saturasi'] = null;
+        }
+
+        $exd = new ExaminationDetailModel();
+        $exd->save($dataexam);
 
         return json_encode($dataexam);
     }
@@ -3809,10 +4505,11 @@ class Assessment extends BaseController
         $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->first());
 
         if (count($select) > 0) {
-            $examModel = new ExaminationModel();
+            $examModel = new ExaminationDetailModel();
 
-            $exam = $examModel->select("vs_status_id, weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, oxygen_usage, awareness, pain, lochia, proteinuria, body_id, pasien_diagnosa_id")
-                ->where("pasien_diagnosa_id", $select['body_id'])->first();
+            $exam = $examModel->select("*")
+                ->where("document_id", $select['body_id'])->first();
+            $exam = $this->lowerKeyOne($exam);
 
             $babyModel = new BabyModel();
             $baby = $babyModel->select("
@@ -3852,8 +4549,9 @@ class Assessment extends BaseController
                 }
                 $whereIn = substr($whereIn, 0, -1);
 
-                $exambaby = $examModel->select("vs_status_id, weight, height, temperature, nadi, tension_upper, tension_below, saturasi, nafas, arm_diameter, oxygen_usage, awareness, pain, lochia, proteinuria, body_id, pasien_diagnosa_id")
-                    ->where("pasien_diagnosa_id in ($whereIn)")->findAll();
+                $exambaby = $examModel->select("*")
+                    ->where("document_id in ($whereIn)")->findAll();
+                $exambaby = $this->lowerKey($exambaby);
             }
         }
 
@@ -3899,6 +4597,7 @@ class Assessment extends BaseController
                 $dataexam = [];
                 $dataexam = [
                     "body_id" => $exambody_id, //harusgenerate
+                    "document_id" => $body_id,
                     "org_unit_code" => $org_unit_code,
                     "pasien_diagnosa_id" => $body_id, //document_id nya
                     "no_registration" => $no_registration,
@@ -3910,17 +4609,10 @@ class Assessment extends BaseController
                     "tension_upper" => $tension_upper,
                     "tension_below" => $tension_below,
                     "nadi" => $nadi,
-                    "nafas" => $nafas,
                     "weight" => $weight,
                     "height" => $height,
-                    "awareness" => @$awareness,
-                    "saturasi" => $saturasi,
-                    "arm_diameter" => $arm_diameter,
-                    "oxygen_usage" => $oxygen_usage,
-                    "awareness" => @$awareness,
-                    "pain" => $pain ?? 0,
-                    "lochia" => $lochia ?? 0,
-                    "proteinuria" => $proteinuria ?? 0,
+                    "tfu" => $tfu,
+                    "uterus" => $uterus,
                     "modified_by" => user()->username,
                     "modified_from" => "P002",
                     "petugas_id" => user()->username,
@@ -3955,11 +4647,6 @@ class Assessment extends BaseController
                     else
                         $dataexam['nadi'] = 0;
 
-                    if (isset($nafas))
-                        $dataexam['nafas'] = (float)$dataexam['nafas'];
-                    else
-                        $dataexam['nafas'] = 0;
-
                     if (isset($weight))
                         $dataexam['weight'] = (float)$dataexam['weight'];
                     else
@@ -3985,7 +4672,7 @@ class Assessment extends BaseController
                     else
                         $dataexam['oxygen_usage'] = 0;
                 }
-                $ex = new ExaminationModel();
+                $ex = new ExaminationDetailModel();
                 $ex->save($dataexam);
             }
 
@@ -4059,6 +4746,7 @@ class Assessment extends BaseController
                 $dataexam = [];
                 $dataexam = [
                     "body_id" => @$exambody_id, //harusgenerate
+                    "document_id" => $baby_id,
                     "org_unit_code" => $org_unit_code,
                     "pasien_diagnosa_id" => $baby_id, //document_id nya
                     "no_registration" => $no_registration,
@@ -4145,13 +4833,13 @@ class Assessment extends BaseController
                     else
                         $dataexam['oxygen_usage'] = 0;
                 }
-                $ex = new ExaminationModel();
+                $ex = new ExaminationDetailModel();
                 $ex->save($dataexam);
             }
             // Return success response
             return $this->response->setJSON([
                 'status' => 'success',
-                'data' => $data
+                'data' => $dataexam
             ])->setStatusCode(200); // OK
         } catch (\Exception $e) {
             // Return error response
@@ -4193,6 +4881,12 @@ class Assessment extends BaseController
             if (!isset($bayino) || $bayino == '') {
                 $p = new PasienModel();
                 $bayino = $p->getNorm();
+                // $model-
+                $data = [
+                    "baby_id" => $baby_id,
+                    "babyno" => $babyno
+                ];
+                $model->save($data);
             }
 
             // return json_encode($bayino);
@@ -4264,7 +4958,7 @@ class Assessment extends BaseController
             // Return success response
             return $this->response->setJSON([
                 'status' => 'success',
-                'data' => $data
+                'data' => $bayino
             ])->setStatusCode(200); // OK
         } catch (\Exception $e) {
             // Return error response

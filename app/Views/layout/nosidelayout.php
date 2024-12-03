@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/quill/quill.snow.css" />
     <script src="<?php echo base_url(); ?>assets/libs/quill/quill.js"></script>
     <script src="<?php echo base_url(); ?>assets/libs/qrcode/qrcode.min.js"></script>
-    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/libs/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <!-- <link rel="stylesheet" href="https://unpkg.com/ionicons@5.5.2/dist/css/ionicons.min.css">
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

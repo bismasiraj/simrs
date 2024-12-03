@@ -130,8 +130,17 @@ $permission = user()->getPermissions();
                     </div>
                     <?php if (user()->checkPermission("cppt", "c")) {
                     ?>
-                        <div class="box-tab-tools text-center">
-                            <a data-toggle="modal" onclick="initialAddacppt()" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                        <div id="" class="row">
+                            <div class="col-md-6">
+                                <div id="" class="box-tab-tools text-end">
+                                    <a data-toggle="modal" onclick="initialAddacppt(true)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SOAP</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="" class="box-tab-tools text-start" style="">
+                                    <a data-toggle="modal" onclick="initialAddacppt(false)" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH SBAR</a>
+                                </div>
+                            </div>
                         </div>
                     <?php
                     } ?>
@@ -281,7 +290,7 @@ $permission = user()->getPermissions();
                                         <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row d-none">
                                     <div class="col-md-3">
                                         <div class="form-check mb-3"><input class="form-check-input" type="radio" name="account_id" id="acpptaccount_id3" value="3"><label class="form-check-label" for="acpptaccount_id3" checked>SOAP</label></div>
                                     </div>
@@ -523,7 +532,7 @@ $permission = user()->getPermissions();
                                             <div class="col-sm-12 mt-2">
                                                 <div class="form-group"><label>Keadaan Umum</label><textarea name="pemeriksaan" id="acpptpemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
                                             </div>
-                                            <div class="col-12 mt-4">
+                                            <div id="cpptFallRiskSegment" class="col-12 mt-4">
                                                 <h4><b>Resiko Jatuh</b></h4>
                                                 <hr>
                                                 <div class="col-md-12">
@@ -538,7 +547,7 @@ $permission = user()->getPermissions();
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12 mt-4">
+                                            <div id="cpptGcsSegment" class="col-12 mt-4">
                                                 <h4><b>GCS</b></h4>
                                                 <hr>
                                                 <div class="col-md-12">

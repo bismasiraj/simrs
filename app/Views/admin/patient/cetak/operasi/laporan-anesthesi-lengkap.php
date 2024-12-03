@@ -190,21 +190,23 @@
 
                     <?php endforeach; ?>
                 </table>
-                <table class="table table-bordered">
-                    <tr>
-                        <th colspan="2" class="text-center">Bromage Score</th>
-                    </tr>
-                    <tr class="text-center">
-                        <th>Kriteria</th>
-                        <th width="1%">Score</th>
-                    </tr>
-                    <?php foreach ($bromage_score as $key => $bromage) : ?>
+                <?php if (!empty($bromage_score)) : ?>
+                    <table class="table table-bordered">
                         <tr>
-                            <td><?= $bromage['value_desc']; ?></td>
-                            <td class="text-center"><?= $bromage['value_score']; ?></td>
+                            <th colspan="2" class="text-center">Bromage Score</th>
                         </tr>
-                    <?php endforeach; ?>
-                </table>
+                        <tr class="text-center">
+                            <th>Kriteria</th>
+                            <th width="1%">Score</th>
+                        </tr>
+                        <?php foreach ($bromage_score as $key => $bromage) : ?>
+                            <tr>
+                                <td><?= $bromage['value_desc']; ?></td>
+                                <td class="text-center"><?= $bromage['value_score']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                <?php endif; ?>
             </div>
         </div>
         <div style="break-after:page"></div>
@@ -395,37 +397,38 @@
 
                     <div class="col-6">
                         Cairan Masuk
-                        <table class="table table-bordered">
+                        <table class="table borderless">
                             <?php foreach ($cairan_masuk as $key => $cm) : ?>
                                 <tr>
-                                    <td><?= tanggal_indo(date_format(date_create($cm['date']), 'Y-m-d')); ?></td>
-                                    <td><?= $cm['name']; ?></td>
-                                    <td><?= $cm['quantity']; ?> cc</td>
+                                    <td><small><?= date_format(date_create($cm['date']), 'd-m-Y'); ?></small></td>
+                                    <td><small><?= $cm['name']; ?></small></td>
+                                    <td><small><?= $cm['quantity']; ?> cc</small></td>
                                 </tr>
+
                             <?php endforeach; ?>
                             <?php
                             $array_cairan_masuk = array_filter($cairan, fn ($item) => $item['cairan_masuk'] === 1);
 
                             foreach ($array_cairan_masuk as $key => $c) : ?>
                                 <tr>
-                                    <td><?= tanggal_indo(date_format(date_create($c['examination_date']), 'Y-m-d')); ?></td>
-                                    <td><?= $c['value_desc']; ?></td>
-                                    <td><?= $c['fluid_amount']; ?> cc</td>
+                                    <td><small><?= date_format(date_create($c['examination_date']), 'd-m-Y'); ?></small></td>
+                                    <td><small><?= $c['value_desc']; ?></small></td>
+                                    <td><small><?= $c['fluid_amount']; ?> cc</small></td>
                                 </tr>
                             <?php endforeach; ?>
                         </table>
                     </div>
                     <div class="col-6">
                         Cairan Keluar
-                        <table class="table table-bordered">
+                        <table class="table table-borderless">
                             <?php
                             $array_cairan_keluar = array_filter($cairan, fn ($item) => $item['cairan_masuk'] === 0);
 
                             foreach ($array_cairan_keluar as $key => $ck) : ?>
                                 <tr>
-                                    <td><?= tanggal_indo(date_format(date_create($ck['examination_date']), 'Y-m-d')); ?></td>
-                                    <td><?= $ck['value_desc']; ?></td>
-                                    <td><?= $ck['fluid_amount']; ?> cc</td>
+                                    <td><small><?= date_format(date_create($ck['examination_date']), 'd-m-Y'); ?></small></td>
+                                    <td><small><?= $ck['value_desc']; ?></small></td>
+                                    <td><small><?= $ck['fluid_amount']; ?> cc</small></td>
                                 </tr>
                             <?php endforeach; ?>
                         </table>
@@ -829,8 +832,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode"), {
         text: `<?= $visit['fullname']; ?>`,
-        width: 150,
-        height: 150,
+        width: 70,
+        height: 70,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction
@@ -839,8 +842,8 @@
 <script>
     var qrcode = new QRCode(document.getElementById("qrcode1"), {
         text: `<?= $visit['diantar_oleh']; ?>`,
-        width: 150,
-        height: 150,
+        width: 70,
+        height: 70,
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.H // High error correction

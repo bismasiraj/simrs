@@ -135,6 +135,8 @@ $db = db_connect();
                     <input type="hidden" name="tarif_id" id="patologi_tarif_id">
                     <input type="hidden" name="bill_id" id="patologi_bill_id">
                     <input type="hidden" name="visit_id" id="patologi_visit_id">
+                    <input type="hidden" name="isvalid" value="0" id="modalIsValid_patologi">
+                    <input type="hidden" name="iskritis" value="0" id="modalIsKritis_patologi">
                     <div class="row">
                         <div class="col-auto" align="center">
                             <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="70px">
@@ -177,7 +179,7 @@ $db = db_connect();
                             <td colspan="2"><?= $visit['contact_address']; ?></td>
                             <td width="20%">Dokter</td>
                             <td width="1%">:</td>
-                            <td><?= $visit['fullname_from']; ?></td>
+                            <td id="doctor_patologi"></td>
                         </tr>
                     </table>
                     <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;" class="mb-2"></div>
@@ -233,6 +235,13 @@ $db = db_connect();
                                 <label for="patologi_conclusion" class="form-label">Kesimpulan</label>
                                 <textarea name="conclusion" class="form-control quill-patologi" rows="8" id="patologi_conclusion"></textarea>
                             </div>
+                        </div>
+                    </div>
+                    <div class="my-2">
+
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary" id="isValidPatologi">Validasi</button>
+                            <button type="button" class="btn btn-outline-primary" id="isKritisPatologi">Nilai Kritis</button>
                         </div>
                     </div>
                     <div class="form-group">

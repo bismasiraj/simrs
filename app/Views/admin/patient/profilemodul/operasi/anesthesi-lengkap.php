@@ -23,6 +23,30 @@
         <input id="body_id-laporanAnesthesi-lengkap" name="body_id" placeholder="" type="hidden" class="form-control block" value="" />
         <input id="modified_by-laporanAnesthesi-lengkap" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
         <input id="trans_id-laporanAnesthesi-lengkap" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
+
+        <input id="clinic_id-laporanAnesthesi-lengkap-durantee" name="clinic_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['clinic_id']; ?>" />
+        <input id="class_room_id-laporanAnesthesi-lengkap-durantee" name="class_room_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['class_room_id']; ?>" />
+        <input id="bed_id-laporanAnesthesi-lengkap-durantee" name="bed_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['bed_id']; ?>" />
+        <input id="keluar_id-laporanAnesthesi-lengkap-durantee" name="keluar_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['keluar_id']; ?>" />
+        <input id="employee_id-laporanAnesthesi-lengkap-durantee" name="employee_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['employee_id']; ?>" />
+        <input id="no_registration-laporanAnesthesi-lengkap-durantee" name="no_registration" placeholder="" type="hidden" class="form-control block" value="<?= $visit['no_registration']; ?>" />
+        <input id="visit_id-laporanAnesthesi-lengkap-durantee" name="visit_id" placeholder="" type="hidden" class="form-control block" value="<?= $visit['visit_id']; ?>" />
+        <input id="org_unit_code-laporanAnesthesi-lengkap-durantee" name="org_unit_code" placeholder="" type="hidden" class="form-control block" value="<?= $visit['org_unit_code']; ?>" />
+        <input id="pasien_diagnosa_id-laporanAnesthesi-lengkap-durantee" name="pasien_diagnosa_id" placeholder="" type="hidden" class="form-control block" value="" />
+        <input id="doctor-laporanAnesthesi-lengkap-durantee" name="doctor" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['doctor'] ?? $visit['fullname']; ?>" />
+        <input id="kal_id-laporanAnesthesi-lengkap-durantee" name="kal_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['kal_id']; ?>" />
+        <input id="theid-laporanAnesthesi-lengkap-durantee" name="theid" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="thename-laporanAnesthesi-lengkap-durantee" name="thename" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="theaddress-laporanAnesthesi-lengkap-durantee" name="theaddress" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['theid']; ?>" />
+        <input id="status_pasien_id-laporanAnesthesi-lengkap-durantee" name="status_pasien_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['status_pasien_id']; ?>" />
+        <input id="isrj-laporanAnesthesi-lengkap-durantee" name="isrj" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['isrj']; ?>" />
+        <input id="gender-laporanAnesthesi-lengkap-durantee" name="gender" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['gender']; ?>" />
+        <input id="ageyear-laporanAnesthesi-lengkap-durantee" name="ageyear" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageyear']; ?>" />
+        <input id="agemonth-laporanAnesthesi-lengkap-durantee" name="agemonth" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['agemonth']; ?>" />
+        <input id="ageday-laporanAnesthesi-lengkap-durantee" name="ageday" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['ageday']; ?>" />
+        <input id="body_id-laporanAnesthesi-lengkap-durantee" name="body_id_durantee" placeholder="" type="hidden" class="form-control block" value="" />
+        <input id="modified_by-laporanAnesthesi-lengkap-durantee" name="modified_by" placeholder="" type="hidden" class="form-control block" value="<?= user()->username ?>" />
+        <input id="trans_id-laporanAnesthesi-lengkap-durantee" name="trans_id" placeholder="" type="hidden" class="form-control block" value="<?= @$visit['trans_id']; ?>" />
         <div id="accordionLengkap" class="accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="flush-headingUmum">
@@ -258,24 +282,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="arm_diameter-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-arm_diameter-laporanAnesthesi-lengkap-durantee"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="oxygen_usage-laporanAnesthesi-lengkap-durantee" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-oxygen_usage-laporanAnesthesi-lengkap-durantee"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
@@ -552,24 +559,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="arm_diameter2" id="arm_diameter-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-arm_diameter-laporanAnesthesi-lengkap"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage2" id="oxygen_usage-laporanAnesthesi-lengkap" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                            <span class="h6" id="badge-oxygen_usage-laporanAnesthesi-lengkap"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+
                                                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                     <div class="form-group">
                                                                         <label>Kesadaran</label>
@@ -669,12 +659,6 @@
 </div>
 
 <script type='text/javascript'>
-    var mrJson;
-    var lastOrder = 0;
-    var vitalsign = <?= json_encode($exam); ?>;
-    var visit = '<?= $visit['visit_id']; ?>'
-    var nomor = '<?= $visit['no_registration']; ?>';
-
     $(document).ready(function(e) {
 
         var nomor = '<?= $visit['no_registration']; ?>';
@@ -722,15 +706,17 @@
     })
 
     function setDataVitalSignLaporanAnesthesiLengkap(container_id, body) {
-        $("#" + body).find("input, textarea").val(null)
-        $("#" + body).find("#total_score-laporanAnesthesi-lengkap").html("")
-        $("#" + body).find("span.h6").html("")
+        $("#" + container_id).find("input, textarea").val(null)
+        $("#" + container_id).find("#total_score-laporanAnesthesi-lengkap-durantee").html("")
+        $("#" + container_id).find("span.h6").html("")
+        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 0);
+        $("#body_id-laporanAnesthesi-lengkap-durantee").val('');
         var bodyId = ''
 
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
-        $("#body_id-laporanAnesthesi-lengkap-durantee").val(bodyId)
+        // $("#body_id-laporanAnesthesi-lengkap-durantee").val(bodyId)
         $("#clinic_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['clinic_id']; ?>')
         $("#trans_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['trans_id']; ?>')
         $("#class_room_id-laporanAnesthesi-lengkap-durantee").val('<?= $visit['class_room_id']; ?>')
@@ -754,17 +740,17 @@
         $("#examination_date-laporanAnesthesi-lengkap-durantee").val(get_date())
 
 
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
+        // var ageYear = <?= $visit['ageyear']; ?>;
+        // var ageMonth = <?= $visit['agemonth']; ?>;
+        // var ageDay = <?= $visit['ageday']; ?>;
 
-        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 3);
-        } else if (ageYear >= 18) {
-            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 1);
-        } else {
-            $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 2);
-        }
+        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 3);
+        // } else if (ageYear >= 18) {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 1);
+        // } else {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 2);
+        // }
 
         $("#" + container_id).slideDown()
     }
@@ -780,19 +766,15 @@
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
                 .append($("<td rowspan='7'>").html(
-                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap(' + key +
-                    ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
+                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap(\'' + btoa(JSON.stringify(examselect)).replace(/'/g, "\\'") + '\', ' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
                     (account_id == '11' ? 'style="display:none;"' : 'style="display:block;"') +
                     '><i class="fa fa-copy"></i> Copy</button>'
                 ))
-
                 .append($("<td rowspan='7'>").html(
-                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
-                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
                     (account_id == '11' ? 'style="display:none;"' : '') +
                     '><i class="fa fa-trash"></i></button>'
                 ))
-
             )
             .append($("<tr>")
                 .append($("<td>").html(''))
@@ -821,107 +803,101 @@
             .append($("<tr>")
                 .append($("<td>").html("Instruksi"))
                 .append($("<td colspan='5'>").html(examselect.instruction))
-            )
+            );
     }
 
-    function copyvitalSignLaporanAnesthesiLengkap(key) {
+    function copyvitalSignLaporanAnesthesiLengkap(data, key) {
+
+        let dataExam = JSON.parse(atob(data));
         var examselect = vitalsign[key];
 
-        var bodyId = ''
-
+        const nowtime = moment(dataExam.examination_date).format("DD/MM/YYYY HH:mm");
         const date = new Date();
-        bodyId = date.toISOString().substring(0, 23);
-        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
-        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
-        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
-        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
-        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
-        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter)
-        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
-        $("#body_id-laporanAnesthesi-lengkap").val(examselect.body_id)
-        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
-        $("#clinic_id-laporanAnesthesi-lengkap").val(examselect.clinic_id)
-        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
-        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
-        $("#employee_id-laporanAnesthesi-lengkap").val(examselect.employee_id)
-        $("flatexamination_date-laporanAnesthesi-lengkap").val(nowtime).trigger("change")
-        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
-        $("#height-laporanAnesthesi-lengkap").val(examselect.height)
-        $("#instruction-laporanAnesthesi-lengkap").val(examselect.instruction)
-        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
-        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
-        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
-        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi)
-        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas)
-        $("#no_registraiton-laporanAnesthesi-lengkap").val(examselect.no_registraiton)
-        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
-        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
-        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id)
-        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
-        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
-        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi)
-        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
-        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature)
-        $("#tension_below-laporanAnesthesi-lengkap").val(examselect.tension_below)
-        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper)
-        $("#teraphy_desc-laporanAnesthesi-lengkap").val(examselect.teraphy_desc)
-        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
-        $("#theid-laporanAnesthesi-lengkap").val(examselect.pasien_id)
-        $("#thename-laporanAnesthesi-lengkap").val(examselect.diantar_oleh)
-        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
-        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight)
+        $("#ageday-laporanAnesthesi-lengkap-durantee").val(dataExam.ageday)
+        $("#agemonth-laporanAnesthesi-lengkap-durantee").val(dataExam.agemonth)
+        $("#ageyear-laporanAnesthesi-lengkap-durantee").val(dataExam.ageyear)
+        $("#anamnase-laporanAnesthesi-lengkap-durantee").val(dataExam.anamnase)
+        $("#bed_id-laporanAnesthesi-lengkap-durantee").val(dataExam.bed_id)
+        $("#body_id-laporanAnesthesi-lengkap-durantee").val(dataExam.body_id)
+        $("#class_room_id-laporanAnesthesi-lengkap-durantee").val(dataExam.class_room_id)
+        $("#clinic_id-laporanAnesthesi-lengkap-durantee").val(dataExam.clinic_id)
+        $("#description-laporanAnesthesi-lengkap-durantee").val(dataExam.description)
+        $("#doctor-laporanAnesthesi-lengkap-durantee").val(dataExam.doctor)
+        $("#employee_id-laporanAnesthesi-lengkap-durantee").val(dataExam.employee_id)
+        $("#flatexamination_date-laporanAnesthesi-lengkap-durantee").val(nowtime).trigger("change")
+        $("#gender-laporanAnesthesi-lengkap-durantee").val(dataExam.gender)
+        $("#height-laporanAnesthesi-lengkap-durantee").val(dataExam.height)
+        $("#instruction-laporanAnesthesi-lengkap-durantee").val(dataExam.instruction)
+        $("#isrj-laporanAnesthesi-lengkap-durantee").val(dataExam.isrj)
+        $("#kal_id-laporanAnesthesi-lengkap-durantee").val(dataExam.kal_id)
+        $("#keluar_id-laporanAnesthesi-lengkap-durantee").val(dataExam.keluar_id)
+        $("#nadi-laporanAnesthesi-lengkap-durantee").val(dataExam.nadi)
+        $("#nafas-laporanAnesthesi-lengkap-durantee").val(dataExam.nafas)
+        $("#no_registraiton-laporanAnesthesi-lengkap-durantee").val(dataExam.no_registraiton)
+        $("#org_unit_code-laporanAnesthesi-lengkap-durantee").val(dataExam.org_unit_code)
+        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").val(dataExam.vs_status_id)
+        $("#pemeriksaan-laporanAnesthesi-lengkap-durantee").val(dataExam.pemeriksaan)
+        $("#petugas-laporanAnesthesi-lengkap-durantee").val(dataExam.petugas)
+        $("#saturasi-laporanAnesthesi-lengkap-durantee").val(dataExam.saturasi)
+        $("#status_pasien_id-laporanAnesthesi-lengkap-durantee").val(dataExam.status_pasien_id)
+        $("#temperature-laporanAnesthesi-lengkap-durantee").val(dataExam.temperature)
+        $("#tension_below-laporanAnesthesi-lengkap-durantee").val(dataExam.tension_below)
+        $("#tension_upper-laporanAnesthesi-lengkap-durantee").val(dataExam.tension_upper)
+        $("#teraphy_desc-laporanAnesthesi-lengkap-durantee").val(dataExam.teraphy_desc)
+        $("#theaddress-laporanAnesthesi-lengkap-durantee").val(dataExam.theaddress)
+        $("#theid-laporanAnesthesi-lengkap-durantee").val(dataExam.pasien_id)
+        $("#thename-laporanAnesthesi-lengkap-durantee").val(dataExam.diantar_oleh)
+        $("#visit_id-laporanAnesthesi-lengkap-durantee").val(dataExam.visit_id)
+        $("#weight-laporanAnesthesi-lengkap-durantee").val(dataExam.weight)
 
-        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
-        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(examselect.pasien_diagnosa_id)
-        $("#no_registration-laporanAnesthesi-lengkap").val(examselect.no_registration)
-        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
-        $("#trans_id-laporanAnesthesi-lengkap").val(examselect.trans_id) //==new
-        $("#bill_id-laporanAnesthesi-lengkap").val(examselect.bill_id)
-        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
-        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
-        $("#in_date-laporanAnesthesi-lengkap").val(examselect.in_date)
-        $("#exit_date-laporanAnesthesi-lengkap").val(examselect.exit_date)
-        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
-        $("#imt_score-laporanAnesthesi-lengkap").val(examselect.imt_score)
-        $("#imt_desc-laporanAnesthesi-lengkap").val(examselect.imt_desc)
-        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
-        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
-        $("#medical_treatment-laporanAnesthesi-lengkap").val(examselect.medical_treatment)
-        $("#modified_date-laporanAnesthesi-lengkap").val(examselect.modified_date)
-        $("#modified_by-laporanAnesthesi-lengkap").val(examselect.modified_by)
-        $("#modified_from-laporanAnesthesi-lengkap").val(examselect.modified_from)
-        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
-        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
-        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
-        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
-        $("#thename-laporanAnesthesi-lengkap").val(examselect.thename)
-        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
-        $("#theid-laporanAnesthesi-lengkap").val(examselect.theid)
-        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
-        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
-        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
-        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
-        $("#petugas_id-laporanAnesthesi-lengkap").val(examselect.petugas_id)
-        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
-        $("#account_id-laporanAnesthesi-lengkap").val(examselect.account_id)
-        $("#kesadaran-laporanAnesthesi-lengkap").val(examselect.kesadaran)
-        $("#isvalid-laporanAnesthesi-lengkap").val(examselect.isvalid)
+        $("#org_unit_code-laporanAnesthesi-lengkap-durantee").val(dataExam.org_unit_code)
+        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap-durantee").val(dataExam.pasien_diagnosa_id)
+        $("#no_registration-laporanAnesthesi-lengkap-durantee").val(dataExam.no_registration)
+        $("#visit_id-laporanAnesthesi-lengkap-durantee").val(dataExam.visit_id)
+        $("#trans_id-laporanAnesthesi-lengkap-durantee").val(dataExam.trans_id) //==new
+        $("#bill_id-laporanAnesthesi-lengkap-durantee").val(dataExam.bill_id)
+        $("#class_room_id-laporanAnesthesi-lengkap-durantee").val(dataExam.class_room_id)
+        $("#bed_id-laporanAnesthesi-lengkap-durantee").val(dataExam.bed_id)
+        $("#in_date-laporanAnesthesi-lengkap-durantee").val(dataExam.in_date)
+        $("#exit_date-laporanAnesthesi-lengkap-durantee").val(dataExam.exit_date)
+        $("#keluar_id-laporanAnesthesi-lengkap-durantee").val(dataExam.keluar_id)
+        $("#imt_score-laporanAnesthesi-lengkap-durantee").val(dataExam.imt_score)
+        $("#imt_desc-laporanAnesthesi-lengkap-durantee").val(dataExam.imt_desc)
+        $("#pemeriksaan-laporanAnesthesi-lengkap-durantee").val(dataExam.pemeriksaan)
+        $("#medical_treatment-laporanAnesthesi-lengkap-durantee").val(dataExam.medical_treatment)
+        $("#modified_date-laporanAnesthesi-lengkap-durantee").val(dataExam.modified_date)
+        $("#modified_by-laporanAnesthesi-lengkap-durantee").val(dataExam.modified_by)
+        $("#modified_from-laporanAnesthesi-lengkap-durantee").val(dataExam.modified_from)
+        $("#status_pasien_id-laporanAnesthesi-lengkap-durantee").val(dataExam.status_pasien_id)
+        $("#ageyear-laporanAnesthesi-lengkap-durantee").val(dataExam.ageyear)
+        $("#agemonth-laporanAnesthesi-lengkap-durantee").val(dataExam.agemonth)
+        $("#ageday-laporanAnesthesi-lengkap-durantee").val(dataExam.ageday)
+        $("#thename-laporanAnesthesi-lengkap-durantee").val(dataExam.thename)
+        $("#theaddress-laporanAnesthesi-lengkap-durantee").val(dataExam.theaddress)
+        $("#theid-laporanAnesthesi-lengkap-durantee").val(dataExam.theid)
+        $("#isrj-laporanAnesthesi-lengkap-durantee").val(dataExam.isrj)
+        $("#gender-laporanAnesthesi-lengkap-durantee").val(dataExam.gender)
+        $("#doctor-laporanAnesthesi-lengkap-durantee").val(dataExam.doctor)
+        $("#kal_id-laporanAnesthesi-lengkap-durantee").val(dataExam.kal_id)
+        $("#petugas_id-laporanAnesthesi-lengkap-durantee").val(dataExam.petugas_id)
+        $("#petugas-laporanAnesthesi-lengkap-durantee").val(dataExam.petugas)
+        $("#account_id-laporanAnesthesi-lengkap-durantee").val(dataExam.account_id)
+        $("#kesadaran-laporanAnesthesi-lengkap-durantee").val(dataExam.kesadaran)
+        $("#isvalid-laporanAnesthesi-lengkap-durantee").val(dataExam.isvalid)
 
-        $("#anamnase-laporanAnesthesi-lengkap-durantee").val(examselect.anamnase)
-        $("#description-laporanAnesthesi-lengkap-durantee").val(examselect.description)
-        $("#weight-laporanAnesthesi-lengkap-durantee").val(examselect.weight).trigger("change")
-        $("#height-laporanAnesthesi-lengkap-durantee").val(examselect.height).trigger("change")
-        $("#temperature-laporanAnesthesi-lengkap-durantee").val(examselect.temperature).trigger("change")
-        $("#nadi-laporanAnesthesi-lengkap-durantee").val(examselect.nadi).trigger("change")
-        $("#tension_upper-laporanAnesthesi-lengkap-durantee").val(examselect.tension_upper).trigger("change")
-        $("#tension_lower-laporanAnesthesi-lengkap-durantee").val(examselect.tension_lower).trigger("change")
-        $("#saturasi-laporanAnesthesi-lengkap-durantee").val(examselect.saturasi).trigger("change")
-        $("#nafas-laporanAnesthesi-lengkap-durantee").val(examselect.nafas).trigger("change")
-        $("#arm_diameter-laporanAnesthesi-lengkap-durantee").val(examselect.arm_diameter).trigger("change")
-        $("#oxygen_usage-laporanAnesthesi-lengkap-durantee").val(examselect.oxygen_usage).trigger("change")
-        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").val(examselect.vs_status_id).trigger("change")
-        $("#pemeriksaan-laporanAnesthesi-lengkap-durantee").val(examselect.pemeriksaan).trigger("change")
+        $("#anamnase-laporanAnesthesi-lengkap-durantee").val(dataExam.anamnase)
+        $("#description-laporanAnesthesi-lengkap-durantee").val(dataExam.description)
+        $("#weight-laporanAnesthesi-lengkap-durantee").val(dataExam.weight).trigger("change")
+        $("#height-laporanAnesthesi-lengkap-durantee").val(dataExam.height).trigger("change")
+        $("#temperature-laporanAnesthesi-lengkap-durantee").val(dataExam.temperature).trigger("change")
+        $("#nadi-laporanAnesthesi-lengkap-durantee").val(dataExam.nadi).trigger("change")
+        $("#tension_upper-laporanAnesthesi-lengkap-durantee").val(dataExam.tension_upper).trigger("change")
+        $("#tension_lower-laporanAnesthesi-lengkap-durantee").val(dataExam.tension_lower).trigger("change")
+        $("#saturasi-laporanAnesthesi-lengkap-durantee").val(dataExam.saturasi).trigger("change")
+        $("#nafas-laporanAnesthesi-lengkap-durantee").val(dataExam.nafas).trigger("change")
+        $("#vs_status_id-laporanAnesthesi-lengkap-durantee").val(dataExam.vs_status_id).trigger("change")
+        $("#pemeriksaan-laporanAnesthesi-lengkap-durantee").val(dataExam.pemeriksaan).trigger("change")
 
         $("#vitalSignLaporanAnesthesi-lengkap").slideDown()
 
@@ -943,6 +919,7 @@
             processData: false,
             success: function(data) {
                 vitalsign = data.examInfo
+
                 $("#" + container_id).html("")
                 vitalsign.forEach((element, key) => {
                     examselect = vitalsign[key];
@@ -961,6 +938,7 @@
         $("#" + body).find("input, textarea").val(null)
         $("#" + body).find("#total_score-laporanAnesthesi-lengkap").html("")
         $("#" + body).find("span.h6").html("")
+        $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 0);
         var bodyId = ''
 
         const date = new Date();
@@ -987,24 +965,23 @@
         $("#ageyear-laporanAnesthesi-lengkap").val('<?= $visit['ageyear']; ?>')
         $("#agemonth-laporanAnesthesi-lengkap").val('<?= $visit['agemonth']; ?>')
         $("#ageday-laporanAnesthesi-lengkap").val('<?= $visit['ageday']; ?>')
-        $("#examination_date-laporanAnesthesi-lengkap").val(get_date())
+        $("#flatexamination_date-laporanAnesthesi-lengkap").val(get_date())
 
+        // var ageYear = <?= $visit['ageyear']; ?>;
+        // var ageMonth = <?= $visit['agemonth']; ?>;
+        // var ageDay = <?= $visit['ageday']; ?>;
 
-        var ageYear = <?= $visit['ageyear']; ?>;
-        var ageMonth = <?= $visit['agemonth']; ?>;
-        var ageDay = <?= $visit['ageday']; ?>;
-
-        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 3);
-        } else if (ageYear >= 18) {
-            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 1);
-        } else {
-            $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 2);
-        }
+        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 3);
+        // } else if (ageYear >= 18) {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 1);
+        // } else {
+        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 2);
+        // }
 
         $("#" + container_id).slideDown()
     }
-    const addRowVitalSigncatatanLaporanAnesthesiLengkap2 = (examselect, key, container_id, account_id = null) => {
+    const addRowVitalSigncatatanLaporanAnesthesiLengkap2 = (examselect, key, container_id, account_id = null, element) => {
         let examinationDate = examselect.examination_date ? examselect.examination_date.substring(0, 16) : 'N/A';
         $('#' + container_id).append($("<tr>")
                 .append($("<td rowspan='7'>").append(examinationDate))
@@ -1016,19 +993,15 @@
                 .append($("<td>").html('<b>Temp</b>'))
                 .append($("<td>").html('<b>SpO2</b>'))
                 .append($("<td rowspan='7'>").html(
-                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap(' + key +
-                    ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
+                    '<button type="button" onclick="copyvitalSignLaporanAnesthesiLengkap2(\'' + btoa(JSON.stringify(examselect)).replace(/'/g, "\\'") + '\', ' + key + ')" class="btn btn-success" data-row-id="1" autocomplete="off" ' +
                     (account_id == '11' ? 'style="display:none;"' : 'style="display:block;"') +
                     '><i class="fa fa-copy"></i> Copy</button>'
                 ))
-
                 .append($("<td rowspan='7'>").html(
-                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id +
-                    '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
+                    '<button type="button" onclick="removeRacik(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off" ' +
                     (account_id == '11' ? 'style="display:none;"' : '') +
                     '><i class="fa fa-trash"></i></button>'
                 ))
-
             )
             .append($("<tr>")
                 .append($("<td>").html(''))
@@ -1057,107 +1030,103 @@
             .append($("<tr>")
                 .append($("<td>").html("Instruksi"))
                 .append($("<td colspan='5'>").html(examselect.instruction))
-            )
+            );
+
     }
 
-    function copyvitalSignLaporanAnesthesiLengkap2(key) {
+    function copyvitalSignLaporanAnesthesiLengkap2(data, key) {
+        let dataExam = JSON.parse(atob(data));
         var examselect = vitalsign[key];
 
         var bodyId = ''
-
+        const nowtime = moment(dataExam.examination_date).format("DD/MM/YYYY HH:mm");
         const date = new Date();
         bodyId = date.toISOString().substring(0, 23);
         bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
 
-        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
-        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
-        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
-        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
-        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter)
-        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
-        $("#body_id-laporanAnesthesi-lengkap").val(examselect.body_id)
-        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
-        $("#clinic_id-laporanAnesthesi-lengkap").val(examselect.clinic_id)
-        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
-        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
-        $("#employee_id-laporanAnesthesi-lengkap").val(examselect.employee_id)
-        $("flatexamination_date-laporanAnesthesi-lengkap").val(nowtime).trigger("change")
-        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
-        $("#height-laporanAnesthesi-lengkap").val(examselect.height)
-        $("#instruction-laporanAnesthesi-lengkap").val(examselect.instruction)
-        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
-        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
-        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
-        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi)
-        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas)
-        $("#no_registraiton-laporanAnesthesi-lengkap").val(examselect.no_registraiton)
-        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
-        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
-        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id)
-        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
-        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
-        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi)
-        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
-        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature)
-        $("#tension_below-laporanAnesthesi-lengkap").val(examselect.tension_below)
-        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper)
-        $("#teraphy_desc-laporanAnesthesi-lengkap").val(examselect.teraphy_desc)
-        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
-        $("#theid-laporanAnesthesi-lengkap").val(examselect.pasien_id)
-        $("#thename-laporanAnesthesi-lengkap").val(examselect.diantar_oleh)
-        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
-        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight)
+        $("#ageday-laporanAnesthesi-lengkap").val(dataExam.ageday)
+        $("#agemonth-laporanAnesthesi-lengkap").val(dataExam.agemonth)
+        $("#ageyear-laporanAnesthesi-lengkap").val(dataExam.ageyear)
+        $("#anamnase-laporanAnesthesi-lengkap").val(dataExam.anamnase)
+        $("#bed_id-laporanAnesthesi-lengkap").val(dataExam.bed_id)
+        $("#body_id-laporanAnesthesi-lengkap").val(dataExam.body_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(dataExam.class_room_id)
+        $("#clinic_id-laporanAnesthesi-lengkap").val(dataExam.clinic_id)
+        $("#description-laporanAnesthesi-lengkap").val(dataExam.description)
+        $("#doctor-laporanAnesthesi-lengkap").val(dataExam.doctor)
+        $("#employee_id-laporanAnesthesi-lengkap").val(dataExam.employee_id)
+        $("#flatexamination_date-laporanAnesthesi-lengkap").val(nowtime).trigger("change")
+        $("#gender-laporanAnesthesi-lengkap").val(dataExam.gender)
+        $("#height-laporanAnesthesi-lengkap").val(dataExam.height)
+        $("#instruction-laporanAnesthesi-lengkap").val(dataExam.instruction)
+        $("#isrj-laporanAnesthesi-lengkap").val(dataExam.isrj)
+        $("#kal_id-laporanAnesthesi-lengkap").val(dataExam.kal_id)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(dataExam.keluar_id)
+        $("#nadi-laporanAnesthesi-lengkap").val(dataExam.nadi)
+        $("#nafas-laporanAnesthesi-lengkap").val(dataExam.nafas)
+        $("#no_registraiton-laporanAnesthesi-lengkap").val(dataExam.no_registraiton)
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(dataExam.org_unit_code)
+        $("#vs_status_id-laporanAnesthesi-lengkap").val(dataExam.vs_status_id)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(dataExam.pemeriksaan)
+        $("#petugas-laporanAnesthesi-lengkap").val(dataExam.petugas)
+        $("#saturasi-laporanAnesthesi-lengkap").val(dataExam.saturasi)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(dataExam.status_pasien_id)
+        $("#temperature-laporanAnesthesi-lengkap").val(dataExam.temperature)
+        $("#tension_below-laporanAnesthesi-lengkap").val(dataExam.tension_below)
+        $("#tension_upper-laporanAnesthesi-lengkap").val(dataExam.tension_upper)
+        $("#teraphy_desc-laporanAnesthesi-lengkap").val(dataExam.teraphy_desc)
+        $("#theaddress-laporanAnesthesi-lengkap").val(dataExam.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(dataExam.pasien_id)
+        $("#thename-laporanAnesthesi-lengkap").val(dataExam.diantar_oleh)
+        $("#visit_id-laporanAnesthesi-lengkap").val(dataExam.visit_id)
+        $("#weight-laporanAnesthesi-lengkap").val(dataExam.weight)
 
-        $("#org_unit_code-laporanAnesthesi-lengkap").val(examselect.org_unit_code)
-        $("#pasien_diagnosa_id-laporanAnesthesi-lengkap").val(examselect.pasien_diagnosa_id)
-        $("#no_registration-laporanAnesthesi-lengkap").val(examselect.no_registration)
-        $("#visit_id-laporanAnesthesi-lengkap").val(examselect.visit_id)
-        $("#trans_id-laporanAnesthesi-lengkap").val(examselect.trans_id) //==new
-        $("#bill_id-laporanAnesthesi-lengkap").val(examselect.bill_id)
-        $("#class_room_id-laporanAnesthesi-lengkap").val(examselect.class_room_id)
-        $("#bed_id-laporanAnesthesi-lengkap").val(examselect.bed_id)
-        $("#in_date-laporanAnesthesi-lengkap").val(examselect.in_date)
-        $("#exit_date-laporanAnesthesi-lengkap").val(examselect.exit_date)
-        $("#keluar_id-laporanAnesthesi-lengkap").val(examselect.keluar_id)
-        $("#imt_score-laporanAnesthesi-lengkap").val(examselect.imt_score)
-        $("#imt_desc-laporanAnesthesi-lengkap").val(examselect.imt_desc)
-        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage)
-        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan)
-        $("#medical_treatment-laporanAnesthesi-lengkap").val(examselect.medical_treatment)
-        $("#modified_date-laporanAnesthesi-lengkap").val(examselect.modified_date)
-        $("#modified_by-laporanAnesthesi-lengkap").val(examselect.modified_by)
-        $("#modified_from-laporanAnesthesi-lengkap").val(examselect.modified_from)
-        $("#status_pasien_id-laporanAnesthesi-lengkap").val(examselect.status_pasien_id)
-        $("#ageyear-laporanAnesthesi-lengkap").val(examselect.ageyear)
-        $("#agemonth-laporanAnesthesi-lengkap").val(examselect.agemonth)
-        $("#ageday-laporanAnesthesi-lengkap").val(examselect.ageday)
-        $("#thename-laporanAnesthesi-lengkap").val(examselect.thename)
-        $("#theaddress-laporanAnesthesi-lengkap").val(examselect.theaddress)
-        $("#theid-laporanAnesthesi-lengkap").val(examselect.theid)
-        $("#isrj-laporanAnesthesi-lengkap").val(examselect.isrj)
-        $("#gender-laporanAnesthesi-lengkap").val(examselect.gender)
-        $("#doctor-laporanAnesthesi-lengkap").val(examselect.doctor)
-        $("#kal_id-laporanAnesthesi-lengkap").val(examselect.kal_id)
-        $("#petugas_id-laporanAnesthesi-lengkap").val(examselect.petugas_id)
-        $("#petugas-laporanAnesthesi-lengkap").val(examselect.petugas)
-        $("#account_id-laporanAnesthesi-lengkap").val(examselect.account_id)
-        $("#kesadaran-laporanAnesthesi-lengkap").val(examselect.kesadaran)
-        $("#isvalid-laporanAnesthesi-lengkap").val(examselect.isvalid)
+        $("#org_unit_code-laporanAnesthesi-lengkap").val(dataExam.org_unit_code)
+        $("#no_registration-laporanAnesthesi-lengkap").val(dataExam.no_registration)
+        $("#visit_id-laporanAnesthesi-lengkap").val(dataExam.visit_id)
+        $("#trans_id-laporanAnesthesi-lengkap").val(dataExam.trans_id) //==new
+        $("#bill_id-laporanAnesthesi-lengkap").val(dataExam.bill_id)
+        $("#class_room_id-laporanAnesthesi-lengkap").val(dataExam.class_room_id)
+        $("#bed_id-laporanAnesthesi-lengkap").val(dataExam.bed_id)
+        $("#in_date-laporanAnesthesi-lengkap").val(dataExam.in_date)
+        $("#exit_date-laporanAnesthesi-lengkap").val(dataExam.exit_date)
+        $("#keluar_id-laporanAnesthesi-lengkap").val(dataExam.keluar_id)
+        $("#imt_score-laporanAnesthesi-lengkap").val(dataExam.imt_score)
+        $("#imt_desc-laporanAnesthesi-lengkap").val(dataExam.imt_desc)
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(dataExam.pemeriksaan)
+        $("#medical_treatment-laporanAnesthesi-lengkap").val(dataExam.medical_treatment)
+        $("#modified_date-laporanAnesthesi-lengkap").val(dataExam.modified_date)
+        $("#modified_by-laporanAnesthesi-lengkap").val(dataExam.modified_by)
+        $("#modified_from-laporanAnesthesi-lengkap").val(dataExam.modified_from)
+        $("#status_pasien_id-laporanAnesthesi-lengkap").val(dataExam.status_pasien_id)
+        $("#ageyear-laporanAnesthesi-lengkap").val(dataExam.ageyear)
+        $("#agemonth-laporanAnesthesi-lengkap").val(dataExam.agemonth)
+        $("#ageday-laporanAnesthesi-lengkap").val(dataExam.ageday)
+        $("#thename-laporanAnesthesi-lengkap").val(dataExam.thename)
+        $("#theaddress-laporanAnesthesi-lengkap").val(dataExam.theaddress)
+        $("#theid-laporanAnesthesi-lengkap").val(dataExam.theid)
+        $("#isrj-laporanAnesthesi-lengkap").val(dataExam.isrj)
+        $("#gender-laporanAnesthesi-lengkap").val(dataExam.gender)
+        $("#doctor-laporanAnesthesi-lengkap").val(dataExam.doctor)
+        $("#kal_id-laporanAnesthesi-lengkap").val(dataExam.kal_id)
+        $("#petugas_id-laporanAnesthesi-lengkap").val(dataExam.petugas_id)
+        $("#petugas-laporanAnesthesi-lengkap").val(dataExam.petugas)
+        $("#account_id-laporanAnesthesi-lengkap").val(dataExam.account_id)
+        $("#kesadaran-laporanAnesthesi-lengkap").val(dataExam.kesadaran)
+        $("#isvalid-laporanAnesthesi-lengkap").val(dataExam.isvalid)
 
-        $("#anamnase-laporanAnesthesi-lengkap").val(examselect.anamnase)
-        $("#description-laporanAnesthesi-lengkap").val(examselect.description)
-        $("#weight-laporanAnesthesi-lengkap").val(examselect.weight).trigger("change")
-        $("#height-laporanAnesthesi-lengkap").val(examselect.height).trigger("change")
-        $("#temperature-laporanAnesthesi-lengkap").val(examselect.temperature).trigger("change")
-        $("#nadi-laporanAnesthesi-lengkap").val(examselect.nadi).trigger("change")
-        $("#tension_upper-laporanAnesthesi-lengkap").val(examselect.tension_upper).trigger("change")
-        $("#tension_lower-laporanAnesthesi-lengkap").val(examselect.tension_lower).trigger("change")
-        $("#saturasi-laporanAnesthesi-lengkap").val(examselect.saturasi).trigger("change")
-        $("#nafas-laporanAnesthesi-lengkap").val(examselect.nafas).trigger("change")
-        $("#arm_diameter-laporanAnesthesi-lengkap").val(examselect.arm_diameter).trigger("change")
-        $("#oxygen_usage-laporanAnesthesi-lengkap").val(examselect.oxygen_usage).trigger("change")
-        $("#vs_status_id-laporanAnesthesi-lengkap").val(examselect.vs_status_id).trigger("change")
-        $("#pemeriksaan-laporanAnesthesi-lengkap").val(examselect.pemeriksaan).trigger("change")
+        $("#anamnase-laporanAnesthesi-lengkap").val(dataExam.anamnase)
+        $("#description-laporanAnesthesi-lengkap").val(dataExam.description)
+        $("#weight-laporanAnesthesi-lengkap").val(dataExam.weight).trigger("change")
+        $("#height-laporanAnesthesi-lengkap").val(dataExam.height).trigger("change")
+        $("#temperature-laporanAnesthesi-lengkap").val(dataExam.temperature).trigger("change")
+        $("#nadi-laporanAnesthesi-lengkap").val(dataExam.nadi).trigger("change")
+        $("#tension_upper-laporanAnesthesi-lengkap").val(dataExam.tension_upper).trigger("change")
+        $("#tension_lower-laporanAnesthesi-lengkap").val(dataExam.tension_lower).trigger("change")
+        $("#saturasi-laporanAnesthesi-lengkap").val(dataExam.saturasi).trigger("change")
+        $("#nafas-laporanAnesthesi-lengkap").val(dataExam.nafas).trigger("change")
+        $("#vs_status_id-laporanAnesthesi-lengkap").val(dataExam.vs_status_id).trigger("change")
+        $("#pemeriksaan-laporanAnesthesi-lengkap").val(dataExam.pemeriksaan).trigger("change")
 
         $("#vitalSignLaporanAnesthesi-lengkap").slideDown()
 
@@ -1183,7 +1152,7 @@
                 vitalsign.forEach((element, key) => {
                     examselect = vitalsign[key];
                     addRowVitalSigncatatanLaporanAnesthesiLengkap2(examselect, key, container_id,
-                        account_id)
+                        account_id, element)
                 });
             },
             error: function() {

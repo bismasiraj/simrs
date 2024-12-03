@@ -8,6 +8,7 @@ use App\Models\FoodRecallModel;
 use App\Models\GiziModel;
 use App\Models\InterventionModel;
 use App\Models\PasienDiagnosasModel;
+use App\Models\SkriningNutritionModel;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Database\RawSql;
 use Exception;
@@ -26,37 +27,41 @@ class Gizi extends \App\Controllers\BaseController
 
 
         $query = $db->query("
-        SELECT TOP(1) WEIGHT, HEIGHT, AGEYEAR, EXAMINATION_DATE 
-        FROM EXAMINATION_INFO 
-        WHERE visit_id = '" . $formData->visit_id . "' ORDER BY EXAMINATION_DATE DESC");
+        SELECT TOP(1) WEIGHT, HEIGHT, AGEYEAR,EXAMINATION_DETAIL.EXAMINATION_DATE 
+        FROM EXAMINATION_DETAIL 
+        LEFT JOIN EXAMINATION_INFO ON EXAMINATION_DETAIL.DOCUMENT_ID = EXAMINATION_INFO.PASIEN_DIAGNOSA_ID
+        WHERE EXAMINATION_DETAIL.visit_id = '" . $formData->visit_id . "' ORDER BY EXAMINATION_DETAIL.EXAMINATION_DATE DESC");
         $results = $this->lowerKey($query->getRowArray() ?? []);
-
-        $biokimia = $db->query("select tarif_name,hasil from sharelis.dbo.hasillis where KODE_KUNJUNGAN =  '" . $formData->visit_id . "'");
-        $biokimia = $this->lowerKey($biokimia->getRowArray() ?? []);
 
         $riwayat_alergi = $db->query("select histories from pasien_history where NO_REGISTRATION = '" . $formData->no_registration . "' and VALUE_ID = 'G0090101'");
         $riwayat_alergi = $this->lowerKey($riwayat_alergi->getRowArray() ?? []);
-        $biokimia = $this->lowerKey($db->query("SELECT
-                    tb.treatment
-                     from treatment_bill tb, pasien p,clinic c, status_pasien s,class k
-                    where tb.no_registration = p.no_registration
-                    and tb.clinic_id ='P013' 
-                    and tb.trans_id ='" . $formData->trans_id . "'
-                    and c.clinic_id = tb.CLINIC_ID_FROM
-                    and tb.CLASS_ID =k.CLASS_ID
-                    and tb.status_pasien_id = s.STATUS_PASIEN_ID
-                    AND tb.no_registration = '" . $formData->no_registration . "'
-                    and tb.bill_id not in (select kode from sharelis.dbo.kirimlis)
-                    ORDER BY tb.treat_date")->getResultArray() ?? []);
 
-        $biokimia = array_column($biokimia, 'treatment');
-        $biokimia = implode(", ", $biokimia);
+        $biokimia = $this->lowerKey($db->query("
+                    SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, hasil
+                    FROM sharelis.dbo.hasillis h 
+                    LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE database_default AND H.kode_kunjungan = K.Kode_Kunjungan 
+                    WHERE 
+                    1=1
+                    AND No_Pasien = '" . $formData->no_registration . "'
+                    GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name,hasil
+                    ORDER BY tarif_id
+                    ")->getResultArray() ?? []);
+        $biokomia_teks = "";
+
+        foreach ($biokimia as $row) {
+
+            $tarif_name = htmlspecialchars($row['tarif_name'], ENT_QUOTES, 'UTF-8');
+            $hasil = htmlspecialchars($row['hasil'], ENT_QUOTES, 'UTF-8');
+
+
+            $biokomia_teks .= $tarif_name . " (Hasil: " . $hasil . "), ";
+        }
 
         return $this->response->setJSON([
             'message' => 'Data retrieved successfully.',
             'respon'  => true,
             'data'    => $results,
-            'biokimia' => $biokimia,
+            'biokimia' => $biokomia_teks,
             'alergi' => $riwayat_alergi
         ]);
     }
@@ -70,37 +75,42 @@ class Gizi extends \App\Controllers\BaseController
         }
 
         $query = $db->query("
-        SELECT TOP(1) ASSESSMENT_NUTRITION.*, weight, height, ageyear,AGE_RANGE.DISPLAY as age_display,ASSESSMENT_NUTRITION_HABIT.DIETARY_HABIT  FROM ASSESSMENT_NUTRITION
+        SELECT TOP(1) ASSESSMENT_NUTRITION.*, EXAMINATION_INFO.weight, EXAMINATION_INFO.height, ageyear,ASSESSMENT_NUTRITION_HABIT.DIETARY_HABIT  FROM ASSESSMENT_NUTRITION
         LEFT JOIN EXAMINATION_INFO ON ASSESSMENT_NUTRITION.VISIT_ID = EXAMINATION_INFO.VISIT_ID
         LEFT JOIN ASSESSMENT_NUTRITION_HABIT ON ASSESSMENT_NUTRITION.pola_makan = ASSESSMENT_NUTRITION_HABIT.habit_id
-        LEFT JOIN AGE_RANGE ON ASSESSMENT_NUTRITION.age_category = AGE_RANGE.age_range
         WHERE ASSESSMENT_NUTRITION.visit_id ='" . $formData->visit_id . "' AND ASSESSMENT_NUTRITION.BODY_ID = '" . $formData->body_id . "'
         ORDER BY EXAMINATION_INFO.EXAMINATION_DATE DESC");
 
         $results = $this->lowerKey($query->getRowArray() ?? []);
 
-        $biokimia = $db->query("select tarif_name,hasil from sharelis.dbo.hasillis where KODE_KUNJUNGAN =  '" . $formData->visit_id . "'");
-        $biokimia = $this->lowerKey($biokimia->getRowArray() ?? []);
-
         $riwayat_alergi = $db->query("select histories from pasien_history where NO_REGISTRATION = '" . $formData->no_registration . "' and VALUE_ID = 'G0090101'");
         $riwayat_alergi = $this->lowerKey($riwayat_alergi->getRowArray() ?? []);
-        // $biokimia = [
-        //     "ASAM URAT" => "5.1",
-        //     "CHOLESTEROL" => "222",
-        //     "ELEKTROLIT (Na, K, Ca)" => "100"
-        // ];
-        $biokimia = array_map(function ($key, $value) {
-            return $key . ': ' . $value;
-        }, array_keys($biokimia), $biokimia);
+        $biokimia = $this->lowerKey($db->query("
+                    SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, hasil
+                    FROM sharelis.dbo.hasillis h 
+                    LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE database_default AND H.kode_kunjungan = K.Kode_Kunjungan 
+                    WHERE 
+                    1=1
+                    AND No_Pasien = '" . $formData->no_registration . "'
+                    GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name,hasil
+                    ORDER BY tarif_id
+                    ")->getResultArray() ?? []);
+        $biokomia_teks = "";
 
-        // Join the formatted strings with newline characters
-        $biokimia = implode(", ", $biokimia);
+        foreach ($biokimia as $row) {
+
+            $tarif_name = htmlspecialchars($row['tarif_name'], ENT_QUOTES, 'UTF-8');
+            $hasil = htmlspecialchars($row['hasil'], ENT_QUOTES, 'UTF-8');
+
+
+            $biokomia_teks .= $tarif_name . " (Hasil: " . $hasil . "), ";
+        }
 
         return $this->response->setJSON([
             'message' => 'Data retrieved successfully.',
             'respon'  => true,
             'data'    => $results,
-            'biokimia' => $biokimia,
+            'biokimia' => $biokomia_teks,
             'alergi' => $riwayat_alergi
         ]);
     }
@@ -285,10 +295,9 @@ class Gizi extends \App\Controllers\BaseController
 
 
         $query = $db->query("
-        SELECT TOP(1) ASSESSMENT_NUTRITION.*, weight, height, ageyear,AGE_RANGE.DISPLAY as age_display,ASSESSMENT_NUTRITION_HABIT.DIETARY_HABIT  FROM ASSESSMENT_NUTRITION
+        SELECT TOP(1) ASSESSMENT_NUTRITION.*, ageyear,ASSESSMENT_NUTRITION_HABIT.DIETARY_HABIT  FROM ASSESSMENT_NUTRITION
         LEFT JOIN EXAMINATION_INFO ON ASSESSMENT_NUTRITION.VISIT_ID = EXAMINATION_INFO.VISIT_ID
         LEFT JOIN ASSESSMENT_NUTRITION_HABIT ON ASSESSMENT_NUTRITION.pola_makan = ASSESSMENT_NUTRITION_HABIT.habit_id
-        LEFT JOIN AGE_RANGE ON ASSESSMENT_NUTRITION.age_category = AGE_RANGE.age_range
         WHERE ASSESSMENT_NUTRITION.visit_id ='" . $formData->visit_id . "' AND ASSESSMENT_NUTRITION.BODY_ID = '" . $resultsIntervensi['document_id'] . "'
         ORDER BY EXAMINATION_INFO.EXAMINATION_DATE DESC");
 
@@ -333,6 +342,8 @@ class Gizi extends \App\Controllers\BaseController
             $data['body_id'] = $this->get_bodyid();
             $data['document_id'] = $this->get_bodyid();
             $data['modified_by'] = user()->username;
+            $data['p_type'] = explode('-', $data['age_category'])[0];
+            $data['age_category'] = explode('-', $data['age_category'])[1];
 
             $model = new GiziModel();
 
@@ -425,7 +436,8 @@ class Gizi extends \App\Controllers\BaseController
                 $data['pola_makan'] = $lastId + 1;
             }
             $data['modified_by'] = user()->username;
-
+            $data['p_type'] = explode('-', $data['age_category'])[0];
+            $data['age_category'] = explode('-', $data['age_category'])[1];
             $model = new GiziModel();
 
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('body_id', $formData->body_id)->first() ?? []);
@@ -455,9 +467,19 @@ class Gizi extends \App\Controllers\BaseController
 
     public function insertFoodRecall()
     {
+        $db = db_connect();
+        $db->transStart();
         try {
             $formData = $this->request->getJSON();
             $data = [];
+
+            if (empty($formData->meal_name)) {
+                return $this->response->setJSON([
+                    'message' => 'Nama Masakan tidak boleh kosong.',
+                    'respon'  => false,
+                ]);
+            }
+
             foreach ($formData as $key => $value) {
                 if (!is_array($value) && $value !== null && $value !== '') {
                     $data[strtolower($key)] = $value;
@@ -467,15 +489,42 @@ class Gizi extends \App\Controllers\BaseController
             $data['modified_by'] = user()->username;
             $model = new FoodRecallModel();
 
-            $model->insert($data);
+            $query = $db->query("
+            select * from recipes where RECIPE_ID = '" . $data['meal_name'] . "'
+            ");
 
+            $results = $this->lowerKey($query->getRowArray() ?? []);
+
+
+            if (empty($results)) {
+                $dataRecipe = $this->lowerKey($db->query("select top 1 * from recipes where RECIPE = '" . $data['meal_name'] . "' order by modified_date desc")->getRowArray() ?? []);
+
+                if (empty($dataRecipe)) {
+                    $id = $this->get_bodyid();
+                    $insertRecipe = $db->query("INSERT INTO recipes (org_unit_code, RECIPE_ID, RECIPE, modified_date, modified_by) VALUES ('" . $data['org_unit_code'] . "','" . $id . "','" . strtolower($data['meal_name']) . "', '" . date("Y-m-d H:i:s") . "', '" . user()->username . "')");
+                    if (!$insertRecipe) {
+                        throw new \Exception('Insert Data Recipes is Failed');
+                    }
+                } else {
+                    $data['meal_name'] = $dataRecipe['recipe'];
+                }
+            } else {
+                $data['meal_name'] = $results['recipe'];
+            }
+
+            $insert = $model->insert($data);
+
+            // if ($insert == false) {
+            //     throw new \Exception('Insert Data Food Recall is Failed');
+            // }
+            $db->transCommit();
             return $this->response->setJSON([
                 'message' => 'Sukses mengirim data.',
                 'respon'  => true,
                 'result' => $data
             ]);
         } catch (\Exception $e) {
-
+            $db->transRollback();
             log_message('error', $e->getMessage());
 
             return $this->response->setJSON([
@@ -489,31 +538,72 @@ class Gizi extends \App\Controllers\BaseController
     public function editFoodRecall()
     {
         try {
+            $db = db_connect();
+            $db->transStart();
             $formData = $this->request->getJSON();
             $data = [];
+
+            if (empty($formData->meal_name)) {
+                return $this->response->setJSON([
+                    'message' => 'Nama Masakan tidak boleh kosong.',
+                    'respon'  => false,
+                ]);
+            }
             foreach ($formData as $key => $value) {
                 if (!is_array($value) && $value !== null && $value !== '') {
                     $data[strtolower($key)] = $value;
                 }
             }
+            $date = \DateTime::createFromFormat('d-m-Y H:i', $data['recall_date']);
+
             $data['modified_by'] = user()->username;
+            $data['recall_date'] = $date->format('Y-m-d H:i:s');
 
             $model = new FoodRecallModel();
 
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('recall_id', $formData->recall_id)->first() ?? []);
             if (!empty($existingEntry)) {
+
+                $query = $db->query("select * from recipes where RECIPE_ID = '" . $data['meal_name'] . "'");
+
+                $results = $this->lowerKey($query->getRowArray() ?? []);
+
+                if (empty($results)) {
+                    $dataRecipe = $this->lowerKey($db->query("select top 1 * from recipes where RECIPE = '" . $data['meal_name'] . "' order by modified_date desc")->getRowArray() ?? []);
+
+                    if (empty($dataRecipe)) {
+                        $id = $this->get_bodyid();
+                        $insertRecipe = $db->query("INSERT INTO recipes (org_unit_code, RECIPE_ID, RECIPE, modified_date, modified_by) VALUES ('" . $data['org_unit_code'] . "','" . $id . "','" . strtolower($data['meal_name']) . "', '" . date("Y-m-d H:i:s") . "', '" . user()->username . "')");
+
+                        if (!$insertRecipe) {
+                            throw new \Exception('Insert Data Recipes is Failed');
+                        }
+                    } else {
+                        $data['meal_name'] = $dataRecipe['recipe'];
+                    }
+                } else {
+                    $data['meal_name'] = $results['recipe'];
+                }
+
                 $update = $model->where('recall_id', $existingEntry['recall_id'])
                     ->set($data)
                     ->update();
-            }
 
+                if (!$update) {
+                    echo '<pre>';
+                    var_dump($model->error());
+                    die();
+                }
+
+                $db->transCommit();
+            }
             return $this->response->setJSON([
                 'message' => 'Sukses mengirim data.',
                 'respon'  => true,
                 'result' => $data
             ]);
         } catch (\Exception $e) {
-
+            $db->transRollback();
             log_message('error', $e->getMessage());
 
             return $this->response->setJSON([
@@ -728,8 +818,12 @@ class Gizi extends \App\Controllers\BaseController
                     $data[strtolower($key)] = $value;
                 }
             }
+
+            $date = \DateTime::createFromFormat('d-m-Y H:i', $data['intervention_date']);
+
             $data['modified_by'] = user()->username;
             $data['intervention_description'] = implode(", ", $formData->intervention_description);
+            $data['intervention_date'] = $date->format('Y-m-d H:i:s');
             $model = new InterventionModel();
 
             $existingEntry = $this->lowerKey($model->where('visit_id', $formData->visit_id)->where('body_id', $formData->body_id)->first() ?? []);
@@ -805,5 +899,287 @@ class Gizi extends \App\Controllers\BaseController
                 'error'   => $e->getMessage()
             ]);
         }
+    }
+
+
+
+
+
+
+    // SKRINING GIZI
+
+
+    public function getDataSkrining()
+    {
+        $request = service('request');
+        $formData = $request->getJSON();
+        $db = db_connect();
+        if (!isset($formData->visit_id)) {
+            return $this->response->setJSON([]);
+        }
+
+
+        $query = $db->query("
+        SELECT *
+        FROM ASSESSMENT_SCREENING_NUTRITION 
+        WHERE visit_id = '" . $formData->visit_id . "' AND no_registration = '" . $formData->no_registration . "' ORDER BY EXAMINATION_DATE DESC");
+        $results = $this->lowerKey($query->getResultArray() ?? []);
+
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => $results,
+        ]);
+    }
+
+    public function getSkriningById()
+    {
+        $request = service('request');
+        $formData = $request->getJSON();
+        $db = db_connect();
+        if (!isset($formData->visit_id)) {
+            return $this->response->setJSON([]);
+        }
+
+
+        $query = $db->query("
+        SELECT *
+        FROM ASSESSMENT_SCREENING_NUTRITION 
+        WHERE visit_id = '" . $formData->visit_id . "' AND no_registration = '" . $formData->no_registration . "' AND body_id = '" . $formData->body_id . "'  ORDER BY EXAMINATION_DATE DESC");
+        $results = $this->lowerKey($query->getRowArray() ?? []);
+
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => $results,
+        ]);
+    }
+
+    public function insertSkrining()
+    {
+        $db = db_connect();
+        $db->transStart();
+        $formData = $this->request->getJSON();
+        $data = [];
+        $date = date("Y-m-d H:i:s");
+
+
+        foreach ($formData as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == '')) {
+                $data[strtolower($key)] = $value;
+            }
+        }
+        $data['examination_date'] = $date;
+        $data['modified_date'] = $date;
+        $data['petugas_id'] = user()->username;
+        $data['modified_by'] = user()->username;
+        $data['document_id'] = null;
+        $data['body_id'] = $this->get_bodyid();
+
+        $getColumn = $this->lowerKey($db->query("SELECT COLUMN_NAME FROM ASSESSMENT_PARAMETER WHERE P_TYPE = '" . $data['p_type'] . "'")->getResultArray() ?? []);
+        $getColumn = array_map(function ($item) {
+            return strtolower($item['column_name']);
+        }, $getColumn);
+
+        $total_score = 0;
+        foreach ($getColumn as $key => $val) {
+            if (isset($data[$val]) && is_numeric($data[$val])) {
+                $total_score += $data[$val];
+            }
+        }
+
+        $score_desc = $this->getScoreDesc($data['p_type'], $total_score);
+
+        $data['total_score'] = $total_score;
+        $data['score_desc'] = $score_desc;
+
+
+        try {
+
+            $model = new SkriningNutritionModel();
+
+            $insert = $model->insert($data);
+
+            $db->transComplete();
+            return $this->response->setJSON([
+                'message' => 'Sukses mengirim data.',
+                'respon'  => true,
+            ]);
+        } catch (\Exception $e) {
+
+            log_message('error', $e->getMessage());
+            $db->transRollback();
+            return $this->response->setJSON([
+                'message' => 'Terjadi kesalahan saat memproses data.',
+                'respon'  => false,
+                'error'   => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateSkrining()
+    {
+        $db = db_connect();
+        $db->transStart();
+        $formData = $this->request->getJSON();
+        $data = [];
+        $date = date("Y-m-d H:i:s");
+
+
+        foreach ($formData as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == '')) {
+                $data[strtolower($key)] = $value;
+            }
+        }
+
+        $getColumn = $this->lowerKey($db->query("SELECT COLUMN_NAME FROM ASSESSMENT_PARAMETER WHERE P_TYPE = '" . $data['p_type'] . "'")->getResultArray() ?? []);
+        $getColumn = array_map(function ($item) {
+            return strtolower($item['column_name']);
+        }, $getColumn);
+
+        $total_score = 0;
+        foreach ($getColumn as $key => $val) {
+            if (isset($data[$val]) && is_numeric($data[$val])) {
+                $total_score += $data[$val];
+            }
+        }
+
+        $score_desc = $this->getScoreDesc($data['p_type'], $total_score);
+
+        $data['total_score'] = $total_score;
+        $data['score_desc'] = $score_desc;
+
+
+        try {
+
+            $model = new SkriningNutritionModel();
+            $dataExist = $this->lowerKey($model->where('body_id', $data['body_id'])->first() ?? []);
+
+            $data['modified_date'] = $date;
+            $data['petugas_id'] = user()->username;
+            $data['modified_by'] = user()->username;
+            $data['special_diagnose'] = $data['special_diagnose'] ?? null;
+            $data['step1_score_imt'] = $data['step1_score_imt'] ?? null;
+            $data['step2_score_wightloss'] = $data['step2_score_wightloss'] ?? null;
+            $data['step3_score_acute_disease'] = $data['step3_score_acute_disease'] ?? null;
+            $data['step4_score_malnutrition'] = $data['step4_score_malnutrition'] ?? null;
+            $data['step5_score'] = $data['step5_score'] ?? null;
+            $data['step6_score'] = $data['step6_score'] ?? null;
+
+            $model->set($data)
+                ->where('body_id', $data['body_id'])
+                ->update();
+
+            $db->transComplete();
+            return $this->response->setJSON([
+                'message' => 'Sukses mengupdate data.',
+                'respon'  => true,
+            ]);
+        } catch (\Exception $e) {
+
+            log_message('error', $e->getMessage());
+            $db->transRollback();
+            return $this->response->setJSON([
+                'message' => 'Terjadi kesalahan saat memproses data.',
+                'respon'  => false,
+                'error'   => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function delete()
+    {
+        $request = service('request');
+        $formData = $request->getJSON();
+
+        $db = db_connect();
+        $db->transBegin();
+
+        if (!$formData->body_id) {
+            return $this->response->setJSON(['message' => 'Error : body_id is missing', 'respon' => false]);
+        }
+
+        try {
+            $model = new SkriningNutritionModel();
+
+            $deleted = $model->where('body_id', $formData->body_id)
+                ->delete();
+
+            if (!$deleted) {
+                throw new \Exception('Failed to delete data.');
+            }
+
+            $db->transCommit();
+
+            return $this->response->setJSON(['message' => 'Data delete successfully.', 'respon' => true]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Error : ' . $e->getMessage(), 'respon' => false]);
+        }
+    }
+
+
+    private function getScoreDesc($p_type, $score)
+    {
+        $description = '';
+        switch ($p_type) {
+            case 'GIZ0601':
+                $description = $score == 0 ? 'rendah' : ($score >= 1 && $score <= 3 ? 'sedang' : ($score >= 4 && $score <= 5 ? 'tinggi' : '-'));
+                break;
+            case 'GIZ0602':
+                $description = $score >= 2 ? 'Berisiko malnutrisi' : 'Tidak berisiko malnutrisi';
+                break;
+            case 'GIZ0603':
+                $description = $score >= 12 ? 'Normal / tidak berisiko, tidak membutuhkan pengkajian lebih lanjut' : 'mungkin malnutrisi, membutuhkan pengkajian lebih lanjut';
+                break;
+        }
+        return $description;
+    }
+    public function getRecipes()
+    {
+        $db = db_connect();
+
+        $query = $db->query("select recipe_id as id, recipe as text from recipes order by text asc")->getResultArray();
+
+        $results = $this->lowerKey($query ?? []);
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => $results
+        ]);
+    }
+    public function getIngredient()
+    {
+        $request = service('request');
+        $formData = $request->getJSON();
+        $db = db_connect();
+
+        $query = $db->query("
+            SELECT GN.NAME + ' ' + CAST(RI.QUANTITY AS VARCHAR(10)) + ' ' + MEASUREMENT AS full_description, 
+            RI.QUANTITY AS gramasi, M.MEASUREMENT AS urt_bahan
+            FROM GOODS_NUTRITION GN
+            JOIN RECIPES_INGRADIENT RI ON GN.BRAND_ID = RI.BRAND_ID
+            JOIN MEASUREMENT M ON RI.MEASURE_ID = M.MEASURE_ID
+            WHERE RI.RECIPE_ID = '" . $formData->recipe_id . "'
+        ");
+
+        $results = $query->getResultArray() ?? [];
+
+        // Extract the 'full_description' from each row and implode them
+        $data = implode(',', array_column($results, 'full_description')) ?? '-';
+        $gramasi = array_sum(array_column($results, 'gramasi')) ?? 0;
+
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => [
+                'nama_bahan'    =>  $data,
+                'urt_bahan'      => !empty($results[0]['urt_bahan']) ? $results[0]['urt_bahan'] : '-',
+                'gramasi'       => $gramasi,
+            ],
+        ]);
     }
 }

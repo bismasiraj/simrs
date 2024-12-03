@@ -265,12 +265,13 @@ class PMKP extends \App\Controllers\BaseController
             $model = new PmkpModel();
             $date = date("Y-m-d H:i:s");
 
+            $dataInsert = [];
             if (isset($formData->data_pmkp) && is_array($formData->data_pmkp)) {
                 foreach ($formData->data_pmkp as $key => $data) {
-
                     $data_indicator = implode(', ', array_map(function ($item) {
                         return "'" . $item . "'";
                     }, $data->indicators));
+
                     if (!empty($data->indicators)) {
                         $data_formulir = $this->lowerKey($db->query("
                             SELECT *,
@@ -312,6 +313,9 @@ class PMKP extends \App\Controllers\BaseController
                                 throw new \Exception('Update failed: ' . $error['message']);
                             }
                         }
+                    } else {
+                        $error = $db->error();
+                        throw new \Exception('Data harus diisi');
                     }
                 }
                 $db->transCommit();
@@ -482,7 +486,7 @@ class PMKP extends \App\Controllers\BaseController
                         AND number < DAY(EOMONTH(DATEFROMPARTS('" . $year . "', '" . $month . "', 1))) + 1
                 )
                 SELECT 
-                    RIGHT('0' + CAST(DAY(dr.Day) AS VARCHAR(2)), 2) AS label_name,  -- Format the day as two digits
+                    RIGHT('0' + CAST(DAY(dr.Day) AS VARCHAR(2)), 2) AS label_name,
                     COALESCE(SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END), 0) AS ya,
                     COALESCE(SUM(CASE WHEN ip.result = 0 THEN 1 ELSE 0 END), 0) AS tidak,
                     CASE 
@@ -497,17 +501,16 @@ class PMKP extends \App\Controllers\BaseController
                 FROM 
                     DateRange dr
                 LEFT JOIN 
-                    INDICATOR_PMKP ip ON CAST(ip.treat_date AS DATE) = dr.Day AND ip.indicator_id LIKE '" . $formData->indicator_id . "%' 
+                    INDICATOR_PMKP ip ON CAST(ip.treat_date AS DATE) = dr.Day AND ip.indicator_id LIKE '" . $formData->indicator_id . "%'
                 LEFT JOIN 
-                    CLINIC ON ip.clinic_id = clinic.clinic_id
+                    CLINIC ON ip.clinic_id = clinic.clinic_id AND (clinic.name_of_clinic LIKE '" . $formData->name_of_clinic . "%' OR clinic.clinic_id IS NULL)
                 WHERE 
                     MONTH(dr.Day) = '" . $month . "' AND 
-                    YEAR(dr.Day) = '" . $year . "' AND 
-                    (clinic.name_of_clinic LIKE '" . $formData->name_of_clinic . "%' OR clinic.clinic_id IS NULL)
+                    YEAR(dr.Day) = '" . $year . "'
                 GROUP BY 
-                    DAY(dr.Day)  -- Group by just the day part
+                    DAY(dr.Day)
                 ORDER BY 
-                    DAY(dr.Day);  -- Order by the day part
+                    DAY(dr.Day);
 
 
             ")->getResultArray() ?? []);
@@ -595,7 +598,7 @@ class PMKP extends \App\Controllers\BaseController
         $db = db_connect();
         $request = service('request');
         $formData = $request->getJSON();
-
+        $kategori = '';
         if (empty($formData->bulan) && $formData->kategori == 1) {
             return $this->response->setJSON([
                 'message' => 'input bulan harus diisi',
@@ -610,49 +613,48 @@ class PMKP extends \App\Controllers\BaseController
         }
 
         if (isset($formData->kategori) && $formData->kategori == 1) {
-
+            $kategori = 'Bulan ' . $this->convertMonth($month);
             $grafik = $this->lowerKey($db->query("
-               WITH DateRange AS (
-                    SELECT 
-                        CAST(DATEADD(DAY, number, EOMONTH(DATEFROMPARTS('" . $year . "', '" . $month . "', 1), -1)) AS DATE) AS Day
-                    FROM 
-                        master..spt_values
-                    WHERE 
-                        type = 'P' 
-                        AND number < DAY(EOMONTH(DATEFROMPARTS('" . $year . "', '" . $month . "', 1))) + 1
-                )
+              WITH DateRange AS (
                 SELECT 
-                    RIGHT('0' + CAST(DAY(dr.Day) AS VARCHAR(2)), 2) AS label_name,  -- Format the day as two digits
-                    COALESCE(SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END), 0) AS ya,
-                    COALESCE(SUM(CASE WHEN ip.result = 0 THEN 1 ELSE 0 END), 0) AS tidak,
-                    CASE 
-                        WHEN (SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN ip.result = 0 OR ip.result IS NULL THEN 1 ELSE 0 END)) = 0 THEN 0
-                        ELSE 
-                            ROUND(
-                                CAST(SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) AS FLOAT) / 
-                                (SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN ip.result = 0 OR ip.result IS NULL THEN 1 ELSE 0 END)) * 100, 
-                                2
-                            )
-                    END AS capaian
+                    CAST(DATEADD(DAY, number, EOMONTH(DATEFROMPARTS('" . $year . "', '" . $month . "', 1), -1)) AS DATE) AS Day
                 FROM 
-                    DateRange dr
-                LEFT JOIN 
-                    INDICATOR_PMKP ip ON CAST(ip.treat_date AS DATE) = dr.Day 
-                LEFT JOIN 
-                    CLINIC ON ip.clinic_id = clinic.clinic_id
+                    master..spt_values
                 WHERE 
-                    MONTH(dr.Day) = '" . $month . "' AND 
-                    YEAR(dr.Day) = '" . $year . "' AND 
-                    (clinic.name_of_clinic LIKE '" . $formData->name_of_clinic . "%' OR clinic.clinic_id IS NULL)
-                GROUP BY 
-                    DAY(dr.Day)  -- Group by just the day part
-                ORDER BY 
-                    DAY(dr.Day);  -- Order by the day part
+                    type = 'P' 
+                    AND number < DAY(EOMONTH(DATEFROMPARTS('" . $year . "', '" . $month . "', 1))) + 1
+            )
+            SELECT 
+                RIGHT('0' + CAST(DAY(dr.Day) AS VARCHAR(2)), 2) AS label_name,
+                COALESCE(SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END), 0) AS ya,
+                COALESCE(SUM(CASE WHEN ip.result = 0 THEN 1 ELSE 0 END), 0) AS tidak,
+                CASE 
+                    WHEN (SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN ip.result = 0 OR ip.result IS NULL THEN 1 ELSE 0 END)) = 0 THEN 0
+                    ELSE 
+                        ROUND(
+                            CAST(SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) AS FLOAT) / 
+                            (SUM(CASE WHEN ip.result = 1 THEN 1 ELSE 0 END) + SUM(CASE WHEN ip.result = 0 OR ip.result IS NULL THEN 1 ELSE 0 END)) * 100, 
+                            2
+                        )
+                END AS capaian
+            FROM 
+                DateRange dr
+            LEFT JOIN 
+                INDICATOR_PMKP ip ON CAST(ip.treat_date AS DATE) = dr.Day
+            LEFT JOIN 
+                CLINIC ON ip.clinic_id = clinic.clinic_id AND (clinic.name_of_clinic LIKE '" . $formData->name_of_clinic . "%' OR clinic.clinic_id IS NULL)
+            WHERE 
+                MONTH(dr.Day) = '" . $month . "' AND 
+                YEAR(dr.Day) = '" . $year . "'
+            GROUP BY 
+                DAY(dr.Day)
+            ORDER BY 
+                DAY(dr.Day);
 
 
             ")->getResultArray() ?? []);
         } else if (isset($formData->kategori) && $formData->kategori == 2) {
-
+            $kategori = 'Tahun ' . $formData->tahun;
             $grafik = $this->lowerKey($db->query("
             WITH DateRange AS (
                     SELECT 
@@ -778,7 +780,8 @@ class PMKP extends \App\Controllers\BaseController
                 'organization' => $kopprint,
                 'analisis' => $analisis,
                 'grafik' => $grafik,
-                'name_of_clinic' => $formData->name_of_clinic
+                'name_of_clinic' => $formData->name_of_clinic,
+                'kategori' => $kategori
             ]
         ]);
     }
@@ -789,14 +792,58 @@ class PMKP extends \App\Controllers\BaseController
         $data_raw = json_decode(base64_decode($dataJson));
         $data = $data_raw->data;
 
-
-
         return view("admin/patient/cetak/pmkp-cetak.php", [
             'title' => 'Cetak PMKP',
             'organization' => $data->organization,
             'analisis' => $data->analisis,
             'grafik' => $data->grafik,
-            'name_of_clinic' => $data->name_of_clinic
+            'name_of_clinic' => $data->name_of_clinic,
+            'kategori' => $data->kategori
         ]);
+    }
+
+    public function convertMonth($month)
+    {
+        switch ($month) {
+            case '01':
+                return 'Januari';
+                break;
+            case '02':
+                return 'Februari';
+                break;
+            case '03':
+                return 'Maret';
+                break;
+            case '04':
+                return 'April';
+                break;
+            case '05':
+                return 'Mei';
+                break;
+            case '06':
+                return 'Juni';
+                break;
+            case '07':
+                return 'Juli';
+                break;
+            case '08':
+                return 'Agustus';
+                break;
+            case '09':
+                return 'September';
+                break;
+            case '10':
+                return 'Oktober';
+                break;
+            case '11':
+                return 'November';
+                break;
+            case '12':
+                return 'Desember';
+                break;
+            default:
+                return 'Bulan tidak valid';
+                break;
+        }
     }
 }

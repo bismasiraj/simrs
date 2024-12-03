@@ -146,15 +146,16 @@ $permission = user()->getPermissions();
 <script type="text/javascript">
     let res = <?= json_encode($aValue); ?>;
 
-    let aValue = res.filter(item => item?.p_type === "GEN0012");
+    // let aValue = res.filter(item => item?.p_type === "GEN0012");
     let combinedData = {
-        aValue: aValue,
+        aValue: res,
         visit: <?= json_encode($visit); ?>
     };
 
     let jsonData = JSON.stringify(combinedData);
 
-    let base64Data = btoa(jsonData);
+    let base64Data = '';
+    // let base64Data = btoa(jsonData);
     let baseUrl = '<?= base_url() ?>';
     let url = baseUrl + '/admin/rm/keperawatan/transfer_internal/' + base64Data + '/' + $("#arpbody_id").val();
 
@@ -277,4 +278,16 @@ $permission = user()->getPermissions();
     $('#lainnyaListLink').append(
         '<li class="list-group-item"><a href="<?= base_url() . '/admin/DocCetak/cetakGroupeRanapFile/' . base64_encode(json_encode($visit)); ?>' +
         '/' + $("#armbody_id").val() + '" target="_blank">Ranap File Pendukung</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/cppt_preview/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Catatan Perkembangan Pasien Terintegrasi</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/assessmen_preview/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Assessment</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/assessmen_perawat_preview/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Assessment Perawat</a></li>')
 </script>

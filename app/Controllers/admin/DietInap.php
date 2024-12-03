@@ -30,7 +30,7 @@ class DietInap extends \App\Controllers\BaseController
         select  
         VISIT_ID,
         thename,
-        NO_REGISTRATION,
+        TA.NO_REGISTRATION,
         TA.employee_id,
         ta.keluar_id ,
         clinic.name_of_clinic,
@@ -81,7 +81,8 @@ class DietInap extends \App\Controllers\BaseController
         }
 
         $data = $this->lowerKey($db->query("
-        SELECT * from DIET_INAP 
+        SELECT DIET_INAP.*,pasien.date_of_birth from DIET_INAP 
+        inner join pasien on diet_inap.no_registration = pasien.no_registration
         WHERE VISIT_ID IN ('" . implode("', '", $formData->visit_id) . "') AND CAST(DIET_DATE AS DATE) = '$formData->date'
         order by MODIFIED_DATE desc
 
@@ -234,6 +235,7 @@ class DietInap extends \App\Controllers\BaseController
                 case 'pagi':
                     $dataValue[] = [
                         'name_of_pasien' => $row->thename,
+                        'date_of_birth' => $row->date_of_birth,
                         'no_registration' => $row->no_registration,
                         'bentuk' => $row->dtype_pagi,
                         'jenis' => $row->pantangan_pagi,
@@ -244,6 +246,7 @@ class DietInap extends \App\Controllers\BaseController
                 case 'siang':
                     $dataValue[] = [
                         'name_of_pasien' => $row->thename,
+                        'date_of_birth' => $row->date_of_birth,
                         'no_registration' => $row->no_registration,
                         'bentuk' => $row->dtype_siang,
                         'jenis' => $row->pantangan_siang,
@@ -254,6 +257,7 @@ class DietInap extends \App\Controllers\BaseController
                 case 'malam':
                     $dataValue[] = [
                         'name_of_pasien' => $row->thename,
+                        'date_of_birth' => $row->date_of_birth,
                         'no_registration' => $row->no_registration,
                         'bentuk' => $row->dtype_malam,
                         'jenis' => $row->pantangan_malam,
@@ -285,6 +289,7 @@ class DietInap extends \App\Controllers\BaseController
             case 'pagi':
                 $dataValue = [
                     'name_of_pasien' => $data->thename,
+                    'date_of_birth' => $data->date_of_birth,
                     'no_registration' => $data->no_registration,
                     'bentuk' => $data->dtype_pagi,
                     'jenis' => $data->pantangan_pagi,
@@ -295,6 +300,7 @@ class DietInap extends \App\Controllers\BaseController
             case 'siang':
                 $dataValue = [
                     'name_of_pasien' => $data->thename,
+                    'date_of_birth' => $data->date_of_birth,
                     'no_registration' => $data->no_registration,
                     'bentuk' => $data->dtype_siang,
                     'jenis' => $data->pantangan_siang,
@@ -305,6 +311,7 @@ class DietInap extends \App\Controllers\BaseController
             case 'malam':
                 $dataValue = [
                     'name_of_pasien' => $data->thename,
+                    'date_of_birth' => $data->date_of_birth,
                     'no_registration' => $data->no_registration,
                     'bentuk' => $data->dtype_malam,
                     'jenis' => $data->pantangan_malam,
@@ -354,6 +361,15 @@ class DietInap extends \App\Controllers\BaseController
                         $value['modified_by'] = user()->username;
                         $value['modified_date'] = $today->format('Y-m-d H:i:s');
                         $value['order_date'] = $tomorrow->format('Y-m-d H:i:s');
+                        $value['valid_date_pagi'] = $existData['valid_date_pagi'] ?? null;
+                        $value['valid_pasien_pagi'] = $existData['valid_pasien_pagi'] ?? null;
+                        $value['valid_date_siang'] = $existData['valid_date_siang'] ?? null;
+                        $value['valid_pasien_siang'] = $existData['valid_pasien_siang'] ?? null;
+                        $value['valid_date_malam'] = $existData['valid_date_malam'] ?? null;
+                        $value['valid_pasien_malam'] = $existData['valid_pasien_malam'] ?? null;
+                        $value['valid_user_pagi'] = $existData['valid_user_pagi'] ?? null;
+                        $value['valid_user_siang'] = $existData['valid_user_siang'] ?? null;
+                        $value['valid_user_malam'] = $existData['valid_user_malam'] ?? null;
 
                         if (!empty($existData)) {
                             $value['dtype_id'] = $existData['dtype_id'];

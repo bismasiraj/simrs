@@ -29,24 +29,13 @@ class ExaminationModel extends Model
         "exit_date",
         "keluar_id",
         "examination_date",
-        "temperature",
-        "tension_upper",
-        "tension_below",
-        "nadi",
-        "nafas",
-        "weight",
-        "height",
-        "imt_score",
-        "imt_desc",
+
         "gcs_e",
         "gcs_v",
         "gcs_m",
         "gcs_score",
         "gcs_desc",
-        "saturasi",
-        "arm_diameter",
         "anamnase",
-        "oxygen_usage",
         "alo_anamnase",
         "pemeriksaan",
         "teraphy_desc",
@@ -73,14 +62,7 @@ class ExaminationModel extends Model
         "account_id",
         "kesadaran",
         "isvalid",
-        'vs_status_id',
-        'awareness',
-        'pain',
-        'lochia',
-        'general_condition',
-        'cardiovasculer',
-        'respiration',
-        'proteinuria'
+        'vs_status_id'
     ];
 
     protected $useTimestamps = true;

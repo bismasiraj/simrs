@@ -6,6 +6,9 @@
     $("#tindakanPerawatTab").on("click", function() {
         getTindakanPerawat()
     })
+    $("#formSaveTindPerawatBtn").on("click", function() {
+        $("#tindakanBodyPerawatKolaborasi").find("button.simpanbill:not([disabled])").trigger("click")
+    })
 </script>
 <script>
     function addBillChargePerawat(container, type, flag = 1, index, tableId) {
@@ -118,7 +121,7 @@
                     //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     // )
                     // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
                 datetimepickerbyidinitial(`flatatptreat_date${key}`)
 
@@ -145,7 +148,7 @@
                         // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     )
                     .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td rowspan=\"1\">").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td rowspan=\"1\">").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
                 // datetimepickerbyid(`flatatptreat_date${key}`)
                 datetimepickerbyidinitial(`flatatptreat_date${key}`)
@@ -189,7 +192,7 @@
                     //     .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     // )
                     // .append($("<td>").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
                 datetimepickerbyidinitial(`flatatptreat_date${key}`)
 
@@ -217,7 +220,7 @@
                         // .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
                     )
                     .append($("<td class=\"text-center\">").attr("id", "displayamount_paid" + key).html(formatCurrency(parseFloat(billPerawat.amount_paid))))
-                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info waves-effect waves-light" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
+                    .append($("<td>").append('<button id="simpanBillPerawatBtn' + key + '" type="button" class="btn btn-info simpanbill" data-row-id="1" autocomplete="off">Simpan</button><div id="editDeleteBillPerawat' + key + '" class="btn-group-vertical" role="group" aria-label="Vertical button group" style="display: none"><div class="btn-group-vertical" role="group" aria-label="Vertical button group"><button id="editBillBtn' + key + '" type="button" onclick="editBillCharge(\'' + key + '\', ' + key + ')" class="btn btn-success waves-effect waves-light" data-row-id="1" autocomplete="off">Edit</button><button id="delBillBtn' + key + '" type="button" onclick="delBillPerawat(\'' + key + '\', \'' + key + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off">Hapus</button></div>'))
 
                 datetimepickerbyidinitial(`flatatptreat_date${key}`, moment().format("DD/MM/YYYY HH:mm"))
             }
@@ -226,10 +229,10 @@
         // datetimepickerbyid(`flatatptreat_date${key}`)
 
         $("#perawatTindakan" + key)
-            .append('<input name="treatment[]" id="atptreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
+            .append('<input name="treatment[]" id="atptreatment' + key + '" type="hidden" value="' + billPerawat.treatment + '" class="form-control" />')
             .append('<input name="treat_date[]" id="atptreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="atpsell_price' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="atpamount_paid' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="atpsell_price' + key + '" type="hidden" value="' + billPerawat.sell_price + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="atpamount_paid' + key + '" type="hidden" value="' + billPerawat.amount_paid + '" class="form-control" />')
             .append('<input name="discount[]" id="atpdiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
             .append('<input name="subsidisat[]" id="atpsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
             .append('<input name="subsidi[]" id="atpsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
@@ -264,7 +267,7 @@
             .append('<input name="modified_from[]" id="atpmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
             .append('<input name="islunas[]" id="atpislunas' + key + '" type="hidden" value="0" class="form-control" />')
             .append('<input name="measure_id[]" id="atpmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="atptarif_id' + key + '" type="hidden" value="' + tarifData.tarif_id + '" class="form-control" />')
+            .append('<input name="tarif_id[]" id="atptarif_id' + key + '" type="hidden" value="' + billPerawat.tarif_id + '" class="form-control" />')
 
 
 

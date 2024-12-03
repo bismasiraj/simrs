@@ -273,11 +273,11 @@ $result = array_change_key_case($result);
                                 </div>
                                 <div class="mb-2">
                                     <label for="modalHasilBaca" class="form-label fw-bold">Hasil Baca</label>
-                                    <textarea class="form-control" id="modalHasilBaca" name="hasil_baca" rows="9" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'disabled'; ?>></textarea>
+                                    <textarea class="form-control quill-textarea-radiologi" id="modalHasilBaca" name="hasil_baca" rows="9" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'disabled'; ?>></textarea>
                                 </div>
                                 <div class="mb-2">
                                     <label for="modalKesimpulan" class="form-label fw-bold">Kesimpulan</label>
-                                    <textarea class="form-control" id="modalKesimpulan" name="kesimpulan" rows="3" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'disabled'; ?>></textarea>
+                                    <textarea class="form-control quill-textarea-radiologi" id="modalKesimpulan" name="kesimpulan" rows="3" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'disabled'; ?>></textarea>
                                 </div>
                                 <div class="mb-2">
                                     <input type="hidden" name="isvalid" value="0" id="modalIsValid">

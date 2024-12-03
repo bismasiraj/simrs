@@ -15,10 +15,10 @@
 
                 </div>
             </div>
-            <div class="box-tab-tools text-center">
+            <!-- <div class="box-tab-tools text-center">
                 <a data-toggle="modal" onclick="addEducationIntegrationMenu(1, 0, 'EducationIntegration', 'educationIntegrationBody')" class="btn btn-primary btn-lg" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-            </div>
-            <h3>Histori Edukasi Integrasi</h3>
+            </div> -->
+            <!-- <h3>Histori Edukasi Integrasi</h3>
             <table class="table table-striped table-hover">
                 <thead class="table-primary" style="text-align: center;">
                     <tr>
@@ -34,10 +34,10 @@
                 <tbody id="educationintegrationBody">
 
                 </tbody>
-            </table>
-            <div class="d-flex mb-3">
+            </table> -->
+            <!-- <div class="d-flex mb-3">
                 <a href="<?= base_url(); ?>/admin/rm/keperawatan/resiko_jatuh/<?= base64_encode(json_encode($visit)); ?>" target="_blank" class="btn btn-success w-100"><i class="fa fa-print"></i> Cetak</a>
-            </div>
+            </div> -->
         </div>
     </div><!--./row-->
 </div>

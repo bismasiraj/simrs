@@ -27,7 +27,14 @@ class BloodRequestModel extends Model
         'blood_quantity',
         'measure_id',
         'descriptions',
-        'using_time' //new 12/10/2024
+        'using_time',
+        'clinic_id',
+        'calf_number',
+        'delivery_time',
+        'terlayani',
+        'transfusion_start',
+        'transfusion_end',
+        'reaction_desc',
     ];
 
     // Dates

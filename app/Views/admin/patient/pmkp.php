@@ -1,11 +1,31 @@
 <?php
 
-$this->extend('layout/nosidelayout', [
-    'orgunit' => $orgunit,
-    'img_time' => $img_time
-]);
-
+// $this->extend('layout/nosidelayout', [
+//     'orgunit' => $orgunit,
+//     'img_time' => $img_time
+// ]);
+$this->extend('layout/basiclayout', [
+    'orgunit' => @$orgunit,
+    'img_time' => @$img_time
+])
 ?>
+
+<?php $this->section('cssContent') ?>
+<!-- DataTables -->
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+<!-- Responsive datatable examples -->
+<link href="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<?php $this->endSection() ?>
+
+<?php $this->section('topbar') ?>
+<?php echo view('layout/partials/topbar.php', [
+    'title' => @$title,
+    'pagetitle' => 'dashboard',
+    'subtitle' => 'dashboard',
+]); ?>
+<?php $this->endSection() ?>
 <?php $this->section('content'); ?>
 <div class="content-wrapper">
     <section>
@@ -296,7 +316,7 @@ $this->extend('layout/nosidelayout', [
                         </div>
                         <div class="col-3" id="display_select_bulan">
                             <label for="">Bulan</label>
-                            <input type="month" name="bulan" class="form-control">
+                            <input type="month" name="bulan" class="form-control" value="<?= date('Y-m'); ?>">
                         </div>
                         <div class="col-3 collapse" id="display_select_tahun">
                             <label for="">Tahun</label>
@@ -372,7 +392,7 @@ $this->extend('layout/nosidelayout', [
                         </div>
                         <div class="col-3" id="display_select_bulan_analisis">
                             <label for="">Bulan</label>
-                            <input type="month" name="bulan" class="form-control">
+                            <input type="month" name="bulan" class="form-control" value="<?= date('Y-m'); ?>">
                         </div>
                         <div class="col-3 collapse" id="display_select_tahun_analisis">
                             <label for="">Tahun</label>
@@ -450,7 +470,7 @@ $this->extend('layout/nosidelayout', [
                         </div>
                         <div class="col-3" id="display_select_bulan_cetak">
                             <label for="">Bulan</label>
-                            <input type="month" name="bulan" class="form-control">
+                            <input type="month" name="bulan" class="form-control" value="<?= date('Y-m'); ?>">
                         </div>
                         <div class="col-3 collapse" id="display_select_tahun_cetak">
                             <label for="">Tahun</label>
@@ -498,6 +518,8 @@ $this->extend('layout/nosidelayout', [
 <?php $this->section('jsContent'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo base_url(); ?>assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let bangsal = '';
@@ -573,8 +595,8 @@ $this->extend('layout/nosidelayout', [
                     templateHtml = dataTemplate({
                         data: res.data,
                         container: templateHtml,
+                        table: '#containerTablePMKP'
                     });
-                    $('#containerTablePMKP').html(templateHtml);
 
                     insertRanap({
                         dataSend: dataSend,
@@ -817,7 +839,7 @@ $this->extend('layout/nosidelayout', [
                     });
                     jsonObj.name_of_clinic = props?.name_of_clinic;
                     jsonObj.isrj = props?.isrj;
-                    console.log(jsonObj);
+
                     postData(jsonObj, 'admin/PMKP/getDataAnalisis', (result) => {
 
                         let dataHtml = '';
@@ -862,7 +884,7 @@ $this->extend('layout/nosidelayout', [
 
                     postData(jsonObj, 'admin/PMKP/getDataCetak', (result) => {
                         if (result.respon) {
-                            console.log(result.data);
+
                             actionCetak({
                                 data: result?.data
                             })
@@ -876,11 +898,16 @@ $this->extend('layout/nosidelayout', [
         }
 
         const dataTemplate = (props) => {
-
+            const table = $(props?.table).closest('table').DataTable({
+                dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                stateSave: true,
+                "bDestroy": true
+            });
+            table.clear();
             let dataHtml = '';
             props?.data.forEach((item, index) => {
                 const formattedDate = moment(props?.date).format('YYYY-MM-DD')
-                dataHtml += `
+                dataHtml = `
                     <tr>
                         <input type="hidden" name="visit_id[]" value="${item.visit_id}">
                         <td class="text-center align-middle">${index+1}</td>
@@ -890,15 +917,15 @@ $this->extend('layout/nosidelayout', [
                         <td class="text-center align-middle">${item.umur}</td>
                     </tr>
                     `;
-
+                table.row.add($(dataHtml));
             });
-            props.container = dataHtml;
-            return props.container
+            table.draw();
+
         }
 
         const actionCetak = (props) => {
 
-            console.log(props);
+
             var url = '<?= base_url() . 'admin/PMKP/cetak/'; ?>' + btoa(JSON.stringify(props));
             // Redirect to the URL
             window.open(url, '_blank');
@@ -943,8 +970,8 @@ $this->extend('layout/nosidelayout', [
                     templateHtml = dataTemplate({
                         data: res.data,
                         container: templateHtml,
+                        table: '#containerTablePMKP_ralan'
                     });
-                    $('#containerTablePMKP_ralan').html(templateHtml);
 
                     insertRalan({
                         dataSend: dataSend,
@@ -1090,7 +1117,7 @@ $this->extend('layout/nosidelayout', [
                 let optionFormulir = '';
                 $('#select_indicator_formulir').html('');
                 $('#select_indicator_formulir').append('<option value="%">Semua</option>');
-                console.log(props?.formulir);
+
                 props?.formulir.forEach(indicator => {
                     optionFormulir += `<option value="${indicator.indicator_id}">${indicator.indicators}</option>`;
                 });
@@ -1188,7 +1215,7 @@ $this->extend('layout/nosidelayout', [
                     });
                     jsonObj.name_of_clinic = props?.name_of_clinic;
                     jsonObj.isrj = props?.isrj;
-                    console.log(jsonObj);
+
                     postData(jsonObj, 'admin/PMKP/getDataAnalisis', (result) => {
 
                         let dataHtml = '';
@@ -1232,7 +1259,7 @@ $this->extend('layout/nosidelayout', [
 
                     postData(jsonObj, 'admin/PMKP/getDataCetak', (result) => {
                         if (result.respon) {
-                            console.log(result.data);
+
                             actionCetak({
                                 data: result?.data
                             })

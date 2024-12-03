@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;;
 use App\Controllers\BaseController;
 use App\Models\InformedConsentModel;
 use CodeIgniter\Controller;
+use Exception;
 
 class CaseManager extends \App\Controllers\BaseController
 {
@@ -26,7 +27,7 @@ class CaseManager extends \App\Controllers\BaseController
             ->where('visit_id', $formData['visit_id'])
             ->where('p_type', 'GEN0019')
             ->groupBy(['visit_id', 'parameter_id', 'body_id'])
-            ->orderBy('modified_date', 'ASC')
+            // ->orderBy('modified_date', 'ASC')
             ->findAll();
 
         $data = $this->lowerKey($data);
@@ -76,54 +77,60 @@ class CaseManager extends \App\Controllers\BaseController
         $formData = $request->getJSON(true);
 
         $db = db_connect();
+        $db->transBegin();
+
         $query = $this->lowerKey($db->query("SELECT * FROM assessment_parameter_value WHERE p_type='" . $formData['p_type'] . "' ")->getResultArray());
 
         $insertData = [];
+        try {
+            foreach ($query as $key) {
 
-        foreach ($query as $key) {
+                $valueId = $key['value_id'];
 
-            $valueId = $key['value_id'];
+                $data = [
+                    'org_unit_code' => $formData['org_unit_code'],
+                    'visit_id' => $formData['visit_id'],
+                    'trans_id' => $formData['trans_id'],
+                    'body_id' => $formData['body_id'],
+                    'p_type' => $formData['p_type'],
+                    'parameter_id' => $key['parameter_id'],
+                    'value_id' => $valueId,
+                    'modified_by' => user()->username,
+                ];
+                $valueScoreKey = 'value_score-' . $valueId;
 
-            $data = [
-                'org_unit_code' => $formData['org_unit_code'],
-                'visit_id' => $formData['visit_id'],
-                'trans_id' => $formData['trans_id'],
-                'body_id' => $formData['body_id'],
-                'p_type' => $formData['p_type'],
-                'parameter_id' => $key['parameter_id'],
-                'value_id' => $valueId,
-                'modified_by' => user()->username,
-            ];
-            $valueScoreKey = 'value_score-' . $valueId;
+                if (isset($formData[$valueScoreKey])) {
+                    $data['value_score'] = $formData[$valueScoreKey];
+                } else {
+                    $data['value_score'] = '';
+                }
 
-            if (isset($formData[$valueScoreKey])) {
-                $data['value_score'] = $formData[$valueScoreKey];
-            } else {
-                $data['value_score'] = '';
+                $valueDescKey = 'value_desc-' . $valueId;
+                if (isset($formData[$valueDescKey])) {
+                    $data['value_desc'] = $formData[$valueDescKey];
+                } else {
+                    $data['value_desc'] = '';
+                }
+
+                $valueInfoKey = 'value_info-' . $valueId;
+                if (isset($formData[$valueInfoKey])) {
+                    $data['value_info'] = $formData[$valueInfoKey];
+                } else {
+                    $data['value_info'] = '';
+                }
+
+                $insertData[] = $data;
             }
 
-            $valueDescKey = 'value_desc-' . $valueId;
-            if (isset($formData[$valueDescKey])) {
-                $data['value_desc'] = $formData[$valueDescKey];
-            } else {
-                $data['value_desc'] = '';
+            foreach ($insertData as $data) {
+                $model->insert($data);
             }
-
-            $valueInfoKey = 'value_info-' . $valueId;
-            if (isset($formData[$valueInfoKey])) {
-                $data['value_info'] = $formData[$valueInfoKey];
-            } else {
-                $data['value_info'] = '';
-            }
-
-            $insertData[] = $data;
+            $db->transCommit();
+            return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true, 'data' => $insertData]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Error : ' . $e->getMessage(), 'respon' => false]);
         }
-
-        foreach ($insertData as $data) {
-            $model->insert($data);
-        }
-
-        return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true, 'data' => $data]);
     }
 
     public function updateData()
@@ -136,64 +143,84 @@ class CaseManager extends \App\Controllers\BaseController
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing body_id in request data']);
         }
 
+
         $bodyId = $formData['body_id'];
 
         $db = db_connect();
+        $db->transBegin();
 
         $query = $db->query("SELECT * FROM assessment_parameter_value WHERE p_type='" . $formData['p_type'] . "' ")->getResultArray();
 
         if (!$query) {
             return $this->response->setStatusCode(404)->setJSON(['error' => 'No data found for given parameters']);
         }
+        try {
 
-        $query = $this->lowerKey($query);
 
-        $updateData = [];
+            $query = $this->lowerKey($query);
 
-        foreach ($query as $key) {
-            $valueId = $key['value_id'];
-            $data = [
-                'org_unit_code' => $formData['org_unit_code'],
-                'visit_id' => $formData['visit_id'],
-                'trans_id' => $formData['trans_id'],
-                'body_id' => $bodyId,
-                'p_type' => $formData['p_type'],
-                'parameter_id' => $key['parameter_id'],
-                'value_id' => $valueId,
-                'modified_by' => user()->username,
-            ];
+            $updateData = [];
 
-            $valueScoreKey = 'value_score-' . $valueId;
-            if (isset($formData[$valueScoreKey])) {
-                $data['value_score'] = $formData[$valueScoreKey];
-            } else {
-                $data['value_score'] = 0;
+            foreach ($query as $key) {
+                $valueId = $key['value_id'];
+                $data = [
+                    'org_unit_code' => $formData['org_unit_code'],
+                    'visit_id' => $formData['visit_id'],
+                    'trans_id' => $formData['trans_id'],
+                    'body_id' => $bodyId,
+                    'p_type' => $formData['p_type'],
+                    'parameter_id' => $key['parameter_id'],
+                    'value_id' => $valueId,
+                    'modified_by' => user()->username,
+                ];
+
+                $valueScoreKey = 'value_score-' . $valueId;
+                if (isset($formData[$valueScoreKey])) {
+                    $data['value_score'] = $formData[$valueScoreKey];
+                } else {
+                    $data['value_score'] = 0;
+                }
+
+                $valueDescKey = 'value_desc-' . $valueId;
+                if (isset($formData[$valueDescKey])) {
+                    $data['value_desc'] = $formData[$valueDescKey];
+                } else {
+                    $data['value_desc'] = '';
+                }
+
+                $valueInfoKey = 'value_info-' . $valueId;
+                if (isset($formData[$valueInfoKey])) {
+                    $data['value_info'] = $formData[$valueInfoKey];
+                } else {
+                    $data['value_info'] = '';
+                }
+
+                $updateData[] = $data;
             }
 
-            $valueDescKey = 'value_desc-' . $valueId;
-            if (isset($formData[$valueDescKey])) {
-                $data['value_desc'] = $formData[$valueDescKey];
-            } else {
-                $data['value_desc'] = '';
+            $getAction[] = [];
+
+            foreach ($updateData as $data) {
+                $dataExist = $model->where(['body_id' => $data['body_id'], 'value_id' => $data['value_id']])->first();
+                if (!empty($dataExist)) {
+                    $getAction[] = $model->where(['body_id' => $data['body_id'], 'value_id' => $data['value_id']])
+                        ->set($data)
+                        ->update();
+                } else {
+                    $getAction[] = $model->insert($data);
+                }
             }
 
-            $valueInfoKey = 'value_info-' . $valueId;
-            if (isset($formData[$valueInfoKey])) {
-                $data['value_info'] = $formData[$valueInfoKey];
-            } else {
-                $data['value_info'] = '';
+            if (in_array(false, array_splice($getAction, 1))) {
+                throw new \Exception('Update Data Gagal ');
             }
 
-            $updateData[] = $data;
+            $db->transCommit();
+            return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true, 'data' => $updateData]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Error : ' . $e->getMessage(), 'respon' => false]);
         }
-
-        foreach ($updateData as $data) {
-            $model->where(['body_id' => $data['body_id'], 'value_id' => $data['value_id']])
-                ->set($data)
-                ->update();
-        }
-
-        return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true]);
     }
 
     public function deleteData()
@@ -201,19 +228,31 @@ class CaseManager extends \App\Controllers\BaseController
         $request = service('request');
         $formData = $request->getJSON(true);
 
+        $db = db_connect();
+        $db->transBegin();
+
         if (!$formData['visit'] || !$formData['id']) {
             return ['success' => false, 'message' => 'Missing visit_id or body_id'];
         }
 
-        $model = new InformedConsentModel();
+        try {
+            $model = new InformedConsentModel();
 
-        $deleted = $model->where('body_id', $formData['id'])
-            ->where('visit_id', $formData['visit'])
-            ->delete();
+            $deleted = $model->where('body_id', $formData['id'])
+                ->where('visit_id', $formData['visit'])
+                ->delete();
 
+            if (!$deleted) {
+                throw new \Exception('Failed to delete data.');
+            }
 
-        $deleted;
-        return $this->response->setJSON(['message' => 'Data delete successfully.', 'respon' => true]);
+            $db->transCommit();
+
+            return $this->response->setJSON(['message' => 'Data delete successfully.', 'respon' => true]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Error : ' . $e->getMessage(), 'respon' => false]);
+        }
     }
 
     public function getType()
@@ -309,29 +348,49 @@ class CaseManager extends \App\Controllers\BaseController
             $kopprintData = $this->kopprint();
 
             $db = db_connect();
-            $query = $this->lowerKey($db->query("SELECT * FROM assessment_parameter_value WHERE p_type='GEN0019' AND parameter_id = '" . $decoded_visit['parameter_id'] . "'")->getResultArray());
-            $visitation = $this->lowerKey($db->query("SELECT * FROM pasien_VISITATION WHERE visit_id = '" . $decoded_visit['visit_id'] . "'")->getResultArray());
+            $query = $this->lowerKey($db->query("SELECT * FROM assessment_parameter_value WHERE p_type='GEN0019' AND parameter_id = '" . $decoded_visit['parameter_id'] . "'")->getResultArray() ?? []);
+            $visitation = $this->lowerKey($db->query("SELECT * FROM pasien_VISITATION WHERE visit_id = '" . $decoded_visit['visit_id'] . "'")->getResultArray() ?? []);
             $data_cm_01 = $this->lowerKey($db->query(
                 "
                 SELECT ASSESSMENT_INFORMED_CONCENT.visit_id, ASSESSMENT_INFORMED_CONCENT.body_id, ASSESSMENT_INFORMED_CONCENT.p_type, ASSESSMENT_INFORMED_CONCENT.parameter_id, ASSESSMENT_INFORMED_CONCENT.VALUE_SCORE, ASSESSMENT_INFORMED_CONCENT.VALUE_INFO,ASSESSMENT_INFORMED_CONCENT.VALUE_DESC , ASSESSMENT_PARAMETER_VALUE.VALUE_INFO AS 'DESC',ASSESSMENT_INFORMED_CONCENT.MODIFIED_DATE FROM ASSESSMENT_INFORMED_CONCENT 
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON ASSESSMENT_INFORMED_CONCENT.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                 WHERE ASSESSMENT_INFORMED_CONCENT.visit_id = '" . $decoded_visit['visit_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.p_type='GEN0019' AND ASSESSMENT_INFORMED_CONCENT.body_id = '" . $decoded_visit['body_id'] . "' AND ASSESSMENT_INFORMED_CONCENT.parameter_id = 'CM_A_01' 
                 "
-            )->getResultArray());
+            )->getResultArray() ?? []);
             $data_cm_02 = $this->lowerKey($db->query(
                 "
                 SELECT * 
                 FROM assessment_informed_concent
                 WHERE visit_id = '" . $decoded_visit['visit_id'] . "' AND p_type='GEN0019' AND body_id = '" . $decoded_visit['body_id'] . "' AND parameter_id = 'CM_A_02'
                 "
-            )->getResultArray());
+            )->getResultArray() ?? []);
             $data_cm_03 = $this->lowerKey($db->query(
                 "
                 SELECT * 
                 FROM assessment_informed_concent
                 WHERE visit_id = '" . $decoded_visit['visit_id'] . "' AND p_type='GEN0019' AND body_id = '" . $decoded_visit['body_id'] . "' AND parameter_id = 'CM_A_03'
                 "
-            )->getResultArray());
+            )->getResultArray() ?? []);
+
+            $data_cm_b = $this->lowerKey($db->query(
+                "
+                SELECT 
+                    modified_date,
+                    modified_by,
+                    MAX(CASE WHEN PARAMETER_ID = 'CM_B_01' THEN VALUE_INFO END) AS implementasi,
+                    MAX(CASE WHEN PARAMETER_ID = 'CM_B_02' THEN VALUE_INFO END) AS catatan
+                FROM 
+                    ASSESSMENT_INFORMED_CONCENT 
+                WHERE 
+                    P_TYPE = 'GEN0019' 
+                    AND visit_id = '" . $decoded_visit['visit_id'] . "' 
+                    AND BODY_ID = '" . $decoded_visit['body_id'] . "' 
+                    AND PARAMETER_ID LIKE 'CM_B_0%'
+
+                GROUP BY modified_date,modified_by
+                            
+                "
+            )->getResultArray() ?? []);
 
             return view("admin/patient/profilemodul/cetak-caseManager.php", [
                 "visit" => $decoded_visit,
@@ -342,6 +401,7 @@ class CaseManager extends \App\Controllers\BaseController
                 'data1' => $data_cm_01,
                 'data2' => $data_cm_02,
                 'data3' => $data_cm_03,
+                'data4' => $data_cm_b,
             ]);
         }
     }

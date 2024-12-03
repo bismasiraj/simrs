@@ -33,7 +33,7 @@ $permission = user()->getPermissions();
             </div><!--./col-lg-6-->
             <div class="col-lg-10 col-md-10 col-sm-12 mt-4">
                 <div class="row">
-                    <h3>Tindakan Keperawatan</h3>
+                    <h3>Implementasi</h3>
                     <hr>
                     <div class="col-md-12">
                         <div class="dividerhr"></div>
@@ -99,17 +99,28 @@ $permission = user()->getPermissions();
                                                         <th class="text-center" rowspan="2" style="width: 5%;">No.</th class="text-center">
                                                         <th class="text-center" rowspan="2" style="width: 20%;">Jenis Tindakan</th class="text-center">
                                                         <th class="text-center" rowspan="2" style="width: 20%;">Tgl Tindakan</th class="text-center">
-                                                        <!-- <th class="text-center" rowspan="2" style="width: auto;">Prosedur Non Tarif</th class="text-center"> -->
-                                                        <!-- <th class="text-center" rowspan="2">Cetak</th class="text-center"> -->
-                                                        <th class="text-center" rowspan="2" style="width: 15%;">Nilai</th class="text-center">
-                                                        <th class="text-center" rowspan="2" style="width: 15%;">Jml</th class="text-center">
-                                                        <th class="text-center" rowspan="2" style="width: 15%;">Total Tagihan</th class="text-center">
+                                                        <th class="text-center" colspan="3" style="width: 45%;">Deskripsi Tindakan / Rincian Biaya</th class="text-center">
                                                         <th class="text-center" rowspan="2"></th class="text-center">
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" style="width: 15%;">Nilai</th class="text-center">
+                                                        <th class="text-center" style="width: 15%;">Jml</th class="text-center">
+                                                        <th class="text-center" style="width: 15%;">Total Tagihan</th class="text-center">
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tindakanBodyPerawatKolaborasi" class="table-group-divider">
                                                 </tbody>
                                             </table>
+                                            <div class="panel-footer text-end mb-4">
+                                                <button type="button" id="formSaveTindPerawatBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                                                <!-- <button type="button" id="formEditBillPoliBtn" name="editrm" onclick="editRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button> -->
+                                                <button type="button" id="formsign" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
+                                                <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
+                                            </div>
+                                            <?php if (user()->checkPermission("tindakanperawat", "c")) {
+                                            ?>
+                                            <?php
+                                            } ?>
                                         </form>
                                     </div>
                                 </div>

@@ -25,19 +25,21 @@ function enableArmDiag(bodyId) {
 }
 
 function appendDiagnosa(accordionId, bodyId, pasienDiagnosa) {
+
     var titleDoc = ''
     var titlerj = '';
 
-    if (pasienDiagnosa.class_room_id != '' && pasienDiagnosa.class_room_id != null) {
+    if (pasienDiagnosa?.class_room_id != '' && pasienDiagnosa?.class_room_id != null) {
         titlerj = ' RAWAT JALAN'
     } else {
         titlerj = ' RAWAT JALAN'
     }
-    $.each(mapAssessment, function(key, value) {
-        if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {
-            titleDoc = ("ASESMEN MEDIS " + value.specialist_type + titlerj)
-        }
-    })
+
+    // $.each(mapAssessment, function(key, value) {
+    //     if (value?.doc_type == 1 && value?.specialist_type_id == pasienDiagnosa?.specialist_type_id) {
+    //         titleDoc = ("ASESMEN MEDIS " + value?.specialist_type + titlerj)
+    //     }
+    // })
     var accordionContent = `
             <div id="adiagGroup` + bodyId + `" class="accordion-item">
             <h2 class="accordion-header" id="headingDiagnosaMedis` + bodyId +
@@ -611,7 +613,7 @@ function getAssessmentDocument(diagCat) {
 
             if (pasienDiagnosaAll.length > 0) {
                 $.each(pasienDiagnosaAll, function(key, value) {
-                    appendDiagnosa("accordionDiagnosa", value.pasien_diagnosa_id, value)
+                    appendDiagnosa("accordionDiagnosa", value?.pasien_diagnosa_id, value)
                 })
             }
             if (examForassessment.length > 0) {
@@ -648,6 +650,7 @@ const actionBtnModal = (props) => {
 
 
         let new_diag_id = diag_id == null ? selectedOption.val() : diag_id
+
         getDataAskepAll({
             id: id,
             diag_id: new_diag_id,
@@ -665,20 +668,7 @@ const actionBtnModal = (props) => {
             bodyIdInput.val(id);
         }
 
-        $("#btnCetakAskep").off().on("click", function() {
-            const visit = <?= json_encode($visit); ?>;
 
-            visit.d_diag_id = diag_id;
-            visit.d_id = id;
-            visit.d_body_id = exam_date
-
-            const visitString = JSON.stringify(visit);
-            const encodedVisit = btoa(visitString);
-            const url =
-                `<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' ?>${encodedVisit}`;
-
-            window.open(url, '_blank');
-        });
 
 
     });
@@ -785,6 +775,21 @@ const getDataAskepAll = (props) => {
         },
         'admin/Askep/getData',
         (res) => {
+            $("#btnCetakAskep").off().on("click", function() {
+                const visit = <?= json_encode($visit); ?>;
+
+                visit.d_diag_id = props?.diag_id;
+                visit.d_id = props?.id;
+                visit.d_body_id = props?.exam_date
+
+                const visitString = JSON.stringify(visit);
+                const encodedVisit = btoa(visitString);
+                const url =
+                    `<?= base_url() . '/admin/rm/keperawatan/diagnosis_keperawatan/' ?>${encodedVisit}`;
+
+                window.open(url, '_blank');
+            });
+
             if (res.respon) {
                 renderAskepSdki({
                     data: res?.value?.sdki,
@@ -793,11 +798,13 @@ const getDataAskepAll = (props) => {
                 });
                 renderAskepSlki({
                     data: res?.value?.slki,
-                    document_id: res?.document_id
+                    document_id: res?.document_id,
+                    diag_id: res?.value?.siki?.diag_id
                 })
                 renderAskepSiki({
                     data: res?.value?.siki,
-                    document_id: res?.document_id
+                    document_id: res?.document_id,
+                    diag_id: res?.value?.siki?.diag_id
                 })
 
             } else {
@@ -947,6 +954,34 @@ const renderAskepSdki = (data) => {
     }
 };
 
+const initializeDiagFlatpickr = () => {
+    flatpickr(".datetimeflatpickr", {
+        enableTime: true,
+        dateFormat: "d/m/Y H:i", // Display format
+        time_24hr: true, // 24-hour time format
+    });
+
+    $(".datetimeflatpickr").prop("readonly", false);
+
+    $(".datetimeflatpickr").on("change", function() {
+        let theid = $(this).attr("id");
+        theid = theid.replace("flat", "");
+        let thevalue = $(this).val();
+
+        if (moment(thevalue, "DD/MM/YYYY HH:mm", true).isValid()) {
+            let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+                "YYYY-MM-DD HH:mm"
+            );
+            $("#" + theid).val(formattedDate);
+        } else {
+            // console.warn("Invalid date entered:", thevalue);
+        }
+    });
+
+    // const nowtime = moment().format("DD/MM/YYYY HH:mm");
+    // $(".datetimeflatpickr").val(nowtime).trigger("change");
+}
+
 const renderAskepSlki = (data) => {
     if (!data) {
         console.warn('No valid data to render.');
@@ -995,23 +1030,31 @@ const renderAskepSlki = (data) => {
         };
         const itemsDate = data?.data?.data.filter(item => item.result_date !== null);
         let dateResult = itemsDate[0]?.result_date ?? moment(new Date()).format("YYYY-MM-DD HH:mm")
-        const datetimeInput = document.createElement('input');
-        datetimeInput.type = 'datetime-local';
-        datetimeInput.className = 'form-control mt-2 datetimepickerr';
-        datetimeInput.name = `result_date`;
-        datetimeInput.id = `result_date`;
-        datetimeInput.value = dateResult;
-        datetimeInput.style = 'width: 200px; '
+        const originalResultDate = data?.data?.date ? new Date(data?.data?.date) : new Date();
 
-        const originalResultDate = new Date(data?.data?.date) ?? new Date();
+        const datetimeInputHidden = document.createElement('input');
+        datetimeInputHidden.type = 'hidden';
+        datetimeInputHidden.className = 'form-control';
+        datetimeInputHidden.name = `result_date`;
+        datetimeInputHidden.id = `result_date`;
+        datetimeInputHidden.value = moment(dateResult).format("YYYY-MM-DD HH:mm");
+        datetimeInputHidden.style = 'width: 200px; '
+
+        const datetimeInput = document.createElement('input');
+        datetimeInput.type = 'Text';
+        datetimeInput.className = 'form-control datetimeflatpickr';
+        // datetimeInput.name = `result_date`;
+        datetimeInput.id = `flatresult_date`;
+        datetimeInput.value = moment(dateResult).format("DD/MM/YYYY HH:mm");
+        datetimeInput.style = 'width: 200px; '
 
 
         datetimeInput.addEventListener('change', (event) => {
             const newDate = new Date(event.target.value);
             const formattedDate = event.target.value.replace('T', ' ');
             if (newDate <= originalResultDate) {
-
                 getDataAskepAll({
+                    diag_id: data?.diag_id,
                     id: data?.document_id,
                     visit_id: visit.visit_id,
                     result_date: formattedDate
@@ -1023,6 +1066,7 @@ const renderAskepSlki = (data) => {
         card.appendChild(createHiddenInput('visit_id', visit.visit_id));
         card.appendChild(createHiddenInput('trans_id', visit.trans_id));
         card.appendChild(createHiddenInput('document_id', data?.document_id));
+        card.appendChild(datetimeInputHidden);
         card.appendChild(datetimeInput);
 
         const row = document.createElement('div');
@@ -1040,7 +1084,7 @@ const renderAskepSlki = (data) => {
 
         const createCheckbox = (item, container) => {
             const formCheck = document.createElement('div');
-            formCheck.className = 'form-check mb-2 d-flex align-items-center';
+            formCheck.className = 'form-check mb-2  align-items-center';
 
             const checkbox = document.createElement('input');
             checkbox.className = 'form-check-input';
@@ -1099,6 +1143,7 @@ const renderAskepSlki = (data) => {
 
         container.appendChild(card);
     }
+    initializeDiagFlatpickr()
 };
 
 const renderAskepSiki = (data) => {
@@ -1126,21 +1171,30 @@ const renderAskepSiki = (data) => {
 
     const itemsDate = data?.data?.data.filter(item => item.result_date !== null);
     let dateResult = itemsDate[0]?.result_date ?? moment(new Date()).format("YYYY-MM-DD HH:mm");
+    const originalResultDate = data?.data?.date ? new Date(data?.data?.date) : new Date();
+
+    const datetimeInputHidden = document.createElement('input');
+    datetimeInputHidden.type = 'hidden';
+    datetimeInputHidden.className = 'form-control';
+    datetimeInputHidden.name = `result_date`;
+    datetimeInputHidden.id = `result_date`;
+    datetimeInputHidden.value = moment(dateResult).format("YYYY-MM-DD HH:mm");
+    datetimeInputHidden.style = 'width: 200px; '
 
     const datetimeInput = document.createElement('input');
-    datetimeInput.type = 'datetime-local';
-    datetimeInput.className = 'form-control mt-2 mb-5';
-    datetimeInput.name = `result_date`;
-    datetimeInput.id = `result_date`;
-    datetimeInput.value = dateResult;
-    datetimeInput.style = 'width: 200px;';
-    const originalResultDate = new Date(data?.data?.date) ?? new Date();
+    datetimeInput.type = 'Text';
+    datetimeInput.className = 'form-control datetimeflatpickr';
+    // datetimeInput.name = `result_date`;
+    datetimeInput.id = `flatresult_date`;
+    datetimeInput.value = moment(dateResult).format("DD/MM/YYYY HH:mm");
+    datetimeInput.style = 'width: 200px; '
 
     datetimeInput.addEventListener('change', (event) => {
         const newDate = new Date(event.target.value);
         const formattedDate = event.target.value.replace('T', ' ');
         if (newDate <= originalResultDate) {
             getDataAskepAll({
+                diag_id: data?.diag_id,
                 id: data?.document_id,
                 visit_id: visit.visit_id,
                 dateSiki: formattedDate
@@ -1148,6 +1202,7 @@ const renderAskepSiki = (data) => {
         }
     });
 
+    container.appendChild(datetimeInputHidden);
     container.appendChild(datetimeInput);
 
     const groupedByDiagAndType = data?.data?.data.reduce((acc, item) => {
@@ -1204,7 +1259,7 @@ const renderAskepSiki = (data) => {
 
             const createCheckbox = (item, container) => {
                 const formCheck = document.createElement('div');
-                formCheck.className = 'form-check mb-2 d-flex align-items-center';
+                formCheck.className = 'form-check mb-2  align-items-center';
 
                 const checkbox = document.createElement('input');
                 checkbox.className = 'form-check-input';
@@ -1236,6 +1291,8 @@ const renderAskepSiki = (data) => {
 
         container.appendChild(card);
     }
+    initializeDiagFlatpickr()
+
 };
 
 

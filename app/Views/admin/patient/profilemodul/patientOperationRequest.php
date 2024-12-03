@@ -18,31 +18,34 @@ $permission = user()->getPermissions();
         <div id="load-content-requestOperation" class="col-12 center-spinner"></div>
         <div id="contentToHide-requestOperation" class="col-12">
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-12 border-r">
+                <div class="col-lg-2 col-md-2 col-sm-12 border-r">
                     <?php echo view('admin/patient/profilemodul/profilebiodata', [
                         'visit' => $visit,
                     ]); ?>
                 </div>
 
-                <div class="col-lg-9 col-md-9 col-xs-12">
-                    <div class="row mt-3 ">
-                        <div class="col-md-12">
-                            <div class="box-tab-tools text-center">
-                                <a data-toggle="modal" data-target="#create-modal-operasi" class="btn btn-primary btn-lg" id="btn-create-operasi" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Permintaan</a>
+                <div class="col-lg-10 col-md-10 col-xs-12">
+                    <?php if (user()->checkPermission("pasienoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
+                        <div class="row mt-3 ">
+                            <div class="col-md-12">
+                                <div class="box-tab-tools text-center">
+                                    <a data-toggle="modal" data-target="#create-modal-operasi" class="btn btn-primary btn-lg" id="btn-create-operasi" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Permintaan</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php } ?>
                     <div class="panel-group" id="table">
                         <h3 class="text-uppercase bolds mt0 ptt10 pull-left font14">PERMINTAAN TINDAKAN OPERASI</h3>
                         <table class="table table-bordered table-hover table-centered" style="text-align: center">
                             <thead class="table-primary">
                                 <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">Tanggal</th>
-                                    <th scope="col">Tindakan Operasi</th>
-                                    <th scope="col">Tarif</th>
-                                    <th scope="col">Dokter</th>
-                                    <th scope="col"></th>
+                                    <th scope="col" class="w-auto text-nowrap">No</th>
+                                    <th scope="col" class="w-auto text-nowrap">Tanggal</th>
+                                    <th scope="col" class="w-auto text-nowrap">Tindakan Operasi</th>
+                                    <th scope="col" class="w-auto text-nowrap">Tarif</th>
+                                    <th scope="col" class="w-auto text-nowrap">Dokter</th>
+                                    <th scope="col" class="w-auto text-nowrap"></th>
                                 </tr>
                             </thead>
                             <tbody id="bodydataRequestOperation" class="table-group-divider">
@@ -53,137 +56,142 @@ $permission = user()->getPermissions();
                             </tbody>
                         </table>
                     </div>
-                    <div class="card mt-4" id="container-tab">
+                    <?php if (user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
 
-                        <div class="card-body">
-                            <h3 class="card-title text-center text-primary" id="nama-tindakan-operasi"></h3>
-                            <!-- update -->
+                        <div class="card mt-4" id="container-tab">
 
-                            <div class="operasi-tab">
-                                <ul class="nav nav-underline" style="border-bottom: 2px solid var(--bs-border-color);">
-                                    <li class="nav-item">
-                                        <a class="nav-link " aria-current="page" href="#pra-operasi" data-bs-toggle="tab">Catatan Keperawatan Pra Operasi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" aria-current="page" href="#catatan-keperawatan" data-bs-toggle="tab">Catatan Keperawatan Peri Operasi</a>
-                                    </li>
+                            <div class="card-body">
+                                <h3 class="card-title text-center text-primary" id="nama-tindakan-operasi"></h3>
+                                <!-- update -->
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#checklist-keselamatan" data-bs-toggle="tab">Checklist
-                                            Keselamatan Operasi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#checklist-anestesi" data-bs-toggle="tab">Checklist
-                                            Anestesi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#laporan-pembedahan" data-bs-toggle="tab">Laporan
-                                            Pembedahan</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#anesthesi-lengkap" data-bs-toggle="tab">Catatan Anestesi dan Sedasi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Asesmen Pra Anestesi</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Instruksi Post Operasi</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content mt-3">
+                                <div class="operasi-tab">
+                                    <ul class="nav nav-underline" style="border-bottom: 2px solid var(--bs-border-color);">
+                                        <li class="nav-item">
+                                            <a class="nav-link " aria-current="page" href="#pra-operasi" data-bs-toggle="tab">Asesmen Pra Operasi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" aria-current="page" href="#catatan-keperawatan" data-bs-toggle="tab">Catatan Keperawatan Peri Operasi</a>
+                                        </li>
 
-
-                                    <!-- catatan -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/praoperasi.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
-
-                                    <!-- catatan -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/catatan-keperawatan.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
-
-                                    <!-- keselamatan -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/checklist-keselamatan.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#checklist-keselamatan" data-bs-toggle="tab">Checklist
+                                                Keselamatan Operasi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#checklist-anestesi" data-bs-toggle="tab">Checklist
+                                                Anestesi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#laporan-pembedahan" data-bs-toggle="tab">Laporan
+                                                Pembedahan</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#anesthesi-lengkap" data-bs-toggle="tab">Catatan
+                                                Anestesi dan Sedasi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Asesmen Pra
+                                                Anestesi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Instruksi Post Operasi</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content mt-3">
 
 
-                                    <!-- anestesi -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/checklist-anestesi.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
+                                        <!-- catatan -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/praoperasi.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
 
-                                    <!-- pembedahan -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/laporan-pembedahan.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
+                                        <!-- catatan -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/catatan-keperawatan.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
 
-                                    <!-- post operasi -->
-                                    <?php echo view('admin/patient/profilemodul/operasi/informasi-post-operasi.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
-
-
-                                    <?php echo view('admin/patient/profilemodul/operasi/laporan-anesthesi.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
-                                    <?php echo view('admin/patient/profilemodul/operasi/anesthesi-lengkap.php', [
-                                        'title' => 'Test',
-                                        'visit' => $visit,
-                                        'aParent' => $aParent,
-                                        'aType' => $aType,
-                                        'aParameter' => $aParameter,
-                                        'aValue' => $aValue,
-                                    ]) ?>
+                                        <!-- keselamatan -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/checklist-keselamatan.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
 
 
+                                        <!-- anestesi -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/checklist-anestesi.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+
+                                        <!-- pembedahan -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/laporan-pembedahan.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+
+                                        <!-- post operasi -->
+                                        <?php echo view('admin/patient/profilemodul/operasi/informasi-post-operasi.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+
+
+                                        <?php echo view('admin/patient/profilemodul/operasi/laporan-anesthesi.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+                                        <?php echo view('admin/patient/profilemodul/operasi/anesthesi-lengkap.php', [
+                                            'title' => 'Test',
+                                            'visit' => $visit,
+                                            'aParent' => $aParent,
+                                            'aType' => $aType,
+                                            'aParameter' => $aParameter,
+                                            'aValue' => $aValue,
+                                        ]) ?>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-12 my-3 d-flex justify-content-end gap-2">
+                                    <input type="hidden" name="save-operasi">
+                                    <button type="button" id="btn-reset-data" class="btn btn-primary">Tutup</button>
                                 </div>
                             </div>
-
-                            <div class="col-12 my-3 d-flex justify-content-end gap-2">
-                                <input type="hidden" name="save-operasi">
-                                <button type="button" id="btn-reset-data" class="btn btn-primary">Tutup</button>
-                            </div>
                         </div>
-                    </div>
 
-                    <!-- 999999999999999 -->
+                        <!-- 999999999999999 -->
+                    <?php } ?>
 
                 </div>
             </div>
@@ -212,9 +220,13 @@ $permission = user()->getPermissions();
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-create-modal-permintaan-operasi">Keluar</button>
-                <button type="button" class="btn btn-primary" id="btn-save-permintaan-operasi-modal">Simpan</button>
-                <button type="button" class="btn btn-primary" id="btn-edit-permintaan-operasi-modal">Perbarui</button>
-                <button type="button" class="btn btn-primary" id="btn-updateAndInsert-permintaan-operasi-modal" hidden>Perbarui</button>
+                <?php if (user()->checkPermission("pasienoperasi", 'c') || user()->checkPermission("assesmenoperasi", 'c') || user()->checkRoles(['superuser'])) { ?>
+
+                    <button type="button" class="btn btn-primary" id="btn-save-permintaan-operasi-modal">Simpan</button>
+                    <button type="button" class="btn btn-primary" id="btn-edit-permintaan-operasi-modal">Perbarui</button>
+                    <button type="button" class="btn btn-primary" id="btn-updateAndInsert-permintaan-operasi-modal" hidden>Perbarui</button>
+
+                <?php } ?>
             </div>
         </div>
     </div>

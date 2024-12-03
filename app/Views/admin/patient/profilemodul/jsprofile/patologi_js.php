@@ -32,6 +32,39 @@
         filterBillPatologi()
     })
 
+
+    $('#isKritisPatologi').click(function(e) {
+        const currentValue = $('#modalIsKritis_patologi').val();
+
+        $('#modalIsKritis_patologi').val(currentValue == 0 ? 1 : 0);
+
+        if ($('#modalIsKritis_patologi').val() == 1) {
+            $('#isKritisPatologi').html('Nilai Kritis &#10003;')
+            $('#isKritisPatologi').removeClass('btn-outline-primary');
+            $('#isKritisPatologi').addClass('btn-primary');
+        } else {
+            $('#isKritisPatologi').html('Nilai Kritis')
+            $('#isKritisPatologi').removeClass('btn-primary');
+            $('#isKritisPatologi').addClass('btn-outline-primary');
+        }
+    })
+    $('#isValidPatologi').click(function(e) {
+        const currentValue = $('#modalIsValid_patologi').val();
+
+        $('#modalIsValid_patologi').val(currentValue == 0 ? 1 : 0);
+
+
+        if ($('#modalIsValid_patologi').val() == 1) {
+            $('#isValidPatologi').html('Tervalidasi')
+            $('#isValidPatologi').removeClass('btn-outline-primary');
+            $('#isValidPatologi').addClass('btn-primary');
+        } else {
+            $('#isValidPatologi').html('Validasi')
+            $('#isValidPatologi').removeClass('btn-primary');
+            $('#isValidPatologi').addClass('btn-outline-primary');
+        }
+    })
+
     function getTreatResultListPatologi(nomor, trans, visit) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/Patologi/getDataResult',
@@ -55,7 +88,10 @@
                     $("#patologiBody").append($("<tr>")
                         .append($("<td >").append($("<p>").html(dataPatologi[key].nota_no)))
                         .append($("<td >").append($("<p>").html(moment(dataPatologi[key].treat_date).format('DD-MM-YYYY HH:MM'))))
-                        .append($("<td class='text-center'>").append($("<p>").html(dataPatologi[key].treatment)))
+                        .append($("<td class='text-center'>").append($("<p>").html(dataPatologi[key].treatment))
+                            .append($("<p class='badge " + (dataPatologi[key].isvalid == 1 ? "bg-primary" : "bg-danger") + " py-1 px-2'>").html(dataPatologi[key].isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'))
+                            .append($("<p class='" + (dataPatologi[key].iskritis == 1 ? "badge py-1 px-2 mx-2 bg-danger" : "d-none") + "'>").html('KRITIS'))
+                        )
                         .append($("<td>").append('<div role="group" aria-label="Vertical button group">' +
                             '<button id="' + 'apatologi' + '" ' + 'data-bill="' + dataPatologi[key].bill_id + '" ' + 'onclick="actionModalPatologi(\'' + encodeURIComponent(JSON.stringify(dataPatologi[key])) + '\',\'' + 'apatologi' + '\')" ' +
                             'type="button" data-bs-toggle="modal" data-bs-target="#modalPatologi" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
@@ -309,6 +345,31 @@
                 }
 
                 $('#printPatologi').removeAttr('disabled')
+                console.log(res?.data);
+                $('#doctor_patologi').text(res?.data?.doctor)
+                $('#modalIsValid_patologi').val(res?.data?.isvalid ?? 0)
+                $('#modalIsKritis_patologi').val(res?.data?.iskritis ?? 0)
+
+
+                if ($('#modalIsValid_patologi').val() == 1) {
+                    $('#isValidPatologi').html('Tervalidasi')
+                    $('#isValidPatologi').removeClass('btn-outline-primary');
+                    $('#isValidPatologi').addClass('btn-primary');
+                } else {
+                    $('#isValidPatologi').html('Validasi')
+                    $('#isValidPatologi').removeClass('btn-primary');
+                    $('#isValidPatologi').addClass('btn-outline-primary');
+                }
+
+                if ($('#modalIsKritis_patologi').val() == 1) {
+                    $('#isKritisPatologi').html('Nilai Kritis &#10003;')
+                    $('#isKritisPatologi').removeClass('btn-outline-primary');
+                    $('#isKritisPatologi').addClass('btn-primary');
+                } else {
+                    $('#isKritisPatologi').html('Nilai Kritis')
+                    $('#isKritisPatologi').removeClass('btn-primary');
+                    $('#isKritisPatologi').addClass('btn-outline-primary');
+                }
 
                 printPatologi({
                     bill_id: data?.bill_id,
@@ -320,6 +381,14 @@
                 $('#patologi_tarif_id').val(data?.tarif_id)
                 $('#patologi_bill_id').val(data?.bill_id)
                 $('#patologi_visit_id').val(data?.visit_id)
+                console.log(data?.doctor);
+                $('#doctor_patologi').text(data?.doctor)
+                $('#isValidPatologi').html('Validasi');
+                $('#isValidPatologi').removeClass('btn-primary');
+                $('#isValidPatologi').addClass('btn-outline-primary');
+                $('#isKritisPatologi').html('Nilai Kritis');
+                $('#isKritisPatologi').removeClass('btn-primary');
+                $('#isKritisPatologi').addClass('btn-outline-primary');
 
                 imagePreview.hide();
                 pdfPreview.hide();

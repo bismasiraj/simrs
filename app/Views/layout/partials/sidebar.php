@@ -23,6 +23,14 @@ $basecontroller->checkMenuActive('register');
                         <span>Dashboard</span>
                     </a>
                 </li>
+                <?php if (user()->checkRoles(['superuser'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('users'); ?>">
+                        <a href="<?php echo base_url() ?>admin/patient/users">
+                            <i class="fas fa-users-cog"></i> <span><?php echo "User Permissions"; ?></span>
+                        </a>
+                    </li>
+                <?php } ?>
+
                 <?php if (user()->checkRoles(['superuser', 'admin', 'billingpasien'])) { ?>
                     <!-- <li class=" <?= $basecontroller->checkMenuActive('bill'); ?>">
                         <a href="<?php echo site_url('admin/patient/bill'); ?>" class=" waves-effect">
@@ -122,6 +130,14 @@ $basecontroller->checkMenuActive('register');
                             <i class="fas fa-medkit"></i> <span><?php echo "PMKP"; ?></span>
                         </a>
                     </li>
+                <?php } ?>
+                <?php if (user()->checkRoles(['superuser'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('users'); ?>">
+                        <a href="<?php echo base_url() ?>admin/patient/users">
+                            <i class="fas fa-users-cog"></i> <span><?php echo "User Permissions"; ?></span>
+                        </a>
+                    </li>
+
                 <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">

@@ -1,10 +1,40 @@
+<?php
+$db = db_connect();
+$exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $visit['visit_id'] . "' ORDER BY EXAMINATION_DATE DESC")->getRowArray();
+
+?>
+
 <script type="text/javascript">
     (function() {
-        $(document).ready(function() {
-            let visit = <?= json_encode($visit) ?>;
-            getDataTableGizi();
-            initializeSearchDietaryHabit('pola_makan_gizi', '#create-modal-gizi')
 
+        let visit = <?= json_encode($visit) ?>;
+        let aValue = <?= json_encode($aValue) ?>;
+        let aParameter = <?= json_encode($aParameter) ?>;
+        let exam_info = <?= json_encode($exam_info) ?>;
+        const allowedTypes = ['GIZ0604', 'GIZ0605', 'GIZ0606', 'GIZ0607', 'GIZ0608', 'GIZ0609'];
+        const allowedNames = [
+            'ANAK (0-1 TH)',
+            'ANAK 1-6 TAHUN',
+            'ANAK 7-18 TAHUN ',
+            'IBU MELAHIRKAN DAN HAMIL',
+            'DEWASA - LANSIA (DIIT BIASA, JANTUNG, GINJAL, RENDAH GARAM, STROKE, PPOK/ASMA (TANPA KOMPLIKASI DM)',
+            'DEWASA - LANSIA (DIIT DM)'
+        ];
+
+        const arrayPeringatan = [
+            'ALBUMIN', 'BB', 'BS', 'DH I', 'DH II', 'DH III', 'DH IV', 'DJ I', 'DJ II',
+            'DJ III', 'DJ IV', 'DL I', 'DL II', 'DL III', 'DL IV', 'DM', 'ENCER',
+            'KECAP', 'LAUK SARING', 'MC', 'NABATI', 'NB', 'NL', 'PRO 40 GR',
+            'PRO 60 GR', 'R. LEMAK', 'R. PURIN', 'R. SERAT', 'RG', 'STROKE I',
+            'STROKE II A (BS)', 'STROKE II B (BB)', 'STROKE II C(NB)', 'T. SERAT',
+            'TIM SARING', 'TKTP'
+        ];
+
+        $(document).ready(function() {
+
+            getDataTableGizi();
+            getDataScreening();
+            initializeSearchDietaryHabit('pola_makan_gizi', '#create-modal-gizi')
 
             flatpickr('.datepicker-gizi', {
                 dateFormat: 'Y-m-d H:i',
@@ -24,16 +54,8 @@
                 });
             });
 
-            const arrayPeringatan = [
-                'ALBUMIN', 'BB', 'BS', 'DH I', 'DH II', 'DH III', 'DH IV', 'DJ I', 'DJ II',
-                'DJ III', 'DJ IV', 'DL I', 'DL II', 'DL III', 'DL IV', 'DM', 'ENCER',
-                'KECAP', 'LAUK SARING', 'MC', 'NABATI', 'NB', 'NL', 'PRO 40 GR',
-                'PRO 60 GR', 'R. LEMAK', 'R. PURIN', 'R. SERAT', 'RG', 'STROKE I',
-                'STROKE II A (BS)', 'STROKE II B (BB)', 'STROKE II C(NB)', 'T. SERAT',
-                'TIM SARING', 'TKTP'
-            ];
-        });
 
+        });
 
         // action button
         $('#hasilIntervensiModal').on('shown.bs.modal', function() {
@@ -67,17 +89,69 @@
 
         $('#addFoodRecall').off().click(function() {
             $('#formFoodRecall')[0].reset();
+
+            initializeReceipe('nama_masakan_food_recall', 'foodRecallModal')
+
         });
 
         $('#tambah-asuhan-gizi').off().click(function() {
-            let visit = <?= json_encode($visit) ?>;
             let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
             let now = moment();
-
             let daysDiff = now.diff(birth, 'days');
+
+            const filteredItems = aParameter
+                ?.filter(item => allowedTypes.includes(item?.p_type))
+                .sort((a, b) => a.p_type.localeCompare(b.p_type) || a.parameter_id - b.parameter_id);
+
+            let selectAge = '';
+            let currentGroup = '';
+
+            filteredItems.forEach(item => {
+                if (item.p_type !== currentGroup) {
+                    if (currentGroup) selectAge += '</optgroup>';
+                    const groupIndex = allowedTypes.indexOf(item.p_type);
+                    const groupLabel = allowedNames[groupIndex];
+                    currentGroup = item.p_type;
+                    selectAge += `<optgroup label="${groupLabel.toLowerCase()}">`;
+                }
+
+                selectAge += `<option value="${item?.p_type}-${item.parameter_id}">${item.parameter_desc.toLowerCase()}</option>`;
+            });
+
+            if (currentGroup) selectAge += '</optgroup>';
+
+            $('#gizi_age_category').html(selectAge);
+
+            let factorActivity = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
+            let factorStress = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
+
+            function populateSelect(selectId, items) {
+                const selectElement = $('#' + selectId);
+                selectElement.innerHTML = '';
+
+                if (!items || items.length === 0) {
+                    selectElement.innerHTML = '<option>No data available</option>';
+                } else {
+                    let optionHtml = '';
+                    items.forEach(item => {
+                        optionHtml +=
+                            `<option value="${item.value_id}"
+                                data-score="${(item.value_score / 100).toString()}">${item.value_desc}
+                            </option>`
+                    });
+                    selectElement.html(optionHtml);
+                }
+            }
+
+
+            populateSelect('factor_activity', factorActivity);
+            populateSelect('factor_stress', factorStress);
+
+            // $('#bbi_gizi').val(bmi)
             getAge({
                 visit: visit['visit_id'],
             }, 'age_category_gizi', daysDiff);
+
             getAsuhanGizi({
                 visit_id: visit['visit_id'],
                 no_registration: visit['no_registration'],
@@ -95,62 +169,66 @@
         });
         // end of action button
 
-
-
         // ====== function render data ======
         const renderGizi = (props) => {
-            let visit = <?= json_encode($visit) ?>;
+
             $('#accordionGizi').hide();
             postData({
                 visit_id: props?.visit_id
             }, 'admin/Gizi/getDataGizi', (res) => {
                 if (res.respon) {
                     let data = res?.data;
-                    let bodyGizi = $('#containerBodyGizi');
                     if (res.data.length > 0) {
-                        let dataRows = ''
-                        data.forEach((value, key) => {
-                            dataRows += `
-                         <tr id="row-${value?.body_id}" class="align-middle">
-                            <td width="1%" class="text-center">${key+1}</td>
-                            <td class="text-center">${value?.nutrition_diagnose ?? '-'}</td>
-                            <td width="1%">
-                                <button type="button" class="btn btn-success btn-sm print-row" data-id="${value?.body_id}"><i class="fas fa-print"></i></button>
-                            </td>
-                            <?php /* if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
-                            <td width="1%">
-                                <div class="position-relative" id="qr-${key+1}-${value?.body_id}">
-                                    <button type="button" class="btn btn-outline-primary btn-sm validate-row" name="sign_gizi" data-sign-ke="1"
-                                    data-button-id="formGiziSaveBtn-${key+1}" data-id="${value?.body_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Validasi dokumen"><i class="fas fa-signature"></i></button>
-                                </div>
-                            </td>
-                            <?php endif */ ?>
-                            <td width="1%">
-                            <button type="button" class="btn btn-success btn-sm assessment-row" data-id="${value?.body_id}">Assessment</button>
-                            </td>
-                            <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
-                            <td width="1%">
-                                <button type="button" class="btn btn-warning btn-sm edit-row-gizi" data-id="${value?.body_id}" data-bs-toggle="modal" data-bs-target="#edit-modal-gizi"><i class="fas fa-edit"></i></button>
-                            </td>
-                            <td width="1%">
-                                <button type="button" class="btn btn-primary btn-sm duplicate-row-gizi" data-id="${value?.body_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Duplikat data"><i class="fas fa-clone"></i></button>
-                            </td>
-                            <td width="1%">
-                                <button type="button" class="btn btn-danger btn-sm delete-row-gizi" data-id="${value?.body_id}"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                            <?php endif ?>
-                        </tr>
-                        `;
-
-
+                        const tableGizi = $('#table_asuhan_gizi').DataTable({
+                            dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                            stateSave: true,
+                            "bDestroy": true
                         });
-                        bodyGizi.html(dataRows);
+                        tableGizi.clear();
+                        let dataRows = '';
+                        data.forEach((value, key) => {
+                            dataRows = `
+                                <tr id="row-${value?.body_id}" class="align-middle">
+                                    <td width="1%" class="text-center">${key+1}</td>
+                                    <td class="text-center">${value?.nutrition_diagnose ?? '-'}</td>
+                                    <td width="1%">
+                                        <button type="button" class="btn btn-success btn-sm print-row" data-id="${value?.body_id}"><i class="fas fa-print"></i></button>
+                                    </td>
+                                    <?php /* if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
+                                    <td width="1%">
+                                        <div class="position-relative" id="qr-${key+1}-${value?.body_id}">
+                                            <button type="button" class="btn btn-outline-primary btn-sm validate-row" name="sign_gizi" data-sign-ke="1"
+                                            data-button-id="formGiziSaveBtn-${key+1}" data-id="${value?.body_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Validasi dokumen"><i class="fas fa-signature"></i></button>
+                                        </div>
+                                    </td>
+                                    <?php endif */ ?>
+                                    <td width="1%">
+                                    <button type="button" class="btn btn-success btn-sm assessment-row" data-id="${value?.body_id}">Assessment</button>
+                                    </td>
+                                    <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                    <td width="1%">
+                                        <button type="button" class="btn btn-warning btn-sm edit-row-gizi" data-id="${value?.body_id}" data-bs-toggle="modal" data-bs-target="#edit-modal-gizi"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                    <td width="1%">
+                                        <button type="button" class="btn btn-primary btn-sm duplicate-row-gizi" data-id="${value?.body_id}" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Duplikat data"><i class="fas fa-clone"></i></button>
+                                    </td>
+                                    <td width="1%">
+                                        <button type="button" class="btn btn-danger btn-sm delete-row-gizi" data-id="${value?.body_id}"><i class="fas fa-trash-alt"></i></button>
+                                    </td>
+                                    <?php endif ?>
+                                </tr>
+                                `;
 
-                        document.querySelectorAll('.validate-row').forEach((button, key) => {
-                            const id = button.getAttribute('data-id');
+                            tableGizi.row.add($(dataRows));
+                        });
+
+                        tableGizi.draw();
+
+                        $('.validate-row').each(function(index, button) {
+                            const id = $(button).data('id');
                             const formId = 'formAsuhanGizi';
                             const primaryKey = id;
-                            const formSaveBtn = `formGiziSaveBtn-${key+1}`;
+                            const formSaveBtn = `formGiziSaveBtn-${index+1}`;
                             if (id) {
                                 $(this).prop('disabled', false);
                             } else {
@@ -160,7 +238,7 @@
 
                             $("button[name='sign_gizi']").off().on("click", function() {
                                 const buttonId = $(this).data('button-id');
-                                const signKe = `${key+1}`;
+                                const signKe = `${index+1}`;
                                 addSignUserGizi("formAsuhanGizi", "accordionGizi", id, buttonId,
                                     7, signKe,
                                     1, "Form Asuhan Gizi");
@@ -170,137 +248,121 @@
                             //     checkSignSignatureGizi(formId, primaryKey, formSaveBtn, '7');
                             // }
                         })
-                        document.querySelectorAll('.assessment-row').forEach(button => {
-                            button.addEventListener('click', function(event) {
-                                getLoadingscreen("accordionGizi", "load-content-accordion-gizi")
-                                const id = button.getAttribute('data-id');
+                        $('.assessment-row').on('click', function() {
+                            getLoadingscreen("accordionGizi", "load-content-accordion-gizi")
+                            const id = $(this).data('id');
 
-                                $('tr').removeClass('bg-light');
-                                $('#row-' + id).addClass('bg-light')
+                            $('tr').removeClass('bg-light');
+                            $('#row-' + id).addClass('bg-light')
 
-                                renderDiagnosaGizi({
-                                    document_id: id
-                                })
-                                renderFoodRecall({
-                                    visit_id: visit['visit_id'],
-                                    document_id: id
-                                })
-                                renderIntervensi({
-                                    visit_id: visit['visit_id'],
-                                    document_id: id
-                                })
+                            renderDiagnosaGizi({
+                                document_id: id
+                            })
+                            renderFoodRecall({
+                                visit_id: visit['visit_id'],
+                                document_id: id
+                            })
+                            renderIntervensi({
+                                visit_id: visit['visit_id'],
+                                document_id: id
+                            })
 
-
-                            });
                         })
-                        document.querySelectorAll('.duplicate-row-gizi').forEach(button => {
-                            button.addEventListener('click', function(event) {
-                                const id = button.getAttribute('data-id');
+                        $('.duplicate-row-gizi').on('click', function() {
+                            const id = $(this).data('id');
 
-                                Swal.fire({
-                                    title: "Duplikat Data Asesmen?",
-                                    text: "Data baru akan dibuat sesuai data yang diduplikat",
-                                    icon: "info",
-                                    showCancelButton: true,
-                                    confirmButtonColor: "#7a6fbe",
-                                    confirmButtonText: "Duplikat",
-                                    reverseButtons: true
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        postData({
-                                            visit_id: visit['visit_id'],
-                                            body_id: id
-                                        }, 'admin/Gizi/duplikatAsuhanGizi', (res) => {
-                                            if (res.respon) {
-                                                renderGizi({
-                                                    visit_id: props?.visit_id,
-                                                    no_registration: props?.no_registration
-                                                })
-                                                successSwal('Data berhasil Diduplikat.');
-                                            }
-                                        });
+                            Swal.fire({
+                                title: "Duplikat Data Asesmen?",
+                                text: "Data baru akan dibuat sesuai data yang diduplikat",
+                                icon: "info",
+                                showCancelButton: true,
+                                confirmButtonColor: "#7a6fbe",
+                                confirmButtonText: "Duplikat",
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    postData({
+                                        visit_id: visit['visit_id'],
+                                        body_id: id
+                                    }, 'admin/Gizi/duplikatAsuhanGizi', (res) => {
+                                        if (res.respon) {
+                                            renderGizi({
+                                                visit_id: props?.visit_id,
+                                                no_registration: props?.no_registration
+                                            })
+                                            successSwal('Data berhasil Diduplikat.');
+                                        }
+                                    });
 
-                                    }
-                                });
-
-
-
-
+                                }
                             });
-                        })
 
-                        document.querySelectorAll('.delete-row-gizi').forEach(button => {
-                            button.addEventListener('click', function(event) {
+                        });
 
-                                const id = button.getAttribute('data-id');
-                                const swalWithBootstrapButtons = Swal.mixin({
-                                    customClass: {
-                                        confirmButton: "btn btn-success ms-2",
-                                        cancelButton: "btn btn-danger"
-                                    },
-                                    buttonsStyling: false
-                                });
-
-                                swalWithBootstrapButtons.fire({
-                                    title: "Apa anda yakin?",
-                                    text: "Anda tidak akan dapat mengembalikannya!",
-                                    icon: "warning",
-                                    showCancelButton: true,
-                                    confirmButtonText: "Ya, Hapus!",
-                                    cancelButtonText: "Batal!",
-                                    reverseButtons: true
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        postData({
-                                            body_id: id
-                                        }, 'admin/Gizi/deleteGizi', (res) => {
-
-                                            if (res.respon) {
-                                                renderGizi({
-                                                    visit_id: props?.visit_id,
-                                                    no_registration: props?.no_registration
-                                                })
-                                                successSwal('Data berhasil Dihapus.');
-                                            } else {
-                                                errorSwal("Gagal Di hapus")
-                                            }
-
-                                        });
-                                    } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                        swalWithBootstrapButtons.fire({
-                                            title: "Dibatalkan",
-                                            text: "File Anda aman :)",
-                                            icon: "error"
-                                        });
-                                    }
-                                });
-
+                        $('.delete-row-gizi').on('click', function() {
+                            const id = $(this).data('id');
+                            const swalWithBootstrapButtons = Swal.mixin({
+                                customClass: {
+                                    confirmButton: "btn btn-success ms-2",
+                                    cancelButton: "btn btn-danger"
+                                },
+                                buttonsStyling: false
                             });
-                        })
 
-                        document.querySelectorAll('.edit-row-gizi').forEach(button => {
-                            button.addEventListener('click', function(event) {
+                            swalWithBootstrapButtons.fire({
+                                title: "Apa anda yakin?",
+                                text: "Anda tidak akan dapat mengembalikannya!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonText: "Ya, Hapus!",
+                                cancelButtonText: "Batal!",
+                                reverseButtons: true
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    postData({
+                                        body_id: id
+                                    }, 'admin/Gizi/deleteGizi', (res) => {
 
-                                const id = button.getAttribute('data-id');
-                                getAsuhanGiziByID({
-                                    visit_id: props?.visit_id,
-                                    no_registration: props?.no_registration,
-                                    body_id: id
-                                })
+                                        if (res.respon) {
+                                            renderGizi({
+                                                visit_id: props?.visit_id,
+                                                no_registration: props?.no_registration
+                                            })
+                                            successSwal('Data berhasil Dihapus.');
+                                        } else {
+                                            errorSwal("Gagal Di hapus")
+                                        }
 
+                                    });
+                                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                    swalWithBootstrapButtons.fire({
+                                        title: "Dibatalkan",
+                                        text: "File Anda aman :)",
+                                        icon: "error"
+                                    });
+                                }
                             });
-                        })
 
-                        document.querySelectorAll('.print-row').forEach(button => {
-                            button.addEventListener('click', function(event) {
+                        });
 
-                                const id = button.getAttribute('data-id');
-                                cetakGizi({
-                                    body_id: id
-                                })
+                        $('.edit-row-gizi').on('click', function() {
+                            const id = $(this).data('id');
+                            getAsuhanGiziByID({
+                                visit_id: props?.visit_id,
+                                no_registration: props?.no_registration,
+                                body_id: id
+                            })
 
-                            });
-                        })
+                        });
+
+                        $('.print-row').on('click', function() {
+
+                            const id = $(this).data('id');
+                            cetakGizi({
+                                body_id: id
+                            })
+
+                        });
 
                     } else {
                         bodyGizi.html(`
@@ -441,16 +503,22 @@
                             }, 'admin/Gizi/getFoodRecallByID', (res) => {
                                 let data = res.data
                                 if (res.respon) {
+                                    // $('#nama_masakan_edit_food_recall').off('change');
                                     $('#tanggal_edit_food_recall').val(moment(data.recall_date).format('DD-MM-YYYY HH:mm'));
-                                    $('#nama_masakan_edit_food_recall').val(data.meal_name);
+                                    // $('#nama_masakan_edit_food_recall').val(data.meal_name);
                                     $('#urt_masakan_edit_food_recall').val(data.meal_urt);
                                     $('#estimasi_gram_edit_food_recall').val(data.meal_grams);
                                     $('#keterangan_edit_food_recall').val(data.meal_description);
+                                    $('#netto_bahan_edit_food_recall').val(data.ingredient_netto);
+                                    $('#edit_food_recall').val(data.recall_id);
+
                                     $('#nama_bahan_edit_food_recall').val(data.ingredient_name);
                                     $('#urt_bahan_edit_food_recall').val(data.ingredient_urt);
                                     $('#gramasi_bahan_edit_food_recall').val(data.ingredient_grams);
-                                    $('#netto_bahan_edit_food_recall').val(data.ingredient_netto);
-                                    $('#edit_food_recall').val(data.recall_id);
+
+                                    initializeReceipe('nama_masakan_edit_food_recall', 'editFoodRecallModal', data)
+
+
 
                                 }
 
@@ -466,7 +534,9 @@
                 document_id: props?.document_id
             })
 
-            updateFoodRecall();
+            updateFoodRecall({
+                document_id: props?.document_id
+            });
         }
 
         const renderDiagnosaGizi = (props) => {
@@ -702,48 +772,95 @@
                 trans_id: props?.trans_id
             }, 'admin/Gizi/getAsuhanGizi', (res) => {
                 if (res.respon) {
-                    $('#container_aktivitas_gizi').hide();
                     let gender = <?= json_encode($visit['gender']); ?>;
 
                     let height = res.data.height ?? 0;
                     let weight = res.data.weight ?? 0;
                     let heightInMeters = height / 100 ?? 0;
                     let ageyear = res.data.ageyear ?? 0;
-                    let bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2) ?? 0;
+
+                    $('#height_gizi').val(height)
+                    $('#weight_gizi').val(weight)
+
+                    let bmi = countBMI({
+                        height: height,
+                        weight: weight
+                    });
                     bmi = isNaN(bmi) ? 0 : bmi;
-
-                    let classification;
-
-                    if (bmi < 18.5) {
-                        classification = 'Underweight';
-                    } else if (bmi >= 18.5 && bmi < 25.0) {
-                        classification = 'Normal weight';
-                    } else if (bmi >= 25.0 && bmi < 30.0) {
-                        classification = 'Overweight';
-                    } else if (bmi >= 30.0 && bmi < 35.0) {
-                        classification = 'Obesity class 1';
-                    } else if (bmi >= 35.0 && bmi < 40.0) {
-                        classification = 'Obesity class 2';
-                    } else if (bmi >= 40.0) {
-                        classification = 'Obesity class 3';
-                    } else {
-                        classification = '-';
-                    }
-
+                    let classification = classificationBMI(bmi);
                     let vitalSign = `BB: ${weight}, TB: ${height}, BMI: ${bmi} (${classification})`;
 
+                    let bbi = 0;
+                    bbi = countBBI({
+                        height: height,
+                        weight: weight,
+                        gender: gender,
+                        p_type: $('#gizi_age_category').val(),
+                    })
+
+                    $('#bbi_gizi').val(bbi);
+
+                    $('#gizi_age_category, #height_gizi, #weight_gizi').change(function(e) {
+                        bbi = countBBI({
+                            height: $('#height_gizi').val(),
+                            weight: $('#weight_gizi').val(),
+                            gender: gender,
+                            p_type: $('#gizi_age_category').val(),
+                        })
+
+                        $('#bbi_gizi').val(bbi);
+                    })
+
+                    let energy = 0;
+                    energy = countEnergy({
+                        height: $('#height_gizi').val(),
+                        weight: $('#weight_gizi').val(),
+                        bbi: $('#bbi_gizi').val(),
+                        factor_activity: $('#factor_activity option:selected').data('score'),
+                        factor_stress: $('#factor_stress option:selected').data('score'),
+                        gender: gender,
+                        ageyear: ageyear,
+                        p_type: $('#gizi_age_category').val(),
+                    })
+
+                    $('#energi_gizi').val(energy);
+
+                    countNutrition({
+                        energy: $('#energi_gizi').val(),
+                        p_type: $('#gizi_age_category').val(),
+                    })
+
+                    $('#gizi_age_category, #height_gizi, #weight_gizi, #bbi_gizi, #factor_activity, #factor_stress').change(function(e) {
+                        energy = countEnergy({
+                            height: $('#height_gizi').val(),
+                            weight: $('#weight_gizi').val(),
+                            bbi: $('#bbi_gizi').val(),
+                            factor_activity: $('#factor_activity option:selected').data('score'),
+                            factor_stress: $('#factor_stress option:selected').data('score'),
+                            gender: gender,
+                            ageyear: ageyear,
+                            p_type: $('#gizi_age_category').val(),
+                        })
+
+                        $('#energi_gizi').val(energy);
+                        countNutrition({
+                            energy: $('#energi_gizi').val(),
+                            p_type: $('#gizi_age_category').val(),
+                        })
+                    })
+
+
+
                     $('#clinical_description_gizi').val(vitalSign)
-                    $('#biokimia_gizi').val(res?.biokimia)
+                    if (res?.biokimia) {
+                        $('#biokimia_gizi').val(res.biokimia).attr('readonly', true);
+                    } else {
+                        $('#biokimia_gizi').val('').attr('readonly', false);
+                    }
+
                     $('#food_alergy_gizi').val(res?.alergi.histories ?? '-')
                     $('#examination_date_gizi').val(res.data.examination_date)
 
-                    $('#antropometri_gizi').change(function() {
-                        if ($(this).val() == 'dewasa') {
-                            $('#container_aktivitas_gizi').show();
-                        } else {
-                            $('#container_aktivitas_gizi').hide();
-                        }
-                    })
 
                 }
             });
@@ -758,40 +875,31 @@
                 body_id: props?.body_id
             }, 'admin/Gizi/getGiziByID', (res) => {
                 if (res.respon) {
-                    $('#edit_container_aktivitas_gizi').hide();
+
                     $('#body_id_gizi').val(props?.body_id);
                     initializeSearchDietaryHabit('edit_pola_makan_gizi', '#edit-modal-gizi', res.data.pola_makan, res.data.dietary_habit)
 
-                    getAge({
-                        visit: visit['visit_id']
-                    }, 'edit_age_category_gizi', null, res.data.age_category);
                     let gender = <?= json_encode($visit['gender']); ?>;
                     let height = res.data.height ?? 0;
                     let weight = res.data.weight ?? 0;
                     let heightInMeters = height / 100 ?? 0;
                     let ageyear = res.data.ageyear ?? 0;
-                    let bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2) ?? 0;
+
+                    $('#edit_height_gizi').val(height)
+                    $('#edit_weight_gizi').val(weight)
+                    $('#edit_bbi_gizi').val(res?.data.weight_ideal)
+                    $('#edit_antropometri_gizi').val(res?.data.antropometri)
+
+                    let bmi = countBMI({
+                        height: height,
+                        weight: weight
+                    });
                     bmi = isNaN(bmi) ? 0 : bmi;
 
-                    let classification;
-
-                    if (bmi < 18.5) {
-                        classification = 'Underweight';
-                    } else if (bmi >= 18.5 && bmi < 25.0) {
-                        classification = 'Normal weight';
-                    } else if (bmi >= 25.0 && bmi < 30.0) {
-                        classification = 'Overweight';
-                    } else if (bmi >= 30.0 && bmi < 35.0) {
-                        classification = 'Obesity class 1';
-                    } else if (bmi >= 35.0 && bmi < 40.0) {
-                        classification = 'Obesity class 2';
-                    } else if (bmi >= 40.0) {
-                        classification = 'Obesity class 3';
-                    } else {
-                        classification = '-';
-                    }
-
+                    let classification = classificationBMI(bmi);
                     let vitalSign = `BB: ${weight}, TB: ${height}, BMI: ${bmi} (${classification})`;
+
+                    let bbi = 0;
 
 
                     $('#edit_energi_gizi').val(res.data.energi)
@@ -805,18 +913,104 @@
                     $('#edit_lemak_gizi').val(res.data.lemak)
                     $('#edit_examination_date_gizi').val(res.data.examination_date)
 
-                    $('#edit_antropometri_gizi').html(`
-                            <option value="anak" ${res.data.antropometri == 'anak' ? 'selected' : ''}>Anak</option>
-                            <option value="dewasa" ${res.data.antropometri == 'dewasa' ? 'selected' : ''}>Dewasa</option>`);
+                    const filteredItems = aParameter
+                        ?.filter(item => allowedTypes.includes(item?.p_type))
+                        .sort((a, b) => a.p_type.localeCompare(b.p_type) || a.parameter_id - b.parameter_id);
 
-                    updateAktivitasGiziVisibility($('#edit_antropometri_gizi').val(), energy, res.data.energi);
+                    let selectAge = '';
+                    let currentGroup = '';
 
-                    $('#edit_antropometri_gizi').change(function() {
-                        let selectedCategory = $(this).val();
-                        updateAktivitasGiziVisibility(selectedCategory, energy, res.data.energi);
+                    filteredItems.forEach(item => {
+                        if (item.p_type !== currentGroup) {
+                            if (currentGroup) selectAge += '</optgroup>';
+                            const groupIndex = allowedTypes.indexOf(item.p_type);
+                            const groupLabel = allowedNames[groupIndex];
+                            currentGroup = item.p_type;
+                            selectAge += `<optgroup label="${groupLabel.toLowerCase()}">`;
+                        }
+
+                        selectAge += `<option value="${item?.p_type}-${item.parameter_id}" ${item?.p_type + '-' + item.parameter_id === res?.data.p_type + '-' + res?.data.age_category ? 'selected' : ''}>${item.parameter_desc.toLowerCase()}</option>`;
+
                     });
 
+                    if (currentGroup) selectAge += '</optgroup>';
+                    $('#edit_gizi_age_category').html(selectAge);
 
+                    let factorActivity = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '01');
+                    let factorStress = aValue?.filter(item => item?.p_type === 'GIZ0611' && item.parameter_id === '02');
+
+                    function populateSelect(selectId, items, data = null) {
+                        const selectElement = $('#' + selectId);
+                        selectElement.innerHTML = '';
+
+                        if (!items || items.length === 0) {
+                            selectElement.innerHTML = '<option>No data available</option>';
+                        } else {
+
+                            let optionHtml = '';
+                            items.forEach(item => {
+                                optionHtml +=
+                                    `<option value="${item.value_id}" data-score="${(item.value_score / 100).toString()}" ${item?.value_id == data ? 'selected' :''}>
+                                        ${item.value_desc}
+                                    </option>`
+                            });
+                            selectElement.html(optionHtml);
+                        }
+                    }
+
+
+                    populateSelect('edit_factor_activity', factorActivity, res?.data.fa_value);
+                    populateSelect('edit_factor_stress', factorStress, res?.data.fs_value);
+
+
+                    $('#edit_gizi_age_category, #edit_height_gizi, #edit_weight_gizi').change(function(e) {
+                        bbi = countBBI({
+                            height: $('#edit_height_gizi').val(),
+                            weight: $('#edit_weight_gizi').val(),
+                            gender: gender,
+                            p_type: $('#edit_gizi_age_category').val(),
+                        })
+
+                        $('#edit_bbi_gizi').val(bbi);
+                    })
+
+                    let energy = 0;
+                    energy = countEnergy({
+                        height: $('#edit_height_gizi').val(),
+                        weight: $('#edit_weight_gizi').val(),
+                        bbi: $('#edit_bbi_gizi').val(),
+                        factor_activity: $('#edit_factor_activity option:selected').data('score'),
+                        factor_stress: $('#edit_factor_stress option:selected').data('score'),
+                        gender: gender,
+                        ageyear: ageyear,
+                        p_type: $('#edit_gizi_age_category').val(),
+                    })
+
+                    $('#edit_energi_gizi').val(energy);
+
+                    countNutrition({
+                        energy: $('#edit_energi_gizi').val(),
+                        p_type: $('#edit_gizi_age_category').val(),
+                    })
+
+                    $('#edit_gizi_age_category, #edit_height_gizi, #edit_weight_gizi, #edit_bbi_gizi, #edit_factor_activity, #edit_factor_stress').change(function(e) {
+                        energy = countEnergy({
+                            height: $('#edit_height_gizi').val(),
+                            weight: $('#edit_weight_gizi').val(),
+                            bbi: $('#edit_bbi_gizi').val(),
+                            factor_activity: $('#edit_factor_activity option:selected').data('score'),
+                            factor_stress: $('#edit_factor_stress option:selected').data('score'),
+                            gender: gender,
+                            ageyear: ageyear,
+                            p_type: $('#edit_gizi_age_category').val(),
+                        })
+
+                        $('#edit_energi_gizi').val(energy);
+                        countNutrition({
+                            energy: $('#edit_energi_gizi').val(),
+                            p_type: $('#edit_gizi_age_category').val(),
+                        })
+                    })
                 }
             });
 
@@ -829,7 +1023,6 @@
                 e.preventDefault();
                 getLoadingscreen("content-to-hide-gizi", "load-content-gizi")
 
-                let visit = <?= json_encode($visit) ?>;
                 renderGizi({
                     visit_id: visit['visit_id'],
                     no_registration: visit['no_registration']
@@ -942,7 +1135,8 @@
                 let formData = document.querySelector('#formHasilIntervensi');
                 let dataSend = new FormData(formData);
                 let intervention_description = dataSend.getAll('intervention_description[]');
-                console.log(intervention_description);
+
+
                 let jsonObj = {};
                 jsonObj.intervention_description = intervention_description
                 dataSend.forEach((value, key) => {
@@ -994,7 +1188,7 @@
             })
         }
 
-        const updateFoodRecall = () => {
+        const updateFoodRecall = (props) => {
             $('#editFoodRecall').off().click(function(e) {
                 let formData = document.querySelector('#formEditFoodRecall');
                 let dataSend = new FormData(formData);
@@ -1004,7 +1198,7 @@
                 dataSend.forEach((value, key) => {
                     jsonObj[key] = value;
                 });
-
+                jsonObj['document_id'] = props?.document_id
 
                 postData(jsonObj, 'admin/Gizi/editFoodRecall', (res) => {
 
@@ -1014,7 +1208,7 @@
                         $("#editFoodRecallModal").modal("hide")
                         renderFoodRecall({
                             visit_id: res?.result?.visit_id,
-                            document_id: id
+                            document_id: props?.document_id
                         })
                     } else {
                         errorSwal(res.message);
@@ -1059,6 +1253,26 @@
 
 
         // ====== function others ======
+        function classificationBMI(bmi) {
+            let classification = '';
+            if (bmi < 18.5) {
+                classification = 'Underweight';
+            } else if (bmi >= 18.5 && bmi < 25.0) {
+                classification = 'Normal weight';
+            } else if (bmi >= 25.0 && bmi < 30.0) {
+                classification = 'Overweight';
+            } else if (bmi >= 30.0 && bmi < 35.0) {
+                classification = 'Obesity class 1';
+            } else if (bmi >= 35.0 && bmi < 40.0) {
+                classification = 'Obesity class 2';
+            } else if (bmi >= 40.0) {
+                classification = 'Obesity class 3';
+            } else {
+                classification = '-';
+            }
+            return classification;
+        }
+
         function addRowDiagDokter(container, bodyId, diag_id = null, diag_name = null, diag_cat = null,
             diag_suffer =
             0) {
@@ -1129,27 +1343,7 @@
             }
         }
 
-        function updateAktivitasGiziVisibility(category, energy, currentEnergi) {
 
-            if (category == 'dewasa') {
-                $('#edit_container_aktivitas_gizi').show();
-                $('#edit_container_aktivitas_gizi').empty();
-                $('#edit_container_aktivitas_gizi').append(`
-                    <label for="edit_aktivitas_gizi" class="form-label fw-bold">Aktivitas</label>
-                    <select id="edit_aktivitas_gizi" class="form-select">
-                        <option value="1" ${(energy * 1).toFixed(2) == currentEnergi ? 'selected' : ''}> -- pilih --</option>
-                        <option value="1.2" ${(energy * 1.2).toFixed(2) == currentEnergi ? 'selected' : ''}>Sangat jarang berolahraga</option>
-                        <option value="1.375" ${(energy * 1.375).toFixed(2) == currentEnergi ? 'selected' : ''}>Jarang olahraga (1-3 kali per minggu)</option>
-                        <option value="1.55" ${(energy * 1.55).toFixed(2) == currentEnergi ? 'selected' : ''}>Cukup olahraga (3-5 kali per minggu)</option>
-                        <option value="1.725" ${(energy * 1.725).toFixed(2) == currentEnergi ? 'selected' : ''}>Sering olahraga (6-7 kali per minggu)</option>
-                        <option value="1.9" ${(energy * 1.9).toFixed(2) == currentEnergi ? 'selected' : ''}>Sangat sering olahraga (sekitar 2 kali dalam sehari)</option>
-                    </select>
-                `);
-            } else {
-                $('#edit_container_aktivitas_gizi').empty();
-                $('#edit_container_aktivitas_gizi').hide();
-            }
-        }
 
         const cetakGizi = (props) => {
             // Retrieve data from button attributes
@@ -1182,7 +1376,511 @@
             });
 
         }
+
+        const countBMI = (props) => {
+            return (props?.weight / ((props?.height / 100) ** 2)).toFixed(2) ?? 0;
+        }
+        const countBBI = (props) => {
+            let idealWeight = parseFloat(props?.height) - 100;
+            let [p_type, parameter_id] = props?.p_type.split('-');
+            let bbi = 0;
+            // check p_type
+
+            // GIZ0606 rumus (TB-100)*0.9
+            if (p_type == 'GIZ0606' && (parameter_id == '03' || parameter_id == '04')) bbi = idealWeight * 0.9
+            // GIZ0607 rumus (TB-100)
+            if (p_type == 'GIZ0607') bbi = idealWeight * 1
+            // GIZ0608 rumus (TB-100)*0.9
+            if (p_type == 'GIZ0608') bbi = idealWeight * 0.9
+            // GIZ0609 rumus pria ((TB DALAM METER)^2)*21 wanita ((TB DALAM METER)^2)*22.5 
+            if (p_type == 'GIZ0609' && props?.gender == '1') bbi = (parseFloat(props?.height / 100) ** 2) * 21
+            if (p_type == 'GIZ0609' && props?.gender != '1') bbi = (parseFloat(props?.height / 100) ** 2) * 22.5
+
+            return parseFloat(bbi).toFixed(2);
+        }
+
+        const BMIonChange = (props) => {
+            $(props?.height + ', ' + props?.weight).on('change', function() {
+                const height = parseFloat($(props?.height).val());
+                const weight = parseFloat($(props?.weight).val());
+
+                if (!isNaN(height) && !isNaN(weight)) {
+                    const bmi = countBMI({
+                        height,
+                        weight
+                    });
+
+                    $(props?.bmi).val(bmi);
+                }
+            });
+        };
+
+        const countEnergy = (props) => {
+            let [p_type, parameter_id] = props?.p_type.split('-');
+            let energy = 0;
+
+
+            if (p_type === 'GIZ0604') { // ANAK (0-1 TH) 
+                // BBI X 128 KKAL
+                if (parameter_id === '01') energy = parseFloat(props?.bbi) * 128;
+                // BBI X 98 KKAL
+                if (parameter_id === '02') energy = parseFloat(props?.bbi) * 98;
+
+
+            } else if (p_type === 'GIZ0605') { // ANAK 1-6 TAHUN 
+                // BBI X 102 KKAL
+                if (parameter_id === '01') energy = parseFloat(props?.bbi) * 102;
+                // BBI X 90 KKAL
+                if (parameter_id === '02') energy = parseFloat(props?.bbi) * 90;
+
+            } else if (p_type === 'GIZ0606') { // ANAK 7-18 TAHUN 
+
+                // ((19,59*BBI)+(1,3*TB)+414,9)*FA*FS  
+                if (parameter_id === '01') energy = parseFloat(props?.bbi) * 108;
+                //  ((16,97*BBI)+(1,62*TB)+371,2)*FA*FS
+                if (parameter_id === '02') energy = parseFloat(props?.bbi) * 90;
+                //  ((16,25*BBI)+(1,4*TB)+515,5)*FA*FS
+                if (parameter_id === '03') energy = (16.25 * parseFloat(props?.bbi) + (1.4 * parseFloat(props?.height)) + 515.5) * parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress);
+                //  ((8,4*BBI)+(4,65*TB)+200)*FA*FS
+                if (parameter_id === '04') energy = (8.4 * parseFloat(props?.bbi) + (4.65 * parseFloat(props?.height)) + 200) * parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress);
+
+            } else if (p_type === 'GIZ0607') { // IBU MELAHIRKAN DAN HAMIL 
+
+                // ((655+(9,6*BBI)+(1,8*TB)-(4,7*USIA))*1,2*1,3)+330
+                if (parameter_id === '01') energy = (655 + (9.6 * parseFloat(props?.bbi)) + (1.8 * parseFloat(props?.height)) - (4.7 * parseFloat(props?.ageyear)) * 1.2 * 1.3) + 330;
+                // ((655+(9,6*BBI)+(1,8*TB)-(4,7*USIA))*1,2*1,2)+180
+                if (parameter_id === '02') energy = (655 + (9.6 * parseFloat(props?.bbi)) + (1.8 * parseFloat(props?.height)) - (4.7 * parseFloat(props?.ageyear)) * 1.2 * 1.3) + 180;
+                // ((655+(9,6*BBI)+(1,8*TB)-(4,7*USIA))*1,2*1,2)+300
+                if (parameter_id === '03') energy = (655 + (9.6 * parseFloat(props?.bbi)) + (1.8 * parseFloat(props?.height)) - (4.7 * parseFloat(props?.ageyear)) * 1.2 * 1.3) + 300;
+
+            } else if (p_type === 'GIZ0608') { // DEWASA – LANSIA (DIIT BIASA, JANTUNG, GINJAL, RENDAH GARAM, STROKE, PPOK/ASMA (TANPA KOMPLIKASI DM) 
+
+                // ((655+(9,6*BBI )+(1,8*TB)-(4,7*USIA))*FA*FS)
+                if (props?.gender !== '01') energy = (655 + (9.6 * parseFloat(props?.bbi)) + (1.8 * parseFloat(props?.height)) - (4.7 * parseFloat(props?.ageyear)) * parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress))
+                // (66+(13,7*BBI)+(5*TB)-(6,8*USIA))*FA*FS)
+                if (props?.gender === '01') energy = (66 + (13.7 * parseFloat(props?.bbi)) + (5 * parseFloat(props?.height)) - (6.8 * parseFloat(props?.ageyear)) * parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress))
+
+            } else if (p_type === 'GIZ0609') { // DEWASA – LANSIA (DIIT BIASA, JANTUNG, GINJAL, RENDAH GARAM, STROKE, PPOK/ASMA (KOMPLIKASI DM) 
+
+                // (BBI*25)+(FAKTOR*BBI*25)
+                if (props?.gender !== '01') energy = (parseFloat(props?.bbi) * 25) + (parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress) * parseFloat(props?.bbi) * 25);
+                // (BBI*25)+(FAKTOR*BBI*30)
+                if (props?.gender === '01') energy = (parseFloat(props?.bbi) * 25) + (parseFloat(props?.factor_activity) * parseFloat(props?.factor_stress) * parseFloat(props?.bbi) * 30);
+
+            }
+
+
+            return parseFloat(energy).toFixed(2);
+        }
+
+        const countNutrition = (props) => {
+
+            let [p_type, parameter_id] = props?.p_type.split('-');
+
+            let khPercent = 0,
+                pPercent = 0,
+                lPercent = 0;
+
+            const energy = parseFloat(props?.energy) || 0;
+
+            if (p_type === 'GIZ0608' || p_type === 'GIZ0609') {
+
+                switch (parameter_id) {
+                    case '01':
+                    case '05':
+                        khPercent = 60;
+                        pPercent = 15;
+                        lPercent = 25;
+                        break; // KH: 60%, P: 15%, L: 25%
+                    case '02':
+                    case '06':
+                        khPercent = 60;
+                        pPercent = 20;
+                        lPercent = 20;
+                        break; // KH: 60%, P: 20%, L: 20%
+                    case '03':
+                    case '07':
+                        khPercent = 55;
+                        pPercent = 20;
+                        lPercent = 25;
+                        break; // KH: 55%, P: 20%, L: 25%
+                    case '04':
+                    case '08':
+                        khPercent = 65;
+                        pPercent = 10;
+                        lPercent = 25;
+                        break; // KH: 65%, P: 10%, L: 25%
+                }
+            } else {
+                khPercent = 65;
+                pPercent = 15;
+                lPercent = 20; // KH: 65%, P: 15%, L: 20%
+            }
+
+
+            const kh = ((khPercent * energy) / 100) / 4;
+            const p = ((pPercent * energy) / 100) / 4;
+            const l = ((lPercent * energy) / 100) / 9;
+
+
+            $('#karbohidrat_gizi').val(kh.toFixed(2));
+            $('#protein_gizi').val(p.toFixed(2));
+            $('#lemak_gizi').val(l.toFixed(2));
+        }
         // ====== end of function others ======
 
+
+
+
+
+
+
+        // ======= SCRIPT SCREENING GIZI =======
+
+
+        $('#tambah-skrining-gizi').off().on('click', function(e) {
+
+            let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
+            let now = moment();
+
+
+            let bmi = countBMI({
+                weight: exam_info['weight'],
+                height: exam_info['height']
+            });
+            $('#height_screening').val(exam_info['height'])
+            $('#weight_screening').val(exam_info['weight'])
+            $('#imt_screening').val(isNaN(bmi) ? 0 : bmi)
+
+            BMIonChange({
+                height: '#height_screening',
+                weight: '#weight_screening',
+                bmi: '#imt_screening',
+            })
+
+            let daysDiff = now.diff(birth, 'days');
+            getAge({
+                visit: visit['visit_id'],
+            }, 'age_category_screening', daysDiff);
+
+            $('#select_skrining_gizi').change(function(e) {
+                getFormScreening({
+                    selectedOption: $(this).val(),
+                    container: '#tbodySkriningGizi',
+                });
+            })
+
+
+            insertDataScreening();
+        })
+
+
+        const getDataScreening = () => {
+            postData({
+                visit_id: visit['visit_id'],
+                no_registration: visit['no_registration']
+            }, 'admin/Gizi/getDataSkrining', (res) => {
+                if (res.respon) {
+                    if (res?.data.length > 0) {
+                        const table = $('#table_skrining_gizi').DataTable({
+                            dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                            stateSave: true,
+                            "bDestroy": true
+                        });
+                        table.clear();
+                        let dataHtml = '';
+                        res?.data.forEach((element, index) => {
+
+                            dataHtml = `
+                                <tr class="p-0">
+                                    <th style="width:1% !important;" class="text-center p-1">${index+1}</th>
+                                    <th class="text-center p-1">Formulir Skrining - ${moment(element?.examination_date).format('YYYY-MM-DD HH:mm:ss')}</th>
+                                    <th style="width:1% !important;" class="text-center p-1">
+                                        <button class="btn btn-sm btn-success btn-skrining-cetak" data-id="${element.body_id}"><i class="fas fa-print"></i></button>
+                                    </th>
+                                    <th style="width:1% !important;" class="text-center p-1">
+                                        <button class="btn btn-sm btn-warning btn-skrining-edit" data-id="${element.body_id}"><i class="fas fa-edit"></i></button>
+                                    </th>
+                                    <th style="width:1% !important;" class="text-center p-1">
+                                        <button class="btn btn-sm btn-danger btn-skrining-delete" data-id="${element.body_id}"><i class="fas fa-trash-alt"></i></button>
+                                    </th>
+                                </tr>
+                            `;
+                            table.row.add($(dataHtml));
+                        })
+                        table.draw();
+
+                        $('.btn-skrining-edit').off().on('click', function(event) {
+                            const id = $(this).data('id');
+
+                            postData({
+                                visit_id: visit['visit_id'],
+                                no_registration: visit['no_registration'],
+                                body_id: id,
+                            }, 'admin/Gizi/getSkriningById', (res) => {
+                                if (res.respon) {
+                                    $('#edit_height_screening').val(res.data.height ?? 0)
+                                    $('#edit_weight_screening').val(res.data.weight ?? 0)
+                                    $('#edit_imt_screening').val(res.data.imt)
+
+                                    BMIonChange({
+                                        height: '#edit_height_screening',
+                                        weight: '#edit_weight_screening',
+                                        bmi: '#edit_imt_screening',
+                                    })
+
+                                    let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
+                                    let now = moment();
+
+                                    let daysDiff = now.diff(birth, 'days');
+                                    getAge({
+                                        visit: visit['visit_id'],
+                                    }, 'edit_age_category_screening', daysDiff, res.data.age_cat);
+
+                                    $('#edit_select_skrining_gizi').val(res?.data.p_type);
+                                    $('#body_id-edit-skrining').val(res?.data.body_id);
+
+                                    $('#edit-modal-skrining').modal('show')
+
+
+                                    getFormScreening({
+                                        selectedOption: res?.data.p_type,
+                                        container: '#edit_tbodySkriningGizi',
+                                        data: res?.data
+                                    });
+
+                                    $('#edit_select_skrining_gizi').change(function(e) {
+                                        getFormScreening({
+                                            selectedOption: $(this).val(),
+                                            container: '#edit_tbodySkriningGizi',
+                                            data: res?.data
+                                        });
+                                    })
+
+                                    $('#btnUpdateSkrining').off().on('click', function(e) {
+                                        let formData = document.querySelector('#edit_formSkriningGizi');
+                                        let dataSend = new FormData(formData);
+                                        let jsonObj = {};
+
+                                        dataSend.forEach((value, key) => {
+                                            jsonObj[key] = value;
+                                        });
+
+                                        postData(jsonObj, 'admin/Gizi/UpdateSkrining', (res) => {
+                                            if (res.respon) {
+                                                successSwal(res.message)
+                                                $('#create-modal-skrining').modal('hide')
+                                                getDataScreening();
+                                            } else {
+                                                errorSwal(res.message)
+                                                $('#create-modal-skrining').modal('hide')
+                                            }
+                                        });
+                                    })
+
+                                }
+                            });
+                        });
+
+                        deleteScreening();
+                        actionCetakScreening();
+
+                    } else {
+                        dataHtml =
+                            `
+                        <tr>
+                            <td class="text-center" colspan="5">Data tidak tersedia</td>
+                        </tr>
+                        `;
+                        container.html(dataHtml);
+                    }
+
+                }
+            });
+
+        }
+        const insertDataScreening = () => {
+            $('#btnSaveSkrining').off().on('click', function(e) {
+
+                let formData = document.querySelector('#formSkriningGizi');
+                let dataSend = new FormData(formData);
+                let jsonObj = {};
+
+                dataSend.forEach((value, key) => {
+                    jsonObj[key] = value;
+                });
+
+                postData(jsonObj, 'admin/Gizi/insertSkrining', (res) => {
+                    if (res.respon) {
+                        successSwal(res.message)
+                        $('#create-modal-skrining').modal('hide')
+                        getDataScreening();
+                    } else {
+                        errorSwal(res.message)
+                        $('#create-modal-skrining').modal('hide')
+                    }
+                });
+            })
+        }
+        const deleteScreening = () => {
+            $('.btn-skrining-delete').off().on('click', function(event) {
+                const id = $(this).data('id');
+
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: "btn btn-success ms-2",
+                        cancelButton: "btn btn-danger"
+                    },
+                    buttonsStyling: false
+                });
+
+                swalWithBootstrapButtons.fire({
+                    title: "Apa anda yakin?",
+                    text: "Anda tidak akan dapat mengembalikannya!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal!",
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        postData({
+                            body_id: id
+                        }, 'admin/Gizi/delete', (res) => {
+
+                            if (res.respon) {
+                                successSwal(res.message)
+                                getDataScreening();
+                            } else {
+                                errorSwal(res.message)
+                            }
+
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        swalWithBootstrapButtons.fire({
+                            title: "Dibatalkan",
+                            text: "File Anda aman :)",
+                            icon: "error"
+                        });
+                    }
+                });
+            })
+        }
+        const actionCetakScreening = () => {
+            $('.btn-skrining-cetak').off().on('click', function(event) {
+                const id = $(this).data('id');
+                cetakSkriningGizi({
+                    body_id: id
+                })
+            })
+        }
+        const getFormScreening = (props) => {
+
+            let selectedCategory = props?.selectedOption;
+            let filteredData = aParameter?.filter(item => item?.p_type === selectedCategory);
+            let data = props?.data ?? null;
+            let bodyContainer = $(props?.container);
+            let htmlContent = '';
+            filteredData.forEach((parameter, index) => {
+                let inputOrSelect = '';
+                let arr = aValue.filter(item => item?.parameter_id === parameter.parameter_id && item?.p_type === selectedCategory);
+                if (data != null) {
+                    inputOrSelect = parameter?.entry_type === 3 ?
+                        `<select class="form-select" name="${parameter?.column_name}">
+                                ${arr.map(item => {
+
+                                    let isSelected = data[parameter?.column_name.toLowerCase()] === item.value_score && data.p_type === selectedCategory ? 'selected' : '';
+                                    return `<option value="${item.value_score}" ${isSelected}>${item.value_desc}</option>`;
+                                }).join('')}
+                            </select>` :
+
+                        `<input type="text" class="form-control" name="${parameter?.column_name.toLowerCase()}" value="${data.p_type === selectedCategory ? data[parameter?.column_name.toLowerCase()] : ''}">`;
+
+                } else {
+                    inputOrSelect = parameter?.entry_type === 3 ?
+                        `<select class="form-select" name="${parameter?.column_name}">
+                            ${arr.map(item => `<option value="${item.value_score}">${item.value_desc}</option>`).join('')}
+                                </select>` :
+                        `<input type="text" class="form-control" name="${parameter?.column_name}">`;
+                }
+
+
+                htmlContent += `
+                        <tr>
+                            <th class="p-1 text-center align-middle" style="width:1% !important">${index + 1}</th>
+                            <td class="p-1">${parameter?.parameter_desc}</td>
+                            <td class="p-1" style="width:120px !important;">
+                                ${inputOrSelect}
+                            </td>
+                        </tr>
+                        `;
+            });
+
+
+
+            bodyContainer.html(htmlContent)
+        }
+        const cetakSkriningGizi = (props) => {
+
+            var visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+            var idEncoded = props.body_id;
+
+
+            var url = '<?= base_url() . '/admin/cetak/skrining_gizi/'; ?>' + visitEncoded + '/' +
+                idEncoded;
+
+
+            window.open(url, '_blank');
+        }
+
+
+        function initializeReceipe(theid, modalParent, data = null) {
+            let initialvalue = data?.meal_name;
+            postData({
+
+            }, 'admin/Gizi/getRecipes', (result) => {
+                $("#" + theid).select2({
+                    theme: "bootstrap-5",
+                    tags: true,
+                    dropdownParent: '#' + modalParent,
+                    placeholder: "Pilih pola makan",
+                    allowClear: true,
+                    data: result?.data
+                });
+
+                if (initialvalue != null) {
+                    let selectedId = result.data.find(item => item.text.toLowerCase() === initialvalue.toLowerCase())?.id;
+                    $("#" + theid).val(selectedId).trigger('change');
+                }
+                $('#' + theid).off().change(function(e) {
+                    if ($(this).val() != null) {
+                        postData({
+                            recipe_id: $(this).val(),
+                        }, 'admin/Gizi/getIngredient', (res) => {
+                            if (initialvalue != null) {
+                                let selectedOption = result.data.find(item => item.text.toLowerCase() === initialvalue.toLowerCase())?.id;
+
+                                if (selectedOption.toLowerCase() != $("#" + theid).val().toLowerCase()) {
+                                    $('#nama_bahan_edit_food_recall').val(res?.data.nama_bahan)
+                                    $('#urt_bahan_edit_food_recall').val(res?.data.urt_bahan)
+                                    $('#gramasi_bahan_edit_food_recall').val(res?.data.gramasi)
+                                } else {
+                                    $('#nama_bahan_edit_food_recall').val(data.ingredient_name);
+                                    $('#urt_bahan_edit_food_recall').val(data.ingredient_urt);
+                                    $('#gramasi_bahan_edit_food_recall').val(data.ingredient_grams);
+                                }
+
+                            } else {
+                                $('#nama_bahan_food_recall').val(res?.data.nama_bahan)
+                                $('#urt_bahan_food_recall').val(res?.data.urt_bahan)
+                                $('#gramasi_bahan_food_recall').val(res?.data.gramasi)
+                            }
+
+                        });
+                    }
+                })
+            });
+
+        }
     })()
 </script>

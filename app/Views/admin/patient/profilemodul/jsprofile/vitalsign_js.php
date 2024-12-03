@@ -1,9 +1,4 @@
 <script type='text/javascript'>
-    var mrJson;
-    var lastOrder = 0;
-    var vitalsign = <?= json_encode($exam); ?>;
-
-
     $("#vitalsignTab").on("click", function() {
         getVitalSign()
     })
@@ -34,20 +29,15 @@
     })
 
 
-    function setDataVitalSign() {
+    const setDataVitalSign = () => {
         $("#formvitalsign").find("input, textarea").val(null)
         $("#formvitalsign").find("#avttotal_score").html("")
         $("#formvitalsign").find("span.h6").html("")
-        var initialexam = examForassessment[examForassessment.length - 1]
+        var initialexam = vitalsign[vitalsign.length - 1]
         $.each(initialexam, function(key, value) {
             $("#avt" + key).val(value)
         })
-        var bodyId = ''
-
-        const date = new Date();
-        bodyId = date.toISOString().substring(0, 23);
-        bodyId = bodyId.replaceAll("-", "").replaceAll(":", "").replaceAll(".", "").replaceAll("T", "");
-        $("#avtbody_id").val(bodyId)
+        $("#avtbody_id").val(get_bodyid())
         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
         $("#avttrans_id").val('<?= $visit['trans_id']; ?>')
         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
@@ -89,7 +79,7 @@
         $("#vitalSignDocument").slideDown()
     }
 
-    function addRowVitalSign(examselect, key) {
+    const addRowVitalSign = (examselect, key) => {
         $("#vitalSignBody").append($("<tr>")
                 .append($("<td rowspan='2'>").append(formatedDatetimeFlat(examselect.examination_date)))
                 .append($("<td rowspan='2'>").html(examselect.petugas))
@@ -133,167 +123,9 @@
         // )
     }
 
-    // function vitalsignInput(prop) {
-    //     var value = prop.value.trim();
-    //     var name = 'avt' + prop.name; //=new
-    //     var data;
-    //     var totalScore = [];
-
-    //     if (isNaN(value) || value === "") {
-    //         value = 0;
-    //     } else {
-    //         value = parseFloat(value);
-    //     }
-
-    //     let scoreFunction;
-    //     if (prop.type == 1) {
-    //         scoreFunction = getAdultScore;
-    //     } else if (prop.type == 5) {
-    //         scoreFunction = getNeonatalScore;
-    //     } else if (prop.type == 10) {
-    //         scoreFunction = getObsetricScore;
-    //     } else {
-    //         scoreFunction = getAdultScore;
-    //     }
-
-    //     switch (name) {
-    //         case "avtnadi":
-    //             data = scoreFunction('nadi', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avttemperature":
-    //             data = scoreFunction('suhu', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avtsaturasi":
-    //             data = scoreFunction('saturasi', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avtnafas":
-    //             data = scoreFunction('pernapasan', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avtoxygen_usage":
-    //             data = scoreFunction('oksigen', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avtweight":
-    //             if (value > 300) {
-    //                 value = 300.00;
-    //             } else {
-    //                 value = value.toFixed(2);
-    //             }
-    //             break;
-    //         case "avttension_upper":
-    //             if (value < 50) {
-    //                 value = 50.00;
-    //             } else if (value > 250) {
-    //                 value = 250.00;
-    //             }
-    //             data = scoreFunction('darah', value);
-    //             setBadge(name, 'badge-' + name, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "avtheight":
-    //             if (value > 250) {
-    //                 value = 250;
-    //             }
-    //             break;
-    //         case "avttension_below":
-    //             if (value < 0) {
-    //                 value = 0.00;
-    //             } else if (value > 300) {
-    //                 value = 300.00;
-    //             }
-    //             break;
-    //         default:
-    //             break;
-    //     }
-
-    //     prop.value = value;
-
-    //     document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
-    // }
-
-    // function vitalsignInput(prop) {
-    //     var value = prop.value.trim();
-    //     var id = prop.id
-    //     var name = prop.name; //=new
-    //     var data;
-    //     var totalScore = [];
-
-    //     if (isNaN(value) || value === "") {
-    //         value = 0;
-    //     } else {
-    //         value = parseFloat(value);
-    //     }
-
-    //     let scoreFunction;
-    //     if (prop.type == 1) {
-    //         scoreFunction = getAdultScore;
-    //     } else {
-    //         scoreFunction = getNeonatalScore;
-    //     }
-    //     switch (name) {
-    //         case "nadi":
-    //             data = scoreFunction('nadi', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "temperature":
-    //             data = scoreFunction('suhu', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "saturasi":
-    //             data = scoreFunction('saturasi', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "nafas":
-    //             data = scoreFunction('pernapasan', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "oxygen_usage":
-    //             data = scoreFunction('oksigen', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "weight":
-    //             if (value > 300) {
-    //                 value = 300.00;
-    //             } else {
-    //                 value = value.toFixed(2);
-    //             }
-    //             break;
-    //         case "tension_upper":
-    //             if (value < 50) {
-    //                 value = 50.00;
-    //             } else if (value > 250) {
-    //                 value = 250.00;
-    //             }
-    //             data = scoreFunction('darah', value);
-    //             setBadge(id, 'badge-' + id, 'bg-' + data.color, data.score);
-    //             break;
-    //         case "height":
-    //             if (value > 250) {
-    //                 value = 250;
-    //             }
-    //             break;
-    //         case "tension_below":
-    //             if (value < 0) {
-    //                 value = 0.00;
-    //             } else if (value > 300) {
-    //                 value = 300.00;
-    //             }
-    //             break;
-    //         default:
-    //             break;
-    //     }
-
-    //     prop.value = value;
-
-    //     document.getElementById('total_score').textContent = 'Total Skor: ' + sumTextContentFromClass('badge-score');
-    // }
 
 
-
-    function disableVitalSign() {
+    const disableVitalSign = () => {
         $("#avtexamination_date").prop("disabled", true)
         $("#avtpetugas").prop("disabled", true)
         $("#avtweight").prop("disabled", true)
@@ -337,7 +169,7 @@
         $("#formvitalsignedit").show()
     }
 
-    function enableVitalSign() {
+    const enableVitalSign = () => {
         $("#avtexamination_date").prop("disabled", false)
         $("#avtpetugas").prop("disabled", false)
         $("#avtweight").prop("disabled", false)
@@ -385,115 +217,13 @@
 
     var i = 0
 
-    // for (let index = vitalsign.length; index >= 0; index--) {
-    //     vitalsigndesc.push(vitalsign[index]);
-    // }
-    // console.log(vitalsigndesc)
-    // vitalsign = vitalsigndesc
 
-
-
-    // vitalsign.forEach((element, key) => {
-    //     examselect = vitalsign[key];
-
-    //     if (examselect.visit_id == '<?= $visit['visit_id']; ?>') {
-
-    //         disableVitalSign()
-    //         $("#formvitalsignsubmit").hide()
-    //         $("#formvitalsignedit").show()
-
-    //         $("#avtclinic_id").val(examselect.clinic_id)
-    //         $("#avtclass_room_id").val(examselect.class_room_id)
-    //         $("#avtbed_id").val(examselect.bed_id)
-    //         $("#avtkeluar_id").val(examselect.keluar_id)
-    //         $("#avtemployee_id").val(examselect.employee_id)
-    //         $("#avtno_registration").val(examselect.no_registration)
-    //         $("#avtvisit_id").val(examselect.visit_id)
-    //         $("#avtorg_unit_code").val(examselect.org_unit_code)
-    //         $("#avtdoctor").val(examselect.fullname)
-    //         $("#avtkal_id").val(examselect.kal_id)
-    //         $("#avttheid").val(examselect.pasien_id)
-    //         $("#avtthename").val(examselect.diantar_oleh)
-    //         $("#avttheaddress").val(examselect.visitor_address)
-    //         $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
-    //         $("#avtisrj").val(examselect.isrj)
-    //         $("#avtgender").val(examselect.gender)
-    //         $("#avtageyear").val(examselect.ageyear)
-    //         $("#avtagemonth").val(examselect.agemonth)
-    //         $("#avtageday").val(examselect.ageday)
-    //         $("#avtbody_id").val(examselect.body_id)
-
-    //         $("#flatavtexamination_date").val(formatedDatetimeFlat(examselect.examination_date)).trigger("change")
-    //         $("#avtpetugas").val(examselect.petugas)
-    //         $("#avtweight").val(examselect.weight)
-    //         $("#avtheight").val(examselect.height)
-    //         $("#avttemperature").val(examselect.temperature)
-    //         $("#avtnadi").val(examselect.nadi)
-    //         $("#avttension_upper").val(examselect.tension_upper)
-    //         $("#avttension_below").val(examselect.tension_below)
-    //         $("#avtsaturasi").val(examselect.saturasi)
-    //         $("#avtnafas").val(examselect.nafas)
-    //         $("#avtarm_diameter").val(examselect.arm_diameter)
-    //         $("#avtanamnase").val(examselect.anamnase)
-    //         $("#avtoxygen_usage").val(examselect.oxygen_usage)
-    //         $("#avtvs_status_id").val(examselect.vs_status_id)
-    //         $("#avtpemeriksaan").val(examselect.pemeriksaan)
-    //         $("#avtteraphy_desc").val(examselect.teraphy_desc)
-    //         $("#avtdescription").val(examselect.description)
-    //         $("#avtclinic_id").val(examselect.clinic_id)
-    //         $("#avttrans_id").val(examselect.trans_id) //==new
-    //         $("#avtclass_room_id").val(examselect.class_room_id)
-    //         $("#avtbed_id").val(examselect.bed_id)
-    //         $("#avtkeluar_id").val(examselect.keluar_id)
-    //         $("#avtemployee_id").val(examselect.employee_id)
-    //         $("#avtno_registraiton").val(examselect.no_registraiton)
-    //         $("#avtvisit_id").val(examselect.visit_id)
-    //         $("#avtorg_unit_code").val(examselect.org_unit_code)
-    //         $("#avtdoctor").val(examselect.doctor)
-    //         $("#avtkal_id").val(examselect.kal_id)
-    //         $("#avttheid").val(examselect.theid)
-    //         $("#avtthename").val(examselect.thename)
-    //         $("#avttheaddress").val(examselect.theaddress)
-    //         $("#avtstatus_pasien_id").val(examselect.status_pasien_id)
-    //         $("#avtisrj").val(examselect.isrj)
-    //         $("#avtgender").val(examselect.gender)
-    //         $("#avtageyear").val(examselect.ageyear)
-    //         $("#avtagemonth").val(examselect.agemonth)
-    //         $("#avtageday").val(examselect.ageday)
-    //         $("#avtinstruction").val(examselect.instruction)
-    //     }
-
-    //     if (typeof $("#avtbody_id").val() !== 'undefined' || $("#avtbody_id").val() == "") {
-    //         $("#avtclinic_id").val('<?= $visit['clinic_id']; ?>')
-    //         $("#avttrans_id").val('<?= $visit['trans_id']; ?>') //==new
-    //         $("#avtclass_room_id").val('<?= $visit['class_room_id']; ?>')
-    //         $("#avtbed_id").val()
-    //         $("#avtkeluar_id").val('<?= $visit['keluar_id']; ?>')
-    //         $("#avtemployee_id").val('<?= $visit['employee_id']; ?>')
-    //         $("#avtno_registration").val('<?= $visit['no_registration']; ?>')
-    //         $("#avtvisit_id").val('<?= $visit['visit_id']; ?>')
-    //         $("#avtorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
-    //         $("#avtdoctor").val('<?= $visit['fullname']; ?>')
-    //         $("#avtkal_id").val('<?= $visit['kal_id']; ?>')
-    //         $("#avttheid").val('<?= $visit['pasien_id']; ?>')
-    //         $("#avtthename").val('<?= $visit['diantar_oleh']; ?>')
-    //         $("#avttheaddress").val('<?= $visit['visitor_address']; ?>')
-    //         $("#avtstatus_pasien_id").val('<?= $visit['status_pasien_id']; ?>')
-    //         $("#avtisrj").val('<?= $visit['isrj']; ?>')
-    //         $("#avtgender").val('<?= $visit['gender']; ?>')
-    //         $("#avtageyear").val('<?= $visit['ageyear']; ?>')
-    //         $("#avtagemonth").val('<?= $visit['agemonth']; ?>')
-    //         $("#avtageday").val('<?= $visit['ageday']; ?>')
-
-
-    //     }
-    // });
     $("#formvitalsign").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         clicked_submit_btn.html('<i class="spinner-border spinner-border-sm"></i>')
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/Assessment/saveExaminationInfo', //==new
+            url: '<?php echo base_url(); ?>admin/rm/Assessment/saveVitalSign', //==new
             type: "POST",
             data: new FormData(this),
             dataType: 'json',
@@ -532,14 +262,17 @@
         });
     }));
 
-    function getVitalSign() {
+    const getVitalSign = () => {
         $("#vitalSignDocument").slideUp()
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/getAssessmentKeperawatan',
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getVitalSign',
             type: "POST",
             data: JSON.stringify({
-                'visit_id': visit,
-                'nomor': nomor
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'trans_id': '<?= $visit['trans_id']; ?>',
+                'nomor': '<?= $visit['no_registration']; ?>',
+                'isrj': '<?= $visit['isrj']; ?>',
+                'norujukan': '<?= $visit['norujukan']; ?>',
             }),
             dataType: 'json',
             contentType: false,
@@ -569,7 +302,7 @@
 </script>
 
 <script>
-    function copyVitalSign(key) {
+    const copyVitalSign = (key) => {
         var examselect = vitalsign[key];
 
         var bodyId = ''
@@ -690,11 +423,11 @@
         // $("#formeditavtid").hide()
     }
 
-    function editCpptVitalSign(key) {
+    const editCpptVitalSign = (key) => {
         var examselect = vitalsign[key];
 
         $.each(examselect, function(key, value) {
-            $("#avt" + key).val(value).trigger("change")
+            $("#avt" + key).val(value)
         })
         // $("#avtvs_status_id" + examselect.vs_status_id).prop("checked", true)
         // $("#cpptModal").modal("show")
@@ -703,8 +436,8 @@
         $("#formeditavtid").hide()
         $("#vitalSignDocument").slideDown()
         enableVitalSign()
-        getFallRisk(examselect.body_id, "bodyFallRiskCppt")
-        getGcs(examselect.body_id, "bodyGcsCppt")
+        // getFallRisk(examselect.body_id, "bodyFallRiskCppt")
+        // getGcs(examselect.body_id, "bodyGcsCppt")
         if (examselect.petugas == '<?= user()->getFullname(); ?>') {
             // alert("Tidak dapat meengubah inputan CPPT milik dokter/petugas lain")
         } else {
@@ -748,7 +481,7 @@
         }
     }
 
-    function displayTableAssessmentKeperawatanForVitalSign() {
+    const displayTableAssessmentKeperawatanForVitalSign = () => {
         $("#copyListVitalSignModal").html("")
         $.each(examForassessment, function(key, value) {
             var pd = examForassessment[key]

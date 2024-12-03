@@ -49,6 +49,12 @@ $routes->group('antrian', function ($routes) {
     $routes->get('ip', 'admin\Antrian::getDataIp');
     $routes->post('updateStatus', 'admin\Antrian::updateStatusPanggilan');
 });
+$routes->group('pendaftaran', function ($routes) {
+    $routes->get('/', 'admin\Antrian::pendaftaranDisplay', ['as' => 'pendaftaran']);
+    $routes->get('getData', 'admin\Antrian::getDataPendaftaranDisplay');
+    $routes->post('updateStatus', 'admin\Antrian::updateStatusPendaftaranPanggilan');
+});
+
 $routes->group("api/antrianbpjs", ['filter' => 'login'], function ($routes) {
     $routes->post("tambahAntrean", "AntrianBpjs::tambahAntrean");
     $routes->post("deleteAntrean", "AntrianBpjs::deleteAntrean");

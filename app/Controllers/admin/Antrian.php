@@ -217,18 +217,33 @@ class Antrian extends \App\Controllers\BaseController
 
     public function getDataIp()
     {
-        $ip_address = $this->request->getIPAddress();
         $db = db_connect();
+
         $hostname = gethostname();
         $ipAddress = gethostbyname($hostname);
         $localIp = $ipAddress;
 
+        $ip = $this->request->getIPAddress();
+
+        $ip_address2 = $this->request->getServer('HTTP_CLIENT_IP')
+            ?? $this->request->getServer('HTTP_X_FORWARDED_FOR');
+
+        $system32Path = getenv('WINDIR') . '\\System32';
+        $ipConfigCommand = $system32Path . '\\ipconfig';
+
+        $ipconfigOutput = shell_exec($ipConfigCommand);
+        $localIPs = $this->parseLocalIPs($ipconfigOutput);
+
+        $localIPs = $localIPs ? $localIPs[0] : [];
+
+
+
         $getData = $this->lowerKey($db->query("SELECT * from ANTRIAN_DISPLAY ORDER BY display_id ASC")->getResultArray());
+
         $videoDir = FCPATH . 'assets/vidio/';
         $videoFiles = [];
         if (is_dir($videoDir)) {
             $files = scandir($videoDir);
-
             foreach ($files as $file) {
                 if (pathinfo($file, PATHINFO_EXTENSION) === 'mp4') {
                     $videoFiles[] = $file;
@@ -236,7 +251,14 @@ class Antrian extends \App\Controllers\BaseController
             }
         }
 
-        $result = ['data' => $getData, 'vidio' => $videoFiles, 'ip' => $localIp, 'ipanyar' => $ip_address];
+        $result = [
+            'data' => $getData,
+            'vidio' => $videoFiles,
+            'ip' => $localIp,
+            'baru' => $ip,
+            'ip_i' => $ip_address2,
+            'all_local_ips' => $localIPs // Tambahkan IP lokal ke hasil
+        ];
 
         if (empty($result)) {
             return $this->response->setJSON([
@@ -250,6 +272,23 @@ class Antrian extends \App\Controllers\BaseController
                 'value' => $result
             ]);
         }
+    }
+
+    private function parseLocalIPs($ipconfigOutput)
+    {
+        $lines = explode("\n", $ipconfigOutput);
+        $localIPs = [];
+
+        foreach ($lines as $line) {
+            if (strpos($line, 'IPv4 Address') !== false) {
+                $parts = explode(':', $line);
+                if (isset($parts[1])) {
+                    $localIPs[] = trim($parts[1]);
+                }
+            }
+        }
+
+        return $localIPs;
     }
 
     public function updateStatusPanggilan()
@@ -287,6 +326,99 @@ class Antrian extends \App\Controllers\BaseController
 
         $builder->where('visit_id', $requestData->visit_id)
             ->where('id', $requestData->id);
+
+        // var_dump("hasil",$builder);
+
+
+
+        $success = $builder->update();
+
+        if ($success) {
+            return $this->response->setJSON([
+                'message' => 'Update successful',
+                'respon' => true
+            ])->setStatusCode(200);
+        } else {
+            return $this->response->setJSON([
+                'message' => 'Update failed',
+                'respon' => false
+            ])->setStatusCode(500);
+        }
+    }
+
+    public function pendaftaranDisplay()
+    {
+        return view('antrian/pendaftaran');
+    }
+
+    public function getDataPendaftaranDisplay()
+    {
+        $db = db_connect();
+        $data = $this->lowerKey($db->query("SELECT *from antrian_pendaftaran
+                                        where  convert(date,tanggal_daftar) = convert(date,getdate())
+                                        and status_panggil = 1 order by tanggal_panggil ASC")->getResultArray());
+
+        $display = $this->lowerKey($db->query("SELECT right(display_room,1) as loket , right(cast(1000 + isnull(max(no_urut),0) as varchar(4)),3) as no_antrian
+                                                from   ANTRIAN_DISPLAY ad left outer join antrian_pendaftaran ap  on 
+                                                ap.loket = right(display_room,1)  
+                                                and convert(date, tanggal_daftar) = convert(date,getdate())
+                                                and status_panggil = 2
+                                                where  
+                                                ad.DISPLAY_ROOM  like 'loket pendaftaran%'
+                                                group by right(display_room,1)")->getResultArray());
+
+
+        $data = [
+            'data' => $data,
+            'display' => $display
+        ];
+        if (empty($data)) {
+            return $this->response->setJSON([
+                'message' => 'Data Kosong',
+                'respon' => false
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'message' => 'Success',
+                'respon' => true,
+                'value' => $data
+            ]);
+        }
+    }
+
+
+    public function updateStatusPendaftaranPanggilan()
+    {
+
+        $db = db_connect();
+        $request = service('request');
+        $requestData = $request->getJSON();
+
+        if (!isset($requestData->id)) {
+            return $this->response->setJSON([
+                'message' => 'Data visit_id atau id tidak lengkap',
+                'respon' => false
+            ])->setStatusCode(400);
+        }
+
+        $builder = $db->table('antrian_pendaftaran');
+        $existingRecord = $builder->where('id', $requestData->id)
+            ->get()
+            ->getRow();
+
+
+        if (!$existingRecord) {
+            return $this->response->setJSON([
+                'message' => 'Data tidak ditemukan atau sudah digunakan IP lain',
+                'respon' => false
+            ])->setStatusCode(404);
+        }
+
+        $builder->set([
+            'status_panggil' => 2,
+        ]);
+
+        $builder->where('id', $requestData->id);
 
         // var_dump("hasil",$builder);
 

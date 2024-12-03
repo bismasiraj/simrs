@@ -78,7 +78,8 @@ class PasienVisitationModel extends Model
         'isrj',
         'backcharge',
         'ssencounter_id',
-        'statusantrean'
+        'statusantrean',
+        'employee_inap'
     ];
 
     // Dates
@@ -206,7 +207,7 @@ class PasienVisitationModel extends Model
                     MONTH(VISIT_DATE),
                     DAY(visit_date),
                     c.NAME_OF_CLINIC')
-                ->select('top(50) count(visit_id) as JML,
+                ->select('top(200) count(visit_id) as JML,
                     YEAR(VISIT_DATE) as YEAR,
                     RIGHT(MONTH(VISIT_DATE)+100, 2) MONTH,
                     RIGHT(DAY(VISIT_DATE)+100, 2) DAY,
@@ -223,7 +224,7 @@ class PasienVisitationModel extends Model
 
             $db = db_connect('default');
             $builder = $db->table('pv');
-            $builder = $builder->select("top(100) CASE PV.NO_REGISTRATION WHEN '000000'THEN PV.DIANTAR_OLEH ELSE PV.NAME_OF_PASIEN END AS NAME_OF_PASIEN,   
+            $builder = $builder->select("CASE PV.NO_REGISTRATION WHEN '000000'THEN PV.DIANTAR_OLEH ELSE PV.NAME_OF_PASIEN END AS NAME_OF_PASIEN,   
             PV.NO_REGISTRATION,    
             PV.ORG_UNIT_CODE,
             pV.DATE_OF_BIRTH AS date_of_birth, 
@@ -316,12 +317,7 @@ class PasienVisitationModel extends Model
             pv.responpost_vklaim,
             pv.asalrujukan,
             pv.kdpoli_eks,
-              pv.diagnosa,
-              ap.status_panggil,
-              cough+hemoptisis+weight_loss+hiperhidrosis+dispnea+close_contact+pneumonia+diabetes+hiv+suspect as tbc
-              ")
-                ->join("antrian_poli ap", "pv.visit_id = ap.visit_id", "left")
-                ->join("assessment_tbc at", "pv.trans_id = at.trans_id", "left")
+              pv.diagnosa")
                 ->where("(
                 ((isnull(PV.DIANTAR_OLEH,'') like '%$nama%' ) or pv.name_of_pasien like '%$nama%') or
                 (PV.NO_REGISTRATION like '%$kode%' or isnull(PV.DIANTAR_OLEH,'') like '%$kode%' ) or  
@@ -339,38 +335,6 @@ class PasienVisitationModel extends Model
             $builder = $builder->get();
             return $builder->getResultArray();
         }
-    }
-    public function getKunjunganOperasi($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null)
-    {
-        $sql = "DECLARE	@return_value int
-
-            EXEC	@return_value = [dbo].[SP_SEARCHKUNJUNGANRIAKOM_FORM]
-                    @X = N'100',
-                    @NAMA = N'%$nama%',
-                    @KODE = N'%$kode%',
-                    @ALAMAT = N'%$kode%',
-                    @POLI = N'%$poli%',
-                    @MULAI = N'$mulai',
-                    @AKHIR = N'$akhir',
-                    @KELUAR = N'%',
-                    @SUDAH = N'%$sudah%',
-                    @DOKTER = N'%$dokter%',
-                    @NOKARTU = N'%$nokartu%'
-
-            SELECT	'Return Value' = @return_value";
-        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_FORM;1 @X = '100',
-        // @NAMA = '%$nama%',
-        // @KODE = '%$kode%',
-        // @ALAMAT = '%$alamat%',
-        // @POLI = '%$poli%',
-        // @MULAI = '$mulai',
-        // @AKHIR = '$akhir',
-        // @KELUAR = '%',
-        // @SUDAH = '%$sudah%',
-        // @DOKTER = '%$dokter%',
-        // @NOKARTU = '%$nokartu%'";
-        $result = $this->db->query(new RawSql($sql));
-        return $result->getResultArray();
     }
 
     public function getKunjunganPasien($id)

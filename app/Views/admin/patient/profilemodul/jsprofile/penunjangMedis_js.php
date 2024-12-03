@@ -167,6 +167,38 @@
     $("#notaNoPenunjangMedis").on("change", function() {
         filterBillPenunjangMedis()
     })
+    $('#isKritisPenunjang').click(function(e) {
+        const currentValue = $('#modalIsKritis_penunjang').val();
+
+        $('#modalIsKritis_penunjang').val(currentValue == 0 ? 1 : 0);
+
+        if ($('#modalIsKritis_penunjang').val() == 1) {
+            $('#isKritisPenunjang').html('Nilai Kritis &#10003;')
+            $('#isKritisPenunjang').removeClass('btn-outline-primary');
+            $('#isKritisPenunjang').addClass('btn-primary');
+        } else {
+            $('#isKritisPenunjang').html('Nilai Kritis')
+            $('#isKritisPenunjang').removeClass('btn-primary');
+            $('#isKritisPenunjang').addClass('btn-outline-primary');
+        }
+    })
+    $('#isValidPenunjang').click(function(e) {
+        const currentValue = $('#modalIsValid_penunjang').val();
+
+        $('#modalIsValid_penunjang').val(currentValue == 0 ? 1 : 0);
+
+
+        if ($('#modalIsValid_penunjang').val() == 1) {
+            $('#isValidPenunjang').html('Tervalidasi')
+            $('#isValidPenunjang').removeClass('btn-outline-primary');
+            $('#isValidPenunjang').addClass('btn-primary');
+        } else {
+            $('#isValidPenunjang').html('Validasi')
+            $('#isValidPenunjang').removeClass('btn-primary');
+            $('#isValidPenunjang').addClass('btn-outline-primary');
+        }
+    })
+
 
 
     function isnullcheck(parameter) {
@@ -195,13 +227,15 @@
                     const treatment = item.treatment ? item.treatment.toLowerCase() : '';
                     return treatment.includes('usg') || treatment.includes('ekg') || treatment.includes('ecg');
                 });
-
                 mrJson.forEach((element, key) => {
 
                     $("#penunjangMedisBody").append($("<tr>")
                         .append($("<td >").append($("<p>").html(moment(mrJson[key].treat_date).format('DD-MM-YYYY HH:MM'))))
                         .append($("<td >").append($("<p>").html(mrJson[key].nota_no)))
-                        .append($("<td class='text-center'>").append($("<p>").html(mrJson[key].treatment)))
+                        .append($("<td class='text-center'>").append($("<p>").html(mrJson[key].treatment))
+                            .append($("<p class='badge " + (mrJson[key].isvalid == 1 ? "bg-primary" : "bg-danger") + " py-1 px-2'>").html(mrJson[key].isvalid == 1 ? 'TERVALIDASI' : 'BELUM VALIDASI'))
+                            .append($("<p class='" + (mrJson[key].iskritis == 1 ? "badge py-1 px-2 mx-2 bg-danger" : "d-none") + "'>").html('KRITIS'))
+                        )
                         .append($("<td>").append('<div role="group" aria-label="Vertical button group">' +
                             '<button id="' + 'apenunjangMedis' + '" ' + 'data-bill="' + mrJson[key].bill_id + '" ' + 'onclick="actionModalPenunjangMedis(\'' + encodeURIComponent(JSON.stringify(mrJson[key])) + '\',\'' + 'apenunjangMedis' + '\')" ' +
                             'type="button" data-bs-toggle="modal" data-bs-target="#modalPenunjangMedis" ' + 'class="btn btn-outline-primary waves-effect waves-light" data-row-id="1" autocomplete="off" ' +
@@ -219,7 +253,7 @@
 
     function addBillPenunjangMedis(container) {
         var nota_no = $("#notaNoPenunjangMedis").val();
-        console.log(nota_no);
+
         if (nota_no == '%') {
             nota_no = get_bodyid()
             $("#notaNoPenunjangMedis").append($("<option>").val(nota_no).text(nota_no))
@@ -404,6 +438,7 @@
 
     const actionModalPenunjangMedis = (bill, identifier) => {
         let data = JSON.parse(decodeURIComponent(bill));
+
         // $('#template_jenis_pemeriksaan').val([]).trigger('change');
         postData({
             visit_id: data?.visit_id,
@@ -433,10 +468,49 @@
                 $('#penunjang_medis_bill_id').val(data?.bill_id)
                 $('#penunjang_medis_visit_id').val(data?.visit_id)
 
+
+
                 if (res.data.length > 0) {
+
+                    $('#doctor_penunjang').text(res?.data[0]?.doctor)
                     $('#printPenunjangMedis').removeAttr('disabled')
+                    $('#modalIsValid_penunjang').val(res?.data[0]?.isvalid ?? 0)
+                    $('#modalIsKritis_penunjang').val(res?.data[0]?.iskritis ?? 0)
+
+
+                    if ($('#modalIsValid_penunjang').val() == 1) {
+                        $('#isValidPenunjang').html('Tervalidasi')
+                        $('#isValidPenunjang').removeClass('btn-outline-primary');
+                        $('#isValidPenunjang').addClass('btn-primary');
+                        $('#batalExpertise_penunjang').attr('disabled', true)
+                    } else {
+                        $('#isValidPenunjang').html('Validasi')
+                        $('#isValidPenunjang').removeClass('btn-primary');
+                        $('#isValidPenunjang').addClass('btn-outline-primary');
+                        $('#batalExpertise_penunjang').removeAttr('disabled')
+                    }
+
+                    if ($('#modalIsKritis_penunjang').val() == 1) {
+                        $('#isKritisPenunjang').html('Nilai Kritis &#10003;')
+                        $('#isKritisPenunjang').removeClass('btn-outline-primary');
+                        $('#isKritisPenunjang').addClass('btn-primary');
+                    } else {
+                        $('#isKritisPenunjang').html('Nilai Kritis')
+                        $('#isKritisPenunjang').removeClass('btn-primary');
+                        $('#isKritisPenunjang').addClass('btn-outline-primary');
+                    }
                 } else {
+
+                    $('#doctor_penunjang').text(data?.doctor)
                     $('#printPenunjangMedis').attr('disabled', true)
+                    $('#isValidPenunjang').html('Validasi');
+                    $('#isValidPenunjang').removeClass('btn-primary');
+                    $('#isValidPenunjang').addClass('btn-outline-primary');
+                    $('#isKritisPenunjang').html('Nilai Kritis');
+                    $('#isKritisPenunjang').removeClass('btn-primary');
+                    $('#isKritisPenunjang').addClass('btn-outline-primary');
+
+                    $('#batalExpertise_penunjang').attr('disabled', true)
                 }
 
                 renderKop({
@@ -478,7 +552,10 @@
                 }
 
 
-                saveData();
+                saveData({
+                    bill: bill,
+                    identifier: identifier.toLowerCase()
+                });
 
             } else {
                 $('#penunjang_medis_tarif_id').val(data?.tarif_id)
@@ -492,11 +569,39 @@
                 imagePreview.hide();
                 pdfPreview.hide();
 
+                $('#isValidPenunjang').html('Validasi');
+                $('#isValidPenunjang').removeClass('btn-primary');
+                $('#isValidPenunjang').addClass('btn-outline-primary');
+                $('#isKritisPenunjang').html('Nilai Kritis');
+                $('#isKritisPenunjang').removeClass('btn-primary');
+                $('#isKritisPenunjang').addClass('btn-outline-primary');
+
             }
 
         });
 
+        $('#batalExpertise_penunjang').off().on('click', function() {
+            let formElement = document.getElementById('formModalPenunjang');
+            let dataSend = new FormData(formElement);
+            let jsonObj = {};
 
+            dataSend.forEach((value, key) => {
+                jsonObj[key] = value;
+            });
+            postData(jsonObj, 'admin/PenunjangMedis/cancelTreatResult', (res) => {
+                let data = res.data;
+                if (res.status) {
+                    successSwal(res.message)
+                    $("#modalPenunjangMedis").modal("hide")
+                    $(`[data-id="${identifier.toLowerCase()}quantity${res.bill_id}"]`).val(data.quantity)
+                    $(`[data-id="${identifier.toLowerCase()}displayamount_paid${res.bill_id}"]`).html(data.amount_paid)
+
+                } else {
+                    errorSwal('data gagal dikembalikan')
+                    $("#modalPenunjangMedis").modal("hide")
+                }
+            });
+        });
 
     };
 
@@ -504,7 +609,10 @@
         $('.kop-name').text(props?.kop.name_of_org_unit || '');
         $('.kop-address').text(props?.kop.contact_address || '');
     }
-    const saveData = () => {
+    const saveData = (props) => {
+        console.log(props);
+        let result = decodeURIComponent(props?.bill)
+        console.log(result);
         $('#savePenunjangMedis').off().on('click', function(e) {
             e.preventDefault();
 
@@ -543,10 +651,9 @@
                 success: function(data) {
                     successSwal('Data berhasil disimpan');
                     $("#modalPenunjangMedis").modal("hide")
-                    // $(`[data-id="${identifier}quantity${data.bill_id}"]`).val(data.treat_bill.quantity)
-                    // $(`[data-id="${identifier}displayamount_paid${data.bill_id}"]`).html(data.treat_bill.amount_paid)
-                    // $(`#${identifier}quantity${data.treat_bill.bill_id}`).val(data.treat_bill.quantity)
-                    // $(`#${identifier}displayamount_paid${data.treat_bill.bill_id}`).val(data.treat_bill.amount_paid)
+                    $(`[data-id="${props?.identifier}quantity${data?.bill_id}"]`).val(data?.treat_bill.quantity)
+                    $(`[data-id="${props?.identifier}displayamount_paid${data?.bill_id}"]`).html(data?.treat_bill.amount_paid)
+
                 },
                 error: function() {
                     errorSwal('Data gagal disimpan');

@@ -27,7 +27,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
         $kopprint = $this->lowerKey($db->query("SELECT * from ORGANIZATIONUNIT")->getRowArray() ?? []);
 
         if (!empty($data[0]['treat_image'])) {
-            $filePath = $data[0]['treat_image'];
+            $filePath = WRITEPATH . $data[0]['treat_image'];
 
             if (file_exists($filePath)) {
                 $fileType = mime_content_type($filePath);
@@ -64,25 +64,44 @@ class PenunjangMedis extends \App\Controllers\BaseController
                     tb.bill_id,
                     c.name_of_clinic,
                     tb.treat_date,
-                    tb.doctor_from,
+                    tb.doctor,
                     tb.tagihan,
                     tb.visit_id,
                     tb.isrj,
+                    tr.isvalid,
+                    tr.iskritis,
                     tb.tarif_id,
                     tb.nota_no,
                     tb.no_registration
-                     from treatment_bill tb, pasien p,clinic c, status_pasien s,class k
+                     from treatment_bill tb, pasien p,clinic c, status_pasien s,class k, treat_results tr
                     where tb.no_registration = p.no_registration
                     and tb.clinic_id IN ('P001', 'P016') 
                     and tb.trans_id ='$trans_id'
                     and c.clinic_id = tb.CLINIC_ID_FROM
                     and tb.CLASS_ID =k.CLASS_ID
+                    and tb.bill_id = tr.bill_id
                     and (treatment LIKE '%USG%' OR treatment LIKE '%EKG%' OR treatment LIKE '%ECG%') 
                     and tb.status_pasien_id = s.STATUS_PASIEN_ID
                     AND tb.no_registration LIKE '%$no_registration%'
                     AND tb.visit_id = '$visit_id'
-                    and tb.nota_no in (select nota_no from TREAT_RESULTS)
-                      ORDER BY tb.treat_date;")->getResultArray() ?? []);
+                    and tb.bill_id in (select bill_id from TREAT_RESULTS)
+                      GROUP BY 
+                        tb.bill_id,
+					    tb.no_registration,
+						p.name_of_pasien,
+						tb.treatment,
+						c.name_of_clinic,
+						tb.treat_date,
+						tb.doctor,
+						tb.tagihan,
+						tb.visit_id,
+						tb.isrj,
+						tr.isvalid,
+						tr.iskritis,
+						tb.tarif_id,
+						tb.nota_no
+                      ORDER BY tb.treat_date
+                      ")->getResultArray() ?? []);
 
         return $this->response->setJSON([
             'message' => 'Data retrieved successfully.',
@@ -128,6 +147,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
                 $extension = $pathInfo['extension'];
 
                 $newFileName = $formData['bill_id'] . '.' . $extension;
+                $filePath = 'uploads/penunjang_medis/' . $formData['visit_id'] . '/' . $newFileName;
                 $formFile->move($uploadPath, $newFileName);
 
                 if (!is_dir($uploadPath)) {
@@ -213,7 +233,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
                 if (!empty($formFile->getSize()) && !empty($formFile->getClientName())) {
                     $uploadFile =  $uploadPath . $newFileName;
                 }
-
+                $action = '';
                 $check = [];
                 foreach ($data['bound'] as $value) {
                     $dataPenunjang = [
@@ -259,6 +279,8 @@ class PenunjangMedis extends \App\Controllers\BaseController
                         'treat_image' => $uploadFile,
                         'isnew' => null,
                         'isnew_clinic' => null,
+                        'isvalid' => !empty($formData['isvalid']) ? $formData['isvalid'] : 0,
+                        'iskritis' => !empty($formData['iskritis']) ? $formData['iskritis'] : 0,
                         'visit_trans' => $getTreatment['nota_no'], //diambilkan dari nota no
                         'satuan' => $getTreatment['satuan'],
                         'satuan_eng' => $getTreatment['satuan_eng'],
@@ -271,6 +293,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
                     $insert = $model->insert($dataPenunjang);
                     $check[] = $insert;
                 }
+                $action = 'insert';
             } else {
 
                 $getTreatment = $this->lowerKey($db->query(
@@ -334,9 +357,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
                     WHERE 
                         I.BILL_ID = '" . $data['bill_id'] . "' -- @BILL
                         AND I.VISIT_ID = '" . $data['visit_id'] . "' -- @VISIT
-                         AND (
-							I.CLINIC_ID = 'P001' 
-							OR I.CLINIC_ID = 'P016') and I.TREATMENT like '%usg%'
+                        AND (I.CLINIC_ID = 'P001' OR (I.CLINIC_ID = 'P016' AND I.TREATMENT LIKE '%USG%' OR I.TREATMENT LIKE '%EKG%' OR I.TREATMENT LIKE '%ECG%'))
                         AND I.BILL_ID IN (SELECT BILL_ID FROM TREAT_RESULTS)
 
                     "
@@ -351,7 +372,7 @@ class PenunjangMedis extends \App\Controllers\BaseController
                 }
 
                 if (!empty($formFile->getSize()) && !empty($formFile->getClientName())) {
-                    $uploadFile =  $uploadPath . $newFileName;
+                    $uploadFile =  $filePath;
                 } else {
                     $uploadFile = $fileImage;
                 }
@@ -401,6 +422,8 @@ class PenunjangMedis extends \App\Controllers\BaseController
                             'treat_image' => $uploadFile,
                             'isnew' => null,
                             'isnew_clinic' => null,
+                            'isvalid' => !empty($formData['isvalid']) ? $formData['isvalid'] : 0,
+                            'iskritis' => !empty($formData['iskritis']) ? $formData['iskritis'] : 0,
                             'visit_trans' => $getTreatment['nota_no'], //diambilkan dari nota no
                             'satuan' => $getTreatment['satuan'],
                             'satuan_eng' => $getTreatment['satuan_eng'],
@@ -415,18 +438,32 @@ class PenunjangMedis extends \App\Controllers\BaseController
                     }
                 } else {
                     $dataUpdate = [
+                        'doctor' => $getTreatment['doctor'] ?? null,
                         'conclusion' => $data['conclusion'] ?? null,
                         'result_value' => $data['bound'][0]->value ?? null,
                         'modified_date' => $date,
                         'modified_by' => user()->username,
                         'treat_image' => $uploadFile,
+                        'isvalid' => $formData['isvalid'],
+                        'iskritis' => $formData['iskritis'],
                     ];
                     $model->where(['bill_id' => $getTreatment['bill_id']])->where('visit_id', $getTreatment['visit_id'])->set($dataUpdate)->update();
                 }
+                $action = 'update';
             }
 
-            $db->transCommit();
+            $treat_bill = [
+                'quantity' => '1',
+                'tagihan' => $getTreatment['sell_price'],
+                'amount' => $getTreatment['sell_price'],
+                'islunas' => $formData['isvalid'] == 1 ? 2 : 0,
+                'amount_paid' => $getTreatment['sell_price'],
+            ];
+            $bill_model = new TreatmentBillModel();
+            $bill_model->where(['bill_id' => $formData['bill_id']])->where('visit_id', $formData['visit_id'])->set($treat_bill)->update();
 
+
+            $db->transCommit();
             if (!empty($formFile->getSize()) && !empty($formFile->getClientName())) {
                 unlink($fileImage);
             }
@@ -435,12 +472,86 @@ class PenunjangMedis extends \App\Controllers\BaseController
                 'status' => true,
                 // 'file_name' => $formFile->getClientName(),
                 'file_path' => $uploadFile,
-                // 'treat_bill' => $treat_bill,
-                'bill_id' => $data['bill_id']
+                'treat_bill' => $treat_bill,
+                'bill_id' => $data['bill_id'],
+                'action' => $action
             ]);
         } catch (\Exception $e) {
             $db->transRollback();
             return $this->response->setJSON(['message' => 'Failed to process data: ' . $e->getMessage(), 'status' => false]);
+        }
+    }
+    public function cancelTreatResult()
+    {
+        $db = db_connect();
+
+        // Fetch JSON data from request
+        $formData = $this->request->getJSON(true);
+
+        // Validate the input
+        if (!isset($formData['bill_id']) || !isset($formData['visit_id'])) {
+            return $this->response->setJSON(['message' => 'Invalid input data.', 'status' => false]);
+        }
+
+        $billId = $formData['bill_id'];
+        $visitId = $formData['visit_id'];
+
+        // Start transaction
+        $db->transBegin();
+
+        try {
+            // Prepare data for update
+            $treat_bill = [
+                'quantity' => '0',
+                'tagihan' => 0,
+                'amount' => 0,
+                'islunas' => $formData['isvalid'] == 1 ? 2 : 0,
+                'amount_paid' => 0,
+            ];
+
+            $model = new TreatResultModel();
+            $bill_model = new TreatmentBillModel();
+
+            // Check if the result exists
+            $existData = $this->lowerKey($model->where('visit_id', $visitId)
+                ->where('bill_id', $billId)
+                ->first() ?? []);
+
+            if ($existData) {
+                // Delete image if exists
+                if (file_exists($existData['treat_image'])) {
+                    unlink($existData['treat_image']);
+                }
+
+                // Delete the result
+                $model->where('result_id', $existData['result_id'])
+                    ->where('visit_id', $visitId)
+                    ->delete();
+            }
+
+            // Update the treatment bill
+            $bill_model->where('bill_id', $billId)
+                ->where('visit_id', $visitId)
+                ->set($treat_bill)
+                ->update();
+
+            // Commit transaction
+            $db->transCommit();
+
+            return $this->response->setJSON([
+                'message' => 'File updated and treatment cancelled successfully.',
+                'status' => true,
+                'data' => $treat_bill,
+                'bill_id' => $billId,
+            ]);
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            $db->transRollback();
+
+            return $this->response->setJSON([
+                'message' => 'Failed to process data: ' . $e->getMessage(),
+                'status' => false,
+            ]);
         }
     }
 }

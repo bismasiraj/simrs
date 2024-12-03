@@ -1,4 +1,4 @@
-<div class="border border-1" style="font-size: 11px !important;">
+<div id="form-setuju-<?= $id; ?>" class="border border-1" style="font-size: 11px !important;">
     <table style="border-collapse: collapse; width: 100%;" border="0">
         <tr class="text-center" style="border-bottom: .5px solid #dee2e6;">
             <th colspan="7" class="py-2">PERSETUJUAN TINDAKAN KEDOKTERAN</th>
@@ -23,21 +23,21 @@
             <tr>
                 <td class="p-0 px-2">Nama</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5" id="nama-tindakan-setuju-<?= $id; ?>">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="nama-tindakan-setuju-<?= $id; ?>"></td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Umur</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" id="umur-tindakan-setuju-<?= $id; ?>">&nbsp;</td>
-                <td class="p-0 px-2">Tahun : </td>
-                <td class="p-0 px-2" id="tahun-tindakan-setuju-<?= $id; ?>">&nbsp;</td>
+                <td class="p-0 px-2" id="umur-tindakan-setuju-<?= $id; ?>"></td>
+                <td class="p-0 px-1">Tahun</td>
+                <td class="p-0 px-2" id="tahun-tindakan-setuju-<?= $id; ?>"></td>
                 <td class="p-0 px-2">Jenis Kelamin : </td>
                 <td class="p-0 px-2"><span id="kelamin-setuju<?= $id; ?>" class="kelamin-setuju<?= $id; ?>"></span></td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Alamat</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5" id="alamat-tindakan-setuju-<?= $id; ?>">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="alamat-tindakan-setuju-<?= $id; ?>"></td>
             </tr>
         </tbody>
     </table>
@@ -54,8 +54,8 @@
         <tbody>
             <tr>
                 <td class="p-0 px-2" colspan="5">
-                    <p class="mb-1">Dengan ini menyatakan SETUJU untuk dilakukan Tindakan</p>
-                    <p class="mb-1">Terhadap <span id="selaku-<?= $id; ?>"></span> : </p>
+                    <p class="mb-1">Dengan ini menyatakan <b>SETUJU</b> untuk dilakukan Tindakan</p>
+                    <p class="mb-1">Terhadap <span class="fw-bold" id="selaku-<?= $id; ?>"></span> : </p>
                 </td>
             </tr>
             <tr>
@@ -67,7 +67,7 @@
                 <td class="p-0 px-2">Umur</td>
                 <td class="p-0 px-2">:</td>
                 <td class="p-0 px-2" id="umur-tindakan-setuju-2-<?= $id; ?>">&nbsp;</td>
-                <td class="p-0 px-2">Tahun : </td>
+                <td class="p-0 px-1">Tahun</td>
                 <td class="p-0 px-2">&nbsp;</td>
                 <td class="p-0 px-2">Jenis Kelamin : </td>
                 <td class="p-0 px-2" id="kelamin-tindakan-setuju-2-<?= $id; ?>"></td>
@@ -106,14 +106,28 @@
                 <td class="text-center p-0 px-2">Tenaga Medis</td>
             </tr>
             <tr style="height: 40px;">
-                <td class="text-center p-0 px-2">&nbsp;</td>
-                <td class="text-center p-0 px-2">&nbsp;</td>
-                <td class="text-center p-0 px-2">&nbsp;</td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-menyatakan-<?= $id; ?>"></p>
+                    </div>
+                </td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-keluarga-<?= $id; ?>"></p>
+                    </div>
+
+                </td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-medis-<?= $id; ?>"></p>
+                    </div>
+
+                </td>
             </tr>
             <tr>
-                <td class="text-center p-0 px-2">(.......................)</td>
-                <td class="text-center p-0 px-2">(.......................)</td>
-                <td class="text-center p-0 px-2">(.......................)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-menyatakan-<?= $id; ?>"></span>)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-keluarga-<?= $id; ?>"></span>)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-medis-<?= $id; ?>"></span>)</td>
             </tr>
             <tr>
                 <td class="text-center p-0 px-2"><small>Tandatangan &amp; nama terang</small></td>
@@ -123,7 +137,7 @@
         </tbody>
     </table>
 </div>
-<div class="border border-1" style="font-size: 11px !important;">
+<div id="form-menolak-<?= $id; ?>" class="border border-1" style="font-size: 11px !important;">
     <table style="border-collapse: collapse; width: 100%;" border="0">
         <tr class="text-center" style="border-bottom: .5px solid #dee2e6;">
             <th colspan="7" class="py-2">PENOLAKAN TINDAKAN KEDOKTERAN</th>
@@ -148,13 +162,13 @@
             <tr>
                 <td class="p-0 px-2">Nama</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="nama-tindakan-menolak-<?= $id; ?>"></td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Umur</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2">&nbsp;</td>
-                <td class="p-0 px-2">Tahun : </td>
+                <td class="p-0 px-2" id="umur-tindakan-menolak-<?= $id; ?>"></td>
+                <td class="p-0 px-2">Tahun</td>
                 <td class="p-0 px-2">&nbsp;</td>
                 <td class="p-0 px-2">Jenis Kelamin : </td>
                 <td class="p-0 px-2"><span id="kelamin-menolak<?= $id; ?>" class="kelamin-menolak<?= $id; ?>"></span></td>
@@ -162,7 +176,7 @@
             <tr>
                 <td class="p-0 px-2">Alamat</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="alamat-tindakan-menolak-<?= $id; ?>"></td>
             </tr>
         </tbody>
     </table>
@@ -179,28 +193,28 @@
         <tbody>
             <tr>
                 <td class="p-0 px-2" colspan="5">
-                    <p class="mb-1">Dengan ini menyatakan PENOLAKAN untuk dilakukan Tindakan</p>
-                    <p class="mb-1">Terhadap saya /………………………saya :<span id="selaku-2-<?= $id; ?>"></span></p>
+                    <p class="mb-1">Dengan ini menyatakan <b>PENOLAKAN</b> untuk dilakukan Tindakan</p>
+                    <p class="mb-1">Terhadap <span class="fw-bold" id="selaku-2-<?= $id; ?>"></span> : </p>
                 </td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Nama</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="nama-tindakan-menolak-2-<?= $id; ?>"></td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Umur</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2">&nbsp;</td>
-                <td class="p-0 px-2">Tahun : </td>
-                <td class="p-0 px-2">&nbsp;</td>
+                <td class="p-0 px-2" id="umur-tindakan-menolak-2-<?= $id; ?>"></td>
+                <td class="p-0 px-2">Tahun</td>
+                <td class="p-0 px-2"></td>
                 <td class="p-0 px-2">Jenis Kelamin : </td>
-                <td class="p-0 px-2"><span id="kelamin-menolak<?= $id; ?>" class="kelamin-menolak<?= $id; ?>"></span></td>
+                <td class="p-0 px-2"><span id="kelamin-tindakan-menolak-2<?= $id; ?>" class="kelamin-menolak<?= $id; ?>"></span></td>
             </tr>
             <tr>
                 <td class="p-0 px-2">Alamat</td>
                 <td class="p-0 px-2">:</td>
-                <td class="p-0 px-2" colspan="5">&nbsp;</td>
+                <td class="p-0 px-2" colspan="5" id="alamat-tindakan-menolak-2-<?= $id; ?>"></td>
             </tr>
         </tbody>
     </table>
@@ -231,14 +245,28 @@
                 <td class="text-center p-0 px-2">Tenaga Medis</td>
             </tr>
             <tr style="height: 40px;">
-                <td class="text-center p-0 px-2">&nbsp;</td>
-                <td class="text-center p-0 px-2">&nbsp;</td>
-                <td class="text-center p-0 px-2">&nbsp;</td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-menyatakan2-<?= $id; ?>"></p>
+                    </div>
+                </td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-keluarga2-<?= $id; ?>"></p>
+                    </div>
+
+                </td>
+                <td class="text-center p-0 px-2">
+                    <div class="d-flex justify-content-center">
+                        <p class="text-center" id="qrcode-tandatangan-pihak-medis2-<?= $id; ?>"></p>
+                    </div>
+
+                </td>
             </tr>
             <tr>
-                <td class="text-center p-0 px-2">(.......................)</td>
-                <td class="text-center p-0 px-2">(.......................)</td>
-                <td class="text-center p-0 px-2">(.......................)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-menyatakan2-<?= $id; ?>"></span>)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-keluarga2-<?= $id; ?>"></span>)</td>
+                <td class="text-center p-0 px-2">(<span id="pihak-medis2-<?= $id; ?>"></span>)</td>
             </tr>
             <tr>
                 <td class="text-center p-0 px-2"><small>Tandatangan &amp; nama terang</small></td>

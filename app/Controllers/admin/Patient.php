@@ -22,6 +22,7 @@ use App\Models\DoctorScheduleModel;
 use App\Models\EducationModel;
 use App\Models\EklaimModel;
 use App\Models\EmployeeAllModel;
+use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
 use App\Models\FollowUpModel;
@@ -428,7 +429,6 @@ class Patient extends \App\Controllers\BaseController
 
         asort($clinicInap);
 
-        // dd($clinic);
 
         return view('admin/patient/search', [
             'giTipe' => $giTipe,
@@ -1091,7 +1091,7 @@ This Function is used to Add Patient
                     $row[] = '<h4 id="antrian' . @$kunjungan[$key]['visit_id'] . '" style="margin: auto;
                     padding: 20px;padding-left: 10px;">#' . @$kunjungan[$key]['ticket_no'] . '</h4>';
                 }
-                if ($kunjungan[$key]['tbc'] > 0) {
+                if (@$kunjungan[$key]['tbc'] > 0) {
                     $row[] = $first_action . "" . $kunjungan[$key]['diantar_oleh'] . " - " . $kunjungan[$key]['no_registration'] . "</a><p class=\"bg-warning\">Terindikasi TBC</p>";
                 } else {
                     $row[] = $first_action . "" . $kunjungan[$key]['diantar_oleh'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
@@ -1371,7 +1371,8 @@ This Function is used to Add Patient
                 $action = "<div class='rowoptionview rowview-mt-19'>";
                 $action .= "<a href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 $action .= "</div'>";
-                $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                $first_action = "<button  onclick=\"listSesi('" . $kunjungan[$key]['visit_id'] . "','" . $kunjungan[$key]['no_registration'] . "', '" . base64_encode(json_encode($kunjungan[$key])) . "')\" class=\"btn btn-primary\">";
+                // $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
                 // $row[] = '<p style="margin: auto;
                 // width: 50%;
@@ -1388,6 +1389,7 @@ This Function is used to Add Patient
                 // $row[] = $kunjungan[$key]['rm_in_date'];
                 $row[] = substr($kunjungan[$key]['date_of_birth'], 0, 10) . "<br>" . $kunjungan[$key]['ageyear'] . "th " . $kunjungan[$key]['agemonth'] . "bl " . $kunjungan[$key]['ageday'] . "hr";
                 $row[] = $kunjungan[$key]['payor'] . "<br>" . $kunjungan[$key]['name_of_class'] . "<br>" . $kunjungan[$key]['name_of_class_plafond'];
+                $row[] = $kunjungan[$key]['consul_type'];
                 $dt_data[] = $row;
             }
         }
@@ -1996,7 +1998,8 @@ This Function is used to Add Patient
     {
         $org = new OrganizationunitModel();
 
-        $session_id = $org->generateId();
+        // $session_id = $org->generateId();
+        $session_id = $id . user()->username;
 
         // return $session_id;
         $orgunitAll = $org->findAll();
@@ -2190,6 +2193,9 @@ This Function is used to Add Patient
 
         $examModel = new ExaminationModel();
         $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->where('visit_id', $visit['visit_id'])->orderBy('examination_date asc')->findAll());
+        $examDetailModel = new ExaminationDetailModel();
+        $examDetail = $this->lowerKey($examDetailModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+
         // $exam = [];
 
         // $pdModel = new PasienDiagnosaModel();
@@ -2292,6 +2298,7 @@ This Function is used to Add Patient
             'followup' => $followup,
             'visit' => $visit,
             'exam' => $exam,
+            'examDetail' => $examDetail,
             'pd' => $pasienDiagnosa,
             'suffer' => $suffer,
             'diagCat' => $diagCat,
@@ -2306,13 +2313,13 @@ This Function is used to Add Patient
         ]);
     }
 
-    public function profileranap($id, $ta)
+    public function profileranap($id, $ta, $session_id = null)
     {
         $org = new OrganizationunitModel();
         $orgunitAll = $org->findAll();
         $orgunit = $orgunitAll[0];
 
-        $session_id = $org->generateId();
+
 
         // dd(user()->getEmployeeData());
 
@@ -2363,13 +2370,16 @@ This Function is used to Add Patient
 
         $pv = new PasienVisitationModel();
         $visit = $this->lowerKey($pv->find($id));
-        $visit['session_id'] = $session_id;
+
+
 
         // $visit = $ta;
         unset($ta['visit_date']);
         foreach ($ta as $key => $value) {
             $visit[$key] = $value;
         }
+
+
         // return json_encode($visit['class_room_id']);
 
         $visit['fullname_inap'] = '';
@@ -2452,9 +2462,13 @@ This Function is used to Add Patient
         $visitDate = substr($visit['exit_date'], 0, 10);
         $visit['exit_date'] = $visitDate;
 
-        $examModel = new ExaminationModel();
-        $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
-        // $exam = [];
+        // $examModel = new ExaminationModel();
+        // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+        // $examDetailModel = new ExaminationDetailModel();
+        // $examDetail = $this->lowerKey($examDetailModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
+
+        $exam = [];
+        $examDetail = [];
 
         $pdModel = new PasienDiagnosaModel();
         $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
@@ -2500,7 +2514,6 @@ This Function is used to Add Patient
 
         usort($aParent, fn($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
         usort($aType, fn($a, $b) => $a['p_description'] <=> $b['p_description']);
-
         // dd($visit);
 
         // dd(json_encode($clinic));
@@ -2509,6 +2522,50 @@ This Function is used to Add Patient
         // return json_encode($mappingAssessment);
         asort($employee);
 
+        $bisma = 0;
+        if ($session_id == null) {
+            $session_id = $org->generateId();
+
+            // return $session_id;
+
+            $dataexam = [
+                'body_id' => $session_id,
+                'account_id' => '3',
+                'examination_date' => date('Y-m-d H:i:s'),
+                'org_unit_code' => $visit['org_unit_code'],
+                'no_registration' => $visit['no_registration'],
+                'visit_id' => $visit['visit_id'],
+                'clinic_id' => $visit['clinic_id'],
+                'employee_id' => $visit['employee_inap'],
+                'class_room_id' => $visit['class_room_id'],
+                'bed_id' => $visit['bed_id'],
+                'in_date' => $visit['in_date'],
+                'exit_date' => $visit['exit_date'],
+                'keluar_id' => $visit['keluar_id'],
+                'modified_from' => $visit['clinic_id'],
+                'status_pasien_id' => $visit['status_pasien_id'],
+                'ageyear' => $visit['ageyear'],
+                'agemonth' => $visit['agemonth'],
+                'ageday' => $visit['ageday'],
+                'thename' => $visit['diantar_oleh'],
+                'theaddress' => $visit['visitor_address'],
+                'theid' => $visit['pasien_id'],
+                'isrj' => 0,
+                'gender' => $visit['gender'],
+                'doctor' => $visit['fullname'],
+                'kal_id' => $visit['kal_id'],
+                'petugas_id' => user()->username,
+                'petugas_type' => user()->getOneRoles(),
+                'petugas' => user()->getFullname(),
+                'modified_by' => user()->username
+            ];
+
+            $ex = new ExaminationModel();
+            $bisma++;
+            $ex->insert($dataexam);
+        }
+        // return json_encode($bisma);
+        $visit['session_id'] = $session_id;
         // dd($employee);
         return view('admin/patient/profile', [
             'title' => 'Profile Pasien',
@@ -2544,6 +2601,7 @@ This Function is used to Add Patient
             'dpjp' => $dpjp,
             'visit' => $visit,
             'exam' => $exam,
+            'examDetail' => $examDetail,
             'pd' => $pasienDiagnosa,
             'suffer' => $suffer,
             'diagCat' => $diagCat,
@@ -2731,6 +2789,7 @@ This Function is used to Add Patient
         // $examModel = new ExaminationModel();
         // $exam = $this->lowerKey($examModel->where('no_registration', $visit['no_registration'])->orderBy('examination_date asc')->findAll());
         $exam = [];
+        $examDetail = [];
 
         // $pdModel = new PasienDiagnosaModel();
         // $pasienDiagnosa = $this->lowerKey($pdModel->where('no_registration', $visit['no_registration'])->orderBy('date_of_diagnosa desc')->findAll());
@@ -2812,6 +2871,7 @@ This Function is used to Add Patient
             'dpjp' => $dpjp,
             'visit' => $visit,
             'exam' => $exam,
+            'examDetail' => $examDetail,
             'pd' => $pasienDiagnosa,
             'suffer' => $suffer,
             'diagCat' => $diagCat,
@@ -6329,7 +6389,7 @@ This Function is used to Add Patient
         $db = db_connect();
 
         $search_term = $this->request->getPost("searchTerm");
-        $employee_id = user()->employee_id ?? '61';
+        $employee_id = user()->employee_id;
         if (isset($search_term) && $search_term != '') {
             $result =
                 $db->query(
@@ -6774,6 +6834,7 @@ This Function is used to Add Patient
         $class_id_plafond = @$body['class_id_plafond']; //$this->request->getPost('class_id_plafond');
         $treatment_plafond = @$body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
         $nota_no = @$body['nota_no']; //$this->request->getPost('nota_no');
+        $body_id = @$body['body_id']; //$this->request->getPost('nota_no');
 
         // echo $treat_date;
 
@@ -6881,10 +6942,9 @@ This Function is used to Add Patient
                     'gender' => $gender,
                     'doctor' => $doctor,
                     'class_room_id' => $class_room_id,
-                    // 'bed_id' => $bed_id,
                     'perujuk' => $employee_id,
                     'modified_by' => user()->username,
-                    'modified_from' => $modified_from,
+                    'modified_from' => $modified_from
                 ];
                 // return json_encode($data);
 
@@ -6946,7 +7006,8 @@ This Function is used to Add Patient
             'amount_paid_plafond' => $amount_paid_plafond,
             'class_id_plafond' => $class_id_plafond,
             'treatment_plafond' => $treatment_plafond,
-            'doctor' => $doctor
+            'doctor' => $doctor,
+            'body_id' => $body_id
         ];
 
         $tbModel->save($data);
@@ -7360,12 +7421,7 @@ This Function is used to Add Patient
         $status_tarif = $this->request->getPost('status_tarif');
         $sold_status = $this->request->getPost('sold_status');
 
-        // return json_encode($this->request->getPost());
-
-
-
         $result = [];
-
 
         if (count($bill_id) > 0) {
 
@@ -7646,7 +7702,6 @@ This Function is used to Add Patient
 
         $body = $this->request->getBody();
         $body = json_decode($body, true);
-        // return json_encode($body);
         $resepKe = $body['resepKe'];
         $resepNo = $body['resepNo'];
 
@@ -8304,6 +8359,54 @@ This Function is used to Add Patient
             'img_time' => $img_time,
             'clinic' => $clinic,
             'dokter' => $dokter,
+        ]);
+    }
+    public function users()
+    {
+        $db = db_connect();
+
+        $org = new OrganizationunitModel();
+        $orgunitAll = $org->findAll();
+        $orgunit = $orgunitAll[0];
+        $clinicModel = new ClinicModel();
+        $clinic = $this->lowerKey($clinicModel->where("stype_id in (1,2,3,5,6)")->findAll());
+        // dd(user()->getEmployeeData());
+        $scheduleModel = new DoctorScheduleModel();
+        $schedule = $this->lowerKey(
+            $scheduleModel->join('employee_all ea', 'doctor_schedule.employee_id = ea.employee_id')
+                ->join('clinic c', 'c.clinic_id = doctor_schedule.clinic_id')
+                ->select("replace(fullname,'''','') as FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id")
+                ->where('day_id is not null')
+                // ->where('start_time > dateadd(day,-1,getdate())')
+                ->where('START_TIME < GETDATE()')
+                ->groupBy('FULLNAME, ea.EMPLOYEE_ID, c.CLINIC_ID, c.NAME_OF_CLINIC, DAY_ID, ea.dpjp, ea.specialist_type_id')
+                ->orderBy('day_id')->findAll()
+        );
+
+        $dokter = array();
+
+        foreach ($clinic as $key => $value) {
+            $selectDokter = array();
+
+            foreach ($schedule as $key1 => $value1) {
+                if ($clinic[$key]['clinic_id'] == $schedule[$key1]['clinic_id']) {
+                    $selectDokter[$schedule[$key1]['employee_id']] = $schedule[$key1]['fullname'];
+                }
+            }
+            $dokter[$clinic[$key]['clinic_id']] = $selectDokter;
+            unset($selectDokter);
+            if ($value['stype_id'] == '3') {
+                $clinicInap[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+            }
+        }
+
+        $img_time = new Time('now');
+        $img_timestamp = $img_time->getTimestamp();
+
+        $title = 'Users Permissions';
+        return view('admin/patient/users', [
+            'orgunit' => $orgunit,
+            'img_time' => $img_timestamp
         ]);
     }
 }

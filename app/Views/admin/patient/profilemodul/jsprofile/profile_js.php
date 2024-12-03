@@ -6,14 +6,14 @@ foreach ($aValue as $key => $value) {
 }
 $weight = 0;
 $height = 0;
-foreach ($exam as $key => $value) {
+foreach ($examDetail as $key => $value) {
     $weight = $value['weight'];
     $height = $value['height'];
 }
-// dd($weight);
 ?>
 <script type='text/javascript'>
     var mrJson;
+    var vitalsign = <?= json_encode($exam); ?>;
     var tagihan = 0.0;
     var subsidi = 0.0;
     var potongan = 0.0;
@@ -27,6 +27,7 @@ foreach ($exam as $key => $value) {
     var doctors = <?= json_encode($employee); ?>;
     var clinics = <?= json_encode($clinic); ?>;
     var examForassessment = <?= json_encode($exam); ?>;
+    var examForassessmentDetail = <?= json_encode($examDetail); ?>;
     var avalue = <?= json_encode($aValue); ?>;
     var aparameter = <?= json_encode($aParameter); ?>;
     var atype = <?= json_encode($aType); ?>;
@@ -126,9 +127,9 @@ foreach ($exam as $key => $value) {
     }
 </script>
 <script>
-    $(document).ready(function() {
-        getAssessmentMedis(99)
-    })
+    // $(document).ready(function() {
+    //     getAssessmentMedis(99)
+    // })
 </script>
 <script type="text/javascript">
     function getAssessmentMedis(diagCat) {
@@ -162,8 +163,9 @@ foreach ($exam as $key => $value) {
                     } else {
                         fillDataArm(pasienDiagnosaAll.length - 1)
                         fillRiwayat()
-                        // $("#formaddarmbtn").slideUp()
                     }
+                } else {
+                    initialAddArm()
                 }
             },
             error: function() {
@@ -224,7 +226,6 @@ foreach ($exam as $key => $value) {
                     '</div>' +
                     '<table class="col-md-12 table table-striped">' +
                     '<tbody id="bodyAssessment002' + bodyId + '">' +
-
                     '</tbody>' +
                     '</table>' +
                     '</div>' +
@@ -2348,7 +2349,7 @@ foreach ($exam as $key => $value) {
             }
         });
         $("#" + container + bodyId).append(
-            '<tr><td colspan="3"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="totalScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td></tr>'
+            '<tr><td colspan="2"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="kategoriScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td><td><h6 id="totalScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td></tr>'
         )
         $.each(aparameter, function(key, value) {
             if (value.p_type == p_type && (value.entry_type == 1)) {
@@ -2372,6 +2373,7 @@ foreach ($exam as $key => $value) {
         $('#score' + parent_id + p_type + parameter_id + bodyId).html(score)
 
         var total = 0;
+        var kategori = '';
 
         if (p_type == 'ASES019') {
             $.each(aparameter, function(key, value) {
@@ -2380,6 +2382,15 @@ foreach ($exam as $key => $value) {
                     total += valuenya
                 }
             });
+            if (total >= 0 && total <= 24) {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            } else if (total > 24 && total <= 50) {
+                kategori = '<div class="text-warning">Risiko rendah</div>';
+            } else if (total > 50) {
+                kategori = '<div class="text-danger">Risiko tinggi</div>';
+            } else {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            }
         } else {
             $.each(aparameter, function(key, value) {
                 if (value.p_type == p_type && value.parameter_id != '08') {
@@ -2387,14 +2398,18 @@ foreach ($exam as $key => $value) {
                     total += valuenya
                 }
             });
+            if (total >= 7 && total <= 11) {
+                kategori = '<div class="text-warning">Risiko rendah</div>';
+            } else if (total > 11) {
+                kategori = '<div class="text-danger">Risiko tinggi</div>';
+            } else {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            }
         }
 
 
 
-
-        // for (var key in fallRiskScore) {
-        //     total += fallRiskScore[key]
-        // }
+        $("#kategoriScore" + parent_id + p_type + bodyId).html(kategori)
         $("#totalScore" + parent_id + p_type + bodyId).html(total)
     }
 
@@ -6621,7 +6636,7 @@ foreach ($exam as $key => $value) {
 
 <!-- // EDUCATION FORM -->
 <script type="text/javascript">
-    function addEducationForm(flag, index, document_id, container, isaddbutton = true) {
+    function addEducationForm(flag, index, document_id, container, isaddbutton = true, value_id = null) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -6830,6 +6845,7 @@ foreach ($exam as $key => $value) {
             .append('<input name="valid_date" class="valid_date" id="educationformsvalid_date' + bodyId + '" type="hidden"  />')
             .append('<input name="valid_user" class="valid_user" id="educationformsvalid_user' + bodyId + '" type="hidden"  />')
             .append('<input name="valid_pasien" class="valid_pasien" id="educationformsvalid_pasien' + bodyId + '" type="hidden"  />')
+            .append('<input name="value_id" class="value_id" id="educationformsvalue_id' + bodyId + '" value="' + value_id + '" type="hidden"  />')
 
 
         $("#formEducationForm" + bodyId).on('submit', (function(e) {
@@ -7169,7 +7185,7 @@ foreach ($exam as $key => $value) {
                                             .append($('<div class="col-md-8">') <?php foreach ($aValue as $key1 => $value1) {
                                                                                                 if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                                                                 ?>
-                                                        .append($('<div class="form-check mb-3">' +
+                                                        .append($('<div class="form-check">' +
                                                             '<input id="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '" class="form-check-input" type="radio" name="<?= $value1['value_info']; ?>" value="<?= $value1['value_score']; ?>">' +
                                                             '<label class="form-check-label" for="educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>' + bodyId + '">' +
                                                             '<?= $value1['value_desc']; ?>' +
@@ -7183,6 +7199,54 @@ foreach ($exam as $key => $value) {
                                                                                         }
                                                                                                 ?>
                         )
+                        .append(`
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <h5>Perencanaan Pemberian Pasien dan Evaluasi</h5>
+                                <table id="" class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Jenis Edukasi</th>
+                                        <th>Pemberi Edukasi</th>
+                                        <th>Waktu Pemberian</th>
+                                        <th>Sasaran</th>
+                                        <th>Cara Edukasi</th>
+                                        <th>Metode Evaluasi</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="educationIntegrationRencana${bodyId}">
+                                        <?php foreach ($aParameter as $key => $value) {
+                                            if (@$value['p_type'] == $ptype && @$value['parameter_id'] == '15') {
+                                                foreach ($aValue as $key1 => $value1) {
+                                                    if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
+                                        ?>
+                                        <tr id="tdeducationintegration<?= $value1['value_info'] . $value1['value_id']; ?>${bodyId}" style="display: none;">
+                                            <td><?= $value1['value_desc']; ?></td>
+                                            <td id="epedueducation_provision<?= $value1['value_id']; ?>${bodyId}"></td>
+                                            <td id="epexamination_date<?= $value1['value_id']; ?>${bodyId}"></td>
+                                            <td id="epedueducation_target<?= $value1['value_id']; ?>${bodyId}"></td>
+                                            <td id="epedueducation_method<?= $value1['value_id']; ?>${bodyId}"></td>
+                                            <td id="epeducation_evaluation<?= $value1['value_id']; ?>${bodyId}"></td>
+                                            <td>
+                                            <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                            <button type="button" onclick="addEducationIntegrationPlan('${bodyId}', '<?= $value1['value_id']; ?>')" class="btn btn-warning btn-to-hide" data-row-id="1" autocomplete="off">
+                                                Perencanaan
+                                            </button>
+                                            <button type="button" onclick="addEdducationFormIntegration('educationintegraitonbody_id${bodyId}','<?= $value1['value_id']; ?>')" class="btn btn-success btn-to-hide" data-row-id="1" autocomplete="off">
+                                                Isi Form
+                                            </button>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                                    }
+                                                }
+                                            }
+                                        } ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        `)
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
                             .append($('<h5>Bahasa Sehari-hari</h5>'))
                             .append($('<table id="educationIntegrationLanguage' + bodyId + '" class="table table-striped">')
@@ -7197,25 +7261,25 @@ foreach ($exam as $key => $value) {
                                 '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationLanguage(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah Dokumen</a></div>' +
                                 '</div>)'))
                         )
-                        .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
-                            .append($('<h5>Perencanaan Edukasi</h5>'))
-                            .append($('<table id="educationIntegrationLanguagePlan' + bodyId + '" class="table table-striped">')
-                                .append($('<thead>')
-                                    .append($('<tr>')
-                                        .append('<th width="50">Kebutuhan Edukasi</th>')
-                                        .append('<th width="50">Pemberian Edukasi</th>')
-                                        .append('<th width="50">Tanggal/Jam Edukasi</th>')
-                                        .append('<th width="50">Sasaran Edukasi</th>')
-                                        .append('<th width="50">Metode Edukasi</th>')
-                                        .append('<th width="50">Metode Evaluasi</th>')
-                                    )
-                                )
-                                .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
-                            )
-                            .append($('<div class="col-md-12">' +
-                                '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
-                                '</div>)'))
-                        )
+                        // .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
+                        //     .append($('<h5>Perencanaan Edukasi</h5>'))
+                        //     .append($('<table id="educationIntegrationLanguagePlan' + bodyId + '" class="table table-striped">')
+                        //         .append($('<thead>')
+                        //             .append($('<tr>')
+                        //                 .append('<th width="50">Kebutuhan Edukasi</th>')
+                        //                 .append('<th width="50">Pemberian Edukasi</th>')
+                        //                 .append('<th width="50">Tanggal/Jam Edukasi</th>')
+                        //                 .append('<th width="50">Sasaran Edukasi</th>')
+                        //                 .append('<th width="50">Metode Edukasi</th>')
+                        //                 .append('<th width="50">Metode Evaluasi</th>')
+                        //             )
+                        //         )
+                        //         .append($('<tbody id="educationIntegrationLanguagePlanBody' + bodyId + '">'))
+                        //     )
+                        //     .append($('<div class="col-md-12">' +
+                        //         '<div class="box-tab-tools text-center"><a onclick="addEducationIntegrationPlan(\'' + bodyId + '\')" class="btn btn-info btn-sm btn-to-hide"  style="width: 200px"><i class=" fa fa-plus"></i> Tambah</a></div>' +
+                        //         '</div>)'))
+                        // )
                         .append($('<div class="col-xs-12 col-sm-12 col-md-12">')
                             .append($('<h5>Daftar Pemberian Edukasi</h5>'))
                             .append($('<table id="educationIntegrationLanguageProvision' + bodyId + '" class="table table-striped">')
@@ -7253,6 +7317,19 @@ foreach ($exam as $key => $value) {
             $("#formEducationIntegration" + bodyId).find("input, select, textarea").prop("disabled", false)
             $("#formEducationIntegration" + bodyId + " .btn-to-hide").slideDown()
         })
+
+        <?php
+        foreach ($aValue as $key1 => $value1) {
+            if ($value1['p_type'] == 'ASES049' && $value1['parameter_id'] == '15') {
+        ?>
+                $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).on("change", function() {
+                    $("#tdeducationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).toggle()
+                })
+        <?php
+            }
+        }
+        ?>
+
         $("#formEducationIntegrationCetakBtn" + bodyId).on("click", function() {
             var win = window.open('<?= base_url() . '/admin/rm/keperawatan/edukasi_integrasi/' . base64_encode(json_encode($visit)); ?>' + '/' + bodyId, '_blank');
         })
@@ -7320,7 +7397,7 @@ foreach ($exam as $key => $value) {
             });
         }));
 
-
+        console.log(flag)
         if (flag == 1) {
             $("#formEducationIntegrationSaveBtn" + bodyId).slideDown()
             $("#formEducationIntegrationEditBtn" + bodyId).slideUp()
@@ -7349,7 +7426,7 @@ foreach ($exam as $key => $value) {
                                         if ($value1['p_type'] == @$value['p_type'] && $value1['parameter_id'] == @$value['parameter_id']) {
                                     ?>
                                             if (value.parameter_id == '<?= @$value['parameter_id']; ?>' && value.value_id == <?= $value1['value_id']; ?>)
-                                                $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true)
+                                                $("#educationintegration<?= $value1['value_info'] . $value1['value_id']; ?>" + bodyId).prop("checked", true).trigger("change")
                                         <?php
                                         }
                                     }
@@ -7371,11 +7448,15 @@ foreach ($exam as $key => $value) {
                     }
                 }
             })
+
+
+
             $.each(educationIntegrationPlanAll, function(key, value) {
                 if (value.body_id == eduInt.body_id) {
                     addRowEducationIntegrationPlan(value)
                 }
             })
+
             $.each(educationIntegrationProvisionAll, function(key, value) {
                 if (value.body_id == eduInt.body_id) {
                     addRowEducationIntegrationProvision(value)
@@ -7413,24 +7494,62 @@ foreach ($exam as $key => $value) {
         $("#GEN0014Aktif" + bodyId + rowcount).val(isactive)
     }
 
-    function addEducationIntegrationPlan(bodyId, flag) {
+    function addEducationIntegrationPlan(bodyId, value_id) {
+        $("#eduplanbody_id").val(null)
+        $("#eduplanplan_ke").val(null)
+        $("#eduplanp_type").val(null)
+        $("#eduplaneducation_material2").prop("checked", true)
+        $("#eduplantreatment_type").val(null)
+        $("#eduplanexamination_date").val(null)
+        $("#eduplaneducation_provision").val(null)
+        $("#eduplaneducation_target").val(null)
+        $("#eduplaneducation_method").val(null)
+        $("#eduplaneducation_evaluation").val(null)
+        $("#eduplanstatus").val(null)
+        $("#eduplanmodified_date").val(null)
+        $("#eduplanmodified_by").val(null)
+        $("#eduplanvalid_date").val(null)
+        $("#eduplanvalid_user").val(null)
+        $("#eduplanvalid_pasien").val(null)
+
+        $("#eduplantreatment_type").val(value_id)
+
         $("#addEducationListPlan").modal('show')
         $("#eduplanbody_id").val(bodyId)
         $("#eduplanp_type").val('<?= $ptype; ?>')
-        var lng = $("#educationIntegrationLanguagePlanBody" + bodyId + " tr").length + 1
-        $("#eduplanplan_ke").val(lng)
+        // var lng = $("#educationIntegrationLanguagePlanBody" + bodyId + " tr").length + 1
+        $("#eduplanplan_ke").val(String(value_id).slice(-1))
+
+        $.each(educationIntegrationPlanAll, function(key, value) {
+            if (value.treatment_type == value_id && value.body_id == bodyId) {
+                $.each(value, function(key1, value1) {
+                    if (key1 == "education_provision") {
+                        $('input[name="education_provision"][value="' + value1 + '"]').prop('checked', true);
+                    } else if (key1 == "education_target") {
+                        $('input[name="education_target"][value="' + value1 + '"]').prop('checked', true);
+                    } else if (key1 == "education_method") {
+                        $('input[name="education_method"][value="' + value1 + '"]').prop('checked', true);
+                    } else {
+                        $("#eduplan" + key1).val(value1)
+                    }
+                })
+            }
+        })
     }
 
     function addRowEducationIntegrationPlan(value) {
         var edutreatment_type = [
             '',
-            'Pengertian penyakit',
-            'Gizi',
-            'Farmasi',
+            'Hak dan Kewajiban pasien',
+            'Diagnosa, Tanda dan Gejala',
+            'Diet',
+            'Obat-obat yang didapat',
+            'Penggunaan alat medis yang aman dan efektif',
             'Rehabilitasi Medik',
-            'Nyeri dan Manajemen Nyeri',
-            'Pencegahan dan Pengendalian Infeksi',
-            'Pelayanan Saat Pelayanan di RS'
+            'Manajemen Nyeri',
+            'Pencegahan dan pengendalian infeksi',
+            'Lain-lain',
+
         ]
         var edueducation_provision = [
             '', 'Perawat', 'Dokter', 'Ahli Gizi', 'Terapis', 'Bidan', 'Lain-lain'
@@ -7441,15 +7560,25 @@ foreach ($exam as $key => $value) {
         var edueducation_method = [
             '', 'Leaflet', 'Demonstrasi', 'Wawancara'
         ]
-        $("#educationIntegrationLanguagePlanBody" + value.body_id)
-            .append($('<tr>')
-                .append($('<td>').html(edutreatment_type[value.treatment_type]))
-                .append($('<td>').html(edueducation_provision[value.education_provision]))
-                .append($('<td>').html(value.examination_date))
-                .append($('<td>').html(edueducation_target[value.education_target]))
-                .append($('<td>').html(edueducation_method[value.education_method]))
-                .append($('<td>').html(value.education_evaluation))
-            )
+
+        console.log("#epeducation_evaluation" + value.treatment_type + value.body_id)
+        console.log(value.education_evaluation)
+        $("#epedueducation_provision" + value.treatment_type + value.body_id).html(edueducation_provision[value.education_provision])
+        $("#epexamination_date" + value.treatment_type + value.body_id).html(value.examination_date)
+        $("#epedueducation_target" + value.treatment_type + value.body_id).html(edueducation_target[value.education_target])
+        $("#epedueducation_method" + value.treatment_type + value.body_id).html(edueducation_method[value.education_method])
+        $("#epeducation_evaluation" + value.treatment_type + value.body_id).html(value.education_evaluation)
+
+
+        // $("#educationIntegrationLanguagePlanBody" + value.body_id)
+        //     .append($('<tr>')
+        //         .append($('<td>').html(edutreatment_type[value.treatment_type]))
+        //         .append($('<td>').html(edueducation_provision[value.education_provision]))
+        //         .append($('<td>').html(value.examination_date))
+        //         .append($('<td>').html(edueducation_target[value.education_target]))
+        //         .append($('<td>').html(edueducation_method[value.education_method]))
+        //         .append($('<td>').html(value.education_evaluation))
+        //     )
     }
 
     function addEducationIntegrationProvision(bodyId, flag) {

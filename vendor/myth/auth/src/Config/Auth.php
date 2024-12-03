@@ -54,6 +54,7 @@ class Auth extends BaseConfig
         'forgot'                  => 'forgot',
         'reset-password'          => 'reset-password',
         'antrian'                => 'antrian',
+        'pendaftaran'                => 'pendaftaran',
     ];
 
     /**

@@ -70,18 +70,6 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                             <h4><b>Keadaan Umum</b></h4>
                                                             <hr>
                                                             <input type="hidden" id="prslexambody_id" name="exambody_id">
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Jenis EWS</label>
-                                                                    <select class="form-select" name="vs_status_id" id="prslvs_status_id">
-                                                                        <!-- <option value="" selected>-- pilih --</option>
-                                                                        <option value="1">Dewasa</option>
-                                                                        <option value="4">Anak</option>
-                                                                        <option value="5">Neonatus</option> -->
-                                                                        <option value="10" selected>Obsetric</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
                                                             <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
                                                                 <div class="form-group">
                                                                     <label>BB(Kg)</label>
@@ -135,15 +123,6 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
-                                                                    <label>Saturasi(SpO2%)</label>
-                                                                    <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="prslexamsaturasi" placeholder="" value="" class="form-control">
-                                                                        <span class="h6" id="badge-prslexamsaturasi"></span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
                                                                     <label>Nafas/RR(/menit)</label>
                                                                     <div class="position-relative">
                                                                         <input onchange="vitalsignInput(this)" type="text" name="nafas" id="prslexamnafas" placeholder="" value="" class="form-control">
@@ -153,64 +132,24 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
-                                                                    <label>Diameter Lengan(cm)</label>
+                                                                    <label>TFU</label>
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="arm_diameter" id="prslexamarm_diameter" placeholder="" value="" class="form-control">
-                                                                        <span class="h6" id="badge-prslexamarm_diameter"></span>
+                                                                        <input onchange="" type="text" name="tfu" id="avttfu" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avttfu"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                                                 <div class="form-group">
-                                                                    <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                    <label>Kontraksi Uterus</label>
                                                                     <div class="position-relative">
-                                                                        <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="prslexamoxygen_usage" placeholder="" value="" class="form-control">
-                                                                        <span class="h6" id="badge-prslexamoxygen_usage"></span>
+                                                                        <input onchange="" type="text" name="uterus" id="avtuterus" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-avtuterus"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Kesadaran</label>
-                                                                    <select class="form-select" name="awareness" id="prslexamawareness" onchange="vitalsignInput(this)">
-                                                                        <option value="0">Sadar</option>
-                                                                        <option value="3">Nyeri</option>
-                                                                        <option value="10">Unrespon</option>
-                                                                    </select>
-                                                                    <span class="h6" id="badge-prslexamawareness"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Nyeri</label>
-                                                                    <select class="form-select" name="pain" id="prslexampain" onchange="vitalsignInput(this)">
-                                                                        <option value="0">Normal</option>
-                                                                        <option value="3">Abnormal</option>
-                                                                    </select>
-                                                                    <span class="h6" id="badge-prslexampain"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Discharge/Lokia</label>
-                                                                    <select class="form-select" name="lochia" id="prslexamlochia" onchange="vitalsignInput(this)">
-                                                                        <option value="0">Normal</option>
-                                                                        <option value="3">Abnormal</option>
-                                                                    </select>
-                                                                    <span class="h6" id="badge-prslexamlokia"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                <div class="form-group">
-                                                                    <label>Proteinuria (Perhari)</label>
-                                                                    <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
-                                                                        <option value="0">-</option>
-                                                                        <option value="2">+</option>
-                                                                        <option value="3">++</option>
-                                                                    </select>
-                                                                    <span class="h6" id="badge-prslexamproteinuria"></span>
-                                                                </div>
-                                                            </div>
+
+
                                                         </div>
                                                         <?php foreach ($persalinan as $key => $value) {
                                                         ?>
@@ -489,7 +428,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                             <div class="row mt-4 mb-4">
                                 <h4><b>Keadaan Umum</b></h4>
                                 <hr>
-                                <input type="hidden" class="bayiexambody_id" name="exambody_id">
+                                <input type="hidden" id="bayiexambody_id" name="exambody_id">
                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                     <div class="form-group">
                                         <label>Jenis EWS</label>

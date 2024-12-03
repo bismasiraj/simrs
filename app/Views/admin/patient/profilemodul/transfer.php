@@ -45,8 +45,7 @@ $permission = user()->getPermissions();
                         <input type="hidden" id="atransfertrans_id" name="trans_id" value="<?= $visit['trans_id']; ?>">
                         <input type="hidden" id="atransferdocument_id" name="document_id">
                         <input type="hidden" id="atransferdocument_id2" name="document_id2">
-                        <input type="hidden" id="atransferclinic_id" name="clinic_id">
-                        <input type="hidden" id="atransferclinic_id_to" name="clinic_id_to">
+                        <input type="hidden" id="atransferdocument_id3" name="document_id3">
                         <input type="hidden" id="atransferstatus_pasien_id" name="status_pasien_id">
                         <input name="valid_date" class="valid_date" id="atransfervalid_date" type="hidden" />
                         <input name="valid_user" class="valid_user" id="atransfervalid_user" type="hidden" />
@@ -106,6 +105,52 @@ $permission = user()->getPermissions();
                                                 }
                                             } ?>
                                         </select> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="atransferclinic_id_group" class="col-sm-4 col-xs-12">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="atransferclinic_id">Asal</label>
+                                        <select name="clinic_id" id="atransferclinic_id" type="hidden" class="form-control ">
+                                            <?php if ($visit['isrj'] == 1) {
+                                                $selectedClinic = $visit['class_room_id'];
+                                            } else {
+                                                $selectedClinic = $visit['clinic_id'];
+                                            } ?>
+                                            <?php foreach ($clinic as $key => $value) {
+                                            ?>
+                                                <?php if ($selectedClinic == $visit['clinic_id']) { ?>
+                                                    <option value="<?= $value['clinic_id']; ?>" selected><?= $value['name_of_clinic']; ?></option>
+                                                <?php } else { ?>
+                                                    <option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option>
+                                                <?php } ?>
+                                            <?php
+                                            } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="atransferclinic_id_to_group" class="col-sm-4 col-xs-12">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label for="atransferclinic_id_to">Tujuan</label>
+                                        <select name="clinic_id_to" id="atransferclinic_id_to" type="hidden" class="form-control ">
+                                            <?php if ($visit['isrj'] == 1) {
+                                                $selectedClinic = $visit['class_room_id'];
+                                            } else {
+                                                $selectedClinic = $visit['clinic_id'];
+                                            } ?>
+                                            <?php foreach ($clinic as $key => $value) {
+                                            ?>
+                                                <?php if ($selectedClinic == $visit['clinic_id']) { ?>
+                                                    <option value="<?= $value['clinic_id']; ?>" selected><?= $value['name_of_clinic']; ?></option>
+                                                <?php } else { ?>
+                                                    <option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option>
+                                                <?php } ?>
+                                            <?php
+                                            } ?>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -460,7 +505,597 @@ $permission = user()->getPermissions();
                                     </textarea>
                             </div>
                         </div>
+                        <div id="atransferstabilitas" class="row" style="display: none;">
+                            <div class="mb-4">
+                                <h3>Derajat Stabilitas</h3>
+                                <hr>
+                            </div>
+                            <div id="transferDerajatBody">
+                            </div>
+                            <div id="transferDerajatBodyAddBtn" class="col-md-12 text-center">
+                                <a onclick="addDerajatStabilitas(1, 0, 'atransferbody_id', 'transferDerajatBody')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Derajat Stabilitas</a>
+                            </div>
+                        </div>
+                        <div id="atransferinternal" class="row" style="display: none;">
+                            <div class="mb-4">
+                                <h3>SOAP</h3>
+                                <hr>
+                                <!-- <div class="row">
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="atransfer1examination_date">Tanggal Assessmennt</label>
+                                                <input id="flatatransfer1examination_date" type="text" class="form-control datetimeflatpickr" required />
+                                                <input id="atransfer1examination_date" type="hidden" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="atransfer1clinic_id">Ruangan</label>
+                                                <select id="atransfer1clinic_id" type="hidden" class="form-control" required>
+                                                    <option value="P012">Unit Gawat Darurat</option>
+                                                    <?php foreach ($clinic as $key => $value)
+                                                        if ($value['stype_id'] == 3) {
+                                                    ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
+                                                                                                                                        } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-12">
+                                        <div class="mb-3">
+                                            <div class="form-group">
+                                                <label for="atransfer1employee_id">Dokter</label>
+                                                <select id="atransfer1employee_id" type="hidden" class="form-control" required>
+                                                    <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
+                                                        $dokterselected = $visit['employee_inap'];
+                                                    } else {
+                                                        $dokterselected = $visit['employee_id'];
+                                                    } ?>
+                                                    <?php foreach ($employee as $key => $value) {
+                                                    ?>
+                                                        <?php if ($dokterselected == $visit['employee_id']) { ?>
+                                                            <option value="<?= $value['employee_id']; ?>" selected><?= $value['fullname']; ?></option>
+                                                        <?php } else { ?>
+                                                            <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
+                                                        <?php } ?>
+                                                    <?php
+                                                    } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="accordion" id="accordionTranferAsal">
+                                    <input type="hidden" id="atransfer1org_unit_code">
+                                    <input type="hidden" id="atransfer1pasien_diagnosa_id">
+                                    <input type="hidden" id="atransfer1no_registration">
+                                    <input type="hidden" id="atransfer1visit_id">
+                                    <input type="hidden" id="atransfer1trans_id" value="<?= $visit['trans_id']; ?>">
+                                    <input type="hidden" id="atransfer1bill_id">
+                                    <input type="hidden" id="atransfer1class_room_id">
+                                    <input type="hidden" id="atransfer1bed_id">
+                                    <input type="hidden" id="atransfer1in_date">
+                                    <input type="hidden" id="atransfer1exit_date">
+                                    <input type="hidden" id="atransfer1keluar_id">
+                                    <input type="hidden" id="atransfer1imt_score">
+                                    <input type="hidden" id="atransfer1imt_desc">
+                                    <input type="hidden" id="atransfer1medical_treatment">
+                                    <input type="hidden" id="atransfer1modified_date">
+                                    <input type="hidden" id="atransfer1modified_by">
+                                    <input type="hidden" id="atransfer1modified_from">
+                                    <input type="hidden" id="atransfer1status_pasien_id">
+                                    <input type="hidden" id="atransfer1ageyear">
+                                    <input type="hidden" id="atransfer1agemonth">
+                                    <input type="hidden" id="atransfer1ageday">
+                                    <input type="hidden" id="atransfer1thename">
+                                    <input type="hidden" id="atransfer1theaddress">
+                                    <input type="hidden" id="atransfer1theid">
+                                    <input type="hidden" id="atransfer1isrj">
+                                    <input type="hidden" id="atransfer1gender">
+                                    <input type="hidden" id="atransfer1doctor">
+                                    <input type="hidden" id="atransfer1kal_id">
+                                    <input type="hidden" id="atransfer1petugas_id">
+                                    <input type="hidden" id="atransfer1petugas">
+                                    <input type="hidden" id="atransfer1account_id">
+                                    <input type="hidden" id="atransfer1kesadaran">
+                                    <input type="hidden" id="atransfer1isvalid">
+                                    <input type="hidden" id="atransfer1petugas_type">
+                                    <!-- Subyektif -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer1headingSubyektif">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseSubyektif" aria-expanded="false" aria-controls="atransfer1collapseSubyektif">
+                                                <b id="transferAsalSubyektifTitle">SUBYEKTIF (S)</b>
+                                            </button>
+                                        </h2>
+                                        <div id="atransfer1collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingSubyektif" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer1anamnase_label">Keluhan Utama</label><textarea name="anamnase" id="atransfer1anamnase" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Obyektif -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer1headingVitalSign">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
+                                                <b id="transferAsalObyektifTitle">OBYEKTIF (O) SEBELUM TRANSFER</b>
+                                            </button>
+                                        </h2>
+                                        <input type="hidden" id="atransfer1body_id">
+                                        <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingVitalSign" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div id="groupVitalSigntransferAsal" class="row">
+                                                    <div class="row mb-4">
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                    <option value="10">Obsetric</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer1weight" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-bb"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer1height" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1height"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer1temperature" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1temperature"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer1nadi" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1nadi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer1tension_upper" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                        <span class="h6" id="badge-atransfer1tension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer1tension_below" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                        <span class="h6" id="badge-atransfer1tension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer1saturasi" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1saturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer1nafas" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1nafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="atransferm_diameter" id="atransfer1arm_diameter" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1arm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer1oxygen_usage" placeholder="" value="" class="form-control vitalSignTransfer1">
+                                                                    <span class="h6" id="badge-atransfer1oxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--==new -->
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Kesadaran</label>
+                                                                <select class="form-select" name="awareness" id="atransfer1awareness" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Sadar</option>
+                                                                    <option value="3">Nyeri</option>
+                                                                    <option value="10">Unrespon</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-atransfer1awareness"></span>
+                                                            </div>
+                                                        </div>
+                                                        <!--==endofnew -->
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer1pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div>
+                                                    </div>
+                                                    <span id="atransfer1total_score"></span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer1alo_anamnase_label">Catatan Obyektif</label><textarea name="alo_anamnase" id="atransfer1alo_anamnase" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="atransfer2VitalSign" class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer2headingVitalSign">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
+                                                <b id="transferTujuanObyektifTitle">OBYEKTIF (O) SELAMA TRANSFER</b>
+                                            </button>
+                                        </h2>
+                                        <input type="hidden" id="atransfer2body_id">
 
+                                        <input type="hidden" id="atransfer2imt_score">
+                                        <input type="hidden" id="atransfer2imt_desc">
+                                        <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingVitalSign" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div id="groupVitalSigntransferTujuan" class="row">
+                                                    <div class="row mb-4">
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer2vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                    <option value="10">Obsetric</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer2weight" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-bb"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer2height" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2height"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer2temperature" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2temperature"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer2nadi" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2nadi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer2tension_upper" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                        <span class="h6" id="badge-atransfer2tension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer2tension_below" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                        <span class="h6" id="badge-atransfer2tension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer2saturasi" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2saturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer2nafas" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2nafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="atransferm_diameter" id="atransfer2arm_diameter" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2arm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer2oxygen_usage" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer2oxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Kesadaran</label>
+                                                                <select class="form-select" name="awareness" id="atransfer2awareness" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Sadar</option>
+                                                                    <option value="3">Nyeri</option>
+                                                                    <option value="10">Unrespon</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-atransfer2awareness"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div>
+                                                    </div>
+                                                    <span id="atransfer2total_score"></span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer2alo_anamnase_label">Catatan Obyektif</label><textarea name="alo_anamnase" id="atransfer2alo_anamnase" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer3headingVitalSign">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer3collapseVitalSign" aria-expanded="false" aria-controls="atransfer3collapseVitalSign">
+                                                <b id="transferTujuanObyektifTitle">OBYEKTIF (O) SESUDAH TRANSFER</b>
+                                            </button>
+                                        </h2>
+
+                                        <input type="hidden" id="atransfer3body_id">
+                                        <input type="hidden" id="atransfer3imt_score">
+                                        <input type="hidden" id="atransfer3imt_desc">
+                                        <div id="atransfer3collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer3headingVitalSign" style="">
+                                            <div class="accordion-body text-muted">
+                                                <div id="groupVitalSigntransferTujuan" class="row">
+                                                    <div class="row mb-4">
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Jenis EWS</label>
+                                                                <select class="form-select" name="vs_status_id" id="atransfer3vs_status_id">
+                                                                    <option value="" selected>-- pilih --</option>
+                                                                    <option value="1">Dewasa</option>
+                                                                    <option value="4">Anak</option>
+                                                                    <option value="5">Neonatus</option>
+                                                                    <option value="10">Obsetric</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>BB(Kg)</label>
+                                                                <div class=" position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer3weight" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-bb"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Tinggi(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer3height" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3height"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Suhu(°C)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer3temperature" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3temperature"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
+                                                            <div class="form-group">
+                                                                <label>Nadi(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer3nadi" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3nadi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group"><label>T.Darah(mmHg)</label>
+                                                                <div class="col-sm-12 " style="display: flex;  align-items: center;">
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer3tension_upper" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                        <span class="h6" id="badge-atransfer3tension_upper"></span>
+                                                                    </div>
+                                                                    <h4 class="mx-2">/</h4>
+                                                                    <div class="position-relative">
+                                                                        <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer3tension_below" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                        <span class="h6" id="badge-atransfer3tension_below"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Saturasi(SpO2%)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer3saturasi" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3saturasi"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Nafas/RR(/menit)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer3nafas" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3nafas"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Diameter Lengan(cm)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="atransferarm_diameter" id="atransfer3arm_diameter" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3arm_diameter"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Penggunaan Oksigen (L/mnt)</label>
+                                                                <div class="position-relative">
+                                                                    <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer3oxygen_usage" placeholder="" value="" class="form-control vitalSignTransfer2">
+                                                                    <span class="h6" id="badge-atransfer3oxygen_usage"></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
+                                                            <div class="form-group">
+                                                                <label>Kesadaran</label>
+                                                                <select class="form-select" name="awareness" id="atransfer3awareness" onchange="vitalsignInput(this)">
+                                                                    <option value="0">Sadar</option>
+                                                                    <option value="3">Nyeri</option>
+                                                                    <option value="10">Unrespon</option>
+                                                                </select>
+                                                                <span class="h6" id="badge-atransfer3awareness"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 mt-2">
+                                                            <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer3pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
+                                                        </div>
+                                                    </div>
+                                                    <span id="atransfer3total_score"></span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer3alo_anamnase_label">Catatan Obyektif</label><textarea name="alo_anamnase" id="atransfer3alo_anamnase" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Assessment -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer1headingDiagnosaPerawat">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer1collapseDiagnosaPerawat">
+                                                <b id="transferAsalAssessmentTitle">ASESMEN (A)</b>
+                                            </button>
+                                        </h2>
+                                        <div id="atransfer1collapseDiagnosaPerawat" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingDiagnosaPerawat">
+                                            <div class="accordion-body text-muted">
+                                                <div id="groupDiagnosaPerawattransferAsal" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="mb-4">
+                                                            <div class="staff-members">
+                                                                <div class="table tablecustom-responsive">
+                                                                    <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                                                        <?php if (true) { ?>
+                                                                            <thead>
+                                                                                <th class="text-center" style="width: 100%">DiagnosaPerawat</th>
+                                                                            </thead>
+                                                                            <tbody id="bodyDiagPerawattransferAsal">
+                                                                            </tbody>
+                                                                        <?php }   ?>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="box-tab-tools" style="text-align: center;">
+                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer1teraphy_desc_label">Catatan Asesmen</label><textarea name="teraphy_desc" id="atransfer1teraphy_desc" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Prosedur -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="atransfer1headingPlanning">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapsePlanning" aria-expanded="false" aria-controls="atransfer1collapsePlanning">
+                                                <b id="transferAsalPlanningTitle">PLANNING (P)</b>
+                                            </button>
+                                        </h2>
+                                        <div id="atransfer1collapsePlanning" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingPlanning">
+                                            <div class="accordion-body text-muted">
+                                                <div class="row">
+                                                    <div class="col-sm-12 mt-2">
+                                                        <div class="form-group"><label id="atransfer1instruction_label">Catatan Planning</label><textarea name="instruction" id="atransfer1instruction" placeholder="" value="" class="form-control"></textarea></div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    //bisma
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formsaveatransferbtnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransferbtn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                             <button type="button" id="formeditatransferid" name="editrm" onclick="enableTindakLanjut()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer btn-edit"><i class="fa fa-edit"></i> <span>Edit</span></button>
@@ -470,659 +1105,6 @@ $permission = user()->getPermissions();
                             <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
                         </div>
                     </form>
-                    <div id="atransfertransferinternalgroup" class="row" style="display: none;">
-                        <div id="transferDerajatBody">
-                        </div>
-                        <div id="transferDerajatBodyAddBtn" class="col-md-12 text-center">
-                            <a onclick="addDerajatStabilitas(1, 0, 'atransferbody_id', 'transferDerajatBody')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Derajat Stabilitas</a>
-                        </div>
-                        <div id="transferAsalBody" class="card border-1 rounded-4 m-4">
-                            <div class="card-body">
-                                <form id="formaddatransfer1" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
-                                    <input type="hidden" id="atransfer1body_id" name="body_id">
-                                    <input type="hidden" id="atransfer1org_unit_code" name="org_unit_code">
-                                    <input type="hidden" id="atransfer1pasien_diagnosa_id" name="pasien_diagnosa_id">
-                                    <input type="hidden" id="atransfer1no_registration" name="no_registration">
-                                    <input type="hidden" id="atransfer1visit_id" name="visit_id">
-                                    <input type="hidden" id="atransfer1trans_id" name="trans_id" value="<?= $visit['trans_id']; ?>">
-                                    <input type="hidden" id="atransfer1bill_id" name="bill_id">
-                                    <input type="hidden" id="atransfer1class_room_id" name="class_room_id">
-                                    <input type="hidden" id="atransfer1bed_id" name="bed_id">
-                                    <input type="hidden" id="atransfer1in_date" name="in_date">
-                                    <input type="hidden" id="atransfer1exit_date" name="exit_date">
-                                    <input type="hidden" id="atransfer1keluar_id" name="keluar_id">
-                                    <input type="hidden" id="atransfer1imt_score" name="imt_score">
-                                    <input type="hidden" id="atransfer1imt_desc" name="imt_desc">
-                                    <input type="hidden" id="atransfer1medical_treatment" name="medical_treatment">
-                                    <input type="hidden" id="atransfer1modified_date" name="modified_date">
-                                    <input type="hidden" id="atransfer1modified_by" name="modified_by">
-                                    <input type="hidden" id="atransfer1modified_from" name="modified_from">
-                                    <input type="hidden" id="atransfer1status_pasien_id" name="status_pasien_id">
-                                    <input type="hidden" id="atransfer1ageyear" name="ageyear">
-                                    <input type="hidden" id="atransfer1agemonth" name="agemonth">
-                                    <input type="hidden" id="atransfer1ageday" name="ageday">
-                                    <input type="hidden" id="atransfer1thename" name="thename">
-                                    <input type="hidden" id="atransfer1theaddress" name="theaddress">
-                                    <input type="hidden" id="atransfer1theid" name="theid">
-                                    <input type="hidden" id="atransfer1isrj" name="isrj">
-                                    <input type="hidden" id="atransfer1gender" name="gender">
-                                    <input type="hidden" id="atransfer1doctor" name="doctor">
-                                    <input type="hidden" id="atransfer1kal_id" name="kal_id">
-                                    <input type="hidden" id="atransfer1petugas_id" name="petugas_id">
-                                    <input type="hidden" id="atransfer1petugas" name="petugas">
-                                    <input type="hidden" id="atransfer1account_id" name="account_id">
-                                    <input type="hidden" id="atransfer1kesadaran" name="kesadaran">
-                                    <input type="hidden" id="atransfer1isvalid" name="isvalid">
-                                    <div class="row">
-                                        <h3 id="atransfer1Title">CPPT Asal</h3>
-                                        <hr>
-                                        <div class="col-md-12">
-                                            <div class="dividerhr"></div>
-                                        </div><!--./col-md-12-->
-                                        <div class="row">
-                                            <div class="col-sm-2 col-xs-12">
-                                                <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer1examination_date">Tanggal Assessmennt</label>
-                                                        <input id="flatatransfer1examination_date" type="text" class="form-control datetimeflatpickr" required />
-                                                        <input name="examination_date" id="atransfer1examination_date" type="hidden" class="form-control" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer1clinic_id">Ruangan</label>
-                                                        <select name="clinic_id" id="atransfer1clinic_id" type="hidden" class="form-control" required>
-                                                            <option value="P012">Unit Gawat Darurat</option>
-                                                            <?php foreach ($clinic as $key => $value)
-                                                                if ($value['stype_id'] == 3) {
-                                                            ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
-                                                                                                                                                } ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer1employee_id">Dokter</label>
-                                                        <select name="employee_id" id="atransfer1employee_id" type="hidden" class="form-control" required>
-                                                            <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
-                                                                $dokterselected = $visit['employee_inap'];
-                                                            } else {
-                                                                $dokterselected = $visit['employee_id'];
-                                                            } ?>
-                                                            <?php foreach ($employee as $key => $value) {
-                                                            ?>
-                                                                <?php if ($dokterselected == $visit['employee_id']) { ?>
-                                                                    <option value="<?= $value['employee_id']; ?>" selected><?= $value['fullname']; ?></option>
-                                                                <?php } else { ?>
-                                                                    <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
-                                                                <?php } ?>
-                                                            <?php
-                                                            } ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- <h4 id="assessmentGroupHeader">A:</h4> -->
-                                        <div class="accordion" id="accordionTranferAsal">
-                                            <!-- Subyektif -->
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer1headingSubyektif">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseSubyektif" aria-expanded="false" aria-controls="atransfer1collapseSubyektif">
-                                                        <b id="transferAsalSubyektifTitle">SUBYEKTIF (S)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer1collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingSubyektif" style="">
-                                                    <div class="accordion-body text-muted">
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer1anamnase_label">Keluhan Utama</label><textarea name="anamnase" id="atransfer1anamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Obyektif -->
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer1headingVitalSign">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseVitalSign" aria-expanded="false" aria-controls="atransfer1collapseVitalSign">
-                                                        <b id="transferAsalObyektifTitle">OBYEKTIF (O)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer1collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingVitalSign" style="">
-                                                    <div class="accordion-body text-muted">
-                                                        <div id="groupVitalSigntransferAsal" class="row">
-                                                            <div class="row mb-4">
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Jenis EWS</label>
-                                                                        <select class="form-select" name="vs_status_id" id="atransfer1vs_status_id">
-                                                                            <option value="" selected>-- pilih --</option>
-                                                                            <option value="1">Dewasa</option>
-                                                                            <option value="4">Anak</option>
-                                                                            <option value="5">Neonatus</option>
-                                                                            <option value="10">Obsetric</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>BB(Kg)</label>
-                                                                        <div class=" position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer1weight" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-bb"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Tinggi(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer1height" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1height"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Suhu(°C)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer1temperature" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1temperature"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
-                                                                    <div class="form-group">
-                                                                        <label>Nadi(/menit)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer1nadi" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1nadi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
-                                                                            <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer1tension_upper" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                                <span class="h6" id="badge-atransfer1tension_upper"></span>
-                                                                            </div>
-                                                                            <h4 class="mx-2">/</h4>
-                                                                            <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer1tension_below" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                                <span class="h6" id="badge-atransfer1tension_below"></span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Saturasi(SpO2%)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer1saturasi" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1saturasi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Nafas/RR(/menit)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer1nafas" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1nafas"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="atransferm_diameter" id="atransfer1arm_diameter" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1arm_diameter"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer1oxygen_usage" placeholder="" value="" class="form-control vitalSignTransfer1">
-                                                                            <span class="h6" id="badge-atransfer1oxygen_usage"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <!--==new -->
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Kesadaran</label>
-                                                                        <select class="form-select" name="awareness" id="atransfer1awareness" onchange="vitalsignInput(this)">
-                                                                            <option value="0">Sadar</option>
-                                                                            <option value="3">Nyeri</option>
-                                                                            <option value="10">Unrespon</option>
-                                                                        </select>
-                                                                        <span class="h6" id="badge-atransfer1awareness"></span>
-                                                                    </div>
-                                                                </div>
-                                                                <!--==endofnew -->
-                                                                <div class="col-sm-12 mt-2">
-                                                                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer1pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                                                </div>
-                                                            </div>
-                                                            <span id="atransfer1total_score"></span>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer1alo_anamnase_label">Catatan Obyektif</label><textarea name="alo_anamnase" id="atransfer1alo_anamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Assessment -->
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer1headingDiagnosaPerawat">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapseDiagnosaPerawat" aria-expanded="false" aria-controls="atransfer1collapseDiagnosaPerawat">
-                                                        <b id="transferAsalAssessmentTitle">ASESMEN (A)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer1collapseDiagnosaPerawat" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingDiagnosaPerawat">
-                                                    <div class="accordion-body text-muted">
-                                                        <div id="groupDiagnosaPerawattransferAsal" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
-                                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                <div class="mb-4">
-                                                                    <div class="staff-members">
-                                                                        <div class="table tablecustom-responsive">
-                                                                            <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                                                                <?php if (true) { ?>
-                                                                                    <thead>
-                                                                                        <th class="text-center" style="width: 100%">DiagnosaPerawat</th>
-                                                                                    </thead>
-                                                                                    <tbody id="bodyDiagPerawattransferAsal">
-                                                                                    </tbody>
-                                                                                <?php }   ?>
-                                                                            </table>
-                                                                        </div>
-                                                                        <div class="box-tab-tools" style="text-align: center;">
-                                                                            <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferAsal', '', null, null,'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer1teraphy_desc_label">Catatan Asesmen</label><textarea name="teraphy_desc" id="atransfer1teraphy_desc" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Prosedur -->
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer1headingPlanning">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer1collapsePlanning" aria-expanded="false" aria-controls="atransfer1collapsePlanning">
-                                                        <b id="transferAsalPlanningTitle">PLANNING (P)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer1collapsePlanning" class="accordion-collapse collapse show" aria-labelledby="atransfer1headingPlanning">
-                                                    <div class="accordion-body text-muted">
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer1instruction_label">Catatan Planning</label><textarea name="instruction" id="atransfer1instruction" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                        <script>
-                                                            //bisma
-                                                        </script>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <hr>
-                                        </div><!--./col-md-12-->
-                                        <div class="panel-footer text-end mb-4">
-                                            <button type="submit" id="formsaveatransfer1btnid" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right formsaveatransfer1btn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                            <button type="button" id="formeditatransfer1id" name="editrm" onclick="enabletransfer2()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right formeditatransfer1 btn-edit"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                            <button type="button" id="formsignatransfer1id" name="signrm" onclick="signatransfer1()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right formsignatransfer1 btn-sign"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div id="transferTujuanBody" class="card border-1 rounded-4 m-4">
-                            <div class="card-body">
-                                <form id="formaddatransfer2" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
-                                    <input type="hidden" id="atransfer2body_id" name="body_id">
-                                    <input type="hidden" id="atransfer2org_unit_code" name="org_unit_code">
-                                    <input type="hidden" id="atransfer2pasien_diagnosa_id" name="pasien_diagnosa_id">
-                                    <input type="hidden" id="atransfer2no_registration" name="no_registration">
-                                    <input type="hidden" id="atransfer2visit_id" name="visit_id">
-                                    <input type="hidden" id="atransfer2trans_id" name="trans_id" value="<?= $visit['trans_id']; ?>">
-                                    <input type="hidden" id="atransfer2bill_id" name="bill_id">
-                                    <input type="hidden" id="atransfer2class_room_id" name="class_room_id">
-                                    <input type="hidden" id="atransfer2bed_id" name="bed_id">
-                                    <input type="hidden" id="atransfer2in_date" name="in_date">
-                                    <input type="hidden" id="atransfer2exit_date" name="exit_date">
-                                    <input type="hidden" id="atransfer2keluar_id" name="keluar_id">
-                                    <input type="hidden" id="atransfer2imt_score" name="imt_score">
-                                    <input type="hidden" id="atransfer2imt_desc" name="imt_desc">
-                                    <input type="hidden" id="atransfer2medical_treatment" name="medical_treatment">
-                                    <input type="hidden" id="atransfer2modified_date" name="modified_date">
-                                    <input type="hidden" id="atransfer2modified_by" name="modified_by">
-                                    <input type="hidden" id="atransfer2modified_from" name="modified_from">
-                                    <input type="hidden" id="atransfer2status_pasien_id" name="status_pasien_id">
-                                    <input type="hidden" id="atransfer2ageyear" name="ageyear">
-                                    <input type="hidden" id="atransfer2agemonth" name="agemonth">
-                                    <input type="hidden" id="atransfer2ageday" name="ageday">
-                                    <input type="hidden" id="atransfer2thename" name="thename">
-                                    <input type="hidden" id="atransfer2theaddress" name="theaddress">
-                                    <input type="hidden" id="atransfer2theid" name="theid">
-                                    <input type="hidden" id="atransfer2isrj" name="isrj">
-                                    <input type="hidden" id="atransfer2gender" name="gender">
-                                    <input type="hidden" id="atransfer2doctor" name="doctor">
-                                    <input type="hidden" id="atransfer2kal_id" name="kal_id">
-                                    <input type="hidden" id="atransfer2petugas_id" name="petugas_id">
-                                    <input type="hidden" id="atransfer2petugas" name="petugas">
-                                    <input type="hidden" id="atransfer2account_id" name="account_id">
-                                    <input type="hidden" id="atransfer2kesadaran" name="kesadaran">
-                                    <input type="hidden" id="atransfer2isvalid" name="isvalid">
-                                    <div class="row">
-                                        <h3 id="atransfer2Title">CPPT Tujuan</h3>
-                                        <hr>
-                                        <div class="col-md-12">
-                                            <div class="dividerhr"></div>
-                                        </div><!--./col-md-12-->
-                                        <div class="row">
-                                            <div class="col-sm-2 col-xs-12">
-                                                <h5 class="font-size-14 mb-4 badge bg-primary">Dokumen Assessment:</h5>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer2examination_date">Tanggal Assessmennt</label>
-                                                        <input id="flatatransfer2examination_date" type="text" class="form-control datetimeflatpickr" required />
-                                                        <input name="examination_date" id="atransfer2examination_date" type="hidden" class="form-control" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer2clinic_id">Ruangan</label>
-                                                        <select name="clinic_id" id="atransfer2clinic_id" type="hidden" class="form-control " required>
-                                                            <?php foreach ($clinic as $key => $value)
-                                                                if ($value['stype_id'] == 3) {
-                                                            ?><option value="<?= $value['clinic_id']; ?>"><?= $value['name_of_clinic']; ?></option><?php
-                                                                                                                                                } ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4 col-xs-12">
-                                                <div class="mb-3">
-                                                    <div class="form-group">
-                                                        <label for="atransfer2employee_id">Dokter</label>
-                                                        <select name="employee_id" id="atransfer2employee_id" type="hidden" class="form-control " required>
-                                                            <?php if (!is_null($visit['class_room_id']) && ($visit['class_room_id'] != '')) {
-                                                                $dokterselected = $visit['employee_inap'];
-                                                            } else {
-                                                                $dokterselected = $visit['employee_id'];
-                                                            } ?>
-                                                            <?php foreach ($employee as $key => $value) {
-                                                            ?>
-                                                                <?php if ($dokterselected == $visit['employee_id']) { ?>
-                                                                    <option value="<?= $value['employee_id']; ?>" selected><?= $value['fullname']; ?></option>
-                                                                <?php } else { ?>
-                                                                    <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
-                                                                <?php } ?>
-                                                            <?php
-                                                            } ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- <h4 id="assessmentGroupHeader">A:</h4> -->
-                                        <div class="accordion" id="accordionTranferTujuan">
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer2headingSubyektif">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseSubyektif" aria-expanded="false" aria-controls="atransfer2collapseSubyektif">
-                                                        <b id="transferTujuanSubyektifTitle">SUBYEKTIF (S)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer2collapseSubyektif" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingSubyektif" style="">
-                                                    <div class="accordion-body text-muted">
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer2anamnase_label">Keluhan Utama</label><textarea name="anamnase" id="atransfer2anamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer2headingVitalSign">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapseVitalSign" aria-expanded="false" aria-controls="atransfer2collapseVitalSign">
-                                                        <b id="transferTujuanObyektifTitle">OBYEKTIF (O)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer2collapseVitalSign" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingVitalSign" style="">
-                                                    <div class="accordion-body text-muted">
-                                                        <div id="groupVitalSigntransferTujuan" class="row">
-                                                            <div class="row mb-4">
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Jenis EWS</label>
-                                                                        <select class="form-select" name="vs_status_id" id="atransfer2vs_status_id">
-                                                                            <option value="" selected>-- pilih --</option>
-                                                                            <option value="1">Dewasa</option>
-                                                                            <option value="4">Anak</option>
-                                                                            <option value="5">Neonatus</option>
-                                                                            <option value="10">Obsetric</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>BB(Kg)</label>
-                                                                        <div class=" position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="atransfer2weight" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-bb"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-12 col-sm-12 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Tinggi(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="atransfer2height" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2height"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Suhu(°C)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="atransfer2temperature" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2temperature"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2 position-relative">
-                                                                    <div class="form-group">
-                                                                        <label>Nadi(/menit)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="atransfer2nadi" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2nadi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group"><label>T.Darah(mmHg)</label>
-                                                                        <div class="col-sm-12 " style="display: flex;  align-items: center;">
-                                                                            <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="atransfer2tension_upper" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                                <span class="h6" id="badge-atransfer2tension_upper"></span>
-                                                                            </div>
-                                                                            <h4 class="mx-2">/</h4>
-                                                                            <div class="position-relative">
-                                                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="atransfer2tension_below" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                                <span class="h6" id="badge-atransfer2tension_below"></span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Saturasi(SpO2%)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="atransfer2saturasi" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2saturasi"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Nafas/RR(/menit)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="atransfer2nafas" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2nafas"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Diameter Lengan(cm)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="atransferm_diameter" id="atransfer2arm_diameter" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2arm_diameter"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Penggunaan Oksigen (L/mnt)</label>
-                                                                        <div class="position-relative">
-                                                                            <input onchange="vitalsignInput(this)" type="text" name="oxygen_usage" id="atransfer2oxygen_usage" placeholder="" value="" class="form-control vitalSignTransfer2">
-                                                                            <span class="h6" id="badge-atransfer2oxygen_usage"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-                                                                    <div class="form-group">
-                                                                        <label>Kesadaran</label>
-                                                                        <select class="form-select" name="awareness" id="atransfer2awareness" onchange="vitalsignInput(this)">
-                                                                            <option value="0">Sadar</option>
-                                                                            <option value="3">Nyeri</option>
-                                                                            <option value="10">Unrespon</option>
-                                                                        </select>
-                                                                        <span class="h6" id="badge-atransfer2awareness"></span>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-12 mt-2">
-                                                                    <div class="form-group"><label>Pemeriksaan</label><textarea name="pemeriksaan" id="atransfer2pemeriksaan" placeholder="" value="" class="form-control"></textarea></div>
-                                                                </div>
-                                                            </div>
-                                                            <span id="atransfer2total_score"></span>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer2alo_anamnase_label">Catatan Obyektif</label><textarea name="alo_anamnase" id="atransfer2alo_anamnase" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer2headingDiagnosaPerawat">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransferiagnosaPerawat" aria-expanded="false" aria-controls="atransfer2collapseDiagnosaPerawat">
-                                                        <b id="transferTujuanAssessmentTitle">ASESMEN (A)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer2collapseDiagnosaPerawat" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingDiagnosaPerawat">
-                                                    <div class="accordion-body text-muted">
-                                                        <div id="groupDiagnosaPerawattransferTujuan" class="row mb-2" <?= isset($group[11]) ? 'style="display: none"' : '' ?>>
-                                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                <div class="mb-4">
-                                                                    <div class="staff-members">
-                                                                        <div class="table tablecustom-responsive">
-                                                                            <table id="tableDiagnosaPerawatMedis" class="table" data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
-                                                                                <?php if (true) { ?>
-                                                                                    <thead>
-                                                                                        <th class="text-center" style="width: 100%">DiagnosaPerawat</th>
-                                                                                    </thead>
-                                                                                    <tbody id="bodyDiagPerawattransferTujuan">
-                                                                                    </tbody>
-                                                                                <?php }   ?>
-                                                                            </table>
-                                                                        </div>
-                                                                        <div class="box-tab-tools" style="text-align: center;">
-                                                                            <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawat('bodyDiagPerawattransferTujuan', '', null, null, 'transferModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer2teraphy_desc_label">Catatan Asesmen</label><textarea name="teraphy_desc" id="atransfer2teraphy_desc" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="atransfer2headingPlanning">
-                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#atransfer2collapsePlanning" aria-expanded="false" aria-controls="atransfer2collapsePlanning">
-                                                        <b id="transferTujuanPlanningTitle">PLANNING (P)</b>
-                                                    </button>
-                                                </h2>
-                                                <div id="atransfer2collapsePlanning" class="accordion-collapse collapse show" aria-labelledby="atransfer2headingPlanning">
-                                                    <div class="accordion-body text-muted">
-                                                        <div class="row">
-                                                            <div class="col-sm-12 mt-2">
-                                                                <div class="form-group"><label id="atransfer2instruction_label">Catatan Planning</label><textarea name="instruction" id="atransfer2instruction" placeholder="" value="" class="form-control"></textarea></div>
-                                                            </div>
-                                                        </div>
-                                                        <script>
-                                                            //bisma
-                                                        </script>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <hr>
-                                        </div><!--./col-md-12-->
-                                        <div class="panel-footer text-end mb-4">
-                                            <button type="submit" id="formsaveatransfer2btnid" name="save" data-loading-text="<i class='fas fa-spinner fa-pulse'></i> Proses ..." class="btn btn-primary pull-right formsaveatransfer2btn btn-save"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                                            <button type="button" id="formeditatransfer2id" name="editrm" onclick="enabletransfer2()" data-loading-text="<i class='fas fa-spinner fa-pulse'></i> Proses ..." class="btn btn-secondary pull-right formeditatransfer2 btn-edit"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                                            <button type="button" id="formsignatransfer2id" name="signrm" onclick="signatransfer2()" data-loading-text="<i class='fas fa-spinner fa-pulse'></i> Proses ..." class="btn btn-warning pull-right formsignatransfer2 btn-sign"><i class="fa fa-signature"></i> <span>Sign</span></button>
-                                            <!-- <button type="button" id="postingSS" name="editrm" onclick="saveBundleEncounterSS()" data-loading-text="<i class='fas fa-spinner fa-pulse'></i> Proses ..." class="btn btn-info pull-right"><i class="fa fa-edit"></i> <span>Satu Sehat</span></button> -->
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="box-tab-tools text-center m-4">
