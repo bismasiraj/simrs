@@ -498,24 +498,24 @@ class Cetak extends \App\Controllers\BaseController
 
             $select = $this->lowerKey($db->query("
             select ASSESSMENT_OPERATION.*,
-            ei.TEMPERATURE as suhu,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.NADI as nadi,
-            ei.NAFAS as respirasi,
-            ei.WEIGHT as bb,
-            ei.HEIGHT as tb,
-            ei.IMT_SCORE,
-            ei.IMT_DESC,
-            ei.SATURASI as saturasi,
+            ed.TEMPERATURE as suhu,
+            ed.TENSION_UPPER as tensi_atas,
+            ed.TENSION_BELOW as tensi_bawah,
+            ed.NADI as nadi,
+            ed.NAFAS as respirasi,
+            ed.WEIGHT as bb,
+            ed.HEIGHT as tb,
+            ed.IMT_SCORE,
+            ed.IMT_DESC,
+            ed.SATURASI as saturasi,
             CASE
-                WHEN ei.HEIGHT = 0 THEN NULL
-                ELSE ROUND(ei.WEIGHT * 10000.0 / (ei.HEIGHT * ei.HEIGHT), 2)
+                WHEN ed.HEIGHT = 0 THEN NULL
+                ELSE ROUND(ed.WEIGHT * 10000.0 / (ed.HEIGHT * ed.HEIGHT), 2)
             END AS bmi
             from ASSESSMENT_OPERATION 
-            left outer join EXAMINATION_info ei on ASSESSMENT_OPERATION.document_id = ei.PASIEN_DIAGNOSA_ID
-            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '10'
-            ")->getRow(0, 'array') ?? []);
+            left outer join EXAMINATION_detail ed on ASSESSMENT_OPERATION.document_id = ed.document_id
+            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_OPERATION.document_id = '" . $vactination_id . "' and ed.ACCOUNT_ID = '10'
+            ")->getRowArray() ?? []);
             if (!empty($select)) {
 
                 $selectDiagnosa = $this->lowerKey($db->query("

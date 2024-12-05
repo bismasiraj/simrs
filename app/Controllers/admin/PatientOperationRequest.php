@@ -1473,7 +1473,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         return $this->response->setJSON($data);
     }
 
-
     public function savePraOperasi()
     {
         if (!$this->request->is('post')) {
@@ -1589,29 +1588,59 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         if (isset($bloodblood_request)) {
             $bloodmodel = new BloodRequestModel();
-            $bloodmodel->where('document_id', $body_id)->delete();
+
+            $bloodBeforeDelete = $this->lowerKey($db->query("
+            select * from blood_request 
+            where VISIT_ID = '" . $data['visit_id'] . "' 
+            and CLINIC_ID = '" . $bloodclinic_id[0] . "' 
+            and NO_REGISTRATION = '" . $bloodno_registration[0] . "' 
+            and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
+            ")->getResultArray() ?? []);
+
+            $bloodmodel->where('visit_id', $data['visit_id'])
+                ->where('document_id', $body_id)
+                ->where('no_registration', $bloodno_registration[0])
+                ->where('clinic_id', $bloodclinic_id[0])
+                ->where('TRANSFUSION_START', NULL)
+                ->orWhere('TRANSFUSION_END', NULL)
+                ->delete();
 
             foreach ($bloodblood_request as $key => $value) {
-                // $existBlood = $this->lowerKey($db->query("select * from blood_request where blood_request =  '" . $bloodrequest_date[$key] . "'")->getResultArray() ?? []);
+
+                $existData = array_filter($bloodBeforeDelete, function ($item) use ($value) {
+                    return isset($item['blood_request']) && $item['blood_request'] === $value;
+                });
+
                 $datablood = [
                     'org_unit_code' => $bloodorg_unit_code[$key],
                     'blood_request' => $bloodblood_request[$key],
                     'no_registration' => $bloodno_registration[$key],
                     'visit_id' => $bloodvisit_id[$key],
                     'trans_id' => $bloodtrans_id[$key],
+                    'clinic_id' => $bloodclinic_id[$key],
                     'document_id' => $body_id,
+
                     'request_date' => $bloodrequest_date[$key],
-                    'blood_type_id' => $blood_type_id[$key],
+                    'blood_type_id' => $bloodblood_type_id[$key],
                     'using_time' => $bloodusing_time[$key],
                     'blood_usage_type' => $bloodblood_usage_type[$key],
                     'blood_quantity' => $bloodblood_quantity[$key],
                     'measure_id' => $bloodmeasure_id[$key],
                     'descriptions' => $blooddescriptions[$key],
+
+                    'calf_number' => $existData[0]['calf_number'] ?? null,
+                    'delivery_time' => $existData[0]['delivery_time'] ?? null,
+                    'terlayani' => $existData[0]['terlayani'] ?? null,
+
                     'transfusion_start' => !empty(@$bloodtransfusion_start[$key]) ? @$bloodtransfusion_start[$key]  : null,
                     'transfusion_end' => !empty(@$bloodtransfusion_end[$key]) ? @$bloodtransfusion_end[$key]  : null,
                     'reaction_desc' => !empty(@$bloodreaction_desc[$key]) ? @$bloodreaction_desc[$key] : null,
                 ];
-                $bloodmodel->insert($datablood);
+                $insertBloodRequest = $bloodmodel->insert($datablood);
+                if (!$insertBloodRequest) {
+                    $error = $db->error();
+                    throw new \Exception('Update failed: ' . $error['message']);
+                }
             }
         }
 

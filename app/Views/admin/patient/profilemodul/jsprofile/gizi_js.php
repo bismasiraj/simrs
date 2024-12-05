@@ -32,8 +32,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
         $(document).ready(function() {
 
-            getDataTableGizi();
-            getDataScreening();
+
             initializeSearchDietaryHabit('pola_makan_gizi', '#create-modal-gizi')
 
             flatpickr('.datepicker-gizi', {
@@ -56,6 +55,11 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
 
 
         });
+
+        $('#giziTab').off().on('click', function(e) {
+            getDataTableGizi();
+            getDataScreening();
+        })
 
         // action button
         $('#hasilIntervensiModal').on('shown.bs.modal', function() {
@@ -157,6 +161,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 no_registration: visit['no_registration'],
                 trans_id: visit['trans_id'],
             })
+            saveAsuhanGizi();
         });
 
         $('#btn-close-gizi').off().click(function() {
@@ -178,16 +183,16 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
             }, 'admin/Gizi/getDataGizi', (res) => {
                 if (res.respon) {
                     let data = res?.data;
-                    if (res.data.length > 0) {
-                        const tableGizi = $('#table_asuhan_gizi').DataTable({
-                            dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
-                            stateSave: true,
-                            "bDestroy": true
-                        });
-                        tableGizi.clear();
-                        let dataRows = '';
-                        data.forEach((value, key) => {
-                            dataRows = `
+
+                    const tableGizi = $('#table_asuhan_gizi').DataTable({
+                        dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                        stateSave: true,
+                        "bDestroy": true
+                    });
+                    tableGizi.clear();
+                    let dataRows = '';
+                    data.forEach((value, key) => {
+                        dataRows = `
                                 <tr id="row-${value?.body_id}" class="align-middle">
                                     <td width="1%" class="text-center">${key+1}</td>
                                     <td class="text-center">${value?.nutrition_diagnose ?? '-'}</td>
@@ -219,163 +224,155 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                 </tr>
                                 `;
 
-                            tableGizi.row.add($(dataRows));
+                        tableGizi.row.add($(dataRows));
+                    });
+
+                    tableGizi.draw();
+
+                    $('.validate-row').each(function(index, button) {
+                        const id = $(button).data('id');
+                        const formId = 'formAsuhanGizi';
+                        const primaryKey = id;
+                        const formSaveBtn = `formGiziSaveBtn-${index+1}`;
+                        if (id) {
+                            $(this).prop('disabled', false);
+                        } else {
+                            $(this).prop('disabled', true);
+                        }
+
+
+                        $("button[name='sign_gizi']").off().on("click", function() {
+                            const buttonId = $(this).data('button-id');
+                            const signKe = `${index+1}`;
+                            addSignUserGizi("formAsuhanGizi", "accordionGizi", id, buttonId,
+                                7, signKe,
+                                1, "Form Asuhan Gizi");
                         });
 
-                        tableGizi.draw();
+                        // if (id) {
+                        //     checkSignSignatureGizi(formId, primaryKey, formSaveBtn, '7');
+                        // }
+                    })
+                    $('.assessment-row').on('click', function() {
+                        getLoadingscreen("accordionGizi", "load-content-accordion-gizi")
+                        const id = $(this).data('id');
 
-                        $('.validate-row').each(function(index, button) {
-                            const id = $(button).data('id');
-                            const formId = 'formAsuhanGizi';
-                            const primaryKey = id;
-                            const formSaveBtn = `formGiziSaveBtn-${index+1}`;
-                            if (id) {
-                                $(this).prop('disabled', false);
-                            } else {
-                                $(this).prop('disabled', true);
+                        $('tr').removeClass('bg-light');
+                        $('#row-' + id).addClass('bg-light')
+
+                        renderDiagnosaGizi({
+                            document_id: id
+                        })
+                        renderFoodRecall({
+                            visit_id: visit['visit_id'],
+                            document_id: id
+                        })
+                        renderIntervensi({
+                            visit_id: visit['visit_id'],
+                            document_id: id
+                        })
+
+                    })
+                    $('.duplicate-row-gizi').on('click', function() {
+                        const id = $(this).data('id');
+
+                        Swal.fire({
+                            title: "Duplikat Data Asesmen?",
+                            text: "Data baru akan dibuat sesuai data yang diduplikat",
+                            icon: "info",
+                            showCancelButton: true,
+                            confirmButtonColor: "#7a6fbe",
+                            confirmButtonText: "Duplikat",
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                postData({
+                                    visit_id: visit['visit_id'],
+                                    body_id: id
+                                }, 'admin/Gizi/duplikatAsuhanGizi', (res) => {
+                                    if (res.respon) {
+                                        renderGizi({
+                                            visit_id: props?.visit_id,
+                                            no_registration: props?.no_registration
+                                        })
+                                        successSwal('Data berhasil Diduplikat.');
+                                    }
+                                });
+
                             }
+                        });
 
+                    });
 
-                            $("button[name='sign_gizi']").off().on("click", function() {
-                                const buttonId = $(this).data('button-id');
-                                const signKe = `${index+1}`;
-                                addSignUserGizi("formAsuhanGizi", "accordionGizi", id, buttonId,
-                                    7, signKe,
-                                    1, "Form Asuhan Gizi");
-                            });
+                    $('.delete-row-gizi').on('click', function() {
+                        const id = $(this).data('id');
+                        const swalWithBootstrapButtons = Swal.mixin({
+                            customClass: {
+                                confirmButton: "btn btn-success ms-2",
+                                cancelButton: "btn btn-danger"
+                            },
+                            buttonsStyling: false
+                        });
 
-                            // if (id) {
-                            //     checkSignSignatureGizi(formId, primaryKey, formSaveBtn, '7');
-                            // }
+                        swalWithBootstrapButtons.fire({
+                            title: "Apa anda yakin?",
+                            text: "Anda tidak akan dapat mengembalikannya!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Ya, Hapus!",
+                            cancelButtonText: "Batal!",
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                postData({
+                                    body_id: id
+                                }, 'admin/Gizi/deleteGizi', (res) => {
+
+                                    if (res.respon) {
+                                        renderGizi({
+                                            visit_id: props?.visit_id,
+                                            no_registration: props?.no_registration
+                                        })
+                                        successSwal('Data berhasil Dihapus.');
+                                    } else {
+                                        errorSwal("Gagal Di hapus")
+                                    }
+
+                                });
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                swalWithBootstrapButtons.fire({
+                                    title: "Dibatalkan",
+                                    text: "File Anda aman :)",
+                                    icon: "error"
+                                });
+                            }
+                        });
+
+                    });
+
+                    $('.edit-row-gizi').on('click', function() {
+                        const id = $(this).data('id');
+                        getAsuhanGiziByID({
+                            visit_id: props?.visit_id,
+                            no_registration: props?.no_registration,
+                            body_id: id
                         })
-                        $('.assessment-row').on('click', function() {
-                            getLoadingscreen("accordionGizi", "load-content-accordion-gizi")
-                            const id = $(this).data('id');
 
-                            $('tr').removeClass('bg-light');
-                            $('#row-' + id).addClass('bg-light')
+                    });
 
-                            renderDiagnosaGizi({
-                                document_id: id
-                            })
-                            renderFoodRecall({
-                                visit_id: visit['visit_id'],
-                                document_id: id
-                            })
-                            renderIntervensi({
-                                visit_id: visit['visit_id'],
-                                document_id: id
-                            })
+                    $('.print-row').on('click', function() {
 
+                        const id = $(this).data('id');
+                        cetakGizi({
+                            body_id: id
                         })
-                        $('.duplicate-row-gizi').on('click', function() {
-                            const id = $(this).data('id');
 
-                            Swal.fire({
-                                title: "Duplikat Data Asesmen?",
-                                text: "Data baru akan dibuat sesuai data yang diduplikat",
-                                icon: "info",
-                                showCancelButton: true,
-                                confirmButtonColor: "#7a6fbe",
-                                confirmButtonText: "Duplikat",
-                                reverseButtons: true
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    postData({
-                                        visit_id: visit['visit_id'],
-                                        body_id: id
-                                    }, 'admin/Gizi/duplikatAsuhanGizi', (res) => {
-                                        if (res.respon) {
-                                            renderGizi({
-                                                visit_id: props?.visit_id,
-                                                no_registration: props?.no_registration
-                                            })
-                                            successSwal('Data berhasil Diduplikat.');
-                                        }
-                                    });
+                    });
 
-                                }
-                            });
 
-                        });
-
-                        $('.delete-row-gizi').on('click', function() {
-                            const id = $(this).data('id');
-                            const swalWithBootstrapButtons = Swal.mixin({
-                                customClass: {
-                                    confirmButton: "btn btn-success ms-2",
-                                    cancelButton: "btn btn-danger"
-                                },
-                                buttonsStyling: false
-                            });
-
-                            swalWithBootstrapButtons.fire({
-                                title: "Apa anda yakin?",
-                                text: "Anda tidak akan dapat mengembalikannya!",
-                                icon: "warning",
-                                showCancelButton: true,
-                                confirmButtonText: "Ya, Hapus!",
-                                cancelButtonText: "Batal!",
-                                reverseButtons: true
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    postData({
-                                        body_id: id
-                                    }, 'admin/Gizi/deleteGizi', (res) => {
-
-                                        if (res.respon) {
-                                            renderGizi({
-                                                visit_id: props?.visit_id,
-                                                no_registration: props?.no_registration
-                                            })
-                                            successSwal('Data berhasil Dihapus.');
-                                        } else {
-                                            errorSwal("Gagal Di hapus")
-                                        }
-
-                                    });
-                                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                    swalWithBootstrapButtons.fire({
-                                        title: "Dibatalkan",
-                                        text: "File Anda aman :)",
-                                        icon: "error"
-                                    });
-                                }
-                            });
-
-                        });
-
-                        $('.edit-row-gizi').on('click', function() {
-                            const id = $(this).data('id');
-                            getAsuhanGiziByID({
-                                visit_id: props?.visit_id,
-                                no_registration: props?.no_registration,
-                                body_id: id
-                            })
-
-                        });
-
-                        $('.print-row').on('click', function() {
-
-                            const id = $(this).data('id');
-                            cetakGizi({
-                                body_id: id
-                            })
-
-                        });
-
-                    } else {
-                        bodyGizi.html(`
-                        <tr>
-                            <td width="1%" class="text-center" colspan="7">Data Kosong</td>
-                        </tr>
-                        `);
-                    }
 
                 }
             });
-
-            saveAsuhanGizi();
             updateAsuhanGizi();
         }
 
@@ -1581,17 +1578,18 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                 no_registration: visit['no_registration']
             }, 'admin/Gizi/getDataSkrining', (res) => {
                 if (res.respon) {
-                    if (res?.data.length > 0) {
-                        const table = $('#table_skrining_gizi').DataTable({
-                            dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
-                            stateSave: true,
-                            "bDestroy": true
-                        });
-                        table.clear();
-                        let dataHtml = '';
-                        res?.data.forEach((element, index) => {
+                    console.log(res.data);
+                    const table = $('#table_skrining_gizi').DataTable({
+                        dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                        stateSave: true,
+                        "bDestroy": true
+                    });
+                    table.clear();
+                    let dataHtml = '';
 
-                            dataHtml = `
+                    res?.data.forEach((element, index) => {
+
+                        dataHtml = `
                                 <tr class="p-0">
                                     <th style="width:1% !important;" class="text-center p-1">${index+1}</th>
                                     <th class="text-center p-1">Formulir Skrining - ${moment(element?.examination_date).format('YYYY-MM-DD HH:mm:ss')}</th>
@@ -1606,94 +1604,86 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                                     </th>
                                 </tr>
                             `;
-                            table.row.add($(dataHtml));
-                        })
-                        table.draw();
+                        table.row.add($(dataHtml));
+                    })
+                    table.draw();
 
-                        $('.btn-skrining-edit').off().on('click', function(event) {
-                            const id = $(this).data('id');
+                    $('.btn-skrining-edit').off().on('click', function(event) {
+                        const id = $(this).data('id');
 
-                            postData({
-                                visit_id: visit['visit_id'],
-                                no_registration: visit['no_registration'],
-                                body_id: id,
-                            }, 'admin/Gizi/getSkriningById', (res) => {
-                                if (res.respon) {
-                                    $('#edit_height_screening').val(res.data.height ?? 0)
-                                    $('#edit_weight_screening').val(res.data.weight ?? 0)
-                                    $('#edit_imt_screening').val(res.data.imt)
+                        postData({
+                            visit_id: visit['visit_id'],
+                            no_registration: visit['no_registration'],
+                            body_id: id,
+                        }, 'admin/Gizi/getSkriningById', (res) => {
+                            if (res.respon) {
+                                $('#edit_height_screening').val(res.data.height ?? 0)
+                                $('#edit_weight_screening').val(res.data.weight ?? 0)
+                                $('#edit_imt_screening').val(res.data.imt)
 
-                                    BMIonChange({
-                                        height: '#edit_height_screening',
-                                        weight: '#edit_weight_screening',
-                                        bmi: '#edit_imt_screening',
-                                    })
+                                BMIonChange({
+                                    height: '#edit_height_screening',
+                                    weight: '#edit_weight_screening',
+                                    bmi: '#edit_imt_screening',
+                                })
 
-                                    let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
-                                    let now = moment();
+                                let birth = moment(<?= json_encode($visit['date_of_birth']); ?>);
+                                let now = moment();
 
-                                    let daysDiff = now.diff(birth, 'days');
-                                    getAge({
-                                        visit: visit['visit_id'],
-                                    }, 'edit_age_category_screening', daysDiff, res.data.age_cat);
+                                let daysDiff = now.diff(birth, 'days');
+                                getAge({
+                                    visit: visit['visit_id'],
+                                }, 'edit_age_category_screening', daysDiff, res.data.age_cat);
 
-                                    $('#edit_select_skrining_gizi').val(res?.data.p_type);
-                                    $('#body_id-edit-skrining').val(res?.data.body_id);
+                                $('#edit_select_skrining_gizi').val(res?.data.p_type);
+                                $('#body_id-edit-skrining').val(res?.data.body_id);
 
-                                    $('#edit-modal-skrining').modal('show')
+                                $('#edit-modal-skrining').modal('show')
 
 
+                                getFormScreening({
+                                    selectedOption: res?.data.p_type,
+                                    container: '#edit_tbodySkriningGizi',
+                                    data: res?.data
+                                });
+
+                                $('#edit_select_skrining_gizi').change(function(e) {
                                     getFormScreening({
-                                        selectedOption: res?.data.p_type,
+                                        selectedOption: $(this).val(),
                                         container: '#edit_tbodySkriningGizi',
                                         data: res?.data
                                     });
+                                })
 
-                                    $('#edit_select_skrining_gizi').change(function(e) {
-                                        getFormScreening({
-                                            selectedOption: $(this).val(),
-                                            container: '#edit_tbodySkriningGizi',
-                                            data: res?.data
-                                        });
-                                    })
+                                $('#btnUpdateSkrining').off().on('click', function(e) {
+                                    let formData = document.querySelector('#edit_formSkriningGizi');
+                                    let dataSend = new FormData(formData);
+                                    let jsonObj = {};
 
-                                    $('#btnUpdateSkrining').off().on('click', function(e) {
-                                        let formData = document.querySelector('#edit_formSkriningGizi');
-                                        let dataSend = new FormData(formData);
-                                        let jsonObj = {};
+                                    dataSend.forEach((value, key) => {
+                                        jsonObj[key] = value;
+                                    });
 
-                                        dataSend.forEach((value, key) => {
-                                            jsonObj[key] = value;
-                                        });
+                                    postData(jsonObj, 'admin/Gizi/UpdateSkrining', (res) => {
+                                        if (res.respon) {
+                                            successSwal(res.message)
+                                            $('#create-modal-skrining').modal('hide')
+                                            getDataScreening();
+                                        } else {
+                                            errorSwal(res.message)
+                                            $('#create-modal-skrining').modal('hide')
+                                        }
+                                    });
+                                })
 
-                                        postData(jsonObj, 'admin/Gizi/UpdateSkrining', (res) => {
-                                            if (res.respon) {
-                                                successSwal(res.message)
-                                                $('#create-modal-skrining').modal('hide')
-                                                getDataScreening();
-                                            } else {
-                                                errorSwal(res.message)
-                                                $('#create-modal-skrining').modal('hide')
-                                            }
-                                        });
-                                    })
-
-                                }
-                            });
+                            }
                         });
+                    });
 
-                        deleteScreening();
-                        actionCetakScreening();
+                    deleteScreening();
+                    actionCetakScreening();
 
-                    } else {
-                        dataHtml =
-                            `
-                        <tr>
-                            <td class="text-center" colspan="5">Data tidak tersedia</td>
-                        </tr>
-                        `;
-                        // container.html(dataHtml);
-                    }
+
 
                 }
             });
