@@ -345,38 +345,12 @@
         $.each(canvasAssessment, function(key, value1) {
             var canvasId = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
             if (canvasId) {
-                let file_path = value1.value_info
                 let filePath = value1.value_info;
                 let extension = filePath.split('.').pop(); // Get extension
                 let canvasResult = canvasId.toDataURL('image/' + extension);
                 $("#lokalis" + value1.value_id).val(canvasResult);
             }
         })
-        <?php foreach ($aParameter as $key => $value) {
-            if ($value['p_type'] == 'GEN0002')
-                foreach ($aValue as $key1 => $value1) {
-                    if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '3') {
-                        foreach ($mapAssessment as $key2 => $value2) {
-                            if ($value2['doc_id'] == $value1['value_id'] && $value2['specialist_type_id'] == $visit['specialist_type_id']) {
-                                $file_path = $value1["value_info"];
-                                $extension = pathinfo(
-                                    $file_path,
-                                    PATHINFO_EXTENSION
-                                );
-        ?>
-                            // var canvasId = document.getElementById('canvas<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>');
-                            // if (canvasId) {
-                            //     const canvasResult<?= $value1['value_id']; ?> = canvasId.toDataURL('image/<?= $extension; ?>');
-
-                            //     $("#lokalis<?= $value1['value_id']; ?>").val(canvasResult<?= $value1['value_id']; ?>);
-                            // }
-
-        <?php
-                            }
-                        }
-                    }
-                }
-        } ?>
     }
 </script>
 <script type="text/javascript">
@@ -694,12 +668,14 @@
             groupeActionInTabKulit()
         if (pasienDiagnosa.specialist_type_id == '1.16')
             groupeActionInTabSaraf()
-        getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
-        getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
-        getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
-        getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
-        getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
-        getEducationForm(pasienDiagnosa.pasien_diagnosa_id, "bodyEducationFormMedis")
+        // getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+        // getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
+        // getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
+        // getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
+        // if (pasienDiagnosa.clinic_id == 'P012')
+        //     getApgar(pasienDiagnosa.pasien_diagnosa_id, "bodyApgarMedis")
+        // getEducationForm(pasienDiagnosa.pasien_diagnosa_id, "bodyEducationFormMedis")
+        getSateliteMedis(pasienDiagnosa)
         fillPemeriksaanFisik(pasienDiagnosa.pasien_diagnosa_id)
         // $("#formsavearmbtn").slideUp()
         // $("#formeditarm").slideDown()
@@ -713,6 +689,93 @@
         }
 
         $("#armModal").modal("show")
+    }
+
+    const getSateliteMedis = (pasienDiagnosa) => {
+        postData({
+            pasien_diagnosa_id: pasienDiagnosa.pasien_diagnosa_id,
+            visit_id: pasienDiagnosa.visit_id,
+            specialist_type_id: pasienDiagnosa.specialist_type_id,
+            clinic_id: pasienDiagnosa.specialist_type_id
+        }, 'admin/rm/assessmentmedis/getSateliteMedis', (res) => {
+            console.log(res)
+            console.log(res.gcs)
+            if (res.gcs) {
+                gcsAll = res.gcs
+                // gcsDetailAll = data.gcsDetail
+
+                $.each(gcsAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGcsPerawat").html("")
+                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                        return false
+                    }
+                })
+            }
+            // getGcs(pasienDiagnosa.pasien_diagnosa_id, "bodySirkulasiMedis")
+            // getFallRisk(pasienDiagnosa.pasien_diagnosa_id, "bodyFallRiskMedis")
+            // getPainMonitoring(pasienDiagnosa.pasien_diagnosa_id, "bodyPainMonitoringMedis")
+            // getPernapasan(pasienDiagnosa.pasien_diagnosa_id, "bodyPernapasanMedis")
+
+            if (res.fallRisk) {
+                let data = res.fallRisk
+                fallRisk = data.fallRisk
+                fallRiskDetail = data.fallRiskDetail
+
+                $.each(fallRisk, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyFallRiskPerawat").html("")
+                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
+                        return false
+                    }
+                })
+            }
+
+            if (res.painMonitoring) {
+                let container = "bodyPainMonitoringMedis"
+                let data = res.painMonitoring
+                painMonitoring = data.painMonitoring
+                painMonitoringDetil = data.painDetil
+                painIntervensi = data.painIntervensi
+
+                $.each(painMonitoring, function(key, value) {
+                    $("#" + container).html("")
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyPainMonitoringMedis").html("")
+                        addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis", false)
+                        return false
+                    }
+                })
+            }
+
+            if (res.pernapasan) {
+                napas = res.pernapasan
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(napas, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
+                        return false
+                    }
+                })
+            }
+            if (res.apgar) {
+                let container = "bodyApgarMedis"
+                let data = res.apgar
+                apgar = data.apgar
+                apgarDetil = data.apgarDetil
+
+                $.each(apgar, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyApgarPerawat").html("")
+                        addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
+                        return false
+                    }
+                })
+            }
+        }, (beforesend) => {
+            // getLoadingGlobalServices('bodydatapemeriksaanKulit')
+        })
     }
 
     function fillRiwayat() {
@@ -748,6 +811,7 @@
             }
         })
     }
+
 
     function enableARM() {
         $("#formsignarm").slideDown()
@@ -1028,14 +1092,37 @@
                 // $("#armbody_id").val(get_bodyid())
             }
         }
-        // alert("berhasil2")
+        var data = [];
 
+        let docDataRm = new FormData(document.getElementById("formaddarm"))
+        let docDataObjectRm = {};
+        docDataRm.forEach(function(value, key) {
+            docDataObjectRm[key] = value
+        });
+        let newObjRm = {
+            id: "formaddarm",
+            data: docDataObjectRm
+        };
+        data.push(newObjRm)
+
+        $("#formaddarm").find(".satelite").each(function() {
+            let docData = new FormData(document.getElementById($(this).attr("id")))
+            let docDataObject = {};
+            docData.forEach(function(value, key) {
+                docDataObject[key] = value
+            });
+            let newObj = {
+                id: $(this).attr("id"),
+                data: docDataObject
+            };
+            data.push(newObj)
+        })
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/addAssessmentMedis',
+            url: '<?php echo base_url(); ?>admin/rm/assessmentmedis/addAssessmentMedis',
             type: "POST",
-            data: new FormData(document.getElementById("formaddarm")),
+            data: JSON.stringify(data),
             dataType: 'json',
             contentType: false,
             cache: false,

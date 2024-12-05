@@ -697,6 +697,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             }
         }
 
+        $data['xray'] = $formData['xray'];
         $dateFields = [
             'time_out',
             'instrument_availability',
@@ -720,7 +721,10 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         try {
             // Process AssessmentOperation
             $existingEntry = $model->where(['document_id' => $formData['document_id'] ?? ''])->first();
-
+            // echo '<pre>';
+            // var_dump($formData);
+            // var_dump($data);
+            // die();
             if ($existingEntry) {
                 $data['body_id'] = $existingEntry['BODY_ID'];
 
@@ -1100,14 +1104,14 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'signed_spot',
             'anesthesia_machine',
             'oxymeter',
-            'isallergy',
+            'isalergy',
             'breathing_dificulty',
             'blood_loss_risk',
             'signin_time',
             'introducing_onself',
             'patient_identity',
             'timeout_procedure',
-            'iniscion_location',
+            'inicision_location',
             'right_eye',
             'left_eye',
             'other_location',
@@ -1257,7 +1261,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'oxygen_tube' => $formData['oxygen_tube'],
             'flow_meter' => $formData['flow_meter'],
             'power_on' => $formData['power_on'],
-            // 'circuit_leakage' => $formData['circuit_leakage'],
+            'circuit_leackage' => $formData['circuit_leackage'],
             'volatil' => $formData['volatil'],
             'face_mask' => $formData['face_mask'],
             'laringoskop' => $formData['laringoskop'],
@@ -1598,14 +1602,14 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     'document_id' => $body_id,
                     'request_date' => $bloodrequest_date[$key],
                     'blood_type_id' => $blood_type_id[$key],
-                    'using_time' => $usingtime[$key],
+                    'using_time' => $bloodusing_time[$key],
                     'blood_usage_type' => $bloodblood_usage_type[$key],
                     'blood_quantity' => $bloodblood_quantity[$key],
                     'measure_id' => $bloodmeasure_id[$key],
-                    'descriptions' => $bloodtransfusion_start[$key],
-                    'transfusion_start' => @$bloodtransfusion_start[$key] ?? null,
-                    'transfusion_end' => @$bloodtransfusion_end[$key] ?? null,
-                    'reaction_desc' => @$bloodreaction_desc[$key] ?? null,
+                    'descriptions' => $blooddescriptions[$key],
+                    'transfusion_start' => !empty(@$bloodtransfusion_start[$key]) ? @$bloodtransfusion_start[$key]  : null,
+                    'transfusion_end' => !empty(@$bloodtransfusion_end[$key]) ? @$bloodtransfusion_end[$key]  : null,
+                    'reaction_desc' => !empty(@$bloodreaction_desc[$key]) ? @$bloodreaction_desc[$key] : null,
                 ];
                 $bloodmodel->insert($datablood);
             }

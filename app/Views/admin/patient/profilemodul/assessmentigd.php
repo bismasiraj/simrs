@@ -43,8 +43,8 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['formedukasi'] = 0;
     $menu['gcs'] = 0;
     $menu['integumen'] = 1;
-    $menu['anak'] = 0;
-    $menu['neonatus'] = 0;
+    $menu['anak'] = 0; //?
+    $menu['neonatus'] = 0; //?
     $menu['neurosensoris'] = 1;
     $menu['pencernaan'] = 0;
     $menu['pernapasan'] = 0;
@@ -53,7 +53,7 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['sirkulasi'] = 1;
     $menu['seksual'] = 0;
     $menu['social'] = 0;
-    $menu['tht'] = 0;
+    $menu['tht'] = 0; //hearing
     $menu['tidur'] = 0;
 } else if ($visit['isrj'] == '0') {
     $menu['fallrisk'] = 1;

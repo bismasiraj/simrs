@@ -1321,4 +1321,350 @@ class lainnya extends \App\Controllers\BaseController
             ]);
         }
     }
+    public function assessmen_preview_result($visit = null)
+    {
+        $formData = $this->request->getJSON();
+        if (isset($formData->visit) && !empty($formData->visit)) {
+            $visitData = json_decode(base64_decode($formData->visit), true);
+        } else {
+            $visitData = json_decode(base64_decode($visit), true);
+        }
+
+        $isrj = isset($formData->status) ? $formData->status : (isset($visitData['isrj']) ? $visitData['isrj'] : null);
+        $clinic = isset($formData->clinic) ? $formData->clinic : (isset($visitData['clinic_id']) ? $visitData['clinic_id'] : null);
+
+        // $title = $isrj == 0 ? "Catatan Perkembangan Pasien Terintegrasi RI" : "Catatan Perkembangan Pasien Terintegrasi RJ";
+        $clinicNames = [
+            "P003" => "Assessmen Medis Anak",
+            "P009" => "Assessmen Medis Kulit Kelamin",
+            "P008" => "Assessmen Medis Mata",
+            "P004" => "Assessmen Medis Kebidanan",
+            "P010" => "Assessmen Medis THT",
+            "P001" => "Assessmen Medis Dalam",
+            "P005" => "Assessmen Medis Bedah Umum",
+            "P012" => "Asesmen Medis IGD",
+            "P006"  => "Asesmen Medis Saraf",
+            "P007" => "Asesmen Medis Pasien PSIKIATRI"
+        ];
+
+        if (!array_key_exists($clinic, $clinicNames)) {
+            $firstKey = array_key_first($clinicNames);
+            $clinic = $firstKey;
+        }
+
+        $no_regis =  $visitData['no_registration'];
+        $db = db_connect();
+        if ($isrj === 0 || $isrj === "0") {
+            $select = $this->lowerKey($db->query("SELECT cast(FORMAT(ha.date_of_birth , 'dd-MM-yyyy') as varchar(10)) + ' (' + patient_age +')' as umur,
+                                                ha.headers,
+                                                ha.assessment_type,
+                                                ha.apgar_score,
+                                                ha.pf_neonatus,
+                                                ha.pemeriksaan_saraf,
+                                                ha.pemeriksaan_psikiatri,
+                                                ha.contact_address as alamat,
+                                                ha.doctor as dpjp,
+                                                c.name_of_clinic as departement,
+                                                cast(FORMAT(ha.date_order , 'dd-MM-yyyy hh:mm') as varchar(16)) as tanggal_masuk,
+                                                ha.ana_main_complaint as keluhan_utama,
+                                                ha.ana_auto_current_disease_history as riwayat_penyakit_sekarang,
+                                                ha.ana_past_disease_history as riwayat_penyakit_dahulu,
+                                                ha.ana_family_disease_history as riwayat_penyakit_keluarga,
+                                                ha.ana_allergy_history_non_drugs as riwayat_alergi_non_obat, 
+                                                ha.ana_allergy_history_drugs as riwayat_alergi_obat,
+                                                ha.ana_drugs_consumed as riwayat_obat_dikonsumsi,
+                                                ha.ana_pregnancy_childbirth_history as riwayat_kehamilan,
+                                                ha.ana_diet_history as riwayat_diet,
+                                                ha.ana_imun_history as riwayat_imunisasi,
+                                                '' as riwayat_kebiasaan ,
+                                                ha.pf_vital_sign_bp as tekanan_darah,
+                                                ha.pf_vital_sign_n as nadi,
+                                                ha.pf_vital_sign_s as suhu,
+                                                ha.pf_vital_sign_rr as respirasi,
+                                                ha.pf_vital_sign_height as berat_badan,
+                                                ha.pf_vital_sign_weight as tinggi_badan,
+                                                ha.pf_vital_sign_spo2 as sp02,
+                                                ha.pf_vital_sign_bmi as bmi,
+
+                                                '<b>GCS E / Respon Membuka Mata : </b>' + ha.gcs_e  + CHAR(13)+CHAR(10) +
+                                                '<b>GCS V / Respon Verbal Terbaik : </b>' + ha.gcs_v  + CHAR(13)+CHAR(10) +
+                                                '<b>GCS M / Respon Motorik Terbaik : </b>'  + ha.gcs_m + CHAR(13)+CHAR(10) +
+                                                '<b>Score GCS : </b>' + case when kel_score_gcs in (1,2,3) then 'Coma'
+                                                when kel_score_gcs in (4,5,6) then 'Sopor'
+                                                when kel_score_gcs in (7,8,9) then 'Somnolen'
+                                                when kel_score_gcs in (10,11) then 'Delirium'
+                                                when kel_score_gcs in (12,13) then 'Apatis' 
+                                                when kel_score_gcs in (15,16) then 'Compos mentis'
+                                                else '-' end  + CHAR(13)+CHAR(10) 
+                                                + '<b>Keadaan Umum : </b>' + pf_general_condition as Kesadaran,
+
+
+                                                'SKALA NYERI ' +  CHAR(13)+CHAR(10) +
+                                                'Alat Ukur Nyeri : ' + case when pain_scale_type =  'cpot' then 'Critical Care Pain Observation Tool (CPOT)' 
+                                                when pain_scale_type ='flacc' then 'Face, Legs, Activity, Cry, and Consolability (FLACC)'
+                                                when pain_scale_type ='nips' then 'Neonatal Infant Pain Scale (NIPS)'
+                                                when pain_scale_type = 'numeric' then 'Numeric Pain Rating Scale (NPRS)'
+                                                when pain_scale_type ='wong_baker' then  'Wong–Baker Faces Pain Rating Scale'
+                                                else '' end  + CHAR(13)+CHAR(10) +
+                                                case  when pain_scale_type = 'numeric' then 'Numeric Pain Rating Scale' + ' : ' + numeric_score
+                                                when pain_scale_type ='wong_baker' then  'Wong–Baker Faces Pain Rating Scale' + ' : ' + wong_baker_score
+                                                else '' end as SKALA_NYERI,
+                                                'RESIKO JATUH' + CHAR(13)+CHAR(10) + isnull(fm_DESCRIPTIONS,HD_DESCRIPTIONS) AS RESIKO_JATUH,
+                                                PF_CONCLUSION as Pemeriksaan_fisik,
+
+                                                
+                                                '<b>Catatan Obyektif : </b>' + CHAR(13)+CHAR(10) + soap_objective AS CATATAN_OBYEKTIF,
+                                                '<b>Triage : </b>' + CHAR(13)+CHAR(10) + triage as Triage ,
+                                                '<b>Hamil : </b>'+ is_pregnant  + CHAR(13)+CHAR(10) + '<b>Umur Kehamilan : </b>' + gestational_age + CHAR(13)+CHAR(10) +
+                                                '<b>G : </b>' + pregnancy_g + CHAR(13)+CHAR(10) + '<b>P : </b> ' + pregnancy_p + CHAR(13)+CHAR(10) +
+                                                '<b>A : </b> '  + pregnancy_a + CHAR(13)+CHAR(10) +
+                                                '<b>Status Obstetri : </b>' + CHAR(13)+CHAR(10) + isnull(obstetric_status,'') + CHAR(13)+CHAR(10) +
+                                                '<b>Status Ginekologi : </b>' + CHAR(13)+CHAR(10) + isnull(gynecology_status,'') + CHAR(13)+CHAR(10)
+                                                AS Kehamilan,
+                                                '<b>Diagnosis (ICD-10)</b>' + + CHAR(13)+CHAR(10)+ rtj_inpatient_indication  + + CHAR(13)+CHAR(10)+ + CHAR(13)+CHAR(10)+
+                                                '<b>Permasalahan Medis</b>' + CHAR(13)+CHAR(10)+ medical_problem +  CHAR(13)+CHAR(10)+ CHAR(13)+CHAR(10)+
+                                                '<b>Penyebab Cidera/Keracunan</b>' + + CHAR(13)+CHAR(10) + cause_of_injury_poisoning + CHAR(13)+CHAR(10)+ CHAR(13)+CHAR(10) as Asesmen,
+                                                '<b>Target Sasaran Terapi :</b> ' + CHAR(13)+CHAR(10)+ isnull(target_of_therapy,'') + CHAR(13)+CHAR(10)+ 
+                                                '<b>Pemeriksaan Diagnostik Penunjang  : </b>' + CHAR(13)+CHAR(10) + '<b>Laboratorium : </b>' + note_lab_confirmed + CHAR(13)+CHAR(10) +
+                                                '<b>Radiologi :  </b>' + note_rad_confirmed as Pemeriksaan_Penunjang,
+                                                '<b>Rencana dan Asuhan Terapi </b>'  + CHAR(13)+CHAR(10) + note_obat_confirmed + + CHAR(13)+CHAR(10)+
+                                                '<b>Procedure</b>' + note_proc_confirmed + CHAR(13)+CHAR(10) + '<b>Catatan Prosedur</b>'  +  CHAR(13)+CHAR(10) +
+                                                '<b>Standing Order </b>' + CHAR(13)+CHAR(10) + standing_order + CHAR(13)+CHAR(10) As Rencana_asuhan,
+                                                '<b>Rencana Tindak Lanjut</b>' +  CHAR(13)+CHAR(10) + follow_up_plan + CHAR(13)+CHAR(10) +
+                                                '<b>Indikasi Dirawat</b>' + CHAR(13)+CHAR(10) + rtj_inpatient_indication + CHAR(13)+CHAR(10) + 
+                                                '<b>Lokasi dirawat </b>' + CHAR(13)+CHAR(10) + 
+                                                case when rtj_inpatient_location = '1' then 'Bangsal'  
+                                                when rtj_inpatient_location = '2' then 'ICU/NICU/PICU ' 
+                                                when  rtj_inpatient_location = '3' then 'VK' else '' end  + CHAR(13)+CHAR(10) 
+                                                + '<b>Dokter Rawat Inap </b>'+CHAR(13)+CHAR(10) + isnull((select fullname from employee_all where employee_id = cast(refphysician_id as varchar(300)) ),'')
+                                                + CHAR(13)+CHAR(10) +'<b>Departemen Rawat Inap </b>' + CHAR(13)+CHAR(10) +isnull((select name_of_clinic from clinic where account_id =inpatient_physician_speciality),'') 
+                                                + CHAR(13)+CHAR(10) +'<b>Kebutuhan Pelayanan </b>' + CHAR(13)+CHAR(10) + rtj_inpatient_service_needs + CHAR(13)+CHAR(10) as Rencana_Tindak_Lanjut,
+                                                '<b>Edukasi Awal,disampaikan tetntang diagnosis, Rencana dan Tujuan Terapi Kepada : </b>' + CHAR(13)+CHAR(10) +
+                                                patient_education + ' , dengan nama : ' + patient_family_name + ' , karena '+ CHAR(13)+CHAR(10)+
+                                                '<b>Materi Edukasi :</b>' + education_material + CHAR(13)+CHAR(10)+  CHAR(13)+CHAR(10)+
+                                                'Dokter : '	 + isnull((select fullname from employee_all where employee_id = cast(physician_id as varchar(300)) ),'') + CHAR(13)+CHAR(10)+
+                                                'Penerima Penjelasan : ' +  patient_family_name as Edukasi,
+                                                pemeriksaan_mata,
+                                                '<b> I Inspeksi </b>' + CHAR(13) + CHAR(10) +
+                                                 '<table border=\"1\" class=\"table table-bordered\">' + 
+                                                '<thead>' +
+                                                '<tr>' +
+                                                '<th><b>Lokasi</b></th>' +
+                                                '<th><b>UKK</b></th>' +
+                                                '<th><b>Distribusi</b></th>' +
+                                                '<th><b>Konfigurasi</b></th>' +
+                                                '</tr>' +
+                                                '</thead>' +
+                                                '<tbody>' +
+                                                '<tr>' +
+                                                '<td>' + ISNULL(sd_ins_location, '') + '</td>' +
+                                                '<td>' + ISNULL(sd_ins_ukk, '') + '</td>' +
+                                                '<td>' + ISNULL(sd_ins_distribution, '') + '</td>' +
+                                                '<td>' + ISNULL(sd_ins_configuration, '') + '</td>' +
+                                                '</tr>' +
+                                                '</tbody>' + 
+                                                '</table>' + CHAR(13) + CHAR(10) +
+                                                '<table class=\"table table-bordered\">' +
+                                                '<tr>' +
+                                                '<td>' + ' <b> Palpasi </b>' + ISNULL(sd_palpation, '') + '</td>' +
+                                                '<td>' + ' <b> Lain-lain </b> ' + ISNULL(sd_others, '') + '</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                '<td colspan=\"2\">' + '<b> Status Venerologik </b>' + '</td>' +
+                                                '</tr>' +
+                                                '<tr>' +
+                                                '<td>' + '<b> Inspeksi </b>' + ISNULL(sv_inspection, '') + '</td>' +
+                                                '<td>' + '<b> Palpasi </b>' + ISNULL(sd_palpation, '') + '</td>' +
+                                                '</tr>'+
+                                                '</table>'
+                                                AS Pemeriksaan_kulit
+                                         
+                                                from HISTORY_ASSESSMENT_MEDIS_RANAP  ha left outer join clinic c on ha.CLINIC_ID = c.CLINIC_ID
+                                                -- where ha.clinic_id  = 'P010'  --:poli
+                                                -- and ha.no_registration = '067710' --:norm
+
+                                                where  ha.no_registration = '$no_regis' --:norm
+                                                and  ha.clinic_id  = '$clinic'  --:poli
+                                                ")->getResultArray());
+        } else {
+            $select = $this->lowerKey($db->query("SELECT cast(FORMAT(ha.date_of_birth , 'dd-MM-yyyy') as varchar(10)) + ' (' + patient_age +')' as umur,
+            ha.contact_address as alamat,
+            ha.doctor as dpjp,
+            ha.pemeriksaan_saraf,
+            ha.pemeriksaan_psikiatri,
+            c.name_of_clinic as departement,
+            cast(FORMAT(ha.date_order , 'dd-MM-yyyy hh:mm') as varchar(16)) as tanggal_masuk,
+            ha.ana_main_complaint as keluhan_utama,
+            ha.ana_auto_current_disease_history as riwayat_penyakit_sekarang,
+            ha.ana_past_disease_history as riwayat_penyakit_dahulu,
+            ha.ana_family_disease_history as riwayat_penyakit_keluarga,
+            ha.ana_allergy_history_non_drugs as riwayat_alergi_non_obat, 
+            ha.ana_allergy_history_drugs as riwayat_alergi_obat,
+            ha.ana_drugs_consumed as riwayat_obat_dikonsumsi,
+            ha.ana_pregnancy_childbirth_history as riwayat_kehamilan,
+            ha.ana_diet_history as riwayat_diet,
+            ha.ana_imun_history as riwayat_imunisasi,
+            '' as riwayat_kebiasaan ,
+            ha.pf_vital_sign_bp as tekanan_darah,
+            ha.pf_vital_sign_n as nadi,
+            ha.pf_vital_sign_s as suhu,
+            ha.pf_vital_sign_rr as respirasi,
+            ha.pf_vital_sign_height as berat_badan,
+            ha.pf_vital_sign_weight as tinggi_badan,
+            ha.pf_vital_sign_spo2 as sp02,
+            ha.pf_vital_sign_bmi as bmi,
+
+            '<b>GCS E / Respon Membuka Mata : </b>' + ha.gcs_e  + CHAR(13)+CHAR(10) +
+            '<b>GCS V / Respon Verbal Terbaik : </b>' + ha.gcs_v  + CHAR(13)+CHAR(10) +
+            '<b>GCS M / Respon Motorik Terbaik : </b>'  + ha.gcs_m + CHAR(13)+CHAR(10) +
+            '<b>Score GCS : </b>' + case when kel_score_gcs in (1,2,3) then 'Coma'
+            when kel_score_gcs in (4,5,6) then 'Sopor'
+            when kel_score_gcs in (7,8,9) then 'Somnolen'
+            when kel_score_gcs in (10,11) then 'Delirium'
+            when kel_score_gcs in (12,13) then 'Apatis' 
+            when kel_score_gcs in (15,16) then 'Compos mentis'
+            else '-' end  + CHAR(13)+CHAR(10) 
+            + '<b>Keadaan Umum : </b>' + pf_general_condition as Kesadaran,
+
+
+            'SKALA NYERI ' +  CHAR(13)+CHAR(10) +
+            'Alat Ukur Nyeri : ' + case when pain_scale_type =  'cpot' then 'Critical Care Pain Observation Tool (CPOT)' 
+            when pain_scale_type ='flacc' then 'Face, Legs, Activity, Cry, and Consolability (FLACC)'
+            when pain_scale_type ='nips' then 'Neonatal Infant Pain Scale (NIPS)'
+            when pain_scale_type = 'numeric' then 'Numeric Pain Rating Scale (NPRS)'
+            when pain_scale_type ='wong_baker' then  'Wong–Baker Faces Pain Rating Scale'
+            else '' end  + CHAR(13)+CHAR(10) +
+            case  when pain_scale_type = 'numeric' then 'Numeric Pain Rating Scale' + ' : ' + numeric_score
+            when pain_scale_type ='wong_baker' then  'Wong–Baker Faces Pain Rating Scale' + ' : ' + wong_baker_score
+            else '' end as SKALA_NYERI,
+            'RESIKO JATUH' + CHAR(13)+CHAR(10) + isnull(fm_DESCRIPTIONS,HD_DESCRIPTIONS) AS RESIKO_JATUH,
+            PF_CONCLUSION as Pemeriksaan_fisik,
+
+            
+            '<b>Catatan Obyektif : </b>' + CHAR(13)+CHAR(10) + soap_objective AS CATATAN_OBYEKTIF,
+            '<b>Triage : </b>' + CHAR(13)+CHAR(10) + triage as Triage ,
+            '<b>Hamil : </b>'+ is_pregnant  + CHAR(13)+CHAR(10) + '<b>Umur Kehamilan : </b>' + gestational_age + CHAR(13)+CHAR(10) +
+            '<b>G : </b>' + pregnancy_g + CHAR(13)+CHAR(10) + '<b>P : </b> ' + pregnancy_p + CHAR(13)+CHAR(10) +
+            '<b>A : </b> '  + pregnancy_a + CHAR(13)+CHAR(10) +
+            '<b>Status Obstetri : </b>' + CHAR(13)+CHAR(10) + isnull(obstetric_status,'') + CHAR(13)+CHAR(10) +
+            '<b>Status Ginekologi : </b>' + CHAR(13)+CHAR(10) + isnull(gynecology_status,'') + CHAR(13)+CHAR(10)
+            AS Kehamilan,
+            '<b>Diagnosis (ICD-10)</b>' + + CHAR(13)+CHAR(10)+ rtj_inpatient_indication  + + CHAR(13)+CHAR(10)+ + CHAR(13)+CHAR(10)+
+            '<b>Permasalahan Medis</b>' + CHAR(13)+CHAR(10)+ medical_problem +  CHAR(13)+CHAR(10)+ CHAR(13)+CHAR(10)+
+            '<b>Penyebab Cidera/Keracunan</b>' + + CHAR(13)+CHAR(10) + cause_of_injury_poisoning + CHAR(13)+CHAR(10)+ CHAR(13)+CHAR(10) as Asesmen,
+            '<b>Target Sasaran Terapi :</b> ' + CHAR(13)+CHAR(10)+ isnull(target_of_therapy,'') + CHAR(13)+CHAR(10)+ 
+            '<b>Pemeriksaan Diagnostik Penunjang  : </b>' + CHAR(13)+CHAR(10) + '<b>Laboratorium : </b>' + note_lab_confirmed + CHAR(13)+CHAR(10) +
+            '<b>Radiologi :  </b>' + note_rad_confirmed as Pemeriksaan_Penunjang,
+            '<b>Rencana dan Asuhan Terapi </b>'  + CHAR(13)+CHAR(10) + note_obat_confirmed + + CHAR(13)+CHAR(10)+
+            '<b>Procedure</b>' + note_proc_confirmed + CHAR(13)+CHAR(10) + '<b>Catatan Prosedur</b>'  +  CHAR(13)+CHAR(10) +
+            '<b>Standing Order </b>' + CHAR(13)+CHAR(10) + standing_order + CHAR(13)+CHAR(10) As Rencana_asuhan,
+            '<b>Rencana Tindak Lanjut</b>' +  CHAR(13)+CHAR(10) + follow_up_plan + CHAR(13)+CHAR(10) +
+            '<b>Indikasi Dirawat</b>' + CHAR(13)+CHAR(10) + rtj_inpatient_indication + CHAR(13)+CHAR(10) + 
+            '<b>Lokasi dirawat </b>' + CHAR(13)+CHAR(10) + 
+            case when rtj_inpatient_location = '1' then 'Bangsal'  
+            when rtj_inpatient_location = '2' then 'ICU/NICU/PICU ' 
+            when  rtj_inpatient_location = '3' then 'VK' else '' end  + CHAR(13)+CHAR(10) 
+            + '<b>Dokter Rawat Inap </b>'+CHAR(13)+CHAR(10) + isnull((select fullname from employee_all where employee_id = cast(refphysician_id as varchar(300)) ),'')
+            + CHAR(13)+CHAR(10) +'<b>Departemen Rawat Inap </b>' + CHAR(13)+CHAR(10) +isnull((select name_of_clinic from clinic where account_id =inpatient_physician_speciality),'') 
+            + CHAR(13)+CHAR(10) +'<b>Kebutuhan Pelayanan </b>' + CHAR(13)+CHAR(10) + rtj_inpatient_service_needs + CHAR(13)+CHAR(10) as Rencana_Tindak_Lanjut,
+            '<b>Edukasi Awal,disampaikan tetntang diagnosis, Rencana dan Tujuan Terapi Kepada : </b>' + CHAR(13)+CHAR(10) +
+            patient_education + ' , dengan nama : ' + patient_family_name + ' , karena '+ CHAR(13)+CHAR(10)+
+            '<b>Materi Edukasi :</b>' + education_material + CHAR(13)+CHAR(10)+  CHAR(13)+CHAR(10)+
+            'Dokter : '	 + isnull((select fullname from employee_all where employee_id = cast(physician_id as varchar(300)) ),'') + CHAR(13)+CHAR(10)+
+            'Penerima Penjelasan : ' +  patient_family_name as Edukasi,
+            pemeriksaan_mata,
+            '<b> I Inspeksi </b>' + CHAR(13) + CHAR(10) +
+             '<table border=\"1\" class=\"table table-bordered\">' + 
+            '<thead>' +
+            '<tr>' +
+            '<th><b>Lokasi</b></th>' +
+            '<th><b>UKK</b></th>' +
+            '<th><b>Distribusi</b></th>' +
+            '<th><b>Konfigurasi</b></th>' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+            '<tr>' +
+            '<td>' + ISNULL(sd_ins_location, '') + '</td>' +
+            '<td>' + ISNULL(sd_ins_ukk, '') + '</td>' +
+            '<td>' + ISNULL(sd_ins_distribution, '') + '</td>' +
+            '<td>' + ISNULL(sd_ins_configuration, '') + '</td>' +
+            '</tr>' +
+            '</tbody>' + 
+            '</table>' + CHAR(13) + CHAR(10) +
+            '<table class=\"table table-bordered\">' +
+            '<tr>' +
+            '<td>' + ' <b> Palpasi </b>' + ISNULL(sd_palpation, '') + '</td>' +
+            '<td>' + ' <b> Lain-lain </b> ' + ISNULL(sd_others, '') + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan=\"2\">' + '<b> Status Venerologik </b>' + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td>' + '<b> Inspeksi </b>' + ISNULL(sv_inspection, '') + '</td>' +
+            '<td>' + '<b> Palpasi </b>' + ISNULL(sd_palpation, '') + '</td>' +
+            '</tr>'+
+            '</table>'
+            AS Pemeriksaan_kulit
+     
+            from HISTORY_ASSESSMENT_MEDIS  ha left outer join clinic c on ha.CLINIC_ID = c.CLINIC_ID
+            -- where ha.clinic_id  = 'P010'  --:poli
+            -- and ha.no_registration = '067710' --:norm
+
+            where ha.clinic_id  = '$clinic'  --:poli
+            and ha.no_registration = '$no_regis' --:norm
+            ")->getResultArray());
+        }
+
+        $data = [];
+
+        if (!empty($select)) {
+            foreach ($select as $item) {
+                $clinicTitle = isset($item['headers']) ? $item['headers'] : $clinicNames[$clinic];
+
+                if (empty($clinicTitle)) {
+                    $clinicTitle = $clinicNames[$clinic];
+                }
+
+                if (!str_contains($clinicTitle, "Rawat Inap") && !str_contains($clinicTitle, "Rawat Jalan")) {
+                    $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
+                }
+
+                $data[] = [
+                    'clinic' => $clinic,
+                    'title' => $clinicTitle,
+                    'data'  => $item
+                ];
+            }
+        } else {
+            $clinicTitle = $clinicNames[$clinic];
+            $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
+            $data[] = [
+                'clinic' => $clinic,
+                'title' => $clinicTitle,
+                'data'  => []
+            ];
+        }
+
+        // var_dump($data);
+        // exit();
+
+        $name_of_clin = $this->lowerKey($db->query("SELECT name_of_clinic FROM clinic WHERE CLINIC_ID = '" . $visitData['clinic_id'] . "'")->getResultArray());
+
+        $kopprintData = $this->kopprint();
+
+        if (!$formData) {
+            return view("admin/patient/profilemodul/formrm/rm/LAINNYA/assessmen_v_result.php", [
+                "visit" => $visitData,
+                'data' => $data,
+                'kop' => $kopprintData[0],
+                'visit1' => $visit,
+                'clin' => $name_of_clin ? $name_of_clin[0]['name_of_clinic'] : "",
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'data' => $data // Data clinic dan title dalam format JSON
+            ]);
+        }
+    }
 }

@@ -611,32 +611,64 @@
             if (res.respon) {
 
                 let data = res.data;
-                $('#bodyContainerTemplateRad').text('');
+                const table = $('#tableTemplate').DataTable({
+                    dom: "tr<'row'<'col-sm-4'p><'col-sm-4 text-center'i><'col-sm-4 text-end'l>>",
+                    stateSave: true,
+                    "bDestroy": true
+                });
+                table.clear();
+                let htmlContent = '';
                 data?.forEach((element, key) => {
-                    $('#bodyContainerTemplateRad').append(
-                        `<tr>
+                    htmlContent = `
+                        <tr>
                             <th class="text-center">${key + 1}</th>
                             <td class="text-center">${element?.treatment}</td>
                             <td class="text-center">
-                                <button type="button" id="radTemplate-${element?.radiologi_bacaan_id}" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalTemplateExpertise" data-id="${element?.radiologi_bacaan_id}"><i class="fas fa-search-plus"></i></button>
+                                <button type="button" id="radTemplate-${element?.radiologi_bacaan_id}" 
+                                        onclick="showDataTemplate('${btoa(encodeURIComponent(JSON.stringify({
+                                            radiologi_bacaan_type: element?.radiologi_bacaan_type,
+                                            treatment: element?.treatment,
+                                            hasil_baca: element?.hasil_baca,
+                                            kesan: element?.kesan
+                                        })))}')" 
+                                        class="btn btn-sm btn-primary" data-id="${element?.radiologi_bacaan_id}">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
                             </td>
-                        </tr>`
-                    );
+                        </tr>
+                    `;
 
-                    $(`#radTemplate-${element?.radiologi_bacaan_id}`).on('click', function() {
-                        // Get data from the clicked button
-                        $('#modalTemplateType').val(element.radiologi_bacaan_type)
-                        $('#modalTemplateTreatment').val(element.treatment)
-                        $('#modalTemplateHasilBaca').html(element.hasil_baca)
-                        $('#modalTemplateKesimpulan').html(element.kesan)
 
-                    });
+
+
+                    table.row.add($(htmlContent));
                 });
+
+                table.draw();
 
             }
         });
     }
 
+    function showDataTemplate(data) {
+        $("#modalTemplateExpertise").modal('show')
+        const dataDecode = JSON.parse(decodeURIComponent(atob(data)));
+
+        $('#modalTemplateType').val(dataDecode?.radiologi_bacaan_type)
+        $('#modalTemplateTreatment').val(dataDecode?.treatment)
+        $('#modalTemplateHasilBaca').html(dataDecode?.hasil_baca)
+        $('#modalTemplateKesimpulan').html(dataDecode?.kesan)
+    }
+
+    function showDataTemplate(data) {
+        $("#modalTemplateExpertise").modal('show')
+        const dataDecode = JSON.parse(decodeURIComponent(atob(data)));
+
+        $('#modalTemplateType').val(dataDecode?.radiologi_bacaan_type)
+        $('#modalTemplateTreatment').val(dataDecode?.treatment)
+        $('#modalTemplateHasilBaca').html(dataDecode?.hasil_baca)
+        $('#modalTemplateKesimpulan').html(dataDecode?.kesan)
+    }
     $('#imagePreviewExpertise').on('click', function() {
 
     })

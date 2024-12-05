@@ -1692,7 +1692,7 @@ $exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EX
                             <td class="text-center" colspan="5">Data tidak tersedia</td>
                         </tr>
                         `;
-                        container.html(dataHtml);
+                        // container.html(dataHtml);
                     }
 
                 }

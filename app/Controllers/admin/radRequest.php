@@ -207,7 +207,7 @@ class radRequest extends \App\Controllers\BaseController
 
 
         $query = "
-            SELECT top(10) RADIOLOGI_BACAAN_ID,
+            SELECT RADIOLOGI_BACAAN_ID,
             RADIOLOGI_BACAAN_TYPE, 
             RADIOLOGI_BACAANTYPE, 
             EMPLOYEE_ID, 

@@ -125,10 +125,11 @@
                 value: props?.data?.partus_abnormal || "",
                 id: "partus_abnormal",
                 class: "",
-                selectOptions: window.optionsFilter.penyulit.map(item => ({
-                    key: item.result,
-                    value: item.result
-                })),
+                selectOptions: window.optionsFilter.penyulit.filter(item => item.result !== "LAIN-LAIN")
+                    .map(item => ({
+                        key: item.result,
+                        value: item.result
+                    })),
                 customInput: true
             },
             {
@@ -175,14 +176,13 @@
             const uniqueId = item.id || `input-${index}`;
 
             if (item.type === "hidden") {
-                contentHtmlHide += `
-                <div class="col-6" hidden>
-                    <div class="mb-3 row">
-                        <div class="col-sm-8">
-                            <input type="${item.type}" class="form-control ${item.class}" id="${uniqueId}" name="${item.name}" value="${item.value}">
-                        </div>
-                    </div>
-                </div>`;
+                contentHtmlHide += `<div class="col-6" hidden>
+                                        <div class="mb-3 row">
+                                            <div class="col-sm-8">
+                                                <input type="${item.type}" class="form-control ${item.class}" id="${uniqueId}" name="${item.name}" value="${item.value}">
+                                            </div>
+                                        </div>
+                                    </div>`;
             } else if (item.type === "select") {
                 let options = item.selectOptions.map(option => {
                     return `<option value="${option.value}" ${option.value === item.value ? "selected" : ""}>${option.key}</option>`;
@@ -190,35 +190,32 @@
 
                 if (item.customInput === true) {
                     options +=
-                        `
-                <option value="custom" ${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? "selected" : ""}>Lainnya</option>`;
+                        `<option value="custom" ${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? "selected" : ""}>Lainnya</option>`;
                 }
 
-                let customInputHtml = `
-                                <div class="col-6">
+                let customInputHtml = `<div class="col-6">
+                                            <div class="mb-3 row">
+                                                <label for="${uniqueId}" class="col-sm-4 col-form-label fw-bold">${item.label}</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control ${item.class}" id="${uniqueId}" name="${item.name}">
+                                                        ${options}
+                                                    </select>
+                                                    <input type="text" class="form-control custom-text-input mt-2" id="custom-${uniqueId}" 
+                                                        placeholder="Lainnya..." style="display:${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? "block" : "none"};" 
+                                                        value="${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? props?.data?.customText || item.value : ""}">
+                                                </div>
+                                            </div>
+                                        </div>`;
+                contentHtmlSelect += customInputHtml;
+            } else {
+                contentHtml += `<div class="col-6">
                                     <div class="mb-3 row">
                                         <label for="${uniqueId}" class="col-sm-4 col-form-label fw-bold">${item.label}</label>
                                         <div class="col-sm-8">
-                                            <select class="form-control ${item.class}" id="${uniqueId}" name="${item.name}">
-                                                ${options}
-                                            </select>
-                                            <input type="text" class="form-control custom-text-input mt-2" id="custom-${uniqueId}" 
-                                                placeholder="Lainnya..." style="display:${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? "block" : "none"};" 
-                                                value="${item.value === "custom" || (item.value && !item.selectOptions.some(opt => opt.value === item.value)) ? props?.data?.customText || item.value : ""}">
+                                            <input type="${item.type}" class="form-control ${item.class}" id="${uniqueId}" name="${item.name}" value="${item.value}">
                                         </div>
                                     </div>
                                 </div>`;
-                contentHtmlSelect += customInputHtml;
-            } else {
-                contentHtml += `
-                <div class="col-6">
-                    <div class="mb-3 row">
-                        <label for="${uniqueId}" class="col-sm-4 col-form-label fw-bold">${item.label}</label>
-                        <div class="col-sm-8">
-                            <input type="${item.type}" class="form-control ${item.class}" id="${uniqueId}" name="${item.name}" value="${item.value}">
-                        </div>
-                    </div>
-                </div>`;
             }
         });
 
@@ -326,8 +323,7 @@
         let resultTables = ""
 
         props?.data?.map((e, index) => {
-            resultTables += `
-                            <tr>
+            resultTables += `<tr>
                                 <td>${index +1}</td>
                                 <td>${e?.partus_date ?moment(e?.partus_date).format(
                                     "DD/MM/YYYY HH:mm") :"-"}</td>

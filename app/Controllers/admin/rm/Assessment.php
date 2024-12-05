@@ -191,14 +191,14 @@ class Assessment extends BaseController
         $db->query("delete from assessment_pain_monitoring where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
 
         $isSuccess = $painMonitoring->save($data);
-        // return json_encode($isSuccess);
+        // return json_encode($parameter_id07);
 
         if (true) {
             $painDetil = new PainDetilModel();
 
             $db->query("delete from assessment_pain_detail where body_id = '$body_id' and visit_id = '$visit_id'");
 
-            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = 'ASES021'")->getResultArray());
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = 'ASES021' and parameter_id <> '07'")->getResultArray());
             foreach ($select as $key => $value) {
                 if (isset(${"parameter_id" . $value['parameter_id']})) {
                     $valueId = ${"parameter_id" . $value['parameter_id']};
@@ -221,6 +221,21 @@ class Assessment extends BaseController
                         $painDetil->insert($data);
                     }
                 }
+            }
+            if (isset($parameter_id07)) {
+                $data = [
+                    'org_unit_code' => $org_unit_code,
+                    'visit_id' => $visit_id,
+                    'trans_id' => $trans_id,
+                    'body_id' => $body_id,
+                    'p_type' => $p_type,
+                    'parameter_id' => '07',
+                    'value_id' => '0210701',
+                    'value_desc' => $parameter_id07,
+                    'modified_date' => Time::now(),
+                    'modified_by' => $modified_by
+                ];
+                $painDetil->insert($data);
             }
 
             if ($parameter_id01 != '0210101') {

@@ -2078,7 +2078,7 @@
 
 
                 const postAnesthesiaKeys = [
-                    'bp_medicine', 'fasting', 'infus', 'infus_volume', 'meal', 'meal_time',
+                    'bp_medicine', 'fasting', 'infus', 'infus_volume', 'meal', 'mealtime',
                     'oxygen', 'postan_position', 'respiratory_interval', 'transfusion',
                     'vomitus_medicine',
                     'postan_plan', 'oxygen_method', 'recovery_leave_time', 'patient_destination'
@@ -3485,6 +3485,7 @@
                 addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id);
             });
 
+
             const formId = 'formPraOperasi';
             const primaryKey = data?.body_id;
             const formSaveBtn = 'formPraOperasiSaveBtn';
@@ -3510,6 +3511,7 @@
             //     checkSignSignature1(formId, primaryKey, formSaveBtn, '7');
             // }
         }
+
         //---------bbb
         const catatanKeperawatanPraOperasi = async (props) => {
             let visit = <?= json_encode($visit) ?>;
@@ -3542,9 +3544,10 @@
                 get_data: data,
             });
             const xrayData = data?.xray;
-            if (xrayData !== undefined) {
-                $(`input[name="xray"][value="${xrayData}"]`).prop('checked', true);
-            }
+
+            // if (xrayData !== undefined) {
+            //     $(`input[name="xray"][value="${xrayData}"]`).prop('checked', true);
+            // }
             if (data?.document_id) {
 
                 getDataVitailSign({
@@ -3640,11 +3643,11 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Jika dihitung tidak Sesuai -> X-ray</label>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="xray" id="xrayYes" value="1">
+                                            <input class="form-check-input" type="radio" name="xray" id="xrayYes" value="1" ${xrayData == 1 ? 'checked' : ''}>
                                             <label class="form-check-label" for="xrayYes">Ya</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="xray" id="xrayNo" value="0" checked>
+                                            <input class="form-check-input" type="radio" name="xray" id="xrayNo" value="0" ${xrayData != 1 ? 'checked' : ''}>
                                             <label class="form-check-label" for="xrayNo">Tidak</label>
                                         </div>
                                     </div>

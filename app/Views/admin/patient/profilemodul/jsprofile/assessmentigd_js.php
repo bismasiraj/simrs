@@ -567,9 +567,7 @@ foreach ($aValue as $key => $value) {
         );
         $("#flatarpexamination_date").trigger("change");
 
-        await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid", 3)
-
-        disableARP()
+        // getSatelitePerawat(ex)
 
         getFallRisk(ex.body_id)
         getPainMonitoring(ex.body_id)
@@ -594,7 +592,245 @@ foreach ($aValue as $key => $value) {
         getHearing(ex.body_id)
         getSleeping(ex.body_id)
 
+        await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid", 3)
+
+        disableARP()
+
+
+
         $("#arpModal").modal("show")
+    }
+    const getSatelitePerawat = (ex) => {
+        postData({
+            document_id: ex.body_id,
+            visit_id: ex.visit_id,
+            specialist_type_id: ex.specialist_type_id,
+            clinic_id: ex.specialist_type_id
+        }, 'admin/rm/assessmentperawat/getSatelitePerawat', (res) => {
+            console.log(res)
+            console.log(res.gcs)
+            if (res.gcs) {
+                gcsAll = res.gcs
+                // gcsDetailAll = data.gcsDetail
+                $.each(gcsAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGcsPerawat").html("")
+                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.fallRisk) {
+                let data = res.fallRisk
+                fallRisk = data.fallRisk
+                fallRiskDetail = data.fallRiskDetail
+
+                $.each(fallRisk, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyFallRiskPerawat").html("")
+                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
+                        return false
+                    }
+                })
+            }
+
+            if (res.painMonitoring) {
+                let container = "bodyPainMonitoringMedis"
+                let data = res.painMonitoring
+                painMonitoring = data.painMonitoring
+                painMonitoringDetil = data.painDetil
+                painIntervensi = data.painIntervensi
+
+                $.each(painMonitoring, function(key, value) {
+                    $("#" + container).html("")
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyPainMonitoringPerawat").html("")
+                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
+                        return false
+                    }
+                })
+            }
+
+            if (res.pernapasan) {
+                napas = res.pernapasan
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(napas, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
+                        return false
+                    }
+                })
+            }
+            if (res.apgar) {
+                let container = "bodyApgarMedis"
+                let data = res.apgar
+                apgar = data.apgar
+                apgarDetil = data.apgarDetil
+
+                $.each(apgar, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyApgarPerawat").html("")
+                        addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.triage) {
+                triage = res.triage.triage
+                triageDetil = res.triage.triageDetil
+
+                $.each(triage, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyTriagePerawat").html("")
+                        addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
+                        return false
+                    }
+                })
+            }
+            if (res.gizi) {
+                giziAll = res.gizi.gizi
+                giziDetailAll = res.gizi.giziDetail
+
+                $.each(giziAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyGiziPerawat").html("")
+                        addGizi(0, key, "arpbody_id", "bodyGiziPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.adl) {
+                adlAll = res.adl.adl
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(adlAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyADLPerawat").html("")
+                        addADL(0, key, "arpbody_id", "bodyADLPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.dekubitus) {
+                dekubitusAll = res.dekubitus.dekubitus
+
+                $.each(dekubitusAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.stabilitas) {
+                stabilitas = res.stabilitas.stabilitas
+                stabilitasDetail = res.stabilitas.stabilitasDetail
+
+                $.each(stabilitas, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat")
+                        return false
+                    }
+                })
+            }
+            if (res.integumen) {
+
+            }
+            if (res.neurosensoris) {
+                integumenAll = res.neurosensoris.integumen
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(integumenAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addIntegumen(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.pencernaan) {
+                digestAll = res.pencernaan.pencernaan
+
+                $.each(digestAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addPencernaan(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.perkemihan) {
+                perkemihanAll = res.perkemihan.perkemihan
+                // stabilitasDetail = data.stabilitasDetail
+
+                $.each(perkemihanAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addPerkemihan(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.psikologi) {
+                psikologiAll = res.psikologi.psikologi
+                psikologiDetailAll = res.psikologi.psikologiDetail
+
+                $.each(psikologiAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addPsikologi(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.sirkulasi) {
+                sirkulasiAll = res.sirkulasi.sirkulasi
+                $.each(sirkulasiAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addSirkulasi(0, key, "arpbody_id", "bodySirkulasi")
+                        return false
+                    }
+                })
+            }
+            if (res.seksual) {
+                seksualAll = res.seksual.seksual
+
+                $.each(seksualAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addSeksual(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.social) {
+                socialAll = res.social.social
+
+                $.each(socialAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addSocial(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.hearing) {
+                hearingAll = res.hearing.hearing
+
+                $.each(hearingAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addHearing(0, key)
+                        return false
+                    }
+                })
+            }
+            if (res.sleeping) {
+                sleepingAll = res.sleeping.sleeping
+
+                $.each(sleepingAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        addSleeping(0, key)
+                        return false
+                    }
+                })
+            }
+        }, (beforesend) => {
+            // getLoadingGlobalServices('bodydatapemeriksaanKulit')
+        })
     }
 
     function fillRiwayatArp() {

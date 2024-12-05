@@ -192,7 +192,7 @@ foreach ($examDetail as $key => $value) {
                     bodyId = painMonitoring[index].body_id
                 }
                 $("#" + container).append(
-                    '<form id="formPainMonitoring' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">' +
+                    '<form id="formPainMonitoring' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">' +
                     '<div class="card border border-1 rounded-4 m-4 p-4">' +
                     '<div class="card-body">' +
                     '<h4 class="card-title"> Monitoring Nyeri' +
@@ -446,22 +446,33 @@ foreach ($examDetail as $key => $value) {
         $.each(aparameter, function(key, value) {
             if (value.p_type == 'ASES021' && value.parameter_id != '01') {
                 counter++;
-                if (value.parameter_id != '05') {
-                    $("#bodyAssessment" + parent_id + body_id).append(
-                        '<tr>' +
-                        '<td>' + counter + '.</td>' +
-                        '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + '<i class="mdi mdi-arrow-right text-primary me-1"></i</h6></td>' +
-                        '<td><div class="row" id="' + parent_id + value.p_type + value.parameter_id + body_id + '">' +
-                        '</div></td>' +
-                        '</tr>'
-                    )
-                } else {
+                if (value.parameter_id == '05') {
                     $("#bodyAssessment" + parent_id + body_id).append(
                         '<tr>' +
                         '<td>' + counter + '.</td>' +
                         '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + '<i class="mdi mdi-arrow-right text-primary me-1"></i</h6></td>' +
                         '<td><select name="parameter_id05" class="form-control" id="' + parent_id + value.p_type + value.parameter_id + body_id + '">' +
                         '</select></td>' +
+                        '</tr>'
+                    )
+                } else if (value.entry_type == 1) {
+                    $("#bodyAssessment" + parent_id + body_id).append(
+                        `<tr>
+                            <td>${counter}</td>
+                            <td>${value.parameter_desc}</td>
+                            <td>
+                                <input class="form-control" type="text" id="${parent_id+value.p_type + value.parameter_id + body_id}" name="parameter_id${value.parameter_id}" placeholder="" fdprocessedid="s5c36b">
+                            </td>
+                        </tr>
+                        `
+                    )
+                } else {
+                    $("#bodyAssessment" + parent_id + body_id).append(
+                        '<tr>' +
+                        '<td>' + counter + '.</td>' +
+                        '<td> <h6 class="font-size-14 mb-4">' + value.parameter_desc + '<i class="mdi mdi-arrow-right text-primary me-1"></i</h6></td>' +
+                        '<td><div class="row" id="' + parent_id + value.p_type + value.parameter_id + body_id + '">' +
+                        '</div></td>' +
                         '</tr>'
                     )
                 }
@@ -626,12 +637,17 @@ foreach ($examDetail as $key => $value) {
         });
         if (flag == '0') {
             $.each(painMonitoringDetil, function(key1, value1) {
-                if (value1.body_id == body_id && value1.parameter_id != '05') {
+                if (value1.body_id == body_id && value1.parameter_id == '07') {
+                    $("#002ASES02107" + body_id).val(value1.value_desc)
+                } else if (value1.body_id == body_id && (value1.parameter_id == '05')) {
+                    $("#atypeASES02105" + body_id).val(value1.value_id)
+                    $('#atypeASES02105' + body_id + ' option').prop("disabled", true)
+                } else if (value1.body_id == body_id && (value1.parameter_id == '01')) {
+                    $("#atypeASES02101" + body_id).val(value1.value_id)
+                    $('#atypeASES02101' + body_id + ' option').prop("disabled", true)
+                } else {
                     $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
                     $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
-                } else {
-                    // $("#atypeASES02101" + body_id).val(value1.value_id)
-                    // $('#atypeASES02101' + body_id + ' option').prop("disabled", true)
                 }
                 if (value1.p_type == p_type) {
                     $("#" + value1.p_type + value1.parameter_id + body_id).val(value1.value_score)
@@ -642,12 +658,17 @@ foreach ($examDetail as $key => $value) {
             if (p_type == 'ASES022' || p_type == 'ASES023' || p_type == 'ASES024') {
                 $("#bodyAssessment002Intervensi" + body_id).html("")
                 $.each(painMonitoringDetil, function(key1, value1) {
-                    if (value1.body_id == body_id && value1.parameter_id != '05') {
-                        $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
-                        $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
-                    } else {
+                    if (value1.body_id == body_id && value1.parameter_id == '07') {
+                        $("#002ASES02107" + body_id).val(value1.value_id)
+                    } else if (value1.body_id == body_id && (value1.parameter_id == '05')) {
                         $("#002ASES02105" + body_id).val(value1.value_id)
                         $('#002ASES02105' + body_id + ' option').prop("disabled", true)
+                    } else if (value1.body_id == body_id && (value1.parameter_id == '01')) {
+                        $("#002ASES02101" + body_id).val(value1.value_id)
+                        $('#002ASES02101' + body_id + ' option').prop("disabled", true)
+                    } else {
+                        $('[name="parameter_id' + value1.parameter_id + '"][value="' + value1.value_id + '"]').prop("checked", true)
+                        $('[name="parameter_id' + value1.parameter_id + '"][type="radio"]:not(:checked)').prop("disabled", true)
                     }
                 });
 
@@ -938,7 +959,7 @@ foreach ($examDetail as $key => $value) {
                     bodyId = triage[index].body_id
                 }
                 $("#" + container).append(
-                    '<form id="formTriage' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">' +
+                    '<form id="formTriage' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">' +
                     '<div class="card border border-1 rounded-4 m-4 p-4">' +
                     '<div class="card-body">' +
                     '<h4 class="card-title"> Triage' +
@@ -1381,7 +1402,7 @@ foreach ($examDetail as $key => $value) {
                     $("#formApgar" + bodyId).find("input, select, textarea").prop("disabled", false)
                 })
 
-                $("#formApgar" + bodyId).append('<input name="org_unit_code" id="apgarorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+                $("#formApgar" + bodyId).append('<input name="org_unit_code" id="apgarorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control satelite" />')
                     .append('<input name="visit_id" id="apgarvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
                     .append('<input name="trans_id" id="apgartrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
                     .append('<input name="body_id" id="apgarbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
@@ -1659,7 +1680,7 @@ foreach ($examDetail as $key => $value) {
             $("#formStabilitasEditBtn" + bodyId).slideUp()
             $("#formStabilitas" + bodyId).find("input, textarea, select").prop("disabled", false)
         })
-        $("#formStabilitas" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+        $("#formStabilitas" + bodyId).append('<input name="org_unit_code" id="stabilitasorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control satelite" />')
             .append('<input name="visit_id" id="stabilitasvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="stabilitastrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="stabilitasbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
@@ -1967,7 +1988,7 @@ foreach ($examDetail as $key => $value) {
             }
         } ?>
 
-        $("#formPernapasan" + bodyId).append('<input name="org_unit_code" id="respirationorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
+        $("#formPernapasan" + bodyId).append('<input name="org_unit_code" id="respirationorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control satelite" />')
             .append('<input name="visit_id" id="respirationvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="respirationtrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="respirationbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')
@@ -2116,7 +2137,7 @@ foreach ($examDetail as $key => $value) {
         }
 
         var fallRiskContent = `
-        <form id="formFallRisk` + bodyId + `" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+        <form id="formFallRisk` + bodyId + `" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10 satelite">
             <div class="card border border-1 rounder-4 m-4 p-4">
                 <div class="card-body">
                     <div class="col-md-12">
@@ -2500,7 +2521,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = sirkulasiAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formSirkulasi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formSirkulasi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -2776,7 +2797,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = neuroAll[index].body_id
         }
         $("#bodyNeurosensoris").append(
-            $('<form id="formNeurosensoris' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formNeurosensoris' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -3043,7 +3064,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = anakAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formAnak' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formAnak' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -3326,7 +3347,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = neonatusAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formNeonatus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formNeonatus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -3609,7 +3630,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = adlAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formADL' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formADL' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -3916,7 +3937,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = dekubitusAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formDekubitus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formDekubitus' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -4181,7 +4202,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = digestAll[index].body_id
         }
         $("#bodyPencernaan").append(
-            $('<form id="formPencernaan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formPencernaan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -4445,7 +4466,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = perkemihanAll[index].body_id
         }
         $("#bodyPerkemihan").append(
-            $('<form id="formPerkemihan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formPerkemihan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -4709,7 +4730,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = psikologiAll[index].body_id
         }
         $("#bodyPsikologi").append(
-            $('<form id="formPsikologi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formPsikologi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -4995,7 +5016,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = seksualAll[index].body_id
         }
         $("#bodySeksual").append(
-            $('<form id="formSeksual' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formSeksual' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -5271,7 +5292,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = socialAll[index].body_id
         }
         $("#bodySocial").append(
-            $('<form id="formSocial' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formSocial' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -5531,7 +5552,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = hearingAll[index].body_id
         }
         $("#bodyHearing").append(
-            $('<form id="formHearing' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formHearing' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -5793,7 +5814,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = sleepingAll[index].body_id
         }
         $("#bodySleeping").append(
-            $('<form id="formSleeping' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formSleeping' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -6063,7 +6084,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = giziAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formGizi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formGizi' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -6647,7 +6668,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = educationFormAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formEducationForm' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formEducationForm' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -7014,7 +7035,7 @@ foreach ($examDetail as $key => $value) {
         ?>
 
         $("#" + container).append(
-            $('<form id="formEducationIntegration' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formEducationIntegration' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -7749,7 +7770,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = gcsAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formGcs' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formGcs' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -8151,7 +8172,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = integumenAll[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formIntegumen' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formIntegumen' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')

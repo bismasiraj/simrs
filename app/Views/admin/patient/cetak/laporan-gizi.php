@@ -152,11 +152,11 @@
             <tr>
                 <td width="50%">
                     <b>Tanggal</b><br>
-                    <small><?= tanggal_indo(date_format(date_create($val['examination_date']), 'Y-m-d')); ?></small>
+                    <small><?= tanggal_indo(date_format(date_create(@$val['examination_date']), 'Y-m-d')); ?></small>
                 </td>
                 <td width="50%">
                     <b>Jenis Antropometri</b><br>
-                    <small><?= $val['antropometri']; ?></small>
+                    <small><?= @$val['antropometri']; ?></small>
                 </td>
             </tr>
         </table>
@@ -165,48 +165,48 @@
             <tr>
                 <td width="50%">
                     <b>Kategori Usia</b><br>
-                    <small><?= $val['display']; ?></small>
+                    <small><?= @$val['display']; ?></small>
                 </td>
                 <td width="50%" rowspan="4"></td>
             </tr>
             <tr>
                 <td width="50%">
                     <b>BB</b><br>
-                    <small><?= $val['weight'] ?? 0; ?></small>
+                    <small><?= @$val['weight'] ?? 0; ?></small>
                 </td>
             </tr>
             <tr>
                 <td width="50%">
                     <b>TB</b><br>
-                    <small><?= $val['height'] ?? 0; ?></small>
+                    <small><?= @$val['height'] ?? 0; ?></small>
                 </td>
             </tr>
             <tr>
                 <td width="50%">
                     <b>BBI</b><br>
-                    <small><?= $val['weight_ideal']; ?></small>
+                    <small><?= @$val['weight_ideal']; ?></small>
                 </td>
             </tr>
             <tr>
                 <td width="50%" colspan="2">
                     <b>BIOKIMIA</b><br>
-                    <small><?= $val['biokimia'] ?? '-'; ?></small>
+                    <small><?= @$val['biokimia'] ?? '-'; ?></small>
                 </td>
             </tr>
             <tr>
                 <td width="50%" colspan="2">
                     <b>Vital Sign & Keadaan Umum</b><br>
-                    <small><?= $val['clinical_description']; ?></small>
+                    <small><?= @$val['clinical_description']; ?></small>
                 </td>
             </tr>
             <tr>
                 <td width="50%">
                     <b>Alergi Makanan</b><br>
-                    <small><?= $val['food_alergy']; ?></small>
+                    <small><?= @$val['food_alergy']; ?></small>
                 </td>
                 <td width="50%">
                     <b>Pola Makan</b><br>
-                    <small><?= $val['dietary_habit']; ?></small>
+                    <small><?= @$val['dietary_habit']; ?></small>
                 </td>
             </tr>
         </table>
@@ -225,28 +225,28 @@
                 <tr>
                     <td>Energi</td>
                     <td>0.0</td>
-                    <td><?= $val['energi']; ?></td>
+                    <td><?= @$val['energi']; ?></td>
                     <td>0.0</td>
                     <td>0.0</td>
                 </tr>
                 <tr>
                     <td>Karbohidrat</td>
                     <td>0.0</td>
-                    <td><?= $val['karbohidrat']; ?></td>
+                    <td><?= @$val['karbohidrat']; ?></td>
                     <td>0.0</td>
                     <td>0.0</td>
                 </tr>
                 <tr>
                     <td>Protein</td>
                     <td>0.0</td>
-                    <td><?= $val['protein']; ?></td>
+                    <td><?= @$val['protein']; ?></td>
                     <td>0.0</td>
                     <td>0.0</td>
                 </tr>
                 <tr>
                     <td>Lemak</td>
                     <td>0.0</td>
-                    <td><?= $val['lemak']; ?></td>
+                    <td><?= @$val['lemak']; ?></td>
                     <td>0.0</td>
                     <td>0.0</td>
                 </tr>
@@ -365,12 +365,12 @@
                 <td>Lemak</td>
             </tr>
             <tr>
-                <td><?= @$val['energi']; ?></td>
+                <td><?= @@$val['energi']; ?></td>
                 <td><?= @$intr['intervention_target']; ?>%</td>
-                <td><?= (@$val['energi'] * (@$intr['intervention_target'] / 100)) ?? ''; ?></td>
-                <td><?= (@$val['protein'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
-                <td><?= (@$val['karbohidrat'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
-                <td><?= (@$val['lemak'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
+                <td><?= (@@$val['energi'] * (@$intr['intervention_target'] / 100)) ?? ''; ?></td>
+                <td><?= (@@$val['protein'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
+                <td><?= (@@$val['karbohidrat'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
+                <td><?= (@@$val['lemak'] * (@$intr['intervention_target'] / 100)) ?? ''; ?> gram</td>
             </tr>
 
         </table>
