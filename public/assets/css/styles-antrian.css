@@ -1,0 +1,122 @@
+/* In public/assets/css/styles-antrian.css */
+body {
+  background-image: url('../img/background.gif');
+  background-size: 100% auto; /* Scales to 100% width, height adjusts automatically */
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.queue-container {
+  position: relative;
+  margin-top: 25vh;
+  margin-left: 2vw;
+  margin-right: 2vw;
+  flex-direction: column; 
+  align-items: center; 
+}
+
+.video-container {
+  position: relative; 
+  /* width: calc(100% - 4vw);  */
+  /* height: 400px;  */
+  margin-top: 25vh; 
+  box-shadow: 13px 1px 8px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; 
+  border-radius: 5px; 
+  /* box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);  */
+}
+
+.video-container iframe {
+  position: absolute; 
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%; 
+  /* border: none;  */
+  border-radius: 5px; /* Tambahkan border-radius untuk sudut yang lebih halus */
+}
+
+/* Tambahan: Responsif untuk perangkat kecil */
+@media (max-width: 768px) {
+  .queue-container {
+    margin-top: 20vh; /* Mengurangi margin atas untuk perangkat kecil */
+  }
+
+  .video-container {
+    height: 250px; /* Mengurangi tinggi video pada perangkat kecil */
+  }
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  margin-right: 20px; /* Jarak antara logo dan judul */
+}
+
+.queue-item {
+  font-size: 3em; /* Ukuran diperbesar */
+  color: rgb(15,129,134); /* Warna dominan */
+  margin: 10px 0;
+  padding: 20px;
+  text-align: center;
+  border: 4px solid rgb(0 0 0); /* Warna dominan */
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.5s forwards;
+  background-color: #ffffff;
+  box-shadow: 13px 1px 8px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.5s;
+
+  /* Menambahkan efek bayangan pada teks */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Horizontal, Vertical, Blur, Color */
+}
+
+
+.queue-item-poli {
+  font-size: 3em; /* Ukuran diperbesar */
+  color: rgb(0, 0, 0); /* Warna dominan */
+  margin: 10px 0;
+  padding: 20px;
+  text-align: center;
+  border: 4px solid rgb(0 0 0); /* Warna dominan */
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.5s forwards;
+  background-color: #ffffff;
+  box-shadow: 13px 1px 8px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.5s;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doctor-room {
+  font-size: 1.5em; /* Ukuran nama dokter dan ruangan */
+  color: #333;
+  margin-top: 10px;
+}
+
+.queue-header {
+  font-size: 1.5em;
+  color: rgb(16, 180, 174); /* Warna dominan */
+}
+
+#stopButton {
+  position: absolute; /* Mengatur posisi absolut */
+  bottom: 20px; /* Jarak dari bawah */
+  right: 20px; /* Jarak dari kanan */
+}
+
+.pointer {
+  cursor: pointer;
+}

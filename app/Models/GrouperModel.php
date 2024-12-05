@@ -10,7 +10,7 @@ class GrouperModel extends Model
     protected $table      = 'grouper';
     protected $primaryKey = 'no_sep';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

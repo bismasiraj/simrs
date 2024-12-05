@@ -10,7 +10,7 @@ class GenerateIdModel extends Model
     protected $table      = 'generate_id';
     protected $primaryKey = 'treat_date';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
@@ -40,12 +40,17 @@ class GenerateIdModel extends Model
             $j = 'RI';
         }
         $themax = 0;
-        if (isset($select[0]['counterrj'])) {
-            $themax += $select[0]['counterrj'];
-        } else if (isset($select[0]['counterri'])) {
-            $themax += $select[0]['counterri'];
+        if ($isrj == '1') {
+            if (isset($select[0]['counterrj'])) {
+                $themax += $select[0]['counterrj'];
+            }
+        } else if ($isrj == '0') {
+            if (isset($select[0]['counterri'])) {
+                $themax += $select[0]['counterri'];
+            }
         }
 
+        // return $select;
 
 
         $isset = isset($select[0]['counterrj']) || isset($select[0]['counterri']);

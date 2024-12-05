@@ -9,7 +9,7 @@ class PayorModel extends Model
     protected $table      = 'payor_info';
     protected $primaryKey = 'payor_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -9,7 +9,7 @@ class SexModel extends Model
     protected $table      = 'sex';
     protected $primaryKey = 'gender';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

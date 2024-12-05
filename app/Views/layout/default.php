@@ -7,9 +7,6 @@ use App\Controllers\BaseController;
 
 $basecontroller = new Patient();
 $basecontroller->checkMenuActive('register');
-
-// dd(user()->checkRoles(['superuser']))
-
 ?>
 
 <head>
@@ -79,6 +76,8 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/datepicker/date.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/jquery-ui.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/js/school-custom.js"></script>
+    <script src="<?php echo base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+
     <!-- fullCalendar -->
     <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.min.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.print.min.css" media="print">
@@ -251,7 +250,7 @@ $basecontroller->checkMenuActive('register');
                     url: base_url + "admin/language/defoult_language/" + id,
                     data: {},
                     success: function(data) {
-                        successMsg("<?php echo lang('Word.status_change_successfully'); ?>");
+                        successSwal("<?php echo lang('Word.status_change_successfully'); ?>");
                         $('#languageSwitcher').html(data);
 
                     }
@@ -266,7 +265,7 @@ $basecontroller->checkMenuActive('register');
                     url: base_url + "admin/language/user_language/" + lang_id,
                     data: {},
                     success: function(data) {
-                        successMsg("<?php echo lang('Word.status_change_successfully'); ?>");
+                        successSwal("<?php echo lang('Word.status_change_successfully'); ?>");
                         window.location.reload('true');
 
                     }
@@ -440,6 +439,7 @@ $basecontroller->checkMenuActive('register');
                             </a>
                             <ul class="treeview-menu">
                                 <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/foantrol"><i class="fas fa-angle-right"></i>Antrian Online</a>
+                                <li class="<?= $basecontroller->checkMenuActive('foantrol'); ?>"><a href="<?php echo base_url(); ?>admin/report/satusehat"><i class="fas fa-angle-right"></i>Satu Sehat</a>
                                 </li>
                                 <li class="<?= $basecontroller->checkMenuActive('registermasuk'); ?>"><a href="<?php echo base_url(); ?>admin/report/registermasuk"><i class="fas fa-angle-right"></i> Register Masuk Ranap</a>
                                 </li>
@@ -578,6 +578,7 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/plugins/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
     <!--language js-->
     <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/bootstrap-select.min.js"></script>
     <script type="text/javascript">
@@ -632,6 +633,7 @@ $basecontroller->checkMenuActive('register');
     <script src="<?php echo base_url(); ?>backend/datepicker/js/bootstrap-datetimepicker.js"></script>
     <script src="<?php echo base_url(); ?>backend/plugins/fastclick/fastclick.min.js"></script>
     <script src="<?php echo base_url(); ?>backend/dist/js/app.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/default.js"></script>
     <!-- nprogress -->
     <script src="<?php echo base_url(); ?>backend/dist/js/nprogress.js"></script>
     <!-- file dropify -->
@@ -701,9 +703,9 @@ $basecontroller->checkMenuActive('register');
                     $.each(res.error, function(index, value) {
                         message += value;
                     });
-                    errorMsg(message);
+                    errorSwal(message);
                 } else {
-                    successMsg(res.message);
+                    successSwal(res.message);
                     window.location.reload(true);
                 }
             }
@@ -1066,10 +1068,10 @@ $basecontroller->checkMenuActive('register');
                         $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
 
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#addevent_formbtn").button('reset');
@@ -1096,9 +1098,9 @@ $basecontroller->checkMenuActive('register');
                         $.each(res.error, function(index, value) {
                             message += value;
                         });
-                        errorMsg(message);
+                        errorSwal(message);
                     } else {
-                        successMsg(res.message);
+                        successSwal(res.message);
                         window.location.reload(true);
                     }
                     $("#updateevent_formbtn").button('reset');
@@ -1118,9 +1120,9 @@ $basecontroller->checkMenuActive('register');
                 dataType: "json",
                 success: function(res) {
                     if (res.status == "fail") {
-                        errorMsg(res.message);
+                        errorSwal(res.message);
                     } else {
-                        successMsg(msg + "<?php echo lang('Word.delete_message') ?>");
+                        successSwal(msg + "<?php echo lang('Word.delete_message') ?>");
                         window.location.reload(true);
                     }
                 }

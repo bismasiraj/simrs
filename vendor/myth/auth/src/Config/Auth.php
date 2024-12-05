@@ -53,6 +53,8 @@ class Auth extends BaseConfig
         'resend-activate-account' => 'resend-activate-account',
         'forgot'                  => 'forgot',
         'reset-password'          => 'reset-password',
+        'antrian'                => 'antrian',
+        'pendaftaran'                => 'pendaftaran',
     ];
 
     /**
@@ -75,9 +77,9 @@ class Auth extends BaseConfig
      */
     public $views = [
         // 'login'           => 'Myth\Auth\Views\login',
-        // 'register'        => 'Myth\Auth\Views\register',
+        'register'        => 'Myth\Auth\Views\register',
         'login'           => '\App\Views\Admin\login',
-        'register'        => '\App\Views\Admin\register',
+        // 'register'        => '\App\Views\Admin\register',
         'forgot'          => 'Myth\Auth\Views\forgot',
         'reset'           => 'Myth\Auth\Views\reset',
         'emailForgot'     => 'Myth\Auth\Views\emails\forgot',
@@ -383,4 +385,9 @@ class Auth extends BaseConfig
      * @var int
      */
     public $resetTime = 3600;
+
+    public $session = [
+        'expire_on_close' => true, // Session expires when the browser closes
+        'expiration' => 7200,      // Session timeout in seconds (2 hours)
+    ];
 }

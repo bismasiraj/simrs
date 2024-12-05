@@ -73,3 +73,21 @@ if (! function_exists('timezone_select')) {
         return $buffer . ("</select>\n");
     }
 }
+if (! function_exists('tanggal_indo')) {
+  
+    function tanggal_indo($tanggal)
+    {
+        // Jika date format Y-m-d
+        if(preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $tanggal)){
+            $bulan = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+            $split = explode('-', $tanggal);
+            return $split[2] . ' ' . $bulan[(int)$split[1]] . ' ' . $split[0];
+        // Jika date format d-m-Y
+        }elseif(preg_match("/^(\d{2})-(\d{2})-(\d{4})$/", $tanggal)){
+            $bulan = array(1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
+            $split = explode('-', $tanggal);
+            return $split[0] . ' ' . $bulan[(int)$split[1]] . ' ' . $split[2];
+        }
+
+    }
+}

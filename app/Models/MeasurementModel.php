@@ -9,7 +9,7 @@ class MeasurementModel extends Model
     protected $table      = 'measurement';
     protected $primaryKey = 'measure_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

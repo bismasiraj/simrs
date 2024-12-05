@@ -71,61 +71,10 @@ class TreatmentObatModel extends Model
         'dose1',
         'dose2',
         'theorder',
-        // 'org_unit_code',
-        // 'jml_bks',
-        // 'dose',
-        // 'orig_dose',
-        // 'resep_ke',
-        // 'description',
-        // 'brand_id',
-        // 'measure_id',
-        // 'measure_id2',
-        // 'racikan',
-        // 'doctor',
-        // 'employee_id',
-        // 'employee_id_from',
-        // 'doctor_from',
-        // 'status_obat',
-        // 'tarif_id',
-        // 'treatment',
-        // 'tarif_type',
-        // 'amount',
-        // 'sell_price',
-        // 'tagihan',
-        // 'subsidi',
-        // 'subsidisat',
-        // 'margin',
-        // 'ppn',
-        // 'ppnvalue',
-        // 'discount',
-        // 'diskon',
-        // 'profession',
-        // 'profesi',
-        // 'amount_paid',
-        // 'description2',
-        // 'dose_presc',
-        // 'quantity',
-        // 'numer',
-        // 'resep_no',
-        // 'nota_no',
-        // 'treat_date',
-        // 'bill_id',
-        // 'class_room_id',
-        // 'clinic_id',
-        // 'clinic_id_from',
-        // 'visit_id',
-        // 'no_registration',
-        // 'trans_id',
-        // 'modified_from',
-        // 'modified_date',
-        // 'isrj',
-        // 'thename',
-        // 'theaddress',
-        // 'theid',
-        // 'dose1',
-        // 'dose2',
-        // 'module_id',
-        // 'theorder'
+        'sold_status',
+        'measure_dosis',
+        'body_id',
+        'status_tarif'
     ];
 
     // Dates
@@ -253,7 +202,7 @@ class TreatmentObatModel extends Model
             ->findAll();
         return $select;
     }
-    public function getHistoryObatResep($nomor)
+    public function getHistoryObatResep($nomor, $soldStatus)
     {
         $select = $this->select("treatment_obat.no_registration,   
         treatment_obat.visit_id, 
@@ -365,10 +314,14 @@ class TreatmentObatModel extends Model
           treatment_obat.education_id,
           treatment_obat.takepill_date,
           treatment_obat.ed,
+          treatment_obat.status_tarif,
+          treatment_obat.measure_dosis,
           isnull(treatment_obat.dose1,0) as dose1,
           isnull(treatment_obat.dose2,0) as dose2")
             ->where('no_registration', $nomor)
-            ->where("treat_date > dateadd(year,-1,getdate())")
+            ->where('racikan in (0,1,3)')
+            ->where('sold_status', $soldStatus)
+            ->where("treat_date > dateadd(month,-3,getdate())")
             ->orderBy('resep_no,resep_ke, theorder, treat_date')
             ->findAll();
         return $select;

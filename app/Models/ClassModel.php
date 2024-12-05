@@ -9,7 +9,7 @@ class ClassModel extends Model
     protected $table      = 'class';
     protected $primaryKey = 'class_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;

@@ -166,3 +166,4 @@ function get_PatientDetails(id) {
     }
 
 }
+

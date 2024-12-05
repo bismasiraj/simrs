@@ -70,7 +70,7 @@ class PermissionModel extends Model
     {
         if (null === $found = cache("{$userId}_permissions")) {
             $fromUser = $this->db->table('auth_users_permissions')
-                ->select('id, auth_permissions.name')
+                ->select('id, auth_permissions.name, auth_users_permissions.c, auth_users_permissions.r, auth_users_permissions.u, auth_users_permissions.d')
                 ->join('auth_permissions', 'auth_permissions.id = permission_id', 'inner')
                 ->where('user_id', $userId)
                 ->get()

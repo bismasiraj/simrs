@@ -9,7 +9,7 @@ class ClassRoomModel extends Model
     protected $table      = 'class_room';
     protected $primaryKey = 'class_room_id';
 
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
