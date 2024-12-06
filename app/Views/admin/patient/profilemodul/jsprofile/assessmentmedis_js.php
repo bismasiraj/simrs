@@ -708,7 +708,13 @@
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyGcsPerawat").html("")
                         addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
-                        return false
+                    }
+                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyGcsMedis").html()
+                        addGcs(0, key, "armpasien_diagnosa_id", "bodyGcsMedis", false)
+                    }
+                    if (value.document_id == $("#acpptbody_id").val()) {
+                        addGcs(0, key, "acpptbody_id", container, false)
                     }
                 })
             }
@@ -726,7 +732,11 @@
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyFallRiskPerawat").html("")
                         addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
-                        return false
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyFallRiskMedis").html("")
+                        addFallRisk(0, key, "armpasien_diagnosa_id", "bodyFallRiskMedis", false)
+                    } else if (value.document_id == $("#acpptbody_id").val()) {
+                        addFallRisk(0, key, "acpptbody_id", container, false)
                     }
                 })
             }
@@ -740,10 +750,12 @@
 
                 $.each(painMonitoring, function(key, value) {
                     $("#" + container).html("")
-                    if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyPainMonitoringPerawat").html("")
+                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
                         $("#bodyPainMonitoringMedis").html("")
                         addPainMonitoring(0, key, 'armpasien_diagnosa_id', "bodyPainMonitoringMedis", false)
-                        return false
                     }
                 })
             }
@@ -753,10 +765,10 @@
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(napas, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val()) {
+                    if (value.document_id == $("#arpbody_id").val())
                         addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
-                        return false
-                    }
+                    else if (value.document_id == $("#armpasien_diagnosa_id").val())
+                        addPernapasan(0, key, "armpasien_diagnosa_id", "bodyPernapasanMedis")
                 })
             }
             if (res.apgar) {
@@ -769,7 +781,10 @@
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyApgarPerawat").html("")
                         addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
-                        return false
+                    } else if (value.document_id == $("#armpasien_diagnosa_id").val()) {
+                        $("#bodyApgarMedis").html("")
+                    } else {
+                        addApgar(0, key, "bayibaby_id", container, false)
                     }
                 })
             }
@@ -820,6 +835,7 @@
         $("#formaddarm input").prop("disabled", false)
         $("#formaddarm textarea").prop("disabled", false)
         $("#formaddarm select").prop("disabled", false)
+        $("#formaddarm option").prop("disabled", false)
         enableCanvasLokalis()
 
         $("#formaddarm").find(".btn-to-hide").slideDown()
@@ -840,6 +856,7 @@
         $("#formaddarm input").prop("disabled", true)
         $("#formaddarm textarea").prop("disabled", true)
         $("#formaddarm select").prop("disabled", true)
+        $("#formaddarm option").prop("disabled", true)
 
         $("#formaddarm").find(".btn-to-hide").slideUp()
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
@@ -1109,7 +1126,15 @@
             let docData = new FormData(document.getElementById($(this).attr("id")))
             let docDataObject = {};
             docData.forEach(function(value, key) {
-                docDataObject[key] = value
+                if (key.includes("[]")) {
+                    if (typeof docDataObject[key.replace("[]", "")] !== 'undefined' && docDataObject[key.replace("[]", "")] !== null) {
+                        docDataObject[key.replace("[]", "")].push(value)
+                    } else {
+                        docDataObject[key.replace("[]", "")] = [value]
+                    }
+                } else {
+                    docDataObject[key] = value
+                }
             });
             let newObj = {
                 id: $(this).attr("id"),
@@ -1133,38 +1158,93 @@
             success: function(data) {
                 $("#formsavearmbtn").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
-                if (data.status == "fail") {
-                    var message = "";
-                    $.each(data.error, function(index, value) {
-                        message += value;
-                    });
-                    errorSwal(message);
-                } else {
-                    successSwal(data.message);
+                if (data.medis) {
+                    if (data.medis.status == "fail") {
+                        var message = "";
+                        $.each(data.medis.error, function(index, value) {
+                            message += value;
+                        });
+                        errorSwal(message);
+                    } else {
+                        successSwal(data.medis.message);
 
-                    $("#formaddarm").find(".btn-save:visible").each(function() {
-                        $(this).trigger("click")
-                    })
-                    $("#armModal").modal("hide")
-                    let formData = new FormData(document.getElementById("formaddarm"))
-                    let formDataObject = {};
-                    formData.forEach(function(value, key) {
-                        formDataObject[key] = value
-                    });
+                        // $("#formaddarm").find(".btn-save:visible").each(function() {
+                        //     $(this).trigger("click")
+                        // })
+                        $("#armModal").modal("hide")
+                        let formData = new FormData(document.getElementById("formaddarm"))
+                        let formDataObject = {};
+                        formData.forEach(function(value, key) {
+                            formDataObject[key] = value
+                        });
 
-                    var isNewDocument = 0
+                        var isNewDocument = 0
 
-                    $.each(pasienDiagnosaAll, function(key, value) {
-                        if (value.pasien_diagnosa_id == formDataObject.pasien_diagnosa_id) {
-                            pasienDiagnosaAll[key] = formDataObject
-                            isNewDocument = 1
-                        }
-                    })
-                    if (isNewDocument != 1)
-                        pasienDiagnosaAll.push(formDataObject)
-                    displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
+                        $.each(pasienDiagnosaAll, function(key, value) {
+                            if (value.pasien_diagnosa_id == formDataObject.pasien_diagnosa_id) {
+                                pasienDiagnosaAll[key] = formDataObject
+                                isNewDocument = 1
+                            }
+                        })
+                        if (isNewDocument != 1)
+                            pasienDiagnosaAll.push(formDataObject)
+                        displayTableAssessmentMedis(pasienDiagnosaAll.length - 1)
+                    }
                 }
+                if (data.gcs) {
+                    let bodyId = data.gcs
 
+                    if ($("#gcsvalid_pasien" + bodyId).val() == '') {
+                        $("#formGcsSaveBtn" + bodyId).slideUp()
+                        $("#formGcsEditBtn" + bodyId).slideDown()
+                        $("#formGcsSignBtn" + bodyId).slideDown()
+                    } else {
+                        $("#formGcsSaveBtn" + bodyId).slideUp()
+                        $("#formGcsEditBtn" + bodyId).slideUp()
+                        $("#formGcsSignBtn" + bodyId).slideUp()
+                    }
+                    $("#formGcs" + bodyId).find("input, select, textarea").prop("disabled", true)
+                    clicked_submit_btn.button('reset');
+
+                    if (isrefresh) {
+                        getGcsAll()
+                    }
+                }
+                if (data.fallRisk) {
+                    let bodyId = data.fallRisk
+                    $('#formFallRisk' + bodyId + ' select').prop("disabled", true)
+                    $('#formFallRisk' + bodyId + ' input').prop("disabled", true)
+                    $("#formFallRiskSaveBtn" + bodyId).slideUp()
+                    $("#formFallRiskEditBtn" + bodyId).slideDown()
+                    $("#formFallRiskSignBtn" + bodyId).slideDown()
+                    clicked_submit_btn.button('reset');
+                    checkSign("formFallRisk" + bodyId)
+                }
+                if (data.monitoring) {
+                    let bodyId = data.monitoring
+                    if (response.status === 'success') {
+                        if (isrefresh) {
+                            getPainMonitoringAll()
+                        }
+                        if ($("#ases022valid_user" + bodyId).val() == '') {
+                            $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                            $("#formPainMonitoringEditBtn" + bodyId).slideDown();
+                            $("#formPainMonitoringSignBtn" + bodyId).slideDown();
+                        } else {
+                            $("#formPainMonitoringSaveBtn" + bodyId).slideUp();
+                            $("#formPainMonitoringEditBtn" + bodyId).slideUp();
+                            $("#formPainMonitoringSignBtn" + bodyId).slideUp();
+                        }
+                        // Disable the form inputs
+                        $form.find("input, textarea, select").prop("disabled", true);
+
+                        // Optionally display a success message
+                        successSwal(response.message);
+                    } else {
+                        // Handle server-side validation or other error messages
+                        errorSwal(response.message || 'An error occurred. Please try again.');
+                    }
+                }
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");

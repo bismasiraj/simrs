@@ -90,9 +90,17 @@ class AssessmentMedis extends BaseController
             if (str_contains($value["id"], "formPainMonitoring")) {
                 $monitoring = $this->savePainMonitoring($value["data"]);
             }
+            if (str_contains($value["id"], "formFallRisk")) {
+                $fallRisk = $this->saveFallRisk($value["data"]);
+            }
         }
 
-        return json_encode($monitoring);
+        return json_encode([
+            "medis" => @$medis,
+            "gcs" => @$gcs,
+            "monitoring" => @$monitoring,
+            "fallRisk" => @$fallRisk
+        ]);
     }
 
     private function saveAssessmentMedis($body)
@@ -536,6 +544,78 @@ class AssessmentMedis extends BaseController
             'fallRiskDetail' => $fallRiskDetil
         ];
     }
+    public function saveFallRisk($body)
+    {
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+        $data['p_type'] = $parameter001;
+        // return json_encode($data);
+
+        $model = new FallRiskModel();
+
+        $model->save($data);
+
+        // return json_encode($data);
+
+        $db = db_connect();
+        $p_type = $parameter001;
+        // return json_encode($parameter001);
+
+        if (true) {
+            $fallRiskDetail  = new FallRiskDetailModel();
+
+            $db->query("delete from assessment_fall_risk_detail where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
+
+            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$p_type'")->getResultArray());
+            foreach ($select as $key => $value) {
+                $valueId = ${"parameter_id" . $value['parameter_id']};
+                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
+                if (isset($paramvalue[0])) {
+                    $data = [
+                        'org_unit_code' => $org_unit_code,
+                        'visit_id' => $visit_id,
+                        'trans_id' => $trans_id,
+                        'body_id' => $body_id,
+                        'p_type' => $p_type,
+                        'parameter_id' => $value['parameter_id'],
+                        'value_id' => $valueId,
+                        'value_score' => $paramvalue[0]['value_score'],
+                        'value_desc' => $paramvalue[0]['value_desc'],
+                        'modified_date' => Time::now(),
+                        'modified_by' => user()->username
+                    ];
+                    $fallRiskDetail->insert($data);
+                } else {
+                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where parameter_id = '{$value['parameter_id']}' and p_type = '{$value['p_type']}'")->getResultArray());
+                    // return json_encode($paramvalue);
+                    if (isset($paramvalue[0])) {
+                        $data = [
+                            'org_unit_code' => $org_unit_code,
+                            'visit_id' => $visit_id,
+                            'trans_id' => $trans_id,
+                            'body_id' => $body_id,
+                            'p_type' => $p_type,
+                            'parameter_id' => $paramvalue[0]['parameter_id'],
+                            'value_id' => $paramvalue[0]['value_id'],
+                            'value_score' => $paramvalue[0]['value_score'],
+                            'value_desc' => ${"parameter_id" . $paramvalue[0]['parameter_id']},
+                            'modified_date' => Time::now(),
+                            'modified_by' => user()->username
+                        ];
+                        $fallRiskDetail->insert($data);
+                    }
+                }
+            }
+        }
+
+        return $body_id;
+    }
     public function getPainMonitoring($bodyId, $visit)
     {
 
@@ -574,6 +654,7 @@ class AssessmentMedis extends BaseController
         foreach ($body as $key => $value) {
             ${$key} = $value;
         }
+        // return $body['timeIntervensi'];
 
         $db = db_connect();
         $painMonitoring = new PainMonitoringModel();
@@ -711,10 +792,7 @@ class AssessmentMedis extends BaseController
             }
         }
 
-        return ([
-            "code" => 200,
-            "status" => "success"
-        ]);
+        return $body_id;
     }
     public function getPernapasan($bodyId, $visit)
     {
