@@ -46,7 +46,6 @@ $group = user()->getRoles();
             </div>
         </div>
     </div><!--./row-->
-
 </div>
 <div class="modal fade" id="cetakarm" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xl" role="document">

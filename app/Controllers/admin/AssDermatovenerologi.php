@@ -73,6 +73,36 @@ class AssDermatovenerologi extends \App\Controllers\BaseController
 
         return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true]);
     }
+    public function saveDataLokal($formData)
+    {
+        $model = new AdermatovenerologiModel();
+        $data = [];
+
+        foreach ($formData as $key => $value) {
+            if ($value !== null && $value !== '') {
+                $data[$key] = $value;
+            }
+        }
+        $data['modified_by'] = user()->username;
+        $data['modified_date'] = date('Y-m-d H:i:s');
+        if (!isset($data['body_id'])) {
+            return $this->response->setJSON([
+                'message' => 'body_id is required.',
+                'respon' => false
+            ])->setStatusCode(400);
+        }
+
+        $existingRecord = $model->where('body_id', $data['body_id'])->first();
+
+        if ($existingRecord) {
+            $existingRecord = $this->lowerKey($existingRecord);
+            $model->update($existingRecord['body_id'], $data);
+        } else {
+            $model->insert($data);
+        }
+
+        return (['message' => 'Data saved successfully.', 'respon' => true]);
+    }
 
 
     public function deleteData()

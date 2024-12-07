@@ -115,15 +115,17 @@ class Assessment extends BaseController
 
         return json_encode($mapAssessment);
     }
-    public function savePainMonitoring()
+    public function savePainMonitoring($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
+            $body = $this->request->getPost();
         }
-        $body = $this->request->getPost();
         foreach ($body as $key => $value) {
             ${$key} = $value;
         }
@@ -425,16 +427,18 @@ class Assessment extends BaseController
         }
     }
 
-    public function saveTriage()
+    public function saveTriage($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -680,16 +684,18 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function saveApgar()
+    public function saveApgar($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -1409,16 +1415,18 @@ class Assessment extends BaseController
             'pasienDiagnosasNurse' => $selectdiagnosasnurse
         ]);
     }
-    public function saveStabilitas()
+    public function saveStabilitas($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         foreach ($body as $key => $value) {
             ${$key} = $value;
@@ -2133,16 +2141,18 @@ class Assessment extends BaseController
         ]); //havin
     }
 
-    public function savePernapasan()
+    public function savePernapasan($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
         $data = [];
 
         // return ($body['OBJECT_STRANGE']);
@@ -2194,16 +2204,19 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function saveSirkulasi()
+    public function saveSirkulasi($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
+        if ($body = null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
+
+            $body = $this->request->getPost();
         }
 
-        $body = $this->request->getPost();
 
         $data = [];
 
@@ -2249,16 +2262,18 @@ class Assessment extends BaseController
             'sirkulasi' => $select
         ]);
     }
-    public function saveNeurosensoris()
+    public function saveNeurosensoris($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2306,16 +2321,18 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function saveIntegumen()
+    public function saveIntegumen($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body = null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2336,66 +2353,7 @@ class Assessment extends BaseController
 
         return json_encode($data);
     }
-    public function saveAnak()
-    {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
 
-        $body = $this->request->getPost();
-
-        $data = [];
-
-        // return ($body['OBJECT_STRANGE']);
-        foreach ($body as $key => $value) {
-            ${$key} = $value;
-            if (!(is_null(${$key}) || ${$key} == ''))
-                $data[strtolower($key)] = $value;
-
-            if (isset($examination_date))
-                $data['examination_date'] = str_replace("T", " ", $examination_date);
-        }
-
-
-        $model = new AnakModel();
-
-        $model->save($data);
-
-        return json_encode($data);
-    }
-    public function saveNeonatus()
-    {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
-
-        $body = $this->request->getPost();
-
-        $data = [];
-
-        // return ($body['OBJECT_STRANGE']);
-        foreach ($body as $key => $value) {
-            ${$key} = $value;
-            if (!(is_null(${$key}) || ${$key} == ''))
-                $data[strtolower($key)] = $value;
-
-            if (isset($examination_date))
-                $data['examination_date'] = str_replace("T", " ", $examination_date);
-        }
-
-
-        $model = new NeonatusModel();
-
-        $model->save($data);
-
-        return json_encode($data);
-    }
     public function getIntegumen()
     {
         if (!$this->request->is('post')) {
@@ -2422,17 +2380,83 @@ class Assessment extends BaseController
             'integumen' => $select
         ]);
     }
-
-    public function saveADL()
+    public function saveAnak($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
+
+            $body = $this->request->getPost();
         }
 
-        $body = $this->request->getPost();
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new AnakModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+    public function saveNeonatus($body = null)
+    {
+        if ($body = null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
+
+            $body = $this->request->getPost();
+        }
+
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $data[strtolower($key)] = $value;
+
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+        }
+
+
+        $model = new NeonatusModel();
+
+        $model->save($data);
+
+        return json_encode($data);
+    }
+
+    public function saveADL($body = null)
+    {
+        if ($body = null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
+
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2477,16 +2501,18 @@ class Assessment extends BaseController
             'adl' => $select
         ]);
     }
-    public function saveDekubitus()
+    public function saveDekubitus($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body = null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2532,16 +2558,18 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function savePencernaan()
+    public function savePencernaan($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2586,16 +2614,18 @@ class Assessment extends BaseController
             'pencernaan' => $select
         ]);
     }
-    public function savePerkemihan()
+    public function savePerkemihan($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2640,16 +2670,18 @@ class Assessment extends BaseController
             'perkemihan' => $select
         ]);
     }
-    public function savePsikologi()
+    public function savePsikologi($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2730,16 +2762,18 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function savegizi()
+    public function savegizi($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2820,16 +2854,18 @@ class Assessment extends BaseController
             'giziDetail' => $selectgizi
         ]);
     }
-    public function saveeducationForm()
+    public function saveeducationForm($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -2899,16 +2935,18 @@ class Assessment extends BaseController
             'educationForm' => $select
         ]);
     }
-    public function saveeducationIntegration()
+    public function saveeducationIntegration($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -3154,16 +3192,18 @@ class Assessment extends BaseController
             ]);
         }
     }
-    public function saveSeksual()
+    public function saveSeksual($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -3208,16 +3248,18 @@ class Assessment extends BaseController
             'seksual' => $select
         ]);
     }
-    public function saveSocial()
+    public function saveSocial($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -3262,16 +3304,18 @@ class Assessment extends BaseController
             'social' => $select
         ]);
     }
-    public function saveHearing()
+    public function saveHearing($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -3316,16 +3360,18 @@ class Assessment extends BaseController
             'hearing' => $select
         ]);
     }
-    public function saveSleeping()
+    public function saveSleeping($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 
@@ -3370,16 +3416,18 @@ class Assessment extends BaseController
             'sleeping' => $select
         ]);
     }
-    public function saveGcs()
+    public function saveGcs($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $gcsconclution = [
             '',
@@ -3473,16 +3521,18 @@ class Assessment extends BaseController
         ]);
     }
 
-    public function saveFallRisk()
+    public function saveFallRisk($body = null)
     {
-        if (!$this->request->is('post')) {
-            return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Invalid request method'
-            ])->setStatusCode(405); // Method Not Allowed
-        }
+        if ($body == null) {
+            if (!$this->request->is('post')) {
+                return $this->response->setJSON([
+                    'status' => 'error',
+                    'message' => 'Invalid request method'
+                ])->setStatusCode(405); // Method Not Allowed
+            }
 
-        $body = $this->request->getPost();
+            $body = $this->request->getPost();
+        }
 
         $data = [];
 

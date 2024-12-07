@@ -67,6 +67,242 @@ use Myth\Auth\Models\UserModel;
 
 class AssessmentPerawat extends BaseController
 {
+    public function saveExaminationInfo()
+    {
+
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+
+        //bisma
+        $menu['fallrisk'] = 1;
+        $menu['painmonitoring'] = 1;
+        $menu['triase'] = 1;
+        $menu['painmonitoring'] = 1;
+        $menu['apgar'] = 1;
+        $menu['skrininggizi'] = 1;
+        $menu['adl'] = 1;
+        $menu['dekubitus'] = 1;
+        $menu['stabilitas'] = 1;
+        $menu['edukasiintegrasi'] = 1;
+        $menu['formedukasi'] = 1;
+        $menu['gcs'] = 1;
+        $menu['integumen'] = 1;
+        $menu['anak'] = 1;
+        $menu['neonatus'] = 1;
+        $menu['neurosensoris'] = 1;
+        $menu['pencernaan'] = 1;
+        $menu['pernapasan'] = 1;
+        $menu['perkemihan'] = 1;
+        $menu['psikologi'] = 1;
+        $menu['sirkulasi'] = 1;
+        $menu['seksual'] = 1;
+        $menu['social'] = 1;
+        $menu['tht'] = 1;
+        $menu['tidur'] = 1;
+
+        $controller = new Assessment();
+        foreach ($body as $key => $value) {
+            if ($value["id"] == "formaddarp") {
+                $perawat = $this->saveAssessmentPerawat($value["data"]);
+            }
+            if (str_contains($value["id"], "fallrisk")) {
+                $gcs = $controller->saveFallRisk($value["data"]);
+            }
+            if (str_contains($value["id"], "formPainMonitoring")) {
+                $monitoring = $controller->savePainMonitoring($value["data"]);
+            }
+            if (str_contains($value["id"], "formFallRisk")) {
+                $fallRisk = $controller->saveFallRisk($value["data"]);
+            }
+            if (str_contains($value["id"], "triase")) {
+                $triage = json_decode($controller->saveTriage($value["data"]));
+            }
+            if (str_contains($value["id"], "apgar")) {
+                $apgar = json_decode($controller->saveApgar($value["data"]));
+            }
+            if (str_contains($value["id"], "stabilitas")) {
+                $stabilitas = json_decode($controller->saveStabilitas($value["data"]));
+            }
+            if (str_contains($value["id"], "pernapasan")) {
+                $pernapasan = json_decode($controller->savePernapasan($value["data"]));
+            }
+            if (str_contains($value["id"], "sirkulasi")) {
+                $sirkulasi = json_decode($controller->saveSirkulasi($value["data"]));
+            }
+            if (str_contains($value["id"], "neurosensori")) {
+                $neurosensori = json_decode($controller->saveNeurosensoris($value["databody: "]));
+            }
+            if (str_contains($value["id"], "integumen")) {
+                $integumen = json_decode($controller->saveIntegumen($value["databody: "]));
+            }
+            if (str_contains($value["id"], "anak")) {
+                $anak = json_decode($controller->saveAnak($value["databody: "]));
+            }
+            if (str_contains($value["id"], "adl")) {
+                $adl = json_decode($controller->saveADL($value["databody: "]));
+            }
+            if (str_contains($value["id"], "dekubitus")) {
+                $dekubitus = json_decode($controller->saveDekubitus($value["databody: "]));
+            }
+            if (str_contains($value["id"], "pencernaan")) {
+                $pencernaan = json_decode($controller->savePencernaan($value["databody: "]));
+            }
+            if (str_contains($value["id"], "perkemihan")) {
+                $perkemihan = json_decode($controller->savePerkemihan($value["databody: "]));
+            }
+            if (str_contains($value["id"], "psikologi")) {
+                $psikologi = json_decode($controller->savePsikologi($value["databody: "]));
+            }
+            if (str_contains($value["id"], "education")) {
+                $education = json_decode($controller->saveeducationForm($value["databody: "]));
+            }
+            if (str_contains($value["id"], "educationIntegration")) {
+                $educationIntegration = json_decode($controller->saveeducationIntegration($value["databody: "]));
+            }
+            if (str_contains($value["id"], "social")) {
+                $social = json_decode($controller->saveSocial($value["databody: "]));
+            }
+            if (str_contains($value["id"], "hearing")) {
+                $hearing = json_decode($controller->saveHearing($value["databody: "]));
+            }
+            if (str_contains($value["id"], "sleeping")) {
+                $sleeping = json_decode($controller->saveSleeping($value["databody: "]));
+            }
+        }
+    }
+    public function saveAssessmentPerawat($body)
+    {
+        $dataexam = [];
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $dataexam[$key] = $value;
+            if (isset($examination_date))
+                $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($temperature) && $temperature != '')
+                $dataexam['temperature'] = (float)$dataexam['temperature'];
+            else
+                $dataexam['temperature'] = null;
+
+            if (isset($tension_upper) && $tension_upper != '')
+                $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
+            else
+                $dataexam['tension_upper'] = null;
+
+            if (isset($tension_below) && $tension_below != '')
+                $dataexam['tension_below'] = (float)$dataexam['tension_below'];
+            else
+                $dataexam['tension_below'] = null;
+
+            if (isset($nadi) && $nadi != '')
+                $dataexam['nadi'] = (float)$dataexam['nadi'];
+            else
+                $dataexam['nadi'] = null;
+
+            if (isset($nafas) && $nafas != '')
+                $dataexam['nafas'] = (float)$dataexam['nafas'];
+            else
+                $dataexam['nafas'] = null;
+
+            if (isset($weight) && $weight != '')
+                $dataexam['weight'] = (float)$dataexam['weight'];
+            else
+                $dataexam['weight'] = null;
+
+            if (isset($height) && $height != '')
+                $dataexam['height'] = (float)$dataexam['height'];
+            else
+                $dataexam['height'] = null;
+
+            if (isset($arm_diameter) && $arm_diameter != '')
+                $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
+            else
+                $dataexam['arm_diameter'] = null;
+
+            if (isset($saturasi) && $saturasi != '')
+                $dataexam['saturasi'] = (int)$dataexam['saturasi'];
+            else
+                $dataexam['saturasi'] = null;
+        }
+
+        $ex = new ExaminationModel();
+        $ex->save($dataexam);
+        $dataexam['document_id'] = $dataexam['body_id'];
+        $exd = new ExaminationDetailModel();
+        $exd->save($dataexam);
+
+        $pasienHistory = new PasienHistoryModel();
+
+        $db = db_connect();
+
+        $select = $this->lowerKey($db->query("select * from assessment_parameter_value where p_type = 'GEN0009'")->getResultArray());
+        $db->query("delete from pasien_history where no_registration = '$no_registration'");
+        $i = 0;
+        foreach ($select as $key => $value) {
+            if (isset(${$value['value_id']})) {
+                $i++;
+                $data = [
+                    'org_unit_code' => $org_unit_code,
+                    'no_registration' => $no_registration,
+                    'item_id' => $i,
+                    'value_id' => $value['value_id'],
+                    'value_desc' => $value['value_desc'],
+                    'histories' => ${$value['value_id']},
+                    'modified_by' => user()->username
+                ];
+                // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
+                $pasienHistory->insert($data);
+            }
+        }
+
+        $pdn = new PasienDiagnosaPerawatModel();
+        $org = new OrganizationunitModel();
+
+        $id = $org->generateId();
+        $pds = new PasienDiagnosasPerawatModel();
+        $db->query("delete from pasien_diagnosas_nurse where body_id in (select body_id from pasien_diagnosa_nurse where document_id = '$body_id')");
+        $db->query("delete from pasien_diagnosa_nurse where document_id = '$body_id'");
+        $data = [
+            'org_unit_code' => $org_unit_code,
+            'visit_id' => $visit_id,
+            'trans_id' => $trans_id,
+            'body_id' => $id,
+            'document_id' => $body_id,
+            'clinic_id' => $clinic_id,
+            'class_room_id' => $class_room_id,
+            'bed_id' => $bed_id,
+            'no_registration' => $no_registration,
+            'examination_date' => str_replace("T", " ", $examination_date),
+            'employee_id' => $employee_id,
+            'petugas_id' => user()->username,
+            'descriptions' => null,
+            'modified_by' => $modified_by,
+        ];
+        $pdn->insert($data);
+        if (!empty($diag_id)) {
+            foreach ($diag_id as $key => $value) {
+                $dataDiag = [
+                    'org_unit_code' => $org_unit_code,
+                    'body_id' => $id,
+                    'diagnosan_id' => $diag_id[$key],
+                    'diagnosa_date' => new RawSql("getdate()"),
+                    'diag_notes' => $diag_name[$key],
+                    'modified_by' => user()->username
+                ];
+                $pds->insert($dataDiag);
+            }
+        }
+
+
+
+        return json_encode($dataexam);
+    }
     public function getSatelitePerawat()
     {
         if (!$this->request->is('post')) {

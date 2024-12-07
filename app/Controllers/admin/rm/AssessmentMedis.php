@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Admin\rm;
 
+use App\Controllers\Admin\AssDermatovenerologi;
+use App\Controllers\Admin\AssNeurology;
 use App\Controllers\BaseController;
 use App\Models\Assessment\ADLModel;
 use App\Models\Assessment\AnakModel;
@@ -61,6 +63,7 @@ use App\Models\PasienProceduresModel;
 use App\Models\PasienVisitationModel;
 use App\Models\PersalinanModel;
 use App\Models\TreatmentBillModel;
+use CodeIgniter\Controller;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
 use Myth\Auth\Models\UserModel;
@@ -93,13 +96,23 @@ class AssessmentMedis extends BaseController
             if (str_contains($value["id"], "formFallRisk")) {
                 $fallRisk = $this->saveFallRisk($value["data"]);
             }
+            if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
+                $neuroController = new AssNeurology();
+                $neuro = $neuroController->saveDataLokal($value["data"]);
+            }
+            if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
+                $dermaController = new AssDermatovenerologi();
+                $dermatologi = $dermaController->saveDataLokal($value["data"]);
+            }
         }
 
         return json_encode([
             "medis" => @$medis,
             "gcs" => @$gcs,
             "monitoring" => @$monitoring,
-            "fallRisk" => @$fallRisk
+            "fallRisk" => @$fallRisk,
+            "neuro" => @$neuro,
+            "dermatologi" => @$dermatologi
         ]);
     }
 

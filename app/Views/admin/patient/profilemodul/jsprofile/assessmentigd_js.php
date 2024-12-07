@@ -167,11 +167,44 @@ foreach ($aValue as $key => $value) {
 
 <script type="text/javascript">
     $(".formsavearpbtn").on('click', (function(e) {
-        $("#formaddarp").find("button.btn-save:visible").trigger("click")
+        var data = [];
+
+        let docDataRm = new FormData(document.getElementById("formaddarp"))
+        let docDataObjectRm = {};
+        docDataRm.forEach(function(value, key) {
+            docDataObjectRm[key] = value
+        });
+        let newObjRm = {
+            id: "formaddarp",
+            data: docDataObjectRm
+        };
+        data.push(newObjRm)
+
+        $("#formaddarp").find(".satelite").each(function() {
+            let docData = new FormData(document.getElementById($(this).attr("id")))
+            let docDataObject = {};
+            docData.forEach(function(value, key) {
+                if (key.includes("[]")) {
+                    if (typeof docDataObject[key.replace("[]", "")] !== 'undefined' && docDataObject[key.replace("[]", "")] !== null) {
+                        docDataObject[key.replace("[]", "")].push(value)
+                    } else {
+                        docDataObject[key.replace("[]", "")] = [value]
+                    }
+                } else {
+                    docDataObject[key] = value
+                }
+            });
+            let newObj = {
+                id: $(this).attr("id"),
+                data: docDataObject
+            };
+            data.push(newObj)
+        })
+
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         $.ajax({
-            url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
+            url: '<?php echo base_url(); ?>admin/rm/assessmentperawat/saveExaminationInfo',
             type: "POST",
             // data: 
 
@@ -232,19 +265,6 @@ foreach ($aValue as $key => $value) {
                 fillRiwayatArp()
                 $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
-                // getAssessmentKeperawatan()
-                // // $("#formsavearpbtn").slideUp()
-                // // $("#formeditarp").slideDown()
-                // var isNewDocument = 0
-                // $.each(examForassessment, function(key, value) {
-                //     if (value.body_id == data.body_id) {
-                //         examForassessment[key] = data
-                //         isNewDocument = 1
-                //     }
-                // })
-                // if (isNewDocument == 1)
-                //     examForassessment.push(data)
-                // disableARP()
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");
@@ -257,6 +277,97 @@ foreach ($aValue as $key => $value) {
             }
         });
     }));
+    // $(".formsavearpbtn").on('click', (function(e) {
+    //     $("#formaddarp").find("button.btn-save:visible").trigger("click")
+    //     let clicked_submit_btn = $(this).closest('form').find(':submit');
+    //     e.preventDefault();
+    //     $.ajax({
+    //         url: '<?php echo base_url(); ?>admin/rm/assessment/saveExaminationInfo',
+    //         type: "POST",
+    //         // data: 
+
+    //         data: new FormData(document.getElementById('formaddarp')),
+    //         dataType: 'json',
+    //         contentType: false,
+    //         cache: false,
+    //         processData: false,
+    //         beforeSend: function() {
+    //             $(".formsavearpbtn").html('<i class="spinner-border spinner-border-sm"></i>')
+    //         },
+    //         success: function(data) {
+    //             $("#formaddarp").find('input, select, textarea').each(function() {
+    //                 const key = $(this).attr('id'); // Use ID or placeholder as key
+
+    //                 localStorage.removeItem(key);
+    //             })
+    //             $("#arpModal").modal("hide")
+    //             let formData = new FormData(document.getElementById("formaddarp"))
+    //             let formDataObject = {};
+    //             formData.forEach(function(value, key) {
+    //                 formDataObject[key] = value
+    //             });
+    //             var isNewDocument = 0
+    //             $.each(examForassessment, function(key, value) {
+    //                 if (value.body_id == formDataObject.body_id) {
+    //                     examForassessment[key] = formDataObject
+    //                     isNewDocument = 1
+    //                 }
+    //             })
+    //             // if (isNewDocument != 1)
+    //             //     examForassessment.push(formDataObject)
+
+    //             if (isNewDocument != 1) {
+    //                 let examNew = Array();
+    //                 examNew.push(formDataObject)
+    //                 $.each(examForassessment, function(key, value) {
+    //                     examNew.push(examForassessment[key])
+    //                 })
+    //                 examForassessment = examNew
+    //             }
+
+
+    //             // $("#cpptBody").html("")
+    //             let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
+    //             if (examFiltered145.length > 0) {
+    //                 fillDataArp(examFiltered145.length - 1)
+    //                 // $("#arpAddDocument").slideUp()
+    //                 $("#arpDocument").slideDown()
+    //             }
+
+    //             if (examForassessment.length > 0) {
+    //                 displayTableAssessmentKeperawatan();
+    //                 displayTableAssessmentKeperawatanForVitalSign();
+    //             }
+
+
+    //             fillRiwayatArp()
+    //             $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+
+    //             // getAssessmentKeperawatan()
+    //             // // $("#formsavearpbtn").slideUp()
+    //             // // $("#formeditarp").slideDown()
+    //             // var isNewDocument = 0
+    //             // $.each(examForassessment, function(key, value) {
+    //             //     if (value.body_id == data.body_id) {
+    //             //         examForassessment[key] = data
+    //             //         isNewDocument = 1
+    //             //     }
+    //             // })
+    //             // if (isNewDocument == 1)
+    //             //     examForassessment.push(data)
+    //             // disableARP()
+    //         },
+    //         error: function(xhr) { // if error occured
+    //             alert("Error occured.please try again");
+    //             $(".formsavearpbtn").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+    //             errorSwal(xhr);
+    //         },
+    //         complete: function() {
+    //             $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+    //             // clicked_submit_btn.button('reset');
+    //         }
+    //     });
+    // }));
 
     const filterVsStatusId = (value) => {
         if (value == 1) {

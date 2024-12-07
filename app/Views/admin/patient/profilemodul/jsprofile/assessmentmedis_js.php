@@ -410,7 +410,6 @@
             let mappingContentMap = JSON.parse(req);
             const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
             const updatedMappingContentMap = mappingContentMap.map(item => {
-                // Find the corresponding item in `mappingOrder` based on `doc_id`
                 const orderItem = mappingOrderMap.get(item.doc_id);
                 if (orderItem) {
                     return {
@@ -1244,6 +1243,12 @@
                         // Handle server-side validation or other error messages
                         errorSwal(response.message || 'An error occurred. Please try again.');
                     }
+                }
+                if (data.neuro) {
+
+                }
+                if (data.dermatologi) {
+
                 }
             },
             error: function(xhr) { // if error occured
@@ -2702,7 +2707,7 @@
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
-                            <form id="FormAssessmen_Dermatovenerologi">
+                            <form id="FormAssessmen_Dermatovenerologi" class="satelite">
                                 <div id="contentAssessmen_Dermatovenerologi_Hide">
                                 </div>
                                 <div id="contentAssessmen_Dermatovenerologi_Show"></div>
@@ -2738,7 +2743,7 @@
                 <div class="accordion-body text-muted">
                     <div class="row">
                         <div class="col-md-12">
-                            <form id="FormAssessmen_Neurologi">
+                            <form id="FormAssessmen_Neurologi" class="satelite">
                                 <div id="contentAssessmen_Neurologi_Hide">
                                 </div>
                                 <div id="contentAssessmen_Neurologi_Show"></div>

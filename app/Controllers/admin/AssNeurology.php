@@ -74,6 +74,39 @@ class AssNeurology extends \App\Controllers\BaseController
         return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true]);
     }
 
+    public function saveDataLokal($formData)
+    {
+        $model = new AneurologyModel();
+        // $request = service('request');
+        // $formData = $request->getJSON(true);
+        $data = [];
+
+        foreach ($formData as $key => $value) {
+            if ($value !== null && $value !== '') {
+                $data[$key] = $value;
+            }
+        }
+        $data['modified_by'] = user()->username;
+        $data['modified_date'] = date('Y-m-d H:i:s');
+        if (!isset($data['body_id'])) {
+            return ([
+                'message' => 'body_id is required.',
+                'respon' => false
+            ]);
+        }
+
+        $existingRecord = $model->where('body_id', $data['body_id'])->first();
+
+        if ($existingRecord) {
+            $existingRecord = $this->lowerKey($existingRecord);
+            $model->update($existingRecord['body_id'], $data);
+        } else {
+            $model->insert($data);
+        }
+
+        return (['message' => 'Data saved successfully.', 'respon' => true]);
+    }
+
 
     public function deleteData()
     {

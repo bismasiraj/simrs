@@ -9,7 +9,7 @@
         });
     });
 
-    const groupeActionInTab = async () => {
+    const groupeActionInTabKulit = async () => {
         let visit = <?= json_encode($visit) ?>;
         await getDataAssessmenDermatovenerologi({
             visit: visit
