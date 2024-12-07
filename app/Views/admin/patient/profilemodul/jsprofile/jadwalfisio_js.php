@@ -1,3 +1,16 @@
+<?php
+$db = db_connect();
+
+$getDataTarif = $db->query("
+SELECT
+    TREAT_TARIF.TARIF_NAME as text, 
+    TREAT_TARIF.TARIF_ID as id
+FROM TREAT_TARIF
+INNER JOIN treatment ON treatment.treat_id = TREAT_TARIF.treat_id
+WHERE TREATMENT.TREAT_TYPE IN ('16')
+ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
+
+?>
 <script type="text/javascript">
     (function() {
         let getDataFisioterapiAll = []
@@ -38,14 +51,14 @@
 
                     </td>
                     <td class="text-center align-middle fw-bold" width="1%">
-                        <div class="position-relative" id="qr-dokter-${data?.vactination_id}">
+                        <div class="position-relative d-flex justify-content-center align-items-center" id="qr-dokter-${data?.vactination_id}">
                             <button type="button" id="formsignJadwalFisio-dokter-${data?.vactination_id}" data-user-type="dokter" name="signFisio" data-sign-ke="1" data-button-id="btn-save-jadwal-fisio" class="btn btn-sm btn-warning row-to-hide" data-bs-toggle="modal" data-bs-target="#digitalSignModalOperation" style="${data?.vactination_id || 'display:none'}">
                                 <i class="fa fa-signature"></i>
                             </button>
                         </div>
                     </td>
                     <td class="text-center align-middle fw-bold" width="1%">
-                        <div class="position-relative" id="qr-terapis-${data?.vactination_id}">
+                        <div class="position-relative d-flex justify-content-center align-items-center" id="qr-terapis-${data?.vactination_id}">
                             <button type="button" id="formsignJadwalFisio-terapis-${data?.vactination_id}" data-user-type="terapis" name="signFisio" data-sign-ke="2" data-button-id="btn-save-jadwal-fisio" class="btn btn-sm btn-warning row-to-hide" data-bs-toggle="modal" data-bs-target="#digitalSignModalOperation" style="${data?.vactination_id || 'display:none'}">
                                 <i class="fa fa-signature"></i>
                             </button>
@@ -1150,6 +1163,24 @@
 
 
 
+
+        }
+
+        function initializeSearchTarifFisio(theid, initialvalue = null, initialname = null) {
+
+            $("#" + theid).select2({
+                theme: "bootstrap-5",
+                placeholder: "Pilih tarif",
+                data: <?= json_encode($getDataTarif); ?>
+            });
+
+            if (initialvalue != null) {
+                let option = new Option(initialname, JSON.stringify({
+                    tarif_id: initialvalue,
+                    tarif_name: initialname
+                }), true, true);
+                $("#" + theid).append(option).trigger('change');
+            }
 
         }
     })()

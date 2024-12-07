@@ -860,7 +860,7 @@
                                 <select class="form-select" id="select_skrining_gizi" name="p_type">
                                     <option selected>Pilih kategori</option>
                                     <option value="GIZ0601">Anak 1 bulan - 18 tahun (Adaptasi Strong-kids)</option>
-                                    <option value="GIZ0602">Malnutrition Screening Tool (MTA)</option>
+                                    <option value="GIZ0602">Malnutrition Screening Tool (MST)</option>
                                     <option value="GIZ0603">Mini Nutritional Assessment (MNA)</option>
                                 </select>
                             </div>
@@ -934,7 +934,7 @@
                                 <select class="form-select" id="edit_select_skrining_gizi" name="p_type">
                                     <option selected>Pilih kategori</option>
                                     <option value="GIZ0601">Anak 1 bulan - 18 tahun (Adaptasi Strong-kids)</option>
-                                    <option value="GIZ0602">Malnutrition Screening Tool (MTA)</option>
+                                    <option value="GIZ0602">Malnutrition Screening Tool (MST)</option>
                                     <option value="GIZ0603">Mini Nutritional Assessment (MNA)</option>
                                 </select>
                             </div>

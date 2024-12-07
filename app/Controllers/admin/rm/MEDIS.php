@@ -8,6 +8,253 @@ use App\Models\OrganizationunitModel;
 class medis extends \App\Controllers\BaseController
 {
 
+    public function medis_Saraf($visit, $vactination_id = null)
+    {
+
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $clinic = $db->query("SELECT NAME_OF_CLINIC FROM CLINIC WHERE CLINIC_ID = ?", [$visit['clinic_id']])->getRowArray();
+
+            if ($clinic) {
+                $visit['nama_clinic'] = $clinic['NAME_OF_CLINIC'];
+            }
+
+
+            $title = "Asesmen Medis Saraf";
+
+            $title .= $visit['isrj'] == 0 ? " Rawat Inap" : " Rawat Jalan";
+
+            $select = $this->lowerKey($db->query("SELECT 
+                                                    pd.NO_REGISTRATION as no_RM,
+                                                    p.NAME_OF_PASIEN as nama,
+                                                    pd.PASIEN_DIAGNOSA_ID,
+                                                    pd.BODY_ID,
+                                                    CASE 
+                                                        WHEN p.gender = '1' THEN 'Laki-laki'
+                                                        ELSE 'Perempuan'
+                                                    END as jeniskel,
+                                                    p.CONTACT_ADDRESS as alamat,
+                                                    pd.DOCTOR as dpjp,
+                                                    c.name_of_clinic as departemen,
+                                                    class.NAME_OF_CLASS as kelas,
+                                                    cr.NAME_OF_CLASS as bangsal,
+                                                    pd.BED_ID as bed,
+                                                    pd.IN_DATE as tanggal_masuk,
+                                                    CONVERT(varchar, P.DATE_OF_BIRTH, 105) as date_of_birth,
+                                                    CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR,
+                                                    ed.WEIGHT as berat,
+                                                    ed.HEIGHT as tinggi,
+                                                    ed.TENSION_UPPER as tensi_atas,
+                                                    ed.TENSION_BELOW as tensi_bawah,
+                                                    ed.TEMPERATURE as suhu,
+                                                    ed.RESPIRATION as nafas,
+                                                    ed.SATURASI as SPO2,
+                                                    ed.WEIGHT / (
+                                                        (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2))) * 
+                                                        (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2)))
+                                                    ) AS IMT,
+                                                    pd.DIAGNOSA_DESC as namadiagnosa,
+                                                    pd.ANAMNASE as anamnesis,
+                                                    pd.DESCRIPTION as riwayat_penyakit_sekarang,
+                                                    an.document_id,
+                                                    an.no_registration as no_reg_neuro,
+                                                    an.examination_date,
+                                                    an.vas_nrs,
+                                                    an.left_diameter,
+                                                    an.left_light_reflex,
+                                                    an.left_cornea,
+                                                    an.left_isokor_anisokor,
+                                                    an.right_diameter,
+                                                    an.right_light_reflex,
+                                                    an.right_cornea,
+                                                    an.right_isokor_anisokor,
+                                                    an.stiff_neck,
+                                                    an.meningeal_sign,
+                                                    an.brudzinki_i_iv,
+                                                    an.kernig_sign,
+                                                    an.dolls_eye_phenomenon,
+                                                    an.vertebra,
+                                                    an.extremity,
+                                                    an.motion_upper_left,
+                                                    an.motion_upper_right,
+                                                    an.motion_lower_left,
+                                                    an.motion_lower_right,
+                                                    an.strength_upper_left,
+                                                    an.strength_upper_right,
+                                                    an.strength_lower_left,
+                                                    an.strength_lower_right,
+                                                    an.physiological_reflex_upper_left,
+                                                    an.physiological_reflex_upper_right,
+                                                    an.physiological_reflex_lower_left,
+                                                    an.physiological_reflex_lower_right,
+                                                    an.pathologycal_reflex_upper_left,
+                                                    an.pathologycal_reflex_upper_right,
+                                                    an.pathologycal_reflex_lower_left,
+                                                    an.pathologycal_reflex_lower_right,
+                                                    an.clonus,
+                                                    an.sensibility,
+                                                    gcs.GCS_E,
+                                                    gcs.GCS_m,
+                                                    gcs.GCS_V, 
+                                                    gcs.GCS_SCORE as gcs,
+                                                    pd.HURT AS PENYEBAB_CIDERA,
+                                                    pd.MEDICAL_PROBLEM AS MASALAH_MEDIS,
+                                                    pd.DIAGNOSA_ID AS icd10,
+                                                    pd.THERAPY_TARGET AS SASARAN,
+                                                    pd.LAB_RESULT AS LABORATORIUM,
+                                                    pd.RO_RESULT AS RADIOLOGI,  
+                                                    pd.TERAPHY_DESC AS FARMAKOLOGIA,
+                                                    pd.INSTRUCTION AS PROSEDUR,
+                                                    pd.STANDING_ORDER AS STANDING_ORDER,
+                                                    pd.rencanatl as rencana_tl,
+                                                    -- Agregasi skala nyeri
+                                                    STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS skala_nyeri
+                                                    -- Fall Risk Detail dari ASSESSMENT_FALL_RISK_DETAIL
+                                                    -- STRING_AGG(CONCAT('Skorrrrrrrrrrrrrrrr : ',afr_detail.VALUE_SCORE,' |', ' ', afr_detail.VALUE_DESC), '<br>') AS fall_risk_detail
+                                                FROM 
+                                                    pasien_diagnosa pd
+                                                LEFT JOIN 
+                                                    clinic c ON pd.clinic_id = c.clinic_id
+                                                LEFT JOIN 
+                                                    CLASS_ROOM cr ON cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+                                                LEFT JOIN 
+                                                    class ON class.CLASS_ID = cr.CLASS_ID
+                                                LEFT JOIN 
+                                                    EXAMINATION_INFO ei ON ei.BODY_ID = pd.BODY_ID
+                                                LEFT JOIN 
+                                                    EXAMINATION_DETAIL ed ON ed.BODY_ID = ei.BODY_ID
+                                                LEFT JOIN 
+                                                    PASIEN p ON pd.NO_REGISTRATION = p.NO_REGISTRATION
+                                                LEFT JOIN 
+                                                    ASSESSMENT_NEUROLOGY an ON an.document_id = pd.PASIEN_DIAGNOSA_ID AND an.VISIT_ID = pd.VISIT_ID 
+                                                    AND an.EXAMINATION_DATE = (
+                                                        SELECT MAX(EXAMINATION_DATE) 
+                                                        FROM ASSESSMENT_NEUROLOGY 
+                                                        WHERE DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID 
+                                                        AND VISIT_ID = pd.VISIT_ID
+                                                    )
+                                                LEFT JOIN 
+                                                    ASSESSMENT_GCS gcs on gcs.DOCUMENT_ID = pd.BODY_ID AND an.EXAMINATION_DATE = (
+                                                        SELECT MAX(EXAMINATION_DATE) 
+                                                        FROM ASSESSMENT_GCS 
+                                                        WHERE DOCUMENT_ID = pd.BODY_ID 
+                                                    )
+                                                LEFT JOIN 
+                                                    ASSESSMENT_FALL_RISK afr ON afr.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
+                                                LEFT JOIN 
+                                                    ASSESSMENT_FALL_RISK_DETAIL afr_detail 
+                                                    ON afr_detail.BODY_ID = (
+                                                        SELECT TOP(1) BODY_ID 
+                                                        FROM ASSESSMENT_FALL_RISK 
+                                                        WHERE DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID 
+                                                        ORDER BY EXAMINATION_DATE DESC
+                                                    )
+                                                LEFT JOIN 
+                                                    ASSESSMENT_PAIN_MONITORING apm ON apm.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
+                                                LEFT JOIN 
+                                                    ASSESSMENT_PAIN_DETAIL apd ON apd.BODY_ID = apm.BODY_ID
+                                             
+                                                WHERE 
+                                                    pd.PASIEN_DIAGNOSA_ID = '20240902124016011344Bbismasiraj'
+                                                    AND pd.VISIT_ID = '20240902124016011344B'
+                                                GROUP BY 
+                                                    pd.PASIEN_DIAGNOSA_ID, 
+                                                    pd.BODY_ID, 
+                                                    pd.NO_REGISTRATION, 
+                                                    p.NAME_OF_PASIEN, 
+                                                    CASE WHEN p.gender = '1' THEN 'Laki-laki' ELSE 'Perempuan' END, 
+                                                    p.CONTACT_ADDRESS, 
+                                                    pd.DOCTOR, 
+                                                    c.name_of_clinic, 
+                                                    class.NAME_OF_CLASS,  
+                                                    cr.NAME_OF_CLASS,  
+                                                    pd.BED_ID,  
+                                                    pd.IN_DATE, 
+                                                    ed.WEIGHT, 
+                                                    ed.HEIGHT, 
+                                                    ed.TENSION_UPPER, 
+                                                    ed.TENSION_BELOW, 
+                                                    ed.RESPIRATION, 
+                                                    ed.SATURASI, 
+                                                    ed.TEMPERATURE, 
+                                                    CONVERT(varchar, P.DATE_OF_BIRTH, 105), 
+                                                    CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR', 
+                                                    pd.DIAGNOSA_DESC, 
+                                                    pd.ANAMNASE, 
+                                                    pd.DESCRIPTION,
+                                                    an.document_id,
+                                                    an.no_registration,
+                                                    an.examination_date,
+                                                    an.vas_nrs,
+                                                    an.left_diameter,
+                                                    an.left_light_reflex,
+                                                    an.left_cornea,
+                                                    an.left_isokor_anisokor,
+                                                    an.right_diameter,
+                                                    an.right_light_reflex,
+                                                    an.right_cornea,
+                                                    an.right_isokor_anisokor,
+                                                    an.stiff_neck,
+                                                    an.meningeal_sign,
+                                                    an.brudzinki_i_iv,
+                                                    an.kernig_sign,
+                                                    an.dolls_eye_phenomenon,
+                                                    an.vertebra,
+                                                    an.extremity,
+                                                    an.motion_upper_left,
+                                                    an.motion_upper_right,
+                                                    an.motion_lower_left,
+                                                    an.motion_lower_right,
+                                                    an.strength_upper_left,
+                                                    an.strength_upper_right,
+                                                    an.strength_lower_left,
+                                                    an.strength_lower_right,
+                                                    an.physiological_reflex_upper_left,
+                                                    an.physiological_reflex_upper_right,
+                                                    an.physiological_reflex_lower_left,
+                                                    an.physiological_reflex_lower_right,
+                                                    an.pathologycal_reflex_upper_left,
+                                                    an.pathologycal_reflex_upper_right,
+                                                    an.pathologycal_reflex_lower_left,
+                                                    an.pathologycal_reflex_lower_right,
+                                                    an.clonus,
+                                                    an.sensibility,
+                                                    gcs.GCS_E,
+                                                    gcs.GCS_m,
+                                                    gcs.GCS_V, 
+                                                    gcs.GCS_SCORE, 
+                                                    pd.HURT,
+                                                    pd.MEDICAL_PROBLEM,
+                                                    pd.DIAGNOSA_ID,
+                                                    pd.THERAPY_TARGET,
+                                                    pd.LAB_RESULT,
+                                                    pd.RO_RESULT,
+                                                    pd.TERAPHY_DESC,
+                                                    pd.INSTRUCTION,
+                                                    pd.STANDING_ORDER,
+                                                    pd.rencanatl
+            ")->getResultArray());
+
+
+            // var_dump($select[0]);
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-saraf.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select[0]
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-saraf.php", [
+                    "visit" => $visit,
+                    'title' => $title
+                ]);
+            }
+        }
+    }
     public function ralan_anak($visit, $vactination_id = null)
     {
         $title = "Asesmen Medis Anak Rawat Jalan";

@@ -70,7 +70,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $db = db_connect();
         $formData = $this->request->getJSON();
         $treatmentData = [];
-        $bloodRequestData = [];
 
         $getDataInstrumenModel = new AssessmentInstrumentModel();
         $getDataPatientOperationCheckModel = new PatientOperationCheck();
@@ -129,14 +128,30 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $queryTreatment = $db->query($sqlTreatment, [$formData->visit_id]);
             $treatmentData = $this->lowerKey($queryTreatment->getResultArray());
 
-            $sqlBloodRequest = "
-                SELECT br.*, but.usagetype AS usageType
-                FROM BLOOD_REQUEST br
-                LEFT JOIN BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
-                WHERE br.visit_id = ? AND br.document_id = ?
-            ";
-            $queryBloodRequest = $db->query($sqlBloodRequest, [$formData->visit_id, $formData->id]);
-            $bloodRequestData = $this->lowerKey($queryBloodRequest->getResultArray());
+            $dataBloodRequest = $this->lowerKey($db->query("
+            select 
+                br.*, but.usagetype AS usageType 
+            from blood_request as br
+            LEFT JOIN 
+                BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
+            where 
+                br.VISIT_ID = '" . $formData->visit_id . "' 
+                AND br.DOCUMENT_ID = '" . $formData->id . "'
+                and br.CLINIC_ID = 'P002' 
+                and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
+            ")->getResultArray() ?? []);
+
+            $bloodRequestHistory = $this->lowerKey($db->query("
+            select 
+                br.*, but.usagetype AS usageType 
+            from blood_request as br
+            LEFT JOIN 
+                BLOOD_USAGE_TYPE but ON br.blood_usage_type = but.usage_type
+            where br.VISIT_ID = '" . $formData->visit_id . "' 
+            AND br.DOCUMENT_ID = '" . $formData->id . "'
+            and br.CLINIC_ID = 'P002' 
+            and (TRANSFUSION_START is not null OR TRANSFUSION_END is not null OR REACTION_DESC is not null)
+            ")->getResultArray() ?? []);
         }
 
 
@@ -152,7 +167,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'assessment_operation_drain' => $dataDrai,
             'TreatmentObat' => [
                 'treatment' => $treatmentData,
-                'blood_request' => $bloodRequestData
+                'blood_request' => $dataBloodRequest
             ],
             'assessment_anesthesia_post' => $dataAssessmentAnesthesiaPost,
             'assessment_anesthesia_recovery' => [
@@ -166,7 +181,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 'jalan_napas' => $dataJalanNapas[0] ?? [],
             ],
             'diagnosas' => $dataDiagnosas,
-            'exam_info' => $vitalSignTerakhir
+            'exam_info' => $vitalSignTerakhir,
+            'blood_history' => $bloodRequestHistory,
 
         ];
 
@@ -721,10 +737,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         try {
             // Process AssessmentOperation
             $existingEntry = $model->where(['document_id' => $formData['document_id'] ?? ''])->first();
-            // echo '<pre>';
-            // var_dump($formData);
-            // var_dump($data);
-            // die();
+
             if ($existingEntry) {
                 $data['body_id'] = $existingEntry['BODY_ID'];
 
@@ -733,14 +746,16 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     ->update();
 
                 if (!$updateResult) {
-                    throw new \Exception('Failed to update AssessmentOperation.');
+                    $error = $db->error();
+                    throw new \Exception('Update AssessmentOperation failed: ' . $error['message']);
                 }
             } else {
                 $data['body_id'] = $this->get_bodyid();
                 $insertResult = $model->insert($data);
 
                 if (!$insertResult) {
-                    throw new \Exception('Failed to insert AssessmentOperation.');
+                    $error = $db->error();
+                    throw new \Exception('Insert AssessmentOperation failed: ' . $error['message']);
                 }
             }
 
@@ -831,7 +846,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $insertPDNResult = $pdn->insert($pdnData);
 
             if (!$insertPDNResult) {
-                throw new \Exception('Failed to insert PasienDiagnosaPerawat.');
+                $error = $db->error();
+                throw new \Exception('Insert PasienDiagnosaPerawat failed: ' . $error['message']);
             }
 
             if (isset($formData['diagnosas']) && is_array($formData['diagnosas'])) {
@@ -847,7 +863,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertDiagResult = $pds->insert($dataDiag);
 
                     if (!$insertDiagResult) {
-                        throw new \Exception('Failed to insert PasienDiagnosasPerawat.');
+                        $error = $db->error();
+                        throw new \Exception('Insert PasienDiagnosaPerawat failed: ' . $error['message']);
                     }
                 }
             }
@@ -910,7 +927,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchDrainResult = $drainModel->insertBatch($drainData);
 
                     if (!$insertBatchDrainResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentOperationDrain.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentOperationDrain failed: ' . $error['message']);
                     }
                 }
             }
@@ -952,7 +970,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                             ->update();
 
                         if (!$updateVitalsignResult) {
-                            throw new \Exception('Failed to update Examination.');
+                            $error = $db->error();
+                            throw new \Exception('Update Examination failed: ' . $error['message']);
                         }
                     } else {
                         $vitalsignData['body_id'] = $this->get_bodyid();
@@ -961,7 +980,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         $insertVitalsignResult = $examinationModel->insert($vitalsignData);
 
                         if (!$insertVitalsignResult) {
-                            throw new \Exception('Failed to insert Examination.');
+                            $error = $db->error();
+                            throw new \Exception('Insert Examination failed: ' . $error['message']);
                         }
                     }
                 } else {
@@ -1007,7 +1027,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchAldreteResult = $aldreteModel->insertBatch($aldreteData);
 
                     if (!$insertBatchAldreteResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Aldrete.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery failed: ' . $error['message']);
                     }
                 }
             }
@@ -1051,7 +1072,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchStewardResult = $stewardModel->insertBatch($stewardData);
 
                     if (!$insertBatchStewardResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery failed: ' . $error['message']);
                     }
                 }
             }
@@ -1473,6 +1495,90 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         return $this->response->setJSON($data);
     }
 
+
+    public function savePraOperasiDummy()
+    {
+        if (!$this->request->is('post')) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $body = $this->request->getPost();
+
+        // return json_encode($body);
+        // $body = json_decode($body, true);
+
+        $db = db_connect();
+        $data = [];
+
+        // return ($body['OBJECT_STRANGE']);
+        foreach ($body as $key => $value) {
+            ${strtolower($key)} = $value;
+            if (!(is_null(${strtolower($key)}) || ${strtolower($key)} == ''))
+                $data[strtolower($key)] = $value;
+            if (isset($examination_date))
+                $data['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($time))
+                $data['time'] = str_replace("T", " ", $time);
+        }
+        $data['modified_by'] = user()->username;
+
+        if (isset($bloodblood_request)) {
+            $bloodblood_request = [
+                '202412040411113432R6', '20241204041114617B4V'
+            ];
+
+            $bloodmodel = new BloodRequestModel();
+
+            $bloodBeforeDelete = $this->lowerKey($db->query("
+            select * from blood_request 
+            where VISIT_ID = '" . $bloodvisit_id[0] . "' 
+            -- and CLINIC_ID = '" . 'P002' . "' 
+            and NO_REGISTRATION = '" . $bloodno_registration[0] . "' 
+            and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
+            ")->getResultArray() ?? []);
+
+            // $bloodmodel->where('visit_id', $bloodvisit_id[0])
+            //     ->where('document_id', '20241203101426927')
+            //     ->where('no_registration', $bloodno_registration[0])
+            //     // ->where('clinic_id', 'P002')
+            //     ->where('TRANSFUSION_START', NULL)
+            //     ->orWhere('TRANSFUSION_END', NULL)
+            //     ->delete();
+            // $bloodmodel->where('document_id', $body_id)->delete();
+
+            foreach ($bloodblood_request as $key => $value) {
+
+                $existData = array_filter($bloodBeforeDelete, function ($item) use ($value) {
+                    return isset($item['blood_request']) && $item['blood_request'] === $value;
+                });
+
+                $datablood = [
+                    'org_unit_code' => $bloodorg_unit_code[$key],
+                    'blood_request' => $bloodblood_request[$key],
+                    'no_registration' => $bloodno_registration[$key],
+                    'visit_id' => $bloodvisit_id[$key],
+                    'trans_id' => $bloodtrans_id[$key],
+                    'document_id' => '20241203101426927',
+                    'request_date' => $bloodrequest_date[$key],
+                    'blood_type_id' => $bloodblood_type_id[$key],
+                    'using_time' => $bloodusing_time[$key],
+                    'blood_usage_type' => $bloodblood_usage_type[$key],
+                    'blood_quantity' => $bloodblood_quantity[$key],
+                    'measure_id' => $bloodmeasure_id[$key],
+                    'descriptions' => $blooddescriptions[$key],
+                    'transfusion_start' => !empty(@$bloodtransfusion_start[$key]) ? @$bloodtransfusion_start[$key]  : null,
+                    'transfusion_end' => !empty(@$bloodtransfusion_end[$key]) ? @$bloodtransfusion_end[$key]  : null,
+                    'reaction_desc' => !empty(@$bloodreaction_desc[$key]) ? @$bloodreaction_desc[$key] : null,
+                ];
+                echo '<pre>';
+                var_dump($datablood);
+                die();
+                $bloodmodel->insert($datablood);
+            }
+        }
+
+        return json_encode($data);
+    }
     public function savePraOperasi()
     {
         if (!$this->request->is('post')) {
@@ -1747,7 +1853,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                                 ->update();
 
                             if (!$updateVitalsignResult) {
-                                throw new \Exception('Failed to update Examination.');
+                                $error = $db->error();
+                                throw new \Exception('Update Examination failed: ' . $error['message']);
                             }
                         } else {
                             $vitalsignData['body_id'] = $this->get_bodyid();
@@ -1755,7 +1862,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                             $insertVitalsignResult = $examinationModel->insert($vitalsignData);
 
                             if (!$insertVitalsignResult) {
-                                throw new \Exception('Failed to insert Examination.');
+                                $error = $db->error();
+                                throw new \Exception('Insert Examination failed: ' . $error['message']);
                             }
                         }
                     } else {
@@ -1869,7 +1977,10 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     ->set($data)
                     ->update();
 
-                if (!$result) throw new Exception('Failed to update main record.');
+                if (!$result) {
+                    $error = $db->error();
+                    throw new \Exception('Update main record failed: ' . $error['message']);
+                }
                 $message = 'Data updated successfully.';
             } else {
                 $data['body_id'] = $this->get_bodyid();
@@ -1908,13 +2019,15 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                             ->set($vitalsignData)
                             ->update();
                         if (!$ex) {
-                            throw new \Exception('Failed to update vital sign 1');
+                            $error = $db->error();
+                            throw new \Exception('Update vital sign 1 failed: ' . $error['message']);
                         }
                     } else {
                         $vitalsignData['body_id'] = $this->get_bodyid();
                         $ex = $examinationModel->insert($vitalsignData);
                         if (!$ex) {
-                            throw new \Exception('Failed to insert vital sign 1');
+                            $error = $db->error();
+                            throw new \Exception('Insert vital sign 1 failed: ' . $error['message']);
                         }
                     }
                 } else {
@@ -1961,7 +2074,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                             ->set($vitalsignData2)
                             ->update();
                         if (!$ex) {
-                            throw new \Exception('Failed to update vital sign 2');
+                            $error = $db->error();
+                            throw new \Exception('Update vital sign 2 failed: ' . $error['message']);
                         }
                         // if (!$ex) {
                         //     $dbError = $examinationModel->error(); // Get the error information
@@ -1975,7 +2089,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         $ex = $examinationModel->insert($vitalsignData2);
 
                         if (!$ex) {
-                            throw new \Exception('Failed to insert vital sign 2');
+                            $error = $db->error();
+                            throw new \Exception('Insert vital sign 2 failed: ' . $error['message']);
                         }
 
                         // if (!$ex) {
@@ -2108,7 +2223,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchAldreteResult = $aldreteModel->insertBatch($aldreteData);
 
                     if (!$insertBatchAldreteResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Aldrete.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery Aldrete failed: ' . $error['message']);
                     }
                 }
             }
@@ -2150,7 +2266,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchInfusionResult = $recoveryModel->insertBatch($infusionData);
 
                     if (!$insertBatchInfusionResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Infusion.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery Infusion. failed: ' . $error['message']);
                     }
                 }
             }
@@ -2192,7 +2309,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchRegionalResult = $recoveryModel->insertBatch($regionalData);
 
                     if (!$insertBatchRegionalResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Regional Anestesia.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery Regional Anestesia failed: ' . $error['message']);
                     }
                 }
             }
@@ -2234,7 +2352,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchGeneralResult = $recoveryModel->insertBatch($generalData);
 
                     if (!$insertBatchGeneralResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery General Anestesia.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery General Anestesia failed: ' . $error['message']);
                     }
                 }
             }
@@ -2275,7 +2394,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchVentilasiResult = $recoveryModel->insertBatch($ventilasiData);
 
                     if (!$insertBatchVentilasiResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Ventilasi Anestesia.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery Ventilasi Anestesia failed: ' . $error['message']);
                     }
                 }
             }
@@ -2316,7 +2436,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchJalanNapasResult = $recoveryModel->insertBatch($jalanNapasData);
 
                     if (!$insertBatchJalanNapasResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery Jalan Napas Anestesia.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery Jalan Napas Anestesia failed: ' . $error['message']);
                     }
                 }
             }
@@ -2346,7 +2467,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
                     $anesthesiaRecoveryModel->insert($dataBromage);
                     if (!$anesthesiaRecoveryModel) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery bromage.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery bromage failed: ' . $error['message']);
                     }
                 }
             }
@@ -2389,7 +2511,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertBatchStewardResult = $stewardModel->insertBatch($stewardData);
 
                     if (!$insertBatchStewardResult) {
-                        throw new \Exception('Failed to insert batch of AssessmentAnesthesiaRecovery steward.');
+                        $error = $db->error();
+                        throw new \Exception('Insert AssessmentAnesthesiaRecovery steward failed: ' . $error['message']);
                     }
                 }
             }

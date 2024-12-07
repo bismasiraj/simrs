@@ -354,88 +354,164 @@
                 <tr>
                     <td>
                         <b>Keadaan Umum</b>
-                        <input type="text" class="form-control" id="" name="" value="">
+                        <?php
+                                    $gcs = @$val['gcs']; 
+
+                                    if (in_array($gcs, [1, 2, 3])) {
+                                        $gcsText = 'Coma';
+                                    } elseif (in_array($gcs, [4, 5, 6])) {
+                                        $gcsText = 'Sopor';
+                                    } elseif (in_array($gcs, [7, 8, 9])) {
+                                        $gcsText = 'Somnolen';
+                                    } elseif (in_array($gcs, [10, 11])) {
+                                        $gcsText = 'Delirium';
+                                    } elseif (in_array($gcs, [12, 13])) {
+                                        $gcsText = 'Apatis';
+                                    } elseif (in_array($gcs, [15, 16])) {
+                                        $gcsText = 'Compos mentis';
+                                    } else {
+                                        $gcsText = 'Unknown'; 
+                                    }
+
+                                    ?>
+                        <span><?= $gcsText; ?></span>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="skalaShow">
             <tbody>
                 <tr>
                     <td>
-                        <b>Skala Nyeri</b>
-                        <input type="text" class="form-control" id="pain_score" name="pain_score"
-                            value="<?= @$val['pain_score']; ?>">
-                    </td>
-                    <td>
-                        <b>Resiko Jatuh</b>
-                        <input type="text" class="form-control" id="fall_score" name="fall_score"
-                            value="<?= @$val['fall_score']; ?>">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <tbody class="fw-bold">
-                <tr>
-                    <td>Gambar Laki-laki</td>
-                    <td style="width: 50%;">
-                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/bedah/male.jpg') ?>" width="400px">
-                    </td>
-                </tr>
-                <tr>
-                    <td>Gambar Perempuan</td>
-                    <td>
-                        <img class="mt-3" src="<?= base_url('assets/img/asesmen/bedah/female.jpg') ?>" width="400px">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td colspan="2">
-                        <h5>Status Dermatologik</h5>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <b>I. Inspeksi</b>
                         <table class="table table-bordered">
-                            <thead class="fw-bold">
-                                <tr>
-                                    <td>Lokasi</td>
-                                    <td>UKK</td>
-                                    <td>Distribusi</td>
-                                    <td>Konfigurasi</td>
-                                </tr>
-                            </thead>
                             <tbody>
                                 <tr>
-                                    <td>R labium mayor tampak erosi multipel diskret</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td colspan="4" class="fst-italic fw-bold">Skala Nyeri</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <span class="col-12">
+                                                <?= @$val['skala_nyeri']; ?>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="fst-italic fw-bold">Resiko Jatuh</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <span class="col-12">
+                                                <?= @$val['fall_risk_detail']; ?>
+                                                <!-- Tipe Resiko Jatuh : fall_morse <br>Riwayat Jatuh : (0)
+                                                Tidak<br>Diagnosis Sekunder : (15) Ya<br>Menggunakan Alat_Bantu : (0)
+                                                Tidak ada/ Bed rest/ dibantu perawat<br>Menggunakan Infuse Heparine :
+                                                (0) Tidak<br>Gaya_berjalan : (0) Normal/ tirah baring
+                                                /imobilisasi<br>Status Mental : (0) Sadar akan kemampuan diri
+                                                sendiri<br>Medikasi : (0) Tidak ada<br> -->
+                                            </span>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <tbody>
                 <tr>
-                    <td><b>Palpasi</b></td>
-                    <td><b>Lain-lain</b></td>
+                    <th>Var/NRS</th>
+                    <th>Pupil Kiri</th>
+                    <th>Pupil kanan</th>
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <h5>Status Venerologik</h5>
+                    <td><?= @$val['vas_nrs']?></td>
+                    <td>
+                        <b>Diameter :</b><?= @$val['left_diameter']?>
+                        <br><b>Refleks Cahaya :</b><?= @$val['left_light_reflex']?>
+                        <br><b>Kornea:</b><?= @$val['left_cornea']?>
+                        <br><b>Isokor Anisokor :</b><?= @$val['left_isokor_anisokor']?>
                     </td>
-                </tr>
-                <tr>
-                    <td><b>Inspeksi</b></td>
-                    <td><b>Palpasi</b></td>
+                    <td>
+                        <b>Diameter :</b><?= @$val['right_diameter']?>
+                        <br><b>Refleks Cahaya :</b><?= @$val['right_light_reflex']?>
+                        <br><b>Kornea:</b><?= @$val['right_cornea']?>
+                        <br><b>Isokor Anisokor :</b><?= @$val['right_isokor_anisokor']?>
+                    </td>
                 </tr>
             </tbody>
         </table>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Leher</th>
+                    <th>Gerak</th>
+                    <th>Kekuatan</th>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Kaku kuduk :</b><?= @$val['stiff_neck']?>
+                        <br><b>Meningeal Sign :</b><?= @$val['meningeal_sign']?>
+                        <br><b>Brudzinki I-IV :</b><?= @$val['brudzinki_i_iv']?>
+                        <br><b>Kernig Sign:</b><?= @$val['kernig_sign']?>
+                        <br><b>Dolls eye phenomena :</b><?= @$val['dolls_eye_phenomenon']?>
+                        <br><b>Vertebra :</b><?= @$val['vertebra']?>
+                        <br><b>Extremity :</b><?= @$val['extremity']?>
+                    </td>
+                    <td>
+                        <b>Gerak Atas Kiri :</b><?= @$val['motion_upper_left']?>
+                        <br><b>Gerak Atas Kanan :</b><?= @$val['motion_upper_right']?>
+                        <br><b>Gerak Bawah Kiri :</b><?= @$val['motion_lower_left']?>
+                        <br><b>Gerak Bawah Kanan :</b><?= @$val['motion_lower_right']?>
+                    </td>
+                    <td>
+                        <b>Kekuatan Atas Kiri :</b><?= @$val['strength_upper_left']?>
+                        <br><b>Kekuatan Atas Kanan :</b><?= @$val['strength_upper_right']?>
+                        <br><b>Kekuatan Bawah Kiri:</b><?= @$val['strength_lower_left']?>
+                        <br><b>Kekuatan Bawah Kanan :</b><?= @$val['strength_lower_right']?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Reflek Fisiologi</th>
+                    <th>Reflek Patologi</th>
+                    <th>Clonus/Sensibilitas</th>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Reflek Fisiologi Atas Kiri :</b><?= @$val['physiological_reflex_upper_left']?>
+                        <br><b>Reflek Fisiologi Atas Kanan :</b><?= @$val['physiological_reflex_upper_right']?>
+                        <br><b>Reflek Fisiologi Bawah Kiri :</b><?= @$val['physiological_reflex_lower_left']?>
+                        <br><b>Reflek Fisiologi Bawah Kanan :</b><?= @$val['physiological_reflex_lower_right']?>
+                    </td>
+                    <td>
+                        <b>Reflek Patologi Atas Kiri :</b><?= @$val['pathologycal_reflex_upper_left']?>
+                        <br><b>Reflek Patologi Atas Kanan :</b><?= @$val['pathologycal_reflex_upper_right']?>
+                        <br><b>Reflek Patologi Bawah Kiri :</b><?= @$val['pathologycal_reflex_lower_left']?>
+                        <br><b>Reflek Patologi Bawah Kanan :</b><?= @$val['pathologycal_reflex_lower_right']?>
+                    </td>
+                    <td>
+                        <b>Clonus :</b><?= @$val['clonus']?>
+                        <br><b>Sensibilitas :</b><?= @$val['sensibility']?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
         <div class="row">
             <h4 class="text-start">Assessment (A)</h4>
         </div>
@@ -443,22 +519,20 @@
             <tbody>
                 <tr>
                     <td>
-                        <b>Diagnosis (ICD-10)</b>
-                        <input type="text" class="form-control" id="icd10" name="icd10" value="<?= @$val['icd10']; ?>">
+                        <b>Diagnosis (ICD-10)</b><br>
+                        <span> <?= @$val['icd10']; ?></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <b>Permasalahan Medis</b>
-                        <input type="text" class="form-control" id="masalah_medis" name="masalah_medis"
-                            value="<?= @$val['masalah_medis']; ?>">
+                        <b>Permasalahan Medis</b><br>
+                        <span> <?= @$val['masalah_medis']; ?></span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <b>Penyebab Cidera / Keracunan</b>
-                        <input type="text" class="form-control" id="penyebab_cidera" name="penyebab_cidera"
-                            value="<?= @$val['penyebab_cidera']; ?>">
+                        <b>Penyebab Cidera / Keracunan</b><br>
+                        <span><?= @$val['penyebab_cidera']; ?></span>
                     </td>
                 </tr>
             </tbody>
@@ -469,71 +543,55 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>
-                        <b>Target / Sasaran Terapi</b>
-                        <input type="text" class="form-control" id="sasaran" name="sasaran"
-                            value="<?= @$val['sasaran']; ?>">
+                    <td><b>Target / Sasaran Terapi</b><br>
+                        <span><?= @$val['sasaran']; ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Pemeriksaan Diagnostik Penunjang</b><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Laboratorium</b><br>
+                        <span><?= @$val['laboratorium']; ?></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Radiologi</b><br>
+                        <span><?= @$val['radiologi']; ?></span>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <div class="row">
-            <h5 class="text-start">Pemeriksaan Diagnostik Penunjang</h5>
-        </div>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td>
-                        <b>Laboratorium</b>
-                        <div type="text" class="form-control" id="laboratorium" name="laboratorium">
-                            <?= @$val['laboratorium']; ?></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Radiologi</b>
-                        <div type="text" class="form-control" id="radiologi" name="radiologi">
-                            <?= @$val['radiologi']; ?></div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
         <div class="row">
             <h5 class="text-start">Rencana Asuhan dan Terapi</h5>
         </div>
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>
-                        <b>Farmakoterapi</b>
-                        <div type="text" class="form-control" id="farmakologia" name="farmakologia">
-                            <?= @$val['farmakologia']; ?>
-                        </div>
+                    <td><b>Farmakoterapi</b><br>
+                        <span><?= @$val['farmakologia']; ?></span>
+
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <b>Procedure</b>
-                        <div type="text" class="form-control" id="prosedur" name="prosedur">
-                            <?= @$val['prosedur']; ?>
-                        </div>
+                    <td><b>Procedure</b><br>
+                        <span><?= @$val['prosedur']; ?></span>
+
                     </td>
                 </tr>
-            </tbody>
-        </table>
-        <div class="row">
-            <h5 class="text-start">Catatan Procedure</h5>
-        </div>
-        <table class="table table-bordered">
-            <tbody>
                 <tr>
-                    <td>
-                        <b>Standing Order</b>
-                        <div type="text" class="form-control" id="standing_order" name="standing_order">
-                            <?= @$val['standing_order']; ?>
-                        </div>
+                    <td><b>Catatan Procedure</b><br>
                     </td>
                 </tr>
+                <tr>
+                    <td><b>Standing Order</b><br>
+                        <span><?= @$val['standing_order']; ?></span>
+
+                    </td>
+                </tr>
+
             </tbody>
         </table>
         <div class="row">
@@ -542,21 +600,20 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>
-                        <b>Rencana Tindak Lanjut</b>
-                        <div type="text" class="form-control" id="rencana_tl" name="rencana_tl">
-                            <?= @@$val['rencana_tl']; ?></div>
+                    <td><b>Rencana Tindak Lanjut</b><br>
+                        <span><?= @$val['rencana_tl']; ?></span>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <b>Kontrol</b>
-                        <div type="text" class="form-control" id="kontrol" name="kontrol"><?= @$val['kontrol']; ?>
-                        </div>
+                    <td><b>Kontrol</b><br>
+                        <span><?= @$val['kontrol']; ?></span>
                     </td>
                 </tr>
+
             </tbody>
         </table>
+
+
         <div class="row">
             <h5 class="text-start">Edukasi Pasien</h5>
         </div>
@@ -675,7 +732,7 @@ $("#btnEdit").on("click", function() {
 }
 </style>
 <script type="text/javascript">
-window.print();
+//window.print();
 </script>
 
 </html>
