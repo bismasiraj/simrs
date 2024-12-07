@@ -1252,9 +1252,15 @@ class lainnya extends \App\Controllers\BaseController
 
         $isrj = isset($formData->status) ? $formData->status : (isset($visitData['isrj']) ? $visitData['isrj'] : null);
         $clinic = isset($formData->clinic) ? $formData->clinic : (isset($visitData['clinic_id']) ? $visitData['clinic_id'] : null);
+        // wajib comen hanya test
+        $isrj = 0;
+        $clinic = "P005";
+
+
 
         $clinicNames = [
-            "P012" => "Asesmen Medis IGD",
+            "all" => "Asesmen Keperawatan",
+            "P012" => "Asesmen Keperawatan IGD"
         ];
 
         if (!array_key_exists($clinic, $clinicNames)) {
@@ -1265,9 +1271,25 @@ class lainnya extends \App\Controllers\BaseController
         $no_regis =  $visitData['no_registration'];
         $db = db_connect();
         if ($isrj === 0 || $isrj === "0") {
-            $select = [];
+            if ($clinic === "P012") {
+                $select = $this->lowerKey($db->query("SELECT * 
+                FROM HISTORY_ASKEP_RALAN
+                WHERE visit_id = '53059' AND CLINIC_ID = '$clinic'")->getResultArray());
+            } else {
+                $select = $this->lowerKey($db->query("SELECT * 
+                FROM HISTORY_ASKEP_RALAN
+                WHERE visit_id = '183337'")->getResultArray());
+            }
         } else {
-            $select = [];
+            if ($clinic === "P012") {
+                $select = $this->lowerKey($db->query("SELECT * 
+                        FROM HISTORY_ASKEP_RANAP
+                        WHERE visit_id = '17160' AND CLINIC_ID = '$clinic'")->getResultArray());
+            } else {
+                $select = $this->lowerKey($db->query("SELECT * 
+                FROM HISTORY_ASKEP_RANAP
+                WHERE visit_id = '183337'")->getResultArray());
+            }
         }
 
         $data = [];
@@ -1275,26 +1297,40 @@ class lainnya extends \App\Controllers\BaseController
         if (!empty($select)) {
             foreach ($select as $item) {
                 $clinicTitle = isset($item['headers']) ? $item['headers'] : $clinicNames[$clinic];
-
                 if (empty($clinicTitle)) {
                     $clinicTitle = $clinicNames[$clinic];
                 }
-
                 if (!str_contains($clinicTitle, "Rawat Inap") && !str_contains($clinicTitle, "Rawat Jalan")) {
                     $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
                 }
 
+                if (!empty($item['date_of_birth']) && !empty($item['create_date'])) {
+                    $dateOfBirth = strtotime($item['date_of_birth']);
+                    $createDate = strtotime($item['create_date']);
+                    if ($dateOfBirth && $createDate) {
+                        $age = date('Y', $createDate) - date('Y', $dateOfBirth);
+                        if (date('md', $createDate) < date('md', $dateOfBirth)) {
+                            $age--;
+                        }
+                        $clinicTitle .= $age < 18 ? " Pasien Anak" : " Pasien Dewasa";
+                    }
+                }
+
                 $data[] = [
                     'clinic' => $clinic,
+                    'isrjResult' => $isrj,
                     'title' => $clinicTitle,
                     'data'  => $item
                 ];
             }
         } else {
+
             $clinicTitle = $clinicNames[$clinic];
             $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
+
             $data[] = [
                 'clinic' => $clinic,
+                'isrjResult' => $isrj,
                 'title' => $clinicTitle,
                 'data'  => []
             ];
@@ -1306,6 +1342,9 @@ class lainnya extends \App\Controllers\BaseController
         $name_of_clin = $this->lowerKey($db->query("SELECT name_of_clinic FROM clinic WHERE CLINIC_ID = '" . $visitData['clinic_id'] . "'")->getResultArray());
 
         $kopprintData = $this->kopprint();
+
+
+
 
         if (!$formData) {
             return view("admin/patient/profilemodul/formrm/rm/LAINNYA/assessmen_perawat_v.php", [

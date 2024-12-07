@@ -435,6 +435,8 @@ $this->extend('layout/basiclayout', [
                 }
             });
         })
+
+
         const renderData = () => {
             let formData = document.querySelector('#formSearchGizi')
             let dataSend = new FormData(formData)
@@ -621,8 +623,8 @@ $this->extend('layout/basiclayout', [
 
                                 <input type="text" name="pantangan_pagi[]" id="ordergizi_all_pantangan_pagi_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_pagi_` + index + 1 + `')" value="${item?.data?.pantangan_pagi ?? ''}" ${item?.data?.valid_date_pagi || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
 
-                                <input type="text" class="form-control form-control-sm" name="mineral_pagi[]" value="${item?.data?.dtype_iddesc ?? ''}" ${item?.data?.valid_date_pagi || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
-                                <input type="text" class="form-control form-control-sm" name="ekstra_pagi[]" value="${item?.data?.penunggu_pagi ?? ''}" ${item?.data?.valid_date_pagi || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-mineral" data-index="${index}" data-id="ordergizi_all_mineral" id="ordergizi_all_mineral_pagi_` + index + `" name="mineral_pagi[]" value="${item?.data?.dtype_iddesc ?? ''}" ${item?.data?.valid_date_pagi || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-ekstra" data-index="${index}" data-id="ordergizi_all_ekstra" id="ordergizi_all_ekstra_pagi_` + index + `" name="ekstra_pagi[]" value="${item?.data?.penunggu_pagi ?? ''}" ${item?.data?.valid_date_pagi || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
                             </div>
                         </td>
                         <td>
@@ -633,8 +635,8 @@ $this->extend('layout/basiclayout', [
 
                                 <input type="text" name="pantangan_siang[]" id="ordergizi_all_pantangan_siang_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_siang_` + index + 1 + `')" value="${item?.data?.pantangan_siang ?? ''}" ${item?.data?.valid_date_siang || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
 
-                                <input type="text" class="form-control form-control-sm" name="mineral_siang[]" value="${item?.data?.dtype_siangdesc ?? ''}" ${item?.data?.valid_date_siang || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
-                                <input type="text" class="form-control form-control-sm" name="ekstra_siang[]" value="${item?.data?.penunggu_siang ?? ''}" ${item?.data?.valid_date_siang || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-mineral" id="ordergizi_all_mineral_siang_` + index + `" name="mineral_siang[]" value="${item?.data?.dtype_siangdesc ?? ''}" ${item?.data?.valid_date_siang || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-ekstra" id="ordergizi_all_ekstra_siang_` + index + `" name="ekstra_siang[]" value="${item?.data?.penunggu_siang ?? ''}" ${item?.data?.valid_date_siang || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
                             </div>
                         </td>
                         <td>
@@ -644,8 +646,8 @@ $this->extend('layout/basiclayout', [
 
                                 <input type="text" name="pantangan_malam[]" id="ordergizi_all_pantangan_malam_` + index + 1 + `" class="form-control form-control-sm" onfocus="isiPeringatanGizi2('pantangan_malam_` + index + 1 + `')" value="${item?.data?.pantangan_malam ?? ''}" ${item?.data?.valid_date_malam || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
 
-                                <input type="text" class="form-control form-control-sm" name="mineral_malam[]" value="${item?.data?.dtype_malamdesc ?? ''}" ${item?.data?.valid_date_malam || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
-                                <input type="text" class="form-control form-control-sm" name="ekstra_malam[]" value="${item?.data?.penunggu_malam ?? ''}" ${item?.data?.valid_date_malam || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-mineral" id="ordergizi_all_mineral_malam_` + index + `" name="mineral_malam[]" value="${item?.data?.dtype_malamdesc ?? ''}" ${item?.data?.valid_date_malam || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
+                                <input type="text" class="form-control form-control-sm order-gizi-ekstra" id="ordergizi_all_ekstra_malam_` + index + `" name="ekstra_malam[]" value="${item?.data?.penunggu_malam ?? ''}" ${item?.data?.valid_date_malam || item.keluar_id == 1 ? 'readonly style="pointer-events: none;"' : ''}>
                             </div>
                         </td>
                         <td class="text-center align-middle">
@@ -660,6 +662,21 @@ $this->extend('layout/basiclayout', [
             });
             table.draw();
 
+
+            $('.order-gizi-mineral').on('change', function() {
+                const index = $(this).data('index');
+                const pagiValue = $('#ordergizi_all_mineral_pagi_' + index).val();
+
+                $('#ordergizi_all_mineral_siang_' + index).val(pagiValue);
+                $('#ordergizi_all_mineral_malam_' + index).val(pagiValue);
+            });
+            $('.order-gizi-ekstra').on('change', function() {
+                const index = $(this).data('index');
+                const pagiValue = $('#ordergizi_all_ekstra_pagi_' + index).val();
+
+                $('#ordergizi_all_ekstra_siang_' + index).val(pagiValue);
+                $('#ordergizi_all_ekstra_malam_' + index).val(pagiValue);
+            });
         }
 
 

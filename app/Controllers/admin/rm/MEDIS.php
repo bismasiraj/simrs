@@ -112,8 +112,6 @@ class medis extends \App\Controllers\BaseController
                                                     pd.rencanatl as rencana_tl,
                                                     -- Agregasi skala nyeri
                                                     STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS skala_nyeri
-                                                    -- Fall Risk Detail dari ASSESSMENT_FALL_RISK_DETAIL
-                                                    -- STRING_AGG(CONCAT('Skorrrrrrrrrrrrrrrr : ',afr_detail.VALUE_SCORE,' |', ' ', afr_detail.VALUE_DESC), '<br>') AS fall_risk_detail
                                                 FROM 
                                                     pasien_diagnosa pd
                                                 LEFT JOIN 
@@ -141,16 +139,6 @@ class medis extends \App\Controllers\BaseController
                                                         SELECT MAX(EXAMINATION_DATE) 
                                                         FROM ASSESSMENT_GCS 
                                                         WHERE DOCUMENT_ID = pd.BODY_ID 
-                                                    )
-                                                LEFT JOIN 
-                                                    ASSESSMENT_FALL_RISK afr ON afr.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
-                                                LEFT JOIN 
-                                                    ASSESSMENT_FALL_RISK_DETAIL afr_detail 
-                                                    ON afr_detail.BODY_ID = (
-                                                        SELECT TOP(1) BODY_ID 
-                                                        FROM ASSESSMENT_FALL_RISK 
-                                                        WHERE DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID 
-                                                        ORDER BY EXAMINATION_DATE DESC
                                                     )
                                                 LEFT JOIN 
                                                     ASSESSMENT_PAIN_MONITORING apm ON apm.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
@@ -236,16 +224,37 @@ class medis extends \App\Controllers\BaseController
                                                     pd.INSTRUCTION,
                                                     pd.STANDING_ORDER,
                                                     pd.rencanatl
-            ")->getResultArray());
+             ")->getResultArray());
+
+            $select = !empty($select) ? $select[0] : [];
 
 
-            // var_dump($select[0]);
+            $ass_fall = $db->query("SELECT 
+                                    STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS fall_risk_detail
+                                FROM pasien_diagnosa pd
+                                LEFT JOIN ASSESSMENT_FALL_RISK_DETAIL apd 
+                                    ON apd.BODY_ID = (
+                                        SELECT TOP 1 BODY_ID 
+                                        FROM ASSESSMENT_FALL_RISK 
+                                        WHERE DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID 
+                                        ORDER BY EXAMINATION_DATE DESC
+                                    )
+                                WHERE pd.PASIEN_DIAGNOSA_ID = ?
+                                AND pd.VISIT_ID = ?
+                                GROUP BY pd.PASIEN_DIAGNOSA_ID;
+                            ", ['20240902124016011344Bbismasiraj', '20240902124016011344B'])->getRowArray();
 
-            if (isset($select[0])) {
+            if ($ass_fall) {
+                $select['fall_risk_detail'] = $ass_fall['fall_risk_detail'];
+            }
+
+
+
+            if (isset($select)) {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-saraf.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "val" => $select[0]
+                    "val" => $select
                 ]);
             } else {
                 return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-saraf.php", [

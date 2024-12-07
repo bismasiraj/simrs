@@ -1852,7 +1852,7 @@ foreach ($examDetail as $key => $value) {
             bodyId = napas[index].body_id
         }
         $("#" + container).append(
-            $('<form id="formPernapasan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">')
+            $('<form id="formPernapasan' + bodyId + '" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4 satelite">')
             .append(
                 $('<div class="card border border-1 rounded-4 m-4 p-4">')
                 .append($('<div class="card-body">')
@@ -1988,7 +1988,7 @@ foreach ($examDetail as $key => $value) {
             }
         } ?>
 
-        $("#formPernapasan" + bodyId).append('<input name="org_unit_code" id="respirationorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control satelite" />')
+        $("#formPernapasan" + bodyId).append('<input name="org_unit_code" id="respirationorg_unit_code' + bodyId + '" type="hidden" value="<?= $visit['org_unit_code']; ?>" class="form-control" />')
             .append('<input name="visit_id" id="respirationvisit_id' + bodyId + '" type="hidden" value="<?= $visit['visit_id']; ?>" class="form-control" />')
             .append('<input name="trans_id" id="respirationtrans_id' + bodyId + '" type="hidden" value="<?= $visit['trans_id']; ?>" class="form-control" />')
             .append('<input name="body_id" id="respirationbody_id' + bodyId + '" type="hidden" value="' + bodyId + '" class="form-control" />')

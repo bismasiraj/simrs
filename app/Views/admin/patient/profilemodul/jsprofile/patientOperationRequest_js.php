@@ -750,7 +750,8 @@
                         getDataKeperawatanOPRS001({
                             data: result?.assessment_operation_pra,
                             blood_request: result?.treatmentobat.blood_request,
-                            diagnosas: result?.diagnosas
+                            diagnosas: result?.diagnosas,
+                            blood_request_history: result?.blood_history,
 
                         })
 
@@ -876,7 +877,7 @@
                 $("#container-tab").slideDown();
                 initializeFlatpickrOperasi()
             });
-        }; //new update 1/08
+        };
 
 
         const cetakOperasi = (props) => {
@@ -3360,6 +3361,7 @@
             let data = props?.data
             let blood_request = props?.blood_request
             let diagnosas = props?.diagnosas
+            let blood_request_history = props?.blood_request_history;
 
             let catatanKeperawatanOPRS001 = `
                     <div class="container">
@@ -3444,6 +3446,61 @@
                         </div>
                     </div>`
 
+            let bloodRequestHistory = `
+                        <div class="row mt-4">
+                            <div class="table tablecustom-responsive">
+                                <h4><b>History Produk Darah</b></h4>
+                                <hr>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr class="table-primary">
+                                            <th>No.</th>
+                                            <th>Jenis Darah</th>
+                                            <th>Deskripsi</th>
+                                            <th>Golongan Darah</th>
+                                            <th>Jumlah</th>
+                                            <th>Ukuran</th>
+                                            <th>Tanggal Permintaan</th>
+                                            <th>Tanggal Digunakan</th>
+                                            <th>Tanggal Dikirim</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bodyBloodRequesHistoryt">
+                                        ${(blood_request_history && blood_request_history.length > 0) ? blood_request_history.map((item, index) => `
+                                            <tr>
+                                                <td width="1%">${index + 1}</td>
+                                                <td style="width:80px !important;">${item?.usagetype}</td>
+                                                <td>${item?.descriptions ?? ''}</td>
+                                                <td style="width:60px !important;">
+                                                    <span class="blood-type">
+                                                        ${item?.blood_type_id == 0 ? '-' : 
+                                                        item?.blood_type_id == 1 ? 'A' :
+                                                        item?.blood_type_id == 2 ? 'B' :
+                                                        item?.blood_type_id == 3 ? 'AB' :
+                                                        item?.blood_type_id == 4 ? 'O' :
+                                                        item?.blood_type_id == 5 ? '-' :
+                                                        item?.blood_type_id == 6 ? 'A+' :
+                                                        item?.blood_type_id == 7 ? 'B+' :
+                                                        item?.blood_type_id == 8 ? 'AB+' :
+                                                        item?.blood_type_id == 9 ? 'O+' : 'N/A'}
+                                                    </span>
+                                                </td>
+                                                <td width="1%">${item?.blood_quantity}</td>
+                                                <td width="1%">${item?.measure_id}</td>
+                                                <td>${item?.request_date}</td>
+                                                <td>${item?.using_time}</td>
+                                                <td>${item?.delivery_time}</td>
+                                                <td width="1%">${item?.terlayani === "1" ? 'Processed' : 'Pending'}</td>
+                                            </tr>
+                                        `).join('') : '<tr><td colspan="10">No data available</td></tr>'}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            `;
+
             getAvalueType({
                 p_type: 'OPRS001',
                 content_id: 'cKeperawatanoprs001-1',
@@ -3454,6 +3511,7 @@
             $('#ttd-praOps').html(ttdOps2)
             $('#cKeperawatanoprs001').html(catatanKeperawatanOPRS001);
             $('#containerBloodRequest').html(bloodRequest);
+            $('#containerBloodRequestHistory').html(bloodRequestHistory);
             $('#praOperasiDiagnosaBody').html(diagnosaOPRS001);
 
             if (blood_request) {
@@ -5373,10 +5431,11 @@
                             break;
 
                         case 7:
+
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 let radioOptions = matchedData.map((item, index) => `
                                     <div class="form-check mb-0 pt-4">
-                                        <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.['value_desc_'+ props?.parameter_id] ? 'checked' : '')}>
+                                        <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === 0 && !props?.get_data?.['value_desc_' + props?.parameter_id] ? 'checked' : '')}>
                                         <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
                                     </div>
                                 `).join('');
@@ -5387,18 +5446,31 @@
                                     </div>
                                 `;
                             } else {
-                                let radioOptions = matchedData.map((item, index) => `
-                        <div class="form-check mb-0 pt-4">
-                            <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
-                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                        </div>
-                    `).join('');
+                                let radioOptions = '';
+                                if (props?.column_name?.toLowerCase() == 'terlayani') {
+                                    console.log(matchedData);
+                                    console.log(props?.get_data?.[props?.column_name?.toLowerCase()]);
+                                    radioOptions = matchedData.map((item, index) => `
+                                    <div class="form-check mb-0 pt-4">
+                                        <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item.value_score}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item.value_score ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
+                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                                    </div>
+                                `).join('');
+                                } else {
+                                    radioOptions = matchedData.map((item, index) => `
+                                    <div class="form-check mb-0 pt-4">
+                                        <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
+                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                                    </div>
+                                `).join('');
+                                }
+
                                 htmlContent = `
-                        <div class="form-group mb-0 pt-4">
-                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                            ${radioOptions}
-                        </div>
-                    `;
+                                    <div class="form-group mb-0 pt-4">
+                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                        ${radioOptions}
+                                    </div>
+                                `;
                             }
 
                             break;
@@ -5638,7 +5710,7 @@
                             </tbody>
                         </table>
                         <div class="d-flex my-3">
-                            <button type="button" class="btn btn-success w-100 add-dropdown" style="height:50px;"><i class="fas fa-plus fa-2xl"></i></button>
+                            <button type="button" class="btn btn-primary mx-auto add-dropdown" style="height:40px;"><i class="fas fa-plus fa-2xl"></i> Tenaga Pelaksana Operasi</button>
                         </div>
                     `;
 

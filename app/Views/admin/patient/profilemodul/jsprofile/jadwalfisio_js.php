@@ -1091,7 +1091,8 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                         vactination_date: vactination_date[i],
                         start: start[i],
                         end: end[i],
-                        program_name: program_name[i],
+                        program_name: $(`#tarif-fisio${i} option:selected`).text(),
+                        program_id: program_name[i]
                     };
 
                     jsonObj.program.push(entry);
@@ -1174,11 +1175,15 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 data: <?= json_encode($getDataTarif); ?>
             });
 
+            // if (initialvalue != null) {
+            //     let option = new Option(initialname, JSON.stringify({
+            //         tarif_id: initialvalue,
+            //         tarif_name: initialname
+            //     }), true, true);
+            //     $("#" + theid).append(option).trigger('change');
+            // }
             if (initialvalue != null) {
-                let option = new Option(initialname, JSON.stringify({
-                    tarif_id: initialvalue,
-                    tarif_name: initialname
-                }), true, true);
+                let option = new Option(initialname, initialvalue, true, true);
                 $("#" + theid).append(option).trigger('change');
             }
 

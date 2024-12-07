@@ -5,39 +5,66 @@
 $selectedStatus = isset($_POST['selected-status']) ? $_POST['selected-status'] : '';
 $selectedStatusFilter = isset($_POST['selected-status-filter']) ? $_POST['selected-status-filter'] : $data[0]['clinic'];
 
-$validSub = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validVitail = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
+// var_dump($data[0]);
 
-$validGsc = ["P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validSkala = ["P006", "P009", "P008","P004","P010","P001","P005","all"];
+$validTriage = ["P012",];
+$validAnamnesa = ["P012","all"];
+$vitailsign = ["P012",'all'];
+$pernapasan = ["P012","all"];
+$assSirkulasi = ["P012", "all"];
+$assNeurosen = ["P012","all"];
+$integumen = ["P012"];
+$skalanyeri = ["P012", "all"];
+$gizi = ["P012", "all"];
+$diagPerawat =  ["P012","all"];
 
-$validAssNew = ["P008","all"];
-$validFisik = ["P003","P010","P001","P012", "all"];
-$validHamil = ["P004","all"];
-$validAssessment = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validPlanning = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validRencanaAsuhan = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validRencanaTindakLanjut = ["P003", "P006", "P007","P009", "P008","P004","P010","P001","P005","P012", "all"];
-$validstatusDermatologi = ["P009","all"];
-$validApgar = ["P003"];
-$validsaraf = ["P006"];
-$validpsikiatri = ["P007"];
+//ass new 
+$lifestyle = ['all'];
+$psikologis = ['all'];
+$sosialEkonomi = ['all'];
+$childSpecial = ['all'];
+$aktivitas= ['all'];
+$pencernaan= ['all'];
+$perkemihan= ['all'];
+$sex= ['all'];
+$tht= ['all'];
+$sleep= ['all'];
 
 
-$vitailShow = in_array($selectedStatusFilter, $validVitail);
-$gscShow =in_array($selectedStatusFilter, $validGsc);
-$skalaShow=in_array($selectedStatusFilter, $validSkala);
-$assNewShow=in_array($selectedStatusFilter, $validAssNew);
-$fisikShow=in_array($selectedStatusFilter, $validFisik);
-$hamilShow=in_array($selectedStatusFilter, $validHamil);
-$AssessmentShow=in_array($selectedStatusFilter, $validAssessment);
-$PlanningShow=in_array($selectedStatusFilter, $validPlanning);
-$RencanaAsuhanShow=in_array($selectedStatusFilter, $validRencanaAsuhan);
-$RencanaTindakLanjutShow=in_array($selectedStatusFilter, $validRencanaAsuhan);
-$statusDermatologiShow =in_array($selectedStatusFilter, $validstatusDermatologi);
-$ApgarShow =in_array($selectedStatusFilter, $validApgar);
-$SarafShow =in_array($selectedStatusFilter, $validsaraf);
-$PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
+
+$triageShow =in_array($selectedStatusFilter, $validTriage);
+$anamnesaShow =in_array($selectedStatusFilter, $validAnamnesa);
+$vitailsignShow =in_array($selectedStatusFilter, $vitailsign);
+$pernapasanShow = in_array($selectedStatusFilter, $pernapasan);
+$assSirkulasiShow = in_array($selectedStatusFilter, $assSirkulasi);
+$assNeurosensorisShow = in_array($selectedStatusFilter, $assNeurosen);
+$integumenShow = in_array($selectedStatusFilter, $assNeurosen);
+$skalanyeriShow = in_array($selectedStatusFilter, $skalanyeri);
+$SkriningGiziShow = in_array($selectedStatusFilter, $gizi);
+$diagkeperawatanShow = in_array($selectedStatusFilter, $diagPerawat);
+
+//ass
+
+$historynlifestyleShow = in_array($selectedStatusFilter, $lifestyle);
+$psikologisShow = in_array($selectedStatusFilter, $psikologis);
+$sosialEkonomiShow = in_array($selectedStatusFilter, $sosialEkonomi);
+$childSpecialShow = in_array($selectedStatusFilter, $childSpecial);
+$aktivitasShow = in_array($selectedStatusFilter, $aktivitas);
+$pencernaanShow = in_array($selectedStatusFilter, $pencernaan);
+$perkemihanShow = in_array($selectedStatusFilter, $perkemihan);
+$seksualShow = in_array($selectedStatusFilter, $sex);
+$thtneyeShow = in_array($selectedStatusFilter, $tht);
+$sleepnChillShow = in_array($selectedStatusFilter, $sleep);
+
+
+
+
+
+
+
+
+
+
 
 
 // var_dump($data[0]);
@@ -139,15 +166,7 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                     </div>
                     <div class="col-md-8">
                         <select id="selected-status-filter" class="form-select" name="selected-status-filter">
-                            <option value="P001">Assessmen Medis Dalam</option>
-                            <option value="P003">Assessmen Medis Anak</option>
-                            <option value="P005">Assessmen Medis Bedah Umum</option>
-                            <option value="P006">Asesmen Medis Saraf</option>
-                            <option value="P007">Asesmen Medis Pasien PSIKIATRI</option>
-                            <option value="P008">Assessmen Medis Mata</option>
-                            <option value="P009">Assessmen Medis Kulit Kelamin</option>
-                            <option value="P004">Assessmen Medis Kebidanan</option>
-                            <option value="P010">Assessmen Medis THT</option>
+                            <option value="all">Assessmen</option>
                             <option value="P012">Asesmen Medis IGD</option>
                         </select>
                     </div>
@@ -162,6 +181,51 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
 <body>
     <div id="data-container">
         <?php foreach ($data as $index => $item): ?>
+        <?php
+                $kelompok_umur_up = false;  
+
+                if (!empty($item['data']['date_of_birth']) && !empty($item['data']['create_date'])) {
+                    $dateOfBirth = strtotime($item['data']['date_of_birth']);
+                    $createDate = strtotime($item['data']['create_date']);
+
+                    if ($dateOfBirth && $createDate) {
+                        $age = date('Y', $createDate) - date('Y', $dateOfBirth);
+
+                        if (date('md', $createDate) < date('md', $dateOfBirth)) {
+                            $age--;
+                        }
+
+                        $kelompok_umur_up = true;
+                    }
+                }
+                $isrjResult = false;
+
+                if (empty($item['isrjResult']) && $item['clinic'] !== "P012") {
+                    $isrjValue = $item['isrjResult'];
+                
+                    if ($isrjValue === 0 || $isrjValue === "0") {
+                        $isrjResult = true;
+                    }
+                }
+
+                $isrjResult1 = false;
+                    if (empty($item['isrjResult'])) {
+                        $isrjValue = $item['isrjResult'];
+
+                        if ($item['clinic'] === "P012") {
+                            $isrjResult1 = true;
+                        }
+                        else if ($isrjValue === 0 || $isrjValue === "0") {
+                            $isrjResult1 = true;
+                        }
+                    }
+
+                var_dump($isrjResult1);
+
+
+               
+            ?>
+
         <div class="container-fluid mt-5" id="body-show-<?= $index ?>">
             <div class="row">
                 <div class="col-auto" align="center">
@@ -178,8 +242,6 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                     <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
                 </div>
             </div>
-
-
             <div class="row">
                 <h3 class="text-center content-title" id="content-title"><?= @$item['title'] ?></h3>
             </div>
@@ -214,8 +276,8 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                             <b>Tanggal Lahir (Usia)</b>
                             <p id="umur-<?= $index ?>" class="m-0 mt-1 p-0 ">
                                 <?= 
-                        isset($item['data']['umur']) && $item['data']['umur'] 
-                            ? $item['data']['umur'] 
+                        isset($item['data']['date_of_birth']) && $item['data']['date_of_birth'] 
+                            ? $item['data']['date_of_birth'] 
                             : DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['tgl_lahir'])->format('d-m-Y')
                     ?>
                             </p>
@@ -250,97 +312,121 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                 </tbody>
             </table>
 
-
-
-            <div class="triage" id="triageShow">
+            <div class="triage" id="triageShow" style="display: <?php echo $triageShow ? '' : 'none'; ?>;">
                 <div class="row">
                     <h4 class="text-start">Triage</h4>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
+                <?=
+                   @$item['data']['triage_desc'];
 
-                    preg_match('#<table.*?>(.*?)</table>#is', $html, $matches);
-
-                if (isset($matches[0])) {
-                echo $matches[0];
-                } else {
-                echo "No table found!";
-                }
+                    
                 ?>
             </div>
 
-            <div class="anamnesa" id="anamnesaShow">
+            <div class="anamnesa" id="anamnesaShow" style="display: <?php echo $anamnesaShow ? '' : 'none'; ?>;">
                 <div class="row">
                     <h4 class="text-start">Anamnesa</h4>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-                if (isset($matches)) {
-                echo ($matches[0][1]);
-                } else {
-                echo "No table found!";
-                }
+                <?=
+                     @$item['data']['anamnesa_desc'];
+                    
                 ?>
             </div>
 
-            <div class="historynlifestyle" id="historynlifestyleShow">
+            <div class="historynlifestyle" id="historynlifestyleShow"
+                style="display:<?php echo $historynlifestyleShow ? '' : 'none'; ?>;">
                 <div class="row">
                     <h4 class="text-start">Riwayat & Gaya Hidup</h4>
                 </div>
-
                 <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][2]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
+                    $lifestyleDesc = @$item['data']['lifestyle_desc'];
+                    if (strpos($lifestyleDesc, '<table') !== false) {
+                        $lifestyleDesc .= '</table>';
+                    }
+                    ?>
+                <?= $lifestyleDesc; ?>
             </div>
 
-            <div class="vitailsign" id="vitailsignShow">
-
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][3]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-
+            <div class="vitailsign" id="vitailsignShow" style="display: <?= $vitailsignShow ? 'block' : 'none'; ?>;">
+                <?= @$item['data']['vital_sign_desc']; ?>
             </div>
 
-            <div class="RencanaAsuhandanTerapi" id="RencanaAsuhanShow">
+            <div class="aktivitas" id="aktivitasShow"
+                style="display:<?= $aktivitasShow  && $isrjResult? 'block' : 'none'; ?>;">
                 <div class="row">
-                    <h5 class="text-start">Skrining Gizi</h5>
+                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
                 </div>
 
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][4]);
-                } else {
-                echo "No table found!";
-                }
+                <?= @$item['data']['adl_desc'];
                 ?>
+            </div>
+
+            <div class="psikologis" id="psikologisShow" style="display: <?= $psikologisShow ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Psikologis Spiritual</h5>
+                </div>
+                <?=
+                   @$item['data']['psychology_desc'];
+                ?>
+            </div>
+
+            <div class="sosialEkonomi" id="sosialEkonomiShow"
+                style="display:<?= $sosialEkonomiShow ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Sosial Ekonomi</h5>
+                </div>
+                <?=
+                   @$item['data']['sosec_desc'];
+                ?>
+            </div>
+
+
+
+            <div class="pernapasan" id="pernapasanShow"
+                style="display: <?= $pernapasanShow && $kelompok_umur_up & $isrjResult1 ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Pernapasan</h5>
+                </div>
+                <?= @$item['data']['respiratory_desc'];
+                ?>
+            </div>
+
+            <div class="assSirkulasi" id="assSirkulasiShow"
+                style="display: <?= $assSirkulasiShow && $isrjResult1? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Asesmen Sirkulasi</h5>
+                </div>
+                <?= @$item['data']['circulation_desc'];?>
 
             </div>
 
-            <div class="skalaNyeri" id="skalanyeri">
+            <div class="assNeurosensoris" id="assNeurosensorisShow"
+                style="display: <?= $assNeurosensorisShow && $isrjResult1 ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Asesmen Neurosensoris</h5>
+                </div>
+                <?= @$item['data']['neurosensoris_desc'];?>
+            </div>
+
+            <div class="integumen" id="integumenShow" style="display: <?= $integumenShow ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
+                </div>
+                <?= @$item['data']['integumen_desc'];?>
+            </div>
+
+
+            <div class="pencernaan" id="pencernaanShow"
+                style="display:<?= $pencernaanShow && $isrjResult ? 'block' : 'none'; ?>;">
+                <div class="row">
+                    <h5 class="text-start">Pencernaan</h5>
+                </div>
+                <?=
+                    $html = @$item['data']['disgetive_desc'];
+                ?>
+            </div>
+
+            <div class="skalaNyeri" id="skalanyeriShow" style="display: <?= $skalanyeriShow ? 'block' : 'none'; ?>;">
                 <table class="table table-bordered" id="skalaShow">
                     <tbody>
                         <tr>
@@ -387,296 +473,98 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                 </table>
             </div>
 
-            <div class="aktivitas" id="aktivitasShow">
+            <div class="skriningGizi" id="SkriningGiziShow"
+                style="display: <?= $SkriningGiziShow ? 'block' : 'none'; ?>;">
                 <div class="row">
-                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                    <h5 class="text-start">Skrining Gizi</h5>
                 </div>
 
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][4]);
-                } else {
-                echo "No table found!";
-                }
+                <?=
+                  @$item['data']['nutrition_desc'];
                 ?>
+
             </div>
 
-            <div class="psikologis" id="psikologisShow">
-                <div class="row">
-                    <h5 class="text-start">Psikologis Spiritual</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
 
 
-                if (isset($matches)) {
-                echo ($matches[0][5]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="sosialEkonomi" id="sosialEkonomiShow">
-                <div class="row">
-                    <h5 class="text-start">Sosial Ekonomi</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][6]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="integumen" id="integumenShow">
-                <div class="row">
-                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][7]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="assNeurosensoris" id="assNeurosensorisShow">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Neurosensoris</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][8]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="assSirkulasi" id="assSirkulasiShow">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Sirkulasi</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][9]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="pencernaan" id="pencernaanShow">
-                <div class="row">
-                    <h5 class="text-start">Pencernaan</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][10]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="pernapasan" id="pernapasanShow">
-                <div class="row">
-                    <h5 class="text-start">Pernapasan</h5>
-                </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][11]);
-                } else {
-                echo "No table found!";
-                }
-                ?>
-            </div>
-
-            <div class="perkemihan" id="perkemihanShow">
+            <div class="perkemihan" id="perkemihanShow"
+                style="display: <?= $perkemihanShow && $isrjResult ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Perkemihan</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][12]);
-                } else {
-                echo "No table found!";
-                }
+                <?=
+                    @$item['data']['urinaria_desc'];
                 ?>
             </div>
 
-            <div class="seksual" id="seksualShow">
+            <div class="seksual" id="seksualShow"
+                style="display:<?= $seksualShow && $isrjResult ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Seksual/Reproduksi</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][13]);
-                } else {
-                echo "No table found!";
-                }
+                <?= @$item['data']['obsgyn_desc'];
                 ?>
             </div>
 
-            <div class="thtneye" id="thtneyeShow">
+            <div class="thtneye" id="thtneyeShow"
+                style="display:<?= $thtneyeShow && $isrjResult ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">THT & MATA</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][14]);
-                } else {
-                echo "No table found!";
-                }
+                <?=
+                    @$item['data']['matatht_desc'];
                 ?>
             </div>
 
-            <div class="childSpecial" id="childSpecialShow">
+            <div class="childSpecial" id="childSpecialShow"
+                style="display: <?= $childSpecialShow ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Khusus Anak</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
+                <?=
+                   @$item['data']['pediatric_desc'];
 
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][15]);
-                } else {
-                echo "No table found!";
-                }
+                   
                 ?>
             </div>
 
-            <div class="sleepnChill" id="sleepnChillShow">
+            <div class="sleepnChill" id="sleepnChillShow"
+                style="display:<?= $sleepnChillShow && $isrjResult ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Tidur Dan Istirahat</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
+                <?= @$item['data']['rest_sleep_desc'];
 
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][16]);
-                } else {
-                echo "No table found!";
-                }
                 ?>
             </div>
 
-            <div class="dekubitus" id="dekubitusShow">
+            <div class="dekubitus" id="dekubitusShow" style="display:none">
                 <div class="row">
                     <h5 class="text-start">Dekubitus</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][17]);
-                } else {
-                echo "No table found!";
-                }
+                <?= @$item['data']['decubitus_desc'];
                 ?>
             </div>
 
-            <div class="activasntrain" id="activasntrainShow">
+            <div class="activasntrain" id="activasntrainShow" style="display:none">
                 <div class="row">
                     <h5 class="text-start">Aktivitas Dan Latihan</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][18]);
-                } else {
-                echo "No table found!";
-                }
+                <?= @$item['data']['training_desc'];
                 ?>
             </div>
 
-            <div class="diagkeperawatan" id="diagkeperawatanShow">
+            <div class="diagkeperawatan" id="diagkeperawatanShow"
+                style="display: <?= $diagkeperawatanShow ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Diagnosis Keperawatan</h5>
                 </div>
-                <?php
-                    $html = @$item['data']['final_note'];
-
-                    preg_match_all('#<\s*table[^>]*>.*?</\s*table\s*>#is', $html, $matches);
-
-
-                if (isset($matches)) {
-                echo ($matches[0][19]);
-                } else {
-                echo "No table found!";
-                }
+                <?=
+                 @$item['data']['nurse_diagnose_desc'];
                 ?>
             </div>
 
-            <div class="tindakKolab" id="tindakKolabShow">
+            <div class="tindakKolab" id="tindakKolabShow" style="display:none">
                 <div class="row">
                     <h5 class="text-start">1. Tindakan Kolaborasi</h5>
                 </div>
@@ -700,7 +588,7 @@ $PsikiatriShow =in_array($selectedStatusFilter, $validpsikiatri);
                 </table>
             </div>
 
-            <div class="tindakMan" id="tindakManShow">
+            <div class="tindakMan" id="tindakManShow" style="display:none">
                 <div class="row">
                     <h5 class="text-start">2. Tindakan Mandiri</h5>
                 </div>
@@ -744,20 +632,8 @@ const visit = '<?= $visit1 ?>';
 
 $(document).ready(function() {
     let statusVisibility = {
-        vitailShow: <?php echo json_encode($validVitail); ?>,
-        gscShow: <?php echo json_encode($validGsc); ?>,
-        skalaShow: <?php echo json_encode($validSkala); ?>,
-        assNewShow: <?php echo json_encode($validAssNew); ?>,
-        fisikShow: <?php echo json_encode($validFisik); ?>,
-        hamilShow: <?php echo json_encode($validHamil); ?>,
-        AssessmentShow: <?php echo json_encode($validAssessment); ?>,
-        PlanningShow: <?php echo json_encode($validPlanning); ?>,
-        RencanaAsuhanShow: <?php echo json_encode($validRencanaAsuhan); ?>,
-        RencanaTindakLanjutShow: <?php echo json_encode($validRencanaTindakLanjut); ?>,
-        statusDermatologiShow: <?php echo json_encode($validstatusDermatologi); ?>,
-        ApgarShow: <?php echo json_encode($validApgar); ?>,
-        SarafShow: <?php echo json_encode($validsaraf); ?>,
-        PsikiatriShow: <?php echo json_encode($validpsikiatri); ?>,
+        vitailShow: "",
+
     };
 
 
@@ -812,8 +688,6 @@ $(document).ready(function() {
         $('#data-container').empty();
 
         data.map((e, index) => {
-            console.log(e);
-
             const rows = e?.data?.pemeriksaan_mata?.split('</tr>').filter(row => row.trim() !== '');
             let leftTableHtml = '';
             let rightTableHtml = '';
@@ -846,7 +720,7 @@ $(document).ready(function() {
 
 
             <div class="row">
-                <h3 class="text-center content-title" id="content-title"><?= @$item['title'] ?></h3>
+                <h3 class="text-center content-title" id="content-title">${e?.title}</h3>
             </div>
             <div class="row">
                 <h5 class="text-start">Informasi Pasien</h5>
@@ -910,10 +784,7 @@ $(document).ready(function() {
                     </tr>
                 </tbody>
             </table>
-
-
-
-            <div class="triage" id="triageShow">
+        ${e?.data.length === 0 ? '' : `<div class="triage" id="triageShow">
                 <div class="row">
                     <h4 class="text-start">Triage</h4>
                 </div>
@@ -938,14 +809,14 @@ $(document).ready(function() {
                    ${e.data?.vital_sign_desc ? ((e.data.vital_sign_desc))  : ""}
             </div>
 
-            <div class="RencanaAsuhandanTerapi" id="RencanaAsuhanShow">
+            <div class="skriningGizi" id="SkriningGiziShow">
                 <div class="row">
                     <h5 class="text-start">Skrining Gizi</h5>
                 </div>
                    ${e.data?.nutrition_desc ? ((e.data.nutrition_desc))  : ""}
             </div>
 
-            <div class="skalaNyeri" id="skalanyeri">
+            <div class="skalaNyeri" id="skalanyeriShow">
                 <table class="table table-bordered" id="skalaShow">
                     <tbody>
                         <tr>
@@ -977,7 +848,7 @@ $(document).ready(function() {
                                             <td>
                                                 <div class="row">
                                                     <span class="col-12">
-                                                     ${!e.data?.fm_descriptions ? "-":nl2br1(e.data?.fm_descriptions) }
+                                                     ${!e.data?.fm_descriptions ? "-": nl2br1(e.data?.fm_descriptions) }
                                                     </span>
                                                 </div>
                                             </td>
@@ -1011,11 +882,11 @@ $(document).ready(function() {
                    ${e.data?.sosec_desc ? ((e.data.sosec_desc))  : ""}
             </div>
 
-            <div class="integumen" id="integumenShow">
+              <div class="assSirkulasi" id="assSirkulasiShow">
                 <div class="row">
-                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
+                    <h5 class="text-start">Asesmen Sirkulasi</h5>
                 </div>
-                   ${e.data?.integumen_desc ? ((e.data.integumen_desc))  : ""}
+                   ${e.data?.circulation_desc ? ((e.data.circulation_desc))  : ""}
             </div>
 
             <div class="assNeurosensoris" id="assNeurosensorisShow">
@@ -1025,11 +896,11 @@ $(document).ready(function() {
                    ${e.data?.neurosensoris_desc ? ((e.data.neurosensoris_desc))  : ""}
             </div>
 
-            <div class="assSirkulasi" id="assSirkulasiShow">
+              <div class="integumen" id="integumenShow">
                 <div class="row">
-                    <h5 class="text-start">Asesmen Sirkulasi</h5>
+                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
                 </div>
-                   ${e.data?.circulation_desc ? ((e.data.circulation_desc))  : ""}
+                   ${e.data?.integumen_desc ? ((e.data.integumen_desc))  : ""}
             </div>
 
             <div class="pencernaan" id="pencernaanShow">
@@ -1148,9 +1019,7 @@ $(document).ready(function() {
                         <td>isiii Nama</td>
                     </tr>
                 </table>
-            </div>
-
-
+            </div>`}
         </div>`
 
             $('#data-container').append(htmlView);
@@ -1167,7 +1036,7 @@ $(document).ready(function() {
     }
 
     function nl2br1(str) {
-        return str.replace(/\r\n/g, '<br>');
+        return str?.replace(/\r\n/g, '<br>');
     }
 
 

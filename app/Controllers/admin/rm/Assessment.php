@@ -137,33 +137,33 @@ class Assessment extends BaseController
         // $parameter_id06 = $this->request->getPost('parameter_id06');
         // $parameter_id07 = $this->request->getPost('parameter_id07');
         // $parameter_id08 = $this->request->getPost('parameter_id08');
-        $timeIntervensi = $this->request->getPost('timeIntervensi');
-        $intervensi = $this->request->getPost('intervensi');
-        $rute = $this->request->getPost('rute');
-        $painscalescore = $this->request->getPost('painscalescore');
-        $reAssessment = $this->request->getPost('reAssessment');
-        $reassessment_date = $this->request->getPost('reassessment_date');
+        // $timeIntervensi = $this->request->getPost('timeIntervensi');
+        // $intervensi = $this->request->getPost('intervensi');
+        // $rute = $this->request->getPost('rute');
+        // $painscalescore = $this->request->getPost('painscalescore');
+        // $reAssessment = $this->request->getPost('reAssessment');
+        // $reassessment_date = $this->request->getPost('reassessment_date');
 
-        $org_unit_code = $this->request->getPost('org_unit_code');
-        $visit_id = $this->request->getPost('visit_id');
-        $trans_id = $this->request->getPost('trans_id');
-        $body_id = $this->request->getPost('body_id');
-        $no_registration = $this->request->getPost('no_registration');
-        $examination_date = str_replace('T', ' ', $this->request->getPost('examination_date'));
-        $clinic_id = $this->request->getPost('clinic_id');
-        $employee_id = $this->request->getPost('employee_id');
-        $petugas_id = $this->request->getPost('petugas_id');
-        $class_room_id = $this->request->getPost('class_room_id');
-        $bed_id = $this->request->getPost('bed_id');
-        $p_type = $this->request->getPost('p_type');
-        $description = $this->request->getPost('description');
-        $modified_date = $this->request->getPost('modified_date');
-        $modified_by = $this->request->getPost('modified_by');
-        $pain_monitoring_status = $this->request->getPost('pain_monitoring_status');
-        $document_id = $this->request->getPost('document_id');
-        $valid_date = $this->request->getPost('valid_date');
-        $valid_user = $this->request->getPost('valid_user');
-        $valid_pasien = $this->request->getPost('valid_pasien');
+        // $org_unit_code = $this->request->getPost('org_unit_code');
+        // $visit_id = $this->request->getPost('visit_id');
+        // $trans_id = $this->request->getPost('trans_id');
+        // $body_id = $this->request->getPost('body_id');
+        // $no_registration = $this->request->getPost('no_registration');
+        // $examination_date = str_replace('T', ' ', $this->request->getPost('examination_date'));
+        // $clinic_id = $this->request->getPost('clinic_id');
+        // $employee_id = $this->request->getPost('employee_id');
+        // $petugas_id = $this->request->getPost('petugas_id');
+        // $class_room_id = $this->request->getPost('class_room_id');
+        // $bed_id = $this->request->getPost('bed_id');
+        // $p_type = $this->request->getPost('p_type');
+        // $description = $this->request->getPost('description');
+        // $modified_date = $this->request->getPost('modified_date');
+        // $modified_by = $this->request->getPost('modified_by');
+        // $pain_monitoring_status = $this->request->getPost('pain_monitoring_status');
+        // $document_id = $this->request->getPost('document_id');
+        // $valid_date = $this->request->getPost('valid_date');
+        // $valid_user = $this->request->getPost('valid_user');
+        // $valid_pasien = $this->request->getPost('valid_pasien');
 
         $db = db_connect();
         $painMonitoring = new PainMonitoringModel();
@@ -301,11 +301,18 @@ class Assessment extends BaseController
             }
         }
 
-        return $this->response->setStatusCode(200)
-            ->setJSON([
+        if ($body == null) {
+            return $this->response->setStatusCode(200)
+                ->setJSON([
+                    "code" => 200,
+                    "status" => "success"
+                ]);
+        } else {
+            return json_encode([
                 "code" => 200,
                 "status" => "success"
             ]);
+        }
     }
     public function getPainMonitoring()
     {
@@ -2206,7 +2213,7 @@ class Assessment extends BaseController
 
     public function saveSirkulasi($body = null)
     {
-        if ($body = null) {
+        if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
                     'status' => 'error',
@@ -2323,7 +2330,7 @@ class Assessment extends BaseController
 
     public function saveIntegumen($body = null)
     {
-        if ($body = null) {
+        if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
                     'status' => 'error',
@@ -2414,7 +2421,7 @@ class Assessment extends BaseController
     }
     public function saveNeonatus($body = null)
     {
-        if ($body = null) {
+        if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
                     'status' => 'error',
@@ -2447,7 +2454,7 @@ class Assessment extends BaseController
 
     public function saveADL($body = null)
     {
-        if ($body = null) {
+        if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
                     'status' => 'error',
@@ -2503,7 +2510,7 @@ class Assessment extends BaseController
     }
     public function saveDekubitus($body = null)
     {
-        if ($body = null) {
+        if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
                     'status' => 'error',

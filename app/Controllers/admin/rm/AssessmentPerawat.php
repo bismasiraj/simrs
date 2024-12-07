@@ -109,72 +109,102 @@ class AssessmentPerawat extends BaseController
         $controller = new Assessment();
         foreach ($body as $key => $value) {
             if ($value["id"] == "formaddarp") {
-                $perawat = $this->saveAssessmentPerawat($value["data"]);
+                $perawat = json_decode($this->saveAssessmentPerawat($value["data"]));
             }
             if (str_contains($value["id"], "fallrisk")) {
                 $gcs = $controller->saveFallRisk($value["data"]);
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
-                $monitoring = $controller->savePainMonitoring($value["data"]);
+                $monitoring = json_encode($controller->savePainMonitoring($value["data"]));
             }
             if (str_contains($value["id"], "formFallRisk")) {
-                $fallRisk = $controller->saveFallRisk($value["data"]);
+                $fallRisk = json_encode($controller->saveFallRisk($value["data"]));
             }
-            if (str_contains($value["id"], "triase")) {
+            if (str_contains($value["id"], "formGizi")) {
+                $gizi = json_decode($controller->savegizi($value["data"]));
+            }
+            if (str_contains($value["id"], "formTriage")) {
                 $triage = json_decode($controller->saveTriage($value["data"]));
             }
-            if (str_contains($value["id"], "apgar")) {
+            if (str_contains($value["id"], "formApgar")) {
                 $apgar = json_decode($controller->saveApgar($value["data"]));
             }
-            if (str_contains($value["id"], "stabilitas")) {
+            if (str_contains($value["id"], "formStabilitas")) {
                 $stabilitas = json_decode($controller->saveStabilitas($value["data"]));
             }
-            if (str_contains($value["id"], "pernapasan")) {
+            if (str_contains($value["id"], "formPernapasan")) {
                 $pernapasan = json_decode($controller->savePernapasan($value["data"]));
             }
-            if (str_contains($value["id"], "sirkulasi")) {
+            if (str_contains($value["id"], "formSirkulasi")) {
                 $sirkulasi = json_decode($controller->saveSirkulasi($value["data"]));
             }
-            if (str_contains($value["id"], "neurosensori")) {
-                $neurosensori = json_decode($controller->saveNeurosensoris($value["databody: "]));
+            if (str_contains($value["id"], "formNeurosensoris")) {
+                $neurosensori = json_decode($controller->saveNeurosensoris($value["data"]));
             }
-            if (str_contains($value["id"], "integumen")) {
-                $integumen = json_decode($controller->saveIntegumen($value["databody: "]));
+            if (str_contains($value["id"], "formIntegumen")) {
+                $integumen = json_decode($controller->saveIntegumen($value["data"]));
             }
-            if (str_contains($value["id"], "anak")) {
-                $anak = json_decode($controller->saveAnak($value["databody: "]));
+            if (str_contains($value["id"], "formAnak")) {
+                $anak = json_decode($controller->saveAnak($value["data"]));
             }
-            if (str_contains($value["id"], "adl")) {
-                $adl = json_decode($controller->saveADL($value["databody: "]));
+            if (str_contains($value["id"], "formADL")) {
+                $adl = json_decode($controller->saveADL($value["data"]));
             }
-            if (str_contains($value["id"], "dekubitus")) {
-                $dekubitus = json_decode($controller->saveDekubitus($value["databody: "]));
+            if (str_contains($value["id"], "formDekubitus")) {
+                $dekubitus = json_decode($controller->saveDekubitus($value["data"]));
             }
-            if (str_contains($value["id"], "pencernaan")) {
-                $pencernaan = json_decode($controller->savePencernaan($value["databody: "]));
+            if (str_contains($value["id"], "formPencernaan")) {
+                $pencernaan = json_decode($controller->savePencernaan($value["data"]));
             }
-            if (str_contains($value["id"], "perkemihan")) {
-                $perkemihan = json_decode($controller->savePerkemihan($value["databody: "]));
+            if (str_contains($value["id"], "formPerkemihan")) {
+                $perkemihan = json_decode($controller->savePerkemihan($value["data"]));
             }
-            if (str_contains($value["id"], "psikologi")) {
-                $psikologi = json_decode($controller->savePsikologi($value["databody: "]));
+            if (str_contains($value["id"], "formPsikologi")) {
+                $psikologi = json_decode($controller->savePsikologi($value["data"]));
             }
-            if (str_contains($value["id"], "education")) {
-                $education = json_decode($controller->saveeducationForm($value["databody: "]));
+            if (str_contains($value["id"], "formEducationForm")) {
+                $education = json_decode($controller->saveeducationForm($value["data"]));
             }
-            if (str_contains($value["id"], "educationIntegration")) {
-                $educationIntegration = json_decode($controller->saveeducationIntegration($value["databody: "]));
+            if (str_contains($value["id"], "formEducationIntegration")) {
+                $educationIntegration = json_decode($controller->saveeducationIntegration($value["data"]));
             }
-            if (str_contains($value["id"], "social")) {
-                $social = json_decode($controller->saveSocial($value["databody: "]));
+            if (str_contains($value["id"], "formSocialsocial")) {
+                $social = json_decode($controller->saveSocial($value["data"]));
             }
-            if (str_contains($value["id"], "hearing")) {
-                $hearing = json_decode($controller->saveHearing($value["databody: "]));
+            if (str_contains($value["id"], "formHearing")) {
+                $hearing = json_decode($controller->saveHearing($value["data"]));
             }
-            if (str_contains($value["id"], "sleeping")) {
-                $sleeping = json_decode($controller->saveSleeping($value["databody: "]));
+            if (str_contains($value["id"], "formSleeping")) {
+                $sleeping = json_decode($controller->saveSleeping($value["data"]));
             }
         }
+
+        return json_encode([
+            "perawat" => @$perawat,
+            "gcs" => @$gcs,
+            "monitoring" => @$monitoring,
+            "fallRisk" => @$fallRisk,
+            "triage" => @$triage,
+            "gizi" => @$gizi,
+            "apgar" => @$apgar,
+            "stabilitas" => @$stabilitas,
+            "apgar" => @$apgar,
+            "pernapasan" => @$pernapasan,
+            "sirkulasi" => @$sirkulasi,
+            "neurosensori" => @$neurosensori,
+            "integumen" => @$integumen,
+            "anak" => @$anak,
+            "adl" => @$adl,
+            "dekubitus" => @$dekubitus,
+            "pencernaan" => @$pencernaan,
+            "perkemihan" => @$perkemihan,
+            "psikologi" => @$psikologi,
+            "education" => @$education,
+            "educationIntegration" => @$educationIntegration,
+            "social" => @$social,
+            "hearing" => @$hearing,
+            "sleeping" => @$sleeping
+        ]);
     }
     public function saveAssessmentPerawat($body)
     {

@@ -174,8 +174,6 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                 foreach ($formData['program'] as $program) {
 
                     $vactination_id = $this->get_bodyid();
-                    array_push($tarif_id_new, json_decode($program['program_name'])->tarif_id);
-                    array_push($tarif_name_new, json_decode($program['program_name'])->tarif_name);
 
                     $dataProgram[] = [
                         'org_unit_code' => $formData['org_unit_code'],
@@ -199,9 +197,9 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
                         'ageday' => $formData['ageday'],
                         'class_room_id' => $formData['class_room_id'],
                         'bed_id' => $formData['bed_id'],
-                        'tarif_id' => json_decode($program['program_name'])->tarif_id,
+                        'tarif_id' => $program['program_id'],
                         'treatment' => $formData['treatment'],
-                        'treatment_program' => json_decode($program['program_name'])->tarif_name,
+                        'treatment_program' => $program['program_name'],
                         'start_date' => $program['vactination_date'] . ' ' . $program['start'],
                         'end_date' => $program['vactination_date'] . ' ' . $program['end'],
                         'examination_date' => date("Y-m-d H:i:s"),
@@ -303,5 +301,38 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         }
 
         return $this->response->setJSON(['message' => 'Data saved successfully.', 'respon' => true]);
+    }
+    public function getRecipes()
+    {
+        $db = db_connect();
+
+        $query = $db->query("select recipe_id as id, recipe as text from recipes order by text asc")->getResultArray();
+
+        $results = $this->lowerKey($query ?? []);
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => $results
+        ]);
+    }
+    public function getTarif()
+    {
+        $db = db_connect();
+
+        $query = $db->query("
+        SELECT
+            TREAT_TARIF.TARIF_NAME as text, 
+            TREAT_TARIF.TARIF_ID as id
+        FROM TREAT_TARIF
+        INNER JOIN treatment ON treatment.treat_id = TREAT_TARIF.treat_id
+        WHERE TREATMENT.TREAT_TYPE IN ('16')
+        ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
+
+        $results = $this->lowerKey($query ?? []);
+        return $this->response->setJSON([
+            'message' => 'Data retrieved successfully.',
+            'respon'  => true,
+            'data'    => $results
+        ]);
     }
 }

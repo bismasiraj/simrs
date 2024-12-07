@@ -181,24 +181,30 @@ foreach ($aValue as $key => $value) {
         data.push(newObjRm)
 
         $("#formaddarp").find(".satelite").each(function() {
-            let docData = new FormData(document.getElementById($(this).attr("id")))
-            let docDataObject = {};
-            docData.forEach(function(value, key) {
-                if (key.includes("[]")) {
-                    if (typeof docDataObject[key.replace("[]", "")] !== 'undefined' && docDataObject[key.replace("[]", "")] !== null) {
-                        docDataObject[key.replace("[]", "")].push(value)
+            let element = document.getElementById($(this).attr("id"))
+            if (element instanceof HTMLFormElement) {
+                let docData = new FormData(element)
+                let docDataObject = {};
+                docData.forEach(function(value, key) {
+                    if (key.includes("[]")) {
+                        if (typeof docDataObject[key.replace("[]", "")] !== 'undefined' && docDataObject[key.replace("[]", "")] !== null) {
+                            docDataObject[key.replace("[]", "")].push(value)
+                        } else {
+                            docDataObject[key.replace("[]", "")] = [value]
+                        }
                     } else {
-                        docDataObject[key.replace("[]", "")] = [value]
+                        docDataObject[key] = value
                     }
-                } else {
-                    docDataObject[key] = value
-                }
-            });
-            let newObj = {
-                id: $(this).attr("id"),
-                data: docDataObject
-            };
-            data.push(newObj)
+                });
+                let newObj = {
+                    id: $(this).attr("id"),
+                    data: docDataObject
+                };
+                data.push(newObj)
+            } else {
+                console.log($(this).attr("id"));
+            }
+
         })
 
         let clicked_submit_btn = $(this).closest('form').find(':submit');
@@ -208,7 +214,7 @@ foreach ($aValue as $key => $value) {
             type: "POST",
             // data: 
 
-            data: new FormData(document.getElementById('formaddarp')),
+            data: JSON.stringify(data),
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -678,30 +684,30 @@ foreach ($aValue as $key => $value) {
         );
         $("#flatarpexamination_date").trigger("change");
 
-        // getSatelitePerawat(ex)
+        getSatelitePerawat(ex)
 
-        getFallRisk(ex.body_id)
-        getPainMonitoring(ex.body_id)
-        getTriage(ex.body_id, "bodyTriage")
-        getGcs(ex.body_id, "bodyGcsPerawat")
-        getApgar(ex.body_id)
-        getStabilitas(ex.body_id)
-        getPernapasan(ex.body_id)
-        getSirkulasi(ex.body_id)
-        getNeurosensoris(ex.body_id)
-        getIntegumen(ex.body_id)
-        getADL(ex.body_id)
-        getPencernaan(ex.body_id)
-        getDekubitus(ex.body_id)
-        getPsikologi(ex.body_id)
-        getPerkemihan(ex.body_id)
-        getSeksual(ex.body_id)
-        getSocial(ex.body_id)
-        getGizi(ex.body_id)
-        getEducationForm(ex.body_id)
-        getEducationIntegration(ex.body_id)
-        getHearing(ex.body_id)
-        getSleeping(ex.body_id)
+        // getFallRisk(ex.body_id)
+        // getPainMonitoring(ex.body_id)
+        // getTriage(ex.body_id, "bodyTriage")
+        // getGcs(ex.body_id, "bodyGcsPerawat")
+        // getApgar(ex.body_id)
+        // getStabilitas(ex.body_id)
+        // getPernapasan(ex.body_id)
+        // getSirkulasi(ex.body_id)
+        // getNeurosensoris(ex.body_id)
+        // getIntegumen(ex.body_id)
+        // getADL(ex.body_id)
+        // getPencernaan(ex.body_id)
+        // getDekubitus(ex.body_id)
+        // getPsikologi(ex.body_id)
+        // getPerkemihan(ex.body_id)
+        // getSeksual(ex.body_id)
+        // getSocial(ex.body_id)
+        // getGizi(ex.body_id)
+        // getEducationForm(ex.body_id)
+        // getEducationIntegration(ex.body_id)
+        // getHearing(ex.body_id)
+        // getSleeping(ex.body_id)
 
         await checkSignSignature("formaddarp", "arpbody_id", "formsavearpbtnid", 3)
 
@@ -726,7 +732,7 @@ foreach ($aValue as $key => $value) {
                 $.each(gcsAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyGcsPerawat").html("")
-                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat")
+                        addGcs(0, key, "arpbody_id", "bodyGcsPerawat", false)
                         return false
                     }
                 })
@@ -739,7 +745,7 @@ foreach ($aValue as $key => $value) {
                 $.each(fallRisk, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyFallRiskPerawat").html("")
-                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat")
+                        addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat", false)
                         return false
                     }
                 })
@@ -756,7 +762,7 @@ foreach ($aValue as $key => $value) {
                     $("#" + container).html("")
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyPainMonitoringPerawat").html("")
-                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat")
+                        addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat", false)
                         return false
                     }
                 })
@@ -768,7 +774,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(napas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        addPernapasan(0, key, "arpbody_id", "bodyPernapasan")
+                        addPernapasan(0, key, "arpbody_id", "bodyPernapasan", false)
                         return false
                     }
                 })
@@ -782,7 +788,7 @@ foreach ($aValue as $key => $value) {
                 $.each(apgar, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyApgarPerawat").html("")
-                        addApgar(0, key, "arpbody_id", "bodyApgarPerawat")
+                        addApgar(0, key, "arpbody_id", "bodyApgarPerawat", false)
                         return false
                     }
                 })
@@ -806,7 +812,7 @@ foreach ($aValue as $key => $value) {
                 $.each(giziAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyGiziPerawat").html("")
-                        addGizi(0, key, "arpbody_id", "bodyGiziPerawat")
+                        addGizi(0, key, "arpbody_id", "bodyGiziPerawat", false)
                         return false
                     }
                 })
@@ -818,7 +824,7 @@ foreach ($aValue as $key => $value) {
                 $.each(adlAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
                         $("#bodyADLPerawat").html("")
-                        addADL(0, key, "arpbody_id", "bodyADLPerawat")
+                        addADL(0, key, "arpbody_id", "bodyADLPerawat", false)
                         return false
                     }
                 })
@@ -828,7 +834,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(dekubitusAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat")
+                        addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat", false)
                         return false
                     }
                 })
@@ -839,7 +845,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(stabilitas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat")
+                        addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat", false)
                         return false
                     }
                 })
