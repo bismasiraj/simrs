@@ -659,6 +659,12 @@
 </div>
 
 <script type='text/javascript'>
+    var mrJson;
+    var lastOrder = 0;
+    var vitalsign = <?= json_encode($exam); ?>;
+    var visit = '<?= $visit['visit_id']; ?>'
+    var nomor = '<?= $visit['no_registration']; ?>';
+
     $(document).ready(function(e) {
 
         var nomor = '<?= $visit['no_registration']; ?>';
@@ -740,17 +746,6 @@
         $("#examination_date-laporanAnesthesi-lengkap-durantee").val(get_date())
 
 
-        // var ageYear = <?= $visit['ageyear']; ?>;
-        // var ageMonth = <?= $visit['agemonth']; ?>;
-        // var ageDay = <?= $visit['ageday']; ?>;
-
-        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 3);
-        // } else if (ageYear >= 18) {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 1);
-        // } else {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap-durantee").prop("selectedIndex", 2);
-        // }
 
         $("#" + container_id).slideDown()
     }
@@ -967,17 +962,6 @@
         $("#ageday-laporanAnesthesi-lengkap").val('<?= $visit['ageday']; ?>')
         $("#flatexamination_date-laporanAnesthesi-lengkap").val(get_date())
 
-        // var ageYear = <?= $visit['ageyear']; ?>;
-        // var ageMonth = <?= $visit['agemonth']; ?>;
-        // var ageDay = <?= $visit['ageday']; ?>;
-
-        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 3);
-        // } else if (ageYear >= 18) {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 1);
-        // } else {
-        //     $("#vs_status_id-laporanAnesthesi-lengkap").prop("selectedIndex", 2);
-        // }
 
         $("#" + container_id).slideDown()
     }

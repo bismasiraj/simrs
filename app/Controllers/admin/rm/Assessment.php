@@ -445,15 +445,17 @@ class Assessment extends BaseController
             }
 
             $body = $this->request->getPost();
+
+
+            $step1 = $this->request->getPost("step1");
+            $step2 = $this->request->getPost("step2");
+            $step3 = $this->request->getPost("step3");
         }
 
         foreach ($body as $key => $value) {
             ${$key} = $value;
         }
 
-        $step1 = $this->request->getPost("step1");
-        $step2 = $this->request->getPost("step2");
-        $step3 = $this->request->getPost("step3");
 
         // $org_unit_code = $this->request->getPost('org_unit_code');
         // $visit_id = $this->request->getPost('visit_id');
@@ -3638,22 +3640,25 @@ class Assessment extends BaseController
             $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
         }
 
-        $db = db_connect();
+        if (count($select) > 0) {
+            $db = db_connect();
 
-        $queryDetil = "select * from assessment_fall_risk_detail where body_id in (";
+            $queryDetil = "select * from assessment_fall_risk_detail where body_id in (";
 
-        foreach ($select as $key => $value) {
-            $queryDetil .= "'" . $value['body_id'] . "',";
+            foreach ($select as $key => $value) {
+                $queryDetil .= "'" . $value['body_id'] . "',";
+            }
+            $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+
+            $queryDetil .= ");";
+
+            $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
         }
-        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
 
-        $queryDetil .= ");";
-
-        $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
 
         return json_encode([
             'fallRisk' => $select,
-            'fallRiskDetail' => $fallRiskDetil
+            'fallRiskDetail' => @$fallRiskDetil
         ]);
     }
     public function copyFallRisk()

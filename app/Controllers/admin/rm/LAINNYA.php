@@ -1252,11 +1252,7 @@ class lainnya extends \App\Controllers\BaseController
 
         $isrj = isset($formData->status) ? $formData->status : (isset($visitData['isrj']) ? $visitData['isrj'] : null);
         $clinic = isset($formData->clinic) ? $formData->clinic : (isset($visitData['clinic_id']) ? $visitData['clinic_id'] : null);
-        // wajib comen hanya test
-        $isrj = 0;
-        $clinic = "P005";
-
-
+        $visit_id = $visitData['visit_id'];
 
         $clinicNames = [
             "all" => "Asesmen Keperawatan",
@@ -1270,26 +1266,25 @@ class lainnya extends \App\Controllers\BaseController
 
         $no_regis =  $visitData['no_registration'];
         $db = db_connect();
-        if ($isrj === 0 || $isrj === "0") {
-            if ($clinic === "P012") {
+
+        if ($clinic === "P012") {
+            $select = $this->lowerKey($db->query("SELECT * 
+                    FROM HISTORY_ASKEP_RALAN
+                    WHERE visit_id = '53059' AND CLINIC_ID = '$clinic'")->getResultArray());
+
+            if (empty($select)) {
                 $select = $this->lowerKey($db->query("SELECT * 
-                FROM HISTORY_ASKEP_RALAN
-                WHERE visit_id = '53059' AND CLINIC_ID = '$clinic'")->getResultArray());
-            } else {
-                $select = $this->lowerKey($db->query("SELECT * 
-                FROM HISTORY_ASKEP_RALAN
-                WHERE visit_id = '183337'")->getResultArray());
+                                FROM HISTORY_ASKEP_RANAP
+                                WHERE visit_id = '17160' AND CLINIC_ID = '$clinic'")->getResultArray());
             }
+        } else if ($isrj === 0 || $isrj === "0") {
+            $select = $this->lowerKey($db->query("SELECT * 
+            FROM HISTORY_ASKEP_RANAP
+            WHERE visit_id = '$visit_id'")->getResultArray());
         } else {
-            if ($clinic === "P012") {
-                $select = $this->lowerKey($db->query("SELECT * 
-                        FROM HISTORY_ASKEP_RANAP
-                        WHERE visit_id = '17160' AND CLINIC_ID = '$clinic'")->getResultArray());
-            } else {
-                $select = $this->lowerKey($db->query("SELECT * 
-                FROM HISTORY_ASKEP_RANAP
-                WHERE visit_id = '183337'")->getResultArray());
-            }
+            $select = $this->lowerKey($db->query("SELECT * 
+            FROM HISTORY_ASKEP_RALAN
+            WHERE visit_id = '$visit_id'")->getResultArray());
         }
 
         $data = [];
@@ -1301,7 +1296,10 @@ class lainnya extends \App\Controllers\BaseController
                     $clinicTitle = $clinicNames[$clinic];
                 }
                 if (!str_contains($clinicTitle, "Rawat Inap") && !str_contains($clinicTitle, "Rawat Jalan")) {
-                    $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
+                    if ($clinic === "P012") {
+                    } else {
+                        $clinicTitle .= $isrj == 0 || $isrj == "0" ? " Rawat Inap" : " Rawat Jalan";
+                    }
                 }
 
                 if (!empty($item['date_of_birth']) && !empty($item['create_date'])) {
@@ -1320,19 +1318,21 @@ class lainnya extends \App\Controllers\BaseController
                     'clinic' => $clinic,
                     'isrjResult' => $isrj,
                     'title' => $clinicTitle,
-                    'data'  => $item
+                    'data'  => $item,
+                    'id' => $visit_id
                 ];
             }
         } else {
 
             $clinicTitle = $clinicNames[$clinic];
-            $clinicTitle .= $isrj == 0 ? " Rawat Inap" : " Rawat Jalan";
+            $clinicTitle .= $isrj == 0 || $isrj == "0" ? " Rawat Inap" : " Rawat Jalan";
 
             $data[] = [
                 'clinic' => $clinic,
                 'isrjResult' => $isrj,
                 'title' => $clinicTitle,
-                'data'  => []
+                'data'  => [],
+                'id' => $visit_id
             ];
         }
 

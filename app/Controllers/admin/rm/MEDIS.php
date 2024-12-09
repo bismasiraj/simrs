@@ -2193,6 +2193,7 @@ class medis extends \App\Controllers\BaseController
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
+            // return json_encode($visit);
 
             $db = db_connect();
             $select = $this->lowerKey($db->query("select 
@@ -2349,6 +2350,7 @@ class medis extends \App\Controllers\BaseController
             PD.DOCTOR")->getRow(0, "array"));
 
 
+
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
             $selectlokalis = $this->lowerKey($db->query(
@@ -2378,7 +2380,8 @@ class medis extends \App\Controllers\BaseController
                 "lokalis2" => $selectlokalis2,
                 "organization" => $selectorganization,
                 "info" => $selectinfo,
-                "sign" => $sign
+                "sign" => $sign,
+
             ]);
         }
     }
@@ -3025,6 +3028,432 @@ class medis extends \App\Controllers\BaseController
                     'title' => $title,
                     "val" => [],
                     "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+
+    public function kopprint()
+    {
+        $db = db_connect();
+        $query = $db->query("select * from ORGANIZATIONUNIT");
+        $orgUnits = $this->lowerKey($query->getResultArray());
+
+        return $orgUnits;
+    }
+
+    public function medis_all_live($visit, $title = null)
+    {
+        if ($this->request->is('get')) {
+
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+            $kopprintData = $this->kopprint();
+            $specialist_type_id = $visit['specialist_type_id'];
+            // $specialist_type_id = "1.12"; //KULIT & KELAMIN
+            // $specialist_type_id = "1.16"; //Bedah saraf
+
+            $session_id = $visit['session_id'];
+            $visit_id = $visit['visit_id'];
+            $clinic_id = $visit['clinic_id'];
+
+            $clinic = $db->query("SELECT NAME_OF_CLINIC FROM CLINIC WHERE CLINIC_ID = ?", [$clinic_id])->getRowArray();
+
+            if ($clinic) {
+                $visit['nama_clinic'] = $clinic['NAME_OF_CLINIC'];
+            }
+
+            $title = isset($title) ? "Asesmen Medis Kulit Kelamin" : $title;
+
+            $title .= $visit['isrj'] == 0 ? " Rawat Inap" : " Rawat Jalan";
+
+            if ($specialist_type_id === "1.12") {
+                $select = $this->lowerKey($db->query("SELECT 
+                            pd.NO_REGISTRATION as no_RM,
+                            p.NAME_OF_PASIEN as nama,
+                            pd.PASIEN_DIAGNOSA_ID,
+                            pd.BODY_ID,
+                            CASE 
+                                WHEN p.gender = '1' THEN 'Laki-laki'
+                                ELSE 'Perempuan'
+                            END as jeniskel,
+                            p.CONTACT_ADDRESS as alamat,
+                            pd.DOCTOR as dpjp,
+                            c.name_of_clinic as departemen,
+                            class.NAME_OF_CLASS as kelas,
+                            cr.NAME_OF_CLASS as bangsal,
+                            pd.BED_ID as bed,
+                            pd.IN_DATE as tanggal_masuk,
+                            CONVERT(varchar, P.DATE_OF_BIRTH, 105) as date_of_birth,
+                            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR,
+                            ed.WEIGHT as berat,
+                            ed.HEIGHT as tinggi,
+                            ed.TENSION_UPPER as tensi_atas,
+                            ed.TENSION_BELOW as tensi_bawah,
+                            ed.TEMPERATURE as suhu,
+                            ed.RESPIRATION as nafas,
+                            ed.SATURASI as SPO2,
+                            ed.WEIGHT / (
+                                (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2))) * 
+                                (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2)))
+                            ) AS IMT,
+                            pd.DIAGNOSA_DESC as namadiagnosa,
+                            pd.ANAMNASE as anamnesis,
+                            pd.DESCRIPTION as riwayat_penyakit_sekarang,
+                            ad.sd_ins_location,
+                            ad.sd_ins_ukk,
+                            ad.sd_ins_distribution,
+                            ad.sd_ins_configuration,
+                            ad.sd_palpation,
+                            ad.sd_others,
+                            ad.sv_inspection,
+                            ad.sv_palpation,
+                        
+                            gcs.GCS_E,
+                            gcs.GCS_m,
+                            gcs.GCS_V, 
+                            gcs.GCS_SCORE as gcs,
+                            pd.HURT AS PENYEBAB_CIDERA,
+                            pd.MEDICAL_PROBLEM AS MASALAH_MEDIS,
+                            pd.DIAGNOSA_ID AS icd10,
+                            pd.THERAPY_TARGET AS SASARAN,
+                            pd.LAB_RESULT AS LABORATORIUM,
+                            pd.RO_RESULT AS RADIOLOGI,  
+                            pd.TERAPHY_DESC AS FARMAKOLOGIA,
+                            pd.INSTRUCTION AS PROSEDUR,
+                            pd.STANDING_ORDER AS STANDING_ORDER,
+                            pd.rencanatl as rencana_tl,
+                            -- Agregasi skala nyeri
+                            STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS skala_nyeri
+                        FROM 
+                            pasien_diagnosa pd
+                        LEFT JOIN 
+                            clinic c ON pd.clinic_id = c.clinic_id
+                        LEFT JOIN 
+                            CLASS_ROOM cr ON cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+                        LEFT JOIN 
+                            class ON class.CLASS_ID = cr.CLASS_ID
+                        LEFT JOIN 
+                            EXAMINATION_INFO ei ON ei.BODY_ID = pd.BODY_ID
+                        LEFT JOIN 
+                            EXAMINATION_DETAIL ed ON ed.BODY_ID = ei.BODY_ID
+                        LEFT JOIN 
+                            PASIEN p ON pd.NO_REGISTRATION = p.NO_REGISTRATION
+
+                            ------------
+                        LEFT JOIN 
+                            ASSESSMENT_DERMATOVENEROLOGI ad ON ad.document_id = '$session_id' AND ad.VISIT_ID = pd.VISIT_ID 
+                            AND ad.EXAMINATION_DATE = (
+                                SELECT MAX(EXAMINATION_DATE) 
+                                FROM ASSESSMENT_DERMATOVENEROLOGI 
+                                WHERE DOCUMENT_ID = '$session_id' 
+                                AND VISIT_ID = pd.VISIT_ID
+                            )
+                        LEFT JOIN 
+                            ASSESSMENT_GCS gcs on gcs.DOCUMENT_ID = pd.BODY_ID AND gcs.EXAMINATION_DATE = (
+                                SELECT MAX(EXAMINATION_DATE) 
+                                FROM ASSESSMENT_GCS 
+                                WHERE DOCUMENT_ID = pd.BODY_ID 
+                            )
+                        LEFT JOIN 
+                            ASSESSMENT_PAIN_MONITORING apm ON apm.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
+                        LEFT JOIN 
+                            ASSESSMENT_PAIN_DETAIL apd ON apd.BODY_ID = apm.BODY_ID
+
+                        WHERE 
+                            -- pd.PASIEN_DIAGNOSA_ID = '$session_id'
+                            -- AND 
+                            pd.VISIT_ID = '$visit_id'
+                        GROUP BY 
+                            pd.PASIEN_DIAGNOSA_ID, 
+                            pd.BODY_ID, 
+                            pd.NO_REGISTRATION, 
+                            p.NAME_OF_PASIEN, 
+                            CASE WHEN p.gender = '1' THEN 'Laki-laki' ELSE 'Perempuan' END, 
+                            p.CONTACT_ADDRESS, 
+                            pd.DOCTOR, 
+                            c.name_of_clinic, 
+                            class.NAME_OF_CLASS,  
+                            cr.NAME_OF_CLASS,  
+                            pd.BED_ID,  
+                            pd.IN_DATE, 
+                            ed.WEIGHT, 
+                            ed.HEIGHT, 
+                            ed.TENSION_UPPER, 
+                            ed.TENSION_BELOW, 
+                            ed.RESPIRATION, 
+                            ed.SATURASI, 
+                            ed.TEMPERATURE, 
+                            CONVERT(varchar, P.DATE_OF_BIRTH, 105), 
+                            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR', 
+                            pd.DIAGNOSA_DESC, 
+                            pd.ANAMNASE, 
+                            pd.DESCRIPTION,
+                            ad.sd_ins_location,
+                            ad.sd_ins_ukk,
+                            ad.sd_ins_distribution,
+                            ad.sd_ins_configuration,
+                            ad.sd_palpation,
+                            ad.sd_others,
+                            ad.sv_inspection,
+                            ad.sv_palpation,
+                            gcs.GCS_E,
+                            gcs.GCS_m,
+                            gcs.GCS_V, 
+                            gcs.GCS_SCORE, 
+                            pd.HURT,
+                            pd.MEDICAL_PROBLEM,
+                            pd.DIAGNOSA_ID,
+                            pd.THERAPY_TARGET,
+                            pd.LAB_RESULT,
+                            pd.RO_RESULT,
+                            pd.TERAPHY_DESC,
+                            pd.INSTRUCTION,
+                            pd.STANDING_ORDER,
+                            pd.rencanatl
+                        ")->getResultArray());
+
+                $select = !empty($select) ? $select[0] : [];
+            } else if ($specialist_type_id === "1.16") {
+                $select = $this->lowerKey($db->query("SELECT 
+                                            pd.NO_REGISTRATION as no_RM,
+                                            p.NAME_OF_PASIEN as nama,
+                                            pd.PASIEN_DIAGNOSA_ID,
+                                            pd.BODY_ID,
+                                            CASE 
+                                                WHEN p.gender = '1' THEN 'Laki-laki'
+                                                ELSE 'Perempuan'
+                                            END as jeniskel,
+                                            p.CONTACT_ADDRESS as alamat,
+                                            pd.DOCTOR as dpjp,
+                                            c.name_of_clinic as departemen,
+                                            class.NAME_OF_CLASS as kelas,
+                                            cr.NAME_OF_CLASS as bangsal,
+                                            pd.BED_ID as bed,
+                                            pd.IN_DATE as tanggal_masuk,
+                                            CONVERT(varchar, P.DATE_OF_BIRTH, 105) as date_of_birth,
+                                            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR' AS UMUR,
+                                            ed.WEIGHT as berat,
+                                            ed.HEIGHT as tinggi,
+                                            ed.TENSION_UPPER as tensi_atas,
+                                            ed.TENSION_BELOW as tensi_bawah,
+                                            ed.TEMPERATURE as suhu,
+                                            ed.RESPIRATION as nafas,
+                                            ed.SATURASI as SPO2,
+                                            ed.WEIGHT / (
+                                                (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2))) * 
+                                                (CAST(ed.HEIGHT AS DECIMAL(5, 2)) / CAST(100 AS DECIMAL(5, 2)))
+                                            ) AS IMT,
+                                            pd.DIAGNOSA_DESC as namadiagnosa,
+                                            pd.ANAMNASE as anamnesis,
+                                            pd.DESCRIPTION as riwayat_penyakit_sekarang,
+                                            an.document_id,
+                                            an.no_registration as no_reg_neuro,
+                                            an.examination_date,
+                                            an.vas_nrs,
+                                            an.left_diameter,
+                                            an.left_light_reflex,
+                                            an.left_cornea,
+                                            an.left_isokor_anisokor,
+                                            an.right_diameter,
+                                            an.right_light_reflex,
+                                            an.right_cornea,
+                                            an.right_isokor_anisokor,
+                                            an.stiff_neck,
+                                            an.meningeal_sign,
+                                            an.brudzinki_i_iv,
+                                            an.kernig_sign,
+                                            an.dolls_eye_phenomenon,
+                                            an.vertebra,
+                                            an.extremity,
+                                            an.motion_upper_left,
+                                            an.motion_upper_right,
+                                            an.motion_lower_left,
+                                            an.motion_lower_right,
+                                            an.strength_upper_left,
+                                            an.strength_upper_right,
+                                            an.strength_lower_left,
+                                            an.strength_lower_right,
+                                            an.physiological_reflex_upper_left,
+                                            an.physiological_reflex_upper_right,
+                                            an.physiological_reflex_lower_left,
+                                            an.physiological_reflex_lower_right,
+                                            an.pathologycal_reflex_upper_left,
+                                            an.pathologycal_reflex_upper_right,
+                                            an.pathologycal_reflex_lower_left,
+                                            an.pathologycal_reflex_lower_right,
+                                            an.clonus,
+                                            an.sensibility,
+                                            gcs.GCS_E,
+                                            gcs.GCS_m,
+                                            gcs.GCS_V, 
+                                            gcs.GCS_SCORE as gcs,
+                                            pd.HURT AS PENYEBAB_CIDERA,
+                                            pd.MEDICAL_PROBLEM AS MASALAH_MEDIS,
+                                            pd.DIAGNOSA_ID AS icd10,
+                                            pd.THERAPY_TARGET AS SASARAN,
+                                            pd.LAB_RESULT AS LABORATORIUM,
+                                            pd.RO_RESULT AS RADIOLOGI,  
+                                            pd.TERAPHY_DESC AS FARMAKOLOGIA,
+                                            pd.INSTRUCTION AS PROSEDUR,
+                                            pd.STANDING_ORDER AS STANDING_ORDER,
+                                            pd.rencanatl as rencana_tl,
+                                            -- Agregasi skala nyeri
+                                            STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS skala_nyeri
+                                        FROM 
+                                            pasien_diagnosa pd
+                                        LEFT JOIN 
+                                            clinic c ON pd.clinic_id = c.clinic_id
+                                        LEFT JOIN 
+                                            CLASS_ROOM cr ON cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
+                                        LEFT JOIN 
+                                            class ON class.CLASS_ID = cr.CLASS_ID
+                                        LEFT JOIN 
+                                            EXAMINATION_INFO ei ON ei.BODY_ID = pd.BODY_ID
+                                        LEFT JOIN 
+                                            EXAMINATION_DETAIL ed ON ed.BODY_ID = ei.BODY_ID
+                                        LEFT JOIN 
+                                            PASIEN p ON pd.NO_REGISTRATION = p.NO_REGISTRATION
+                                        LEFT JOIN 
+                                            ASSESSMENT_NEUROLOGY an ON an.document_id = '$session_id' AND an.VISIT_ID = pd.VISIT_ID 
+                                            AND an.EXAMINATION_DATE = (
+                                                SELECT MAX(EXAMINATION_DATE) 
+                                                FROM ASSESSMENT_NEUROLOGY 
+                                                WHERE DOCUMENT_ID = '$session_id' 
+                                                AND VISIT_ID = pd.VISIT_ID
+                                            )
+                                        LEFT JOIN 
+                                            ASSESSMENT_GCS gcs on gcs.DOCUMENT_ID = pd.BODY_ID AND gcs.EXAMINATION_DATE = (
+                                                SELECT MAX(EXAMINATION_DATE) 
+                                                FROM ASSESSMENT_GCS 
+                                                WHERE DOCUMENT_ID = pd.BODY_ID 
+                                            )
+                                        LEFT JOIN 
+                                            ASSESSMENT_PAIN_MONITORING apm ON apm.DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID
+                                        LEFT JOIN 
+                                            ASSESSMENT_PAIN_DETAIL apd ON apd.BODY_ID = apm.BODY_ID
+                                    
+                                        WHERE 
+                                            -- pd.PASIEN_DIAGNOSA_ID = '$session_id'
+                                            -- AND 
+                                            pd.VISIT_ID = '$visit_id'
+                                        GROUP BY 
+                                            pd.PASIEN_DIAGNOSA_ID, 
+                                            pd.BODY_ID, 
+                                            pd.NO_REGISTRATION, 
+                                            p.NAME_OF_PASIEN, 
+                                            CASE WHEN p.gender = '1' THEN 'Laki-laki' ELSE 'Perempuan' END, 
+                                            p.CONTACT_ADDRESS, 
+                                            pd.DOCTOR, 
+                                            c.name_of_clinic, 
+                                            class.NAME_OF_CLASS,  
+                                            cr.NAME_OF_CLASS,  
+                                            pd.BED_ID,  
+                                            pd.IN_DATE, 
+                                            ed.WEIGHT, 
+                                            ed.HEIGHT, 
+                                            ed.TENSION_UPPER, 
+                                            ed.TENSION_BELOW, 
+                                            ed.RESPIRATION, 
+                                            ed.SATURASI, 
+                                            ed.TEMPERATURE, 
+                                            CONVERT(varchar, P.DATE_OF_BIRTH, 105), 
+                                            CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR', 
+                                            pd.DIAGNOSA_DESC, 
+                                            pd.ANAMNASE, 
+                                            pd.DESCRIPTION,
+                                            an.document_id,
+                                            an.no_registration,
+                                            an.examination_date,
+                                            an.vas_nrs,
+                                            an.left_diameter,
+                                            an.left_light_reflex,
+                                            an.left_cornea,
+                                            an.left_isokor_anisokor,
+                                            an.right_diameter,
+                                            an.right_light_reflex,
+                                            an.right_cornea,
+                                            an.right_isokor_anisokor,
+                                            an.stiff_neck,
+                                            an.meningeal_sign,
+                                            an.brudzinki_i_iv,
+                                            an.kernig_sign,
+                                            an.dolls_eye_phenomenon,
+                                            an.vertebra,
+                                            an.extremity,
+                                            an.motion_upper_left,
+                                            an.motion_upper_right,
+                                            an.motion_lower_left,
+                                            an.motion_lower_right,
+                                            an.strength_upper_left,
+                                            an.strength_upper_right,
+                                            an.strength_lower_left,
+                                            an.strength_lower_right,
+                                            an.physiological_reflex_upper_left,
+                                            an.physiological_reflex_upper_right,
+                                            an.physiological_reflex_lower_left,
+                                            an.physiological_reflex_lower_right,
+                                            an.pathologycal_reflex_upper_left,
+                                            an.pathologycal_reflex_upper_right,
+                                            an.pathologycal_reflex_lower_left,
+                                            an.pathologycal_reflex_lower_right,
+                                            an.clonus,
+                                            an.sensibility,
+                                            gcs.GCS_E,
+                                            gcs.GCS_m,
+                                            gcs.GCS_V, 
+                                            gcs.GCS_SCORE, 
+                                            pd.HURT,
+                                            pd.MEDICAL_PROBLEM,
+                                            pd.DIAGNOSA_ID,
+                                            pd.THERAPY_TARGET,
+                                            pd.LAB_RESULT,
+                                            pd.RO_RESULT,
+                                            pd.TERAPHY_DESC,
+                                            pd.INSTRUCTION,
+                                            pd.STANDING_ORDER,
+                                            pd.rencanatl
+                            ")->getResultArray());
+
+                $select = !empty($select) ? $select[0] : [];
+            }
+
+            $ass_fall = $db->query("SELECT 
+                                    STRING_AGG(CONCAT('Skor : ', apd.VALUE_SCORE, ' | ', apd.VALUE_DESC), '<br>') AS fall_risk_detail
+                                FROM pasien_diagnosa pd
+                                LEFT JOIN ASSESSMENT_FALL_RISK_DETAIL apd 
+                                    ON apd.BODY_ID = (
+                                        SELECT TOP 1 BODY_ID 
+                                        FROM ASSESSMENT_FALL_RISK 
+                                        WHERE DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID 
+                                        ORDER BY EXAMINATION_DATE DESC
+                                    )
+                                WHERE 
+                                -- pd.PASIEN_DIAGNOSA_ID = ?
+                                -- AND 
+                                pd.VISIT_ID = ?
+                                GROUP BY pd.PASIEN_DIAGNOSA_ID;
+                            ", [$session_id, $visit_id])->getRowArray();
+
+            if ($ass_fall) {
+                $select['fall_risk_detail'] = $ass_fall['fall_risk_detail'];
+            }
+
+            if (isset($select)) {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-all-live", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    'kop' => $kopprintData[0],
+                    'sepcialis' => $specialist_type_id
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/MEDIS/medis-all-live", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    'kop' => $kopprintData[0],
+                    'sepcialis' => $specialist_type_id
                 ]);
             }
         }

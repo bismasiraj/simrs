@@ -86,12 +86,12 @@ $permission = user()->getPermissions();
                                                 Pembedahan</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#anesthesi-lengkap" data-bs-toggle="tab">Catatan
-                                                Anestesi dan Sedasi</a>
-                                        </li>
-                                        <li class="nav-item">
                                             <a class="nav-link" href="#laporan-anesthesi" data-bs-toggle="tab">Asesmen Pra
                                                 Anestesi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#anesthesi-lengkap" data-bs-toggle="tab">Catatan
+                                                Anestesi dan Sedasi</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#informasi-post-operasi" data-bs-toggle="tab">Instruksi Post Operasi</a>

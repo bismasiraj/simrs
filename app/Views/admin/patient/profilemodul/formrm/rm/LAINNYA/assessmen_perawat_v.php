@@ -5,8 +5,6 @@
 $selectedStatus = isset($_POST['selected-status']) ? $_POST['selected-status'] : '';
 $selectedStatusFilter = isset($_POST['selected-status-filter']) ? $_POST['selected-status-filter'] : $data[0]['clinic'];
 
-// var_dump($data[0]);
-
 $validTriage = ["P012",];
 $validAnamnesa = ["P012","all"];
 $vitailsign = ["P012",'all'];
@@ -29,7 +27,7 @@ $perkemihan= ['all'];
 $sex= ['all'];
 $tht= ['all'];
 $sleep= ['all'];
-
+$dekubit=['all'];
 
 
 $triageShow =in_array($selectedStatusFilter, $validTriage);
@@ -55,19 +53,8 @@ $perkemihanShow = in_array($selectedStatusFilter, $perkemihan);
 $seksualShow = in_array($selectedStatusFilter, $sex);
 $thtneyeShow = in_array($selectedStatusFilter, $tht);
 $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
+$dekubitusShow= in_array($selectedStatusFilter, $dekubit);
 
-
-
-
-
-
-
-
-
-
-
-
-// var_dump($data[0]);
 ?>
 
 <head>
@@ -176,15 +163,13 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
     </div>
 </form>
 
-
-
 <body>
     <div id="data-container">
         <?php foreach ($data as $index => $item): ?>
         <?php
                 $kelompok_umur_up = false;  
 
-                if (!empty($item['data']['date_of_birth']) && !empty($item['data']['create_date'])) {
+                if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
                     $dateOfBirth = strtotime($item['data']['date_of_birth']);
                     $createDate = strtotime($item['data']['create_date']);
 
@@ -194,15 +179,33 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                         if (date('md', $createDate) < date('md', $dateOfBirth)) {
                             $age--;
                         }
-
-                        $kelompok_umur_up = true;
+                        if ($age >= 18) {
+                            $kelompok_umur_up = true;
+                        }
                     }
                 }
+                $kelompok_umur_down = false;  
+
+                if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
+                    $dateOfBirth = strtotime($item['data']['date_of_birth']);
+                    $createDate = strtotime($item['data']['create_date']);
+
+                    if ($dateOfBirth && $createDate) {
+                        $age = date('Y', $createDate) - date('Y', $dateOfBirth);
+
+                        if (date('md', $createDate) < date('md', $dateOfBirth)) {
+                            $age--;
+                        }
+                        if ($age < 18) {
+                            $kelompok_umur_down = true;
+                        }
+                    }
+                }
+
                 $isrjResult = false;
 
-                if (empty($item['isrjResult']) && $item['clinic'] !== "P012") {
+                if (empty(@$item['isrjResult']) && @$item['clinic'] !== "P012") {
                     $isrjValue = $item['isrjResult'];
-                
                     if ($isrjValue === 0 || $isrjValue === "0") {
                         $isrjResult = true;
                     }
@@ -219,11 +222,6 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                             $isrjResult1 = true;
                         }
                     }
-
-                var_dump($isrjResult1);
-
-
-               
             ?>
 
         <div class="container-fluid mt-5" id="body-show-<?= $index ?>">
@@ -311,15 +309,13 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                     </tr>
                 </tbody>
             </table>
-
+            <?php if (!empty(@$item['data'])): ?>
             <div class="triage" id="triageShow" style="display: <?php echo $triageShow ? '' : 'none'; ?>;">
                 <div class="row">
                     <h4 class="text-start">Triage</h4>
                 </div>
                 <?=
                    @$item['data']['triage_desc'];
-
-                    
                 ?>
             </div>
 
@@ -329,7 +325,6 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                 </div>
                 <?=
                      @$item['data']['anamnesa_desc'];
-                    
                 ?>
             </div>
 
@@ -380,10 +375,8 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                 ?>
             </div>
 
-
-
-            <div class="pernapasan" id="pernapasanShow"
-                style="display: <?= $pernapasanShow && $kelompok_umur_up & $isrjResult1 ? 'block' : 'none'; ?>;">
+            <div class="pernapasan" id="pernapasanShow" style="display: <?= 
+                $pernapasanShow && $kelompok_umur_up && $isrjResult1 ? 'block' : 'none'; ?>;">
                 <div class="row">
                     <h5 class="text-start">Pernapasan</h5>
                 </div>
@@ -523,8 +516,6 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                 </div>
                 <?=
                    @$item['data']['pediatric_desc'];
-
-                   
                 ?>
             </div>
 
@@ -534,11 +525,11 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                     <h5 class="text-start">Tidur Dan Istirahat</h5>
                 </div>
                 <?= @$item['data']['rest_sleep_desc'];
-
                 ?>
             </div>
 
-            <div class="dekubitus" id="dekubitusShow" style="display:none">
+            <div class="dekubitus" id="dekubitusShow"
+                style="display:<?=$dekubitusShow && $kelompok_umur_down && $isrjResult1 ? 'block' : 'none'?>">
                 <div class="row">
                     <h5 class="text-start">Dekubitus</h5>
                 </div>
@@ -611,8 +602,7 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
                     </tr>
                 </table>
             </div>
-
-
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
     </div>
@@ -628,14 +618,32 @@ $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
 const defaultStatus = <?= json_encode($visit['isrj']) ?>;
 const visit = '<?= $visit1 ?>';
 
-
-
 $(document).ready(function() {
     let statusVisibility = {
-        vitailShow: "",
+        triageShow: <?php echo json_encode($validTriage); ?>,
+        anamnesaShow: <?php echo json_encode($validAnamnesa); ?>,
+        vitailsignShow: <?php echo json_encode($vitailsign); ?>,
+        pernapasanShow: <?php echo json_encode($pernapasan); ?>,
+        assSirkulasiShow: <?php echo json_encode($assSirkulasi); ?>,
+        assNeurosensorisShow: <?php echo json_encode($assNeurosen); ?>,
+        integumenShow: <?php echo json_encode($assNeurosen); ?>,
+        skalanyeriShow: <?php echo json_encode($skalanyeri); ?>,
+        SkriningGiziShow: <?php echo json_encode($gizi); ?>,
+        diagkeperawatanShow: <?php echo json_encode($diagPerawat); ?>,
 
+        // Ass New
+        historynlifestyleShow: <?php echo json_encode($lifestyle); ?>,
+        psikologisShow: <?php echo json_encode($psikologis); ?>,
+        sosialEkonomiShow: <?php echo json_encode($sosialEkonomi); ?>,
+        childSpecialShow: <?php echo json_encode($childSpecial); ?>,
+        aktivitasShow: <?php echo json_encode($aktivitas); ?>,
+        pencernaanShow: <?php echo json_encode($pencernaan); ?>,
+        perkemihanShow: <?php echo json_encode($perkemihan); ?>,
+        seksualShow: <?php echo json_encode($sex); ?>,
+        thtneyeShow: <?php echo json_encode($tht); ?>,
+        sleepnChillShow: <?php echo json_encode($sleep); ?>,
+        dekubitusShow: <?php echo json_encode($dekubit); ?>
     };
-
 
     if (defaultStatus !== null) {
         $('#selected-status').val(defaultStatus);
@@ -688,6 +696,68 @@ $(document).ready(function() {
         $('#data-container').empty();
 
         data.map((e, index) => {
+            let kelompok_umur_up = false;
+
+            if (e.data?.date_of_birth && e.data?.create_date) {
+                const dateOfBirth = new Date(e.data.date_of_birth);
+                const createDate = new Date(e.data.create_date);
+
+                if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
+                    let age = createDate.getFullYear() - dateOfBirth.getFullYear();
+
+                    if (
+                        createDate.getMonth() < dateOfBirth.getMonth() ||
+                        (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
+                            dateOfBirth.getDate())
+                    ) {
+                        age--;
+                    }
+                    if (age >= 18) {
+                        kelompok_umur_up = true;
+                    }
+                }
+            }
+
+            let kelompok_umur_down = false;
+
+            if (e.data?.date_of_birth && e.data?.create_date) {
+                const dateOfBirth = new Date(e.data.date_of_birth);
+                const createDate = new Date(e.data.create_date);
+                if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
+                    let age = createDate.getFullYear() - dateOfBirth.getFullYear();
+
+                    if (
+                        createDate.getMonth() < dateOfBirth.getMonth() ||
+                        (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
+                            dateOfBirth.getDate())
+                    ) {
+                        age--;
+                    }
+                    if (age < 18) {
+                        kelompok_umur_down = true;
+                    }
+                }
+            }
+            let isrjResult = false;
+
+            if (e.isrjResult && e.clinic !== "P012") {
+                const isrjValue = e.isrjResult;
+                if (isrjValue === 0 || isrjValue === "0") {
+                    isrjResult = true;
+                }
+            }
+
+            let isrjResult1 = false;
+
+            if (e.isrjResult) {
+                const isrjValue1 = e.isrjResult;
+                if (e.clinic === "P012") {
+                    isrjResult1 = true;
+                } else if (isrjValue1 === 0 || isrjValue1 === "0") {
+                    isrjResult1 = true;
+                }
+            }
+
             const rows = e?.data?.pemeriksaan_mata?.split('</tr>').filter(row => row.trim() !== '');
             let leftTableHtml = '';
             let rightTableHtml = '';
@@ -700,335 +770,382 @@ $(document).ready(function() {
                 }
             });
 
+            let condition = {
+                triageShow: statusVisibility.triageShow.includes(e.clinic) ? '' : 'hidden',
+                anamnesaShow: statusVisibility.anamnesaShow.includes(e.clinic) ? '' : 'hidden',
+                vitailsignShow: statusVisibility.vitailsignShow.includes(e.clinic) ? '' :
+                    'hidden',
+                pernapasanShow: statusVisibility.pernapasanShow.includes(e.clinic) &&
+                    kelompok_umur_up && isrjResult1 ? '' : 'hidden',
+                assSirkulasiShow: statusVisibility.assSirkulasiShow.includes(e.clinic) &&
+                    isrjResult1 ? '' : 'hidden',
+                assNeurosensorisShow: statusVisibility.assNeurosensorisShow.includes(e
+                    .clinic) && isrjResult1 ? '' : 'hidden',
+                integumenShow: statusVisibility.integumenShow.includes(e.clinic) ? '' :
+                    'hidden',
+                skalanyeriShow: statusVisibility.skalanyeriShow.includes(e.clinic) ? '' :
+                    'hidden',
+                SkriningGiziShow: statusVisibility.SkriningGiziShow.includes(e.clinic) ?
+                    '' : 'hidden',
+                diagkeperawatanShow: statusVisibility.diagkeperawatanShow.includes(e.clinic) ?
+                    '' : 'hidden',
+
+                // Ass New
+                historynlifestyleShow: statusVisibility.historynlifestyleShow.includes(e
+                    .clinic) ? '' : 'hidden',
+                psikologisShow: statusVisibility.psikologisShow.includes(e.clinic) ? '' :
+                    'hidden',
+                sosialEkonomiShow: statusVisibility.sosialEkonomiShow.includes(e.clinic) ?
+                    '' : 'hidden',
+                childSpecialShow: statusVisibility.childSpecialShow.includes(e.clinic) ?
+                    '' : 'hidden',
+                aktivitasShow: statusVisibility.aktivitasShow.includes(e.clinic) && isrjResult ?
+                    '' : 'hidden',
+                pencernaanShow: statusVisibility.pencernaanShow.includes(e.clinic) &&
+                    isrjResult ? '' : 'hidden',
+                perkemihanShow: statusVisibility.perkemihanShow.includes(e.clinic) &&
+                    isrjResult ? '' : 'hidden',
+                seksualShow: statusVisibility.seksualShow.includes(e.clinic) && isrjResult ?
+                    '' : 'hidden',
+                thtneyeShow: statusVisibility.thtneyeShow.includes(e.clinic) && isrjResult ?
+                    '' : 'hidden',
+                sleepnChillShow: statusVisibility.sleepnChillShow.includes(e.clinic) &&
+                    isrjResult ? '' : 'hidden',
+                dekubitusShow: statusVisibility.dekubitusShow.includes(e.clinic) &&
+                    kelompok_umur_down && isrjResult1 ? '' : 'hidden'
+            };
+
 
             const htmlView = `<div class="container-fluid mt-5" id="body-show-<?= $index ?>">
-            <div class="row">
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                </div>
-                <div class="col mt-2" align="center">
-                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
-                    <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
-                        <?= @$kop['fax'] ?? "-"?>,
-                        <?= @$kop['kota'] ?? "-"?></p>
-                    <p><?= @$kop['sk'] ?? "-"?></p>
-                </div>
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-                </div>
-            </div>
+                                    <div class="row">
+                                        <div class="col-auto" align="center">
+                                            <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
+                                        </div>
+                                        <div class="col mt-2" align="center">
+                                            <h3><?= @$kop['name_of_org_unit'] ?></h3>
+                                            <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
+                                                <?= @$kop['fax'] ?? "-"?>,
+                                                <?= @$kop['kota'] ?? "-"?></p>
+                                            <p><?= @$kop['sk'] ?? "-"?></p>
+                                        </div>
+                                        <div class="col-auto" align="center">
+                                            <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <h3 class="text-center content-title" id="content-title">${e?.title}</h3>
+                                    </div>
+                                    <div class="row">
+                                        <h5 class="text-start">Informasi Pasien</h5>
+                                    </div>
+
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="p-1" style="width:33.3%">
+                                                    <b>Nomor RM</b>
+                                                    <p id="no_registration" class="m-0 mt-1 p-0">
+                                                        <?= isset($visit['no_registration']) && $visit['no_registration'] ? $visit['no_registration'] : '-' ?>
+                                                    </p>
+                                                </td>
+                                                <td class="p-1" style="width:33.3%">
+                                                    <b>Nama Pasien</b>
+                                                    <p id="name_of_pasien" class="m-0 mt-1 p-0">
+                                                        <?= isset($visit['name_of_pasien']) && $visit['name_of_pasien'] ? $visit['name_of_pasien'] : '-' ?>
+                                                    </p>
+                                                </td>
+                                                <td class="p-1" style="width:33.3%">
+                                                    <b>Jenis Kelamin</b>
+                                                    <p id="gendername" class="m-0 mt-1 p-0 ">
+                                                        <?= isset($visit['gendername']) && $visit['gendername'] ? $visit['gendername'] : '-' ?>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-1" style="width:33.3%">
+                                                    <b>Tanggal Lahir (Usia)</b>
+                                                    <p class="m-0 mt-1 p-0 ">
+                                                    ${e.data?.date_of_birth ? moment(e.data?.date_of_birth).format("DD/MM/YYYY"): "-"}
+                                                    </p>
+                                                </td>
+                                                <td class="p-1" style="width:66.3%" colspan="2">
+                                                    <b>Alamat Pasien</b>
+                                                    <p class="m-0 mt-1 p-0">
+                                                    ${e.data?.contact_address ?? "-"}
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-1">
+                                                    <b>DPJP</b>
+                                                    <p class="m-0 mt-1 p-0">
+                                                        ${e.data?.doctor ?? "-"}
+                                                    </p>
+                                                </td>
+                                                <td class="p-1">
+                                                    <b>Department</b>
+                                                    <p class="m-0 mt-1 p-0">
+                                                        ${e.data?.doctor ?? "-"}
+                                                    </p>
+                                                </td>
+                                                <td class="p-1">
+                                                    <b>Tanggal Masuk</b>
+                                                    <p class="m-0 mt-1 p-0 ">
+                                                        ${e.data?.create_date ? moment(e.data?.create_date).format("DD/MM/YYYY"): "-"}
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    ${e.data.length === 0?"":`<div class="triage" id="triageShow" ${condition.triageShow }>
+                                        <div class="row">
+                                            <h4 class="text-start">Triage</h4>
+                                        </div>
+                                        ${e.data?.triage_desc ? e.data.triage_desc  : ""}
+                                    </div>
+
+                                    
+                                <div class="anamnesa" id="anamnesaShow" ${condition.anamnesaShow}>
+                                        <div class="row">
+                                            <h4 class="text-start">Anamnesa</h4>
+                                        </div>
+                                        ${e.data?.anamnesa_desc ? e.data.anamnesa_desc : ""}
+                                    </div>
+
+                                <div class="historynlifestyle" id="historynlifestyleShow"  ${condition.historynlifestyleShow}>
+                                        <div class="row">
+                                            <h4 class="text-start">Riwayat & Gaya Hidup</h4>
+                                        </div>
+                                        ${e.data?.lifestyle_desc ? (
+                                            e.data?.lifestyle_desc?.includes('<table') ? e.data?.lifestyle_desc + '</table>' : e.data?.lifestyle_desc
+                                        ) : ""}
+                                    </div>
 
 
-            <div class="row">
-                <h3 class="text-center content-title" id="content-title">${e?.title}</h3>
-            </div>
-            <div class="row">
-                <h5 class="text-start">Informasi Pasien</h5>
-            </div>
+                                    <div class="vitailsign" id="vitailsignShow"  ${condition.vitailsignShow }>
+                                        ${e.data?.vital_sign_desc ? ((e.data.vital_sign_desc))  : ""}
+                                    </div>
 
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Nomor RM</b>
-                            <p id="no_registration" class="m-0 mt-1 p-0">
-                                <?= isset($visit['no_registration']) && $visit['no_registration'] ? $visit['no_registration'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Nama Pasien</b>
-                            <p id="name_of_pasien" class="m-0 mt-1 p-0">
-                                <?= isset($visit['name_of_pasien']) && $visit['name_of_pasien'] ? $visit['name_of_pasien'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Jenis Kelamin</b>
-                            <p id="gendername" class="m-0 mt-1 p-0 ">
-                                <?= isset($visit['gendername']) && $visit['gendername'] ? $visit['gendername'] : '-' ?>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Tanggal Lahir (Usia)</b>
-                            <p class="m-0 mt-1 p-0 ">
-                            ${e.data?.date_of_birth ? moment(e.data?.date_of_birth).format("DD/MM/YYYY"): "-"}
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:66.3%" colspan="2">
-                            <b>Alamat Pasien</b>
-                            <p class="m-0 mt-1 p-0">
-                            ${e.data?.contact_address ?? "-"}
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1">
-                            <b>DPJP</b>
-                            <p class="m-0 mt-1 p-0">
-                                ${e.data?.doctor ?? "-"}
-                            </p>
-                        </td>
-                        <td class="p-1">
-                            <b>Department</b>
-                            <p class="m-0 mt-1 p-0">
-                                ${e.data?.doctor ?? "-"}
-                            </p>
-                        </td>
-                        <td class="p-1">
-                            <b>Tanggal Masuk</b>
-                            <p class="m-0 mt-1 p-0 ">
-                                  ${e.data?.create_date ? moment(e.data?.create_date).format("DD/MM/YYYY"): "-"}
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        ${e?.data.length === 0 ? '' : `<div class="triage" id="triageShow">
-                <div class="row">
-                    <h4 class="text-start">Triage</h4>
-                </div>
-                   ${e.data?.triage_desc ? ((e.data.triage_desc))  : ""}
-            </div>
+                                    <div class="aktivitas" id="aktivitasShow"  ${statusVisibility.aktivitasShow.includes(e.clinic) && isrjResult ? '' : 'none' }>
+                                        <div class="row">
+                                            <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                                        </div>
+                                        ${e.data?.adl_desc ? ((e.data.adl_desc))  : ""}
+                                    </div>
 
-            <div class="anamnesa" id="anamnesaShow">
-                <div class="row">
-                    <h4 class="text-start">Anamnesa</h4>
-                </div>
-                   ${e.data?.anamnesa_desc ? ((e.data.anamnesa_desc))  : ""}
-            </div>
+                                    <div class="psikologis" id="psikologisShow"  ${condition.psikologisShow }>
+                                        <div class="row">
+                                            <h5 class="text-start">Psikologis Spiritual</h5>
+                                        </div>
+                                        ${e.data?.psychology_desc ? ((e.data.psychology_desc))  : ""}
+                                    </div>
+                                    
 
-            <div class="historynlifestyle" id="historynlifestyleShow">
-                <div class="row">
-                    <h4 class="text-start">Riwayat & Gaya Hidup</h4>
-                </div>
-                   ${e.data?.lifestyle_desc ? ((e.data.lifestyle_desc))  : ""}
-            </div>
+                                    <div class="sosialEkonomi" id="sosialEkonomiShow"  ${condition.sosialEkonomiShow }>
+                                        <div class="row">
+                                            <h5 class="text-start">Sosial Ekonomi</h5>
+                                        </div>
+                                        ${e.data?.sosec_desc ? ((e.data.sosec_desc))  : ""}
+                                    </div>
 
-            <div class="vitailsign" id="vitailsignShow">
-                   ${e.data?.vital_sign_desc ? ((e.data.vital_sign_desc))  : ""}
-            </div>
+                                    <div class="pernapasan" id="pernapasanShow"  ${condition.pernapasanShow}>
+                                        <div class="row">
+                                            <h5 class="text-start">Pernapasan</h5>
+                                        </div>
+                                        ${e.data?.respiratory_desc ? ((e.data.respiratory_desc))  : ""}
+                                    </div>
 
-            <div class="skriningGizi" id="SkriningGiziShow">
-                <div class="row">
-                    <h5 class="text-start">Skrining Gizi</h5>
-                </div>
-                   ${e.data?.nutrition_desc ? ((e.data.nutrition_desc))  : ""}
-            </div>
+                                    <div class="assSirkulasi" id="assSirkulasiShow"  ${condition.assSirkulasiShow}>
+                                        <div class="row">
+                                            <h5 class="text-start">Asesmen Sirkulasi</h5>
+                                        </div>
+                                        ${e.data?.circulation_desc ? ((e.data.circulation_desc))  : ""}
+                                    </div>
 
-            <div class="skalaNyeri" id="skalanyeriShow">
-                <table class="table table-bordered" id="skalaShow">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="4" class="fst-italic fw-bold">Skala Nyeri</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="row">
-                                                    <span class="col-12">
-                                                     ${e.data?.numeric_score ? nl2br1(e.data?.numeric_score) : nl2br1(e.data?.wong_baker_score)}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="4" class="fst-italic fw-bold">Resiko Jatuh</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="row">
-                                                    <span class="col-12">
-                                                     ${!e.data?.fm_descriptions ? "-": nl2br1(e.data?.fm_descriptions) }
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                                    <div class="assNeurosensoris" id="assNeurosensorisShow"  ${condition.assNeurosensorisShow }>
+                                        <div class="row">
+                                            <h5 class="text-start">Asesmen Neurosensoris</h5>
+                                        </div>
+                                        ${e.data?.neurosensoris_desc ? ((e.data.neurosensoris_desc))  : ""}
+                                    </div>
 
-            <div class="aktivitas" id="aktivitasShow">
-                <div class="row">
-                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
-                </div>
-                   ${e.data?.adl_desc ? ((e.data.adl_desc))  : ""}
-            </div>
+                                    <div class="integumen" id="integumenShow"  ${condition.integumenShow }>
+                                        <div class="row">
+                                            <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
+                                        </div>
+                                        ${e.data?.integumen_desc ? ((e.data.integumen_desc))  : ""}
+                                    </div>
 
-            <div class="psikologis" id="psikologisShow">
-                <div class="row">
-                    <h5 class="text-start">Psikologis Spiritual</h5>
-                </div>
-                   ${e.data?.psychology_desc ? ((e.data.psychology_desc))  : ""}
-            </div>
+                                    <div class="pencernaan" id="pencernaanShow"  ${condition.pencernaanShow }>
+                                        <div class="row">
+                                            <h5 class="text-start">Pencernaan</h5>
+                                        </div>
+                                        ${e.data?.disgetive_desc ? ((e.data.disgetive_desc))  : ""}
+                                    </div>
 
-            <div class="sosialEkonomi" id="sosialEkonomiShow">
-                <div class="row">
-                    <h5 class="text-start">Sosial Ekonomi</h5>
-                </div>
-                   ${e.data?.sosec_desc ? ((e.data.sosec_desc))  : ""}
-            </div>
+                                    <div class="skalaNyeri" id="skalanyeriShow"  ${condition.skalanyeriShow }>
+                                        <table class="table table-bordered" id="skalaShow">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="4" class="fst-italic fw-bold">Skala Nyeri</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="row">
+                                                                            <span class="col-12">
+                                                                            ${e.data?.numeric_score ? nl2br1(e.data?.numeric_score ?? "-") : nl2br1(e.data?.wong_baker_score ?? "-")}
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="4" class="fst-italic fw-bold">Resiko Jatuh</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="row">
+                                                                            <span class="col-12">
+                                                                            ${!e.data?.fm_descriptions ? "-": nl2br1(e.data?.fm_descriptions) }
+                                                                            </span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-              <div class="assSirkulasi" id="assSirkulasiShow">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Sirkulasi</h5>
-                </div>
-                   ${e.data?.circulation_desc ? ((e.data.circulation_desc))  : ""}
-            </div>
+                                    <div class="skriningGizi" id="SkriningGiziShow"  ${condition.SkriningGiziShow  }>
+                                        <div class="row">
+                                            <h5 class="text-start">Skrining Gizi</h5>
+                                        </div>
+                                        ${e.data?.nutrition_desc ? ((e.data.nutrition_desc))  : ""}
+                                    </div>
 
-            <div class="assNeurosensoris" id="assNeurosensorisShow">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Neurosensoris</h5>
-                </div>
-                   ${e.data?.neurosensoris_desc ? ((e.data.neurosensoris_desc))  : ""}
-            </div>
+                                    <div class="perkemihan" id="perkemihanShow"  ${condition.perkemihanShow  }>
+                                        <div class="row">
+                                            <h5 class="text-start">Perkemihan</h5>
+                                        </div>
+                                        ${e.data?.urinaria_desc ? ((e.data.urinaria_desc))  : ""}
+                                    </div>
 
-              <div class="integumen" id="integumenShow">
-                <div class="row">
-                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
-                </div>
-                   ${e.data?.integumen_desc ? ((e.data.integumen_desc))  : ""}
-            </div>
+                                    <div class="seksual" id="seksualShow"  ${condition.seksualShow   }>
+                                        <div class="row">
+                                            <h5 class="text-start">Seksual/Reproduksi</h5>
+                                        </div>
+                                        ${e.data?.obsgyn_desc ? ((e.data.obsgyn_desc))  : ""}
+                                    </div>
 
-            <div class="pencernaan" id="pencernaanShow">
-                <div class="row">
-                    <h5 class="text-start">Pencernaan</h5>
-                </div>
-                   ${e.data?.disgetive_desc ? ((e.data.disgetive_desc))  : ""}
-            </div>
+                                    <div class="thtneye" id="thtneyeShow"  ${condition.thtneyeShow    }>
+                                        <div class="row">
+                                            <h5 class="text-start">THT & MATA</h5>
+                                        </div>
+                                        ${e.data?.matatht_desc ? ((e.data.matatht_desc))  : ""}
+                                    </div>
 
-            <div class="pernapasan" id="pernapasanShow">
-                <div class="row">
-                    <h5 class="text-start">Pernapasan</h5>
-                </div>
-                   ${e.data?.respiratory_desc ? ((e.data.respiratory_desc))  : ""}
-            </div>
+                                    <div class="childSpecial" id="childSpecialShow"  ${condition.childSpecialShow  }>
+                                        <div class="row">
+                                            <h5 class="text-start">Khusus Anak</h5>
+                                        </div>
+                                        ${e.data?.pediatric_desc ? ((e.data.pediatric_desc))  : ""}
+                                    </div>
 
-            <div class="perkemihan" id="perkemihanShow">
-                <div class="row">
-                    <h5 class="text-start">Perkemihan</h5>
-                </div>
-                   ${e.data?.urinaria_desc ? ((e.data.urinaria_desc))  : ""}
-            </div>
+                                    <div class="sleepnChill" id="sleepnChillShow"  ${condition.sleepnChillShow    }>
+                                        <div class="row">
+                                            <h5 class="text-start">Tidur Dan Istirahat</h5>
+                                        </div>
+                                        ${e.data?.rest_sleep_desc ? ((e.data.rest_sleep_desc))  : ""}
+                                    </div>
 
-            <div class="seksual" id="seksualShow">
-                <div class="row">
-                    <h5 class="text-start">Seksual/Reproduksi</h5>
-                </div>
-                   ${e.data?.obsgyn_desc ? ((e.data.obsgyn_desc))  : ""}
-            </div>
+                                <div class="dekubitus" id="dekubitusShow"  ${condition.dekubitusShow}>
 
-            <div class="thtneye" id="thtneyeShow">
-                <div class="row">
-                    <h5 class="text-start">THT & MATA</h5>
-                </div>
-                   ${e.data?.matatht_desc ? ((e.data.matatht_desc))  : ""}
-            </div>
+                                        <div class="row">
+                                            <h5 class="text-start">Dekubitus</h5>
+                                        </div>
+                                        ${e.data?.decubitus_desc ? ((e.data.decubitus_desc))  : ""}
+                                    </div>
 
-            <div class="childSpecial" id="childSpecialShow">
-                <div class="row">
-                    <h5 class="text-start">Khusus Anak</h5>
-                </div>
-                   ${e.data?.pediatric_desc ? ((e.data.pediatric_desc))  : ""}
-            </div>
+                                    <div class="activasntrain" id="activasntrainShow" hidden>
+                                        <div class="row">
+                                            <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                                        </div>
+                                        ${e.data?.training_desc ? ((e.data.training_desc))  : ""}
+                                    </div>
 
-            <div class="sleepnChill" id="sleepnChillShow">
-                <div class="row">
-                    <h5 class="text-start">Tidur Dan Istirahat</h5>
-                </div>
-                   ${e.data?.rest_sleep_desc ? ((e.data.rest_sleep_desc))  : ""}
-            </div>
+                                    <div class="diagkeperawatan" id="diagkeperawatanShow"  ${condition.diagkeperawatanShow}>
+                                        <div class="row">
+                                            <h5 class="text-start">Diagnosis Keperawatan</h5>
+                                        </div>
+                                        ${e.data?.nurse_diagnose_desc ? ((e.data.nurse_diagnose_desc))  : ""}
+                                    </div>
 
-            <div class="dekubitus" id="dekubitusShow">
-                <div class="row">
-                    <h5 class="text-start">Dekubitus</h5>
-                </div>
-                   ${e.data?.decubitus_desc ? ((e.data.decubitus_desc))  : ""}
-            </div>
+                                    <div class="tindakKolab" id="tindakKolabShow" >
+                                        <div class="row">
+                                            <h5 class="text-start">1. Tindakan Kolaborasi</h5>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    Tanggal & Jam
+                                                </th>
+                                                <th>
+                                                    Tindakan Keperawatan
+                                                </th>
+                                                <th>
+                                                    Nama Terang
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>isiii tgl</td>
+                                                <td>isiii Tindakan</td>
+                                                <td>isiii Nama</td>
+                                            </tr>
+                                        </table>
+                                    </div>
 
-            <div class="activasntrain" id="activasntrainShow">
-                <div class="row">
-                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
-                </div>
-                   ${e.data?.training_desc ? ((e.data.training_desc))  : ""}
-            </div>
-
-            <div class="diagkeperawatan" id="diagkeperawatanShow">
-                <div class="row">
-                    <h5 class="text-start">Diagnosis Keperawatan</h5>
-                </div>
-                   ${e.data?.nurse_diagnose_desc ? ((e.data.nurse_diagnose_desc))  : ""}
-            </div>
-
-            <div class="tindakKolab" id="tindakKolabShow">
-                <div class="row">
-                    <h5 class="text-start">1. Tindakan Kolaborasi</h5>
-                </div>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>
-                            Tanggal & Jam
-                        </th>
-                        <th>
-                            Tindakan Keperawatan
-                        </th>
-                        <th>
-                            Nama Terang
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>isiii tgl</td>
-                        <td>isiii Tindakan</td>
-                        <td>isiii Nama</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="tindakMan" id="tindakManShow">
-                <div class="row">
-                    <h5 class="text-start">2. Tindakan Mandiri</h5>
-                </div>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>
-                            Tanggal & Jam
-                        </th>
-                        <th>
-                            Tindakan Keperawatan
-                        </th>
-                        <th>
-                            Nama Terang
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>isiii tgl</td>
-                        <td>isiii Tindakan</td>
-                        <td>isiii Nama</td>
-                    </tr>
-                </table>
-            </div>`}
-        </div>`
+                                    <div class="tindakMan" id="tindakManShow">
+                                        <div class="row">
+                                            <h5 class="text-start">2. Tindakan Mandiri</h5>
+                                        </div>
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>
+                                                    Tanggal & Jam
+                                                </th>
+                                                <th>
+                                                    Tindakan Keperawatan
+                                                </th>
+                                                <th>
+                                                    Nama Terang
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>isiii tgl</td>
+                                                <td>isiii Tindakan</td>
+                                                <td>isiii Nama</td>
+                                            </tr>
+                                        </table>
+                                    </div>`}
+                                </div>`
 
             $('#data-container').append(htmlView);
-
-
         });
 
         toggleDynamicVisibility(statusVisibility, selectedValue);
-
     }
 
     function nl2br(str) {
@@ -1038,7 +1155,6 @@ $(document).ready(function() {
     function nl2br1(str) {
         return str?.replace(/\r\n/g, '<br>');
     }
-
 
     function cleanBr(str) {
         let result = str.replace(/(<table[^>]*>.*?<\/table>)/gs, (match) => {

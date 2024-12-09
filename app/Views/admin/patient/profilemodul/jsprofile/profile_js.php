@@ -1841,7 +1841,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- PERNAPASAN -->
 <script type="text/javascript">
-    function addPernapasan(flag, index, document_id, container) {
+    function addPernapasan(flag, index, document_id, container, isaddbutton = true) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -2088,7 +2088,10 @@ foreach ($examDetail as $key => $value) {
 
         }
         index++
-        $("#addPernapasanButton").html('<a onclick="addPernapasan(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyPernapasanMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton)
+            $("#" + container + "AddBtn").html('<a onclick="addPernapasan(1,' + index + ',\'armpasien_diagnosa_id\', \'bodyPernapasanMedis\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        else
+            $("#" + container + "AddBtn").html("")
     }
 
     function getPernapasan(bodyId, container) {

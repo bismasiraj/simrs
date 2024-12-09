@@ -1782,15 +1782,15 @@ class Cetak extends \App\Controllers\BaseController
             max(case when PH.value_id = 'G0090401'  then histories else '' end ) as riwayat_obat_dikonsumsi,
             max(case when PH.value_id = 'G0090402'  then histories else '' end ) as riwayat_kehamilan,
             max(case when PH.value_id = 'G0090403'  then histories else '' end ) as riwayat_imunisasi,
-            ei.WEIGHT as berat,
-            ei.HEIGHT as tinggi,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.nadi,
-            ei.TEMPERATURE AS Suhu,
-            ei.NAFAS as respiration,
-            ei.SATURASI AS SPO2,
-            EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
+            ed.WEIGHT as berat,
+            ed.HEIGHT as tinggi,
+            ed.TENSION_UPPER as tensi_atas,
+            ed.TENSION_BELOW as tensi_bawah,
+            ed.nadi,
+            ed.TEMPERATURE AS Suhu,
+            ed.NAFAS as respiration,
+            ed.SATURASI AS SPO2,
+            ed.WEIGHT/ ( (CAST( ed.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( ed.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
             isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
             where DOCUMENT_ID = pd.BODY_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
             isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
@@ -1829,7 +1829,13 @@ class Cetak extends \App\Controllers\BaseController
             left outer join CLASS_ROOM cr on cr.CLASS_ROOM_ID = pd.CLASS_ROOM_ID
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = pd.NO_REGISTRATION
-            left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
+            --
+           LEFT OUTER JOIN 
+                EXAMINATION_INFO ei 
+                ON ei.body_id = pd.BODY_ID
+            LEFT OUTER JOIN 
+                EXAMINATION_DETAIL ed 
+                ON ed.body_id = ei.body_id
             LEFT OUTER JOIN ASSESSMENT_LOKALIS ALO ON PD.BODY_ID = ALO.DOCUMENT_ID
             left outer join ASSESSMENT_GCS gcs on pd.BODY_ID = gcs.DOCUMENT_ID,
             pasien p 
@@ -1854,14 +1860,14 @@ class Cetak extends \App\Controllers\BaseController
             pd.IN_DATE,
             pd.ANAMNASE, 
             pd.DESCRIPTION,
-            ei.WEIGHT,
-            ei.HEIGHT, 
-            ei.TENSION_UPPER, 
-            ei.TENSION_BELOW, 
-            ei.nadi,
-            ei.NAFAS, 
-            ei.SATURASI,
-            ei.TEMPERATURE,
+            ed.WEIGHT,
+            ed.HEIGHT, 
+            ed.TENSION_UPPER, 
+            ed.TENSION_BELOW, 
+            ed.nadi,
+            ed.NAFAS, 
+            ed.SATURASI,
+            ed.TEMPERATURE,
             convert(varchar,P.date_of_birth,105),
             CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR',
             gcs.GCS_E, 
@@ -1874,7 +1880,7 @@ class Cetak extends \App\Controllers\BaseController
             PD.DIAGNOSA_ID,
             PD.HURT, 
             PD.MEDICAL_PROBLEM, 
-            EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ), 
+            ed.WEIGHT/ ( (CAST( ed.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( ed.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ), 
             THERAPY_TARGET,
             PD.LAB_RESULT, 
             PD.RO_RESULT,
@@ -1924,6 +1930,8 @@ class Cetak extends \App\Controllers\BaseController
             ]);
         }
     }
+
+
 
 
     public function cetak_laporan_pembedahan($visit, $vactination_id = null)

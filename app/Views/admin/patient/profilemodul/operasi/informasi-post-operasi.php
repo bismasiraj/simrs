@@ -65,7 +65,6 @@
             postData(jsonObj, 'admin/PatientOperationRequest/insertAssessmentPostOperasi', (res) => {
                 if (res.respon === true) {
                     successSwal('Data berhasil disimpan.');
-                    $('#form-informasi-post-operasi')[0].reset();
                     let visit_id = '<?php echo $visit['visit_id']; ?>';
                 } else {
                     console.error('Error saving data:', res);

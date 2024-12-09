@@ -82,7 +82,6 @@
                 <p><?= @$kop['contact_address'] ?>,<?= @$kop['phone'] ?>, Fax: <?= @$kop['fax'] ?>, <?= @$kop['kota'] ?>
                     <br><?= @$kop['sk'] ?>
                 </p>
-
             </div>
             <div class="col-auto" align="center">
                 <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
@@ -429,6 +428,76 @@
                 </tr>
             </tbody>
         </table>
+        <?php if ($sepcialis === "1.12"): ?>
+        <table class="table table-bordered" id="statusDermatologiShow">
+            <tbody>
+                <tr>
+                    <td colspan="4" class="fw-bold">Status Dermatologik</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="row">
+                            <b class="col-12">I. Inspeksi</b>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold">Lokasi</td>
+                                    <td class="fw-bold">UKK</td>
+                                    <td class="fw-bold">Distribusi</td>
+                                    <td class="fw-bold">Konfigurasi</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?= @$val['sd_ins_location'] ?></td>
+                                    <td><?= @$val['sd_ins_ukk'] ?></td>
+                                    <td><?= @$val['sd_ins_distribution'] ?></td>
+                                    <td><?= @$val['sd_ins_configuration'] ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Palpasi</b>
+                            <span class="col-12"><?= @$val['sd_palpation'] ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Lain-Lain</b>
+                            <span class="col-12"><?= @$val['sd_others'] ?></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="row">
+                            <b class="col-12">Status Venerologik</b>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Inspeksi</b>
+                            <span class="col-12"><?= @$val['sv_inspection'] ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Palpasi</b>
+                            <span class="col-12"><?= @$val['sv_palpation'] ?></span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php endif; ?>
+        <?php if ($sepcialis === "1.16"): ?>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -485,34 +554,7 @@
                 </tr>
             </tbody>
         </table>
-
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th>Reflek Fisiologi</th>
-                    <th>Reflek Patologi</th>
-                    <th>Clonus/Sensibilitas</th>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Reflek Fisiologi Atas Kiri :</b><?= @$val['physiological_reflex_upper_left']?>
-                        <br><b>Reflek Fisiologi Atas Kanan :</b><?= @$val['physiological_reflex_upper_right']?>
-                        <br><b>Reflek Fisiologi Bawah Kiri :</b><?= @$val['physiological_reflex_lower_left']?>
-                        <br><b>Reflek Fisiologi Bawah Kanan :</b><?= @$val['physiological_reflex_lower_right']?>
-                    </td>
-                    <td>
-                        <b>Reflek Patologi Atas Kiri :</b><?= @$val['pathologycal_reflex_upper_left']?>
-                        <br><b>Reflek Patologi Atas Kanan :</b><?= @$val['pathologycal_reflex_upper_right']?>
-                        <br><b>Reflek Patologi Bawah Kiri :</b><?= @$val['pathologycal_reflex_lower_left']?>
-                        <br><b>Reflek Patologi Bawah Kanan :</b><?= @$val['pathologycal_reflex_lower_right']?>
-                    </td>
-                    <td>
-                        <b>Clonus :</b><?= @$val['clonus']?>
-                        <br><b>Sensibilitas :</b><?= @$val['sensibility']?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <?php endif; ?>
 
         <div class="row">
             <h4 class="text-start">Assessment (A)</h4>

@@ -1,24 +1,4 @@
 <div class="tab-pane fade" id="pra-operasi">
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Retrieve the JavaScript variable from the request
-        $body_id = isset($_POST['body_id']) ? $_POST['body_id'] : '';
-
-        // Process the data (e.g., save it to a database, manipulate it, etc.)
-        // For demonstration purposes, we simply echo it back
-
-        // Example processing (e.g., save to a session, database, etc.)
-        // $_SESSION['receivedData'] = $body_id; // For session storage
-        // file_put_contents('data.txt', $body_id); // For file storage
-
-        // Send a response back to JavaScript
-        echo "Data received and processed: " . htmlspecialchars($body_id);
-        print_r($body_id);
-    }
-    $db = db_connect();
-    $selectPraOperasi = array_change_key_case($db->query("select * from assessment_operation_pra where body_id = '20240803131228034'  ")->getRowArray() ?? []);
-
-    ?>
     <form id="formPraOperasi" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post">
         <?php csrf_field(); ?>
 
@@ -98,6 +78,9 @@
                         <div id="containerBloodRequest">
 
                         </div>
+                        <div id="containerBloodRequestHistory">
+
+                        </div>
 
                     </div>
                 </div>
@@ -167,7 +150,7 @@
                 <i class="fas fa-print"></i> Cetak
             </button>
             <button type="button" id="formPraOperasiAddBtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-check-circle"></i> <span>Tambah</span></button>
-            <button type="submit" id="formPraOperasiSaveBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+            <button type="button" id="formPraOperasiSaveBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
             <button type="button" id="formPraOperasiEditBtn" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
             <button type="button" id="formPraOperasiCetakBtn" name="" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light pull-right"><i class="fa fa-signature"></i> <span>Cetak</span></button>
         </div>

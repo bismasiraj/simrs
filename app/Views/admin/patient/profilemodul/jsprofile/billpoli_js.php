@@ -157,14 +157,16 @@
             ?>
         }
         $("#billPoliChargesBody")
-            .append('<input name="employee_id[]" id="abillpoliemployee_id' + key + '" type="hidden" value="<?= $visit['employee_id']; ?>" class="form-control" />')
-            .append('<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />')
-            .append('<input name="amount[]" id="abillpoliamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />')
-            .append('<input name="profesi[]" id="abillpoliprofesi' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tagihan[]" id="abillpolitagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#abillpoliquantity" + key).val() + '" class="form-control" />')
-            .append('<input name="treatment_plafond[]" id="abillpolitreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />')
-            .append('<input name="tarif_type[]" id="abillpolitarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />')
+            .append(
+                '<input name="employee_id[]" id="abillpoliemployee_id' + key + '" type="hidden" value="" class="form-control" />' +
+                '<input name="doctor[]" id="abillpolidoctor' + key + '" type="hidden" value="<?= $visit['fullname']; ?>" class="form-control" />' +
+                '<input name="amount[]" id="abillpoliamount' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />' +
+                '<input name="nota_no[]" id="abillpolinota_no' + key + '" type="hidden" value="' + nota_no + '" class="form-control" />' +
+                '<input name="profesi[]" id="abillpoliprofesi' + key + '" type="hidden" value="" class="form-control" />' +
+                '<input name="tagihan[]" id="abillpolitagihan' + key + '" type="hidden" value="' + tarifData.amount * $("#abillpoliquantity" + key).val() + '" class="form-control" />' +
+                '<input name="treatment_plafond[]" id="abillpolitreatment_plafond' + key + '" type="hidden" value="' + tarifData.amount + '" class="form-control" />' +
+                '<input name="tarif_type[]" id="abillpolitarif_type' + key + '" type="hidden" value="' + tarifData.tarif_type + '" class="form-control" />'
+            );
 
         if ('<?= $visit['class_id']; ?>' != '<?= $visit['class_id_plafond']; ?>') {
             var tarifKelas = getPlafond('<?= $visit['class_id_plafond']; ?>', tarifData.tarif_name, tarifData.isCito);

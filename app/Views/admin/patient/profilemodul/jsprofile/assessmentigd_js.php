@@ -851,10 +851,7 @@ foreach ($aValue as $key => $value) {
                 })
             }
             if (res.integumen) {
-
-            }
-            if (res.neurosensoris) {
-                integumenAll = res.neurosensoris.integumen
+                integumenAll = res.integumen.integumen
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(integumenAll, function(key, value) {
@@ -862,6 +859,15 @@ foreach ($aValue as $key => $value) {
                         addIntegumen(0, key)
                         return false
                     }
+                })
+            }
+            if (res.neurosensoris) {
+                neurosensoris = res.neurosensoris.neuro
+
+                $.each(neuroAll, function(key, value) {
+                    if (value.document_id == $("#arpbody_id").val())
+                        addNeurosensoris(0, key)
+                    return false
                 })
             }
             if (res.pencernaan) {
@@ -1064,6 +1070,8 @@ foreach ($aValue as $key => $value) {
         $("#formaddarp input").prop("disabled", false)
         $("#formaddarp textarea").prop("disabled", false)
         $("#formaddarp select").prop("disabled", false)
+        $("#formaddarp option").prop("disabled", false)
+
         $("#vitalSignPerawat").find("button").click()
         $("#formaddarp").find(".btn-to-hide").slideDown()
         $("#formaddarp").find(".btn-edit").each(function() {
@@ -1082,6 +1090,7 @@ foreach ($aValue as $key => $value) {
         $("#formaddarp input").prop("disabled", true)
         $("#formaddarp textarea").prop("disabled", true)
         $("#formaddarp select").prop("disabled", true)
+        $("#formaddarp option").prop("disabled", true)
         $("#formaddarp").find(".btn-to-hide").slideUp()
         $("#vitalSignPerawat").find("button").click()
         if ($("#arpvalid_user").val() != '') {

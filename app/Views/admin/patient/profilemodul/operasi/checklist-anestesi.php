@@ -64,7 +64,6 @@
             postData(jsonObj, 'admin/PatientOperationRequest/insertChecklistanestesi', (res) => {
                 if (res.respon === true) {
                     successSwal('Data berhasil disimpan.');
-                    $('#form-checklist-anestesi')[0].reset();
                     let visit_id = '<?php echo $visit['visit_id']; ?>';
                 } else {
                     console.error('Error saving data:', res);

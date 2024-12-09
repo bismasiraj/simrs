@@ -845,7 +845,7 @@
                         <input type="hidden" name="trans_id" value="<?= $visit['trans_id']; ?>">
                         <input type="hidden" name="no_registration" value="<?= $visit['no_registration']; ?>">
                         <input type="hidden" name="thename" value="<?= $visit['diantar_oleh']; ?>">
-                        <input type="hidden" name="theaddress" value="<?= $visit['contact_address']; ?>">
+                        <input type="hidden" name="theaddress" value="<?= $visit['visitor_address']; ?>">
                         <input type="hidden" name="clinic_id" value="<?= $visit['clinic_id']; ?>">
                         <input type="hidden" name="employee_id" value="<?= $visit['employee_id']; ?>">
                         <input type="hidden" name="class_room_id" value="<?= $visit['class_room_id']; ?>">

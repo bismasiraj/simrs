@@ -111,7 +111,7 @@ class AssessmentPerawat extends BaseController
             if ($value["id"] == "formaddarp") {
                 $perawat = json_decode($this->saveAssessmentPerawat($value["data"]));
             }
-            if (str_contains($value["id"], "fallrisk")) {
+            if (str_contains($value["id"], "formGcs")) {
                 $gcs = $controller->saveFallRisk($value["data"]);
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
@@ -191,7 +191,7 @@ class AssessmentPerawat extends BaseController
             "apgar" => @$apgar,
             "pernapasan" => @$pernapasan,
             "sirkulasi" => @$sirkulasi,
-            "neurosensori" => @$neurosensori,
+            "neurosensoris" => @$neurosensori,
             "integumen" => @$integumen,
             "anak" => @$anak,
             "adl" => @$adl,
@@ -366,10 +366,8 @@ class AssessmentPerawat extends BaseController
         $psikologi = $this->getPsikologi($document_id, $visit_id);
         $sirkulasi = $this->getSirkulasi($document_id, $visit_id);
         $seksual = $this->getSeksual($document_id, $visit_id);
-        $social = $this->getSocial($document_id, $visit_id);
         $hearing = $this->getHearing($document_id, $visit_id);
         $sleeping = $this->getSleeping($document_id, $visit_id);
-        $social = $this->getSocial($document_id, $visit_id);
         $social = $this->getSocial($document_id, $visit_id);
         return $this->response->setJSON([
             'gcs' => $gcs,
@@ -414,22 +412,25 @@ class AssessmentPerawat extends BaseController
             $select = $this->lowerKey($model->where("visit_id", $visit)->select("*")->findAll());
         }
 
-        $db = db_connect();
+        if (count($select) > 0) {
+            $db = db_connect();
 
-        $queryDetil = "select * from assessment_fall_risk_detail where body_id in (";
+            $queryDetil = "select * from assessment_fall_risk_detail where body_id in (";
 
-        foreach ($select as $key => $value) {
-            $queryDetil .= "'" . $value['body_id'] . "',";
+            foreach ($select as $key => $value) {
+                $queryDetil .= "'" . $value['body_id'] . "',";
+            }
+            $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+
+            $queryDetil .= ");";
+
+            $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
         }
-        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
 
-        $queryDetil .= ");";
-
-        $fallRiskDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
 
         return [
             'fallRisk' => $select,
-            'fallRiskDetail' => $fallRiskDetil
+            'fallRiskDetail' => @$fallRiskDetil
         ];
     }
     public function getPainMonitoring($bodyId, $visit)
@@ -443,26 +444,29 @@ class AssessmentPerawat extends BaseController
             $painMonitoring = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_MONITORING where visit_id = '$visit'")->getResultArray());
         }
 
-        $queryDetil = "select * from assessment_pain_detail where body_id in (";
-        $queryIntervensi = "select * from assessment_pain_intervensi where body_id in (";
+        if (count($painMonitoring) > 0) {
+            $queryDetil = "select * from assessment_pain_detail where body_id in (";
+            $queryIntervensi = "select * from assessment_pain_intervensi where body_id in (";
 
-        foreach ($painMonitoring as $key => $value) {
-            $queryDetil .= "'" . $value['body_id'] . "',";
-            $queryIntervensi .= "'" . $value['body_id'] . "',";
+            foreach ($painMonitoring as $key => $value) {
+                $queryDetil .= "'" . $value['body_id'] . "',";
+                $queryIntervensi .= "'" . $value['body_id'] . "',";
+            }
+            $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
+            $queryIntervensi = substr($queryIntervensi, 0, strlen($queryIntervensi) - 1);
+
+            $queryDetil .= ");";
+            $queryIntervensi .= ") order by body_id, intervensi_ke;";
+
+            $painDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
+            $painIntervensi = $this->lowerKey($db->query($queryIntervensi)->getResultArray());
         }
-        $queryDetil = substr($queryDetil, 0, strlen($queryDetil) - 1);
-        $queryIntervensi = substr($queryIntervensi, 0, strlen($queryIntervensi) - 1);
 
-        $queryDetil .= ");";
-        $queryIntervensi .= ") order by body_id, intervensi_ke;";
-
-        $painDetil = $this->lowerKey($db->query($queryDetil)->getResultArray());
-        $painIntervensi = $this->lowerKey($db->query($queryIntervensi)->getResultArray());
 
         return ([
             'painMonitoring' => $painMonitoring,
-            'painDetil' => $painDetil,
-            'painIntervensi' => $painIntervensi
+            'painDetil' => @$painDetil,
+            'painIntervensi' => @$painIntervensi
         ]);
     }
     public function getPernapasan($bodyId, $visit)

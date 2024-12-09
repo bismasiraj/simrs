@@ -239,6 +239,7 @@
 </div>
 
 <script type='text/javascript'>
+    var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
     var visit = '<?= $visit['visit_id']; ?>'
@@ -268,46 +269,6 @@
         getVitalSignLaporanAnesthesi()
     })
 
-    // $("#vs_status_id-laporanAnesthesi").on("change", function() {
-    //     var optionSelected = $("option:selected", this);
-    //     console.log(optionSelected.val());
-    //     $('#container-vitalsign-laporanAnesthesi').empty();
-
-    //     switch (optionSelected.val()) {
-    //         case '4':
-    //             let isi = `
-    //             <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
-    //                             <div class="form-group">
-    //                                 <label>aaaaaa</label>
-    //                                 <div class="position-relative">
-    //                                     <input onchange="vitalsignInput(this)" type="text" name="temperature" id="temperature-laporanAnesthesi" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-    //                                     <span class="h6" id="badge-temperature-laporanAnesthesi"></span>
-    //                                 </div>
-    //                             </div>
-    //                         </div>`;
-    //             console.log(isi);
-    //             $('#container-vitalsign-laporanAnesthesi').append(isi);
-    //             break;
-    //         case '10':
-    //             break;
-    //     }
-    //     $('.vitalsignclass-laporanAnesthesi').each((index, each) => {
-    //         $(each).change(element => {
-    //             vitalsignInput({
-    //                 value: $(each).val(),
-    //                 name: $(each).attr('name'),
-    //                 uniq_name: '-laporanAnesthesi',
-    //                 type: optionSelected.val()
-    //             })
-    //         })
-    //         vitalsignInput({
-    //             value: $(each).val(),
-    //             name: $(each).attr('name'),
-    //             uniq_name: '-laporanAnesthesi',
-    //             type: optionSelected.val()
-    //         })
-    //     });
-    // })
 
     $("#formvitalsign-laporanAnesthesi").on('submit', (function(e) {
         let clicked_submit_btn = $(this).closest('form').find(':submit');

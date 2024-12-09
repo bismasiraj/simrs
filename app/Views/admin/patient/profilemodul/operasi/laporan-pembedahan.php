@@ -54,29 +54,3 @@
         </div>
     </form>
 </div>
-
-<script>
-    // $('#btn-save-catatan-keperawatan').on('click', function(e) {
-    //     // Code to handle click event
-
-    //     e.preventDefault();
-
-    //     let formElement = $('#form-catatan-keperawatan')[0];
-    //     let dataSend = new FormData(formElement);
-    //     let jsonObj = {};
-    //     dataSend.forEach((value, key) => {
-    //         jsonObj[key] = value;
-    //     });
-    //     postData(jsonObj, 'admin/PatientOperationRequest/insertDataPraOprasi', (res) => {
-    //         if (res.respon === true) {
-    //             successSwal('Data berhasil disimpan.');
-    //             $('#form-catatan-keperawatan')[0].reset();
-    //             let visit_id = '<?php echo $visit['visit_id']; ?>';
-    //             // getDataTables({
-    //             //     visit_id: visit_id
-    //             // });
-    //         }
-    //     });
-
-    // });
-</script>

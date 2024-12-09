@@ -1127,7 +1127,7 @@
                         </tr>
                         <tr>
                             <th class="text-center" style="width: 5%;"></th class="text-center">
-                            <th class="text-start" style="width: 30%;"><h5>Komponen: </h5></th class="text-center">
+                            <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
                             <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
                             <th class="text-center" style="width: 10%;"><select name="measure_id2[]" id="aormeasure_id2${billId}" placeholder="" value="" class="form-select text-right" readonly></th class="text-center">
                             <th class="text-center" colspan="6" style="width: 40%;"><input type="text" name="description2[]" id="aordescription2${billId}" placeholder="" class="form-control"></th class="text-center">

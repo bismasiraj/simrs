@@ -290,4 +290,8 @@ $permission = user()->getPermissions();
         '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/lainnya/assessmen_perawat_preview/' . base64_encode(json_encode($visit)); ?>' +
         '/' + $("#armbody_id").val() +
         '" target="_blank">Assessment Perawat</a></li>')
+    $('#lainnyaListLink').append(
+        '<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/medis/medis_all_live/' . base64_encode(json_encode($visit)); ?>' +
+        '/' + $("#armbody_id").val() +
+        '" target="_blank">Test Assesmen Medis All</a></li>')
 </script>

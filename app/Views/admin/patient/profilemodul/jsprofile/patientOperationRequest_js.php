@@ -1265,6 +1265,7 @@
                     datasets: datasets
                 },
                 options: {
+
                     plugins: {
                         datalabels: false
                     },

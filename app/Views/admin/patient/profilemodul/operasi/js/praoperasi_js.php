@@ -403,16 +403,16 @@
                 </td>
                 <td>
                     <select name="bloodblood_type_id[]" id="apoblood_type_id${bodyId}" type="text" class="form-select">
-                        <option value="0">-</option>
-                        <option value="1">A</option>
-                        <option value="2">B</option>
-                        <option value="3">AB</option>
-                        <option value="4">O</option>
-                        <option value="5">-</option>
-                        <option value="6">A+</option>
-                        <option value="7">B+</option>
-                        <option value="8">AB+</option>
-                        <option value="9">O+</option>
+                        <option value="0" ${bloodselected.blood_type_id == '0' ? 'selected' : ''}>-</option>
+                        <option value="1" ${bloodselected.blood_type_id == '1' ? 'selected' : ''}>A</option>
+                        <option value="2" ${bloodselected.blood_type_id == '2' ? 'selected' : ''}>B</option>
+                        <option value="3" ${bloodselected.blood_type_id == '3' ? 'selected' : ''}>AB</option>
+                        <option value="4" ${bloodselected.blood_type_id == '4' ? 'selected' : ''}>O</option>
+                        <option value="5" ${bloodselected.blood_type_id == '5' ? 'selected' : ''}>-</option>
+                        <option value="6" ${bloodselected.blood_type_id == '6' ? 'selected' : ''}>A+</option>
+                        <option value="7" ${bloodselected.blood_type_id == '7' ? 'selected' : ''}>B+</option>
+                        <option value="8" ${bloodselected.blood_type_id == '8' ? 'selected' : ''}>AB+</option>
+                        <option value="9" ${bloodselected.blood_type_id == '9' ? 'selected' : ''}>O+</option>
                     </select>
                 </td>
                 <td>
@@ -423,19 +423,19 @@
                 </td>
                  ${bloodselected?.terlayani == 1 ? `
                 <td>
-                    <input type="text" name="transfusion_start[]" class="form-control bg-white datepicker-darah" 
+                    <input type="text" name="bloodtransfusion_start[]" class="form-control bg-white datepicker-darah" 
                     value="${moment(bloodselected?.transfusion_start, 'YYYY-MM-DD HH:mm', true).isValid() 
                             ? moment(bloodselected?.transfusion_start).format('YYYY-MM-DD HH:mm') 
                             : moment().format('YYYY-MM-DD HH:mm')}">
                 </td>
                 <td>
-                    <input type="text" name="transfusion_end[]" class="form-control bg-white datepicker-darah" 
+                    <input type="text" name="bloodtransfusion_end[]" class="form-control bg-white datepicker-darah" 
                     value="${moment(bloodselected?.transfusion_end, 'YYYY-MM-DD HH:mm', true).isValid() 
                             ? moment(bloodselected?.transfusion_end).format('YYYY-MM-DD HH:mm') 
                             : moment().format('YYYY-MM-DD HH:mm')}">
                 </td>
                 <td>
-                    <input type="text" name="reaction_desc[]" class="form-control" value="${bloodselected?.reaction_desc ?? ''}">
+                    <input type="text" name="bloodreaction_desc[]" class="form-control" value="${bloodselected?.reaction_desc ?? ''}">
                 </td>
                 ` : 
                 `
