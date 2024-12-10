@@ -223,12 +223,14 @@ foreach ($aValue as $key => $value) {
                 $(".formsavearpbtn").html('<i class="spinner-border spinner-border-sm"></i>')
             },
             success: function(data) {
+                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+
                 $("#formaddarp").find('input, select, textarea').each(function() {
                     const key = $(this).attr('id'); // Use ID or placeholder as key
 
                     localStorage.removeItem(key);
                 })
-                $("#arpModal").modal("hide")
+                // $("#arpModal").modal("hide")
                 let formData = new FormData(document.getElementById("formaddarp"))
                 let formDataObject = {};
                 formData.forEach(function(value, key) {
@@ -257,7 +259,7 @@ foreach ($aValue as $key => $value) {
                 // $("#cpptBody").html("")
                 let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
                 if (examFiltered145.length > 0) {
-                    fillDataArp(examFiltered145.length - 1)
+                    // fillDataArp(examFiltered145.length - 1)
                     // $("#arpAddDocument").slideUp()
                     $("#arpDocument").slideDown()
                 }
@@ -461,7 +463,7 @@ foreach ($aValue as $key => $value) {
 
                 let examFiltered145 = examForassessment.filter(item => item.account_id == 2)
                 if (examFiltered145.length > 0) {
-                    fillDataArp(examFiltered145.length - 1)
+                    // fillDataArp(examFiltered145.length - 1)
                     // $("#arpAddDocument").slideUp()
                     $("#arpDocument").slideDown()
                 }
@@ -771,6 +773,7 @@ foreach ($aValue as $key => $value) {
             if (res.pernapasan) {
                 napas = res.pernapasan
                 // stabilitasDetail = data.stabilitasDetail
+                $("#bodyPernapasan").html("")
 
                 $.each(napas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
@@ -834,6 +837,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(dekubitusAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyDekubitusPerawat").html("")
                         addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat", false)
                         return false
                     }
@@ -845,6 +849,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(stabilitas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyStabilitasPerawat").html("")
                         addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat", false)
                         return false
                     }
@@ -852,22 +857,27 @@ foreach ($aValue as $key => $value) {
             }
             if (res.integumen) {
                 integumenAll = res.integumen.integumen
+                console.log(integumenAll)
                 // stabilitasDetail = data.stabilitasDetail
 
                 $.each(integumenAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        addIntegumen(0, key)
+                        $("#bodyIntegumenPerawat").html("")
+                        addIntegumen(0, key, 'arpbody_id', 'bodyIntegumenPerawat')
                         return false
                     }
                 })
             }
             if (res.neurosensoris) {
-                neurosensoris = res.neurosensoris.neuro
+                neuroAll = res.neurosensoris.neuro
+                console.log(neuroAll)
 
                 $.each(neuroAll, function(key, value) {
-                    if (value.document_id == $("#arpbody_id").val())
+                    if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyNeurosensoris")
                         addNeurosensoris(0, key)
-                    return false
+                        return false
+                    }
                 })
             }
             if (res.pencernaan) {
@@ -875,6 +885,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(digestAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyPencernaan").html("")
                         addPencernaan(0, key)
                         return false
                     }
@@ -886,6 +897,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(perkemihanAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#addPerkemihanButton").html("")
                         addPerkemihan(0, key)
                         return false
                     }
@@ -897,6 +909,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(psikologiAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyPsikologi").html("")
                         addPsikologi(0, key)
                         return false
                     }
@@ -906,6 +919,7 @@ foreach ($aValue as $key => $value) {
                 sirkulasiAll = res.sirkulasi.sirkulasi
                 $.each(sirkulasiAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodySirkulasi").html("")
                         addSirkulasi(0, key, "arpbody_id", "bodySirkulasi")
                         return false
                     }
@@ -916,6 +930,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(seksualAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodySeksual").html("")
                         addSeksual(0, key)
                         return false
                     }
@@ -926,6 +941,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(socialAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodySocial").html("")
                         addSocial(0, key)
                         return false
                     }
@@ -936,6 +952,8 @@ foreach ($aValue as $key => $value) {
 
                 $.each(hearingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodyHearing").html("")
+
                         addHearing(0, key)
                         return false
                     }
@@ -946,6 +964,7 @@ foreach ($aValue as $key => $value) {
 
                 $.each(sleepingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
+                        $("#bodySleeping").html("")
                         addSleeping(0, key)
                         return false
                     }

@@ -112,7 +112,7 @@ class AssessmentPerawat extends BaseController
                 $perawat = json_decode($this->saveAssessmentPerawat($value["data"]));
             }
             if (str_contains($value["id"], "formGcs")) {
-                $gcs = $controller->saveFallRisk($value["data"]);
+                $gcs = json_decode($controller->saveGcs($value["data"]));
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
                 $monitoring = json_encode($controller->savePainMonitoring($value["data"]));
@@ -635,7 +635,7 @@ class AssessmentPerawat extends BaseController
         $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
 
         return ([
-            'perkemihan' => $select
+            'perkemihan' => $visit
         ]);
     }
     public function getPsikologi($bodyId, $visit)

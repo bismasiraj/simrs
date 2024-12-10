@@ -1830,7 +1830,7 @@ class Assessment extends BaseController
 
         if ($episode == 1) {
             if ($isrj == 1)
-                $where = "and (ex.visit_id = '$visit_id' or pv.norujukan = '$norujukan')";
+                $where = "and (ex.visit_id = '$visit_id' or (pv.norujukan = '$norujukan' and pv.norujukan <> ''))";
             else
                 $where = "and (ex.visit_id = '$visit_id')";
         } else {
@@ -2274,14 +2274,16 @@ class Assessment extends BaseController
     public function saveNeurosensoris($body = null)
     {
         if ($body == null) {
-            if (!$this->request->is('post')) {
-                return $this->response->setJSON([
-                    'status' => 'error',
-                    'message' => 'Invalid request method'
-                ])->setStatusCode(405); // Method Not Allowed
-            }
+            if (isset($this->request)) {
+                if (!$this->request->is('post')) {
+                    return $this->response->setJSON([
+                        'status' => 'error',
+                        'message' => 'Invalid request method'
+                    ])->setStatusCode(405); // Method Not Allowed
+                }
 
-            $body = $this->request->getPost();
+                $body = $this->request->getPost();
+            }
         }
 
         $data = [];
@@ -3545,55 +3547,39 @@ class Assessment extends BaseController
 
         $data = [];
 
-        // return ($body['OBJECT_STRANGE']);
-        foreach ($body as $key => $value) {
-            ${$key} = $value;
-            if (!(is_null(${$key}) || ${$key} == ''))
-                $data[strtolower($key)] = $value;
+        if (count($body) > 0) {
+            // return ($body['OBJECT_STRANGE']);
+            foreach ($body as $key => $value) {
+                ${$key} = $value;
+                if (!(is_null(${$key}) || ${$key} == ''))
+                    $data[strtolower($key)] = $value;
 
-            if (isset($examination_date))
-                $data['examination_date'] = str_replace("T", " ", $examination_date);
-        }
-        $data['p_type'] = $parameter001;
-        // return json_encode($data);
+                if (isset($examination_date))
+                    $data['examination_date'] = str_replace("T", " ", $examination_date);
+            }
+            // $body = ($body);
+            $data['p_type'] = $parameter001;
+            // return json_encode($data);
 
-        $model = new FallRiskModel();
+            $model = new FallRiskModel();
 
-        $model->save($data);
+            $model->save($data);
 
-        // return json_encode($data);
+            // return json_encode($data);
 
-        $db = db_connect();
-        $p_type = $parameter001;
-        // return json_encode($parameter001);
+            $db = db_connect();
+            $p_type = $parameter001;
+            // return json_encode($parameter001);
 
-        if (true) {
-            $fallRiskDetail  = new FallRiskDetailModel();
+            if (true) {
+                $fallRiskDetail  = new FallRiskDetailModel();
 
-            $db->query("delete from assessment_fall_risk_detail where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
+                $db->query("delete from assessment_fall_risk_detail where body_id = '$body_id' and visit_id = '$visit_id' and p_type = '$p_type'");
 
-            $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$p_type'")->getResultArray());
-            foreach ($select as $key => $value) {
-                $valueId = ${"parameter_id" . $value['parameter_id']};
-                $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
-                if (isset($paramvalue[0])) {
-                    $data = [
-                        'org_unit_code' => $org_unit_code,
-                        'visit_id' => $visit_id,
-                        'trans_id' => $trans_id,
-                        'body_id' => $body_id,
-                        'p_type' => $p_type,
-                        'parameter_id' => $value['parameter_id'],
-                        'value_id' => $valueId,
-                        'value_score' => $paramvalue[0]['value_score'],
-                        'value_desc' => $paramvalue[0]['value_desc'],
-                        'modified_date' => Time::now(),
-                        'modified_by' => user()->username
-                    ];
-                    $fallRiskDetail->insert($data);
-                } else {
-                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where parameter_id = '{$value['parameter_id']}' and p_type = '{$value['p_type']}'")->getResultArray());
-                    // return json_encode($paramvalue);
+                $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER where P_TYPE = '$p_type'")->getResultArray());
+                foreach ($select as $key => $value) {
+                    $valueId = ${"parameter_id" . $value['parameter_id']};
+                    $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where value_id = '$valueId'")->getResultArray());
                     if (isset($paramvalue[0])) {
                         $data = [
                             'org_unit_code' => $org_unit_code,
@@ -3601,18 +3587,38 @@ class Assessment extends BaseController
                             'trans_id' => $trans_id,
                             'body_id' => $body_id,
                             'p_type' => $p_type,
-                            'parameter_id' => $paramvalue[0]['parameter_id'],
-                            'value_id' => $paramvalue[0]['value_id'],
+                            'parameter_id' => $value['parameter_id'],
+                            'value_id' => $valueId,
                             'value_score' => $paramvalue[0]['value_score'],
-                            'value_desc' => ${"parameter_id" . $paramvalue[0]['parameter_id']},
+                            'value_desc' => $paramvalue[0]['value_desc'],
                             'modified_date' => Time::now(),
                             'modified_by' => user()->username
                         ];
                         $fallRiskDetail->insert($data);
+                    } else {
+                        $paramvalue = $this->lowerKey($db->query("select * from assessment_parameter_value where parameter_id = '{$value['parameter_id']}' and p_type = '{$value['p_type']}'")->getResultArray());
+                        // return json_encode($paramvalue);
+                        if (isset($paramvalue[0])) {
+                            $data = [
+                                'org_unit_code' => $org_unit_code,
+                                'visit_id' => $visit_id,
+                                'trans_id' => $trans_id,
+                                'body_id' => $body_id,
+                                'p_type' => $p_type,
+                                'parameter_id' => $paramvalue[0]['parameter_id'],
+                                'value_id' => $paramvalue[0]['value_id'],
+                                'value_score' => $paramvalue[0]['value_score'],
+                                'value_desc' => ${"parameter_id" . $paramvalue[0]['parameter_id']},
+                                'modified_date' => Time::now(),
+                                'modified_by' => user()->username
+                            ];
+                            $fallRiskDetail->insert($data);
+                        }
                     }
                 }
             }
         }
+
 
         return json_encode('berhasil');
     }

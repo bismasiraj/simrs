@@ -844,7 +844,7 @@
             var qty = 0.0
             var numer = "9"
             var resepNo = resep_no
-            var notaNo = resep_no
+            var notaNo = '<?= $visit['session_id']; ?>'
             var treatDate = get_date()
             var dose1 = 0.0
             var dose2 = 0.0

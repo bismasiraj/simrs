@@ -2071,8 +2071,8 @@ This Function is used to Add Patient
         // $suffer = $this->lowerKey($sufferModel->findAll());
         $suffer = $this->getSuffer();
 
-        // $diagCatModel = new DiagnosaCategoryModel();
-        // $diagCat = $this->lowerKey($diagCatModel->findAll());
+        $diagCatModel = new DiagnosaCategoryModel();
+        $diagCat = $this->lowerKey($diagCatModel->findAll());
         $diagCat = $this->getDiagCat();
 
 

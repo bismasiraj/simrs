@@ -383,6 +383,23 @@
                         $("#notaNoLab").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
                         addRowBill("labChargesBody", "alab", key, i, counter)
                     }
+                    if (billJson[key].clinic_id == 'P001') {
+                        const exists = $('#notaNoPenunjangMedis option').filter(function() {
+                            return $(this).val() === billJson[key].nota_no;
+                        }).length > 0;
+                        if (!exists) {
+                            $("#notaNoPenunjangMedis").append(new Option(billJson[key].nota_no, billJson[key].nota_no));
+                        }
+                        var i = $('#penunjangChargesBody tr').length + 1;
+                        var counter = 'penunjangmedis' + i;
+                        addRowBill("penunjangChargesBody", "apenunjangmedis", key, i, counter);
+                    }
+                    if (billJson[key].clinic_id == 'P023') {
+                        var i = $('#patologiChargesBody tr').length + 1;
+                        var counter = 'patologimedis' + i
+                        $("#notaNoPatologi").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
+                        addRowBill("patologiChargesBody", "apatologi", key, i, counter)
+                    }
                     if (billJson[key].clinic_id == '<?= $visit['clinic_id']; ?>') {
                         var i = $('#billPoliChargesBody tr').length + 1;
                         var counter = 'billpoli' + i
@@ -1056,24 +1073,6 @@
             labpembulatan += billJson[key].pembulatan
             labpembayaran += billJson[key].bayar
             labretur += billJson[key].retur
-        }
-        if (billJson[key].clinic_id == 'P001') {
-            const exists = $('#notaNoPenunjangMedis option').filter(function() {
-                return $(this).val() === billJson[key].nota_no;
-            }).length > 0;
-
-            if (!exists) {
-                $("#notaNoPenunjangMedis").append(new Option(billJson[key].nota_no, billJson[key].nota_no));
-            }
-            var i = $('#penunjangChargesBody tr').length + 1;
-            var counter = 'penunjangmedis' + i;
-            addRowBill("penunjangChargesBody", "apenunjangmedis", key, i, counter);
-        }
-        if (billJson[key].clinic_id == 'P023') {
-            var i = $('#patologiChargesBody tr').length + 1;
-            var counter = 'patologimedis' + i
-            $("#notaNoPatologi").append(new Option(billJson[key].nota_no, billJson[key].nota_no))
-            addRowBill("patologiChargesBody", "apatologi", key, i, counter)
         }
         if (billJson[key].clinic_id == 'P016') {
             radtagihan += parseFloat(billJson[key].tagihan)

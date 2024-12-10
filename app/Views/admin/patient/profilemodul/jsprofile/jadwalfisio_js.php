@@ -1086,12 +1086,14 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 let program_name = dataSend.getAll('program[]');
 
                 jsonObj.program = [];
+                let program_tarif = <?= json_encode($getDataTarif); ?>;
                 for (let i = 0; i < program_name.length; i++) {
+
                     let entry = {
                         vactination_date: vactination_date[i],
                         start: start[i],
                         end: end[i],
-                        program_name: $(`#tarif-fisio${i} option:selected`).text(),
+                        program_name: program_tarif.find(item => item.id == program_name[i])?.text,
                         program_id: program_name[i]
                     };
 
@@ -1120,7 +1122,7 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                     }
                 });
             })
-        } // baru havin 26 09
+        }
 
         const tandaTangan = (props) => {
             let visit = <?= json_encode($visit) ?>;
@@ -1175,13 +1177,6 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 data: <?= json_encode($getDataTarif); ?>
             });
 
-            // if (initialvalue != null) {
-            //     let option = new Option(initialname, JSON.stringify({
-            //         tarif_id: initialvalue,
-            //         tarif_name: initialname
-            //     }), true, true);
-            //     $("#" + theid).append(option).trigger('change');
-            // }
             if (initialvalue != null) {
                 let option = new Option(initialname, initialvalue, true, true);
                 $("#" + theid).append(option).trigger('change');

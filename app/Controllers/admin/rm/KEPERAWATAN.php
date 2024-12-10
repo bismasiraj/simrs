@@ -630,6 +630,7 @@ class keperawatan extends \App\Controllers\BaseController
             $db = db_connect();
             $select = $this->lowerKey($db->query("
                 SELECT
+					ei.VISIT_ID,
                     ei.ANAMNASE as anamnesis,
                     ed.vs_status_id,
                     ei.DESCRIPTION AS riwayat_penyakit_sekarang,
@@ -676,17 +677,18 @@ class keperawatan extends \App\Controllers\BaseController
 					isnull((select top(1) ASSESSMENT_PAIN_MONITORING.DESCRIPTION from ASSESSMENT_PAIN_MONITORING
                     where ASSESSMENT_PAIN_MONITORING.DOCUMENT_ID = ed.DOCUMENT_ID order by EXAMINATION_DATE desc) ,'') as FALL_DESC,
                     ea.fullname as dokter
-                FROM EXAMINATION_DETAIL ed
-					inner join EXAMINATION_INFO ei ON ed.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID
+                FROM EXAMINATION_INFO ei
+					left outer join EXAMINATION_DETAIL ed ON ei.PASIEN_DIAGNOSA_ID = ed.DOCUMENT_ID
                     left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = ed.NO_REGISTRATION
-                    left outer join ASSESSMENT_GCS gcs on ed.DOCUMENT_ID = gcs.DOCUMENT_ID
-                    left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ed.DOCUMENT_ID = EDU.DOCUMENT_ID
-                    left outer join ASSESSMENT_REPRODUCTION arp on ed.DOCUMENT_ID = arp.DOCUMENT_ID
+                    left outer join ASSESSMENT_GCS gcs on ei.body_id = gcs.DOCUMENT_ID
+                    left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on ei.body_id = EDU.DOCUMENT_ID
+                    left outer join ASSESSMENT_REPRODUCTION arp on ei.body_id = arp.DOCUMENT_ID
                     LEFT OUTER JOIN ASSESSMENT_PARAMETER_VALUE apv ON gcs.P_TYPE = apv.P_TYPE
                     left outer join employee_all ea on ea.employee_id = ei.employee_id
-                WHERE ed.VISIT_ID = '{$visit['visit_id']}' AND ed.BODY_ID = '$vactination_id'
+                WHERE ei.BODY_ID = '" . $vactination_id . "' 
 
                 group by 
+				ei.VISIT_ID,
                     ei.ANAMNASE, 
                     ei.DESCRIPTION,
                     gcs.GCS_E,
@@ -709,6 +711,8 @@ class keperawatan extends \App\Controllers\BaseController
                     ea.fullname
 
         ")->getRowArray() ?? []);
+
+            // return json_encode($select);
 
             $title = "Asesmen Keperawatan ";
             if (!is_null($visit['class_room_id']) && $visit['class_room_id'] != '') {
@@ -1019,13 +1023,13 @@ class keperawatan extends \App\Controllers\BaseController
             $db = db_connect();
             $select = $this->lowerKey($db->query(
                 "
-                select ed.examination_date , ed.body_id,
-                case when ea.OBJECT_CATEGORY_ID = '20' then 'D'
-                when ea.OBJECT_CATEGORY_ID = '21' then 'P'
-                when ea.OBJECT_CATEGORY_ID = '22' then 'Far'
-                when ea.OBJECT_CATEGORY_ID = '23' then 'B'
-                    when ea.OBJECT_CATEGORY_ID = '24' then 'G'
-                    when ea.OBJECT_CATEGORY_ID = '25' then 'Fis'
+                select ei.examination_date , ei.body_id, ed.trans_id,
+                case when ei.petugas_type = '11' then 'D'
+                when ei.petugas_type = '13' then 'P'
+                when ei.petugas_type = '27' then 'Far'
+                when ei.petugas_type = '52' then 'B'
+                    when ei.petugas_type = '19' then 'G'
+                    when ei.petugas_type = '51' then 'Fis'
                     else '' end as kode_PPA,
                     ea.FULLNAME as nama_ppa ,
                     ei.ANAMNASE as Subyectif,
@@ -1045,14 +1049,13 @@ class keperawatan extends \App\Controllers\BaseController
                     gcs.GCS_SCORE,
                     gcs.GCS_DESC
 
-                from examination_detail ed
-                inner join EXAMINATION_INFO ei on ed.DOCUMENT_ID = ei.PASIEN_DIAGNOSA_ID
+                from EXAMINATION_INFO ei
+                left outer join examination_detail ed on ei.PASIEN_DIAGNOSA_ID = ed.DOCUMENT_ID
                 left outer join ASSESSMENT_GCS gcs on ei.body_id = gcs.document_id
                 left outer join ASSESSMENT_FALL_RISK afr on ei.body_id = afr.DOCUMENT_ID
                 left outer join employee_all ea on ei.employee_id = ea.employee_id
                 where
-                ed.visit_id  = '" . $visit['visit_id'] . "'
-                and ed.NO_REGISTRATION = '" . $visit['no_registration'] . "'
+                ei.VISIT_ID = '" . $visit['visit_id'] . "'
                 order by tanggal_dibuat desc
             "
             )->getResultArray() ?? []);

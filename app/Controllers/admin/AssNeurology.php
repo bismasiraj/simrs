@@ -17,13 +17,16 @@ class AssNeurology extends \App\Controllers\BaseController
         $db = db_connect();
 
         $model = new AneurologyModel();
-        $data = $this->lowerKeyOne(
-            $model->where('org_unit_code', $formData['org_unit_code'])
-                ->where('no_registration', $formData['no_registration'])
-                ->where('document_id', $formData['session_id'])
-                ->orderBy('examination_date', 'DESC')
-                ->first()
-        );
+        $data = $model->where('org_unit_code', $formData['org_unit_code'])
+            ->where('no_registration', $formData['no_registration'])
+            ->where('document_id', $formData['session_id'])
+            ->orderBy('examination_date', 'DESC')
+            ->findAll();
+        if (count(@$data) > 0) {
+            $data = $this->lowerKeyOne(
+                $data[0]
+            );
+        }
 
         $result =  ['dataAll' => $data];
 

@@ -2050,6 +2050,19 @@ function togglePasswordVisibility(inputId, button) {
     button.classList.remove("btn-outline-primary");
   }
 }
+function openPopUpTab(url) {
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  // Set desired width and height as a percentage of the screen size
+  const width = Math.floor(screenWidth * 0.6); // 80% of the screen width
+  const height = Math.floor(screenHeight * 0.9); // 80% of the screen height
+  window.open(
+    url,
+    "_blank",
+    `toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=${width},height=${height}`
+  );
+}
 $(document).ready(function () {
   $(".modal-change-password")
     .off()

@@ -39,8 +39,9 @@ class BloodRequest extends \App\Controllers\BaseController
 
         $query =
             "
-            select pv.diantar_oleh, blood_request.* from blood_request 
+            select pv.diantar_oleh, clinic.NAME_OF_CLINIC, blood_request.* from blood_request 
             inner join PASIEN_VISITATION pv ON blood_request.VISIT_ID = pv.VISIT_ID
+            left join clinic on BLOOD_REQUEST.CLINIC_ID = clinic.CLINIC_ID
             where 1=1
             and CAST(request_date AS DATE) between '$start_date' and '$end_date'
             and (TRANSFUSION_START is null OR TRANSFUSION_END is null OR REACTION_DESC is null) 
@@ -108,11 +109,13 @@ class BloodRequest extends \App\Controllers\BaseController
                 and (TRANSFUSION_START is null OR TRANSFUSION_END is null)
                 ")->getResultArray() ?? []);
 
-                $model->where('visit_id', $formData->blood[0]->visit_id)
+                $delete =  $model->where('visit_id', $formData->blood[0]->visit_id)
                     ->where('no_registration', $formData->blood[0]->no_registration)
                     ->where('clinic_id', $formData->blood[0]->clinic_id)
+                    ->groupStart()
                     ->where('TRANSFUSION_START', NULL)
                     ->orWhere('TRANSFUSION_END', NULL)
+                    ->groupEnd()
                     ->delete();
 
                 foreach ($formData->blood as $blood) {
@@ -174,9 +177,7 @@ class BloodRequest extends \App\Controllers\BaseController
         $request = service('request');
         $db->transBegin();
         $formData = $request->getJSON();
-        // echo '<pre>';
-        // var_dump($formData);
-        // die();
+
         $model = new BloodRequestModel();
 
         $dataBloodRequest = [];

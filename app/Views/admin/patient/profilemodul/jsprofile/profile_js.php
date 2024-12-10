@@ -1841,7 +1841,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- PERNAPASAN -->
 <script type="text/javascript">
-    function addPernapasan(flag, index, document_id, container, isaddbutton = true) {
+    function addPernapasan(flag, index, document_id, container, isaddbutton = false) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -2513,7 +2513,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- SIRKULASI -->
 <script type="text/javascript">
-    function addSirkulasi(flag, index, document_id, container, isaddbutton = true) {
+    function addSirkulasi(flag, index, document_id, container, isaddbutton = false) {
         var bodyId = '';
         var documentId = $("#" + document_id).val()
         if (flag == 1) {
@@ -2790,7 +2790,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- NEUROSENSORIS -->
 <script type="text/javascript">
-    function addNeurosensoris(flag, index) {
+    function addNeurosensoris(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -3020,8 +3020,10 @@ foreach ($examDetail as $key => $value) {
             $('#formNeurosensoris' + bodyId).find("input, select, textarea").prop("disabled", true)
             checkSign("formNeurosensoris" + bodyId)
         }
-        index++
-        $("#addNeurosensorisButton").html('<a onclick="addNeurosensoris(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addNeurosensorisButton").html('<a onclick="addNeurosensoris(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getNeurosensoris(bodyId) {
@@ -3929,7 +3931,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- DEKUBITUS -->
 <script type="text/javascript">
-    function addDekubitus(flag, index, document_id, container) {
+    function addDekubitus(flag, index, document_id, container, isaddbutton = false) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -4195,7 +4197,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- PENCERNAAN -->
 <script type="text/javascript">
-    function addPencernaan(flag, index) {
+    function addPencernaan(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -4423,8 +4425,10 @@ foreach ($examDetail as $key => $value) {
             $("#formPencernaanEditBtn" + bodyId).slideDown()
             checkSign("formPencernaan" + bodyId)
         }
-        index++
-        $("#addPencernaanButton").html('<a onclick="addPencernaan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addPencernaanButton").html('<a onclick="addPencernaan(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getPencernaan(bodyId) {
@@ -4459,7 +4463,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- PERKEMIHAN -->
 <script type="text/javascript">
-    function addPerkemihan(flag, index) {
+    function addPerkemihan(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -4687,8 +4691,10 @@ foreach ($examDetail as $key => $value) {
                 $("#formPerkemihanSaveBtn" + bodyId).hide()
                 $("#formPerkemihanEditBtn" + bodyId).show()
             }
-            index++
-            $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            if (isaddbutton) {
+                index++
+                $("#addPerkemihanButton").html('<a onclick="addPerkemihan(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+            }
         }
 
         function getPerkemihan(bodyId) {
@@ -4723,7 +4729,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // PSIKOLOGI -->
 <script type="text/javascript">
-    function addPsikologi(flag, index) {
+    function addPsikologi(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -4973,8 +4979,10 @@ foreach ($examDetail as $key => $value) {
             checkSign("formPsikologi" + bodyId)
 
         }
-        index++
-        $("#addPsikologiButton").html('<a onclick="addPsikologi(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addPsikologiButton").html('<a onclick="addPsikologi(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getPsikologi(bodyId) {
@@ -5285,7 +5293,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // SOCIAL -->
 <script type="text/javascript">
-    function addSocial(flag, index) {
+    function addSocial(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -5507,8 +5515,10 @@ foreach ($examDetail as $key => $value) {
             $("#formSocial" + bodyId).find("input, textarea, select").prop("disabled", true)
             checkSign("formSocial" + bodyId)
         }
-        index++
-        $("#addSocialButton").html('<a onclick="addSocial(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addSocialButton").html('<a onclick="addSocial(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getSocial(bodyId) {
@@ -5545,7 +5555,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // HEARING -->
 <script type="text/javascript">
-    function addHearing(flag, index) {
+    function addHearing(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -5772,8 +5782,10 @@ foreach ($examDetail as $key => $value) {
             } ?>
             checkSign("formHearing" + bodyId)
         }
-        index++
-        $("#addHearingButton").html('<a onclick="addHearing(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addHearingButton").html('<a onclick="addHearing(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getHearing(bodyId) {
@@ -5807,7 +5819,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // SLEEPING -->
 <script type="text/javascript">
-    function addSleeping(flag, index) {
+    function addSleeping(flag, index, isaddbutton = false) {
         var bodyId = '';
         if (flag == 1) {
             const date = new Date();
@@ -6041,8 +6053,10 @@ foreach ($examDetail as $key => $value) {
             checkSign("formSleeping" + bodyId)
 
         }
-        index++
-        $("#addSleepingButton").html('<a onclick="addSleeping(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addSleepingButton").html('<a onclick="addSleeping(1,' + index + ')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getSleeping(bodyId) {
@@ -6076,7 +6090,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // GIZI -->
 <script type="text/javascript">
-    function addGizi(flag, index, document_id, container) {
+    function addGizi(flag, index, document_id, container, isaddbutton = false) {
         var documentId = $("#" + document_id).val()
         var bodyId = '';
         if (flag == 1) {
@@ -6579,8 +6593,10 @@ foreach ($examDetail as $key => $value) {
             $("#formGizi" + bodyId).find("input, textarea, select").prop("disabled", true)
             checkSign("formGizi" + bodyId)
         }
-        index++
-        $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addGiziButton").html('<a onclick="addGizi(1,' + index + ',\'' + document_id + '\', \'' + container + '\')" class="btn btn-primary btn-lg btn-add-doc btn-to-hide" id="addDocumentBtn' + bodyId + '" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function checkImt(score) {
@@ -8054,7 +8070,22 @@ foreach ($examDetail as $key => $value) {
                 }
             } ?>
             $("#GCS_SCORE" + bodyId).val(gcs.gcs_score)
-            $("#GCS_DESC" + bodyId).val(gcs.gcs_score)
+            var totalScore = gcs.gcs_score
+            var conclutionScore = 0
+            if (totalScore >= 3 && totalScore <= 4)
+                conclutionScore = 6
+            if (totalScore > 4 && totalScore <= 6)
+                conclutionScore = 5
+            if (totalScore > 6 && totalScore <= 9)
+                conclutionScore = 4
+            if (totalScore > 9 && totalScore <= 11)
+                conclutionScore = 3
+            if (totalScore > 11 && totalScore <= 13)
+                conclutionScore = 2
+            if (totalScore > 13 && totalScore <= 15)
+                conclutionScore = 1
+
+            $("#GCS_DESC" + bodyId).val(conclutionScore)
             $.each(gcsDetailAll, function(key, value) {
                 if (value.body_id == gcs.body_id) {
                     $("#val" + value.p_type + value.parameter_id + bodyId).prop("checked", true)
@@ -8163,7 +8194,7 @@ foreach ($examDetail as $key => $value) {
 
 <!-- // INTEGUMEN -->
 <script type="text/javascript">
-    function addIntegumen(flag, index, document_id, container) {
+    function addIntegumen(flag, index, document_id, container, isaddbutton = false) {
         var bodyId = '';
         var documentId = $("#" + document_id).val()
 
@@ -8390,8 +8421,10 @@ foreach ($examDetail as $key => $value) {
             $("formIntegumenEditBtn" + bodyId).slideDown()
             $("#formIntegumen" + bodyId).find("input, select, textarea").prop("disabled", true)
         }
-        index++
-        $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        if (isaddbutton) {
+            index++
+            $("#addIntegumenButton").html('<a onclick="addIntegumen(1,' + index + ')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>')
+        }
     }
 
     function getIntegumen(bodyId) {

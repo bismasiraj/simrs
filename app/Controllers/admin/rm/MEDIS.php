@@ -2196,7 +2196,7 @@ class medis extends \App\Controllers\BaseController
             // return json_encode($visit);
 
             $db = db_connect();
-            $select = $this->lowerKey($db->query("select 
+            $select = $this->lowerKey($db->query("SELECT 
             pd.NO_REGISTRATION as no_RM,
             p.NAME_OF_PASIEN as nama,
             pd.PASIEN_DIAGNOSA_ID,
@@ -2239,15 +2239,15 @@ class medis extends \App\Controllers\BaseController
             else 'Kerabat Pasien dengan nama : ' + edu.family_name + ' materi edukasi : ' + edu.education_material  end ) as edukasi_pasien,
             igt.nama as tindaklanjut,
             pd.TGLKONTROL as tanggal_kontrol,
-            ei.WEIGHT as berat,
-            ei.HEIGHT as tinggi,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.nadi,
-            ei.TEMPERATURE AS Suhu,
-            ei.NAFAS as respiration,
-            ei.SATURASI AS SPO2,
-            EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
+            eid.WEIGHT as berat,
+            eid.HEIGHT as tinggi,
+            eid.TENSION_UPPER as tensi_atas,
+            eid.TENSION_BELOW as tensi_bawah,
+            eid.nadi,
+            eid.TEMPERATURE AS Suhu,
+            eid.NAFAS as respiration,
+            eid.SATURASI AS SPO2,
+            EId.WEIGHT/ ( (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ) AS IMT,
             isnull((select top(1) total_score from ASSESSMENT_FALL_RISK
             where DOCUMENT_ID = pd.PASIEN_DIAGNOSA_ID order by EXAMINATION_DATE desc) ,'') as FALL_SCORE,
             isnull((select top(1) total_score from ASSESSMENT_PAIN_MONITORING
@@ -2256,14 +2256,15 @@ class medis extends \App\Controllers\BaseController
             PD.MEDICAL_PROBLEM AS MASALAH_MEDIS,
             'MASALAH_PERAWAT' AS MASALAH_PERAWAT,
             PD.HURT AS PENYEBAB_CIDERA,
-            PD.THERAPY_TARGET AS SASARAN,
-            PD.LAB_RESULT AS LABORATORIUM,
-            PD.RO_RESULT AS RADIOLOGI,
-            PD.TERAPHY_DESC AS FARMAKOLOGIA,
+            -- PD.THERAPY_TARGET AS SASARAN,
+            -- PD.LAB_RESULT AS LABORATORIUM,
+            -- PD.RO_RESULT AS RADIOLOGI,
+            -- PD.TERAPHY_DESC AS FARMAKOLOGIA,
+            ei.INSTRUCTION AS SASARAN,
             PD.INSTRUCTION AS PROSEDUR,
             PD.STANDING_ORDER AS STANDING_ORDER,
             PD.DOCTOR AS DOKTER,
-            '' rencana_tl,
+            -- '' rencana_tl,
             '' kontrol,
 			 isnull((select top(1) case when total_score = 5 then 'ATS V' 
 			 when total_score = 4 then 'ATS IV'
@@ -2291,6 +2292,7 @@ class medis extends \App\Controllers\BaseController
             left outer join class on class.CLASS_ID = cr.CLASS_ID
             left outer join PASIEN_HISTORY ph on ph.NO_REGISTRATION = pd.NO_REGISTRATION
             left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
+            left outer join EXAMINATION_DETAIL eid on eid.body_id = pd.BODY_ID
             left outer join ASSESSMENT_GCS gcs on pd.PASIEN_DIAGNOSA_ID = gcs.DOCUMENT_ID
             left outer join ASSESSMENT_EDUCATION_FORMULIR EDU on pd.PASIEN_DIAGNOSA_ID = EDU.DOCUMENT_ID
 			left outer join INASIS_GET_TINDAKLANJUT igt on pd.RENCANATL = igt.KODE
@@ -2318,14 +2320,14 @@ class medis extends \App\Controllers\BaseController
             pd.IN_DATE,
             pd.ANAMNASE, 
             pd.DESCRIPTION,
-            ei.WEIGHT,
-            ei.HEIGHT, 
-            ei.TENSION_UPPER, 
-            ei.TENSION_BELOW, 
-            ei.nadi,
-            ei.NAFAS, 
-            ei.SATURASI,
-            ei.TEMPERATURE,
+            eid.WEIGHT,
+            eid.HEIGHT, 
+            eid.TENSION_UPPER, 
+            eid.TENSION_BELOW, 
+            eid.nadi,
+            eid.NAFAS, 
+            eid.SATURASI,
+            eid.TEMPERATURE,
             convert(varchar,P.date_of_birth,105),
             CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR',
             gcs.GCS_E, 
@@ -2340,36 +2342,107 @@ class medis extends \App\Controllers\BaseController
             PD.DIAGNOSA_ID,
             PD.HURT, 
             PD.MEDICAL_PROBLEM, 
-            EI.WEIGHT/ ( (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EI.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ), 
-            THERAPY_TARGET,
-            PD.LAB_RESULT, 
-            PD.RO_RESULT,
-            PD.TERAPHY_DESC, 
+            EID.WEIGHT/ ( (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) ) *  (CAST( EID.HEIGHT AS DECIMAL (5,2)) / CAST( 100 AS DECIMAL (5,2)) )  ), 
+            -- THERAPY_TARGET,
+            -- PD.LAB_RESULT, 
+            -- PD.RO_RESULT,
+            -- PD.TERAPHY_DESC, 
+            ei.INSTRUCTION,
             PD.INSTRUCTION, 
             PD.STANDING_ORDER, 
             PD.DOCTOR")->getRow(0, "array"));
 
-
+            $query = "SELECT  STUFF(
+             (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
+			  treatment_obat.body_id  = '$vactination_id' 
+			  and DESCRIPTION <> '%jasa%' 
+                group by description ,isnull(description2,'')
+              FOR XML PATH (''))
+             ,1, 2, '') terapi
+			 from ORGANIZATIONUNIT ;";
+            $farmako = $this->lowerKeyOne($db->query($query)->getResultArray());
 
             $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
             $selectlokalis = $this->lowerKey($db->query(
-                "
-                select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                 where document_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 3"
             )->getResultArray());
 
             $selectlokalis2 = $this->lowerKey($db->query(
-                "
-                select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
+                "SELECT assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                 INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                 where document_id = '$vactination_id' AND assessment_lokalis.VALUE_SCORE = 2"
             )->getResultArray());
+            $lab = $db->query("SELECT REPLACE(replace( STUFF(
+                                (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+                                from TREATMENT_BILL tr where
+                                -- tr.TRANS_ID = 'trans_id'  and
+                                tr.VISIT_ID= ?  and
+                                tr.CLINIC_ID = 'P013' 	 
+                                order by tr.TREATMENT
+                                FOR XML PATH (''))
+                                , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksalab
+                                from ORGANIZATIONUNIT
+                            ", [$visit['visit_id']])->getRowArray();
+
+            $rad = $db->query("SELECT REPLACE(replace( STUFF(
+                    (SELECT ';' +  ' Pemeriksaan : ' + tr.treatment + '  '
+                    from TREATMENT_BILL tr where
+                    -- tr.TRANS_ID = 'trans_id'  and
+                    tr.VISIT_ID= ?  and
+                    tr.CLINIC_ID = 'P016' 	 
+                    order by tr.TREATMENT
+                    FOR XML PATH (''))
+                    , 1, 1, '') , ';',CHAR(13)) , '&#x0D','') periksarad
+                    from ORGANIZATIONUNIT
+                ", [$visit['visit_id']])->getRowArray();
+
+            $tindakLanjut = $this->lowerKey($db->query("SELECT 
+                            CASE 
+                                WHEN ISINTERNAL = 2 THEN 'DIRUJUK'
+                                WHEN ISINTERNAL = 3 THEN 'DI RUJUK KE UNIT LAIN (KONSUL)'
+                                WHEN ISINTERNAL = 4 THEN 'PERAWATAN JALAN (KONTROL)'
+                                WHEN ISINTERNAL = 5 THEN 'RAWAT INAP'
+                                WHEN ISINTERNAL = 10 THEN 'TRANSFER INTERNAL'
+                                WHEN ISINTERNAL = 11 THEN 'Pengobatan Selesai'
+                                ELSE ''
+                            END AS tindak_lanjut
+                        FROM PASIEN_TRANSFER
+                        WHERE visit_id = '20241209P006022374'
+                        AND ISINTERNAL <> 11;", [$visit['visit_id']])->getRowArray());
+
+            $farma = $db->query("SELECT  STUFF(
+             (SELECT ', ' +  description + ' ( ' + isnull(description2,'') + ' ) '   from  treatment_obat where 
+			  treatment_obat.visit_id  = ?
+			  and DESCRIPTION <> '%jasa%' 
+                group by description ,isnull(description2,'')
+              FOR XML PATH (''))
+             ,1, 2, '') terapi
+			 from ORGANIZATIONUNIT ;
+            ", [$visit['visit_id']])->getRowArray();
+
+            // var_dump($lab);
+            if ($lab) {
+                $select['laboratorium'] = $lab['periksalab'];
+            }
+            if ($rad) {
+                $select['radiologi'] = $rad['periksarad'];
+            }
+            if ($farma) {
+                $select['farmakologia'] = $farma['terapi'];
+            }
+            if ($tindakLanjut) {
+                $select['rencana_tl'] = $tindakLanjut['tindak_lanjut'];
+            }
+
 
             $selectinfo = $visit;
 
             $sign = $this->checkSignDocs($vactination_id, 2);
+
+
 
             // return json_encode($vactination_id);
             return view("admin/patient/profilemodul/formrm/rm/MEDIS/20-igd-rawat-jalan.php", [
@@ -2381,10 +2454,11 @@ class medis extends \App\Controllers\BaseController
                 "organization" => $selectorganization,
                 "info" => $selectinfo,
                 "sign" => $sign,
-
+                "farmako" => $farmako,
             ]);
         }
     }
+
 
     public function profile($visit, $vactination_id = null)
     {

@@ -56,6 +56,7 @@ $menu = [
     'educationIntegration' => 0,
     'educationForm' => 0,
     'gizi' => 0,
+    'patologi' => 1,
     'cairan' => 1,
     'penunjang' => 1,
     'riwayatHamil' => 1,
@@ -236,6 +237,10 @@ $currency_symbol = 'Rp. ';
                                         if ($menu['fisio'] == 1) { ?>
                                             <li class="nav-item"><a id="fisioTab" class="nav-link border-bottom" href="#fisio" data-bs-toggle="tab" aria-expanded="true" role="tab">Fisioterapi</a></li>
                                             <li class="nav-item"><a id="jadwalFisioTab" class="nav-link border-bottom" href="#jadwalFisiomodul" data-bs-toggle="tab" aria-expanded="true" role="tab">Jadwal Fisio</a></li>
+                                            <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
+                                        <?php }
+                                        if ($menu['patologi'] == 1) { ?>
+                                            <li class="nav-item"><a id="patologiTab" class="nav-link border-bottom" href="#patologi" data-bs-toggle="tab" aria-expanded="true" role="tab">Patologi</a></li>
                                             <!-- <li class="nav-item"><a id="radTab" class="nav-link border-bottom" href="#rad" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fas fa-x-ray text-primary"></i> Radiologi</a></li> -->
                                         <?php }
                                         if ($menu['permintaandarah'] == 1) { ?>
@@ -605,6 +610,27 @@ $currency_symbol = 'Rp. ';
                                             'pasienDiagnosa' => $pasienDiagnosa,
 
                                         ]); ?>
+                                        <?php if ($menu['patologi'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/patologi', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa
+                                            ]); ?>
+                                        <?php
+                                        } ?>
                                         <?php echo view('admin/patient/profilemodul/mrpasien', [
                                             'title' => '',
                                             'orgunit' => $orgunit,
@@ -2108,6 +2134,26 @@ if (true) {
         'mappingAssessment' => $mappingAssessment
     ]);
 }
+if ($menu['patologi'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/patologi_js', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa
+    ]);
+}
+
 if ($menu['charges'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/charges_js', [
         'title' => '',

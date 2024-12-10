@@ -1272,7 +1272,9 @@
         } else {
             var url = "<?= base_url('admin/rm/medis/rawat_jalan/' . base64_encode(json_encode($visit))) ?>" + '/' + $("#armpasien_diagnosa_id").val() + '/' + title;
         }
-        window.open(url, '_blank');
+
+        openPopUpTab(url)
+
     })
 </script>
 <script type="text/javascript">

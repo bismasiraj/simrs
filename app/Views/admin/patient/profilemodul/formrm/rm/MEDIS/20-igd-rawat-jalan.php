@@ -7,20 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
+        rel="stylesheet">
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="<?= base_url('assets/libs/qrcode/qrcode.min.js') ?>"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -149,7 +152,7 @@
                     </td>
                     <td class="p-1">
                         <b>Suhu Tubuh</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['suhu']; ?> ℃</p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['suhu']; ?> ?</p>
                     </td>
                     <td class="p-1">
                         <b>Respiration Rate</b>
@@ -171,7 +174,7 @@
                     </td>
                     <td class="p-1">
                         <b>BMI</b>
-                        <p class="m-0 mt-1 p-0"><?= number_format(@$val['imt'], 2); ?></p>
+                        <p class="m-0 mt-1 p-0"><?= @$val['imt']; ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -187,9 +190,12 @@
                     <td class="p-1">
                         <div class="row mb-2">
                             <div class="col-auto">
-                                <b>pGCS E / Respon Membuka Mata :</b> <span class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_e'] . '] ' . @$val['gsc_e_desc']; ?>.</span>
-                                <b>pGCS V / Respon Verbal Terbaik :</b> <span class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_v'] . '] ' . @$val['gsc_v_desc']; ?>.</span>
-                                <b>pGCS M / Respon Motorik Terbaik :</b> <span class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_m'] . '] ' . @$val['gsc_m_desc']; ?>.</span>
+                                <b>pGCS E / Respon Membuka Mata :</b> <span
+                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_e'] . '] ' . @$val['gsc_e_desc']; ?>.</span>
+                                <b>pGCS V / Respon Verbal Terbaik :</b> <span
+                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_v'] . '] ' . @$val['gsc_v_desc']; ?>.</span>
+                                <b>pGCS M / Respon Motorik Terbaik :</b> <span
+                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_m'] . '] ' . @$val['gsc_m_desc']; ?>.</span>
                             </div>
 
                         </div>
@@ -308,7 +314,7 @@
                         <p class="m-0 mt-1 p-0"><?= !empty(@$val['ats_tipe']) ? @$val['ats_tipe'] : '-'; ?></p>
                     </td>
                 </tr>
-                <?php if (!empty($val['ats_tipe'])) : ?>
+                <?php if (!empty($val['ats_tipe'])): ?>
                     <tr>
                         <td class="p-1">
                             <b><?= @$val['ats_tipe']; ?></b>
@@ -316,36 +322,38 @@
                         </td>
                     </tr>
                 <?php endif; ?>
-                <tr>
-                    <td class="p-1" colspan="2">
-                        <b>Hamil</b>
-                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['hamil']) ? @$val['hamil'] : '-'; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" colspan="2">
-                        <b>Umur Kehamilan</b>
-                        <p class="m-0 mt-1 p-0"></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" colspan="2">
-                        <b>G</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_g']; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" colspan="2">
-                        <b>P</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_p']; ?></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="p-1" colspan="2">
-                        <b>A</b>
-                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_a']; ?></p>
-                    </td>
-                </tr>
+                <?php if (!empty($val['hamil']) && ($val['hamil'] === "Hamil")): ?>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>Hamil</b>
+                            <p class="m-0 mt-1 p-0"><?= !empty(@$val['hamil']) ? @$val['hamil'] : '-'; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>Umur Kehamilan</b>
+                            <p class="m-0 mt-1 p-0"></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>G</b>
+                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_g']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>P</b>
+                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_p']; ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-1" colspan="2">
+                            <b>A</b>
+                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_a']; ?></p>
+                        </td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
 
@@ -478,7 +486,7 @@
                 <div class="mb-1">
                     <div id="qrcode"></div>
                 </div>
-                <p class="p-0 m-0 py-1" id="qrcode_name">(<?= @$val['dokter']; ?>)</p>
+                <p class="p-0 m-0 py-1">(<?= @$val['dokter']; ?>)</p>
                 <i>dicetak pada tanggal <?= tanggal_indo(date('Y-m-d')); ?></i>
             </div>
             <div class="col"></div>
@@ -488,7 +496,7 @@
                 <div class="mb-1">
                     <div id="qrcode1"></div>
                 </div>
-                <p class="p-0 m-0 py-1" id="qrcode_name1">(<?= @$val['nama']; ?>)</p>
+                <p class="p-0 m-0 py-1">(<?= @$val['nama']; ?>)</p>
             </div>
         </div>
     </div>
@@ -496,39 +504,30 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
 
 </body>
 <script>
-    let val = <?= json_encode($val); ?>;
-    let sign = <?= json_encode($sign); ?>;
-
-    sign = JSON.parse(sign)
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: '<?= @$val['dpjp']; ?>',
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 <script>
-    $.each(sign, function(key, value) {
-        if (value.user_type == 1 && value.isvalid == 1) {
-            var qrcode = new QRCode(document.getElementById("qrcode"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-            $("#qrcode_name").html(`(${value.fullname??value.user_id})`)
-        } else if (value.user_type == 2 && value.isvalid == 1) {
-            var qrcode1 = new QRCode(document.getElementById("qrcode1"), {
-                text: value.sign_path,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H // High error correction
-            });
-            $("#qrcode_name1").html(`(${value.fullname??value.user_id})`)
-        }
-    })
+    var qrcode = new QRCode(document.getElementById("qrcode1"), {
+        text: '<?= @$val['nama']; ?>',
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 
 <style>

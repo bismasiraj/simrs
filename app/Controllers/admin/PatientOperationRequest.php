@@ -1524,7 +1524,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         if (isset($bloodblood_request)) {
             $bloodblood_request = [
-                '202412040411113432R6', '20241204041114617B4V'
+                '202412040411113432R6',
+                '20241204041114617B4V'
             ];
 
             $bloodmodel = new BloodRequestModel();
@@ -1707,8 +1708,10 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 ->where('document_id', $body_id)
                 ->where('no_registration', $bloodno_registration[0])
                 ->where('clinic_id', $bloodclinic_id[0])
+                ->groupStart()
                 ->where('TRANSFUSION_START', NULL)
                 ->orWhere('TRANSFUSION_END', NULL)
+                ->groupEnd()
                 ->delete();
 
             foreach ($bloodblood_request as $key => $value) {
