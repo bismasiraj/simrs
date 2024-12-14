@@ -6,7 +6,7 @@
         <input type="hidden" name="document_id" id="document_id_checklist_keselamatan">
         <input type="hidden" name="body_id" id="body_id_checklist_keselamatan">
         <input type="hidden" name="examination_date" id="examination_date_checklist_keselamatan">
-        <input type="hidden" name="modified_date" id="examination_date_checklist_keselamatan">
+        <input type="hidden" name="modified_date" id="modified_date_checklist_keselamatan">
         <input type="hidden" name="modified_by" id="modified_by_checklist_keselamatan" value="<?= user()->username; ?>">
 
 
@@ -82,7 +82,7 @@
         </div>
     </form>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     $('#btn-save-checklist-keselamatan').on('click', function(e) {
 
@@ -91,11 +91,6 @@
         let formElement = $('#form-checklist-keselamatan')[0];
         let dataSend = new FormData(formElement);
 
-        let brand_name = dataSend.getAll(`brand_name[]`);
-        let quantity_before = dataSend.getAll(`quantity_before[]`);
-        let quantity_intra = dataSend.getAll(`quantity_intra[]`);
-        let quantity_additional = dataSend.getAll(`quantity_additional[]`);
-        let quantity_after = dataSend.getAll(`quantity_after[]`);
         let body_id = dataSend.getAll(`body_id[]`);
         let jsonObj = {
             instrumen: []
@@ -114,31 +109,14 @@
         }
 
 
-        // Iterate through arrays and create entries
-        for (let i = 0; i < brand_name.length; i++) {
-            let entry = {
-                brand_id: brand_name[i],
-                brand_name: $('select[name="brand_name[]"] option:selected').eq(i).text(),
-                quantity_before: quantity_before[i],
-                quantity_intra: quantity_intra[i],
-                quantity_additional: quantity_additional[i],
-                quantity_after: quantity_after[i],
-                body_id: genBodyID,
-            };
-
-            jsonObj.instrumen.push(entry);
-        }
-        delete jsonObj['brand_name[]']
-        delete jsonObj['quantity_before[]']
-        delete jsonObj['quantity_intra[]']
-        delete jsonObj['quantity_additional[]']
-        delete jsonObj['quantity_after[]']
         delete jsonObj['body_id[]']
 
+
         postData(jsonObj, 'admin/PatientOperationRequest/insertChecklistKeselamatan', (res) => {
-            if (res.respon === true) {
+            if (res.respon) {
                 successSwal('Data berhasil disimpan.');
-                $('#form-checklist-keselamatan')[0].reset();
+            } else {
+                errorSwal('Data gagal disimpan.')
             }
         });
     });

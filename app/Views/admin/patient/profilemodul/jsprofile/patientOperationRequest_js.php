@@ -2255,7 +2255,7 @@
                     initializeQuillEditors();
                 });
 
-                initializeQuillEditors();
+                // initializeQuillEditors();
                 actionDropdownSpesialisas();
                 btnSaveActionRequestOperation(visit);
             });
@@ -2624,7 +2624,7 @@
                 initializeFlatpickrOperasi()
                 initializeQuillEditors();
             });
-            initializeQuillEditors();
+            // initializeQuillEditors();
         };
 
         const modalViewEditRequestOperation = (data) => {
@@ -2722,7 +2722,7 @@
                 initializeQuillEditors();
             });
             initializeFlatpickrOperasi()
-            initializeQuillEditors();
+            // initializeQuillEditors();
             btnUpdateDataRequestOperation(result)
         };
 
@@ -2868,7 +2868,7 @@
             });
 
 
-            initializeQuillEditors();
+            // initializeQuillEditors();
             actionBtnUpdateAndInsert(result);
         };
 
@@ -5556,7 +5556,7 @@
                                 htmlContent = `
                                     <div class="form-group mb-0 pt-4">
                                         <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
+                                    <input type="${props?.column_name?.toLowerCase() == 'bleeding' ? 'number' : 'text' }" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
                                     </div>
                                 `;
                             }
@@ -5598,13 +5598,21 @@
 
         const initializeQuillEditors = (props) => {
             document.querySelectorAll('.quill-editor').forEach(editor => {
+                const instance = quillInstances[editor.id];
+                if (instance) {
+                    instance.off('text-change'); // Remove event listeners
+                    instance.root.innerHTML = ''; // Clear content
+                    delete quillInstances[editor.id]; // Remove instance
+                }
+            });
+
+            document.querySelectorAll('.quill-editor').forEach(editor => {
                 if (!quillInstances[editor.id]) {
                     const quill = new Quill(editor, {
                         theme: 'snow'
                     });
 
                     quillInstances[editor.id] = quill;
-
 
                     const inputField = document.querySelector(
                         `input[name="${editor.getAttribute('name')}"]`);
@@ -5687,12 +5695,12 @@
             };
 
             let droppdown = `
-                        <table class="table table-borderless" id="data-dropdown">
+                        <table class="table table-borderless my-4" id="data-dropdown">
                             <tbody>
                                 ${props?.map(e => `
                                     <tr class="bg-light">
                                         <td>
-                                            <select class="form-select task-dropdown" name="groupedTasks_option[]">
+                                            <select class="form-select task-dropdown select2" name="groupedTasks_option[]">
                                                 ${generateTaskOptions(e.task_id)}
                                             </select>
                                         </td>
@@ -5702,7 +5710,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select class="form-select employee-dropdown" name="employee_option[]">
+                                            <select class="form-select employee-dropdown select2" name="employee_option[]">
                                                 ${generateEmployeeOptions(e.employee_id)}
                                             </select>
                                         </td>
@@ -5784,7 +5792,7 @@
                 let dataDropdownContent = `
                             <tr class="bg-light">
                                 <td>
-                                    <select class="form-select task-dropdown" name="groupedTasks_option[]">
+                                    <select class="form-select task-dropdown select2" name="groupedTasks_option[]">
                                         <option value="pilih">pilih</option>
                                         ${newTaskOptions}
                                     </select>
@@ -5795,7 +5803,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <select class="form-select employee-dropdown" name="employee_option[]">
+                                    <select class="form-select employee-dropdown select2" name="employee_option[]">
                                         <option value="pilih">pilih</option>
                                         ${newTaskOptionsEmployee}
                                     </select>
@@ -6532,7 +6540,9 @@
         }; //new 01/08
 
         const convertDate = (dateString) => {
-            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm", "YYYY-MM-DDTHH:mm"];
+            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm",
+                "YYYY-MM-DDTHH:mm"
+            ];
             const parsedDate = moment(dateString, formats, true);
             if (parsedDate.isValid()) {
                 return parsedDate.format("YYYY-MM-DD HH:mm");

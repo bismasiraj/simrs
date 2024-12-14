@@ -617,11 +617,7 @@ class lainnya extends \App\Controllers\BaseController
             $db = db_connect();
             $kopprintData = $this->kopprint();
 
-            //       var_dump($visit);
-            // exit();
-
-
-            $dataTables = $this->lowerKey($db->query("SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
+            $dataTables = $this->lowerKey($db->query("SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound, h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,
                                                         PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
                                                         reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
                                                         k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl
@@ -634,17 +630,33 @@ class lainnya extends \App\Controllers\BaseController
                                                         AND DATEADD(hour, 24, COALESCE('" . $visit['end_request'] . "', GETDATE()))
                                                         GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
                                                         PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, k.Tgl_Periksa, reg_date, norm,
-                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl
-                                                        ORDER BY urut_bound, kode_kunjungan, tarif_id, kel_pemeriksaan")->getResultArray());
+                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl,h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi
+                                                        ORDER BY urut_bound, kode_kunjungan, tarif_id")->getResultArray());
+
+            $doctor = $this->lowerKey($db->query("SELECT fullname from EMPLOYEE_ALL where NONACTIVE= 0 and employee_id in (select employee_id from DOCTOR_SCHEDULE where clinic_id ='P013')")->getRowArray());
+            $username_valid = $this->lowerKey($db->query("SELECT users.username,
+                                                isnull(EMPLOYEE_ALL.fullname, users.username) as fullname
+                                            FROM 
+                                                USERS
+                                            left outer JOIN 
+                                                EMPLOYEE_ALL 
+                                                ON USERS.employee_id = EMPLOYEE_ALL.employee_id
+                                                WHERE users.username = '" . user()->username . "'  
+												
+                                    ")->getRowArray());
+            if ($username_valid) {
+                $visit['valid_users_p'] = $username_valid['fullname'];
+            }
 
 
-            $select = $this->lowerKey($db->query("select VISIT_Id, org_unit_code, DESCRIPTION as nama_obat, DESCRIPTION2 as aturan_pakai, MODULE_ID,TREAT_DATE from PASIEN_PRESCRIPTION_DETAIL where 
-                                                                VISIT_ID ='" . $visit['visit_id'] . "' AND ORG_UNIT_CODE ='" . $visit['org_unit_code'] . "'")->getResultArray());
-            if (isset($select)) {
+            if ($doctor) {
+                $visit['doctor_responsible'] = $doctor['fullname'];
+            }
+
+            if (isset($dataTables)) {
                 return view("admin/patient/profilemodul/formrm/rm/hasil-pemeriksaan-laboratorium.php", [
                     "visit" => $visit,
                     'title' => $title,
-                    "data" => $select,
                     'kop' => $kopprintData[0],
                     'dataTables' => $dataTables
 
@@ -660,6 +672,7 @@ class lainnya extends \App\Controllers\BaseController
             }
         }
     }
+
 
 
     // radiologi
@@ -1182,11 +1195,11 @@ class lainnya extends \App\Controllers\BaseController
             AS Pemeriksaan_kulit
      
             from HISTORY_ASSESSMENT_MEDIS  ha left outer join clinic c on ha.CLINIC_ID = c.CLINIC_ID
-            -- where ha.clinic_id  = 'P010'  --:poli
-            -- and ha.no_registration = '067710' --:norm
-
             where ha.clinic_id  = '$clinic'  --:poli
-            and ha.no_registration = '$no_regis' --:norm
+             and ha.no_registration = '$no_regis'
+
+            -- where ha.clinic_id  = '$clinic'  --:poli
+            -- and ha.no_registration = '$no_regis' --:norm
             ")->getResultArray());
         }
 

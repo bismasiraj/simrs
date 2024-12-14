@@ -56,23 +56,32 @@ $menu = [
     'educationIntegration' => 0,
     'educationForm' => 0,
     'gizi' => 0,
-    'patologi' => 1,
-    'cairan' => 1,
-    'penunjang' => 1,
-    'riwayatHamil' => 1,
-    'permintaandarah' => 1,
-    'pemeriksaanSaraf' => 1,
-    'pemeriksaanKulit' => 1,
+    'patologi' => 0,
+    'cairan' => 0,
+    'penunjang' => 0,
+    'riwayatHamil' => 0,
+    'permintaandarah' => 0,
+    'pemeriksaanSaraf' => 0,
+    'pemeriksaanKulit' => 0,
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
     $menu['persalinan'] = 1;
     $menu['suratketeranganlahir'] = 1;
+    $menu['riwayatHamil'] = 1;
+}
+if ($visit['specialist_type_id'] == '1.12') {
+    $menu['pemeriksaanKulit'] = 1;
+}
+if ($visit['specialist_type_id'] == '1.16') {
+    $menu['pemeriksaanSaraf'] = 1;
 }
 if (@$gsPoli == 'P002') {
     $menu['patientOperationRequest'] = 1;
 }
-
+if ($visit['isrj'] == 0) {
+    $menu['permintaandarah'] = 1;
+}
 if (user()->checkPermission("assessmentmedis", "r"))
     $menu['assessmentmedis'] = 1;
 if (user()->checkPermission("assessmentperawat", "r"))
@@ -133,6 +142,10 @@ if (user()->checkPermission("asuhangizi", "r"))
     $menu['gizi'] = 1;
 if (user()->checkPermission("cairan", "r"))
     $menu['cairan'] = 1;
+if (user()->checkPermission("penunjangmedis", "r"))
+    $menu['penunjang'] = 1;
+if (user()->checkPermission("patologi", "r"))
+    $menu['patologi'] = 1;
 ?>
 
 <?php $this->section('content') ?>
@@ -2679,7 +2692,7 @@ if ($menu['pemeriksaanKulit'] == 1) {
         'pasienDiagnosa' => $pasienDiagnosa
     ]);
 }
-if ($menu['pemeriksaanKulit'] == 1) {
+if ($menu['pemeriksaanSaraf'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/pemeriksaanSaraf_js.php', [
         'title' => '',
         'orgunit' => $orgunit,

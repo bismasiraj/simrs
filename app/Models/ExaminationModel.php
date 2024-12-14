@@ -59,6 +59,7 @@ class ExaminationModel extends Model
         "kal_id",
         "petugas_id",
         "petugas",
+        "petugas_type",
         "account_id",
         "kesadaran",
         "isvalid",

@@ -32,10 +32,10 @@ class UsersPermission extends \App\Controllers\BaseController
                                                 USERS.email, 
                                                 users.id,
                                                 users.username,
-                                                EMPLOYEE_ALL.fullname
+                                                isnull(EMPLOYEE_ALL.fullname, users.username) as fullname
                                             FROM 
                                                 USERS
-                                            INNER JOIN 
+                                            left outer JOIN 
                                                 EMPLOYEE_ALL 
                                                 ON USERS.employee_id = EMPLOYEE_ALL.employee_id
                                                 WHERE FULLNAME LIKE  '%$search%'  OR USERS.email LIKE '%$search%'
@@ -81,10 +81,10 @@ class UsersPermission extends \App\Controllers\BaseController
                                                 USERS.email, 
                                                 users.id,
                                                 users.username,
-                                                EMPLOYEE_ALL.fullname
+                                                isnull(EMPLOYEE_ALL.fullname, users.username) as fullname
                                             FROM 
                                                 USERS
-                                            INNER JOIN 
+                                            LEFT JOIN 
                                                 EMPLOYEE_ALL 
                                                 ON USERS.employee_id = EMPLOYEE_ALL.employee_id
                                             ORDER BY 
@@ -111,7 +111,7 @@ class UsersPermission extends \App\Controllers\BaseController
                                             ag.name
                                         FROM 
                                             auth_groups_users agu
-                                        LEFT JOIN 
+                                        LEFT OUTER JOIN 
                                             EMPLOYEE_ALL e 
                                             ON agu.user_id = CAST(e.EMPLOYEE_ID AS VARCHAR(50)) 
                                             AND ISNUMERIC(e.EMPLOYEE_ID) = 1
@@ -120,7 +120,7 @@ class UsersPermission extends \App\Controllers\BaseController
                                             ON agu.group_id = ag.id
         ")->getResultArray() ?? []);
 
-        $dataOptions = $this->lowerKey($db->query("SELECT * From AUTH_GROUPS 
+        $dataOptions = $this->lowerKey($db->query("SELECT * From AUTH_GROUPS order by description
         ")->getResultArray() ?? []);
 
 

@@ -337,7 +337,7 @@ $permission = user()->getPermissions();
                             <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                 <div class="form-group"><label for="sprikddpjp">Dokter</label>
                                     <div>
-                                        <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%">
+                                        <select name="sprikddpjp" id="sprikddpjp" class="form-control" style="width:100%" onchange="setPoliTindakLanjut(this.value)">
                                             <?php foreach ($employee as $key => $value) {
                                             ?>
                                                 <option value="<?= $value['employee_id']; ?>"><?= $value['fullname']; ?></option>
@@ -372,7 +372,8 @@ $permission = user()->getPermissions();
                             </div>
                             <div class="col-sm-12 col-xs-12 col-md-4 mb-3">
                                 <div class="form-group"><label for="spritglkontrol">Tgl Rencana Ranap</label>
-                                    <input type='date' name="spritglkontrol" class="form-control" id='spritglkontrol' />
+                                    <input name="" id="flatspritglkontrol" type="text" class="form-control datetimeflatpickr" readonly />
+                                    <input name="spritglkontrol" id="spritglkontrol" type="hidden" />
                                 </div>
                             </div>
                             <div class="row mt-3 mb-3" style=" display: none;">

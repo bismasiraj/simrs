@@ -33,9 +33,9 @@
     function addRowfall(fallselect, key) {
         var type = '';
         if (fallselect.p_type == 'ASES019') {
-            type = 'HUMPTY DUMPTY (SKALA JATUH ANAK)'
-        } else {
             type = 'MORSE FALL SCALE(SKALA JATUH MORSE)'
+        } else {
+            type = 'HUMPTY DUMPTY (SKALA JATUH ANAK)'
         }
         var p1 = '';
         var p2 = '';

@@ -112,70 +112,96 @@ class AssessmentPerawat extends BaseController
                 $perawat = json_decode($this->saveAssessmentPerawat($value["data"]));
             }
             if (str_contains($value["id"], "formGcs")) {
-                $gcs = json_decode($controller->saveGcs($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $gcs = json_decode($controller->saveGcs($value["data"]));
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
-                $monitoring = json_encode($controller->savePainMonitoring($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $monitoring = json_encode($controller->savePainMonitoring($value["data"]));
             }
             if (str_contains($value["id"], "formFallRisk")) {
-                $fallRisk = json_encode($controller->saveFallRisk($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $fallRisk = json_encode($controller->saveFallRisk($value["data"]));
             }
             if (str_contains($value["id"], "formGizi")) {
-                $gizi = json_decode($controller->savegizi($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $gizi = json_decode($controller->savegizi($value["data"]));
             }
             if (str_contains($value["id"], "formTriage")) {
-                $triage = json_decode($controller->saveTriage($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $triage = json_decode($controller->saveTriage($value["data"]));
             }
             if (str_contains($value["id"], "formApgar")) {
-                $apgar = json_decode($controller->saveApgar($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $apgar = json_decode($controller->saveApgar($value["data"]));
             }
             if (str_contains($value["id"], "formStabilitas")) {
-                $stabilitas = json_decode($controller->saveStabilitas($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $stabilitas = json_decode($controller->saveStabilitas($value["data"]));
             }
             if (str_contains($value["id"], "formPernapasan")) {
-                $pernapasan = json_decode($controller->savePernapasan($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $pernapasan = json_decode($controller->savePernapasan($value["data"]));
             }
             if (str_contains($value["id"], "formSirkulasi")) {
-                $sirkulasi = json_decode($controller->saveSirkulasi($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $sirkulasi = json_decode($controller->saveSirkulasi($value["data"]));
             }
             if (str_contains($value["id"], "formNeurosensoris")) {
-                $neurosensori = json_decode($controller->saveNeurosensoris($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $neurosensori = json_decode($controller->saveNeurosensoris($value["data"]));
             }
             if (str_contains($value["id"], "formIntegumen")) {
-                $integumen = json_decode($controller->saveIntegumen($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $integumen = json_decode($controller->saveIntegumen($value["data"]));
             }
             if (str_contains($value["id"], "formAnak")) {
-                $anak = json_decode($controller->saveAnak($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $anak = json_decode($controller->saveAnak($value["data"]));
             }
             if (str_contains($value["id"], "formADL")) {
-                $adl = json_decode($controller->saveADL($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $adl = json_decode($controller->saveADL($value["data"]));
             }
             if (str_contains($value["id"], "formDekubitus")) {
-                $dekubitus = json_decode($controller->saveDekubitus($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $dekubitus = json_decode($controller->saveDekubitus($value["data"]));
             }
             if (str_contains($value["id"], "formPencernaan")) {
-                $pencernaan = json_decode($controller->savePencernaan($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $pencernaan = json_decode($controller->savePencernaan($value["data"]));
             }
             if (str_contains($value["id"], "formPerkemihan")) {
-                $perkemihan = json_decode($controller->savePerkemihan($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $perkemihan = json_decode($controller->savePerkemihan($value["data"]));
             }
             if (str_contains($value["id"], "formPsikologi")) {
-                $psikologi = json_decode($controller->savePsikologi($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $psikologi = json_decode($controller->savePsikologi($value["data"]));
             }
             if (str_contains($value["id"], "formEducationForm")) {
-                $education = json_decode($controller->saveeducationForm($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $education = json_decode($controller->saveeducationForm($value["data"]));
             }
             if (str_contains($value["id"], "formEducationIntegration")) {
-                $educationIntegration = json_decode($controller->saveeducationIntegration($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $educationIntegration = json_decode($controller->saveeducationIntegration($value["data"]));
             }
             if (str_contains($value["id"], "formSocialsocial")) {
-                $social = json_decode($controller->saveSocial($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $social = json_decode($controller->saveSocial($value["data"]));
+            }
+            if (str_contains($value["id"], "formSeksual")) {
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $seksual = json_decode($controller->saveSeksual($value["data"]));
             }
             if (str_contains($value["id"], "formHearing")) {
-                $hearing = json_decode($controller->saveHearing($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $hearing = json_decode($controller->saveHearing($value["data"]));
             }
             if (str_contains($value["id"], "formSleeping")) {
-                $sleeping = json_decode($controller->saveSleeping($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $sleeping = json_decode($controller->saveSleeping($value["data"]));
             }
         }
 
@@ -202,6 +228,7 @@ class AssessmentPerawat extends BaseController
             "education" => @$education,
             "educationIntegration" => @$educationIntegration,
             "social" => @$social,
+            "seksual" => @$seksual,
             "hearing" => @$hearing,
             "sleeping" => @$sleeping
         ]);
@@ -315,16 +342,17 @@ class AssessmentPerawat extends BaseController
             'modified_by' => $modified_by,
         ];
         $pdn->insert($data);
-        if (!empty($diag_id)) {
-            foreach ($diag_id as $key => $value) {
+        if (!empty($diagnosan_id)) {
+            foreach ($diagnosan_id as $key => $value) {
                 $dataDiag = [
                     'org_unit_code' => $org_unit_code,
                     'body_id' => $id,
-                    'diagnosan_id' => $diag_id[$key],
+                    'diagnosan_id' => $diagnosan_id[$key],
                     'diagnosa_date' => new RawSql("getdate()"),
-                    'diag_notes' => $diag_name[$key],
+                    'diag_notes' => $diag_notes[$key],
                     'modified_by' => user()->username
                 ];
+                // return json_encode($dataDiag);
                 $pds->insert($dataDiag);
             }
         }
@@ -347,6 +375,9 @@ class AssessmentPerawat extends BaseController
         $body = json_decode($body, true);
         $document_id = $body['document_id'];
         $visit_id = $body['visit_id'];
+        $db = db_connect();
+        $diagPerawat = $this->lowerKey($db->query("select * from pasien_diagnosa_nurse pdn inner join pasien_diagnosas_nurse pds on pdn.body_id = pds.body_id where pdn.document_id in ('$document_id') ")->getResultArray());
+
         $gcs = $this->getGcs($document_id, $visit_id);
         $fallRisk = $this->getFallRisk($document_id, $visit_id);
         $painMonitoring = $this->getPainMonitoring($document_id, $visit_id);
@@ -390,6 +421,7 @@ class AssessmentPerawat extends BaseController
             'social' => @$social,
             'hearing' => @$hearing,
             'sleeping' => @$sleeping,
+            'diagPerawat' => @$diagPerawat
         ]);
     }
     public function getGcs($bodyId, $visit)
@@ -635,7 +667,7 @@ class AssessmentPerawat extends BaseController
         $select = $this->lowerKey($model->where("visit_id", $visit)->where("document_id", $bodyId)->select("*")->findAll());
 
         return ([
-            'perkemihan' => $visit
+            'perkemihan' => $select
         ]);
     }
     public function getPsikologi($bodyId, $visit)

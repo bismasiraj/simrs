@@ -50,12 +50,12 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
         <div class="d-flex">
 
             <!-- App Search-->
-            <form class="app-search d-none d-lg-block">
+            <!-- <form class="app-search d-none d-lg-block">
                 <div class="position-relative">
                     <input type="text" class="form-control" placeholder="Search...">
                     <span class="fa fa-search"></span>
                 </div>
-            </form>
+            </form> -->
 
             <div class="dropdown d-inline-block d-lg-none ms-2">
                 <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
@@ -84,18 +84,18 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
 
 
 
-            <div class="dropdown d-none d-lg-inline-block">
+            <!-- <div class="dropdown d-none d-lg-inline-block">
                 <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
                     <i class="mdi mdi-fullscreen font-size-24 color-white"></i>
                 </button>
-            </div>
+            </div> -->
 
-            <div class="dropdown d-inline-block ms-1">
+            <!-- <div class="dropdown d-inline-block ms-1">
                 <button type="button" class="btn header-item noti-icon waves-effect"
                     id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
                     <i class="ti-bell color-white"></i>
-                    <!-- <span class="badge text-bg-danger rounded-pill">3</span> -->
+                    <span class="badge text-bg-danger rounded-pill">3</span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                     aria-labelledby="page-header-notifications-dropdown">
@@ -107,7 +107,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                         </div>
                     </div>
                     <div data-simplebar style="max-height: 230px;">
-                        <!-- <a href="javascript:void(0);" class="text-reset notification-item">
+                        <a href="javascript:void(0);" class="text-reset notification-item">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar-xs">
@@ -195,7 +195,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                                     </div>
                                 </div>
                             </div>
-                        </a> -->
+                        </a>
                     </div>
                     <div class="p-2 border-top">
                         <a class="btn btn-sm btn-link font-size-14 w-100 text-center" href="javascript:void(0)">
@@ -203,7 +203,7 @@ $mini_logo = base_url() . "assets/img/backgrounds/headerweb2.png";
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
 
             <div class="dropdown d-inline-block">

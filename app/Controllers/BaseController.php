@@ -881,4 +881,12 @@ abstract class BaseController extends Controller
         $json = '[{"diag_cat":1,"diagnosa_category":"DIAGNOSA UTAMA"},{"diag_cat":2,"diagnosa_category":"DIAGNOSA PENUNJANG \/SEKUNDER"},{"diag_cat":3,"diagnosa_category":"DIAGNOSA MASUK"},{"diag_cat":4,"diagnosa_category":"DIAGNOSA HARIAN\/ KERJA"},{"diag_cat":5,"diagnosa_category":"DIAGNOSA KECELAKAAN"},{"diag_cat":6,"diagnosa_category":"DIAGNOSA KEMATIAN"},{"diag_cat":7,"diagnosa_category":"DIAGNOSA BANDING"},{"diag_cat":8,"diagnosa_category":"DIAGNOSA UTAMA EKLAIM"},{"diag_cat":9,"diagnosa_category":"DIAGNOSA SEKUNDER EKLAIM"},{"diag_cat":10,"diagnosa_category":"DIAGNOSA AKTUAL (KEPERAWATAN)"},{"diag_cat":11,"diagnosa_category":"DIAGNOSA RESIKO(KEPERAWATAN)"},{"diag_cat":12,"diagnosa_category":"DIAGNOSA PROMOSI KESEHATAN (KEPERAWATAN)"},{"diag_cat":13,"diagnosa_category":"DIAGNOSA PRA OPERASI"},{"diag_cat":14,"diagnosa_category":"DIAGNOSA PASCA OPERASI"},{"diag_cat":15,"diagnosa_category":"DIAGNOSA OPERASI"},{"diag_cat":16,"diagnosa_category":"DIAGNOSA NUTRISI"},{"diag_cat":17,"diagnosa_category":"DIAGNOSA FUNGSI FISIOTERAPI"}]';
         return json_decode($json, true);
     }
+    function isInvalidDate($dateString)
+    {
+        $date = DateTime::createFromFormat('Y-m-d', $dateString);
+        $errors = DateTime::getLastErrors();
+
+        // Check if the date is valid and if there are any errors
+        return $errors['warning_count'] > 0 || $errors['error_count'] > 0;
+    }
 }

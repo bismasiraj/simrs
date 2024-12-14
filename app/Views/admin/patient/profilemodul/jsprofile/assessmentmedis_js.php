@@ -408,19 +408,25 @@
 
 
             let mappingContentMap = JSON.parse(req);
-            const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
-            const updatedMappingContentMap = mappingContentMap.map(item => {
-                const orderItem = mappingOrderMap.get(item.doc_id);
-                if (orderItem) {
-                    return {
-                        ...item,
-                        theorder: orderItem.order
-                    };
-                }
-                return item;
-            });
+            let updatedMappingContentMap = mappingContentMap
+            console.log(updatedMappingContentMap)
+
+            // const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
+            // const updatedMappingContentMap = mappingContentMap.map(item => {
+            //     const orderItem = mappingOrderMap.get(item.doc_id);
+            //     if (orderItem) {
+            //         return {
+            //             ...item,
+            //             theorder: orderItem.order
+            //         };
+            //     }
+            //     return item;
+            // });
+            // console.log(updatedMappingContentMap)
+
 
             const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
+            console.log(sortedMappingContentMap)
             $.each(sortedMappingContentMap, function(key, value) {
                 if (value.doc_type == 1) {
                     window[value.doc_id](accMedisName)
@@ -835,7 +841,9 @@
         $("#formaddarm textarea").prop("disabled", false)
         $("#formaddarm select").prop("disabled", false)
         $("#formaddarm option").prop("disabled", false)
-        enableCanvasLokalis()
+        if (assessmentMedisType != 1) {
+            enableCanvasLokalis()
+        }
 
         $("#formaddarm").find(".btn-to-hide").slideDown()
 
@@ -861,6 +869,9 @@
         if ($("#armvalid_user").val() != '' && $("#armvalid_user").val() != null) {
             $("#formeditarm").slideUp()
             $("#formsignarm").slideUp()
+        } else {
+            $("#formeditarm").slideDown()
+            $("#formsignarm").slideDown()
         }
         disableCanvasLokalis()
     }
@@ -1037,8 +1048,8 @@
                         .append($("<td>").html(value.diagnosa_desc))
                     )
                     .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
-                        .append($("<td>").html(value.standing_order))
+                        // .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
+                        // .append($("<td>").html(value.standing_order))
                     )
                     .append($("<tr>")
                         .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
@@ -1083,8 +1094,8 @@
                         .append($("<td>").html(value.diagnosa_desc))
                     )
                     .append($("<tr>")
-                        .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
-                        .append($("<td>").html(value.standing_order))
+                        // .append($("<td class=\"text-end\">").html("<b>Standing Order: </b>"))
+                        // .append($("<td>").html(value.standing_order))
                     )
                     .append($("<tr>")
                         .append($("<td class=\"text-end\">").html("<b>Target/Sasaran Terapi: </b>"))
@@ -1604,6 +1615,23 @@
             '</div>' +
             '</div>'
         )
+
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#armvs_status_id").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#armvs_status_id").prop("selectedIndex", 1);
+        } else {
+            $("#armvs_status_id").prop("selectedIndex", 2);
+        }
+        <?php if ($visit['specialist_type_id'] == '1.05') {
+        ?>
+            $("#armvs_status_id").prop("selectedIndex", 4)
+        <?php
+        } ?>
     }
 
     function appendRiwayatMedis(accordionId) {
@@ -1943,7 +1971,7 @@
             <div id="collapseProsedur" class="accordion-collapse collapse show" aria-labelledby="headingProsedur" >
                 <div class="accordion-body text-muted">
                     <div class="row mb-2">
-                        <div class="col-sm-12 col-xs-12">
+                        <div class="col-sm-12 col-xs-12 d-none">
                             <div class="mb-3">
                                 <div class="form-group">
                                     <label for="armstanding_order" class="mb-4 badge bg-primary">Standing Order </label>

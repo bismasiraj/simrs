@@ -8,32 +8,34 @@
 
     <link rel="icon" href="<?= base_url('assets/img/logo.png') ?>" type="image/x-icon">
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css">
 
     <!-- Link ke file CSS kustom -->
-    <link rel="stylesheet" href="<?= base_url('assets/css/styles-antrian.css') ?>">
+    <link rel="stylesheet" href="<?= base_url() ?>assets/css/styles-antrian.css">
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
 
     <!-- Moment.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
 
     <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/flatpickr/flatpickr.min.css">
+    <script src="<?= base_url(); ?>assets/libs/flatpickr/flatpickr.js"></script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url(); ?>assetsss\font-awesome\css\font-awesome.css">
 
     <!-- swal -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <link href="<?= base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/sweetalert2/sweetalert2.min.js">
+
 </head>
 
 <body>
     <div class="container">
         <div class="row mt-5">
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12 text-center">
                 <div class="queue-container">
                     <div id="ip-content" class="queue-item-poli mt-3 fw-bold pointer" style="display: none;"></div>
 
@@ -45,7 +47,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12 text-center">
                 <div class="video-container">
                     <!-- <iframe id="videoFrame" frameborder="0" allowfullscreen></iframe> -->
                     <video id="videoPlayer" autoplay class="pointer" style="width: 100%;"></video>
@@ -82,9 +84,10 @@
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="<?= base_url('assets/js/default.js') ?>"></script>
-    <script type="module" src="<?= base_url('component/antrain.js?v0.0.01') ?>"></script>
+    <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="<?= base_url() ?>assets/js/default.js"></script>
+    <script type="module" src="<?= base_url() ?>component/antrain.js?v0.0.02"></script>
 </body>
 
 </html>

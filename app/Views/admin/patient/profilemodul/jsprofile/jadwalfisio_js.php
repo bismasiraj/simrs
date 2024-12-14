@@ -966,11 +966,11 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
         };
 
         const initializeFlatpickrFisioterapi = () => {
-            flatpickr(".datetimeflatpickr", {
-                enableTime: true,
-                dateFormat: "d/m/Y H:i", // Display format
-                time_24hr: true, // 24-hour time format
-            });
+            // flatpickr(".datetimeflatpickr", {
+            //     enableTime: true,
+            //     dateFormat: "d/m/Y H:i", // Display format
+            //     time_24hr: true, // 24-hour time format
+            // });
 
             $(".datetimeflatpickr").prop("readonly", false);
 

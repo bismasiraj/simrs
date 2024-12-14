@@ -93,8 +93,15 @@
             rowKolaborasi = $("#" + tableId + "Implementasi .aprwrow").length + 1;
             $("#" + tableId + "Implementasi").append($("<tr id=\"perawatTindakan" + key + "\">"))
         }
-
+        let treatment = '';
+        let sell_price = 0.0;
+        let amount_paid = 0.0;
+        let tarif_id = '';
         if (flag == 1) {
+            treatment = tarifData.tarif_name;
+            sell_price = tarifData.amount;
+            amount_paid = tarifData.amount;
+            tarif_id = tarifData.tarif_id;
             if (tarifData.amount == 0) {
                 if (type == 1) {
                     $("#perawatTindakan" + key)
@@ -166,6 +173,10 @@
 
 
         } else {
+            treatment = billPerawat.treatment;
+            sell_price = billPerawat.sell_price;
+            amount_paid = billPerawat.amount_paid;
+            tarif_id = billPerawat.tarif_id;
             if (billPerawat.amount == 0) {
                 if (type == 1) {
                     $("#perawatTindakan" + key)
@@ -226,13 +237,14 @@
             }
         }
 
+
         // datetimepickerbyid(`flatatptreat_date${key}`)
 
         $("#perawatTindakan" + key)
-            .append('<input name="treatment[]" id="atptreatment' + key + '" type="hidden" value="' + billPerawat.treatment + '" class="form-control" />')
+            .append('<input name="treatment[]" id="atptreatment' + key + '" type="hidden" value="' + treatment + '" class="form-control" />')
             .append('<input name="treat_date[]" id="atptreat_date' + key + '" type="hidden" value="' + get_date() + '" class="form-control" />')
-            .append('<input name="sell_price[]" id="atpsell_price' + key + '" type="hidden" value="' + billPerawat.sell_price + '" class="form-control" />')
-            .append('<input name="amount_paid[]" id="atpamount_paid' + key + '" type="hidden" value="' + billPerawat.amount_paid + '" class="form-control" />')
+            .append('<input name="sell_price[]" id="atpsell_price' + key + '" type="hidden" value="' + sell_price + '" class="form-control" />')
+            .append('<input name="amount_paid[]" id="atpamount_paid' + key + '" type="hidden" value="' + amount_paid + '" class="form-control" />')
             .append('<input name="discount[]" id="atpdiscount' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
             .append('<input name="subsidisat[]" id="atpsubsidisat' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
             .append('<input name="subsidi[]" id="atpsubsidi' + key + '" type="hidden" value="' + 0 + '" class="form-control" />')
@@ -267,7 +279,7 @@
             .append('<input name="modified_from[]" id="atpmodified_from' + key + '" type="hidden" value="<?= $visit['clinic_id']; ?>" class="form-control" />')
             .append('<input name="islunas[]" id="atpislunas' + key + '" type="hidden" value="0" class="form-control" />')
             .append('<input name="measure_id[]" id="atpmeasure_id' + key + '" type="hidden" value="" class="form-control" />')
-            .append('<input name="tarif_id[]" id="atptarif_id' + key + '" type="hidden" value="' + billPerawat.tarif_id + '" class="form-control" />')
+            .append('<input name="tarif_id[]" id="atptarif_id' + key + '" type="hidden" value="' + tarif_id + '" class="form-control" />')
 
 
 

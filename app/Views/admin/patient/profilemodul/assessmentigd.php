@@ -924,7 +924,7 @@ if ($visit['clinic_id'] == 'P012') {
                                                                     </table>
                                                                 </div>
                                                                 <div class="box-tab-tools" style="text-align: center;">
-                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawat', '', null, null, 'arpModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
+                                                                    <button type="button" name="addDiagnosaPerawat" onclick="addRowDiagPerawatBasic('bodyDiagPerawat', '', null, null, 'arpModal')" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary btn-to-hide"><i class="fa fa-check-circle"></i> <span>Diagnosa</span></button>
                                                                 </div>
                                                             </div>
                                                         </div>

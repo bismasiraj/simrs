@@ -95,6 +95,7 @@ class Assessment extends BaseController
         $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
         inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
         where st.specialist_type_id = '{$specialist_type_id}'
+        order by m.doc_type, m.theorder
         ;")->getResultArray());
         // $mapAssessment = $this->lowerKey($db->query("select m.*, st.specialist_type_id, case when '" . $visit['clinic_id'] . "' is null then '' else st.specialist_type end as specialist_type from MAPPING_ASSESSMENT_SPECIALIST m
         // inner join SPECIALIST_TYPE st on m.SPECIALIST_TYPE_ID = st.SPECIALIST_TYPE_ID
@@ -129,41 +130,7 @@ class Assessment extends BaseController
         foreach ($body as $key => $value) {
             ${$key} = $value;
         }
-        // $parameter_id01 = $this->request->getPost('parameter_id01');
-        // $parameter_id02 = $this->request->getPost('parameter_id02');
-        // $parameter_id03 = $this->request->getPost('parameter_id03');
-        // $parameter_id04 = $this->request->getPost('parameter_id04');
-        // $parameter_id05 = $this->request->getPost('parameter_id05');
-        // $parameter_id06 = $this->request->getPost('parameter_id06');
-        // $parameter_id07 = $this->request->getPost('parameter_id07');
-        // $parameter_id08 = $this->request->getPost('parameter_id08');
-        // $timeIntervensi = $this->request->getPost('timeIntervensi');
-        // $intervensi = $this->request->getPost('intervensi');
-        // $rute = $this->request->getPost('rute');
-        // $painscalescore = $this->request->getPost('painscalescore');
-        // $reAssessment = $this->request->getPost('reAssessment');
-        // $reassessment_date = $this->request->getPost('reassessment_date');
 
-        // $org_unit_code = $this->request->getPost('org_unit_code');
-        // $visit_id = $this->request->getPost('visit_id');
-        // $trans_id = $this->request->getPost('trans_id');
-        // $body_id = $this->request->getPost('body_id');
-        // $no_registration = $this->request->getPost('no_registration');
-        // $examination_date = str_replace('T', ' ', $this->request->getPost('examination_date'));
-        // $clinic_id = $this->request->getPost('clinic_id');
-        // $employee_id = $this->request->getPost('employee_id');
-        // $petugas_id = $this->request->getPost('petugas_id');
-        // $class_room_id = $this->request->getPost('class_room_id');
-        // $bed_id = $this->request->getPost('bed_id');
-        // $p_type = $this->request->getPost('p_type');
-        // $description = $this->request->getPost('description');
-        // $modified_date = $this->request->getPost('modified_date');
-        // $modified_by = $this->request->getPost('modified_by');
-        // $pain_monitoring_status = $this->request->getPost('pain_monitoring_status');
-        // $document_id = $this->request->getPost('document_id');
-        // $valid_date = $this->request->getPost('valid_date');
-        // $valid_user = $this->request->getPost('valid_user');
-        // $valid_pasien = $this->request->getPost('valid_pasien');
 
         $db = db_connect();
         $painMonitoring = new PainMonitoringModel();
@@ -240,7 +207,7 @@ class Assessment extends BaseController
                 $painDetil->insert($data);
             }
 
-            if ($parameter_id01 != '0210101') {
+            if (@$parameter_id01 != '0210101') {
                 $select = $this->lowerKey($db->query("select * from ASSESSMENT_PARAMETER 
                                                 where P_TYPE = (select value_info from ASSESSMENT_PARAMETER_VALUE where VALUE_ID = '$parameter_id01')")->getResultArray());
                 $p_type = $select[0]['p_type'];
@@ -273,29 +240,30 @@ class Assessment extends BaseController
                     }
                 }
 
-                if ($timeIntervensi != '' && $timeIntervensi != null && isset($timeIntervensi)) {
+                if (@$timeIntervensi != '' && @$timeIntervensi != null && isset($timeIntervensi)) {
                     $painIntervensi = new PainIntervensiModel();
                     $db->query("delete from assessment_pain_intervensi where body_id = '$body_id'");
                     foreach ($timeIntervensi as $key => $value) {
                         // return json_encode(str_replace('T', ' ', $reassessment_date));
-
-                        $data = [
-                            'body_id' => $body_id,
-                            'intervensi_ke' => $key,
-                            'no_registration' => $no_registration,
-                            'p_type' => $p_type,
-                            'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
-                            'intervensi' => $intervensi[$key],
-                            'rute' => $rute[$key],
-                            'reassessment' => $reAssessment[$key],
-                            'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
-                            'valid' => null,
-                            'petugas' => user()->username,
-                            'modified_date' => Time::now(),
-                            'modified_by' => $modified_by,
-                            'value_id' => $painscalescore[$key]
-                        ];
-                        $painIntervensi->insert($data);
+                        if (!$this->isInvalidDate($timeIntervensi[$key])) {
+                            $data = [
+                                'body_id' => $body_id,
+                                'intervensi_ke' => $key,
+                                'no_registration' => $no_registration,
+                                'p_type' => $p_type,
+                                'intervensi_date' => str_replace('T', ' ', $timeIntervensi[$key]),
+                                'intervensi' => $intervensi[$key],
+                                'rute' => $rute[$key],
+                                'reassessment' => $reAssessment[$key],
+                                'reassessment_date' => str_replace('T', ' ', $reassessment_date[$key]),
+                                'valid' => null,
+                                'petugas' => user()->username,
+                                'modified_date' => Time::now(),
+                                'modified_by' => $modified_by,
+                                'value_id' => $painscalescore[$key]
+                            ];
+                            $painIntervensi->insert($data);
+                        }
                     }
                 }
             }
@@ -3429,6 +3397,7 @@ class Assessment extends BaseController
     }
     public function saveGcs($body = null)
     {
+
         if ($body == null) {
             if (!$this->request->is('post')) {
                 return $this->response->setJSON([
@@ -3436,7 +3405,6 @@ class Assessment extends BaseController
                     'message' => 'Invalid request method'
                 ])->setStatusCode(405); // Method Not Allowed
             }
-
             $body = $this->request->getPost();
         }
 
@@ -5732,7 +5700,7 @@ class Assessment extends BaseController
 
         // Assuming 'find' is a method that should be used with an ID,
         // verify if 'find' is appropriate or use another method if needed.
-        $select = $this->lowerKey($model->join("clinic c", "c.kdpoli = inasis_kontrol.polikontrol_kdpoli")->where("visit_id", $visit)->where("surattype", 1)->find($nosurat));
+        $select = $this->lowerKey($model->join("clinic c", "c.kdpoli = inasis_kontrol.polikontrol_kdpoli")->where("visit_id", $visit)->where("surattype", 2)->find($nosurat));
 
         // Check if the result was found
         if ($select === null) {
@@ -5841,6 +5809,7 @@ class Assessment extends BaseController
             $data = [
                 'visit_id' => $visit,
                 'surattype' => 2,
+                'nosep' => $visit,
                 'nosuratkontrol' => $noSuratKontrol,
                 'tglrenckontrol' => $request['tglRencanaKontrol'],
                 'polikontrol_kdpoli' => $request['poliKontrol'],
@@ -5851,7 +5820,7 @@ class Assessment extends BaseController
 
             // return json_encode($data);
 
-            $ik->insert($data);
+            $ik->save($data);
 
             $response['metaData']['code'] = "200";
             $response['metaData']['message'] = "Success";

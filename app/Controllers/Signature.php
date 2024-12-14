@@ -6,6 +6,7 @@ use App\Helpers\RsaEncryptionHelper;
 use App\Models\Assessment\FallRiskDetailModel;
 use App\Models\Assessment\GcsModel;
 use App\Models\Assessment\PainDetilModel;
+use App\Models\Assessment\PasienTransferModel;
 use App\Models\DocsSignedModel;
 use App\Models\ExaminationModel;
 use App\Models\FamilyModel;
@@ -259,6 +260,8 @@ class Signature extends BaseController
             $model = new FallRiskDetailModel();
         } else if ($docs_type == '6') {
             $model = new GcsModel();
+        } else if ($docs_type == '7') {
+            $model = new PasienTransferModel();
         }
         // return json_encode($sign_id);
         $select = $model->find($sign_id);

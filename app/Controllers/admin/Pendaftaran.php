@@ -445,65 +445,101 @@ class Pendaftaran extends \App\Controllers\BaseController
         $visit = $body['visit_id'];
         $nomr = $body['no_registration'];
 
-        $ws_data = [];
-        if ($nospri != '') {
-            $method = 'PUT';
-            $url = $this->baseurlvclaim . '/RencanaKontrol/';
-            $url .= 'UpdateSPRI';
-            $request['noSPRI'] = $nospri;
+        $c = new ClinicModel();
+        $clinic = $c->where("clinic_id = '" . $request['poliKontrol'] . "' or kdpoli = '" . $request['poliKontrol'] . "'")->select("kdpoli")->first();
+        $request['poliKontrol'] = $clinic['kdpoli'];
+
+
+        if ($request['noKartu'] != '') {
+            $ws_data = [];
+            if ($nospri != '') {
+                $method = 'PUT';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'UpdateSPRI';
+                $request['noSPRI'] = $nospri;
+            } else {
+                $method = 'POST';
+                $url = $this->baseurlvclaim . '/RencanaKontrol/';
+                $url .= 'InsertSPRI';
+            }
+
+
+
+            $ws_data['request'] = $request;
+            $postdata = json_encode($ws_data);
+            $posting = $this->sendVclaim($url, $method, $postdata);
+            $response = $posting;
+            // $posting = ' {
+            //     "metaData": {
+            //         "code": "200",
+            //         "message": "Ok"
+            //     },
+            //     "response": {
+            //         "noSuratKontrol": "0301R0110520K000013",
+            //         "tglRencanaKontrol": "2020-05-15",
+            //         "namaDokter": "Dr. John Wick",
+            //         "noKartu": "0001328186441",
+            //         "nama": "ARIS",
+            //         "kelamin": "Laki-laki",
+            //         "tglLahir": "1947-12-31"
+            //     }
+            // }';
+            // $response = json_decode($posting, true);
+            if ($response['metaData']['code'] == '200') {
+                $ik = new InasisKontrolModel();
+                $data = [
+                    'visit_id' => $visit,
+                    'nosep' => $visit,
+                    'surattype' => 2,
+                    'nosuratkontrol' => $response['response']['noSPRI'],
+                    'tglrenckontrol' => $response['response']['tglRencanaKontrol'],
+                    'polikontrol_kdpoli' => $request['poliKontrol'],
+                    'kodedokter' => $request['kodeDokter'],
+                    'modified_by' => user()->username,
+                    'no_registration' => $nomr
+                ];
+                if ($method == 'POST') {
+                    $data['responpost'] = json_encode($response);
+                } else {
+                    $data['responput'] = json_encode($response);
+                }
+
+                // return json_encode($data);
+
+                $ik->save($data);
+            }
+            return json_encode($response);
         } else {
-            $method = 'POST';
-            $url = $this->baseurlvclaim . '/RencanaKontrol/';
-            $url .= 'InsertSPRI';
-        }
-
-
-
-        $ws_data['request'] = $request;
-        $postdata = json_encode($ws_data);
-        $posting = $this->sendVclaim($url, $method, $postdata);
-        $response = $posting;
-        // $posting = ' {
-        //     "metaData": {
-        //         "code": "200",
-        //         "message": "Ok"
-        //     },
-        //     "response": {
-        //         "noSuratKontrol": "0301R0110520K000013",
-        //         "tglRencanaKontrol": "2020-05-15",
-        //         "namaDokter": "Dr. John Wick",
-        //         "noKartu": "0001328186441",
-        //         "nama": "ARIS",
-        //         "kelamin": "Laki-laki",
-        //         "tglLahir": "1947-12-31"
-        //     }
-        // }';
-        // $response = json_decode($posting, true);
-        if ($response['metaData']['code'] == '200') {
+            if ($nospri == "") {
+                $nospri = $this->get_bodyid();
+            }
+            // return json_encode($nospri);
+            // $id = $this->generateId();
             $ik = new InasisKontrolModel();
             $data = [
                 'visit_id' => $visit,
                 'nosep' => $visit,
                 'surattype' => 2,
-                'nosuratkontrol' => $response['response']['noSPRI'],
-                'tglrenckontrol' => $response['response']['tglRencanaKontrol'],
+                'nosuratkontrol' => $nospri,
+                'tglrenckontrol' => $request['tglRencanaKontrol'],
                 'polikontrol_kdpoli' => $request['poliKontrol'],
                 'kodedokter' => $request['kodeDokter'],
                 'modified_by' => user()->username,
                 'no_registration' => $nomr
             ];
-            if ($method == 'POST') {
-                $data['responpost'] = json_encode($response);
-            } else {
-                $data['responput'] = json_encode($response);
-            }
 
             // return json_encode($data);
-
             $ik->save($data);
-        }
 
-        return json_encode($response);
+            return json_encode([
+                "metaData" => [
+                    "code" => 200
+                ],
+                "response" => [
+                    "noSPRI" => $nospri
+                ]
+            ]);
+        }
     }
     public function checkSpri()
     {

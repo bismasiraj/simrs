@@ -140,34 +140,6 @@ $permissions = user()->getPermissions();
                         padding: 0.3rem 0.3rem;
                     }
                 </style>
-                <?php if (user()->checkPermission("eresep", "c")) {
-                    if (true) { ?>
-                        <div id="eresepBtnGroup" class="row">
-                            <div class="col-md-6">
-                                <div id="eresepAddR" class="box-tab-tools text-end">
-                                    <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="eresepRAddNR" class="box-tab-tools text-start" style="">
-                                    <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
-                                </div>
-                            </div>
-                        </div>
-                <?php }
-                } ?>
-                <?php if (user()->checkPermission("medicalitem", "c")) {
-                ?>
-                    <div id="medItemBtnGroup" class="row">
-                        <div class="col-md-12">
-                            <div id="eresepAdds" class="box-tab-tools text-center">
-                                <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
-                            </div>
-                        </div>
-                    </div>
-                <?php
-                } ?>
-
                 <?php if (isset($permissions['eresep']['c'])) {
                     if ($permissions['eresep']['c'] == '1') { ?>
 
@@ -182,7 +154,7 @@ $permissions = user()->getPermissions();
                                     <th class="text-center" style="width: 4%;">No.</th class="text-center">
                                     <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
                                     <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                                    <th class="text-center" colspan="5" style="width: 30%;">Aturan Minum</th class="text-center">
+                                    <th class="text-center" colspan="3" style="width: 30%;">Aturan Minum</th class="text-center">
                                     <th class="text-center" style="width: 12,5%;"></th class="text-center">
                                     <th class="text-center" style="width: 12,5%;"></th class="text-center">
                                 </tr>
@@ -193,6 +165,33 @@ $permissions = user()->getPermissions();
                         </table>
                         <div id="eresepBody">
                         </div>
+                        <?php if (user()->checkPermission("eresep", "c")) {
+                            if (true) { ?>
+                                <div id="eresepBtnGroup" class="row">
+                                    <div class="col-md-6">
+                                        <div id="eresepAddR" class="box-tab-tools text-end">
+                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div id="eresepRAddNR" class="box-tab-tools text-start" style="">
+                                            <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php }
+                        } ?>
+                        <?php if (user()->checkPermission("medicalitem", "c")) {
+                        ?>
+                            <div id="medItemBtnGroup" class="row">
+                                <div class="col-md-12">
+                                    <div id="eresepAdds" class="box-tab-tools text-center">
+                                        <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php
+                        } ?>
                         <div class="panel-footer text-end mb-4">
                             <button type="submit" id="formAddPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                             <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-edit"></i> <span>Edit</span></button>
@@ -205,7 +204,6 @@ $permissions = user()->getPermissions();
                         </div>
                     </form>
                 </div>
-
             </div>
         </div> <!-- col-lg-10 col-md-10 col-sm-12 -->
     </div><!--./row-->

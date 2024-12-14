@@ -1129,7 +1129,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'isalergy',
             'breathing_dificulty',
             'blood_loss_risk',
-            'signin_time',
             'introducing_onself',
             'patient_identity',
             'timeout_procedure',
@@ -1150,13 +1149,11 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'negative_diathermy',
             'suchtion',
             'photo_shown',
-            'timeout_time',
             'procedure_name',
             'instrument',
             'speciment',
             'isproblematic_tools',
             'main_problem',
-            'signout_time'
         ];
 
         $data = [];
@@ -1166,13 +1163,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         $data['examination_date'] = $data['modified_date'] = $date;
         $data['modified_by'] = user()->username;
-
-        // Convert date-time format
-        foreach (['signin_time', 'timeout_time', 'signout_time'] as $timeField) {
-            if (!empty($data[$timeField])) {
-                $data[$timeField] = str_replace("T", " ", $data[$timeField]);
-            }
-        }
 
         // Database transaction
         $db->transStart();
@@ -1195,30 +1185,6 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                 $patientOperationCheckModel->insert($data);
             }
 
-            // Handle instrumen data
-            if (isset($formData['instrumen']) && is_array($formData['instrumen'])) {
-                $instrumenModel->where('document_id', $data['document_id'])->delete();
-
-                foreach ($formData['instrumen'] as $instrumen) {
-                    $dataInstrumen = [
-                        'org_unit_code' => $data['org_unit_code'],
-                        'visit_id' => $data['visit_id'],
-                        'trans_id' => $data['trans_id'],
-                        'document_id' => $data['document_id'],
-                        'body_id' => $instrumen['body_id'],
-                        'examination_date' => $date,
-                        'modified_by' => user()->username,
-                        'modified_date' => $date,
-                        'brand_id' => $instrumen['brand_id'],
-                        'brand_name' => $instrumen['brand_name'],
-                        'quantity_intra' => $instrumen['quantity_intra'],
-                        'quantity_after' => $instrumen['quantity_after'],
-                        'quantity_additional' => $instrumen['quantity_additional'],
-                        'quantity_before' => $instrumen['quantity_before']
-                    ];
-                    $instrumenModel->insert($dataInstrumen);
-                }
-            }
 
             $db->transComplete();
 
@@ -1231,7 +1197,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $db->transRollback();
             return $this->response->setJSON(['message' => 'Data save failed.', 'respon' => false, 'error' => $e->getMessage()]);
         }
-    } // new update 29/7
+    }
 
     public function getDataAssessmentOperation()
     {

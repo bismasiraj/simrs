@@ -38,7 +38,7 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li> -->
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter', 'perawat'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorugd', 'dokter', 'perawat', 'casemanager'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('unitgawatdarurat'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/unitgawatdarurat">
                             <i class="fas fa-ambulance"></i>
@@ -53,7 +53,7 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'casemanager'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('rajal'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/rajal">
                             <i class="mdi mdi-stethoscope"></i> <span> Rawat Jalan</span>
@@ -81,7 +81,7 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'admingizi'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'operatorgizi'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('gizi'); ?>">
                         <a href="<?php echo base_url() ?>admin/patient/gizi" target="_blank">
                             <i class="fas fa-utensils"></i> <span><?php echo "Gizi"; ?></span>
@@ -131,14 +131,6 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser'])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('users'); ?>">
-                        <a href="<?php echo base_url() ?>admin/patient/users">
-                            <i class="fas fa-users-cog"></i> <span><?php echo "User Permissions"; ?></span>
-                        </a>
-                    </li>
-
-                <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', ''])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('admin'); ?>">
                         <a href="#" class="has-arrow waves-effect">
@@ -158,7 +150,7 @@ $basecontroller->checkMenuActive('register');
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('fo'); ?>">
                         <a href="#" class="has-arrow waves-effect">
                             <i class="fas fa-file" style="color: rgba(100, 150, 200, 0.8);"></i><span>Front Office</span>
@@ -172,7 +164,7 @@ $basecontroller->checkMenuActive('register');
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('register'); ?>">
                         <a href="#" class="has-arrow waves-effect">
                             <i class="fas fa-file" style="color: #b0e57c"></i><span>Register</span>
@@ -188,7 +180,7 @@ $basecontroller->checkMenuActive('register');
                         </ul>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin'])) { ?>
                     <li class=" <?= $basecontroller->checkMenuActive('rm'); ?>">
                         <a href="#" class="has-arrow waves-effect">
                             <i class="fas fa-file" style="color: #c4c3d0"></i><span>Rekam Medis</span>

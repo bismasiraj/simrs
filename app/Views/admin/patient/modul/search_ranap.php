@@ -73,8 +73,8 @@
                 <div class="form-group">
                     <label>Dokter</label>
                     <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
-                        <option value="%">Semua</option>
                         <?php if (!isset($roles['11'])) { ?>
+                            <option value="%">Semua</option>
                         <?php } ?>
                         <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
                             <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>

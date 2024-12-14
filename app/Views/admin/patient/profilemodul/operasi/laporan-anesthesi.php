@@ -1,3 +1,8 @@
+<?php
+$db = db_connect();
+$exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $visit['visit_id'] . "' ORDER BY EXAMINATION_DATE DESC")->getRowArray();
+
+?>
 <div class="tab-pane fade " id="laporan-anesthesi">
     <form action="" id="form-laporan-anesthesi">
         <div id="accordionCatatan" class="accordion">
@@ -568,6 +573,10 @@
         $("#agemonth-laporanAnesthesi").prop("disabled", false)
         $("#ageday-laporanAnesthesi").prop("disabled", false)
         $("#instruction-laporanAnesthesi").prop("disabled", false)
+
+        let exam_info = <?= json_encode($exam_info) ?>;
+        $('#weight-laporanAnesthesi').val(exam_info ? exam_info['weight'] : 0)
+        $('#height-laporanAnesthesi').val(exam_info ? exam_info['height'] : 0)
 
         $("#formvitalsignsubmit-laporanAnesthesi").show()
         $("#formvitalsignedit").hide()

@@ -48,7 +48,7 @@
                     </tr>
                 <?php } else { ?>
                     <tr>
-                        <td class="bolds">Tanggal</td>
+                        <td class="bolds">Tanggal Kunjung</td>
                         <td id="visit_date"><?php echo $visit['visit_date']; ?></td>
                     </tr>
                 <?php } ?>

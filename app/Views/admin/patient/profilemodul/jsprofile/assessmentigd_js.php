@@ -158,7 +158,7 @@ foreach ($aValue as $key => $value) {
         $("#arpTindakanMandiri_Group").slideDown()
         $("#arpImplementasi_Group").slideDown()
 
-        initialAddArp()
+        // initialAddArp()
         generateSatelite()
         getAssessmentKeperawatan()
         getTindakanPerawat()
@@ -172,7 +172,15 @@ foreach ($aValue as $key => $value) {
         let docDataRm = new FormData(document.getElementById("formaddarp"))
         let docDataObjectRm = {};
         docDataRm.forEach(function(value, key) {
-            docDataObjectRm[key] = value
+            if (key.includes("[]")) {
+                if (typeof docDataObjectRm[key.replace("[]", "")] !== 'undefined' && docDataObjectRm[key.replace("[]", "")] !== null) {
+                    docDataObjectRm[key.replace("[]", "")].push(value)
+                } else {
+                    docDataObjectRm[key.replace("[]", "")] = [value]
+                }
+            } else {
+                docDataObjectRm[key] = value
+            }
         });
         let newObjRm = {
             id: "formaddarp",
@@ -220,10 +228,10 @@ foreach ($aValue as $key => $value) {
             cache: false,
             processData: false,
             beforeSend: function() {
-                $(".formsavearpbtn").html('<i class="spinner-border spinner-border-sm"></i>')
+                $("#formsavearpbtnid").html('<i class="spinner-border spinner-border-sm"></i>')
             },
             success: function(data) {
-                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+                $("#formsavearpbtnid").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
                 $("#formaddarp").find('input, select, textarea').each(function() {
                     const key = $(this).attr('id'); // Use ID or placeholder as key
@@ -269,9 +277,10 @@ foreach ($aValue as $key => $value) {
                     displayTableAssessmentKeperawatanForVitalSign();
                 }
 
+                disableARP()
 
                 fillRiwayatArp()
-                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+                $("#formsavearpbtnid").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
             },
             error: function(xhr) { // if error occured
@@ -280,7 +289,7 @@ foreach ($aValue as $key => $value) {
                 errorSwal(xhr);
             },
             complete: function() {
-                $(".formsavearpbtn").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
+                $("#formsavearpbtnid").button(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
                 // clicked_submit_btn.button('reset');
             }
         });
@@ -610,6 +619,17 @@ foreach ($aValue as $key => $value) {
         <?php
         } ?>
 
+        // var ageYear = <?= $visit['ageyear']; ?>;
+        // var ageMonth = <?= $visit['agemonth']; ?>;
+        // var ageDay = <?= $visit['ageday']; ?>;
+
+        // if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+        //     $("#armvs_status_id").prop("selectedIndex", 3);
+        // } else if (ageYear >= 18) {
+        //     $("#armvs_status_id").prop("selectedIndex", 1);
+        // } else {
+        //     $("#armvs_status_id").prop("selectedIndex", 2);
+        // }
 
         $("#arpweight").val(berat)
         $("#arpheight").val(tinggi)
@@ -726,14 +746,37 @@ foreach ($aValue as $key => $value) {
             specialist_type_id: ex.specialist_type_id,
             clinic_id: ex.specialist_type_id
         }, 'admin/rm/assessmentperawat/getSatelitePerawat', (res) => {
-            console.log(res)
-            console.log(res.gcs)
+            $("#bodyGcsPerawat").html("")
+            $("#bodyFallRiskPerawat").html("")
+            $("#bodyPainMonitoringPerawat").html("")
+            $("#bodyPernapasan").html("")
+            $("#bodyApgarPerawat").html("")
+            $("#bodyTriagePerawat").html("")
+            $("#bodyGiziPerawat").html("")
+            $("#bodyADLPerawat").html("")
+            $("#bodyDekubitusPerawat").html("")
+            $("#bodyStabilitasPerawat").html("")
+            $("#bodyIntegumenPerawat").html("")
+            $("#bodyNeurosensoris").html("")
+            $("#bodyPencernaan").html("")
+            $("#bodyPerkemihan").html("")
+            $("#bodyPsikologi").html("")
+            $("#bodySirkulasi").html("")
+            $("#bodySeksual").html("")
+            $("#bodySocial").html("")
+            $("#bodyHearing").html("")
+            $("#bodySleeping").html("")
+
+            if (res.diagPerawat) {
+                $.each(res.diagPerawat, function(key, value) {
+                    addRowDiagPerawatBasic('bodyDiagPerawat', '', value.diagnosan_id, value.diag_notes, 'arpModal')
+                })
+            }
             if (res.gcs) {
                 gcsAll = res.gcs
                 // gcsDetailAll = data.gcsDetail
                 $.each(gcsAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyGcsPerawat").html("")
                         addGcs(0, key, "arpbody_id", "bodyGcsPerawat", false)
                         return false
                     }
@@ -746,7 +789,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(fallRisk, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyFallRiskPerawat").html("")
                         addFallRisk(0, key, "arpbody_id", "bodyFallRiskPerawat", false)
                         return false
                     }
@@ -763,7 +805,6 @@ foreach ($aValue as $key => $value) {
                 $.each(painMonitoring, function(key, value) {
                     $("#" + container).html("")
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyPainMonitoringPerawat").html("")
                         addPainMonitoring(0, key, 'arpbody_id', "bodyPainMonitoringPerawat", false)
                         return false
                     }
@@ -773,7 +814,6 @@ foreach ($aValue as $key => $value) {
             if (res.pernapasan) {
                 napas = res.pernapasan
                 // stabilitasDetail = data.stabilitasDetail
-                $("#bodyPernapasan").html("")
 
                 $.each(napas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
@@ -790,7 +830,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(apgar, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyApgarPerawat").html("")
                         addApgar(0, key, "arpbody_id", "bodyApgarPerawat", false)
                         return false
                     }
@@ -802,7 +841,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(triage, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyTriagePerawat").html("")
                         addTriage(0, key, "arpbody_id", "bodyTriagePerawat", false)
                         return false
                     }
@@ -814,7 +852,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(giziAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyGiziPerawat").html("")
                         addGizi(0, key, "arpbody_id", "bodyGiziPerawat", false)
                         return false
                     }
@@ -826,7 +863,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(adlAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyADLPerawat").html("")
                         addADL(0, key, "arpbody_id", "bodyADLPerawat", false)
                         return false
                     }
@@ -837,7 +873,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(dekubitusAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyDekubitusPerawat").html("")
                         addDekubitus(0, key, 'arpbody_id', "bodyDekubitusPerawat", false)
                         return false
                     }
@@ -849,7 +884,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(stabilitas, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyStabilitasPerawat").html("")
                         addDerajatStabilitas(0, key, "arpbody_id", "bodyStabilitasPerawat", false)
                         return false
                     }
@@ -862,7 +896,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(integumenAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyIntegumenPerawat").html("")
                         addIntegumen(0, key, 'arpbody_id', 'bodyIntegumenPerawat')
                         return false
                     }
@@ -874,7 +907,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(neuroAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyNeurosensoris")
                         addNeurosensoris(0, key)
                         return false
                     }
@@ -885,7 +917,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(digestAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyPencernaan").html("")
                         addPencernaan(0, key)
                         return false
                     }
@@ -897,7 +928,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(perkemihanAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#addPerkemihanButton").html("")
                         addPerkemihan(0, key)
                         return false
                     }
@@ -909,7 +939,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(psikologiAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyPsikologi").html("")
                         addPsikologi(0, key)
                         return false
                     }
@@ -919,7 +948,6 @@ foreach ($aValue as $key => $value) {
                 sirkulasiAll = res.sirkulasi.sirkulasi
                 $.each(sirkulasiAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodySirkulasi").html("")
                         addSirkulasi(0, key, "arpbody_id", "bodySirkulasi")
                         return false
                     }
@@ -930,7 +958,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(seksualAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodySeksual").html("")
                         addSeksual(0, key)
                         return false
                     }
@@ -941,7 +968,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(socialAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodySocial").html("")
                         addSocial(0, key)
                         return false
                     }
@@ -952,7 +978,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(hearingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodyHearing").html("")
 
                         addHearing(0, key)
                         return false
@@ -964,7 +989,6 @@ foreach ($aValue as $key => $value) {
 
                 $.each(sleepingAll, function(key, value) {
                     if (value.document_id == $("#arpbody_id").val()) {
-                        $("#bodySleeping").html("")
                         addSleeping(0, key)
                         return false
                     }
@@ -1124,53 +1148,6 @@ foreach ($aValue as $key => $value) {
         initialAddArp()
     })
 </script>
-<script type="text/javascript">
-    // function addRowDiagPerawat(diag_id = null, diag_name = null, diag_cat = null, diag_suffer = null) {
-    //     diagIndex++;
-    //     if (diag_cat == null) {
-    //         diag_cat = 1
-    //     }
-    //     if (diag_cat == null && diagIndex > 1) {
-    //         diag_cat = 2
-    //     }
-    //     $("#bodyDiagPerawat")
-    //         .append($('<tr id="arpdiag' + diagIndex + '">')
-    //             // .append($('<td>').html(diagIndex + "."))
-    //             .append($('<td>')
-    //                 .append('<select id="arpdiag_id' + diagIndex + '" class="form-control" name="diag_id[]" onchange="selectedDiagNurse(' + diagIndex + ')" style="width: 100%"></select>')
-    //                 .append('<input id="arpdiag_name' + diagIndex + '" name="diag_name[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
-    //                 .append('<input id="arpsscondition_id' + diagIndex + '" name="sscondition_id[]" placeholder="" type="text" class="form-control block" value="" style="display: none" />')
-    //                 // .append($('<input>').attr('name', 'diag_id[]').attr('id', 'diag_id' + diagIndex).attr('value', diag_id).attr('type', 'text').attr('readonly', 'readonly'))
-    //             )
-    //             // .append($('<td>')
-    //             //     .append($('<input>').attr('name', 'diag_name[]').attr('id', 'diag_name' + diagIndex).attr('value', diag_name).attr('type', 'text').attr('readonly', 'readonly'))
-    //             // )
-    //             .append($('<td>')
-    //                 .append($("<select class=\"form-control\">")
-    //                     .attr('name', 'suffer_type[]').attr('id', 'arpsuffer_type' + diagIndex) <?php foreach ($suffer as $key => $value) { ?>
-    //                         .append($("<option>")
-    //                             .attr('value', '<?= $suffer[$key]['suffer_type']; ?>').html('<?= $suffer[$key]['suffer']; ?>')
-    //                         ) <?php } ?>
-    //                     .val(diag_suffer)
-    //                 )
-    //             )
-    //             .append($('<td>')
-    //                 .append($("<select class=\"form-control\">")
-    //                     .attr('name', 'diag_cat[]').attr('id', 'diag_cat' + diagIndex) <?php foreach ($diagCat as $key => $value) { ?>
-    //                         .append($("<option>")
-    //                             .attr('value', '<?= $diagCat[$key]['diag_cat']; ?>').html('<?= $diagCat[$key]['diagnosa_category']; ?>')
-    //                         ) <?php } ?>
-    //                     .val(diag_cat)
-    //                 )
-    //             )
-    //             .append("<td><a href='#' onclick='$(\"#diag" + diagIndex + "\").remove()' class='btn closebtn btn-xs pull-right' data-toggle='modal' title=''><i class='fa fa-trash'></i></a></td>")
-    //         );
-
-    //     initializeDiagPerawatSelect2("arpdiag_id" + diagIndex, diag_id, diag_name)
-    //     $("#arpsuffer_type" + diagIndex).val(0)
-    //     $("#arpdiag_cat" + diagIndex).val(diagIndex)
-    // }
-</script>
 
 <script>
     function cetakAssessmenKeperawatan() {
@@ -1188,7 +1165,8 @@ foreach ($aValue as $key => $value) {
             titlekeperawatan = 'Obsetric'
         }
 
-        var win = window.open('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan, '_blank');
+        openPopUpTab('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan)
+        // var win = window.open('<?= base_url() . '/admin/rm/keperawatan/cetak_keperawatan/' . base64_encode(json_encode($visit)); ?>' + '/' + $("#arpbody_id").val() + '/' + titlekeperawatan, '_blank');
         // $.ajax({
         //     url: '<?= base_url() . '/admin/rm/assessment/cetakKeperawatan' . base64_encode(json_encode($visit)); ?>' + '/' + $("#armbody_id").val(),
         //     type: "GET",

@@ -82,27 +82,37 @@ class AssessmentMedis extends BaseController
         $body = $this->request->getBody();
         $body = json_decode($body, true);
 
-        //bisma
         foreach ($body as $key => $value) {
+            $controller = new Assessment();
             if ($value["id"] == "formaddarm") {
                 $medis = $this->saveAssessmentMedis($value["data"]);
             }
             if (str_contains($value["id"], "formGcs")) {
-                $gcs = $this->saveGcs($value["data"]);
+                // return json_encode(is_null($value["data"]));
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $gcs = $controller->saveGcs($value["data"]);
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
-                $monitoring = $this->savePainMonitoring($value["data"]);
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $monitoring = $controller->savePainMonitoring($value["data"]);
             }
             if (str_contains($value["id"], "formFallRisk")) {
-                $fallRisk = $this->saveFallRisk($value["data"]);
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $fallRisk = $controller->saveFallRisk($value["data"]);
+            }
+            if (str_contains($value["id"], "formTriage")) {
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $triage = $controller->saveTriage($value["data"]);
             }
             if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
                 $neuroController = new AssNeurology();
-                $neuro = $neuroController->saveDataLokal($value["data"]);
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $neuro = $neuroController->saveDataLokal($value["data"]);
             }
             if (str_contains($value["id"], "FormAssessmen_Neurologi")) {
                 $dermaController = new AssDermatovenerologi();
-                $dermatologi = $dermaController->saveDataLokal($value["data"]);
+                if (!is_null($value["data"]) && $value["data"] != [])
+                    $dermatologi = $dermaController->saveDataLokal($value["data"]);
             }
         }
 
@@ -112,7 +122,8 @@ class AssessmentMedis extends BaseController
             "monitoring" => @$monitoring,
             "fallRisk" => @$fallRisk,
             "neuro" => @$neuro,
-            "dermatologi" => @$dermatologi
+            "dermatologi" => @$dermatologi,
+            "triage" => @$triage
         ]);
     }
 
@@ -298,6 +309,7 @@ class AssessmentMedis extends BaseController
             'isrj' => @$isrj,
             'gender' => @$gender,
             'doctor' => @$doctor,
+            'fullname' => @$doctor,
             'nokartu' => @$nokartu,
             'nosep' => @$nosep,
             'tglsep' => @$tglsep,
@@ -308,6 +320,7 @@ class AssessmentMedis extends BaseController
             'valid_pasien' => @$valid_pasien,
             'specialist_type_id' => @$specialist_type_id
         ];
+
 
 
 
@@ -327,6 +340,10 @@ class AssessmentMedis extends BaseController
         $db = db_connect();
         $select = $this->lowerKey($db->query("select * from assessment_parameter_value where VALUE_SCORE in (2, 3, 4, 5) and P_TYPE = 'GEN0002'")->getResultArray());
 
+        $dokter = $db->query("select fullname from employee_all where employee_id = '$doctor'")->getFirstRow();
+        $dokter = @$dokter['fullname'];
+
+        // return json_encode($doctor);
 
         // return json_encode($lokalisG0020206);
         $lokalisModel = new LokalisModel();
@@ -342,7 +359,7 @@ class AssessmentMedis extends BaseController
                 $filenameLokalis = $clinic_id . '_' . $pasien_diagnosa_id . $value['value_id'] . '.png';
                 $fullPathLokalis = $lokalisPath . $filenameLokalis;
                 if (file_put_contents($fullPathLokalis, $decodedLokalis)) {
-                    $data = [
+                    $dataLokalis = [
                         'org_unit_code' => $org_unit_code,
                         'visit_id' => $visit_id,
                         'trans_id' => $visit_id,
@@ -358,12 +375,12 @@ class AssessmentMedis extends BaseController
                         'modified_by' => user()->username
                     ];
                     $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
-                    $lokalisModel->insert($data);
+                    $lokalisModel->insert($dataLokalis);
                 } else {
                     return $this->response->setJSON(['success' => false, 'error' => 'Failed to save signature']);
                 }
             } else if (isset(${'fisik' . $value['value_id']}) && $value['value_score'] == 2) {
-                $data = [
+                $dataLokalis = [
                     'org_unit_code' => $org_unit_code,
                     'visit_id' => $visit_id,
                     'trans_id' => $visit_id,
@@ -378,9 +395,9 @@ class AssessmentMedis extends BaseController
                     'modified_by' => user()->username
                 ];
                 $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
-                $lokalisModel->insert($data);
+                $lokalisModel->insert($dataLokalis);
             } else if (isset(${'lokalis' . $value['value_id']}) && ($value['value_score'] == 4 || $value['value_score'] == 5)) {
-                $data = [
+                $dataLokalis = [
                     'org_unit_code' => $org_unit_code,
                     'visit_id' => $visit_id,
                     'trans_id' => $visit_id,
@@ -395,7 +412,7 @@ class AssessmentMedis extends BaseController
                     'modified_by' => user()->username
                 ];
                 $db->query("delete from assessment_lokalis where body_id = '$pasien_diagnosa_id' and value_id = '" . $value['value_id'] . "'");
-                $lokalisModel->insert($data);
+                $lokalisModel->insert($dataLokalis);
             }
         }
 
@@ -407,7 +424,7 @@ class AssessmentMedis extends BaseController
         foreach ($select as $key => $value) {
             if (isset(${$value['value_id']})) {
                 $i++;
-                $data = [
+                $dataHistory = [
                     'org_unit_code' => $org_unit_code,
                     'no_registration' => $no_registration,
                     'item_id' => $i,
@@ -417,7 +434,7 @@ class AssessmentMedis extends BaseController
                     'modified_by' => user()->username
                 ];
                 // $db->query("delete from pasien_history where no_registration = '$no_registration' and value_id = '" . $value['value_id'] . "'");
-                $pasienHistory->insert($data);
+                $pasienHistory->insert($dataHistory);
             }
         }
 

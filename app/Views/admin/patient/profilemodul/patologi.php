@@ -65,17 +65,19 @@ $db = db_connect();
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-10">
-                                                    <div class="form-group">
-                                                        <label for="">Pencarian Tarif</label>
-                                                        <div class="input-group">
-                                                            <select id="searchTarifPatologi" class="form-control fit" style="width: 70%; height: 100%;"></select>
-                                                            <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillPatologi("searchTarifPatologi")'>
-                                                                <i class="fa fa-plus"></i> Tambah
-                                                            </button>
+                                                <?php if (user()->checkPermission("patologi", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
+                                                    <div class="col-md-10">
+                                                        <div class="form-group">
+                                                            <label for="">Pencarian Tarif</label>
+                                                            <div class="input-group">
+                                                                <select id="searchTarifPatologi" class="form-control fit" style="width: 70%; height: 100%;"></select>
+                                                                <button type="button" class="btn btn-primary btn-sm addcharges align-items-end" onclick='addBillPatologi("searchTarifPatologi")'>
+                                                                    <i class="fa fa-plus"></i> Tambah
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                     </div>

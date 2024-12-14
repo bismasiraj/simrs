@@ -2050,7 +2050,7 @@
                 // .append($("<td>").html('<b>SpO2</b>'))
 
                 .append($("<td rowspan='8' colspan='2'>")
-                    .append(examselect.modified_by == 'bismasiraj' ? $('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                    .append(examselect.modified_by == '<?= user()->username; ?>' ? $('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
                         .append('<button type="button" onclick="redirectToProfileBySession(\'' + examselect.visit_id + '\', \'' + base64json + '\', \'' + examselect.body_id + '\')" class="btn btn-success" data-row-id="1" autocomplete="off"><i class="fa fa-check">Pilih Sesi</i></button>') : ''
                     ))
                 // .append($("<td rowspan='8'>").html('<button type="button" onclick="removeCppt(\'' + examselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))

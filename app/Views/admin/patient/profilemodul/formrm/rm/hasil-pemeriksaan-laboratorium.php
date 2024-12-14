@@ -7,30 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css">
 
     <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" /> -->
 
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
-        rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
+    <link href="<?= base_url(); ?>css/jquery.signature.css" rel="stylesheet">
+    <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
+    <script src="<?= base_url(); ?>js/jquery.signature.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/qrcode/qrcode.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+    <script src="<?= base_url(); ?>assets/js/default.js"></script>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
     <style>
         .table-container-split {
@@ -49,7 +43,7 @@
 
         body {
             width: 21cm;
-            height: 29.7cm;
+            /* height: 29.7cm; */
             margin: 0;
             font-size: 12px;
         }
@@ -95,22 +89,25 @@
             <?php csrf_field(); ?>
             <div class="row">
                 <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="70px">
+                    <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="70px">
                 </div>
                 <div class="col mt-2">
                     <h3><?= @$kop['name_of_org_unit'] ?></h3>
                     <!-- <h3>Surakarta</h3> -->
-                    <p><?= @$kop['contact_address'] ?></p>
+                    <p><?= @$kop['contact_address'] ?>,<?= @$kop['phone'] ?>, Fax: <?= @$kop['fax'] ?>,
+                        <?= @$kop['kota'] ?>
+                        <br><?= @$kop['sk'] ?>
+                    </p>
                 </div>
                 <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/kemenkes.png') ?>" width="70px">
-                    <img class="mt-2" src="<?= base_url('assets/img/kars-bintang.png') ?>" width="70px">
+                    <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
+                    <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
                 </div>
             </div>
             <br>
             <div style="border-bottom: .5px solid #000; border-top: .5px solid #000;padding-bottom: 2px;"></div>
             <div class="row">
-                <h6 class="text-center pt-2"><?= $title; ?></h6>
+                <h5 class="text-center pt-2 fw-bold"><?= $title; ?></h5>
             </div>
             <div class="table-container-split">
                 <table>
@@ -169,13 +166,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Tgl. Sampel</td>
-                        <td>:</td>
-                        <td>
-                            <div id="date_sampel"></div>
-                        </td>
-                    </tr>
-                    <tr>
                         <td>Cara Bayar</td>
                         <td>:</td>
                         <td>
@@ -187,6 +177,13 @@
                         <td>:</td>
                         <td>
                             <div id="doctor_send"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Kelas - Cara Bayar</td>
+                        <td>:</td>
+                        <td>
+                            <div id="class_pay"></div>
                         </td>
                     </tr>
                     <tr>
@@ -214,10 +211,10 @@
                     <tr>
                         <th style="width: 10%;">Nama pemeriksaan</th>
                         <th style="width: 5%;">Hasil</th>
+                        <th style="width: 2%;">Flag</th>
                         <th style="width: 5%;">Satuan</th>
                         <th style="width: 7%;">Nilai Rujukan</th>
-                        <th style="width: 15%;">Metode</th>
-                        <th style="width: 2%;">Flag</th>
+                        <th style="width: 15%;">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="render-tables" class="border">
@@ -229,16 +226,8 @@
                     Nilai Kritis</p>
             </em>
 
-            <h6>Expertise :</h6>
-            <p>Note: Rapid Antigen SARS-CoV-2
-                * Spesimen : Swab Nasofaring/ Orofaring
-                * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
-                * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
-                ke orang lain,
-                disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
-                probabilitas pretes relatif tinggi,
-                terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
-            </p>
+            <div id="tindakan_medis"></div>
+
 
 
             <div class="row mb-2">
@@ -275,9 +264,9 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    </script> -->
 
 </body>
 
@@ -294,13 +283,22 @@
         <?php $dataJsonTables = json_encode($dataTables); ?>
 
         let dataTable = <?php echo $dataJsonTables; ?>;
-        console.log(dataTable);
-
-
 
         let groupedData = {};
 
         dataTable.forEach(e => {
+            if (e.tarif_name?.toLowerCase().includes("antigen")) {
+                $("#tindakan_medis").html(`<h6>Expertise :</h6>
+            <p>Note: Rapid Antigen SARS-CoV-2
+                * Spesimen : Swab Nasofaring/ Orofaring
+                * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
+                * Hasil negatif tidak menyingkirkan kemungkinan terinfeksi SARS-CoV-2 sehingga masih berisiko menularkan
+                ke orang lain,
+                disarankan tes ulang atau tes konfirmasi dengan NAAT (Nucleic Acid Amplification Tests), bila
+                probabilitas pretes relatif tinggi,
+                terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
+            </p>`);
+            }
             if (!groupedData[e.kel_pemeriksaan]) {
                 groupedData[e.kel_pemeriksaan] = {};
             }
@@ -327,28 +325,23 @@
                                             </tr>`;
 
                         groupedData[kelPemeriksaan][tarifName].forEach(e => {
-                            console.log(e);
-
                             dataResultTable += `<tr>
                                                     <td style="padding-left: 40px;">${e.parameter_name}</td>
-                                                    <td>${(e.flag_hl?.trim() || '') === 'L' ? `<b style="color:blue;">${e.hasil}</b>` : 
-                                                            (e.flag_hl?.trim() || '') === 'H' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                            (e.flag_hl?.trim() || '') === '(*)' ? `<b style="color:red;">${e.hasil}</b>` :
-                                                            e.hasil}
+                                                    <td>
+                                                        ${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                            ['L', 'H', 'K', '(*)'].includes(e.flag_hl.trim()) ? `<b class="fw-bold">${e.hasil}</b>` : 
+                                                            (e.flag_hl.trim().includes('K') ? `<b style="color:red;">${e.hasil}</b>` : 
+                                                            e.hasil)}
+                                                    </td>
 
-                                                        </td>
-
+                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
+                                                            (e.flag_hl?.trim().includes('K') ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
+                                                            ['L', 'H', 'K' , '(*)'].includes(e.flag_hl?.trim()) ? `<b class="fw-bold">${e.flag_hl.trim()}</b>` : 
+                                                            e.flag_hl.trim())}
+                                                    </td>
                                                     <td>${!e.satuan? "-":e.satuan}</td>
                                                     <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
-                                                    <td>${!e.metode_periksa ? "-" : e.metode_periksa}</td>
-                                                    <td>${(e.flag_hl?.trim() || '') === '' ? '-' : 
-                                                        (e.flag_hl?.trim() || '') === 'L' ? `<b style="color:blue;">${e.flag_hl.trim()}</b>` : 
-                                                        (e.flag_hl?.trim() || '') === 'H' ? `<b style="color:red;">${e.flag_hl.trim()}</b>` :
-                                                        (e.flag_hl?.trim() || '') === '(*)' ? `<b style="color:red;">${e.flag_hl.trim()}</b>` : 
-                                                        e.flag_hl.trim()}
-
-
-                                                    </td>
+                                                    <td></td>
 
                                                 </tr>`;
                         });
@@ -362,26 +355,17 @@
         $("#noLab_rm").html(dataTable[0]?.nolab_lis + '/ ' + dataTable[0]?.norm)
         $("#name_patient").html(dataTable[0]?.nama)
         $("#adresss_patient").html(dataTable[0]?.alamat)
-        $("#date_check").html(moment(dataTable[0]?.tgl_periksa).format("DD/MM/YYYY HH:mm:ss"))
-        $("#date_sampel").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
+        $("#date_check").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
         $("#payment_method").html(dataTable[0]?.cara_bayar_name)
         $("#doctor_send").html(dataTable[0]?.pengirim_name)
         $("#room_poli").html(dataTable[0]?.ruang_name)
-        $("#doctor-responsible").html(dataTable[0]?.pengirim_name)
-        $("#validator-ttd").html(dataTable[0]?.pengirim_name)
+        $("#class_pay").html(`${dataTable[0]?.kelas_name} - ${dataTable[0]?.cara_bayar_name}`)
 
 
-        var qrcode = new QRCode(document.getElementById("qrcode1"), {
-            text: `${dataTable[0]?.pengirim_name}`, // Your text here
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
+
 
         var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: `<?= user()->fullname; ?> | ${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`, // Your text here
+            text: `https://www.pkusampangan.com/`, // Your text here
             width: 70,
             height: 70,
             colorDark: "#000000",
@@ -424,12 +408,26 @@
 
     const renderDataPatient = () => {
         <?php $dataJson = json_encode($visit); ?>
-        let data = <?php echo $dataJson; ?>
+        let data = <?php echo $dataJson; ?>;
+        // console.log("sasa", data);
+
         // render patient 
         $("#gender_patient").html(data?.name_of_gender)
+        $("#doctor-responsible").html(data?.doctor_responsible)
+
         $("#date_age").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
         $("#no_tlp").html(data?.phone_number)
         $("#diagnosa_klinis").html(data?.diagnosa)
+        $("#validator-ttd").html(data?.valid_users_p)
+
+        var qrcode = new QRCode(document.getElementById("qrcode1"), {
+            text: `${data?.valid_users_p}`, // Your text here
+            width: 70,
+            height: 70,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H // High error correction
+        });
     }
 </script>
 <style>

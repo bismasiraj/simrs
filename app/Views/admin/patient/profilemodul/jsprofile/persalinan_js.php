@@ -182,6 +182,9 @@
         );
         $("#flatbayidate_of_birth").trigger("change");
         $("#bayivisit").val(`<?= base64_encode(json_encode($visit)); ?>`)
+        if (babyAll == null) {
+            babyAll = []
+        }
         $("#bayibaby_ke").val(babyAll.length + 1)
         $("#bayiexambody_id").val(get_bodyid())
         $("#bodyApgarBayi").html("")

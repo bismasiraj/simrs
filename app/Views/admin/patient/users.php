@@ -130,40 +130,40 @@ $this->extend('layout/basiclayout', [
 <script src="<?php echo base_url(); ?>assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js">
 </script>
 <script>
-(function() {
-    $(document).ready(function() {
-        let currentPage = 1;
-        getDataList(
-            'admin/UsersPermission/getUsers', (res) => {
-                window.dataSendUsers = res?.dataSend
-                window.selectOptionAuth = res?.select
-                if (res.respon) {
-                    renderDataUsers({
-                        data: res?.value
-                    })
+    (function() {
+        $(document).ready(function() {
+            let currentPage = 1;
+            getDataList(
+                'admin/UsersPermission/getUsers', (res) => {
+                    window.dataSendUsers = res?.dataSend
+                    window.selectOptionAuth = res?.select
+                    if (res.respon) {
+                        renderDataUsers({
+                            data: res?.value
+                        })
+                    }
+                    const totalData = res?.value?.count_data || 0;
+                    renderPagination(totalData, 15, currentPage);
+
+                }, (beforesend) => {
+                    getLoadingGlobalServices('tbodyUsers')
                 }
-                const totalData = res?.value?.count_data || 0;
-                renderPagination(totalData, 15, currentPage);
+            );
+        });
 
-            }, (beforesend) => {
-                getLoadingGlobalServices('tbodyUsers')
-            }
-        );
-    });
+        const renderDataUsers = (props) => {
+            let htmlContent = '';
+            const pageNumber = props.data.page;
+            const perPage = 15 || Math.floor(props.data.count_data / props.data.total_pages);
 
-    const renderDataUsers = (props) => {
-        let htmlContent = '';
-        const pageNumber = props.data.page;
-        const perPage = 15 || Math.floor(props.data.count_data / props.data.total_pages);
+            props?.data.data.forEach((row, key) => {
+                const no = (pageNumber - 1) * perPage + (key + 1);
+                const filteredData = window.dataSendUsers
+                    .filter(item => item.user_id === row?.id)
+                    .map(item => item.group_name)
+                    .join(', ');
 
-        props?.data.data.forEach((row, key) => {
-            const no = (pageNumber - 1) * perPage + (key + 1);
-            const filteredData = window.dataSendUsers
-                .filter(item => item.user_id === row?.id)
-                .map(item => item.group_name)
-                .join(', ');
-
-            htmlContent += `<tr>
+                htmlContent += `<tr>
                                 <th>${no}</th>
                                 <td class="slideContentUser">${row?.fullname}</td>
                                 <td>${row?.email}</td>
@@ -175,47 +175,46 @@ $this->extend('layout/basiclayout', [
                             <td></td>
                             <td colspan="3">${filteredData || ''}</td>
                         </tr>`;
+            });
 
-        });
+            $('#tbodyUsers').html(htmlContent);
 
-        $('#tbodyUsers').html(htmlContent);
+            $('.slideContentUser1').on('click', function() {
+                const parentRow = $(this).closest('tr');
+                const slideRow = parentRow.next('.slide-content');
 
-        $('.slideContentUser1').on('click', function() {
-            const parentRow = $(this).closest('tr');
-            const slideRow = parentRow.next('.slide-content');
+                if (slideRow.is(':visible')) {
+                    slideRow.slideUp();
+                } else {
+                    slideRow.slideDown();
+                }
+            });
 
-            if (slideRow.is(':visible')) {
-                slideRow.slideUp();
-            } else {
-                slideRow.slideDown();
-            }
-        });
-
-        actionButtonUsers(props);
-    };
-
+            actionButtonUsers(props);
+        };
 
 
-    const actionButtonUsers = (props) => {
-        $("#tbodyUsers").on("click", ".formContentUsers", function() {
-            const id = $(this).data("id");
-            renderModalUsers({
-                data: window.dataSendUsers,
-                id_users: id
-            })
 
-        });
-    }
+        const actionButtonUsers = (props) => {
+            $("#tbodyUsers").on("click", ".formContentUsers", function() {
+                const id = $(this).data("id");
+                renderModalUsers({
+                    data: window.dataSendUsers,
+                    id_users: id
+                })
 
-    const renderModalUsers = (props) => {
-        let result = "";
-        let dataResultProps = props.data.filter(item => item.user_id === props?.id_users);
-        const existingData = dataResultProps || [];
-        let isDataSaved = existingData.length > 0;
+            });
+        }
 
-        if (existingData.length > 0) {
-            existingData.map((e, index) => {
-                result += `
+        const renderModalUsers = (props) => {
+            let result = "";
+            let dataResultProps = props.data.filter(item => item.user_id === props?.id_users);
+            const existingData = dataResultProps || [];
+            let isDataSaved = existingData.length > 0;
+
+            if (existingData.length > 0) {
+                existingData.map((e, index) => {
+                    result += `
                 <tr data-group-id="${e?.group_id}">
                     <td class="text-center">${index + 1}</td>
                     <td>${e?.group_name}</td>
@@ -225,58 +224,58 @@ $this->extend('layout/basiclayout', [
                         </button>
                     </td>
                 </tr>`;
-            });
-        }
+                });
+            }
 
-        $("#body_container_Aksess_users").html(result);
+            $("#body_container_Aksess_users").html(result);
 
-        const templateBtnAdd = `
+            const templateBtnAdd = `
                             <div class="box-tab-tools my-3" style="text-align: center;">
                                 <button type="button" id="addUsersGroup_btn" name="addUsersGroup_btn" class="btn btn-outline-success w-100">
                                     <span><i class="fas fa-plus fa-2xl"></i> Tambah</span>
                                 </button>
                             </div>
                         `;
-        $("#content-add-autUserss").html(templateBtnAdd);
+            $("#content-add-autUserss").html(templateBtnAdd);
 
-        $("#user_profile_modal").modal("show");
+            $("#user_profile_modal").modal("show");
 
-        const checkSaveActive = () => {
-            return $("button.btn-save").filter(function() {
-                return !$(this).prop('disabled');
-            }).length > 0;
-        };
+            const checkSaveActive = () => {
+                return $("button.btn-save").filter(function() {
+                    return !$(this).prop('disabled');
+                }).length > 0;
+            };
 
-        $("button.formModalUsersRequest").on("click", function() {
-            const id = $(this).data("id");
-            deleteDataModalUsers({
-                group_id: id,
-                user_id: props?.id_users
-            })
-        });
-
-        $("#addUsersGroup_btn").on("click", () => {
-
-            if (checkSaveActive()) {
-                return;
-            }
-
-            const selectOptions = window.selectOptionAuth;
-            const existingGroupIds = [...$("#body_container_Aksess_users tr").map((_, tr) => $(tr)
-                .data("group-id"))];
-
-            const currentIndex = $("#body_container_Aksess_users tr").length + 1;
-
-            let selectHTML = `<select class="form-select new-select select2" required>
-                    <option value="" disabled selected>Pilih Akses</option>`;
-            selectOptions.forEach(option => {
-                if (!existingGroupIds.includes(option.id)) {
-                    selectHTML += `
-                                <option value="${option.id}">${option.description}</option>`;
-                }
+            $("button.formModalUsersRequest").on("click", function() {
+                const id = $(this).data("id");
+                deleteDataModalUsers({
+                    group_id: id,
+                    user_id: props?.id_users
+                })
             });
-            selectHTML += `</select>`;
-            const newRow = `
+
+            $("#addUsersGroup_btn").on("click", () => {
+
+                if (checkSaveActive()) {
+                    return;
+                }
+
+                const selectOptions = window.selectOptionAuth;
+                const existingGroupIds = [...$("#body_container_Aksess_users tr").map((_, tr) => $(tr)
+                    .data("group-id"))];
+
+                const currentIndex = $("#body_container_Aksess_users tr").length + 1;
+
+                let selectHTML = `<select class="form-select new-select select2" required>
+                    <option value="" disabled selected>Pilih Akses</option>`;
+                selectOptions.forEach(option => {
+                    if (!existingGroupIds.includes(option.id)) {
+                        selectHTML += `
+                                <option value="${option.id}">${option.description}</option>`;
+                    }
+                });
+                selectHTML += `</select>`;
+                const newRow = `
                                 <tr data-group-id="new">
                                     <td class="text-center">${currentIndex}</td>
                                     <td>${selectHTML}</td>
@@ -292,61 +291,61 @@ $this->extend('layout/basiclayout', [
                                     </td>   
                                 </tr>
                             `;
-            $("#body_container_Aksess_users").append(newRow);
+                $("#body_container_Aksess_users").append(newRow);
 
-            $("button.formModalUsers").on("click", function() {
-                $(this).closest("tr").remove();
-            });
+                $("button.formModalUsers").on("click", function() {
+                    $(this).closest("tr").remove();
+                });
 
-            $("button.btn-save").on("click", function() {
-                const selectElement = $(this).closest("tr").find("select");
-                const selectedValue = selectElement.val();
+                $("button.btn-save").on("click", function() {
+                    const selectElement = $(this).closest("tr").find("select");
+                    const selectedValue = selectElement.val();
 
-                if (selectElement.length > 0 && selectedValue) {
-                    const isDuplicate = existingGroupIds.includes(selectedValue);
+                    if (selectElement.length > 0 && selectedValue) {
+                        const isDuplicate = existingGroupIds.includes(selectedValue);
 
-                    if (isDuplicate) {
-                        errorSwal(
-                            "Akses ini sudah dipilih sebelumnya. Silakan pilih akses lain."
-                        );
-                        return;
+                        if (isDuplicate) {
+                            errorSwal(
+                                "Akses ini sudah dipilih sebelumnya. Silakan pilih akses lain."
+                            );
+                            return;
+                        }
+
+                        saveDataModalUsers({
+                            group_id: selectedValue,
+                            user_id: props?.id_users
+                        })
+                        $(this).prop("disabled", true);
+                        selectElement.prop("disabled", true);
+                        $(this).closest("tr").data("group-id",
+                            selectedValue);
+                        existingGroupIds.push(selectedValue);
+                    } else {
+                        errorSwal("Silakan pilih Akses terlebih dahulu.");
                     }
-
-                    saveDataModalUsers({
-                        group_id: selectedValue,
-                        user_id: props?.id_users
-                    })
-                    $(this).prop("disabled", true);
-                    selectElement.prop("disabled", true);
-                    $(this).closest("tr").data("group-id",
-                        selectedValue);
-                    existingGroupIds.push(selectedValue);
-                } else {
-                    errorSwal("Silakan pilih Akses terlebih dahulu.");
-                }
+                });
             });
-        });
-    };
+        };
 
-    const deleteDataModalUsers = (props) => {
-        postData({
-                group_id: props.group_id,
-                user_id: props?.user_id
-            },
-            'admin/UsersPermission/deleteData', (res) => {
-                let result_id = res?.id
-                if (res.status === "success") {
-                    successSwal(res.status)
-                    getDataList(
-                        'admin/UsersPermission/getUsersEmploye', (res) => {
-                            window.dataSendUsers = res?.dataSend
-                            renderModalUsers({
-                                data: window.dataSendUsers,
-                                id_users: result_id
-                            })
+        const deleteDataModalUsers = (props) => {
+            postData({
+                    group_id: props.group_id,
+                    user_id: props?.user_id
+                },
+                'admin/UsersPermission/deleteData', (res) => {
+                    let result_id = res?.id
+                    if (res.status === "success") {
+                        successSwal(res.status)
+                        getDataList(
+                            'admin/UsersPermission/getUsersEmploye', (res) => {
+                                window.dataSendUsers = res?.dataSend
+                                renderModalUsers({
+                                    data: window.dataSendUsers,
+                                    id_users: result_id
+                                })
 
-                        }, (beforesend) => {
-                            $("#body_container_Aksess_users").html(`<tr>
+                            }, (beforesend) => {
+                                $("#body_container_Aksess_users").html(`<tr>
                                                                         <td colspan="50">
                                                                         <div class="card" aria-hidden="true">
                                                                             <div class="card-body">
@@ -364,34 +363,34 @@ $this->extend('layout/basiclayout', [
                                                                         </div>
                                                                         </td>
                                                                     </tr>`)
-                        }
-                    );
+                            }
+                        );
+                    }
+                }, (beforesend) => {
+                    $('.formModalUsers').prop('disabled', true).html(
+                        '<i class="fas fa-spinner fa-spin"></i>');
                 }
-            }, (beforesend) => {
-                $('.formModalUsers').prop('disabled', true).html(
-                    '<i class="fas fa-spinner fa-spin"></i>');
-            }
-        );
-    }
+            );
+        }
 
-    const saveDataModalUsers = (props) => {
-        postData({
-                group_id: props.group_id,
-                user_id: props?.user_id
-            },
-            'admin/UsersPermission/saveData', (res) => {
-                let result_id = res?.id
-                if (res.status === "success") {
-                    successSwal(res.status)
-                    getDataList(
-                        'admin/UsersPermission/getUsersEmploye', (res) => {
-                            window.dataSendUsers = res?.dataSend
-                            renderModalUsers({
-                                data: window.dataSendUsers,
-                                id_users: result_id
-                            })
-                        }, (beforesend) => {
-                            $("#body_container_Aksess_users").html(`<tr>
+        const saveDataModalUsers = (props) => {
+            postData({
+                    group_id: props.group_id,
+                    user_id: props?.user_id
+                },
+                'admin/UsersPermission/saveData', (res) => {
+                    let result_id = res?.id
+                    if (res.status === "success") {
+                        successSwal(res.status)
+                        getDataList(
+                            'admin/UsersPermission/getUsersEmploye', (res) => {
+                                window.dataSendUsers = res?.dataSend
+                                renderModalUsers({
+                                    data: window.dataSendUsers,
+                                    id_users: result_id
+                                })
+                            }, (beforesend) => {
+                                $("#body_container_Aksess_users").html(`<tr>
                                                                         <td colspan="50">
                                                                         <div class="card" aria-hidden="true">
                                                                             <div class="card-body">
@@ -409,118 +408,118 @@ $this->extend('layout/basiclayout', [
                                                                         </div>
                                                                         </td>
                                                                     </tr>`)
-                        }
-                    );
+                            }
+                        );
+                    }
+                }, (beforesend) => {
+                    $('.btn-save').prop('disabled', true).html(
+                        '<i class="fas fa-spinner fa-spin"></i>');
                 }
-            }, (beforesend) => {
-                $('.btn-save').prop('disabled', true).html(
-                    '<i class="fas fa-spinner fa-spin"></i>');
+            );
+        }
+
+
+        function renderPagination(totalData, perPage, currentPage) {
+            const totalPages = Math.ceil(totalData / perPage);
+            const paginationContainer = $('.custom-pagination');
+
+            paginationContainer.empty();
+
+            let paginationHTML = '';
+
+            if (currentPage > 1) {
+                paginationHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a></li>`;
             }
-        );
-    }
 
+            const maxVisible = 4;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
-    function renderPagination(totalData, perPage, currentPage) {
-        const totalPages = Math.ceil(totalData / perPage);
-        const paginationContainer = $('.custom-pagination');
+            if (currentPage <= Math.ceil(maxVisible / 2)) {
+                endPage = Math.min(totalPages, maxVisible);
+            }
 
-        paginationContainer.empty();
+            if (currentPage > totalPages - Math.floor(maxVisible / 2)) {
+                startPage = Math.max(1, totalPages - maxVisible + 1);
+            }
 
-        let paginationHTML = '';
-
-        if (currentPage > 1) {
-            paginationHTML +=
-                `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a></li>`;
-        }
-
-        const maxVisible = 4;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-        if (currentPage <= Math.ceil(maxVisible / 2)) {
-            endPage = Math.min(totalPages, maxVisible);
-        }
-
-        if (currentPage > totalPages - Math.floor(maxVisible / 2)) {
-            startPage = Math.max(1, totalPages - maxVisible + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            paginationHTML += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<li class="page-item ${i === currentPage ? 'active' : ''}">
                             <a class="page-link" href="#" data-page="${i}">${i}</a>
                           </li>`;
-        }
+            }
 
-        if (endPage < totalPages) {
-            paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-            paginationHTML += `<li class="page-item">
+            if (endPage < totalPages) {
+                paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                paginationHTML += `<li class="page-item">
                             <a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>
                           </li>`;
+            }
+
+            if (currentPage < totalPages) {
+                paginationHTML +=
+                    `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a></li>`;
+            }
+
+            paginationContainer.append(paginationHTML);
+
+            $('.page-link').off('click').on('click', function(event) {
+                event.preventDefault();
+
+                const pageNumber = $(this).data('page');
+                if (pageNumber) {
+                    changePage(pageNumber);
+                }
+            });
         }
 
-        if (currentPage < totalPages) {
-            paginationHTML +=
-                `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a></li>`;
+        const changePage = (pageNumber) => {
+            postData({
+                    page: pageNumber,
+                    limit: 15,
+                    search: $("#search_users_form").val()
+                }, 'admin/UsersPermission/getDataUsers',
+                (res) => {
+                    if (res && res.respon) {
+                        renderDataUsers({
+                            data: res?.value
+                        })
+                        const totalData = res?.value?.count_data || 0;
+                        renderPagination(totalData, 15, pageNumber);
+                    }
+                }, (beforesend) => {
+                    getLoadingGlobalServices('tbodyUsers')
+                }
+            );
         }
 
-        paginationContainer.append(paginationHTML);
 
-        $('.page-link').off('click').on('click', function(event) {
-            event.preventDefault();
-
-            const pageNumber = $(this).data('page');
-            if (pageNumber) {
-                changePage(pageNumber);
-            }
-        });
-    }
-
-    const changePage = (pageNumber) => {
-        postData({
-                page: pageNumber,
-                limit: 15,
-                search: $("#search_users_form").val()
-            }, 'admin/UsersPermission/getDataUsers',
-            (res) => {
-                if (res && res.respon) {
-                    renderDataUsers({
-                        data: res?.value
-                    })
-                    const totalData = res?.value?.count_data || 0;
-                    renderPagination(totalData, 15, pageNumber);
+        $("#btnsearch_users_form").off().on("click", function(e) {
+            postData({
+                    page: 1,
+                    limit: 15,
+                    search: $("#search_users_form").val()
+                }, 'admin/UsersPermission/getDataUsers',
+                (res) => {
+                    if (res && res.respon) {
+                        renderDataUsers({
+                            data: res?.value
+                        })
+                        const totalData = res?.value?.count_data || 0;
+                        renderPagination(totalData, 15, res?.value?.page);
+                    }
+                }, (beforesend) => {
+                    getLoadingGlobalServices('tbodyUsers')
                 }
-            }, (beforesend) => {
-                getLoadingGlobalServices('tbodyUsers')
-            }
-        );
-    }
+            );
 
-
-    $("#btnsearch_users_form").off().on("click", function(e) {
-        postData({
-                page: 1,
-                limit: 15,
-                search: $("#search_users_form").val()
-            }, 'admin/UsersPermission/getDataUsers',
-            (res) => {
-                if (res && res.respon) {
-                    renderDataUsers({
-                        data: res?.value
-                    })
-                    const totalData = res?.value?.count_data || 0;
-                    renderPagination(totalData, 15, res?.value?.page);
-                }
-            }, (beforesend) => {
-                getLoadingGlobalServices('tbodyUsers')
-            }
-        );
-
-    })
+        })
 
 
 
 
 
-})()
+    })()
 </script>
 <?php $this->endSection(); ?>

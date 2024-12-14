@@ -6,6 +6,7 @@
     let exam3 = [];
     let transferdesc = []
     let visitTransfer = []
+    let clinicDoctors = [];
     var i = 0
     // addRanap('100000') // blm ranap
     // getAkomodasi('202408030835470650684') // sudah ranap
@@ -55,8 +56,22 @@
             moment().format("DD/MM/YYYY HH:mm")
         );
         $("#flatatransferexamination_date").trigger("change");
-
+        getClinicDoctors()
         enableTindakLanjut()
+    }
+
+    const getClinicDoctors = () => {
+        postData({
+
+        }, 'admin/patient/getClinicDoctors', res => {
+            clinicDoctors = res
+        });
+    }
+    const setPoliTindakLanjut = (dokter) => {
+        let clinic_id = clinicDoctors.filter(item => item.employee_id == dokter)
+        console.log(dokter)
+        console.log(clinic_id)
+        $("#sprikdpoli").val(clinic_id[0].clinic_id)
     }
 
     const getFollowUpName = (isinternal) => {
@@ -180,6 +195,7 @@
     }
 
     const signTindakLanjut = () => {
+        //addSignUserSatelite = (formId, container, body_id, primaryKey, buttonId, docs_type, user_type, sign_ke = 1,title)
         addSignUser("formaddatransfer", "atransfer", "atransferbody_id", "formsaveatransferbtnid", 7, 1, 1, $("#atransferisinternal option:selected").text())
     }
     //ini untuk save tindak lanjut
@@ -1405,6 +1421,9 @@
 
         $("#spritglkontrol").val(get_date())
         $("#sprinosurat").val(null)
+        flatpickrInstances["flatspritglkontrol"].setDate(moment().format("DD/MM/YYYY HH:mm"))
+        $("#flatacpptexamination_date").trigger("change")
+
 
         const req = await libAsyncAwaitPost({
                 visit: '<?= $visit['visit_id']; ?>',
@@ -1418,56 +1437,60 @@
             $("#sprikdpoli").val(req?.data?.clinic_id)
             $("#spritglkontrol").val(req?.data?.tglrenckontrol)
             $("#sprinosurat").val(req?.data?.nosuratkontrol)
+            console.log(req?.data?.tglrenckontrol)
+            flatpickrInstances["flatspritglkontrol"].setDate(formatedDatetimeFlat(req?.data?.tglrenckontrol))
+            $("#flatspritglkontrol").trigger("change")
         }
         $("#atransfersprigroup").slideDown()
     }
 
-    const getSPRI = () => {
-        $("#getSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
-        $("#getSpriSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
-        // alert("Get Nomor SKDP Berhasil")
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/pendaftaran/getSPRI',
-            type: "POST",
-            data: JSON.stringify({
-                'norm': $visit['no_registration'],
-                'kddpjp': $visit['kddpjp'],
-                'clinic_id': $visit['clinic_id'],
-                'visit_id': $visit['visit_id']
-            }),
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(data) {
-                if (data.metadata.code == '200') {
-                    alert('Berhasil mengambil data SPRI')
-                    $("#pvspecimenno").val(data.spri)
-                    $("#taspecimenno").val(data.spri)
-                } else {
-                    alert('tidak ada data SPRI')
-                }
-                $("#getSpriBtn").html('<i class="fa fa-search"></i>')
-                $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
-            },
-            error: function() {
-                $("#getSpriBtn").html('<i class="fa fa-search"></i>')
-                $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
-            }
-        });
-    }
+    // const getSPRI = () => {
+    //     $("#getSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+    //     $("#getSpriSpriBtn").html('<i class="spinner-border spinner-border-sm"></i>')
+    //     // alert("Get Nomor SKDP Berhasil")
+    //     $.ajax({
+    //         url: '<?php echo base_url(); ?>admin/pendaftaran/getSPRI',
+    //         type: "POST",
+    //         data: JSON.stringify({
+    //             'norm': $visit['no_registration'],
+    //             'kddpjp': $visit['kddpjp'],
+    //             'clinic_id': $visit['clinic_id'],
+    //             'visit_id': $visit['visit_id']
+    //         }),
+    //         dataType: 'json',
+    //         contentType: false,
+    //         cache: false,
+    //         processData: false,
+    //         success: function(data) {
+    //             if (data.metadata.code == '200') {
+    //                 alert('Berhasil mengambil data SPRI')
+    //                 $("#pvspecimenno").val(data.spri)
+    //                 $("#taspecimenno").val(data.spri)
+    //             } else {
+    //                 alert('tidak ada data SPRI')
+    //             }
+    //             $("#getSpriBtn").html('<i class="fa fa-search"></i>')
+    //             $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
+    //         },
+    //         error: function() {
+    //             $("#getSpriBtn").html('<i class="fa fa-search"></i>')
+    //             $("#getSpriRanapBtn").html('<i class="fa fa-search"></i>')
+    //         }
+    //     });
+    // }
 
     const saveSpri = () => {
         let spripasien_id = '<?= $visit['pasien_id']; ?>'
         let sprikddpjp = $("#sprikddpjp").val()
         let sprikdpoli = $("#sprikdpoli").val()
         let spritglkontrol = $("#spritglkontrol").val()
-        let sprinosurat = $("#sprinosurat").val()
+        let sprinosurat = $("#atransferdocument_id").val()
 
-        if (spripasien_id == '') {
-            if ('<?= $visit['status_pasien_id']; ?>' == '18')
-                alert('No Kartu BPJS harus diisi!')
-        } else if (sprikddpjp == '' || sprikddpjp == null) {
+        // if (spripasien_id == '') {
+        //     if ('<?= $visit['status_pasien_id']; ?>' == '18')
+        //         alert('No Kartu BPJS harus diisi!')
+        // } else 
+        if (sprikddpjp == '' || sprikddpjp == null) {
             alert('Kolom Dokter tidak boleh kosong')
         } else if (sprikdpoli == '' | sprikdpoli == null) {
             alert('Kolom Poli tidak boleh kosong')
@@ -1483,7 +1506,7 @@
             });
             spritglkontrol == (String)(spritglkontrol).replace("T", " ")
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/pendaftaran/savespri ',
+                url: '<?php echo base_url(); ?>admin/rm/assessment/saveSpri',
                 type: "POST",
                 data: JSON.stringify({
                     "request": {
@@ -1506,6 +1529,7 @@
                     if (data.metaData.code == '200') {
                         alert("Berhasil posting spri!")
                         $("#sprinosurat").val(data.response.noSPRI)
+                        $("#atransferdocument_id").val(data.response.noSPRI)
                     } else {
                         alert(data.metaData.message)
                     }

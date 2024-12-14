@@ -2282,6 +2282,8 @@ This Function is used to Add Patient
         usort($aParent, fn($a, $b) => $a['parent_parameter'] <=> $b['parent_parameter']);
         usort($aType, fn($a, $b) => $a['p_description'] <=> $b['p_description']);
 
+        // return json_encode(user()->getOneRoles());
+
         // dd($clinic);
         return view('admin/patient/profile', [
             'title' => '',
@@ -2521,16 +2523,30 @@ This Function is used to Add Patient
 
         // return json_encode($mappingAssessment);
         asort($employee);
-
         $bisma = 0;
         if ($session_id == null) {
             $session_id = $org->generateId();
 
             // return $session_id;
-
+            $ageYear = $visit['ageyear'];
+            $ageMonth = $visit['agemonth'];
+            $ageDay = $visit['ageday'];
+            $vstatusid = 0;
+            if ($ageYear == 0 && $ageMonth == 0 && $ageDay <= 28) {
+                $vstatusid = 5;
+            } else if ($ageYear >= 18) {
+                $vstatusid = 1;
+                // $("#armvs_status_id").prop("selectedIndex", 1);
+            } else {
+                $vstatusid = 4;
+                // $("#armvs_status_id").prop("selectedIndex", 2);
+            }
+            if ($visit['specialist_type_id'] == '1.05') {
+                $vstatusid = 10;
+            }
             $dataexam = [
                 'body_id' => $session_id,
-                'account_id' => '3',
+                'account_id' => 3,
                 'examination_date' => date('Y-m-d H:i:s'),
                 'org_unit_code' => $visit['org_unit_code'],
                 'no_registration' => $visit['no_registration'],
@@ -2549,6 +2565,7 @@ This Function is used to Add Patient
                 'ageday' => $visit['ageday'],
                 'thename' => $visit['diantar_oleh'],
                 'theaddress' => $visit['visitor_address'],
+                'vs_status_id' => $vstatusid,
                 'theid' => $visit['pasien_id'],
                 'isrj' => 0,
                 'gender' => $visit['gender'],
@@ -7478,19 +7495,19 @@ This Function is used to Add Patient
                             'dose' => (float)$dose[$key],
                             'orig_dose' => (float)$orig_dose[$key],
                             'resep_ke' => $resep_ke[$key],
-                            'description' => $description[$key],
-                            'brand_id' => $brand_id[$key],
-                            'measure_id' => $measure_id[$key],
-                            'measure_id2' => $measure_id2[$key],
+                            'description' => @$description[$key],
+                            'brand_id' => @$brand_id[$key],
+                            'measure_id' => @$measure_id[$key],
+                            'measure_id2' => @$measure_id2[$key],
                             'racikan' => (int)$racikan[$key],
-                            'doctor' => $doctor[$key],
-                            'employee_id' => $employee_id[$key],
-                            'employee_id_from' => $employee_id_from[$key],
-                            'doctor_from' => $doctor_from[$key],
+                            'doctor' => @$doctor[$key],
+                            'employee_id' => @$employee_id[$key],
+                            'employee_id_from' => @$employee_id_from[$key],
+                            'doctor_from' => @$doctor_from[$key],
                             // 'status_obat' => $status_obat[$key],
-                            'tarif_id' => $tarif_id[$key],
-                            'treatment' => $treatment[$key],
-                            'tarif_type' => $tarif_type[$key],
+                            'tarif_id' => @$tarif_id[$key],
+                            'treatment' => @$treatment[$key],
+                            'tarif_type' => @$tarif_type[$key],
                             'amount' => (float)$amount[$key],
                             'sell_price' => (float)$sell_price[$key],
                             'tagihan' => (float)$tagihan[$key],
@@ -7508,13 +7525,13 @@ This Function is used to Add Patient
                             'dose_presc' => (float)$dose_presc[$key],
                             'quantity' => (float)$quantity[$key],
                             'numer' => (int)$numer[$key],
-                            'resep_no' => $resep_no[$key],
-                            'nota_no' => $nota_no[$key],
+                            'resep_no' => @$resep_no[$key],
+                            'nota_no' => @$nota_no[$key],
                             'treat_date' => $treat_date[$key],
                             'bill_id' => $bill_id[$key],
-                            'class_room_id' => $class_room_id[$key],
-                            'clinic_id' => $clinic_id[$key],
-                            'clinic_id_from' => $clinic_id_from[$key],
+                            'class_room_id' => @$class_room_id[$key],
+                            'clinic_id' => @$clinic_id[$key],
+                            'clinic_id_from' => @$clinic_id_from[$key],
                             'visit_id' => $visit_id[$key],
                             'no_registration' => $no_registration[$key],
                             'trans_id' => $trans_id[$key],
@@ -8408,5 +8425,12 @@ This Function is used to Add Patient
             'orgunit' => $orgunit,
             'img_time' => $img_timestamp
         ]);
+    }
+    public function getClinicDoctors()
+    {
+        $model = new ClinicDoctorModel();
+        $select = $model->select("employee_id, clinic_id")->findAll();
+
+        return $this->response->setJSON($select);
     }
 }

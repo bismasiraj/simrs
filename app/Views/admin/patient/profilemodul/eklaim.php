@@ -1,6 +1,6 @@
 <?php
-$currency_symbol = "Rp. ";
-$permission = user()->getPermissions();
+@$currency_symbol = "Rp. ";
+@$permission = user()->getPermissions();
 ?>
 
 <style>
@@ -64,9 +64,9 @@ $permission = user()->getPermissions();
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-12 border-r">
             <?php echo view('admin/patient/profilemodul/profilebiodata', [
-                'visit' => $visit,
-                'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                'pasienDiagnosa' => $pasienDiagnosa
+                'visit' => @$visit,
+                'pasienDiagnosaAll' => @$pasienDiagnosaAll,
+                'pasienDiagnosa' => @$pasienDiagnosa
             ]); ?>
         </div><!--./col-lg-6-->
         <div class="col-lg-10 col-md-10 col-sm-12">
@@ -222,7 +222,7 @@ $permission = user()->getPermissions();
                                             </td>
                                         </tr>
                                         <tr>
-                                            <?php if ($visit['no_skpinap'] == '' || is_null($visit['no_skpinap'])) { ?>
+                                            <?php if (@$visit['no_skpinap'] == '' || is_null(@$visit['no_skpinap'])) { ?>
                                                 <td>Poli Eksekutif</td>
                                                 <td>
                                                     <select name="kelas_rawat" id="ekkelas_rawat" class="form-select">
@@ -1017,7 +1017,7 @@ $permission = user()->getPermissions();
                                 <h3>Coding UNU Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
-                                        <table class="table table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                        <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
                                                     <th>Diagnosa (ICD X)</th>
@@ -1036,7 +1036,7 @@ $permission = user()->getPermissions();
                                 </div>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
-                                        <table class="table table-borderedcustom table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                        <table class="table table-borderedcustom table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
                                                     <th>Prosedur (ICD IX)</th>
@@ -1057,7 +1057,7 @@ $permission = user()->getPermissions();
                                 <h3>Coding INA Grouper</h3>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
-                                        <table class="table table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                        <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
                                                     <th>Diagnosa (ICD X)</th>
@@ -1076,7 +1076,7 @@ $permission = user()->getPermissions();
                                 </div>
                                 <div class="staff-members">
                                     <div class="table tablecustom-responsive">
-                                        <table class="table table-hover " data-export-title="<?php echo ($visit['diantar_oleh'] . $visit['no_registration']) ?>">
+                                        <table class="table table-hover " data-export-title="<?php echo (@$visit['diantar_oleh'] . @$visit['no_registration']) ?>">
                                             <?php if (true) { ?>
                                                 <thead>
                                                     <th>Prosedur (ICD IX)</th>
@@ -1273,7 +1273,7 @@ $permission = user()->getPermissions();
                                             <td colspan="2" style="border-left:0;text-align:right;vertical-align:top;">&nbsp;&nbsp;</td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align:left;">[ <span class="xlnk" onclick="$(&quot;#trdebug&quot;).fadeToggle();">debug</span> ]</td>
+                                            <td style="text-align:left;">[ <span class="xlnk" onclick="@$(&quot;#trdebug&quot;).fadeToggle();">debug</span> ]</td>
                                             <td style="border-left:0;font-weight:bold;text-align:right;" colspan="2">Total Rp</td>
                                             <td id="totalGrouper" style="border-left:0;font-weight:bold;text-align:right;">0</td>
                                         </tr>
@@ -1317,7 +1317,7 @@ $permission = user()->getPermissions();
                         <button type="submit" id="ekformsubmit" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-primary"><?php echo lang('Word.save'); ?></button>
                         <button type="button" id="ekeditbtn" onclick="editKlaim()" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
                         <button type="button" id="" onclick="" style="display: none;" data-loading-text="<?php echo lang('Word.processing') ?>" class="btn btn-secondary">Edit</button>
-                        <a href="<?= base_url() . '/admin/cetak/cetakAllGrouping/' . base64_encode(json_encode($visit)); ?>" target="_blank">All Template</a>
+                        <a href="<?= base_url() . '/admin/cetak/cetakAllGrouping/' . base64_encode(json_encode(@$visit)); ?>" target="_blank">All Template</a>
                     </div>
                 </div>
             </form>

@@ -256,11 +256,11 @@ $result = array_change_key_case($result);
                 </form>
             </div>
             <div class="modal-footer">
-                <?php if (user()->checkRoles(['dokterradiologi', 'adminrad', 'adminlab', 'dokterlab', 'superuser'])) : ?>
+                <?php if (user()->checkPermission("penunjangmedis", "c")) : ?>
                     <button id="printPenunjangMedis" type="button" class="btn btn-success"><i class="fas fa-print"></i> Print</button>
                     <button id="savePenunjangMedis" type="button" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
                 <?php endif; ?>
-                <button id="batalExpertise_penunjang" type="button" class="btn btn-danger" <?php user()->checkRoles(['dokterradiologi', 'dokterlab', 'superuser']) ? '' : 'style="display:none;"'; ?>>Batalkan Tagihan</button>
+                <button id="batalExpertise_penunjang" type="button" class="btn btn-danger" <?php user()->checkPermission("penunjangmedis", "c") ? '' : 'style="display:none;"'; ?>>Batalkan Tagihan</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>

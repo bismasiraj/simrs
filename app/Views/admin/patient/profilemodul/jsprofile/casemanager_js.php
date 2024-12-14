@@ -524,7 +524,7 @@
             let resultData = data;
             // selectParamCasemanager();
             let result = resultData.data[0];
-            console.log(resultData.data);
+
             actionViewParam({
                 id_param: result.parameter_id,
                 action: "detail"

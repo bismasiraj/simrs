@@ -336,6 +336,38 @@ class PasienVisitationModel extends Model
             return $builder->getResultArray();
         }
     }
+    public function getKunjunganOperasi($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null)
+    {
+        $sql = "DECLARE	@return_value int
+
+            EXEC	@return_value = [dbo].[SP_SEARCHKUNJUNGANRIAKOM_FORM]
+                    @X = N'100',
+                    @NAMA = N'%$nama%',
+                    @KODE = N'%$kode%',
+                    @ALAMAT = N'%$kode%',
+                    @POLI = N'%$poli%',
+                    @MULAI = N'$mulai',
+                    @AKHIR = N'$akhir',
+                    @KELUAR = N'%',
+                    @SUDAH = N'%$sudah%',
+                    @DOKTER = N'%$dokter%',
+                    @NOKARTU = N'%$nokartu%'
+
+            SELECT	'Return Value' = @return_value";
+        // $sql = "SP_SEARCHKUNJUNGANRIAKOM_FORM;1 @X = '100',
+        // @NAMA = '%$nama%',
+        // @KODE = '%$kode%',
+        // @ALAMAT = '%$alamat%',
+        // @POLI = '%$poli%',
+        // @MULAI = '$mulai',
+        // @AKHIR = '$akhir',
+        // @KELUAR = '%',
+        // @SUDAH = '%$sudah%',
+        // @DOKTER = '%$dokter%',
+        // @NOKARTU = '%$nokartu%'";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
 
     public function getKunjunganPasien($id)
     {

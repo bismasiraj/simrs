@@ -54,7 +54,7 @@
 
                             <div class="tab-pane fade" id="asuhan-gizi-tab">
                                 <div class="container-fluid">
-                                    <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                    <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                         <div class="row mt-3 ">
                                             <div class="col-md-12">
                                                 <div class="box-tab-tools text-center">
@@ -70,11 +70,11 @@
                                                 <th width="1%">No.</th>
                                                 <th class="text-center">Dokumen</th>
                                                 <th width="1%" class="text-center"><i class="fas fa-print"></i></th>
-                                                <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'superuser'])) : ?>
+                                                <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'superuser'])) : ?>
                                                     <!-- <th width="1%" class="text-center"><i class="fas fa-clipboard-check"></i></th> -->
                                                 <?php endif; ?>
                                                 <th width="1%" class="text-center"><i class="fas fa-tasks"></i></th>
-                                                <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                                <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                                     <th width="1%" class="text-center"><i class="fas fa-edit"></i></th>
                                                     <th width="1%" class="text-center"><i class="fas fa-clone"></i></th>
                                                     <th width="1%" class="text-center"><i class="fas fa-trash-alt"></i></th>
@@ -112,7 +112,7 @@
                                                             </div>
 
                                                         </div>
-                                                        <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                                        <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                                             <div class="row mt-3">
                                                                 <div class="col text-center">
                                                                     <button type="button" id="addDiagnosaGizi" name="addDiagnosaGizi" data-body="body-diagnosisGizi" class="btn btn-primary">
@@ -146,7 +146,7 @@
                                                                             <th scope="col">Tanggal/Jam Makan</th>
                                                                             <th scope="col">Nama Masakan</th>
                                                                             <th scope="col">Kesimpulan</th>
-                                                                            <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                                                            <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                                                                 <th scope="col" width="1%" class="text-center"><i class="fas fa-edit"></i></th>
                                                                                 <th scope="col" width="1%" class="text-center"><i class="fas fa-trash-alt"></i></th>
                                                                             <?php endif; ?>
@@ -158,7 +158,7 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                                        <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                                             <div class="row mt-3 pt-3">
                                                                 <div class="col text-center">
 
@@ -193,7 +193,7 @@
                                                                             <th scope="col">Hasil</th>
                                                                             <th scope="col">Identifikasi Masalah</th>
                                                                             <th scope="col">Rencana Tindak Lanjut</th>
-                                                                            <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['admingizi', 'operatorgizi', 'superuser'])) : ?>
+                                                                            <?php if (user()->checkPermission("asuhangizi", 'c') || user()->checkRoles(['operatorgizi', 'operatorgizi', 'superuser'])) : ?>
                                                                                 <th scope="col" width="1%" class="text-center"><i class="fas fa-laptop-medical"></i></th>
                                                                                 <th scope="col" width="1%" class="text-center"><i class="fas fa-edit"></i></th>
                                                                                 <th scope="col" width="1%" class="text-center"><i class="fas fa-trash-alt"></i></th>

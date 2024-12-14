@@ -160,34 +160,47 @@ $group = user()->getRoles();
         $("#formcpptsubmit").toggle()
         $("#formcpptedit").toggle()
     }
-    $("#acpptaccount_id3").on("change", function() {
-        $("#groupRiwayatCppt").slideDown()
-        $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
-        $("#groupVitalSignCppt").slideDown()
-        $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", false)
-        $("#groupDiagnosaPerawatCppt").slideDown()
-        $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
-        $("#cpptObyektifTitle").html("OBYEKTIF (O)")
-        $("#cpptPlanningTitle").html("PLANNING (P)")
-        $("#cpptVitalSign").show()
-        $("#cpptFallRiskSegment").show()
-        $("#cpptGcsSegment").show()
-
-        // $("#acpptaccount_id3").is("checked", function() {})
+    $("#acpptaccount_id").on("change", function() {
+        if ($(this).val() == 3) {
+            $("#groupRiwayatCppt").slideDown()
+            $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
+            $("#groupVitalSignCppt").slideDown()
+            $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", false)
+            $("#groupDiagnosaPerawatCppt").slideDown()
+            $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
+            $("#cpptObyektifTitle").html("OBYEKTIF (O)")
+            $("#cpptPlanningTitle").html("PLANNING (P)")
+            $("#cpptVitalSign").show()
+            $("#cpptFallRiskSegment").show()
+            $("#cpptGcsSegment").show()
+        } else {
+            $("#cpptSubyektifTitle").html("SITUATION (S)")
+            $("#cpptObyektifTitle").html("BACKGROUND (B)")
+            $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
+            $("#cpptFallRiskSegment").hide()
+            $("#cpptGcsSegment").hide()
+        }
     })
-    $("#acpptaccount_id4").on("change", function() {
-        // $("#groupRiwayatCppt").slideUp()
-        // $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", true)
-        // $("#groupVitalSignCppt").slideUp()
-        // $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", true)
-        // $("#groupDiagnosaPerawatCppt").slideUp()
-        $("#cpptSubyektifTitle").html("SITUATION (S)")
-        $("#cpptObyektifTitle").html("BACKGROUND (B)")
-        $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
-        $("#cpptFallRiskSegment").hide()
-        $("#cpptGcsSegment").hide()
-        // $("#acpptaccount_id4").is("checked", function() {})
-    })
+    // $("#acpptaccount_id3").on("change", function() {
+    //     $("#groupRiwayatCppt").slideDown()
+    //     $("#groupRiwayatCppt").find("input, textarea, select").prop("disabled", false)
+    //     $("#groupVitalSignCppt").slideDown()
+    //     $("#groupVitalSignCppt").find("input, textarea, select").prop("disabled", false)
+    //     $("#groupDiagnosaPerawatCppt").slideDown()
+    //     $("#cpptSubyektifTitle").html("SUBYEKTIF (S)")
+    //     $("#cpptObyektifTitle").html("OBYEKTIF (O)")
+    //     $("#cpptPlanningTitle").html("PLANNING (P)")
+    //     $("#cpptVitalSign").show()
+    //     $("#cpptFallRiskSegment").show()
+    //     $("#cpptGcsSegment").show()
+    // })
+    // $("#acpptaccount_id4").on("change", function() {
+    //     $("#cpptSubyektifTitle").html("SITUATION (S)")
+    //     $("#cpptObyektifTitle").html("BACKGROUND (B)")
+    //     $("#cpptPlanningTitle").html("RECOMMENDATION (R)")
+    //     $("#cpptFallRiskSegment").hide()
+    //     $("#cpptGcsSegment").hide()
+    // })
 
     function addRowCPPT(examselect, key) {
         if (examselect.account_id == "2" || examselect.account_id == "3") {
@@ -360,7 +373,7 @@ $group = user()->getRoles();
 
         // var editor = tinymce.get('acpptinstruction')
         // editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
-        $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change");
+        // $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change");
 
         $("#acpptcollapseVitalSign").find("input, select").trigger("change")
 
@@ -471,7 +484,7 @@ $group = user()->getRoles();
         $("#acpptpetugas_id").val(examselect.petugas_id)
         $("#acpptpetugas_type").val(examselect.petugas_type)
         $("#acpptpetugas").val(examselect.petugas)
-        $("#acpptaccount_id").val(examselect.account_id)
+        $("#acpptaccount_id").val(examselect.account_id).trigger("change")
         $("#acpptkesadaran").val(examselect.kesadaran)
         $("#acpptisvalid").val(examselect.isvalid)
 
@@ -492,7 +505,7 @@ $group = user()->getRoles();
         var editor = tinymce.get('acpptinstruction')
         editor.setContent(examselect.intstruction !== null ? examselect.instruction : "")
 
-        $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change") //bisma
+        // $("#acpptaccount_id" + examselect.account_id).prop("checked", true).trigger("change") //bisma
 
 
         $("#formsaveacpptbtnid").slideDown()
@@ -571,12 +584,13 @@ $group = user()->getRoles();
             bodyId = '<?= $visit['session_id']; ?>'
             let isnew = false;
             let theindex = 0;
-            $.each(examForassessment, function(key, value) {
-                if (value.body_id == bodyId) {
-                    isnew = true;
-                    theindex = key
-                }
-            })
+            if (examForassessment.length > 0)
+                $.each(examForassessment, function(key, value) {
+                    if (value.body_id == bodyId) {
+                        isnew = true;
+                        theindex = key
+                    }
+                })
             if (isnew) {
                 editCppt(theindex)
                 return alert("Anda sudah pernah membuat dokumen CPPT SOAP pada sesi " + bodyId + ". Silahkan buat dokumen SBAR atau refresh halaman jika memang sudah berganti sesi.");
@@ -590,18 +604,20 @@ $group = user()->getRoles();
 
 
         $("#formaddacppt").find("input, textarea").val(null)
-        let initialexam = examForassessment[examForassessment.length - 1]
-        let lastBodyId = initialexam.body_id
-        $.each(initialexam, function(key, value) {
-            $("#acppt" + key).val(value)
-        })
+        if (examForassessment.length) {
+            let initialexam = examForassessment[examForassessment.length - 1]
+            let lastBodyId = initialexam.body_id
+            $.each(initialexam, function(key, value) {
+                $("#acppt" + key).val(value)
+            })
+        }
         $("#bodyFallRiskCppt").html("")
         $("#bodyGcsCppt").html("")
         $("#bodyDiagPerawatCppt").html("")
 
-        $("#acpptaccount_id3").val("3")
-        $("#acpptaccount_id4").val("4")
-        $("#acpptaccount_id3").prop("checked", true).trigger("change")
+        // $("#acpptaccount_id3").val("3")
+        // $("#acpptaccount_id4").val("4")
+        // $("#acpptaccount_id3").prop("checked", true).trigger("change")
         $("#acpptbody_id").val(bodyId)
         $("#acpptorg_unit_code").val('<?= $visit['org_unit_code']; ?>')
         $("#acpptpasien_diagnosa_id").val(null)
@@ -656,9 +672,11 @@ $group = user()->getRoles();
         $('#keperawatanListLinkAll').html("")
 
         if (issoap) {
-            $("#acpptaccount_id3").trigger("change")
+            $("#acpptaccount_id").val(3).trigger("change")
+            // $("#acpptaccount_id3").trigger("change")
         } else {
-            $("#acpptaccount_id4").trigger("change")
+            $("#acpptaccount_id").val(4).trigger('change')
+            // $("#acpptaccount_id4").trigger("change")
         }
 
         $('#keperawatanListLinkAll').append('<li class="list-group-item"><a href="<?= base_url() . '/admin/rm/keperawatan/ralan_anak/' . base64_encode(json_encode($visit)); ?>/' + $("#armbody_id").val() + '" target="_blank">Assessmen Keperawatan Ralan Anak</a></li>')
@@ -693,6 +711,23 @@ $group = user()->getRoles();
         $("#acpptModal").modal("show")
         enableacppt()
         fillRiwayatAcppt()
+
+        var ageYear = <?= $visit['ageyear']; ?>;
+        var ageMonth = <?= $visit['agemonth']; ?>;
+        var ageDay = <?= $visit['ageday']; ?>;
+
+        if (ageYear === 0 && ageMonth === 0 && ageDay <= 28) {
+            $("#acpptvs_status_id").prop("selectedIndex", 3);
+        } else if (ageYear >= 18) {
+            $("#acpptvs_status_id").prop("selectedIndex", 1);
+        } else {
+            $("#acpptvs_status_id").prop("selectedIndex", 2);
+        }
+        <?php if ($visit['specialist_type_id'] == '1.05') {
+        ?>
+            $("#acpptvs_status_id").prop("selectedIndex", 4)
+        <?php
+        } ?>
 
         // getFallRisk(lastBodyId, "bodyFallRiskCppt")
         if (issoap) {
@@ -860,7 +895,7 @@ $group = user()->getRoles();
 </script>
 
 <script>
-    $("#formsaveacpptbtnid").on('click', (function(e) {
+    $("#formsaveacpptbtnid").off().on('click', (function(e) {
         // tinyMCE.triggerSave();
         // let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();

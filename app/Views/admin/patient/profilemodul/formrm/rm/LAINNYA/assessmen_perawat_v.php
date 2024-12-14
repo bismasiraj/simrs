@@ -6,33 +6,33 @@ $selectedStatus = isset($_POST['selected-status']) ? $_POST['selected-status'] :
 $selectedStatusFilter = isset($_POST['selected-status-filter']) ? $_POST['selected-status-filter'] : $data[0]['clinic'];
 
 $validTriage = ["P012",];
-$validAnamnesa = ["P012","all"];
-$vitailsign = ["P012",'all'];
-$pernapasan = ["P012","all"];
+$validAnamnesa = ["P012", "all"];
+$vitailsign = ["P012", 'all'];
+$pernapasan = ["P012", "all"];
 $assSirkulasi = ["P012", "all"];
-$assNeurosen = ["P012","all"];
+$assNeurosen = ["P012", "all"];
 $integumen = ["P012"];
 $skalanyeri = ["P012", "all"];
 $gizi = ["P012", "all"];
-$diagPerawat =  ["P012","all"];
+$diagPerawat =  ["P012", "all"];
 
 //ass new 
 $lifestyle = ['all'];
 $psikologis = ['all'];
 $sosialEkonomi = ['all'];
 $childSpecial = ['all'];
-$aktivitas= ['all'];
-$pencernaan= ['all'];
-$perkemihan= ['all'];
-$sex= ['all'];
-$tht= ['all'];
-$sleep= ['all'];
-$dekubit=['all'];
+$aktivitas = ['all'];
+$pencernaan = ['all'];
+$perkemihan = ['all'];
+$sex = ['all'];
+$tht = ['all'];
+$sleep = ['all'];
+$dekubit = ['all'];
 
 
-$triageShow =in_array($selectedStatusFilter, $validTriage);
-$anamnesaShow =in_array($selectedStatusFilter, $validAnamnesa);
-$vitailsignShow =in_array($selectedStatusFilter, $vitailsign);
+$triageShow = in_array($selectedStatusFilter, $validTriage);
+$anamnesaShow = in_array($selectedStatusFilter, $validAnamnesa);
+$vitailsignShow = in_array($selectedStatusFilter, $vitailsign);
 $pernapasanShow = in_array($selectedStatusFilter, $pernapasan);
 $assSirkulasiShow = in_array($selectedStatusFilter, $assSirkulasi);
 $assNeurosensorisShow = in_array($selectedStatusFilter, $assNeurosen);
@@ -53,7 +53,7 @@ $perkemihanShow = in_array($selectedStatusFilter, $perkemihan);
 $seksualShow = in_array($selectedStatusFilter, $sex);
 $thtneyeShow = in_array($selectedStatusFilter, $tht);
 $sleepnChillShow = in_array($selectedStatusFilter, $sleep);
-$dekubitusShow= in_array($selectedStatusFilter, $dekubit);
+$dekubitusShow = in_array($selectedStatusFilter, $dekubit);
 
 ?>
 
@@ -89,54 +89,54 @@ $dekubitusShow= in_array($selectedStatusFilter, $dekubit);
 
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="<?= base_url('assets/js/default.js') ?>"></script>
+    <script src="<?= base_url() ?>assets/js/default.js"></script>
 
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
 
-    .o_list_view_ungrouped {
-        width: auto !important;
-    }
+        .o_list_view_ungrouped {
+            width: auto !important;
+        }
     </style>
 </head>
 <form method="post" id="filter-form">
@@ -166,444 +166,447 @@ $dekubitusShow= in_array($selectedStatusFilter, $dekubit);
 <body>
     <div id="data-container">
         <?php foreach ($data as $index => $item): ?>
-        <?php
-                $kelompok_umur_up = false;  
+            <?php
+            $kelompok_umur_up = false;
 
-                if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
-                    $dateOfBirth = strtotime($item['data']['date_of_birth']);
-                    $createDate = strtotime($item['data']['create_date']);
+            if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
+                $dateOfBirth = strtotime($item['data']['date_of_birth']);
+                $createDate = strtotime($item['data']['create_date']);
 
-                    if ($dateOfBirth && $createDate) {
-                        $age = date('Y', $createDate) - date('Y', $dateOfBirth);
+                if ($dateOfBirth && $createDate) {
+                    $age = date('Y', $createDate) - date('Y', $dateOfBirth);
 
-                        if (date('md', $createDate) < date('md', $dateOfBirth)) {
-                            $age--;
-                        }
-                        if ($age >= 18) {
-                            $kelompok_umur_up = true;
-                        }
+                    if (date('md', $createDate) < date('md', $dateOfBirth)) {
+                        $age--;
+                    }
+                    if ($age >= 18) {
+                        $kelompok_umur_up = true;
                     }
                 }
-                $kelompok_umur_down = false;  
+            }
+            $kelompok_umur_down = false;
 
-                if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
-                    $dateOfBirth = strtotime($item['data']['date_of_birth']);
-                    $createDate = strtotime($item['data']['create_date']);
+            if (@$item['data']['date_of_birth'] && @$item['data']['create_date']) {
+                $dateOfBirth = strtotime($item['data']['date_of_birth']);
+                $createDate = strtotime($item['data']['create_date']);
 
-                    if ($dateOfBirth && $createDate) {
-                        $age = date('Y', $createDate) - date('Y', $dateOfBirth);
+                if ($dateOfBirth && $createDate) {
+                    $age = date('Y', $createDate) - date('Y', $dateOfBirth);
 
-                        if (date('md', $createDate) < date('md', $dateOfBirth)) {
-                            $age--;
-                        }
-                        if ($age < 18) {
-                            $kelompok_umur_down = true;
-                        }
+                    if (date('md', $createDate) < date('md', $dateOfBirth)) {
+                        $age--;
+                    }
+                    if ($age < 18) {
+                        $kelompok_umur_down = true;
                     }
                 }
+            }
 
-                $isrjResult = false;
+            $isrjResult = false;
 
-                if (empty(@$item['isrjResult']) && @$item['clinic'] !== "P012") {
-                    $isrjValue = $item['isrjResult'];
-                    if ($isrjValue === 0 || $isrjValue === "0") {
-                        $isrjResult = true;
-                    }
+            if (empty(@$item['isrjResult']) && @$item['clinic'] !== "P012") {
+                $isrjValue = $item['isrjResult'];
+                if ($isrjValue === 0 || $isrjValue === "0") {
+                    $isrjResult = true;
                 }
+            }
 
-                $isrjResult1 = false;
-                    if (empty($item['isrjResult'])) {
-                        $isrjValue = $item['isrjResult'];
+            $isrjResult1 = false;
+            if (empty($item['isrjResult'])) {
+                $isrjValue = $item['isrjResult'];
 
-                        if ($item['clinic'] === "P012") {
-                            $isrjResult1 = true;
-                        }
-                        else if ($isrjValue === 0 || $isrjValue === "0") {
-                            $isrjResult1 = true;
-                        }
-                    }
+                if ($item['clinic'] === "P012") {
+                    $isrjResult1 = true;
+                } else if ($isrjValue === 0 || $isrjValue === "0") {
+                    $isrjResult1 = true;
+                }
+            }
             ?>
 
-        <div class="container-fluid mt-5" id="body-show-<?= $index ?>">
-            <div class="row">
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
-                </div>
-                <div class="col mt-2" align="center">
-                    <h3><?= @$kop['name_of_org_unit'] ?></h3>
-                    <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
-                        <?= @$kop['fax'] ?? "-"?>,
-                        <?= @$kop['kota'] ?? "-"?></p>
-                    <p><?= @$kop['sk'] ?? "-"?></p>
-                </div>
-                <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
-                </div>
-            </div>
-            <div class="row">
-                <h3 class="text-center content-title" id="content-title"><?= @$item['title'] ?></h3>
-            </div>
-            <div class="row">
-                <h5 class="text-start">Informasi Pasien</h5>
-            </div>
-
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Nomor RM</b>
-                            <p id="no_registration" class="m-0 mt-1 p-0">
-                                <?= isset($visit['no_registration']) && $visit['no_registration'] ? $visit['no_registration'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Nama Pasien</b>
-                            <p id="name_of_pasien" class="m-0 mt-1 p-0">
-                                <?= isset($visit['name_of_pasien']) && $visit['name_of_pasien'] ? $visit['name_of_pasien'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Jenis Kelamin</b>
-                            <p id="gendername" class="m-0 mt-1 p-0 ">
-                                <?= isset($visit['gendername']) && $visit['gendername'] ? $visit['gendername'] : '-' ?>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" style="width:33.3%">
-                            <b>Tanggal Lahir (Usia)</b>
-                            <p id="umur-<?= $index ?>" class="m-0 mt-1 p-0 ">
-                                <?= 
-                        isset($item['data']['date_of_birth']) && $item['data']['date_of_birth'] 
-                            ? $item['data']['date_of_birth'] 
-                            : DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['tgl_lahir'])->format('d-m-Y')
-                    ?>
-                            </p>
-                        </td>
-                        <td class="p-1" style="width:66.3%" colspan="2">
-                            <b>Alamat Pasien</b>
-                            <p id="alamat-<?= $index ?>" class="m-0 mt-1 p-0">
-                                <?= isset($item['data']['alamat']) && $item['data']['alamat'] ? $item['data']['alamat'] : '-' ?>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1">
-                            <b>DPJP</b>
-                            <p id="dpjp-<?= $index ?>" class="m-0 mt-1 p-0">
-                                <?= isset($item['data']['dpjp']) && $item['data']['dpjp'] ? $item['data']['dpjp'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1">
-                            <b>Department</b>
-                            <p id="departement-<?= $index ?>" class="m-0 mt-1 p-0">
-                                <?= isset($item['data']['departement']) && $item['data']['departement'] ? $item['data']['departement'] : '-' ?>
-                            </p>
-                        </td>
-                        <td class="p-1">
-                            <b>Tanggal Masuk</b>
-                            <p id="tanggal_masuk-<?= $index ?>" class="m-0 mt-1 p-0 ">
-                                <?= isset($item['data']['tanggal_masuk']) && $item['data']['tanggal_masuk'] ? $item['data']['tanggal_masuk'] : '-' ?>
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <?php if (!empty(@$item['data'])): ?>
-            <div class="triage" id="triageShow" style="display: <?php echo $triageShow ? '' : 'none'; ?>;">
+            <div class="container-fluid mt-5" id="body-show-<?= $index ?>">
                 <div class="row">
-                    <h4 class="text-start">Triage</h4>
+                    <div class="col-auto" align="center">
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="90px">
+                    </div>
+                    <div class="col mt-2" align="center">
+                        <h3><?= @$kop['name_of_org_unit'] ?></h3>
+                        <p><?= @$kop['contact_address'] ?? "-" ?>, <?= @$kop['phone'] ?? "-" ?>, Fax:
+                            <?= @$kop['fax'] ?? "-" ?>,
+                            <?= @$kop['kota'] ?? "-" ?></p>
+                        <p><?= @$kop['sk'] ?? "-" ?></p>
+                    </div>
+                    <div class="col-auto" align="center">
+                        <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="90px">
+                    </div>
                 </div>
-                <?=
-                   @$item['data']['triage_desc'];
-                ?>
-            </div>
-
-            <div class="anamnesa" id="anamnesaShow" style="display: <?php echo $anamnesaShow ? '' : 'none'; ?>;">
                 <div class="row">
-                    <h4 class="text-start">Anamnesa</h4>
+                    <h3 class="text-center content-title" id="content-title"><?= @$item['title'] ?></h3>
                 </div>
-                <?=
-                     @$item['data']['anamnesa_desc'];
-                ?>
-            </div>
-
-            <div class="historynlifestyle" id="historynlifestyleShow"
-                style="display:<?php echo $historynlifestyleShow ? '' : 'none'; ?>;">
                 <div class="row">
-                    <h4 class="text-start">Riwayat & Gaya Hidup</h4>
-                </div>
-                <?php
-                    $lifestyleDesc = @$item['data']['lifestyle_desc'];
-                    if (strpos($lifestyleDesc, '<table') !== false) {
-                        $lifestyleDesc .= '</table>';
-                    }
-                    ?>
-                <?= $lifestyleDesc; ?>
-            </div>
-
-            <div class="vitailsign" id="vitailsignShow" style="display: <?= $vitailsignShow ? 'block' : 'none'; ?>;">
-                <?= @$item['data']['vital_sign_desc']; ?>
-            </div>
-
-            <div class="aktivitas" id="aktivitasShow"
-                style="display:<?= $aktivitasShow  && $isrjResult? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                    <h5 class="text-start">Informasi Pasien</h5>
                 </div>
 
-                <?= @$item['data']['adl_desc'];
-                ?>
-            </div>
-
-            <div class="psikologis" id="psikologisShow" style="display: <?= $psikologisShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Psikologis Spiritual</h5>
-                </div>
-                <?=
-                   @$item['data']['psychology_desc'];
-                ?>
-            </div>
-
-            <div class="sosialEkonomi" id="sosialEkonomiShow"
-                style="display:<?= $sosialEkonomiShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Sosial Ekonomi</h5>
-                </div>
-                <?=
-                   @$item['data']['sosec_desc'];
-                ?>
-            </div>
-
-            <div class="pernapasan" id="pernapasanShow" style="display: <?= 
-                $pernapasanShow && $kelompok_umur_up && $isrjResult1 ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Pernapasan</h5>
-                </div>
-                <?= @$item['data']['respiratory_desc'];
-                ?>
-            </div>
-
-            <div class="assSirkulasi" id="assSirkulasiShow"
-                style="display: <?= $assSirkulasiShow && $isrjResult1? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Sirkulasi</h5>
-                </div>
-                <?= @$item['data']['circulation_desc'];?>
-
-            </div>
-
-            <div class="assNeurosensoris" id="assNeurosensorisShow"
-                style="display: <?= $assNeurosensorisShow && $isrjResult1 ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Asesmen Neurosensoris</h5>
-                </div>
-                <?= @$item['data']['neurosensoris_desc'];?>
-            </div>
-
-            <div class="integumen" id="integumenShow" style="display: <?= $integumenShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
-                </div>
-                <?= @$item['data']['integumen_desc'];?>
-            </div>
-
-
-            <div class="pencernaan" id="pencernaanShow"
-                style="display:<?= $pencernaanShow && $isrjResult ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Pencernaan</h5>
-                </div>
-                <?=
-                    $html = @$item['data']['disgetive_desc'];
-                ?>
-            </div>
-
-            <div class="skalaNyeri" id="skalanyeriShow" style="display: <?= $skalanyeriShow ? 'block' : 'none'; ?>;">
-                <table class="table table-bordered" id="skalaShow">
+                <table class="table table-bordered">
                     <tbody>
                         <tr>
-                            <td>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="4" class="fst-italic fw-bold">Skala Nyeri</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="row">
-                                                    <span class="col-12" id="skala_nyeri-<?= $index ?>">
-                                                        <?= @$item['data']['numeric_score'] 
-                                                        ? nl2br((@$item['data']['numeric_score'])) 
-                                                        : nl2br((@$item['data']['wong_baker_score'])); ?>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <td class="p-1" style="width:33.3%">
+                                <b>Nomor RM</b>
+                                <p id="no_registration" class="m-0 mt-1 p-0">
+                                    <?= isset($visit['no_registration']) && $visit['no_registration'] ? $visit['no_registration'] : '-' ?>
+                                </p>
                             </td>
-                            <td>
-                                <table class="table table-bordered">
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="4" class="fst-italic fw-bold">Resiko Jatuh</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="row">
-                                                    <span class="col-12">
-                                                        <?= nl2br(@$item['data']['fm_descriptions']); ?>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <td class="p-1" style="width:33.3%">
+                                <b>Nama Pasien</b>
+                                <p id="name_of_pasien" class="m-0 mt-1 p-0">
+                                    <?= isset($visit['name_of_pasien']) && $visit['name_of_pasien'] ? $visit['name_of_pasien'] : '-' ?>
+                                </p>
+                            </td>
+                            <td class="p-1" style="width:33.3%">
+                                <b>Jenis Kelamin</b>
+                                <p id="gendername" class="m-0 mt-1 p-0 ">
+                                    <?= isset($visit['gendername']) && $visit['gendername'] ? $visit['gendername'] : '-' ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-1" style="width:33.3%">
+                                <b>Tanggal Lahir (Usia)</b>
+                                <p id="umur-<?= $index ?>" class="m-0 mt-1 p-0 ">
+                                    <?=
+                                    !empty($item['data']['date_of_birth'])
+                                        ? $item['data']['date_of_birth']
+                                        : (!empty($visit['tgl_lahir'])
+                                            ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['tgl_lahir'])->format('d-m-Y')
+                                            : (!empty($visit['date_of_birth'])
+                                                ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['date_of_birth'])->format('d-m-Y')
+                                                : '-'))
+                                    ?>
+                                </p>
+                            </td>
+                            <td class="p-1" style="width:66.3%" colspan="2">
+                                <b>Alamat Pasien</b>
+                                <p id="alamat-<?= $index ?>" class="m-0 mt-1 p-0">
+                                    <?= isset($item['data']['alamat']) && $item['data']['alamat'] ? $item['data']['alamat'] : '-' ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-1">
+                                <b>DPJP</b>
+                                <p id="dpjp-<?= $index ?>" class="m-0 mt-1 p-0">
+                                    <?= isset($item['data']['dpjp']) && $item['data']['dpjp'] ? $item['data']['dpjp'] : '-' ?>
+                                </p>
+                            </td>
+                            <td class="p-1">
+                                <b>Department</b>
+                                <p id="departement-<?= $index ?>" class="m-0 mt-1 p-0">
+                                    <?= isset($item['data']['departement']) && $item['data']['departement'] ? $item['data']['departement'] : '-' ?>
+                                </p>
+                            </td>
+                            <td class="p-1">
+                                <b>Tanggal Masuk</b>
+                                <p id="tanggal_masuk-<?= $index ?>" class="m-0 mt-1 p-0 ">
+                                    <?= isset($item['data']['tanggal_masuk']) && $item['data']['tanggal_masuk'] ? $item['data']['tanggal_masuk'] : '-' ?>
+                                </p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <?php if (!empty(@$item['data'])): ?>
+                    <div class="triage" id="triageShow" style="display: <?php echo $triageShow ? '' : 'none'; ?>;">
+                        <div class="row">
+                            <h4 class="text-start">Triage</h4>
+                        </div>
+                        <?=
+                        @$item['data']['triage_desc'];
+                        ?>
+                    </div>
+
+                    <div class="anamnesa" id="anamnesaShow" style="display: <?php echo $anamnesaShow ? '' : 'none'; ?>;">
+                        <div class="row">
+                            <h4 class="text-start">Anamnesa</h4>
+                        </div>
+                        <?=
+                        @$item['data']['anamnesa_desc'];
+                        ?>
+                    </div>
+
+                    <div class="historynlifestyle" id="historynlifestyleShow"
+                        style="display:<?php echo $historynlifestyleShow ? '' : 'none'; ?>;">
+                        <div class="row">
+                            <h4 class="text-start">Riwayat & Gaya Hidup</h4>
+                        </div>
+                        <?php
+                        $lifestyleDesc = @$item['data']['lifestyle_desc'];
+                        if (strpos($lifestyleDesc, '<table') !== false) {
+                            $lifestyleDesc .= '</table>';
+                        }
+                        ?>
+                        <?= $lifestyleDesc; ?>
+                    </div>
+
+                    <div class="vitailsign" id="vitailsignShow" style="display: <?= $vitailsignShow ? 'block' : 'none'; ?>;">
+                        <?= @$item['data']['vital_sign_desc']; ?>
+                    </div>
+
+                    <div class="aktivitas" id="aktivitasShow"
+                        style="display:<?= $aktivitasShow  && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                        </div>
+
+                        <?= @$item['data']['adl_desc'];
+                        ?>
+                    </div>
+
+                    <div class="psikologis" id="psikologisShow" style="display: <?= $psikologisShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Psikologis Spiritual</h5>
+                        </div>
+                        <?=
+                        @$item['data']['psychology_desc'];
+                        ?>
+                    </div>
+
+                    <div class="sosialEkonomi" id="sosialEkonomiShow"
+                        style="display:<?= $sosialEkonomiShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Sosial Ekonomi</h5>
+                        </div>
+                        <?=
+                        @$item['data']['sosec_desc'];
+                        ?>
+                    </div>
+
+                    <div class="pernapasan" id="pernapasanShow" style="display: <?=
+                                                                                $pernapasanShow && $kelompok_umur_up && $isrjResult1 ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Pernapasan</h5>
+                        </div>
+                        <?= @$item['data']['respiratory_desc'];
+                        ?>
+                    </div>
+
+                    <div class="assSirkulasi" id="assSirkulasiShow"
+                        style="display: <?= $assSirkulasiShow && $isrjResult1 ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Asesmen Sirkulasi</h5>
+                        </div>
+                        <?= @$item['data']['circulation_desc']; ?>
+
+                    </div>
+
+                    <div class="assNeurosensoris" id="assNeurosensorisShow"
+                        style="display: <?= $assNeurosensorisShow && $isrjResult1 ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Asesmen Neurosensoris</h5>
+                        </div>
+                        <?= @$item['data']['neurosensoris_desc']; ?>
+                    </div>
+
+                    <div class="integumen" id="integumenShow" style="display: <?= $integumenShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Integumen & Muskulo Skeletal</h5>
+                        </div>
+                        <?= @$item['data']['integumen_desc']; ?>
+                    </div>
+
+
+                    <div class="pencernaan" id="pencernaanShow"
+                        style="display:<?= $pencernaanShow && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Pencernaan</h5>
+                        </div>
+                        <?=
+                        $html = @$item['data']['disgetive_desc'];
+                        ?>
+                    </div>
+
+                    <div class="skalaNyeri" id="skalanyeriShow" style="display: <?= $skalanyeriShow ? 'block' : 'none'; ?>;">
+                        <table class="table table-bordered" id="skalaShow">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4" class="fst-italic fw-bold">Skala Nyeri</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="row">
+                                                            <span class="col-12" id="skala_nyeri-<?= $index ?>">
+                                                                <?= @$item['data']['numeric_score']
+                                                                    ? nl2br((@$item['data']['numeric_score']))
+                                                                    : nl2br((@$item['data']['wong_baker_score'])); ?>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4" class="fst-italic fw-bold">Resiko Jatuh</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="row">
+                                                            <span class="col-12">
+                                                                <?= nl2br(@$item['data']['fm_descriptions']); ?>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="skriningGizi" id="SkriningGiziShow"
+                        style="display: <?= $SkriningGiziShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Skrining Gizi</h5>
+                        </div>
+
+                        <?=
+                        @$item['data']['nutrition_desc'];
+                        ?>
+
+                    </div>
+
+
+
+                    <div class="perkemihan" id="perkemihanShow"
+                        style="display: <?= $perkemihanShow && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Perkemihan</h5>
+                        </div>
+                        <?=
+                        @$item['data']['urinaria_desc'];
+                        ?>
+                    </div>
+
+                    <div class="seksual" id="seksualShow"
+                        style="display:<?= $seksualShow && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Seksual/Reproduksi</h5>
+                        </div>
+                        <?= @$item['data']['obsgyn_desc'];
+                        ?>
+                    </div>
+
+                    <div class="thtneye" id="thtneyeShow"
+                        style="display:<?= $thtneyeShow && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">THT & MATA</h5>
+                        </div>
+                        <?=
+                        @$item['data']['matatht_desc'];
+                        ?>
+                    </div>
+
+                    <div class="childSpecial" id="childSpecialShow"
+                        style="display: <?= $childSpecialShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Khusus Anak</h5>
+                        </div>
+                        <?=
+                        @$item['data']['pediatric_desc'];
+                        ?>
+                    </div>
+
+                    <div class="sleepnChill" id="sleepnChillShow"
+                        style="display:<?= $sleepnChillShow && $isrjResult ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Tidur Dan Istirahat</h5>
+                        </div>
+                        <?= @$item['data']['rest_sleep_desc'];
+                        ?>
+                    </div>
+
+                    <div class="dekubitus" id="dekubitusShow"
+                        style="display:<?= $dekubitusShow && $kelompok_umur_down && $isrjResult1 ? 'block' : 'none' ?>">
+                        <div class="row">
+                            <h5 class="text-start">Dekubitus</h5>
+                        </div>
+                        <?= @$item['data']['decubitus_desc'];
+                        ?>
+                    </div>
+
+                    <div class="activasntrain" id="activasntrainShow" style="display:none">
+                        <div class="row">
+                            <h5 class="text-start">Aktivitas Dan Latihan</h5>
+                        </div>
+                        <?= @$item['data']['training_desc'];
+                        ?>
+                    </div>
+
+                    <div class="diagkeperawatan" id="diagkeperawatanShow"
+                        style="display: <?= $diagkeperawatanShow ? 'block' : 'none'; ?>;">
+                        <div class="row">
+                            <h5 class="text-start">Diagnosis Keperawatan</h5>
+                        </div>
+                        <?=
+                        @$item['data']['nurse_diagnose_desc'];
+                        ?>
+                    </div>
+
+                    <div class="tindakKolab" id="tindakKolabShow" style="display:none">
+                        <div class="row">
+                            <h5 class="text-start">1. Tindakan Kolaborasi</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>
+                                    Tanggal & Jam
+                                </th>
+                                <th>
+                                    Tindakan Keperawatan
+                                </th>
+                                <th>
+                                    Nama Terang
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>isiii tgl</td>
+                                <td>isiii Tindakan</td>
+                                <td>isiii Nama</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="tindakMan" id="tindakManShow" style="display:none">
+                        <div class="row">
+                            <h5 class="text-start">2. Tindakan Mandiri</h5>
+                        </div>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>
+                                    Tanggal & Jam
+                                </th>
+                                <th>
+                                    Tindakan Keperawatan
+                                </th>
+                                <th>
+                                    Nama Terang
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>isiii tgl</td>
+                                <td>isiii Tindakan</td>
+                                <td>isiii Nama</td>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
-
-            <div class="skriningGizi" id="SkriningGiziShow"
-                style="display: <?= $SkriningGiziShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Skrining Gizi</h5>
-                </div>
-
-                <?=
-                  @$item['data']['nutrition_desc'];
-                ?>
-
-            </div>
-
-
-
-            <div class="perkemihan" id="perkemihanShow"
-                style="display: <?= $perkemihanShow && $isrjResult ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Perkemihan</h5>
-                </div>
-                <?=
-                    @$item['data']['urinaria_desc'];
-                ?>
-            </div>
-
-            <div class="seksual" id="seksualShow"
-                style="display:<?= $seksualShow && $isrjResult ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Seksual/Reproduksi</h5>
-                </div>
-                <?= @$item['data']['obsgyn_desc'];
-                ?>
-            </div>
-
-            <div class="thtneye" id="thtneyeShow"
-                style="display:<?= $thtneyeShow && $isrjResult ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">THT & MATA</h5>
-                </div>
-                <?=
-                    @$item['data']['matatht_desc'];
-                ?>
-            </div>
-
-            <div class="childSpecial" id="childSpecialShow"
-                style="display: <?= $childSpecialShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Khusus Anak</h5>
-                </div>
-                <?=
-                   @$item['data']['pediatric_desc'];
-                ?>
-            </div>
-
-            <div class="sleepnChill" id="sleepnChillShow"
-                style="display:<?= $sleepnChillShow && $isrjResult ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Tidur Dan Istirahat</h5>
-                </div>
-                <?= @$item['data']['rest_sleep_desc'];
-                ?>
-            </div>
-
-            <div class="dekubitus" id="dekubitusShow"
-                style="display:<?=$dekubitusShow && $kelompok_umur_down && $isrjResult1 ? 'block' : 'none'?>">
-                <div class="row">
-                    <h5 class="text-start">Dekubitus</h5>
-                </div>
-                <?= @$item['data']['decubitus_desc'];
-                ?>
-            </div>
-
-            <div class="activasntrain" id="activasntrainShow" style="display:none">
-                <div class="row">
-                    <h5 class="text-start">Aktivitas Dan Latihan</h5>
-                </div>
-                <?= @$item['data']['training_desc'];
-                ?>
-            </div>
-
-            <div class="diagkeperawatan" id="diagkeperawatanShow"
-                style="display: <?= $diagkeperawatanShow ? 'block' : 'none'; ?>;">
-                <div class="row">
-                    <h5 class="text-start">Diagnosis Keperawatan</h5>
-                </div>
-                <?=
-                 @$item['data']['nurse_diagnose_desc'];
-                ?>
-            </div>
-
-            <div class="tindakKolab" id="tindakKolabShow" style="display:none">
-                <div class="row">
-                    <h5 class="text-start">1. Tindakan Kolaborasi</h5>
-                </div>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>
-                            Tanggal & Jam
-                        </th>
-                        <th>
-                            Tindakan Keperawatan
-                        </th>
-                        <th>
-                            Nama Terang
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>isiii tgl</td>
-                        <td>isiii Tindakan</td>
-                        <td>isiii Nama</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="tindakMan" id="tindakManShow" style="display:none">
-                <div class="row">
-                    <h5 class="text-start">2. Tindakan Mandiri</h5>
-                </div>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>
-                            Tanggal & Jam
-                        </th>
-                        <th>
-                            Tindakan Keperawatan
-                        </th>
-                        <th>
-                            Nama Terang
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>isiii tgl</td>
-                        <td>isiii Tindakan</td>
-                        <td>isiii Nama</td>
-                    </tr>
-                </table>
-            </div>
-            <?php endif; ?>
-        </div>
         <?php endforeach; ?>
     </div>
     <!-- Optional JavaScript; choose one of the two! -->
@@ -615,221 +618,217 @@ $dekubitusShow= in_array($selectedStatusFilter, $dekubit);
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
 </script>
 <script>
-const defaultStatus = <?= json_encode($visit['isrj']) ?>;
-const visit = '<?= $visit1 ?>';
+    const defaultStatus = <?= json_encode($visit['isrj']) ?>;
+    const visit = '<?= $visit1 ?>';
 
-$(document).ready(function() {
-    let statusVisibility = {
-        triageShow: <?php echo json_encode($validTriage); ?>,
-        anamnesaShow: <?php echo json_encode($validAnamnesa); ?>,
-        vitailsignShow: <?php echo json_encode($vitailsign); ?>,
-        pernapasanShow: <?php echo json_encode($pernapasan); ?>,
-        assSirkulasiShow: <?php echo json_encode($assSirkulasi); ?>,
-        assNeurosensorisShow: <?php echo json_encode($assNeurosen); ?>,
-        integumenShow: <?php echo json_encode($assNeurosen); ?>,
-        skalanyeriShow: <?php echo json_encode($skalanyeri); ?>,
-        SkriningGiziShow: <?php echo json_encode($gizi); ?>,
-        diagkeperawatanShow: <?php echo json_encode($diagPerawat); ?>,
+    $(document).ready(function() {
+        let statusVisibility = {
+            triageShow: <?php echo json_encode($validTriage); ?>,
+            anamnesaShow: <?php echo json_encode($validAnamnesa); ?>,
+            vitailsignShow: <?php echo json_encode($vitailsign); ?>,
+            pernapasanShow: <?php echo json_encode($pernapasan); ?>,
+            assSirkulasiShow: <?php echo json_encode($assSirkulasi); ?>,
+            assNeurosensorisShow: <?php echo json_encode($assNeurosen); ?>,
+            integumenShow: <?php echo json_encode($assNeurosen); ?>,
+            skalanyeriShow: <?php echo json_encode($skalanyeri); ?>,
+            SkriningGiziShow: <?php echo json_encode($gizi); ?>,
+            diagkeperawatanShow: <?php echo json_encode($diagPerawat); ?>,
 
-        // Ass New
-        historynlifestyleShow: <?php echo json_encode($lifestyle); ?>,
-        psikologisShow: <?php echo json_encode($psikologis); ?>,
-        sosialEkonomiShow: <?php echo json_encode($sosialEkonomi); ?>,
-        childSpecialShow: <?php echo json_encode($childSpecial); ?>,
-        aktivitasShow: <?php echo json_encode($aktivitas); ?>,
-        pencernaanShow: <?php echo json_encode($pencernaan); ?>,
-        perkemihanShow: <?php echo json_encode($perkemihan); ?>,
-        seksualShow: <?php echo json_encode($sex); ?>,
-        thtneyeShow: <?php echo json_encode($tht); ?>,
-        sleepnChillShow: <?php echo json_encode($sleep); ?>,
-        dekubitusShow: <?php echo json_encode($dekubit); ?>
-    };
+            // Ass New
+            historynlifestyleShow: <?php echo json_encode($lifestyle); ?>,
+            psikologisShow: <?php echo json_encode($psikologis); ?>,
+            sosialEkonomiShow: <?php echo json_encode($sosialEkonomi); ?>,
+            childSpecialShow: <?php echo json_encode($childSpecial); ?>,
+            aktivitasShow: <?php echo json_encode($aktivitas); ?>,
+            pencernaanShow: <?php echo json_encode($pencernaan); ?>,
+            perkemihanShow: <?php echo json_encode($perkemihan); ?>,
+            seksualShow: <?php echo json_encode($sex); ?>,
+            thtneyeShow: <?php echo json_encode($tht); ?>,
+            sleepnChillShow: <?php echo json_encode($sleep); ?>,
+            dekubitusShow: <?php echo json_encode($dekubit); ?>
+        };
 
-    if (defaultStatus !== null) {
-        $('#selected-status').val(defaultStatus);
-    }
+        if (defaultStatus !== null) {
+            $('#selected-status').val(defaultStatus);
+        }
 
-    const requestAPi = () => {
-        postData({
-            status: $('#selected-status').val(),
-            visit: visit,
-            clinic: $("#selected-status-filter").val()
-        }, 'admin/rm/LAINNYA/assessmen_perawat_preview', (res) => {
-            const selectedValue = $("#selected-status-filter").val();
-            rendersDataView({
-                data: res.data,
-                result_select: selectedValue,
-                dataLength: res?.data?.length
+        const requestAPi = () => {
+            postData({
+                status: $('#selected-status').val(),
+                visit: visit,
+                clinic: $("#selected-status-filter").val()
+            }, 'admin/rm/LAINNYA/assessmen_perawat_preview', (res) => {
+                const selectedValue = $("#selected-status-filter").val();
+                rendersDataView({
+                    data: res.data,
+                    result_select: selectedValue,
+                    dataLength: res?.data?.length
+                });
             });
+        }
+
+        $('#selected-status').on('change', function() {
+            requestAPi();
         });
-    }
 
-    $('#selected-status').on('change', function() {
-        requestAPi();
-    });
-
-    $('#selected-status-filter').on('change', function() {
-        requestAPi();
-    });
-
-    function toggleDynamicVisibility(visibilityData, user) {
-
-        Object.keys(visibilityData).forEach((key) => {
-            const isVisible = visibilityData[key]?.includes(user) ?? false;
-            const element = $("#" + key);
-
-            if (element.length > 0) {
-                element.css("display", isVisible ? "" : "none");
-            }
+        $('#selected-status-filter').on('change', function() {
+            requestAPi();
         });
-    }
 
-    const rendersDataView = (props) => {
-        let {
-            data,
-            result_select,
-            dataLength
-        } = props;
-        const selectedValue = result_select;
+        function toggleDynamicVisibility(visibilityData, user) {
 
+            Object.keys(visibilityData).forEach((key) => {
+                const isVisible = visibilityData[key]?.includes(user) ?? false;
+                const element = $("#" + key);
 
-        $('#data-container').empty();
-
-        data.map((e, index) => {
-            let kelompok_umur_up = false;
-
-            if (e.data?.date_of_birth && e.data?.create_date) {
-                const dateOfBirth = new Date(e.data.date_of_birth);
-                const createDate = new Date(e.data.create_date);
-
-                if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
-                    let age = createDate.getFullYear() - dateOfBirth.getFullYear();
-
-                    if (
-                        createDate.getMonth() < dateOfBirth.getMonth() ||
-                        (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
-                            dateOfBirth.getDate())
-                    ) {
-                        age--;
-                    }
-                    if (age >= 18) {
-                        kelompok_umur_up = true;
-                    }
-                }
-            }
-
-            let kelompok_umur_down = false;
-
-            if (e.data?.date_of_birth && e.data?.create_date) {
-                const dateOfBirth = new Date(e.data.date_of_birth);
-                const createDate = new Date(e.data.create_date);
-                if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
-                    let age = createDate.getFullYear() - dateOfBirth.getFullYear();
-
-                    if (
-                        createDate.getMonth() < dateOfBirth.getMonth() ||
-                        (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
-                            dateOfBirth.getDate())
-                    ) {
-                        age--;
-                    }
-                    if (age < 18) {
-                        kelompok_umur_down = true;
-                    }
-                }
-            }
-            let isrjResult = false;
-
-            if (e.isrjResult && e.clinic !== "P012") {
-                const isrjValue = e.isrjResult;
-                if (isrjValue === 0 || isrjValue === "0") {
-                    isrjResult = true;
-                }
-            }
-
-            let isrjResult1 = false;
-
-            if (e.isrjResult) {
-                const isrjValue1 = e.isrjResult;
-                if (e.clinic === "P012") {
-                    isrjResult1 = true;
-                } else if (isrjValue1 === 0 || isrjValue1 === "0") {
-                    isrjResult1 = true;
-                }
-            }
-
-            const rows = e?.data?.pemeriksaan_mata?.split('</tr>').filter(row => row.trim() !== '');
-            let leftTableHtml = '';
-            let rightTableHtml = '';
-
-            rows?.forEach((row, index) => {
-                if (index % 2 === 0) {
-                    leftTableHtml += row + '</tr>';
-                } else {
-                    rightTableHtml += row + '</tr>';
+                if (element.length > 0) {
+                    element.css("display", isVisible ? "" : "none");
                 }
             });
+        }
 
-            let condition = {
-                triageShow: statusVisibility.triageShow.includes(e.clinic) ? '' : 'hidden',
-                anamnesaShow: statusVisibility.anamnesaShow.includes(e.clinic) ? '' : 'hidden',
-                vitailsignShow: statusVisibility.vitailsignShow.includes(e.clinic) ? '' :
-                    'hidden',
-                pernapasanShow: statusVisibility.pernapasanShow.includes(e.clinic) &&
-                    kelompok_umur_up && isrjResult1 ? '' : 'hidden',
-                assSirkulasiShow: statusVisibility.assSirkulasiShow.includes(e.clinic) &&
-                    isrjResult1 ? '' : 'hidden',
-                assNeurosensorisShow: statusVisibility.assNeurosensorisShow.includes(e
-                    .clinic) && isrjResult1 ? '' : 'hidden',
-                integumenShow: statusVisibility.integumenShow.includes(e.clinic) ? '' :
-                    'hidden',
-                skalanyeriShow: statusVisibility.skalanyeriShow.includes(e.clinic) ? '' :
-                    'hidden',
-                SkriningGiziShow: statusVisibility.SkriningGiziShow.includes(e.clinic) ?
-                    '' : 'hidden',
-                diagkeperawatanShow: statusVisibility.diagkeperawatanShow.includes(e.clinic) ?
-                    '' : 'hidden',
-
-                // Ass New
-                historynlifestyleShow: statusVisibility.historynlifestyleShow.includes(e
-                    .clinic) ? '' : 'hidden',
-                psikologisShow: statusVisibility.psikologisShow.includes(e.clinic) ? '' :
-                    'hidden',
-                sosialEkonomiShow: statusVisibility.sosialEkonomiShow.includes(e.clinic) ?
-                    '' : 'hidden',
-                childSpecialShow: statusVisibility.childSpecialShow.includes(e.clinic) ?
-                    '' : 'hidden',
-                aktivitasShow: statusVisibility.aktivitasShow.includes(e.clinic) && isrjResult ?
-                    '' : 'hidden',
-                pencernaanShow: statusVisibility.pencernaanShow.includes(e.clinic) &&
-                    isrjResult ? '' : 'hidden',
-                perkemihanShow: statusVisibility.perkemihanShow.includes(e.clinic) &&
-                    isrjResult ? '' : 'hidden',
-                seksualShow: statusVisibility.seksualShow.includes(e.clinic) && isrjResult ?
-                    '' : 'hidden',
-                thtneyeShow: statusVisibility.thtneyeShow.includes(e.clinic) && isrjResult ?
-                    '' : 'hidden',
-                sleepnChillShow: statusVisibility.sleepnChillShow.includes(e.clinic) &&
-                    isrjResult ? '' : 'hidden',
-                dekubitusShow: statusVisibility.dekubitusShow.includes(e.clinic) &&
-                    kelompok_umur_down && isrjResult1 ? '' : 'hidden'
-            };
+        const rendersDataView = (props) => {
+            let {
+                data,
+                result_select,
+                dataLength
+            } = props;
+            const selectedValue = result_select;
 
 
-            const htmlView = `<div class="container-fluid mt-5" id="body-show-<?= $index ?>">
+            $('#data-container').empty();
+
+            data.map((e, index) => {
+                let kelompok_umur_up = false;
+
+                if (e.data?.date_of_birth && e.data?.create_date) {
+                    const dateOfBirth = new Date(e.data.date_of_birth);
+                    const createDate = new Date(e.data.create_date);
+
+                    if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
+                        let age = createDate.getFullYear() - dateOfBirth.getFullYear();
+
+                        if (
+                            createDate.getMonth() < dateOfBirth.getMonth() ||
+                            (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
+                                dateOfBirth.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age >= 18) {
+                            kelompok_umur_up = true;
+                        }
+                    }
+                }
+
+                let kelompok_umur_down = false;
+
+                if (e.data?.date_of_birth && e.data?.create_date) {
+                    const dateOfBirth = new Date(e.data.date_of_birth);
+                    const createDate = new Date(e.data.create_date);
+                    if (!isNaN(dateOfBirth) && !isNaN(createDate)) {
+                        let age = createDate.getFullYear() - dateOfBirth.getFullYear();
+
+                        if (
+                            createDate.getMonth() < dateOfBirth.getMonth() ||
+                            (createDate.getMonth() === dateOfBirth.getMonth() && createDate.getDate() <
+                                dateOfBirth.getDate())
+                        ) {
+                            age--;
+                        }
+                        if (age < 18) {
+                            kelompok_umur_down = true;
+                        }
+                    }
+                }
+                let isrjResult = false;
+
+                if (e.isrjResult && e.clinic !== "P012") {
+                    const isrjValue = e.isrjResult;
+                    if (isrjValue === 0 || isrjValue === "0") {
+                        isrjResult = true;
+                    }
+                }
+
+                let isrjResult1 = false;
+
+                if (e.isrjResult) {
+                    const isrjValue1 = e.isrjResult;
+                    if (e.clinic === "P012") {
+                        isrjResult1 = true;
+                    } else if (isrjValue1 === 0 || isrjValue1 === "0") {
+                        isrjResult1 = true;
+                    }
+                }
+
+                const rows = e?.data?.pemeriksaan_mata?.split('</tr>').filter(row => row.trim() !== '');
+                let leftTableHtml = '';
+                let rightTableHtml = '';
+
+                rows?.forEach((row, index) => {
+                    if (index % 2 === 0) {
+                        leftTableHtml += row + '</tr>';
+                    } else {
+                        rightTableHtml += row + '</tr>';
+                    }
+                });
+
+                let condition = {
+                    triageShow: statusVisibility.triageShow.includes(e.clinic) ? '' : 'hidden',
+                    anamnesaShow: statusVisibility.anamnesaShow.includes(e.clinic) ? '' : 'hidden',
+                    vitailsignShow: statusVisibility.vitailsignShow.includes(e.clinic) ? '' : 'hidden',
+                    pernapasanShow: statusVisibility.pernapasanShow.includes(e.clinic) &&
+                        kelompok_umur_up && isrjResult1 ? '' : 'hidden',
+                    assSirkulasiShow: statusVisibility.assSirkulasiShow.includes(e.clinic) &&
+                        isrjResult1 ? '' : 'hidden',
+                    assNeurosensorisShow: statusVisibility.assNeurosensorisShow.includes(e
+                        .clinic) && isrjResult1 ? '' : 'hidden',
+                    integumenShow: statusVisibility.integumenShow.includes(e.clinic) ? '' : 'hidden',
+                    skalanyeriShow: statusVisibility.skalanyeriShow.includes(e.clinic) ? '' : 'hidden',
+                    SkriningGiziShow: statusVisibility.SkriningGiziShow.includes(e.clinic) ?
+                        '' : 'hidden',
+                    diagkeperawatanShow: statusVisibility.diagkeperawatanShow.includes(e.clinic) ?
+                        '' : 'hidden',
+
+                    // Ass New
+                    historynlifestyleShow: statusVisibility.historynlifestyleShow.includes(e
+                        .clinic) ? '' : 'hidden',
+                    psikologisShow: statusVisibility.psikologisShow.includes(e.clinic) ? '' : 'hidden',
+                    sosialEkonomiShow: statusVisibility.sosialEkonomiShow.includes(e.clinic) ?
+                        '' : 'hidden',
+                    childSpecialShow: statusVisibility.childSpecialShow.includes(e.clinic) ?
+                        '' : 'hidden',
+                    aktivitasShow: statusVisibility.aktivitasShow.includes(e.clinic) && isrjResult ?
+                        '' : 'hidden',
+                    pencernaanShow: statusVisibility.pencernaanShow.includes(e.clinic) &&
+                        isrjResult ? '' : 'hidden',
+                    perkemihanShow: statusVisibility.perkemihanShow.includes(e.clinic) &&
+                        isrjResult ? '' : 'hidden',
+                    seksualShow: statusVisibility.seksualShow.includes(e.clinic) && isrjResult ?
+                        '' : 'hidden',
+                    thtneyeShow: statusVisibility.thtneyeShow.includes(e.clinic) && isrjResult ?
+                        '' : 'hidden',
+                    sleepnChillShow: statusVisibility.sleepnChillShow.includes(e.clinic) &&
+                        isrjResult ? '' : 'hidden',
+                    dekubitusShow: statusVisibility.dekubitusShow.includes(e.clinic) &&
+                        kelompok_umur_down && isrjResult1 ? '' : 'hidden'
+                };
+
+
+                const htmlView = `<div class="container-fluid mt-5" id="body-show-<?= $index ?>">
                                     <div class="row">
                                         <div class="col-auto" align="center">
-                                            <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
+                                            <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="90px">
                                         </div>
                                         <div class="col mt-2" align="center">
                                             <h3><?= @$kop['name_of_org_unit'] ?></h3>
-                                            <p><?= @$kop['contact_address'] ?? "-"?>, <?= @$kop['phone'] ?? "-"?>, Fax:
-                                                <?= @$kop['fax'] ?? "-"?>,
-                                                <?= @$kop['kota'] ?? "-"?></p>
-                                            <p><?= @$kop['sk'] ?? "-"?></p>
+                                            <p><?= @$kop['contact_address'] ?? "-" ?>, <?= @$kop['phone'] ?? "-" ?>, Fax:
+                                                <?= @$kop['fax'] ?? "-" ?>,
+                                                <?= @$kop['kota'] ?? "-" ?></p>
+                                            <p><?= @$kop['sk'] ?? "-" ?></p>
                                         </div>
                                         <div class="col-auto" align="center">
-                                            <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+                                            <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="90px">
                                         </div>
                                     </div>
 
@@ -1142,49 +1141,49 @@ $(document).ready(function() {
                                     </div>`}
                                 </div>`
 
-            $('#data-container').append(htmlView);
-        });
+                $('#data-container').append(htmlView);
+            });
 
-        toggleDynamicVisibility(statusVisibility, selectedValue);
-    }
+            toggleDynamicVisibility(statusVisibility, selectedValue);
+        }
 
-    function nl2br(str) {
-        return str.replace(/(\r\n|\n|\r)+/g, '<br>');
-    }
+        function nl2br(str) {
+            return str.replace(/(\r\n|\n|\r)+/g, '<br>');
+        }
 
-    function nl2br1(str) {
-        return str?.replace(/\r\n/g, '<br>');
-    }
+        function nl2br1(str) {
+            return str?.replace(/\r\n/g, '<br>');
+        }
 
-    function cleanBr(str) {
-        let result = str.replace(/(<table[^>]*>.*?<\/table>)/gs, (match) => {
-            return match.replace(/(\r\n|\n|\r)+/g, '<br>');
-        });
+        function cleanBr(str) {
+            let result = str.replace(/(<table[^>]*>.*?<\/table>)/gs, (match) => {
+                return match.replace(/(\r\n|\n|\r)+/g, '<br>');
+            });
 
-        result = result.replace(/(<br\s*\/?>)/g, '');
+            result = result.replace(/(<br\s*\/?>)/g, '');
 
-        return result;
-    }
-});
+            return result;
+        }
+    });
 </script>
 
 
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
-    }
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
 
-    .date-request {
-        display: none;
+        .date-request {
+            display: none;
+        }
     }
-}
 </style>
 
 </html>

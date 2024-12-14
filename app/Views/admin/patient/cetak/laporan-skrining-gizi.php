@@ -7,21 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css">
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
-    <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
-    <script src="<?= base_url('/assets/js/default.js') ?>"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+
+    <link href="<?= base_url(); ?>css/jquery.signature.css" rel="stylesheet">
+    <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
+    <script src="<?= base_url(); ?>js/jquery.signature.js"></script>
+    <script src="<?= base_url(); ?>assets/js/default.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/qrcode/qrcode.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
     <style>
         .form-control:disabled,
         .form-control[readonly] {
@@ -180,8 +176,7 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
@@ -201,7 +196,7 @@
 
             text = parameter?.entry_type === 3 ?
                 `<span>${arr.find(item => item.value_score === data[parameter?.column_name.toLowerCase()])?.value_desc || ''}</span>` :
-                `<span>${data.p_type === p_type ? data[parameter?.column_name.toLowerCase()] : ''}</span>`;
+                `<span>${data.p_type === p_type ? data[parameter?.column_name.toLowerCase()] ?? '' : ''}</span>`;
 
 
             skor = arr.find(item => item.value_score === data[parameter?.column_name.toLowerCase()])?.value_score ?? 0;

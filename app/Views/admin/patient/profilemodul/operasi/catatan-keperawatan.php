@@ -1,3 +1,8 @@
+<?php
+$db = db_connect();
+$exam_info = $db->query("SELECT TOP 1 WEIGHT AS weight, HEIGHT AS height FROM EXAMINATION_DETAIL WHERE VISIT_ID = '" . $visit['visit_id'] . "' ORDER BY EXAMINATION_DATE DESC")->getRowArray();
+
+?>
 <div class="tab-pane fade" id="catatan-keperawatan">
     <form action="" id="form-catatan-keperawatan">
         <div id="accordionCatatan" class="accordion">
@@ -317,6 +322,7 @@
 </div>
 
 <script type='text/javascript'>
+    var mrJson;
     var lastOrder = 0;
     var vitalsign = <?= json_encode($exam); ?>;
     var visit = '<?= $visit['visit_id']; ?>'
@@ -460,6 +466,8 @@
         $("#agemonth-catatanKeperawatan").val('<?= $visit['agemonth']; ?>')
         $("#ageday-catatanKeperawatan").val('<?= $visit['ageday']; ?>')
         $("#examination_date-catatanKeperawatan").val(get_date())
+
+
 
         // var ageYear = <?= $visit['ageyear']; ?>;
         // var ageMonth = <?= $visit['agemonth']; ?>;
@@ -682,6 +690,10 @@
         $("#agemonth-catatanKeperawatan").prop("disabled", false)
         $("#ageday-catatanKeperawatan").prop("disabled", false)
         $("#instruction-catatanKeperawatan").prop("disabled", false)
+
+        let exam_info = <?= json_encode($exam_info) ?>;
+        $('#weight-catatanKeperawatan').val(exam_info ? exam_info['weight'] : 0)
+        $('#height-catatanKeperawatan').val(exam_info ? exam_info['height'] : 0)
 
         $("#formvitalsignsubmit-catatanKeperawatan").show()
         $("#formvitalsignedit").hide()

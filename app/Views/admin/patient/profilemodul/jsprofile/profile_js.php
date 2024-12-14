@@ -752,11 +752,15 @@ foreach ($examDetail as $key => $value) {
                 });
                 // Get the value of the input field
                 var date
-                if (flag == 1) {
-                    var inputDate = $("#flatreassessment_date" + body_id + beforeIndex).val();
-                    date = inputDate
+                if (indexnow != 1) {
+                    if (flag == 1) {
+                        var inputDate = $("#flatreassessment_date" + body_id + beforeIndex).val();
+                        date = inputDate
+                    } else {
+                        date = nowtime;
+                    }
                 } else {
-                    date = nowtime;
+                    date = nowtime
                 }
 
                 $.each(avalue, function(key1, value1) {
@@ -8853,5 +8857,19 @@ foreach ($examDetail as $key => $value) {
             }
 
         });
+    }
+
+    function openPopUpTab(url) {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // Set desired width and height as a percentage of the screen size
+        const width = Math.floor(screenWidth * 0.6); // 80% of the screen width
+        const height = Math.floor(screenHeight * 0.9); // 80% of the screen height
+        window.open(
+            url,
+            "_blank",
+            `toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=${width},height=${height}`
+        );
     }
 </script>

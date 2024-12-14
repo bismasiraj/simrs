@@ -7,65 +7,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="<?= base_url(); ?>assets/libs/bootstrap/css/bootstrap.min.css">
 
     <title><?= $title; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
-        rel="stylesheet">
+
     <link href="<?= base_url('css/jquery.signature.css') ?>" rel="stylesheet">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/jquery/jquery.min.js"></script>
     <script src="<?= base_url('js/jquery.signature.js') ?>"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/qrcode/qrcode.js"></script>
+    <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
+
     <style>
-    .form-control:disabled,
-    .form-control[readonly] {
-        background-color: #FFF;
-        opacity: 1;
-    }
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #FFF;
+            opacity: 1;
+        }
 
-    .form-control,
-    .input-group-text {
-        background-color: #fff;
-        border: 1px solid #fff;
-        font-size: 12px;
-    }
+        .form-control,
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid #fff;
+            font-size: 12px;
+        }
 
-    @page {
-        size: A4;
-    }
+        @page {
+            size: A4;
+        }
 
-    body {
-        width: 21cm;
-        height: 29.7cm;
-        margin: 0;
-        font-size: 12px;
-    }
+        body {
+            width: 21cm;
+            height: 29.7cm;
+            margin: 0;
+            font-size: 12px;
+        }
 
-    .h1,
-    .h2,
-    .h3,
-    .h4,
-    .h5,
-    .h6,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: 0;
-        margin-bottom: .3rem;
-        font-weight: 500;
-        line-height: 1.2;
-    }
+        .h1,
+        .h2,
+        .h3,
+        .h4,
+        .h5,
+        .h6,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0;
+            margin-bottom: .3rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
     </style>
 </head>
 
@@ -74,7 +71,8 @@
 
         <div class="row">
             <div class="col-auto" align="center">
-                <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px">
+                <!-- <img class="mt-2" src="<?= base_url('assets/img/logo.png') ?>" width="90px"> -->
+                <img class="mt-2" src="<?= base_url() ?>assets/img/logo.png" width="90px">
             </div>
             <div class="col mt-2" align="center">
                 <h3><?= @$kop['name_of_org_unit'] ?></h3>
@@ -84,7 +82,7 @@
                 </p>
             </div>
             <div class="col-auto" align="center">
-                <img class="mt-2" src="<?= base_url('assets/img/paripurna.png') ?>" width="90px">
+                <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="90px">
             </div>
         </div>
         <div class="row">
@@ -119,7 +117,12 @@
                     <td class="p-1" style="width:33.3%">
                         <b>Tanggal Lahir (Usia)</b>
                         <p class="m-0 mt-1 p-0 ">
-                            <?=  DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['tgl_lahir'])->format('d-m-Y')?>
+                            <?= isset($visit['tgl_lahir']) && $visit['tgl_lahir']
+                                ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['tgl_lahir'])->format('d-m-Y')
+                                : (isset($visit['date_of_birth']) && $visit['date_of_birth']
+                                    ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['date_of_birth'])->format('d-m-Y')
+                                    : '-') ?>
+
                         </p>
                     </td>
                     <td class="p-1" style="width:66.3%" colspan="2">
@@ -145,7 +148,7 @@
                     <td class="p-1">
                         <b>Tanggal Masuk</b>
                         <p class="m-0 mt-1 p-0 ">
-                            <?= isset($visit['in_date']) && $visit['in_date'] ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['in_date'])->format('d-m-Y H:i'): '-' ?>
+                            <?= isset($visit['in_date']) && $visit['in_date'] ? DateTime::createFromFormat('Y-m-d H:i:s.u', $visit['in_date'])->format('d-m-Y H:i') : '-' ?>
                         </p>
                     </td>
                 </tr>
@@ -356,25 +359,25 @@
                     <td>
                         <b>Keadaan Umum</b>
                         <?php
-                                    $gcs = @$val['gcs']; 
+                        $gcs = @$val['gcs'];
 
-                                    if (in_array($gcs, [1, 2, 3])) {
-                                        $gcsText = 'Coma';
-                                    } elseif (in_array($gcs, [4, 5, 6])) {
-                                        $gcsText = 'Sopor';
-                                    } elseif (in_array($gcs, [7, 8, 9])) {
-                                        $gcsText = 'Somnolen';
-                                    } elseif (in_array($gcs, [10, 11])) {
-                                        $gcsText = 'Delirium';
-                                    } elseif (in_array($gcs, [12, 13])) {
-                                        $gcsText = 'Apatis';
-                                    } elseif (in_array($gcs, [15, 16])) {
-                                        $gcsText = 'Compos mentis';
-                                    } else {
-                                        $gcsText = ''; 
-                                    }
+                        if (in_array($gcs, [1, 2, 3])) {
+                            $gcsText = 'Coma';
+                        } elseif (in_array($gcs, [4, 5, 6])) {
+                            $gcsText = 'Sopor';
+                        } elseif (in_array($gcs, [7, 8, 9])) {
+                            $gcsText = 'Somnolen';
+                        } elseif (in_array($gcs, [10, 11])) {
+                            $gcsText = 'Delirium';
+                        } elseif (in_array($gcs, [12, 13])) {
+                            $gcsText = 'Apatis';
+                        } elseif (in_array($gcs, [15, 16])) {
+                            $gcsText = 'Compos mentis';
+                        } else {
+                            $gcsText = '';
+                        }
 
-                                    ?>
+                        ?>
                         <span><?= $gcsText; ?></span>
                     </td>
                 </tr>
@@ -429,131 +432,131 @@
             </tbody>
         </table>
         <?php if ($sepcialis === "1.12"): ?>
-        <table class="table table-bordered" id="statusDermatologiShow">
-            <tbody>
-                <tr>
-                    <td colspan="4" class="fw-bold">Status Dermatologik</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div class="row">
-                            <b class="col-12">I. Inspeksi</b>
-                        </div>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <td class="fw-bold">Lokasi</td>
-                                    <td class="fw-bold">UKK</td>
-                                    <td class="fw-bold">Distribusi</td>
-                                    <td class="fw-bold">Konfigurasi</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><?= @$val['sd_ins_location'] ?></td>
-                                    <td><?= @$val['sd_ins_ukk'] ?></td>
-                                    <td><?= @$val['sd_ins_distribution'] ?></td>
-                                    <td><?= @$val['sd_ins_configuration'] ?></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="row">
-                            <b class="col-12">Palpasi</b>
-                            <span class="col-12"><?= @$val['sd_palpation'] ?></span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <b class="col-12">Lain-Lain</b>
-                            <span class="col-12"><?= @$val['sd_others'] ?></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div class="row">
-                            <b class="col-12">Status Venerologik</b>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="row">
-                            <b class="col-12">Inspeksi</b>
-                            <span class="col-12"><?= @$val['sv_inspection'] ?></span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <b class="col-12">Palpasi</b>
-                            <span class="col-12"><?= @$val['sv_palpation'] ?></span>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <table class="table table-bordered" id="statusDermatologiShow">
+                <tbody>
+                    <tr>
+                        <td colspan="4" class="fw-bold">Status Dermatologik</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">I. Inspeksi</b>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td class="fw-bold">Lokasi</td>
+                                        <td class="fw-bold">UKK</td>
+                                        <td class="fw-bold">Distribusi</td>
+                                        <td class="fw-bold">Konfigurasi</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><?= @$val['sd_ins_location'] ?></td>
+                                        <td><?= @$val['sd_ins_ukk'] ?></td>
+                                        <td><?= @$val['sd_ins_distribution'] ?></td>
+                                        <td><?= @$val['sd_ins_configuration'] ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$val['sd_palpation'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Lain-Lain</b>
+                                <span class="col-12"><?= @$val['sd_others'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="row">
+                                <b class="col-12">Status Venerologik</b>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Inspeksi</b>
+                                <span class="col-12"><?= @$val['sv_inspection'] ?></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <b class="col-12">Palpasi</b>
+                                <span class="col-12"><?= @$val['sv_palpation'] ?></span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         <?php endif; ?>
         <?php if ($sepcialis === "1.16"): ?>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th>Var/NRS</th>
-                    <th>Pupil Kiri</th>
-                    <th>Pupil kanan</th>
-                </tr>
-                <tr>
-                    <td><?= @$val['vas_nrs']?></td>
-                    <td>
-                        <b>Diameter :</b><?= @$val['left_diameter']?>
-                        <br><b>Refleks Cahaya :</b><?= @$val['left_light_reflex']?>
-                        <br><b>Kornea:</b><?= @$val['left_cornea']?>
-                        <br><b>Isokor Anisokor :</b><?= @$val['left_isokor_anisokor']?>
-                    </td>
-                    <td>
-                        <b>Diameter :</b><?= @$val['right_diameter']?>
-                        <br><b>Refleks Cahaya :</b><?= @$val['right_light_reflex']?>
-                        <br><b>Kornea:</b><?= @$val['right_cornea']?>
-                        <br><b>Isokor Anisokor :</b><?= @$val['right_isokor_anisokor']?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <th>Leher</th>
-                    <th>Gerak</th>
-                    <th>Kekuatan</th>
-                </tr>
-                <tr>
-                    <td>
-                        <b>Kaku kuduk :</b><?= @$val['stiff_neck']?>
-                        <br><b>Meningeal Sign :</b><?= @$val['meningeal_sign']?>
-                        <br><b>Brudzinki I-IV :</b><?= @$val['brudzinki_i_iv']?>
-                        <br><b>Kernig Sign:</b><?= @$val['kernig_sign']?>
-                        <br><b>Dolls eye phenomena :</b><?= @$val['dolls_eye_phenomenon']?>
-                        <br><b>Vertebra :</b><?= @$val['vertebra']?>
-                        <br><b>Extremity :</b><?= @$val['extremity']?>
-                    </td>
-                    <td>
-                        <b>Gerak Atas Kiri :</b><?= @$val['motion_upper_left']?>
-                        <br><b>Gerak Atas Kanan :</b><?= @$val['motion_upper_right']?>
-                        <br><b>Gerak Bawah Kiri :</b><?= @$val['motion_lower_left']?>
-                        <br><b>Gerak Bawah Kanan :</b><?= @$val['motion_lower_right']?>
-                    </td>
-                    <td>
-                        <b>Kekuatan Atas Kiri :</b><?= @$val['strength_upper_left']?>
-                        <br><b>Kekuatan Atas Kanan :</b><?= @$val['strength_upper_right']?>
-                        <br><b>Kekuatan Bawah Kiri:</b><?= @$val['strength_lower_left']?>
-                        <br><b>Kekuatan Bawah Kanan :</b><?= @$val['strength_lower_right']?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Var/NRS</th>
+                        <th>Pupil Kiri</th>
+                        <th>Pupil kanan</th>
+                    </tr>
+                    <tr>
+                        <td><?= @$val['vas_nrs'] ?></td>
+                        <td>
+                            <b>Diameter :</b><?= @$val['left_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$val['left_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$val['left_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$val['left_isokor_anisokor'] ?>
+                        </td>
+                        <td>
+                            <b>Diameter :</b><?= @$val['right_diameter'] ?>
+                            <br><b>Refleks Cahaya :</b><?= @$val['right_light_reflex'] ?>
+                            <br><b>Kornea:</b><?= @$val['right_cornea'] ?>
+                            <br><b>Isokor Anisokor :</b><?= @$val['right_isokor_anisokor'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Leher</th>
+                        <th>Gerak</th>
+                        <th>Kekuatan</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Kaku kuduk :</b><?= @$val['stiff_neck'] ?>
+                            <br><b>Meningeal Sign :</b><?= @$val['meningeal_sign'] ?>
+                            <br><b>Brudzinki I-IV :</b><?= @$val['brudzinki_i_iv'] ?>
+                            <br><b>Kernig Sign:</b><?= @$val['kernig_sign'] ?>
+                            <br><b>Dolls eye phenomena :</b><?= @$val['dolls_eye_phenomenon'] ?>
+                            <br><b>Vertebra :</b><?= @$val['vertebra'] ?>
+                            <br><b>Extremity :</b><?= @$val['extremity'] ?>
+                        </td>
+                        <td>
+                            <b>Gerak Atas Kiri :</b><?= @$val['motion_upper_left'] ?>
+                            <br><b>Gerak Atas Kanan :</b><?= @$val['motion_upper_right'] ?>
+                            <br><b>Gerak Bawah Kiri :</b><?= @$val['motion_lower_left'] ?>
+                            <br><b>Gerak Bawah Kanan :</b><?= @$val['motion_lower_right'] ?>
+                        </td>
+                        <td>
+                            <b>Kekuatan Atas Kiri :</b><?= @$val['strength_upper_left'] ?>
+                            <br><b>Kekuatan Atas Kanan :</b><?= @$val['strength_upper_right'] ?>
+                            <br><b>Kekuatan Bawah Kiri:</b><?= @$val['strength_lower_left'] ?>
+                            <br><b>Kekuatan Bawah Kanan :</b><?= @$val['strength_lower_right'] ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         <?php endif; ?>
 
         <div class="row">
@@ -666,7 +669,7 @@
                 <tr>
                     <td>
                         <b>Edukasi Awal, disampaikan tentang diagnosis, Rencana dan Tujuan Terapai kepada:</b>
-                        <div type="text" class="form-control" id="sa" name="sa"></div>
+                        <p class="m-0 mt-1 p-0"><?= @$val['edukasi_pasien']; ?></p>
                     </td>
                 </tr>
             </tbody>
@@ -692,91 +695,90 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+    <script src="<?= base_url(); ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: '<?= @$val['dpjp']; ?>',
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: '<?= @$val['dpjp']; ?>',
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 <script>
-var qrcode = new QRCode(document.getElementById("qrcode1"), {
-    text: '<?= @$val['nama']; ?>',
-    width: 150,
-    height: 150,
-    colorDark: "#000000",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H // High error correction
-});
+    var qrcode = new QRCode(document.getElementById("qrcode1"), {
+        text: '<?= @$val['nama']; ?>',
+        width: 150,
+        height: 150,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 </script>
 <script>
-$(document).ready(function() {
-    $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
-    $("#no_registration").val("<?= $visit['no_registration']; ?>")
-    $("#visit_id").val("<?= $visit['visit_id']; ?>")
-    $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
-    $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
-    $("#in_date").val("<?= $visit['in_date']; ?>")
-    $("#exit_date").val("<?= $visit['exit_date']; ?>")
-    $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
-    <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
+    $(document).ready(function() {
+        $("#org_unit_code").val("<?= $visit['org_unit_code']; ?>")
+        $("#no_registration").val("<?= $visit['no_registration']; ?>")
+        $("#visit_id").val("<?= $visit['visit_id']; ?>")
+        $("#clinic_id").val("<?= $visit['clinic_id']; ?>")
+        $("#class_room_id").val("<?= $visit['class_room_id']; ?>")
+        $("#in_date").val("<?= $visit['in_date']; ?>")
+        $("#exit_date").val("<?= $visit['exit_date']; ?>")
+        $("#keluar_id").val("<?= $visit['keluar_id']; ?>")
+        <?php $dt = new DateTime("now", new DateTimeZone('Asia/Bangkok'));
         ?>
-    $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#employee_id").val("<?= $visit['employee_id']; ?>")
-    $("#description").val("<?= $visit['description']; ?>")
-    $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
-    $("#modified_by").val("<?= user()->username; ?>")
-    $("#modified_from").val("<?= $visit['clinic_id']; ?>")
-    $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
-    $("#ageyear").val("<?= $visit['ageyear']; ?>")
-    $("#agemonth").val("<?= $visit['agemonth']; ?>")
-    $("#ageday").val("<?= $visit['ageday']; ?>")
-    $("#thename").val("<?= $visit['diantar_oleh']; ?>")
-    $("#theaddress").val("<?= $visit['visitor_address']; ?>")
-    $("#theid").val("<?= $visit['pasien_id']; ?>")
-    $("#isrj").val("<?= $visit['isrj']; ?>")
-    $("#gender").val("<?= $visit['gender']; ?>")
-    $("#doctor").val("<?= $visit['employee_id']; ?>")
-    $("#kal_id").val("<?= $visit['kal_id']; ?>")
-    $("#petugas_id").val("<?= user()->username; ?>")
-    $("#petugas").val("<?= user()->fullname; ?>")
-    $("#account_id").val("<?= $visit['account_id']; ?>")
-})
-$("#btnSimpan").on("click", function() {
-    saveSignatureData()
-    saveSignatureData1()
-    console.log($("#TTD").val())
-    $("#form").submit()
-})
-$("#btnEdit").on("click", function() {
-    $("input").prop("disabled", false);
-    $("textarea").prop("disabled", false);
+        $("#examination_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#employee_id").val("<?= $visit['employee_id']; ?>")
+        $("#description").val("<?= $visit['description']; ?>")
+        $("#modified_date").val("<?= $dt->format('Y-m-d H:i:s'); ?>")
+        $("#modified_by").val("<?= user()->username; ?>")
+        $("#modified_from").val("<?= $visit['clinic_id']; ?>")
+        $("#status_pasien_id").val("<?= $visit['status_pasien_id']; ?>")
+        $("#ageyear").val("<?= $visit['ageyear']; ?>")
+        $("#agemonth").val("<?= $visit['agemonth']; ?>")
+        $("#ageday").val("<?= $visit['ageday']; ?>")
+        $("#thename").val("<?= $visit['diantar_oleh']; ?>")
+        $("#theaddress").val("<?= $visit['visitor_address']; ?>")
+        $("#theid").val("<?= $visit['pasien_id']; ?>")
+        $("#isrj").val("<?= $visit['isrj']; ?>")
+        $("#gender").val("<?= $visit['gender']; ?>")
+        $("#doctor").val("<?= $visit['employee_id']; ?>")
+        $("#kal_id").val("<?= $visit['kal_id']; ?>")
+        $("#petugas_id").val("<?= user()->username; ?>")
+        $("#petugas").val("<?= user()->fullname; ?>")
+        $("#account_id").val("<?= $visit['account_id']; ?>")
+    })
+    $("#btnSimpan").on("click", function() {
+        saveSignatureData()
+        saveSignatureData1()
+        console.log($("#TTD").val())
+        $("#form").submit()
+    })
+    $("#btnEdit").on("click", function() {
+        $("input").prop("disabled", false);
+        $("textarea").prop("disabled", false);
 
-})
+    })
 </script>
 <style>
-@media print {
-    @page {
-        margin: none;
-        scale: 85;
-    }
+    @media print {
+        @page {
+            margin: none;
+            scale: 85;
+        }
 
-    .container {
-        width: 210mm;
-        /* Sesuaikan dengan lebar kertas A4 */
+        .container {
+            width: 210mm;
+            /* Sesuaikan dengan lebar kertas A4 */
+        }
     }
-}
 </style>
 <script type="text/javascript">
-window.print();
+    window.print();
 </script>
 
 </html>
