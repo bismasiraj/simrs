@@ -1831,6 +1831,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeResepSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
             placeholder: "input nama item",
+            dropdownParent: "#prescriptionDetailModal",
             theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatListAjax',
@@ -1861,6 +1862,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeResepRacikSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
             placeholder: "input nama item",
+            dropdownParent: "#prescriptionDetailModal",
             theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatListAjaxRacik',
@@ -1891,6 +1893,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeResepAlkesSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
             placeholder: "input nama item",
+            dropdownParent: "#prescriptionDetailModal",
             theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatAlkesListAjax',
@@ -1922,6 +1925,7 @@ echo view('admin/patient/modal/hasilRad', [
     function initializeResepAllSelect2(theid, initialvalue = null) {
         $("#" + theid).select2({
             placeholder: "input nama item",
+            dropdownParent: "#prescriptionDetailModal",
             theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getObatAllListAjax',

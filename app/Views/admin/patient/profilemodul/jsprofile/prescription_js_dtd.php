@@ -11,7 +11,6 @@
     var signa4Param = [];
     var signa5Param = [];
     var resepDetail = [];
-    var resepGrouped = [];
     var resepNo = [];
     var resepOrder = 0;
     var resep_no = '';
@@ -158,24 +157,8 @@
                 });
 
 
-                resepGrouped = resepDetail.reduce((result, current) => {
-                    // Check if the resep_no already exists in the result object
-                    if (!result[current.resep_no]) {
-                        result[current.resep_no] = []; // Create an empty array if not
-                    }
-                    // Push the current object into the respective resep_no array
-                    result[current.resep_no].push(current);
-                    return result;
-                }, {});
 
-                console.log(resepGrouped);
-                $("#displayResep").html("")
-                $.each(resepGrouped, function(key, value) {
-                    addRowResep(key, value)
-                })
-
-
-                // filteredResep('%')
+                filteredResep('%')
                 $("#resepno").val('%');
                 // holdModal('historyEresepModal')
 
@@ -184,74 +167,6 @@
 
             }
         });
-    }
-    const addRowResep = (key, data) => {
-        let thetable = `<div class="col-md-4 col-sm-6 col-xs-12"><div class="card border border-1 rounded-4 m-2 p-2">
-            <div class="card-body">
-                <h4 class="card-title text-center">RS PKU Muhammadiyah Sampangan</h4>
-                <hr>
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr>
-                            <td>No Resep</td>
-                            <td>: ${key}</td>
-                        </tr>
-                        <tr>
-                            <td>Tanggal</td>
-                            <td>: ${data[0].treat_date}</td>
-                        </tr>
-                        <tr>
-                            <td>Dokter</td>
-                            <td>: ${data[0].doctor_from}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="mb-3 row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <table id="" class="table table-hover table-prescription" style="display: block;">
-                            <thead class="table-primary" style="text-align: center;">
-                                <tr>
-                                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                                </tr>
-                            </thead>
-                            <tbody id="displayResep${key}">
-                                
-                            </tbody>
-                        </table>
-                </div>
-                </div>
-                <div class="panel-footer text-end mb-4">
-                    <button type="submit" name="save" data-loading-text="processing" class="btn btn-primary btn-save" onclick="filteredResep('${key}')">
-                        <i class="fa fa-file"></i>
-                        <span>Lihat</span>
-                    </button>
-                </div>
-            </div>
-        </div></div>`
-
-        $("#displayResep").append(thetable)
-
-        console.log(data)
-
-        data.forEach((value1, key1) => {
-            let measureName = '';
-            measureParam.forEach((melement, mkey) => {
-                if (measureParam[mkey].measure_id == value1.measure_id) {
-                    measureName = measureParam[mkey].measurement;
-                    return false;
-                }
-            });
-            console.log(`#displayResep${key}`)
-            console.log(value1)
-            $(`#displayResep${key}`).append(`
-                <tr>
-                    <td>${value1.description}</td>
-                    <td>${parseFloat(value1.dose_presc)}</td>
-                    <td>${measureName}</td>
-                </tr>
-            `)
-        })
     }
 
     function copyResep(formid) {
@@ -306,7 +221,7 @@
 
     }
 
-    function generateResep(norm, clinicId, isrj, isracik = null) {
+    function generateResep(norm, clinicId, isrj, isracik) {
 
         if (isracik == 1) {
             var clicked_submit_btn = $("#addRBtn")
@@ -350,7 +265,7 @@
                     // $("#eresepAdd").slideUp()
                     // $("#eresepRAdd").slideUp()
                     $("#eresepTable").slideDown()
-                } else if (isracik == 0) {
+                } else {
                     addBlankLine('nonracik', 1)
                     // $("#eresepAdd").slideUp()
                     // $("#eresepRAdd").slideUp()
@@ -520,16 +435,15 @@
             var clinicIdFrom = '<?= $visit['clinic_id']; ?>'
             var islunas = 0
 
-            // console.log(measureId)
+            console.log(measureDosis)
             measureParam.forEach((melement, mkey) => {
-                if (measureParam[mkey].measure_id == parseInt(measureId)) {
+                if (measureParam[mkey].measure_id == measureId) {
                     measureIdName = measureParam[mkey].measurement;
                 }
-                if (measureParam[mkey].measure_id == parseInt(measureDosis)) {
+                if (measureParam[mkey].measure_id == measureDosis) {
                     measureDosisName = measureParam[mkey].measurement;
                 }
             });
-            console.log(measureIdName)
 
             $("#aordose1" + billId).val(1);
             $("#aordose2" + billId).val(1);
@@ -539,7 +453,6 @@
             $("#aorbrand_id" + billId).val(brandId);
             $("#aormeasure_id" + billId).html(new Option(measureIdName, parseInt(measureId)));
             $("#aormeasure_id" + billId).val(parseInt(measureId));
-            $("#aormeasure_idname" + billId).val(measureIdName);
             // $("#aormeasure_id2" + billId).html(new Option(measureDosisName, measureId2));
             // $("#aormeasure_id2" + billId).val(measureId2);
             $("#aormeasure_dosis" + billId).html(new Option(measureDosisName, parseInt(measureDosis)));
@@ -598,14 +511,14 @@
             $("#aorcif" + billId).val(description)
         }
 
-        $("#formAddPrescrBtn").on('click', (function(e) {
-            let clicked_submit_btn = $("#formprescription").closest('form').find(':submit');
+        $("#formprescription").on('submit', (function(e) {
+            let clicked_submit_btn = $(this).closest('form').find(':submit');
             e.preventDefault();
             e.stopImmediatePropagation();
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/patient/addPrescR',
                 type: "POST",
-                data: new FormData(document.getElementById("formprescription")),
+                data: new FormData(this),
                 dataType: 'json',
                 contentType: false,
                 cache: false,
@@ -672,95 +585,7 @@
 </script>
 <script type="text/javascript">
     function filteredResep(resepSelected) {
-        $("#eresepsRacikBody").html("")
-        $("#resepno").val(resepSelected)
-        $("#eresepTable").html(`<thead class="table-primary" style="text-align: center;">
-                                        <tr>
-                                            <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                                            <th class="text-center" colspan="2" style="width: 30%;">Jumlah</th class="text-center">
-                                            <th class="text-center" colspan="3" style="width: 30%;">Aturan Minum</th class="text-center">
-                                            <th class="text-center" style="width: 5%;"></th class="text-center">
-                                        </tr>
-                                    </thead>
-                                    <tbody id="eresepNonRacikBody">
-
-                                                    </tbody>
-                                    `)
-
-
-        let data = resepGrouped && resepGrouped[resepSelected] || [];
-
-        if (data.length > 0) {
-            $("#modalPrescriptionTitle").html(`${data[0].doctor_from} | ${data[0].resep_no} | ${data[0].treat_date}`)
-
-            $("#headerPrescriptionDetailModal").html(`
-                <h4 class="text-center">RS PKU Muhammadiyah Sampangan</h4>
-                <hr>
-                <table class="table table-stripped">
-                    <tbody>
-                        <tr>
-                            <td class="text-right">No Resep</td>
-                            <td>: ${resepSelected}</td>
-                        </tr>
-                        <tr>
-                            <td>Tanggal</td>
-                            <td>: ${data[0].treat_date}</td>
-                        </tr>
-                        <tr>
-                            <td>No RM</td>
-                            <td>: ${data[0].no_registration}</td>
-                        </tr>
-                        <tr>
-                            <td>Nama</td>
-                            <td>: ${data[0].thename}</td>
-                        </tr>
-                        <tr>
-                            <td>Alamat</td>
-                            <td>: ${data[0].theaddress}</td>
-                        </tr>
-                        <tr>
-                            <td>Dokter</td>
-                            <td>: ${data[0].doctor_from}</td>
-                        </tr>
-                    </tbody>
-                </table>`)
-        } else {
-            $("#modalPrescriptionTitle").html(`<?= user()->getFullname(); ?> | ${resepSelected} | ${get_date()}`)
-
-            $("#headerPrescriptionDetailModal").html(`
-                <h4 class="text-center">RS PKU Muhammadiyah Sampangan</h4>
-                <hr>
-                <table class="table table-stripped">
-                    <tbody>
-                        <tr>
-                            <td class="text-right">No Resep</td>
-                            <td>: ${resepSelected}</td>
-                        </tr>
-                        <tr>
-                            <td>Tanggal</td>
-                            <td>: ${get_date()}</td>
-                        </tr>
-                        <tr>
-                            <td>No RM</td>
-                            <td>: <?= $visit['no_registration']; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Nama</td>
-                            <td>: <?= $visit['diantar_oleh']; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Alamat</td>
-                            <td>: <?= $visit['visitor_address']; ?></td>
-                        </tr>
-                        <tr>
-                            <td>Dokter</td>
-                            <td>: <?= user()->getFullname(); ?></td>
-                        </tr>
-                    </tbody>
-                </table>`)
-        }
-
-        $("#prescriptionDetailModal").modal("show")
+        $("#eresepTable").html("")
 
         var iseresep = $("#iseresep").val()
         var soldstatusarray = ['1', '7'];
@@ -769,12 +594,12 @@
         resepOrder = 0;
 
         if (resepDetail.length > 0) {
-            // $("#eresepTable").html("")
+            $("#eresepTable").html("")
             $("#formprescription").find("input, textarea, select").prop("disabled", false)
             $("#formAddPrescrBtn").slideUp()
             $("#formEditPrescrBtn").slideDown()
         } else {
-            // $("#eresepTable").html("")
+            $("#eresepTable").html("")
             $("#formprescription").find("input, textarea, select").prop("disabled", false)
             $("#formAddPrescrBtn").slideDown()
             $("#formEditPrescrBtn").slideUp()
@@ -789,8 +614,7 @@
 
 
             if (resepSelected == '%' || resep.resep_no == resepSelected) {
-                // console.log(resep.resep_ke)
-                addRowObat(null, resep.resep_ke, resep)
+                addRowObat(null, resep.resek_ke, resep)
             }
         });
         if (resepDetail.length > 0) {
@@ -943,7 +767,7 @@
         let bodytable = '';
 
         if (keyvisit == null) {
-            bodytable = '#eresepsRacikBody';
+            bodytable = '#eresepTable';
         } else {
             bodytable = "#body" + keyvisit;
         }
@@ -954,12 +778,14 @@
         if (resep == null) {
             var racikan = 0;
 
+
             var iseresep = $("#iseresep").val()
+
 
             if (obatType != 'komponen') { // non racikan atau racikan
                 resepOrder++;
                 if (obatType != 'racikan') { // non racikan
-                    theOrder = 1;
+                    theOrder = resepOrder;
                     racikan = 0;
                 } else { // racikan
                     theOrder = 1;
@@ -1115,93 +941,90 @@
                     }
                 });
             }
-            if (resepOrder < resepKe) {
-                resepOrder = resepKe
-            }
         }
 
 
 
 
-        // if (racikan == 1) {
-        //     var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine1' + resepKe + '" id="dosisLine1' + resepKe + '" class="form-control">';
-        //     dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
-        //     option.forEach((element, key) => {
-        //         dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
-        //     });
-        //     dosisDiv = dosisDiv + '</select>';
+        if (racikan == 1) {
+            var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine1' + resepKe + '" id="dosisLine1' + resepKe + '" class="form-control">';
+            dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
+            option.forEach((element, key) => {
+                dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
+            });
+            dosisDiv = dosisDiv + '</select>';
 
-        //     var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine2' + resepKe + '" id="dosisLine2' + resepKe + '" class="form-control">';
-        //     dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
-        //     optionJml.forEach((element, key) => {
-        //         dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
-        //     });
-        //     dosis2Div = dosis2Div + '</select>';
+            var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine2' + resepKe + '" id="dosisLine2' + resepKe + '" class="form-control">';
+            dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
+            optionJml.forEach((element, key) => {
+                dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
+            });
+            dosis2Div = dosis2Div + '</select>';
 
-        //     var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa2' + resepKe + '" id="signa2' + resepKe + '" class="form-control">';
-        //     signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
-        //     signa2Param.forEach((element, key) => {
-        //         signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
-        //     });
-        //     signa2Div = signa2Div + '</select>';
+            var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa2' + resepKe + '" id="signa2' + resepKe + '" class="form-control">';
+            signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
+            signa2Param.forEach((element, key) => {
+                signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
+            });
+            signa2Div = signa2Div + '</select>';
 
-        //     var signa4Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa4' + resepKe + '" id="signa4' + resepKe + '" class="form-control">';
-        //     signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
-        //     signa4Param.forEach((element, key) => {
-        //         signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
-        //     });
-        //     signa4Div = signa4Div + '</select>';
-
-
-        //     var signa5Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa5' + resepKe + '" id="signa5' + resepKe + '" class="form-control">';
-        //     signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
-        //     signa5Param.forEach((element, key) => {
-        //         signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
-        //     });
-        //     signa5Div = signa5Div + '</select>';
-        // } else {
-        //     var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine1' + billId + '" id="dosisLine1' + billId + '" class="form-control">';
-        //     dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
-        //     option.forEach((element, key) => {
-        //         dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
-        //     });
-        //     dosisDiv = dosisDiv + '</select>';
-
-        //     var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine2' + billId + '" id="dosisLine2' + billId + '" class="form-control">';
-        //     dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
-        //     optionJml.forEach((element, key) => {
-        //         dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
-        //     });
-        //     dosis2Div = dosis2Div + '</select>';
-
-        //     var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + billId + '\')" name="signa2' + billId + '" id="signa2' + billId + '" class="form-control">';
-        //     signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
-        //     signa2Param.forEach((element, key) => {
-        //         signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
-        //     });
-        //     signa2Div = signa2Div + '</select>';
-
-        //     var signa4Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa4' + billId + '" id="signa4' + billId + '" class="form-control">';
-        //     signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
-        //     signa4Param.forEach((element, key) => {
-        //         signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
-        //     });
-        //     signa4Div = signa4Div + '</select>';
+            var signa4Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa4' + resepKe + '" id="signa4' + resepKe + '" class="form-control">';
+            signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
+            signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
+            signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
+            signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
+            signa4Param.forEach((element, key) => {
+                signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
+            });
+            signa4Div = signa4Div + '</select>';
 
 
-        //     var signa5Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa5' + billId + '" id="signa5' + billId + '" class="form-control">';
-        //     signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
-        //     signa5Param.forEach((element, key) => {
-        //         signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
-        //     });
-        //     signa5Div = signa5Div + '</select>';
-        // }
+            var signa5Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa5' + resepKe + '" id="signa5' + resepKe + '" class="form-control">';
+            signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
+            signa5Param.forEach((element, key) => {
+                signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
+            });
+            signa5Div = signa5Div + '</select>';
+        } else {
+            var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine1' + billId + '" id="dosisLine1' + billId + '" class="form-control">';
+            dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
+            option.forEach((element, key) => {
+                dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
+            });
+            dosisDiv = dosisDiv + '</select>';
+
+            var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine2' + billId + '" id="dosisLine2' + billId + '" class="form-control">';
+            dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
+            optionJml.forEach((element, key) => {
+                dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
+            });
+            dosis2Div = dosis2Div + '</select>';
+
+            var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + billId + '\')" name="signa2' + billId + '" id="signa2' + billId + '" class="form-control">';
+            signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
+            signa2Param.forEach((element, key) => {
+                signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
+            });
+            signa2Div = signa2Div + '</select>';
+
+            var signa4Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa4' + billId + '" id="signa4' + billId + '" class="form-control">';
+            signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
+            signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
+            signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
+            signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
+            signa4Param.forEach((element, key) => {
+                signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
+            });
+            signa4Div = signa4Div + '</select>';
+
+
+            var signa5Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa5' + billId + '" id="signa5' + billId + '" class="form-control">';
+            signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
+            signa5Param.forEach((element, key) => {
+                signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
+            });
+            signa5Div = signa5Div + '</select>';
+        }
 
 
         if (racikan == 0 || racikan == 3 || racikan == 4 || racikan == 15) { //non racikan
@@ -1224,9 +1047,9 @@
             //             <tbody id="${resepNo}${resepKe}">
             //             </tbody>
             //         </table>`)
-            // $(bodytable).append(`
-            //             <tbody id="${resepNo}${resepKe}">
-            //             </tbody>`)
+            $(bodytable).append(`
+                        <tbody id="${resepNo}${resepKe}">
+                        </tbody>`)
 
 
 
@@ -1234,9 +1057,9 @@
                 $(`#${resepNo}${resepKe}oddstatus`).html(`${doctorFrom} | ${resepNo} | ${treatDate} | <span class="text-center text-danger">ODD Telah Selesai</span>`)
 
 
-            $(`#eresepNonRacikBody`).append(`
+            $(`#${resepNo}${resepKe}`).append(`
                 <tr id="${billId}" class="non-racikan table-success ${billId}">
-                    <td class="d-none">
+                    <td>
                         <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right" readonly>
                     </td>
                     <td>
@@ -1255,12 +1078,13 @@
                     .append($('<td colspan="3">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
 
                 if (keyvisit == null) {
-                    $(`#${billId}`)
-                        // .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
-                        //     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        //         .append((status_tarif != 0 && isrj == 0 ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</i></button>` : ''))
-                        //     )
-                        // )
+                    $(`#${billId}`).append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                // .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">NonRacikan</i></button>')
+                                // .append('<button type="button" onclick="addR()" class="btn btn-warning btn-btnr" data-row-id="1" autocomplete="off">Racikan</i></button>')
+                                .append((status_tarif != 0 && isrj == 0 ? `<button type="button" onclick="stopOdd('${resepNo}', ${resepKe})" class="btn btn-danger btn-btnr" data-row-id="1" autocomplete="off">Stop ODD</i></button>` : ''))
+                            )
+                        )
                         .append($('<td>')
                             .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
@@ -1271,47 +1095,29 @@
 
 
                 if (keyvisit == null) {
-                    $(`#${billId}`)
-                        // .append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
-                        //     .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
-                        //         .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
-                        //     )
-                        // )
+                    $(`#${billId}`).append($('<td>').attr("id", "tdbtnracikresep" + resepKe).attr("class", "tdbtnresep")
+                            .append($('<div class="btn-group-vertical" role="group" aria-label="Vertical button group">')
+                                .append('<button type="button" onclick="addNR()" class="btn btn-success btn-btnnr waves-effect waves-light" data-row-id="1" autocomplete="off">Tambah</i></button>')
+                            )
+                        )
                         .append($('<td>')
                             .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
                 }
             }
         } else if (racikan == 1 && theOrder == '1') { //racikan
-            $(bodytable).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
-                    <thead class="table-primary" style="text-align: center;">
-                        <tr>
-                            <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
-                            <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right updateJmlBks"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
-                            <th class="text-center" style="width: 10%;" colspan="2"><select name="measure_id2[]" id="aormeasure_id2${billId}" placeholder="" value="" class="form-select text-right" readonly><option value="">-- Pilih Satuan --<option></select></th class="text-center">
-                            <th class="text-center" colspan="5" style="width: 40%;"><input type="text" name="description2[]" id="aordescription2${billId}" placeholder="signa" class="form-control"></th class="text-center">
-                                                            ` + (keyvisit == null ? `
-                            ` : ``) + `
-                        </tr>
-                        <tr>
-                            <th class="text-center d-none" style="width: 5%;">No</th class="text-center">
-                            <th class="text-center" style="width: 30%;" colspan="2">Nama Obat</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Dosis</th class="text-center">
-                            <th class="text-center d-none" style="width: 10%;">Dosis</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Qty</th class="text-center">
-                            <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
-                            <th class="text-center" colspan="2"></th class="text-center">
-                                                            ` + (keyvisit == null ? `` : ``) + `
-                        </tr>
-                    </thead>
-                    <tbody id="${resepNo}${resepKe}">
-                    </tbody>
-                </table>`)
-
-            // $(bodytable).append(`
-            //         <tbody id="${resepNo}${resepKe}">
-            //             <tr class="table-warning">
+            // $(bodytable).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+            //         <thead class="table-primary" style="text-align: center;">
+            //             <tr>
+            //                 <th id="${resepNo}${resepKe}oddstatus" colspan="9"> ${doctorFrom} | ${resepNo} | ${nowtime}</th>
+            //             </tr>
+            //             <tr>
+            //                 <th class="text-center" style="width: 4%;">No.</th class="text-center">
+            //                 <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+            //                 <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+            //                 <th class="text-center" colspan="5" style="width: 30%;">Aturan Minum</th class="text-center">
+            //             </tr>
+            //             <tr>
             //                 <th class="text-center" style="width: 5%;"></th class="text-center">
             //                 <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
             //                 <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right updateJmlBks"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
@@ -1320,7 +1126,7 @@
             //                                                 ` + (keyvisit == null ? `
             //                 ` : ``) + `
             //             </tr>
-            //             <tr class="table-warning">
+            //             <tr>
             //                 <th class="text-center" style="width: 5%;">No</th class="text-center">
             //                 <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
             //                 <th class="text-center" style="width: 10%;">DTD</th class="text-center">
@@ -1331,7 +1137,34 @@
             //                 <th class="text-center" colspan="2"></th class="text-center">
             //                                                 ` + (keyvisit == null ? `` : ``) + `
             //             </tr>
-            //         </tbody>`)
+            //         </thead>
+            //         <tbody id="${resepNo}${resepKe}">
+            //         </tbody>
+            //     </table>`)
+
+            $(bodytable).append(`
+                    <tbody id="${resepNo}${resepKe}">
+                        <tr class="table-warning">
+                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                            <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
+                            <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right updateJmlBks"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
+                            <th class="text-center" style="width: 10%;"><select name="measure_id2[]" id="aormeasure_id2${billId}" placeholder="" value="" class="form-select text-right" readonly></th class="text-center">
+                            <th class="text-center" colspan="5" style="width: 40%;"><input type="text" name="description2[]" id="aordescription2${billId}" placeholder="" class="form-control"></th class="text-center">
+                                                            ` + (keyvisit == null ? `
+                            ` : ``) + `
+                        </tr>
+                        <tr class="table-warning">
+                            <th class="text-center" style="width: 5%;">No</th class="text-center">
+                            <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                            <th class="text-center" style="width: 10%;">DTD</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Dosis</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Qty</th class="text-center">
+                            <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
+                            <th class="text-center" colspan="2"></th class="text-center">
+                                                            ` + (keyvisit == null ? `` : ``) + `
+                        </tr>
+                    </tbody>`)
 
 
             $(`#aormeasure_id2${billId}`).on("change", function() {
@@ -1355,16 +1188,16 @@
             treatment = "PEMBELIAN OBAT RACIKAN"
             $(`#${resepNo}${resepKe}`).append(`
                 <tr id="${billId}" class="racikan${racikan} ${billId} table-info">
-                    <td id="tdresep_keresep${resepKe}" class="d-none">
+                    <td id="tdresep_keresep${resepKe}">
                         <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right" readonly>
                     </td>
-                    <td id="tddescriptionresep${resepKe}" colspan="2">
+                    <td id="tddescriptionresep${resepKe}">
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
                     <td id="dose${resepKe}">
                         <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
                     </td>
-                    <td id="orig_dose${resepKe}" class="d-none">
+                    <td id="orig_dose${resepKe}">
                         <input type="text" name="orig_dose[]" id="aororig_dose${billId}" placeholder="" value="" class="form-control text-right" readonly>
                     </td>
                     <td>
@@ -1408,15 +1241,17 @@
             $("#tdsigna2Div" + resepKe).remove()
             $("#tdsigna4Div" + resepKe).remove()
             $("#tdsigna5Div" + resepKe).remove()
+            console.log(`#${resepNo}${resepKe}`)
             $(`#${resepNo}${resepKe}`).append(`
                 <tr id="${billId}" class="racikan${racikan} ${billId} table-info">
-                    <td id="tddescriptionresep${resepKe}" colspan="2">
+                    <td></td>
+                    <td id="tddescriptionresep${resepKe}">
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
                     <td id="dose${resepKe}">
                         <input type="text" name="dose[]" id="aordose${billId}" placeholder="" value="" class="form-control text-right" onfocus="this.value=''">
                     </td>
-                    <td id="orig_dose${resepKe}" class="d-none">
+                    <td id="orig_dose${resepKe}">
                         <input type="text" name="orig_dose[]" id="aororig_dose${billId}" placeholder="" value="" class="form-control text-right" readonly>
                     </td>
                     <td>
@@ -1433,27 +1268,28 @@
         }
 
         if (racikan == 1 && theOrder != '1') {
-            $(`#${billId}`).append(
-                '<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />' +
-                '<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />' +
-                '<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />' +
-                '<input name="measure_id2[]" id="aormeasure_id2' + billId + '" type="hidden" class="form-control" />'
-            );
+            $(`#${billId}`).append('<input name="resep_ke[]" id="aorresep_ke' + billId + '" type="hidden" class="form-control" />')
+            $(`#${billId}`).append('<input name="description2[]" id="aordescription2' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="measure_id2[]" id="aormeasure_id2' + billId + '" type="hidden" class="form-control" />')
         }
         if (racikan != 1) {
-            $(`#${billId}`).append(
-                '<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />' +
-                '<input name="dose[]" id="aordose' + billId + '" type="hidden" class="form-control" />' +
-                '<input name="orig_dose[]" id="aororig_dose' + billId + '" type="hidden" class="form-control" />' +
-                `<select name="measure_id[]" id="aormeasure_id${billId}" placeholder="" value="" class="form-select text-right d-none" readonly></select>` +
-                '<input name="measure_id2[]" id="aormeasure_id2' + billId + '" type="hidden" class="form-control" />'
-            );
+            $(`#${billId}`)
+                .append('<input name="jml_bks[]" id="aorjml_bks' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="dose[]" id="aordose' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="orig_dose[]" id="aororig_dose' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="measure_id[]" id="aormeasure_id' + billId + '" type="hidden" class="form-control" />')
+                .append('<input name="measure_id2[]" id="aormeasure_id2' + billId + '" type="hidden" class="form-control" />')
         } else {
             $(`#aordose${billId}`).on("change", function() {
                 let dose = $(`#aordose${billId}`).val()
                 let origDose = $(`#aororig_dose${billId}`).val()
                 let jmlBks = $(`#aorjml_bks${billId}`).val()
                 let dosePresc = jmlBks * dose / origDose;
+                console.log(dose)
+                console.log(origDose)
+                console.log(jmlBks)
+                console.log(dosePresc)
                 $(`#aordose_presc${billId}`).val(dosePresc)
             })
         }
@@ -1519,13 +1355,14 @@
 
         let measureArrayBks = ['5', '10', '17'];
         measureParam.forEach((melement, mkey) => {
-            if (measureParam[mkey].measure_id == parseInt(measureId)) {
+            if (measureParam[mkey].measure_id == measureId) {
                 measureIdName = measureParam[mkey].measurement;
             }
-            if (measureParam[mkey].measure_id == parseInt(measureId2)) {
+            if (measureParam[mkey].measure_id == measureId2) {
+                console.log(measureParam[mkey].measurement)
                 measureId2Name = measureParam[mkey].measurement;
             }
-            if (measureParam[mkey].measure_id == parseInt(measureDosis)) {
+            if (measureParam[mkey].measure_id == measureDosis) {
                 measureDosisName = measureParam[mkey].measurement;
             }
             if (measureParam[mkey].measure_id == '5' || measureParam[mkey].measure_id == '10' || measureParam[mkey].measure_id == '17') {
@@ -1540,8 +1377,7 @@
         $("#aorresep_ke" + billId).val(resepKe);
         $("#aorbrand_id" + billId).val(brandId);
         $("#aormeasure_id" + billId).append(new Option(measureIdName, measureId));
-        $("#aormeasure_id" + billId).append(measureId);
-        console.log("#aormeasure_id" + billId + " = " + measureId + measureIdName);
+
         $("#aormeasure_idname" + billId).val(measureIdName);
         $("#aormeasure_id2" + billId).val(measureId2);
         $("#aormeasure_id2name" + billId).val(measureId2);

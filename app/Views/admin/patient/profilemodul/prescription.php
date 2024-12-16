@@ -86,7 +86,7 @@ $permissions = user()->getPermissions();
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-md-3">
+                    <div class="col-sm-6 col-md-3 d-none">
                         <div class="mb-4">
                             <div class="form-group">
                                 <label>Resep</label>
@@ -108,6 +108,17 @@ $permissions = user()->getPermissions();
                             </div>
                         </div>
                     </div>
+                    <?php if (user()->checkPermission("eresep", "c")) {
+                        if (true) { ?>
+                            <div id="eresepBtnGroup" class="row m-4">
+                                <div class="col-md-12">
+                                    <div id="eresepAddR" class="box-tab-tools text-center">
+                                        <a data-toggle="modal" onclick="generateResep('<?= $visit['no_registration']; ?>','<?= $visit['clinic_id']; ?>','<?= $visit['isrj']; ?>')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Resep Baru</a>
+                                    </div>
+                                </div>
+                            </div>
+                    <?php }
+                    } ?>
                 </div>
             </form>
             <div class="table-responsive">
@@ -146,66 +157,128 @@ $permissions = user()->getPermissions();
                 <?php }
                 } ?>
                 <div class="box-tab-tools">
-                    <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="mt-4">
-                        <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
-                        <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
-                            <thead class="table-primary" style="text-align: center;">
-                                <tr>
-                                    <th class="text-center" style="width: 4%;">No.</th class="text-center">
-                                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-                                    <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
-                                    <th class="text-center" colspan="3" style="width: 30%;">Aturan Minum</th class="text-center">
-                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
-                                    <th class="text-center" style="width: 12,5%;"></th class="text-center">
-                                </tr>
-                            </thead>
-                            <tbody id="ereseploadingspace">
+                    <div id="displayResep" class="row">
 
-                            </tbody>
-                        </table>
-                        <div id="eresepBody">
-                        </div>
-                        <?php if (user()->checkPermission("eresep", "c")) {
-                            if (true) { ?>
-                                <div id="eresepBtnGroup" class="row">
-                                    <div class="col-md-6">
-                                        <div id="eresepAddR" class="box-tab-tools text-end">
-                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div id="eresepRAddNR" class="box-tab-tools text-start" style="">
-                                            <a data-toggle="modal" onclick="addR()" class="btn btn-primary btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
-                                        </div>
-                                    </div>
-                                </div>
-                        <?php }
-                        } ?>
-                        <?php if (user()->checkPermission("medicalitem", "c")) {
-                        ?>
-                            <div id="medItemBtnGroup" class="row">
-                                <div class="col-md-12">
-                                    <div id="eresepAdds" class="box-tab-tools text-center">
-                                        <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php
-                        } ?>
-                        <div class="panel-footer text-end mb-4">
-                            <button type="submit" id="formAddPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
-                            <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-edit"></i> <span>Edit</span></button>
-                            <?php if ($visit['isrj'] == 0 && user()->checkRoles(['dokter', 'admin', 'superadmin'])) {
-                            ?>
-                                <button type="button" id="formStopOddBtn" onclick="stopOddAll()" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-stop"></i> <span>Stop ODD</span></button>
-                            <?php
-                            } ?>
-                            <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light"><i class="fa fa-history"></i> <span>History</span></button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div> <!-- col-lg-10 col-md-10 col-sm-12 -->
     </div><!--./row-->
 </div>
-<!-- -->
+<div class="modal fade" id="prescriptionDetailModal" aria-hidden="true" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content modal-media-content">
+
+            <div class="modal-header modal-media-header">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-sm-8 col-md-8">
+                            <h4 id="modalPrescriptionTitle"></h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div><!--./row-->
+                </div>
+            </div><!--./modal-header-->
+            <div class="modal-body pb0 ptt10">
+                <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div id="headerPrescriptionDetailModal" class="col-md-4"></div>
+                        <div class="col-md-4"></div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-sm-12">
+                            <div class="card border border-1 rounded-4 m-2 p-2">
+                                <h3 class="card-title text-center">Non Racikan</h3>
+
+                                <div class="card-body">
+                                    <div class="mb-3 row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
+                                            <table id="eresepTable" class="table table-hover table-prescription" style="display: block;">
+                                                <thead class="table-primary" style="text-align: center;">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                                        <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                        <th class="text-center" colspan="3" style="width: 30%;">Aturan Minum</th class="text-center">
+                                                        <!-- <th class="text-center" style="width: 12,5%;"></th class="text-center"> -->
+                                                        <th class="text-center" style="width: 12,5%;"></th class="text-center">
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="eresepNonRacikBody">
+                                                </tbody>
+                                            </table>
+                                            <?php if (user()->checkPermission("eresep", "c")) {
+                                                if (true) { ?>
+                                                    <div id="eresepBtnGroup" class="row">
+                                                        <div class="col-md-12">
+                                                            <div id="eresepAddR" class="box-tab-tools text-center">
+                                                                <a data-toggle="modal" onclick="addNR()" class="btn btn-success btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            <?php }
+                                            } ?>
+                                            <?php if (user()->checkPermission("medicalitem", "c")) {
+                                            ?>
+                                                <div id="medItemBtnGroup" class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="eresepAdds" class="box-tab-tools text-center">
+                                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php
+                                            } ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-sm-12">
+                            <div class="card border border-1 rounded-4 m-2 p-2">
+                                <h3 class="card-title text-center">Racikan</h3>
+                                <div class="card-body">
+                                    <div class="mb-3 row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>">
+                                            <div id="eresepsRacikBody">
+
+                                            </div>
+                                            <?php if (user()->checkPermission("eresep", "c")) {
+                                                if (true) { ?>
+                                                    <div id="eresepBtnGroup" class="row">
+                                                        <div class="col-md-12">
+                                                            <div id="eresepRAddNR" class="box-tab-tools text-center" style="">
+                                                                <a data-toggle="modal" onclick="addR()" class="btn btn-warning btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            <?php }
+                                            } ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="panel-footer text-end mb-4">
+                    <button type="submit" id="formAddPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
+                    <button type="button" id="formEditPrescrBtn" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary"><i class="fa fa-edit"></i> <span>Edit</span></button>
+                    <?php if ($visit['isrj'] == 0 && user()->checkRoles(['dokter', 'admin', 'superadmin'])) {
+                    ?>
+                        <button type="button" id="formStopOddBtn" onclick="stopOddAll()" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-danger"><i class="fa fa-stop"></i> <span>Stop ODD</span></button>
+                    <?php
+                    } ?>
+                    <button style="margin-right: 10px" type="button" id="historyprescbtn" onclick="$('#historyEresepModal').modal('show')" name="save" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-light"><i class="fa fa-history"></i> <span>History</span></button>
+                </div>
+            </div>
+        </div>
+    </div><!--./modal-body-->
+</div>
