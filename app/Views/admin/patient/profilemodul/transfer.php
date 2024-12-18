@@ -89,9 +89,9 @@ $permission = user()->getPermissions();
                                     <div class="form-group">
                                         <label>Follow Up</label>
                                         <select name="isinternal" id="atransferisinternal" onchange="openTindakLanjutModal()" class="form-control ">
-                                            <option value="2">DIRUJUK</option>
-                                            <option value="3">DI RUJUK KE UNIT LAIN (KONSUL)</option>
                                             <option value="4">PERAWATAN JALAN (KONTROL)</option>
+                                            <option value="2">RUJUK EKSTERNAL</option>
+                                            <option value="3">KONSUL INTERNAL</option>
                                             <option value="5">RAWAT INAP</option>
                                             <option value="10">TRANSFER INTERNAL</option>
                                             <option value="11">Pengobatan Selesai</option>
@@ -464,7 +464,7 @@ $permission = user()->getPermissions();
                                     <div class="col-sm-12 col-md-4 col-xs-4 mb-3">
                                         <div class="form-group">
                                             <label>Tgl Rencana Kontrol</label>
-                                            <input id="flatskdptglkontrol" type="text" class="form-control datetimeflatpickr" placeholder="yyyy-mm-dd">
+                                            <input id="flatskdptglkontrol" type="text" class="form-control dateflatpickr" placeholder="yyyy-mm-dd">
                                             <input id="skdptglkontrol" name=" skdptglkontrol" type="hidden" class="form-control" placeholder="yyyy-mm-dd">
                                         </div>
                                     </div>
@@ -501,7 +501,7 @@ $permission = user()->getPermissions();
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-4 col-lg-4 mb-3">
-                            <div class="form-group"><label for="atransfernotes">Keterangan</label>
+                            <div class="form-group"><label for="atransfernotes">Alasan Kontrol</label>
                                 <textarea type='text' name="notes" class="form-control" id='atransfernotes'>
                                     </textarea>
                             </div>

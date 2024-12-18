@@ -1213,6 +1213,7 @@ This Function is used to Add Patient
         }
         $ta = new TreatmentAkomodasiModel();
 
+        $giTipe = $this->request->getPost("giTipe");
         $nama = $this->request->getPost('nama');
         $kode = $this->request->getPost('norm');
         $alamat = $this->request->getPost('address');
@@ -1247,7 +1248,11 @@ This Function is used to Add Patient
             $nokartu = '%';
         }
 
-        $kunjungan = $this->lowerKey($ta->getPasienRanap($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu, $keluar, $x));
+        if ($giTipe == 22) {
+            $kunjungan = $this->lowerKey($ta->getPasienRanapBidan($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu, $keluar, $x));
+        } else {
+            $kunjungan = $this->lowerKey($ta->getPasienRanap($nama, $kode, $alamat, $poli, $mulai, $akhir, $sudah, $dokter, $nokartu, $keluar, $x));
+        }
         // return json_encode($poli);
 
         // colecting parameter
@@ -1369,10 +1374,10 @@ This Function is used to Add Patient
                 $row = array();
                 //====================================
                 $action = "<div class='rowoptionview rowview-mt-19'>";
-                $action .= "<a href=" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
+                $action .= "<a href=" . base_url() . 'admin/patient/redirectProfileRanap/' . $kunjungan[$key]['visit_id'] . " target='_blank' class='btn btn-default btn-xs' style='width: 100%;' data-toggle='tooltip' title='" . lang('Word.show') . "'><i class='fa fa-reorder' aria-hidden='true'></i></a>";
                 $action .= "</div'>";
                 $first_action = "<button  onclick=\"listSesi('" . $kunjungan[$key]['visit_id'] . "','" . $kunjungan[$key]['no_registration'] . "', '" . base64_encode(json_encode($kunjungan[$key])) . "')\" class=\"btn btn-primary\">";
-                // $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/profileranap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
+                // $first_action = "<a target='_blank' href='" . base_url() . 'admin/patient/redirectProfileRanap/' . $kunjungan[$key]['visit_id'] . "/" . base64_encode(json_encode($kunjungan[$key])) . "' style='text-align: left !important'>";
                 //==============================
                 // $row[] = '<p style="margin: auto;
                 // width: 50%;
@@ -2314,7 +2319,99 @@ This Function is used to Add Patient
             'clinicType' => $clinicType
         ]);
     }
+    public function redirectProfileRanap($id, $ta, $session_id = null, $isnew = false)
+    {
+        $taold = $ta;
+        $ta = base64_decode($ta);
+        $ta = json_decode($ta, true);
 
+        $pv = new PasienVisitationModel();
+        $visit = $this->lowerKey($pv->find($id));
+
+
+
+        // $visit = $ta;
+        unset($ta['visit_date']);
+        foreach ($ta as $key => $value) {
+            $visit[$key] = $value;
+        }
+        $db = db_connect();
+        $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+        SPECIALIST_TYPE st
+        inner join CLINIC_TYPE ct on ct.SPESIALISTIK = st.SPECIALIST_TYPE_ID
+        where ct.clinic_type = ISNULL('" . $ta['clinic_type'] . "','0');")->getResultArray());
+        foreach ($specialist as $key => $value) {
+            $visit['specialist_type_id'] = $value['specialist_type_id'];
+        }
+        // return json_encode($ta['employee_id']);
+        if (!isset($visit['specialist_type_id'])) {
+            $specialist = $this->lowerKey($db->query("select st.specialist_type_id from 
+                employee_all st
+                where st.employee_id = '" . $ta['employee_id'] . "';")->getResultArray());
+            foreach ($specialist as $key => $value) {
+                $visit['specialist_type_id'] = $value['specialist_type_id'];
+            }
+        }
+        if (!isset($visit['specialist_type_id'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data spesialis tidak ditemukan. Silahkan hubungi pihak Admin.');
+        }
+        if ($isnew) {
+            // return $session_id;
+            $ageYear = $visit['ageyear'];
+            $ageMonth = $visit['agemonth'];
+            $ageDay = $visit['ageday'];
+            $vstatusid = 0;
+            if ($ageYear == 0 && $ageMonth == 0 && $ageDay <= 28) {
+                $vstatusid = 5;
+            } else if ($ageYear >= 18) {
+                $vstatusid = 1;
+                // $("#armvs_status_id").prop("selectedIndex", 1);
+            } else {
+                $vstatusid = 4;
+                // $("#armvs_status_id").prop("selectedIndex", 2);
+            }
+            if ($visit['specialist_type_id'] == '1.05') {
+                $vstatusid = 10;
+            }
+            $dataexam = [
+                'body_id' => $session_id,
+                'account_id' => 3,
+                'examination_date' => date('Y-m-d H:i:s'),
+                'org_unit_code' => $visit['org_unit_code'],
+                'no_registration' => $visit['no_registration'],
+                'visit_id' => $visit['visit_id'],
+                'clinic_id' => $visit['clinic_id'],
+                'employee_id' => $visit['employee_inap'],
+                'class_room_id' => $visit['class_room_id'],
+                'bed_id' => $visit['bed_id'],
+                'in_date' => $visit['in_date'],
+                'exit_date' => $visit['exit_date'],
+                'keluar_id' => $visit['keluar_id'],
+                'modified_from' => $visit['clinic_id'],
+                'status_pasien_id' => $visit['status_pasien_id'],
+                'ageyear' => $visit['ageyear'],
+                'agemonth' => $visit['agemonth'],
+                'ageday' => $visit['ageday'],
+                'thename' => $visit['diantar_oleh'],
+                'theaddress' => $visit['visitor_address'],
+                'vs_status_id' => $vstatusid,
+                'theid' => $visit['pasien_id'],
+                'isrj' => 0,
+                'gender' => $visit['gender'],
+                'doctor' => $visit['fullname'],
+                'kal_id' => $visit['kal_id'],
+                'petugas_id' => user()->username,
+                'petugas_type' => user()->getOneRoles(),
+                'petugas' => user()->getFullname(),
+                'modified_by' => user()->username
+            ];
+
+            $ex = new ExaminationModel();
+            $ex->save($dataexam);
+        }
+
+        return redirect()->to(base_url() . 'admin/patient/profileranap' . '/' . $id . '/' . $taold . '/' . $session_id);
+    }
     public function profileranap($id, $ta, $session_id = null)
     {
         $org = new OrganizationunitModel();
@@ -2523,65 +2620,7 @@ This Function is used to Add Patient
 
         // return json_encode($mappingAssessment);
         asort($employee);
-        $bisma = 0;
-        if ($session_id == null) {
-            $session_id = $org->generateId();
-
-            // return $session_id;
-            $ageYear = $visit['ageyear'];
-            $ageMonth = $visit['agemonth'];
-            $ageDay = $visit['ageday'];
-            $vstatusid = 0;
-            if ($ageYear == 0 && $ageMonth == 0 && $ageDay <= 28) {
-                $vstatusid = 5;
-            } else if ($ageYear >= 18) {
-                $vstatusid = 1;
-                // $("#armvs_status_id").prop("selectedIndex", 1);
-            } else {
-                $vstatusid = 4;
-                // $("#armvs_status_id").prop("selectedIndex", 2);
-            }
-            if ($visit['specialist_type_id'] == '1.05') {
-                $vstatusid = 10;
-            }
-            $dataexam = [
-                'body_id' => $session_id,
-                'account_id' => 3,
-                'examination_date' => date('Y-m-d H:i:s'),
-                'org_unit_code' => $visit['org_unit_code'],
-                'no_registration' => $visit['no_registration'],
-                'visit_id' => $visit['visit_id'],
-                'clinic_id' => $visit['clinic_id'],
-                'employee_id' => $visit['employee_inap'],
-                'class_room_id' => $visit['class_room_id'],
-                'bed_id' => $visit['bed_id'],
-                'in_date' => $visit['in_date'],
-                'exit_date' => $visit['exit_date'],
-                'keluar_id' => $visit['keluar_id'],
-                'modified_from' => $visit['clinic_id'],
-                'status_pasien_id' => $visit['status_pasien_id'],
-                'ageyear' => $visit['ageyear'],
-                'agemonth' => $visit['agemonth'],
-                'ageday' => $visit['ageday'],
-                'thename' => $visit['diantar_oleh'],
-                'theaddress' => $visit['visitor_address'],
-                'vs_status_id' => $vstatusid,
-                'theid' => $visit['pasien_id'],
-                'isrj' => 0,
-                'gender' => $visit['gender'],
-                'doctor' => $visit['fullname'],
-                'kal_id' => $visit['kal_id'],
-                'petugas_id' => user()->username,
-                'petugas_type' => user()->getOneRoles(),
-                'petugas' => user()->getFullname(),
-                'modified_by' => user()->username
-            ];
-
-            $ex = new ExaminationModel();
-            $bisma++;
-            $ex->insert($dataexam);
-        }
-        // return json_encode($bisma);
+        // echo json_encode($bisma);
         $visit['session_id'] = $session_id;
         // dd($employee);
         return view('admin/patient/profile', [
@@ -7094,7 +7133,7 @@ This Function is used to Add Patient
         $session = session();
         $sessionData = ['gsPoli' => 'P004'];
         $session->set($sessionData);
-        $giTipe = 2;
+        $giTipe = 22;
 
         $title = 'Kebidanan';
 
@@ -7440,6 +7479,8 @@ This Function is used to Add Patient
 
         $result = [];
 
+        // return json_encode($measure_dosis);
+
         if (count($bill_id) > 0) {
 
             $pasienPrescription = new PasienPrescriptionModel();
@@ -7485,6 +7526,8 @@ This Function is used to Add Patient
 
                 $model = new TreatmentObatModel();
                 $modelgf = new GoodGfModel();
+
+                $berhasil = [];
 
                 // return json_encode($soldstatus);
                 foreach ($bill_id as $key => $value) {
@@ -7552,7 +7595,6 @@ This Function is used to Add Patient
                         if ((int)$racikan[$key] == 1 && isset($measure_dosis[$key])) {
                             $data['measure_dosis'] = $measure_dosis[$key];
                         }
-
 
                         $model->save($data, true);
 

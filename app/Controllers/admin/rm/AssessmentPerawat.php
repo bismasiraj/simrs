@@ -108,7 +108,7 @@ class AssessmentPerawat extends BaseController
 
         $controller = new Assessment();
         foreach ($body as $key => $value) {
-            if ($value["id"] == "formaddarp") {
+            if ($value["id"] == "formaddarp" || $value["id"] == "formaddarb") {
                 $perawat = json_decode($this->saveAssessmentPerawat($value["data"]));
             }
             if (str_contains($value["id"], "formGcs")) {

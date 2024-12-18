@@ -50,6 +50,14 @@
     //     $("#jenisresep").val('')
     // })
 
+    $("#divNonRacikan").on("click", function() {
+        $(this).attr("class", "col-md-9 col-sm-9 col-sm-12")
+        $("#divRacikan").attr("class", "col-md-3 col-sm-3 col-sm-12")
+    })
+    $("#divRacikan").on("click", function() {
+        $(this).attr("class", "col-md-9 col-sm-9 col-sm-12")
+        $("#divNonRacikan").attr("class", "col-md-3 col-sm-3 col-sm-12")
+    })
     $("#eresepTab").on("click", function() {
         <?php if ($visit['isrj'] == 1) {
         ?>
@@ -147,15 +155,15 @@
                     resepDetail = data.obat;
                 }
 
-                visitHistory = data.visitHistory;
+                // visitHistory = data.visitHistory;
 
-                $("#historyEresep").html(visitHistory)
+                // $("#historyEresep").html(visitHistory)
 
-                obat = data.historyObat
+                // obat = data.historyObat
 
-                obat.forEach((element, key) => {
-                    fillHistoryEresep(obat[key], obat[key].visit_id)
-                });
+                // obat.forEach((element, key) => {
+                //     fillHistoryEresep(obat[key], obat[key].visit_id)
+                // });
 
 
                 resepGrouped = resepDetail.reduce((result, current) => {
@@ -186,6 +194,7 @@
         });
     }
     const addRowResep = (key, data) => {
+        let jenisresep = $("#jenisresep").val()
         let thetable = `<div class="col-md-4 col-sm-6 col-xs-12"><div class="card border border-1 rounded-4 m-2 p-2">
             <div class="card-body">
                 <h4 class="card-title text-center">RS PKU Muhammadiyah Sampangan</h4>
@@ -232,26 +241,34 @@
 
         $("#displayResep").append(thetable)
 
-        console.log(data)
-
-        data.forEach((value1, key1) => {
-            let measureName = '';
-            measureParam.forEach((melement, mkey) => {
-                if (measureParam[mkey].measure_id == value1.measure_id) {
-                    measureName = measureParam[mkey].measurement;
-                    return false;
-                }
-            });
-            console.log(`#displayResep${key}`)
-            console.log(value1)
-            $(`#displayResep${key}`).append(`
+        if (jenisresep == 8) {
+            data.forEach((value1, key1) => {
+                $(`#displayResep${key}`).append(`
+                <tr>
+                    <td>${value1.description}</td>
+                    <td>${parseFloat(value1.dose_presc)}</td>
+                </tr>
+            `)
+            })
+        } else
+            data.forEach((value1, key1) => {
+                let measureName = '';
+                measureParam.forEach((melement, mkey) => {
+                    if (measureParam[mkey].measure_id == value1.measure_id) {
+                        measureName = measureParam[mkey].measurement;
+                        return false;
+                    }
+                });
+                // console.log(`#displayResep${key}`)
+                // console.log(value1)
+                $(`#displayResep${key}`).append(`
                 <tr>
                     <td>${value1.description}</td>
                     <td>${parseFloat(value1.dose_presc)}</td>
                     <td>${measureName}</td>
                 </tr>
             `)
-        })
+            })
     }
 
     function copyResep(formid) {
@@ -449,8 +466,23 @@
 
                     }
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {}
             });
@@ -580,6 +612,7 @@
             $("#aorno_registration" + billId).val('<?= $visit['no_registration']; ?>');
             $("#aortrans_id" + billId).val('<?= $visit['trans_id']; ?>');
             $("#aormodified_from" + billId).val('<?= $visit['clinic_id']; ?>');
+            $("#aormodified_by" + billId).val('<?= user()->username; ?>');
             $("#aormodified_date" + billId).val(get_date());
             $("#aorisrj" + billId).val('<?= $visit['isrj']; ?>');
             $("#aorthename" + billId).val('<?= $visit['diantar_oleh']; ?>');
@@ -598,7 +631,7 @@
             $("#aorcif" + billId).val(description)
         }
 
-        $("#formAddPrescrBtn").on('click', (function(e) {
+        $("#formAddPrescrBtn").off().on('click', (function(e) {
             let clicked_submit_btn = $("#formprescription").closest('form').find(':submit');
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -634,7 +667,10 @@
                             resepDetail.push(data.data[key])
                         });
 
-                        $("#resepno")
+                        getResep(visit, nomor)
+
+                        $("#divRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
+                        $("#divNonRacikan").attr("class", "col-md-6 col-sm-6 col-sm-12")
 
                         filteredResep($("#resepno").val())
 
@@ -642,9 +678,23 @@
                     }
                     clicked_submit_btn.button('reset');
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -672,9 +722,26 @@
 </script>
 <script type="text/javascript">
     function filteredResep(resepSelected) {
+
+        var jnsrsp = $("#jenisresep").val()
+
         $("#eresepsRacikBody").html("")
         $("#resepno").val(resepSelected)
-        $("#eresepTable").html(`<thead class="table-primary" style="text-align: center;">
+
+        if (jnsrsp == '8') {
+            $("#eresepTable").html(`<thead class="table-primary" style="text-align: center;">
+                                        <tr>
+                                            <th class="text-center" style="width: 60%;">Nama Obat</th class="text-center">
+                                            <th class="text-center" colspan="2" style="width: 30%;">Jumlah</th class="text-center">
+                                            <th class="text-center" style="width: 5%;"></th class="text-center">
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eresepNonRacikBody">
+
+                                                    </tbody>
+                                    `)
+        } else {
+            $("#eresepTable").html(`<thead class="table-primary" style="text-align: center;">
                                         <tr>
                                             <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
                                             <th class="text-center" colspan="2" style="width: 30%;">Jumlah</th class="text-center">
@@ -686,12 +753,15 @@
 
                                                     </tbody>
                                     `)
+        }
 
 
         let data = resepGrouped && resepGrouped[resepSelected] || [];
 
         if (data.length > 0) {
-            $("#modalPrescriptionTitle").html(`${data[0].doctor_from} | ${data[0].resep_no} | ${data[0].treat_date}`)
+            // $("#modalPrescriptionTitle").html(`${data[0].doctor_from} | ${data[0].resep_no} | ${data[0].treat_date}`)
+            $("#modalPrescriptionTitle").html(`E-Resep`)
+
 
             $("#headerPrescriptionDetailModal").html(`
                 <h4 class="text-center">RS PKU Muhammadiyah Sampangan</h4>
@@ -725,7 +795,9 @@
                     </tbody>
                 </table>`)
         } else {
-            $("#modalPrescriptionTitle").html(`<?= user()->getFullname(); ?> | ${resepSelected} | ${get_date()}`)
+            // $("#modalPrescriptionTitle").html(`<?= user()->getFullname(); ?> | ${resepSelected} | ${get_date()}`)
+            $("#modalPrescriptionTitle").html(`E-Resep`)
+
 
             $("#headerPrescriptionDetailModal").html(`
                 <h4 class="text-center">RS PKU Muhammadiyah Sampangan</h4>
@@ -802,7 +874,16 @@
         // }
 
 
-        var jnsrsp = $("#jenisresep").val()
+
+        if (jnsrsp == '8') {
+            $("#divRacikan").hide()
+            $("#eresepBtnGroup").hide()
+            $("#medItemBtnGroup").show()
+        } else {
+            $("#divRacikan").show()
+            $("#eresepBtnGroup").show()
+            $("#medItemBtnGroup").hide()
+        }
         // if ($("#eresepBody table").length == 0) {
         //     console.log(soldstatusarray.includes($("#jenisresep").val()))
         //     console.log('asdf')
@@ -940,6 +1021,7 @@
         });
     }
     const addRowObat = (obatType, resepKe = null, resep = null, keyvisit = null) => {
+
         let bodytable = '';
 
         if (keyvisit == null) {
@@ -1020,6 +1102,7 @@
             var resepNo = resep_no
             var notaNo = '<?= $visit['session_id']; ?>'
             var treatDate = get_date()
+            var thename = '<?= $visit['diantar_oleh']; ?>'
             var dose1 = 0.0
             var dose2 = 0.0
             var classRoomId = ""
@@ -1030,6 +1113,7 @@
             var status_tarif = <?= $visit['isrj'] == 1 ? 0 : 1; ?>;
             var iscetak = 1;
             var bodyId = '<?= $visit['session_id']; ?>'
+            var modified_by = '<?= user()->username; ?>'
             if (racikan == 1)
                 var measureIdName = 'Bks';
             else
@@ -1096,6 +1180,7 @@
             var theaddress = resep?.theaddress
             var modifiedDate = resep?.modified_date
             var modifiedFrom = resep?.modified_from
+            var modifiedBy = resep?.modified_by
             var theid = resep?.theid
             var orgUnitCode = resep?.org_unit_code
             var cif = resep?.cif
@@ -1242,10 +1327,11 @@
                     <td>
                         <select id="aordescription1${billId}" class="form-control select2-full-width fillitemidR" name="description1[]" onchange="itemObatChange('${billId}', this.value)" style="width: 100%"></select>
                     </td>
-                    <td>
+                    <td ` + (soldstatus == '8' ? 'colspan="2"' : '') + `>
                         <input type="text" name="dose_presc[]" id="aordose_presc${billId}" placeholder="" value="" class="form-control text-right" onchange="decimalInput(this)" onfocus="this.value=''">
+                        <select name="measure_dosis[]" id="aormeasure_dosis${billId}" placeholder="" value="" class="form-select d-none" readonly></select>
                     </td>
-                    <td>
+                    <td class="` + (soldstatus == '8' ? 'd-none' : '') + `">
                         <input type="text" name="" id="aormeasure_idname${billId}" placeholder="" value="" class="form-control medicine_name" readonly>
                     </td>
                 </tr>
@@ -1262,12 +1348,12 @@
                         //     )
                         // )
                         .append($('<td>')
-                            .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
                 }
             } else {
                 $(`#${billId}`)
-                    .append($('<td colspan="3">').append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
+                    .append($(`<td colspan="3" class="` + (soldstatus == '8' ? 'd-none' : '') + `">`).append('<input type="text" name="description2[]" id="aordescription2' + billId + '" placeholder="" class="form-control">'))
 
 
                 if (keyvisit == null) {
@@ -1278,7 +1364,7 @@
                         //     )
                         // )
                         .append($('<td>')
-                            .append('<button type="button" onclick="removeRacik(\'' + resepNo + resepKe + 'table\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
+                            .append('<button type="button" onclick="removeRacik(\'' + billId + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>')
                         )
                 }
             }
@@ -1308,30 +1394,6 @@
                     <tbody id="${resepNo}${resepKe}">
                     </tbody>
                 </table>`)
-
-            // $(bodytable).append(`
-            //         <tbody id="${resepNo}${resepKe}">
-            //             <tr class="table-warning">
-            //                 <th class="text-center" style="width: 5%;"></th class="text-center">
-            //                 <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">
-            //                 <th class="text-center" style="width: 10%;"><input type="text" name="jml_bks[]" id="aorjml_bks${billId}" placeholder="" value="" class="form-control text-right updateJmlBks"  onchange="updateJmlBks('${resepNo}',${resepKe},this.value)"  onfocus="this.value=''"></th class="text-center">
-            //                 <th class="text-center" style="width: 10%;"><select name="measure_id2[]" id="aormeasure_id2${billId}" placeholder="" value="" class="form-select text-right" readonly></th class="text-center">
-            //                 <th class="text-center" colspan="5" style="width: 40%;"><input type="text" name="description2[]" id="aordescription2${billId}" placeholder="" class="form-control"></th class="text-center">
-            //                                                 ` + (keyvisit == null ? `
-            //                 ` : ``) + `
-            //             </tr>
-            //             <tr class="table-warning">
-            //                 <th class="text-center" style="width: 5%;">No</th class="text-center">
-            //                 <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
-            //                 <th class="text-center" style="width: 10%;">DTD</th class="text-center">
-            //                 <th class="text-center" style="width: 10%;">Dosis</th class="text-center">
-            //                 <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
-            //                 <th class="text-center" style="width: 10%;">Qty</th class="text-center">
-            //                 <th class="text-center" style="width: 10%;">Satuan</th class="text-center">
-            //                 <th class="text-center" colspan="2"></th class="text-center">
-            //                                                 ` + (keyvisit == null ? `` : ``) + `
-            //             </tr>
-            //         </tbody>`)
 
 
             $(`#aormeasure_id2${billId}`).on("change", function() {
@@ -1388,7 +1450,7 @@
                         </div>
                     </td>
                     <td id="tdbtnremoveracikresep${resepKe}" rowspan="1000">
-                        <button type="button" onclick="removeRacik('${resepNo}${resepKe}table')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>
+                        <button type="button" onclick="removeRacik('${billId}')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>
                     </td>
                 `);
             }
@@ -1451,10 +1513,30 @@
         } else {
             $(`#aordose${billId}`).on("change", function() {
                 let dose = $(`#aordose${billId}`).val()
-                let origDose = $(`#aororig_dose${billId}`).val()
-                let jmlBks = $(`#aorjml_bks${billId}`).val()
-                let dosePresc = jmlBks * dose / origDose;
-                $(`#aordose_presc${billId}`).val(dosePresc)
+                var result = dose
+                if (dose.includes('/')) {
+                    // Split the value by '/' and calculate the result
+                    var parts = dose.split('/');
+                    if (parts.length === 2) {
+                        var numerator = parseFloat(parts[0]);
+                        var denominator = parseFloat(parts[1]);
+
+                        if (!isNaN(numerator) && !isNaN(denominator) && denominator !== 0) {
+                            // Update the input field with the result of the division
+                            result = numerator / denominator;
+                            $(this).val(result);
+                        }
+                    }
+                    // let origDose = $(`#aororig_dose${billId}`).val()
+                    let jmlBks = $(`#aorjml_bks${billId}`).val()
+                    let dosePresc = jmlBks * result;
+                    $(`#aordose_presc${billId}`).val(dosePresc)
+                } else {
+                    let origDose = $(`#aororig_dose${billId}`).val()
+                    let jmlBks = $(`#aorjml_bks${billId}`).val()
+                    let dosePresc = jmlBks * result / origDose;
+                    $(`#aordose_presc${billId}`).val(dosePresc)
+                }
             })
         }
 
@@ -1493,6 +1575,7 @@
             .append('<input name="no_registration[]" id="aorno_registration' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="trans_id[]" id="aortrans_id' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="modified_from[]" id="aormodified_from' + billId + '" type="hidden" class="form-control" />')
+            .append('<input name="modified_by[]" id="aormodified_by' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="modified_date[]" id="aormodified_date' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="isrj[]" id="aorisrj' + billId + '" type="hidden" class="form-control" />')
             .append('<input name="thename[]" id="aorthename' + billId + '" type="hidden" class="form-control" />')
@@ -1583,6 +1666,7 @@
         $("#aorno_registration" + billId).val(noRegistration);
         $("#aortrans_id" + billId).val(transId);
         $("#aormodified_from" + billId).val(modifiedFrom);
+        $("#aormodified_by" + billId).val(modifiedBy);
         $("#aormodified_date" + billId).val(modifiedDate);
         $("#aorisrj" + billId).val(isrj);
         $("#aorthename" + billId).val(thename);
@@ -1613,7 +1697,7 @@
                 }
                 $("#aordescription" + billId).val(description)
             } else if (soldstatus == '8') {
-                initializeResepAllSelect2('aordescription1' + billId)
+                initializeResepAlkesSelect2('aordescription1' + billId)
                 $("#aordescription" + billId).val(description)
             } else {
                 initializeResepAlkesSelect2('aordescription1' + billId)
@@ -1628,7 +1712,7 @@
                 }
                 $("#aordescription" + billId).val(resep.description)
             } else if (soldstatus == '8') {
-                initializeResepAllSelect2('aordescription1' + billId, resep.description)
+                initializeResepAlkesSelect2('aordescription1' + billId, resep.description)
                 $("#aordescription" + billId).val(resep.description)
             } else {
                 initializeResepAlkesSelect2('aordescription1' + billId, resep.description)

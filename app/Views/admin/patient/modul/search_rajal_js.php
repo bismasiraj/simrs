@@ -49,8 +49,22 @@ $permissions = user()->getPermissions();
                 });
                 $("#form1btn").html('<i class="fa fa-search"></i> Cari')
             },
-            error: function() {
-                errorSwal('Data terlalu besar, silahkan persempit range tanggal atau ubah filter menjadi lebih spesifik')
+            error: function(jqXHR, textStatus, errorThrown) {
+                let errorMessage = "An error occurred: ";
+
+                if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                    errorMessage = jqXHR.responseJSON.message;
+                } else if (textStatus === "timeout") {
+                    errorMessage = "The request timed out.";
+                } else if (textStatus === "error") {
+                    errorMessage = "Error: " + errorThrown;
+                } else if (textStatus === "abort") {
+                    errorMessage = "The request was aborted.";
+                } else {
+                    errorMessage = "Unknown error occurred.";
+                }
+
+                errorSwal(errorMessage);
                 $("#form1btn").html('<i class="fa fa-search"></i>')
             }
         });

@@ -308,7 +308,7 @@ $group = user()->getRoles();
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>B</b>"))
-                    .append($("<td colspan='5'>").html(examselect.pemeriksaan))
+                    .append($("<td colspan='5'>").html(examselect.alo_anamnase))
                 )
                 .append($("<tr>")
                     .append($("<td>").html("<b>A</b>"))
@@ -602,14 +602,17 @@ $group = user()->getRoles();
 
 
 
-
+        let n = 1;
         $("#formaddacppt").find("input, textarea").val(null)
-        if (examForassessment.length) {
-            let initialexam = examForassessment[examForassessment.length - 1]
+        if (examForassessment.length > 0) {
+            let initialexam = examForassessment[examForassessment.length - n]
             let lastBodyId = initialexam.body_id
             $.each(initialexam, function(key, value) {
                 $("#acppt" + key).val(value)
             })
+            if ($("#acpptweight").val() == '') {
+                n + 1
+            }
         }
         $("#bodyFallRiskCppt").html("")
         $("#bodyGcsCppt").html("")
@@ -786,12 +789,47 @@ $group = user()->getRoles();
 
 
                 if (examForassessment.length > 0) {
-                    displayTableAssessmentKeperawatan();
-                    displayTableAssessmentKeperawatanForVitalSign();
+                    $("#cpptBody").html("")
+                    $.each(examForassessment, function(key, value) {
+                        if (value.account_id == 3 || value.account_id == 4) {
+                            let pd = examForassessment[key]
+                            addRowCPPT(value, key)
+                        }
+                    })
                 }
+            },
+            error: function() {
+                $("#cpptBody").html(tempTablesNull())
+                $("#vitalSignBody").html(tempTablesNull())
+            }
+        });
+    }
 
-
-                fillRiwayatArp()
+    function copyLastDiagnosis() {
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/rm/assessment/getLastDiagnosis',
+            type: "POST",
+            data: JSON.stringify({
+                'visit_id': '<?= $visit['visit_id']; ?>',
+                'username': '<?= user()->username; ?>'
+            }),
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            beforeSend: function() {
+                $("#cpptDivForm").hide()
+                getLoadingscreen("contentCppt", "loadContentCppt")
+                getLoadingscreen("contentAssessmentPerawat", "loadContentAssessmentPerawat")
+                $("#cpptBody").html(loadingScreen())
+                $("#vitalSignBody").html(loadingScreen())
+            },
+            processData: false,
+            success: function(data) {
+                if (data) {
+                    $("#acpptteraphy_desc").val(data.diagnosa_desc)
+                } else {
+                    alert("tidak ada data")
+                }
             },
             error: function() {
                 $("#cpptBody").html(tempTablesNull())
@@ -899,6 +937,33 @@ $group = user()->getRoles();
         // tinyMCE.triggerSave();
         // let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
+
+        let account_id = $("#acpptaccount_id").val()
+
+        if ($("#acpptanamnase").val() == '') {
+            if (account_id == '3')
+                alert("Subyektif tidak boleh kosong")
+            else {
+                alert("Situation tidak boleh kosong")
+            }
+            return false;
+        }
+        if ($("#acpptteraphy_desc").val() == '') {
+            if (account_id == '3')
+                alert("Asesmen tidak boleh kosong")
+            else {
+                alert("Asesmen tidak boleh kosong")
+            }
+            return false;
+        }
+        if ($("#acpptinstruction").val() == '') {
+            if (account_id == '3')
+                alert("Planning tidak boleh kosong")
+            else {
+                alert("Recommendation tidak boleh kosong")
+            }
+            return false;
+        }
 
         $("#formaddacppt").find("button.btn-save:visible").trigger("click")
 

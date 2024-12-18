@@ -6,10 +6,11 @@
     $gsPoli = $session->gsPoli;
     $permissions = user()->getPermissions();
     $roles = user()->getRoles();
+    // return ($roles);
     ?>
     <form id="form2" action="" method="post" class="">
+        <input type="hidden" name="giTipe" value="<?= $giTipe; ?>">
         <div class="box-body row mt-4 mb-4">
-            <input type="hidden" name="ci_csrf_token" value="">
             <div class="col-sm-2">
                 <div class="form-group">
                     <label>Nama Pasien</label>
@@ -73,26 +74,33 @@
                 <div class="form-group">
                     <label>Dokter</label>
                     <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
-                        <?php if (!isset($roles['11'])) { ?>
+                        <?php if (!isset($roles['11']) || isset($roles['2'])): ?>
                             <option value="%">Semua</option>
-                        <?php } ?>
-                        <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
-                            <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
-                        <?php
-                        } else {
-                        ?>
-                            <?php $dokterlist = array();
-                            foreach ($dokter as $key => $value) {
-                                foreach ($value as $key1 => $value1) {
-                                    $dokterlist[$key1] = $value1;
+                        <?php endif; ?>
+
+                        <?php if ($giTipe == 22): ?>
+                            <option value="48">dr. Dimas Mardiawan, SpOG</option>
+                            <option value="248">dr. Gathot Adi Yanuar, Sp.OG</option>
+                        <?php else: ?>
+                            <?php if (!is_null(user()->employee_id) && isset($roles['11'])): ?>
+                                <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
+                            <?php else: ?>
+                                <?php
+                                // Prepare dokter list
+                                $dokterlist = [];
+                                foreach ($dokter as $value) {
+                                    foreach ($value as $key1 => $value1) {
+                                        $dokterlist[$key1] = $value1;
+                                    }
                                 }
-                            }
-                            asort($dokterlist);
-                            ?>
-                            <?php foreach ($dokterlist as $key => $value) { ?>
-                                <option value="<?= $key; ?>"><?= $value; ?></option>
-                        <?php }
-                        } ?>
+                                asort($dokterlist); // Sort the dokter list
+                                ?>
+
+                                <?php foreach ($dokterlist as $key => $value): ?>
+                                    <option value="<?= $key; ?>"><?= $value; ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </select>
                     <span class="text-danger" id="error_doctor"></span>
                 </div>

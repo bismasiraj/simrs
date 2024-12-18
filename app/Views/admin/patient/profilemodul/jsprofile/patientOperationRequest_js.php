@@ -668,6 +668,8 @@
                     jsonObj[key] = value;
                 });
 
+                jsonObj.operation_desc = $('#quill_operation_desc_12').text();
+
                 let diag_cats = dataSend.getAll('diag_cat[]');
                 let diag_ids = dataSend.getAll('diag_id[]');
                 let diag_names = dataSend.getAll('diag_name[]');

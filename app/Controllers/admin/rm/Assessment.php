@@ -1607,21 +1607,6 @@ class Assessment extends BaseController
         } else {
             $data['discount'] = (float)$data['discount'];
         }
-        if (is_null($dose) || empty($dose) || $dose == '') {
-            $data['dose'] = 0;
-        } else {
-            $data['dose'] = (float)$data['dose'];
-        }
-        if (is_null($orig_dose) || empty($orig_dose) || $orig_dose == '') {
-            $data['orig_dose'] = 0;
-        } else {
-            $data['orig_dose'] = (float)$data['orig_dose'];
-        }
-        if (is_null($dose_presc) || empty($dose_presc) || $dose_presc == '') {
-            $data['dose_presc'] = 0;
-        } else {
-            $data['dose_presc'] = (float)$data['dose_presc'];
-        }
         if (
             is_null($amount_paid) || empty($amount_paid) || $amount_paid == ''
         ) {
@@ -1696,11 +1681,7 @@ class Assessment extends BaseController
         } else {
             $data['subsidisat'] = (float)$data['subsidisat'];
         }
-        if (is_null($stock_available) || empty($stock_available) || $stock_available == '') {
-            $data['stock_available'] = 0;
-        } else {
-            $data['stock_available'] = (float)$data['stock_available'];
-        }
+
         if (is_null($profession) || empty($profession) || $profession == '') {
             $data['profession'] = 0;
         } else {
@@ -1764,7 +1745,7 @@ class Assessment extends BaseController
 
         $db = db_connect();
 
-        $select = $this->lowerKey($db->query("select * from treatment_perawat where visit_id = '$visit'")->getResultArray());
+        $select = $this->lowerKey($db->query("select * from treatment_perawat where visit_id = '$visit' order by treat_date asc")->getResultArray());
 
 
         return json_encode($select);
@@ -3900,6 +3881,29 @@ class Assessment extends BaseController
             'examDetail' => $examDetail
         ]);
     }
+    public function getLastDiagnosis()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+        $body = $this->request->getBody();
+
+        $body = json_decode($body, true);
+        $visit_id = $body['visit_id'];
+        $username = $body['username'];
+
+        $model = new ExaminationModel();
+        $select = $model->select("teraphy_desc as diagnosa_desc")->where("visit_id = '" . $visit_id . "' and petugas = '" . $username . "'")->orderBy("examination_date desc")->first();
+
+        if ($select == null) {
+            $model = new PasienDiagnosaModel();
+            $select = $model->select("diagnosa_desc")->where("visit_id = '" . $visit_id . "' and modified_by = '" . $username . "'")->orderBy("date_of_diagnosa desc")->first();
+        }
+        return json_encode($select);
+    }
     public function saveTransferInternal()
     {
         if (!$this->request->is('post')) {
@@ -4343,6 +4347,73 @@ class Assessment extends BaseController
 
         return json_encode($dataexam);
     }
+    public function saveSesi()
+    {
+        if (!$this->request->is('post')) {
+            return $this->response->setJSON([
+                'status' => 'error',
+                'message' => 'Invalid request method'
+            ])->setStatusCode(405); // Method Not Allowed
+        }
+        $body = $this->request->getBody();
+        $body = json_decode($body, true);
+        $dataexam = [];
+        foreach ($body as $key => $value) {
+            ${$key} = $value;
+            if (!(is_null(${$key}) || ${$key} == ''))
+                $dataexam[$key] = $value;
+            if (isset($examination_date))
+                $dataexam['examination_date'] = str_replace("T", " ", $examination_date);
+            if (isset($temperature) && $temperature != '')
+                $dataexam['temperature'] = (float)$dataexam['temperature'];
+            else
+                $dataexam['temperature'] = null;
+
+            if (isset($tension_upper) && $tension_upper != '')
+                $dataexam['tension_upper'] = (float)$dataexam['tension_upper'];
+            else
+                $dataexam['tension_upper'] = null;
+
+            if (isset($tension_below) && $tension_below != '')
+                $dataexam['tension_below'] = (float)$dataexam['tension_below'];
+            else
+                $dataexam['tension_below'] = null;
+
+            if (isset($nadi) && $nadi != '')
+                $dataexam['nadi'] = (float)$dataexam['nadi'];
+            else
+                $dataexam['nadi'] = null;
+
+            if (isset($nafas) && $nafas != '')
+                $dataexam['nafas'] = (float)$dataexam['nafas'];
+            else
+                $dataexam['nafas'] = null;
+
+            if (isset($weight) && $weight != '')
+                $dataexam['weight'] = (float)$dataexam['weight'];
+            else
+                $dataexam['weight'] = null;
+
+            if (isset($height) && $height != '')
+                $dataexam['height'] = (float)$dataexam['height'];
+            else
+                $dataexam['height'] = null;
+
+            if (isset($arm_diameter) && $arm_diameter != '')
+                $dataexam['arm_diameter'] = (float)$dataexam['arm_diameter'];
+            else
+                $dataexam['arm_diameter'] = null;
+
+            if (isset($saturasi) && $saturasi != '')
+                $dataexam['saturasi'] = (int)$dataexam['saturasi'];
+            else
+                $dataexam['saturasi'] = null;
+        }
+
+        $ex = new ExaminationModel();
+        $ex->save($dataexam);
+        return json_encode($dataexam);
+    }
     public function saveVitalSign()
     {
         if (!$this->request->is('post')) {
@@ -4560,10 +4631,12 @@ class Assessment extends BaseController
 
             $exam = $examModel->select("*")
                 ->where("document_id", $select['body_id'])->first();
-            $exam = $this->lowerKeyOne($exam);
 
-            $babyModel = new BabyModel();
-            $baby = $babyModel->select("
+            if (!is_null($exam)) {
+                $exam = $this->lowerKeyOne($exam);
+
+                $babyModel = new BabyModel();
+                $baby = $babyModel->select("
             org_unit_code,
             visit_id,
             baby_id,
@@ -4593,16 +4666,17 @@ class Assessment extends BaseController
             valid_pasien
             ")->where("document_id", $select['body_id'])->findAll();
 
-            if (count($baby) > 0) {
-                $whereIn = '';
-                foreach ($baby as $key => $value) {
-                    $whereIn .= "'" . $value['baby_id'] . "',";
-                }
-                $whereIn = substr($whereIn, 0, -1);
+                if (count($baby) > 0) {
+                    $whereIn = '';
+                    foreach ($baby as $key => $value) {
+                        $whereIn .= "'" . $value['baby_id'] . "',";
+                    }
+                    $whereIn = substr($whereIn, 0, -1);
 
-                $exambaby = $examModel->select("*")
-                    ->where("document_id in ($whereIn)")->findAll();
-                $exambaby = $this->lowerKey($exambaby);
+                    $exambaby = $examModel->select("*")
+                        ->where("document_id in ($whereIn)")->findAll();
+                    $exambaby = $this->lowerKey($exambaby);
+                }
             }
         }
 

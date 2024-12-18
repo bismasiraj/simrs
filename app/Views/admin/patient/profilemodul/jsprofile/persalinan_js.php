@@ -65,8 +65,10 @@
                     // console.log(babyAll)
 
                     babyExamAll = data?.exambaby
+                    disablePersalinan()
+                } else {
+                    enablePersalinan()
                 }
-                disablePersalinan()
             },
             error: function(xhr) { // if error occured
                 alert("Error occured.please try again");

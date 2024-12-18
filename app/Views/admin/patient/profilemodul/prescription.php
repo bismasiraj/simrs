@@ -110,7 +110,7 @@ $permissions = user()->getPermissions();
                     </div>
                     <?php if (user()->checkPermission("eresep", "c")) {
                         if (true) { ?>
-                            <div id="eresepBtnGroup" class="row m-4">
+                            <div id="generateResepGroup" class="row m-4">
                                 <div class="col-md-12">
                                     <div id="eresepAddR" class="box-tab-tools text-center">
                                         <a data-toggle="modal" onclick="generateResep('<?= $visit['no_registration']; ?>','<?= $visit['clinic_id']; ?>','<?= $visit['isrj']; ?>')" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Buat Resep Baru</a>
@@ -118,6 +118,17 @@ $permissions = user()->getPermissions();
                                 </div>
                             </div>
                     <?php }
+                    } ?>
+                    <?php if (user()->checkPermission("medicalitem", "c")) {
+                    ?>
+                        <div id="medItemBtnGroup" class="row">
+                            <div class="col-md-12">
+                                <div id="eresepAdds" class="box-tab-tools text-center">
+                                    <a data-toggle="modal" onclick="generateResep('<?= $visit['no_registration']; ?>','<?= $visit['clinic_id']; ?>','<?= $visit['isrj']; ?>')" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php
                     } ?>
                 </div>
             </form>
@@ -190,7 +201,7 @@ $permissions = user()->getPermissions();
 
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 col-sm-12">
+                        <div id="divNonRacikan" class="col-md-6 col-sm-6 col-sm-12">
                             <div class="card border border-1 rounded-4 m-2 p-2">
                                 <h3 class="card-title text-center">Non Racikan</h3>
 
@@ -216,7 +227,7 @@ $permissions = user()->getPermissions();
                                                     <div id="eresepBtnGroup" class="row">
                                                         <div class="col-md-12">
                                                             <div id="eresepAddR" class="box-tab-tools text-center">
-                                                                <a data-toggle="modal" onclick="addNR()" class="btn btn-success btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
+                                                                <a data-toggle="modal" onclick="addNR()" class="btn btn-success btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Non Racikan</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -227,7 +238,7 @@ $permissions = user()->getPermissions();
                                                 <div id="medItemBtnGroup" class="row">
                                                     <div class="col-md-12">
                                                         <div id="eresepAdds" class="box-tab-tools text-center">
-                                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -238,7 +249,7 @@ $permissions = user()->getPermissions();
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 col-sm-12">
+                        <div id="divRacikan" class="col-md-6 col-sm-6 col-sm-12">
                             <div class="card border border-1 rounded-4 m-2 p-2">
                                 <h3 class="card-title text-center">Racikan</h3>
                                 <div class="card-body">
@@ -253,7 +264,7 @@ $permissions = user()->getPermissions();
                                                     <div id="eresepBtnGroup" class="row">
                                                         <div class="col-md-12">
                                                             <div id="eresepRAddNR" class="box-tab-tools text-center" style="">
-                                                                <a data-toggle="modal" onclick="addR()" class="btn btn-warning btn-lg" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
+                                                                <a data-toggle="modal" onclick="addR()" class="btn btn-warning btn-lg btn-to-hide" id="addRBtn" style="width: 300px"><i class=" fa fa-plus"></i> TAMBAH E-RESEP Racikan</a>
                                                             </div>
                                                         </div>
                                                     </div>

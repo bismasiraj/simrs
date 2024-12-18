@@ -53,7 +53,7 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'casemanager'])) { ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'dokter', 'perawat', 'casemanager', 'bidan'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('rajal'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/rajal">
                             <i class="mdi mdi-stethoscope"></i> <span> Rawat Jalan</span>
@@ -67,8 +67,8 @@ $basecontroller->checkMenuActive('register');
                 </li>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'customerservices', 'perawat', 'operatorbangsal', 'bangsal', 'dokter'])) { ?>
                 <?php } ?>
-                <?php if (user()->checkRoles(['superuser', 'admin', 'vk'])) { ?>
-                    <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
+                <?php if (user()->checkRoles(['superuser', 'admin', 'bidan'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('bidan'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/bidan">
                             <i class="mdi mdi-baby-face-outline"></i> <span> Kebidanan</span>
                         </a>

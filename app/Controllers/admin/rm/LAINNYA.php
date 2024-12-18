@@ -435,41 +435,43 @@ class lainnya extends \App\Controllers\BaseController
             select 
             pd.PASIEN_DIAGNOSA_ID,
             pd.body_id,
-            ei.WEIGHT as berat,
-            ei.HEIGHT as tinggi,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.nadi,
-            ei.TEMPERATURE AS Suhu,
-            ei.NAFAS as respiration,
-            ei.SATURASI AS SPO2
+            ed.WEIGHT as berat,
+            ed.HEIGHT as tinggi,
+            ed.TENSION_UPPER as tensi_atas,
+            ed.TENSION_BELOW as tensi_bawah,
+            ed.nadi,
+            ed.TEMPERATURE AS Suhu,
+            ed.NAFAS as respiration,
+            ed.SATURASI AS SPO2
 
             from pasien_diagnosa pd left outer join  clinic c on pd.clinic_id = c.clinic_id
             left outer join EXAMINATION_INFO ei on ei.body_id = pd.BODY_ID
+			inner join EXAMINATION_DETAIL ed ON ei.PASIEN_DIAGNOSA_ID = ed.DOCUMENT_ID
            , pasien p 
             where 
-            pd.PASIEN_DIAGNOSA_ID = '2024050311063402401BC'
-            and PD.VISIT_ID =  '202404241151300470C77'
+			1=1
+            and pd.PASIEN_DIAGNOSA_ID = '" . $vactination_id . "'
+            and PD.VISIT_ID =  '" . $visit['visit_id'] . "'
             and pd.NO_REGISTRATION = p.NO_REGISTRATION
             
             group by 
             pd.PASIEN_DIAGNOSA_ID,
             pd.body_id,
-            ei.WEIGHT,
-            ei.HEIGHT, 
-            ei.TENSION_UPPER, 
-            ei.TENSION_BELOW, 
-            ei.nadi,
-            ei.NAFAS, 
-            ei.SATURASI,
-            ei.TEMPERATURE
-            ")->getResultArray());
+            ed.WEIGHT,
+            ed.HEIGHT, 
+            ed.TENSION_UPPER, 
+            ed.TENSION_BELOW, 
+            ed.nadi,
+            ed.NAFAS, 
+            ed.SATURASI,
+            ed.TEMPERATURE
+            ")->getResultArray()) ?? [];
 
             $apgarWaktu = $this->lowerKey($db->query(
                 "
                SELECT * FROM ASSESSMENT_PARAMETER_type WHERE p_type in ('ASES032','ASES033', 'ASES034')
                 "
-            )->getResultArray());
+            )->getResultArray() ?? []);
             $apgarData = $this->lowerKey($db->query(
                 "
                SELECT 
@@ -486,12 +488,12 @@ class lainnya extends \App\Controllers\BaseController
                 LEFT JOIN 
                     ASSESSMENT_PARAMETER ON ASSESSMENT_APGAR_DETAIL.PARAMETER_ID = ASSESSMENT_PARAMETER.PARAMETER_ID
                 WHERE 
-                    ASSESSMENT_APGAR_DETAIL.BODY_ID = '20240530183632520'
-                    AND ASSESSMENT_APGAR_DETAIL.VISIT_ID = '20240530141940038069A'
+                    ASSESSMENT_APGAR_DETAIL.BODY_ID = '" . $vactination_id . "'
+                    AND ASSESSMENT_APGAR_DETAIL.VISIT_ID = '" . $visit['visit_id'] . "'
                     AND ASSESSMENT_PARAMETER.P_TYPE IN ('ASES032', 'ASES033', 'ASES034')
                 GROUP BY 
                     ASSESSMENT_PARAMETER.PARAMETER_DESC, ASSESSMENT_PARAMETER.PARAMETER_ID"
-            )->getResultArray());
+            )->getResultArray() ?? []);
 
             $neonatus = $this->lowerKey($db->query(
                 "
@@ -511,13 +513,13 @@ class lainnya extends \App\Controllers\BaseController
                     RESUSITASI AS RESUSITASI
                 FROM ASSESSMENT_NEONATUS_PHYSIC
                 WHERE 
-                    ASSESSMENT_NEONATUS_PHYSIC.BODY_ID = '20240530183632520'
-                    AND ASSESSMENT_NEONATUS_PHYSIC.VISIT_ID = '20240530141940038069A'
+                    ASSESSMENT_NEONATUS_PHYSIC.BODY_ID = '" . $vactination_id . "'
+                    AND ASSESSMENT_NEONATUS_PHYSIC.VISIT_ID = '" . $visit['visit_id'] . "'
                "
-            )->getResultArray());
+            )->getResultArray() ?? []);
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
-            $selectinfo = $this->query_template_info($db, '2024052400101208008C3', '202405262033530190C16');
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+            $selectinfo = $this->query_template_info($db, $visit['visit_id'], $vactination_id);
 
             if (isset($select[0])) {
                 return view("admin/patient/profilemodul/formrm/rm/LAINNYA/persalinan.php", [

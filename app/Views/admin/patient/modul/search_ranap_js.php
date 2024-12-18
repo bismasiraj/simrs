@@ -2029,10 +2029,12 @@
     }
 
     const redirectToProfileBySession = (visit, base64json, body_id = null) => {
-        if (body_id == null)
-            window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json, '_blank');
-        else
+        if (body_id == null) {
+            body_id = get_bodyid()
+            window.open('<?= base_url(); ?>admin/patient/redirectProfileRanap/' + visit + '/' + base64json + '/' + body_id + '/true', '_blank');
+        } else {
             window.open('<?= base_url(); ?>admin/patient/profileranap/' + visit + '/' + base64json + '/' + body_id, '_blank');
+        }
 
         $("#historyCpptList").modal("hide")
     }

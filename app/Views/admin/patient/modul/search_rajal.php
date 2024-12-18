@@ -6,7 +6,7 @@ $roles = user()->getRoles();
 ?>
 
 <div class="tab-pane tab-content-height
-<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 73 || $giTipe == 50 || user()->checkRoles(['dokter'])) echo "active"; ?>
+<?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 22 || $giTipe == 73 || $giTipe == 50 || user()->checkRoles(['dokter'])) echo "active"; ?>
 " id="rawat_jalan">
     <div class="row">
         <div class="mt-4">
@@ -56,7 +56,17 @@ $roles = user()->getRoles();
                             <label>Dokter</label>
                             <select id="dokter" class="form-select" name="dokter" onchange="showdate(this.value)">
                                 <?php if (!is_null(user()->employee_id) && isset($roles['11'])) { ?>
+                                    <?php if (isset($roles['2'])) {
+                                    ?>
+                                        <option value="%">Semua</option>
+                                    <?php
+                                    } ?>
                                     <option value="<?= user()->employee_id; ?>"><?= user()->getFullname(); ?></option>
+                                <?php
+                                } else if ($giTipe == 22) {
+                                ?>
+                                    <option value="48">dr. Dimas Mardiawan, SpOG</option>
+                                    <option value="248">dr. Gathot Adi Yanuar, Sp.OG</option>
                                 <?php
                                 } else {
                                 ?>

@@ -45,37 +45,79 @@
         var p6 = '';
         var p7 = '';
 
+        var total = 0;
+        var kategori = '';
+
         $.each(fallRiskDetail, function(key, value) {
             if (value.body_id == fallselect.body_id) {
                 if (value.parameter_id == '01') {
                     p1 = value.value_desc
+                    total += value.value_score
                 }
                 if (value.parameter_id == '02') {
                     p2 = value.value_desc
+                    total += value.value_score
                 }
                 if (value.parameter_id == '03') {
                     p3 = value.value_desc
+                    total += value.value_score
                 }
                 if (value.parameter_id == '04') {
                     p4 = value.value_desc
+                    total += value.value_score
                 }
                 if (value.parameter_id == '05') {
                     p5 = value.value_desc
+                    total += value.value_score
                 }
                 if (value.parameter_id == '06') {
                     p6 = value.value_desc
+                    total += value.value_score
+                }
+                if (value.parameter_id == '07') {
+                    p7 = value.value_desc
+                    total += value.value_score
                 }
             }
         })
+
+        console.log(total)
+
+
+        if (fallselect.p_type == 'ASES019') {
+            if (total >= 0 && total <= 24) {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            } else if (total > 24 && total <= 50) {
+                kategori = '<div class="text-warning">Risiko rendah</div>';
+            } else if (total > 50) {
+                kategori = '<div class="text-danger">Risiko tinggi</div>';
+            } else {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            }
+        } else {
+            if (total >= 7 && total <= 11) {
+                kategori = '<div class="text-warning">Risiko rendah</div>';
+            } else if (total > 11) {
+                kategori = '<div class="text-danger">Risiko tinggi</div>';
+            } else {
+                kategori = '<div class="text-success">Tidak ada risiko</div>';
+            }
+        }
+
+
         $("#fallBody").append($("<tr>")
             .append($("<td>").append((fallselect.examination_date)?.substring(0, 16)))
             .append($("<td>").html(fallselect.modified_by))
             .append($("<td>").html(type))
-            .append($("<td>").html(p1))
-            .append($("<td>").html(p2))
-            .append($("<td>").html(p3))
-            .append($("<td>").html(p4))
-            .append($("<td>").html(p5))
+            // .append($("<td>").html(p1))
+            // .append($("<td>").html(p2))
+            // .append($("<td>").html(p3))
+            // .append($("<td>").html(p4))
+            // .append($("<td>").html(p5))
+            // .append($("<td>").html(p6))
+            // .append($("<td>").html(p7))
+            .append($("<td class=\"text-center\">").html(total))
+            .append($("<td>").html(kategori))
             .append($("<td>").html('<button type="button" onclick="editfall(' + key + ')" class="btn btn-warning" data-row-id="1" autocomplete="off"><i class="fa fa-edit">Edit</i></button>'))
             .append($("<td>").html('<button type="button" onclick="removeRacik(\'' + fallselect.body_id + '\')" class="btn btn-danger" data-row-id="1" autocomplete="off"><i class="fa fa-trash"></i></button>'))
         )

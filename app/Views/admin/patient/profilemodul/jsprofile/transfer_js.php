@@ -8,10 +8,30 @@
     let visitTransfer = []
     let clinicDoctors = [];
     var i = 0
+    // flatpickrInstances["flatskdptglkontrol"] = flatpickr("#flatskdptglkontrol", {
+    //     enableTime: false,
+    //     dateFormat: "d/m/Y", // Display format
+    //     time_24hr: false, // 24-hour time format
+    //     defaultDate: moment().format("DD/MM/YYYY"),
+    //     minuteIncrement: 1,
+    // });
+    // $("#" + flatskdptglkontrol).prop("readonly", false);
+    // $("#" + flatskdptglkontrol).on("change", function() {
+    //     let theid = flatskdptglkontrol.replace("flat", "");
+    //     let thevalue = $(this).val();
+    //     let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+    //         "YYYY-MM-DD HH:mm"
+    //     );
+    //     $("#" + theid)
+    //         .val(formattedDate)
+    //         .trigger("change");
+    // });
     // addRanap('100000') // blm ranap
     // getAkomodasi('202408030835470650684') // sudah ranap
     $("#transferTab").on("click", function() {
         getTindakLanjut()
+        setDataTindakLanjut()
+        $("#atransferisinternal").val(4).trigger("change")
     })
 
     const setDataTindakLanjut = (data = null) => {
@@ -56,6 +76,7 @@
             moment().format("DD/MM/YYYY HH:mm")
         );
         $("#flatatransferexamination_date").trigger("change");
+
         getClinicDoctors()
         enableTindakLanjut()
     }
@@ -154,7 +175,9 @@
             $("#atransferinternal").slideDown()
         } else if (isinternal == 4) {
             $("#atransferservice_needs_group").slideUp()
-            $("#atransferinternal").slideDown()
+            $("#atransferinternal").slideUp()
+            $("#atransferskdpgroup").slideDown()
+
             await setDataSkdp()
         } else if (isinternal == 5) {
             $("#atransferservice_needs_group").slideDown()
@@ -200,6 +223,12 @@
     }
     //ini untuk save tindak lanjut
     $("#formaddatransfer").on('submit', (function(e) {
+
+        let alasan = $("#atransferprocedure_05").val()
+        if (alasan == '') {
+            alert("Alasan tidak boleh kosong")
+            return false;
+        }
         let clicked_submit_btn = $(this).closest('form').find(':submit');
         e.preventDefault();
         clicked_submit_btn.html('<i class="spinner-border spinner-border-sm"></i>')
@@ -1165,9 +1194,23 @@
             $("#skdpkdpoli").val('<?= $visit['clinic_id']; ?>')
         <?php
         } ?>
-        flatpickrInstances["flatskdptglkontrol"].setDate(
-            moment().format("DD/MM/YYYY HH:mm")
-        );
+        flatpickr("#flatskdptglkontrol", {
+            dateFormat: "d/m/Y", // Hanya menampilkan tanggal tanpa waktu
+            minDate: new Date().fp_incr(7), // Rentang tanggal minimal 7 hari ke depan
+            defaultDate: new Date().fp_incr(30), // Default tanggal adalah 7 hari ke depan
+        });
+        $("#flatskdptglkontrol").prop("readonly", false);
+
+        $("#flatskdptglkontrol").on("change", function() {
+            let theid = "skdptglkontrol";
+            let thevalue = $(this).val();
+            let formattedDate = moment(thevalue, "DD/MM/YYYY").format(
+                "YYYY-MM-DD"
+            );
+            $("#" + theid)
+                .val(formattedDate)
+                .trigger("change");
+        })
         $("#flatskdptglkontrol").trigger("change");
 
         $("#skdpkddpjp").val('<?= $visit['employee_id']; ?>')

@@ -540,14 +540,14 @@ $permission = user()->getPermissions();
                                                             <span class="h6" id="badge-prslexamproteinuria"></span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-12 mt-2">
-                                                        <div class="form-group">
-                                                            <label id="acpptalo_anamnase_label">Obyektif</label>
-                                                            <textarea name="alo_anamnase" id="acpptalo_anamnase" placeholder="" value="" class="form-control"></textarea>
-                                                        </div>
-                                                    </div>
                                                 <?php
                                                 } ?>
+                                                <div class="col-sm-12 mt-2">
+                                                    <div class="form-group">
+                                                        <label id="acpptalo_anamnase_label">Obyektif</label>
+                                                        <textarea name="alo_anamnase" id="acpptalo_anamnase" placeholder="" value="" class="form-control"></textarea>
+                                                    </div>
+                                                </div>
                                                 <span id="acppttotal_score"></span>
 
                                                 <!-- <div class="col-sm-12 mt-2">
@@ -567,7 +567,9 @@ $permission = user()->getPermissions();
                                             <div class="">
                                                 <div class="row">
                                                     <div class="col-sm-12 mt-2">
-                                                        <div class="form-group"><label id="acpptteraphy_desc_label">Catatan Asesmen</label><textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control" rows="8"></textarea></div>
+                                                        <div class="form-group"><label id="acpptteraphy_desc_label">Catatan Asesmen <a href="#" onclick="copyLastDiagnosis()">(Copy)</a></label>
+                                                            <textarea name="teraphy_desc" id="acpptteraphy_desc" placeholder="" value="" class="form-control" rows="8"></textarea>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div id="groupDiagnosaPerawatCppt" class="row mb-2">

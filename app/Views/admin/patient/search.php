@@ -4,8 +4,8 @@ $this->extend('layout/basiclayout', [
     'title' => $title
 ]) ?>
 <?php
-$rajalTipe = [1, 2, 0, 73, 50, 5];
-$ranapTipe = [3, 2, 0, 73, 50, 5];
+$rajalTipe = [1, 2, 0, 22, 73, 50, 5];
+$ranapTipe = [3, 2, 0, 22, 73, 50, 5];
 $permissions = user()->getPermissions();
 $session = session();
 $gsPoli = $session->gsPoli;

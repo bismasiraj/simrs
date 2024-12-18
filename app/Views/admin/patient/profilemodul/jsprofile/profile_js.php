@@ -285,7 +285,7 @@ foreach ($examDetail as $key => $value) {
                     .append('<input name="p_type" id="ases022p_type' + bodyId + '" type="hidden" value="ASES021"  />')
                     .append('<input name="description" id="ases022description' + bodyId + '" type="hidden" value="<?= $visit['description']; ?>"  />')
                     .append('<input name="modified_date" id="ases022modified_date' + bodyId + '" type="hidden" value="<?= $visit['modified_date']; ?>"  />')
-                    .append('<input name="modified_by" id="ases022modified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>"  />')
+                    .append('<input name="modified_by" id="ases022modified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>"  />')
                     .append('<input name="pain_monitoring_status" id="ases022pain_monitoring_status' + bodyId + '" type="hidden" value=""  />')
                     .append('<input name="valid_date" class="valid_date" id="ases022valid_date' + bodyId + '" type="hidden"  />')
                     .append('<input name="valid_user" class="valid_user" id="ases022valid_user' + bodyId + '" type="hidden"  />')
@@ -1088,7 +1088,7 @@ foreach ($examDetail as $key => $value) {
                     .append('<input name="bed_id" id="triagebed_id' + bodyId + '" type="hidden" value="<?= $visit['bed_id']; ?>"  />')
                     .append('<input name="description" id="triagedescription' + bodyId + '" type="hidden" value="<?= $visit['description']; ?>"  />')
                     .append('<input name="modified_date" id="triagemodified_date' + bodyId + '" type="hidden" value="<?= $visit['modified_date']; ?>"  />')
-                    .append('<input name="modified_by" id="triagemodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>"  />')
+                    .append('<input name="modified_by" id="triagemodified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>"  />')
                     .append('<input name="valid_date" class="valid_date" id="triagevalid_date' + bodyId + '" type="hidden"  />')
                     .append('<input name="valid_user" class="valid_user" id="triagevalid_user' + bodyId + '" type="hidden"  />')
                     .append('<input name="valid_pasien" class="valid_pasien" id="triagevalid_pasien' + bodyId + '" type="hidden"  />')
@@ -1419,7 +1419,7 @@ foreach ($examDetail as $key => $value) {
                     .append('<input name="bed_id" id="apgarbed_id' + bodyId + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
                     .append('<input name="description" id="apgardescription' + bodyId + '" type="hidden" value="<?= $visit['description']; ?>" class="form-control" />')
                     .append('<input name="modified_date" id="apgarmodified_date' + bodyId + '" type="hidden" value="<?= $visit['modified_date']; ?>" class="form-control" />')
-                    .append('<input name="modified_by" id="apgarmodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
+                    .append('<input name="modified_by" id="apgarmodified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>" class="form-control" />')
                     .append('<input name="p_type" id="apgarp_type' + bodyId + '" type="hidden" value="ASES032" class="form-control" />')
                     .append('<input name="valid_date" class="valid_date" id="apgarvalid_date' + bodyId + '" type="hidden"  />')
                     .append('<input name="valid_user" class="valid_user" id="apgarvalid_user' + bodyId + '" type="hidden"  />')
@@ -1697,7 +1697,7 @@ foreach ($examDetail as $key => $value) {
             .append('<input name="bed_id" id="stabilitasbed_id' + bodyId + '" type="hidden" value="<?= $visit['bed_id']; ?>" class="form-control" />')
             .append('<input name="description" id="stabilitasdescription' + bodyId + '" type="hidden" value="<?= $visit['description']; ?>" class="form-control" />')
             .append('<input name="modified_date" id="stabilitasmodified_date' + bodyId + '" type="hidden" value="<?= $visit['modified_date']; ?>" class="form-control" />')
-            .append('<input name="modified_by" id="stabilitasmodified_by' + bodyId + '" type="hidden" value="<?= $visit['modified_by']; ?>" class="form-control" />')
+            .append('<input name="modified_by" id="stabilitasmodified_by' + bodyId + '" type="hidden" value="<?= user()->username; ?>" class="form-control" />')
             .append('<input name="p_type" id="stabilitasp_type' + bodyId + '" type="hidden" value="ASES032" class="form-control" />')
             .append('<input name="valid_date" class="valid_date" id="stabilitasvalid_date' + bodyId + '" type="hidden"  />')
             .append('<input name="valid_user" class="valid_user" id="stabilitasvalid_user' + bodyId + '" type="hidden"  />')
@@ -1725,10 +1725,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formStabilitas" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -1833,7 +1846,8 @@ foreach ($examDetail as $key => $value) {
                 $("#chargesBodyPerawatMandiri").html("")
                 $("#tindakanBodyPerawatKolaborasi").html("")
                 $.each(billPerawatJson, function(key, value) {
-                    addBillChargePerawat('', value.treatment_type, 0, key, 'tindakanBodyPerawat')
+                    if (value.nota_no == $("#tindakanBodyPerawatKolaborasiNota").val() || $("#tindakanBodyPerawatKolaborasiNota").val() == '%')
+                        addBillChargePerawat('', value.treatment_type, 0, key, 'tindakanBodyPerawat')
                 })
             },
             error: function() {
@@ -2028,10 +2042,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formPernapasan" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2377,7 +2404,9 @@ foreach ($examDetail as $key => $value) {
             }
         });
         $("#" + container + bodyId).append(
-            '<tr><td colspan="2"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="kategoriScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td><td><h6 id="totalScore' + parent_id + p_type + bodyId + '" class="font-size-14 mb-4"></h6></td></tr>'
+            `<tr><td colspan="2"><h6 class="font-size-14 mb-4">Total Score</h6></td><td><h6 id="kategoriScore` + parent_id + p_type + bodyId + `" class="font-size-14 mb-4"></h6></td><td><h6 id="totalScore` + parent_id + p_type + bodyId + `" class="font-size-14 mb-4"></h6>
+            <input id="totalScore` + parent_id + p_type + bodyId + `input" name="total_score" class="font-size-14 mb-4" type="hidden"></input>
+            </td></tr>`
         )
         $.each(aparameter, function(key, value) {
             if (value.p_type == p_type && (value.entry_type == 1)) {
@@ -2439,6 +2468,7 @@ foreach ($examDetail as $key => $value) {
 
         $("#kategoriScore" + parent_id + p_type + bodyId).html(kategori)
         $("#totalScore" + parent_id + p_type + bodyId).html(total)
+        $("#totalScore" + parent_id + p_type + bodyId + "input").val(total)
     }
 
     function getFallRisk(bodyId, container) {
@@ -2700,10 +2730,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formSirkulasi" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -2959,10 +3002,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formNeurosensoris" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3242,10 +3298,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formAnak" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3525,10 +3594,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formNeonatus" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -3802,10 +3884,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formADL" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4104,10 +4199,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formDekubitus" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4369,10 +4477,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formPencernaan" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -4922,10 +5043,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formPsikologi" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5208,10 +5342,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formSeksual" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5465,10 +5612,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formSocial" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -5732,10 +5892,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formHearing" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6001,10 +6174,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formSleeping" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6508,10 +6694,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formGizi" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -6919,10 +7118,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formEducationForm" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -7430,10 +7642,23 @@ foreach ($examDetail as $key => $value) {
                     checkSign("formEducationIntegration" + bodyId)
 
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -8023,10 +8248,23 @@ foreach ($examDetail as $key => $value) {
                         getGcsAll()
                     }
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');
@@ -8373,10 +8611,23 @@ foreach ($examDetail as $key => $value) {
                     $("#formIntegumenSaveBtn" + bodyId).slideUp()
                     $("formIntegumenEditBtn" + bodyId).slideDown()
                 },
-                error: function(xhr) { // if error occured
-                    alert("Error occured.please try again");
-                    clicked_submit_btn.button('reset');
-                    errorSwal(xhr);
+                error: function(jqXHR, textStatus, errorThrown) {
+                    let errorMessage = "An error occurred: ";
+
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                        errorMessage = jqXHR.responseJSON.message;
+                    } else if (textStatus === "timeout") {
+                        errorMessage = "The request timed out.";
+                    } else if (textStatus === "error") {
+                        errorMessage = "Error: " + errorThrown;
+                    } else if (textStatus === "abort") {
+                        errorMessage = "The request was aborted.";
+                    } else {
+                        errorMessage = "Unknown error occurred.";
+                    }
+
+                    errorSwal(errorMessage);
+                    $("#form1btn").html('<i class="fa fa-search"></i>')
                 },
                 complete: function() {
                     clicked_submit_btn.button('reset');

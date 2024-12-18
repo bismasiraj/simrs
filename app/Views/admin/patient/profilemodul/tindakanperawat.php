@@ -48,7 +48,7 @@ $permission = user()->getPermissions();
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="">Nomor Sesi</label>
-                                                    <select id="tindakanBodyPerawatKolaborasiNota" class="form-control" style="width: 100%">
+                                                    <select id="tindakanBodyPerawatKolaborasiNota" class="form-control" style="width: 100%" onchange="getTindakanPerawat()">
                                                         <option value="%">Semua</option>
                                                     </select>
                                                 </div>

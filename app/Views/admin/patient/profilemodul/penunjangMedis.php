@@ -178,7 +178,7 @@ $result = array_change_key_case($result);
                     <input type="hidden" name="name_of_pasien" value="<?= $visit['diantar_oleh']; ?>">
                     <input type="hidden" name="age" value="<?= $visit['age']; ?>">
                     <input type="hidden" name="contact_address" value="<?= $visit['visitor_address']; ?>">
-                    <input type="hidden" name="gendername" value="<?= $visit['gendername']; ?>">
+                    <input type="hidden" name="gendername" value="<?= $visit['gender']; ?>">
                     <input type="hidden" name="no_registration" value="<?= $visit['no_registration']; ?>">
                     <input type="hidden" name="tarif_id" id="penunjang_medis_tarif_id">
                     <input type="hidden" name="bill_id" id="penunjang_medis_bill_id">
@@ -214,7 +214,7 @@ $result = array_change_key_case($result);
                             <td width="20%">Umur</td>
                             <td width="1%">:</td>
                             <td><?= $visit['age']; ?></td>
-                            <td>LP: <?= $visit['gendername']; ?></td>
+                            <td>LP: <?= $visit['gender']; ?></td>
                             <td width="20%">Tanggal</td>
                             <td width="1%">:</td>
                             <td><?= date('d-m-Y') ?></td>

@@ -89,7 +89,6 @@ class labRequest extends \App\Controllers\BaseController
                             AND tb.clinic_id = 'P013'
                         ORDER BY
                             tb.treat_date;
-
                     ";
 
 
@@ -218,7 +217,7 @@ class labRequest extends \App\Controllers\BaseController
                     $sqlInsert = "INSERT INTO sharelis.dbo.kirimlis
                                 (kode, modified_date, No_Pasien, NOLAB_LIS, Kode_Kunjungan, Nama, Email, Date_of_birth,
                                 UmurTahun, UmurBulan, UmurHari, Gender, Alamat, Diagnosa, Tgl_Periksa, pengirim_name,
-                                Kelas, kelas_name, Ruang, ruang_name, Cara_Bayar, cara_bayar_name, Kode_Tarif, IS_Inap, Status, IS_UPDATE, tarif_name, modified_by)
+                                Kelas, kelas_name, Ruang, ruang_name, Cara_Bayar, cara_bayar_name, Kode_Tarif, IS_Inap, Status, IS_UPDATE, tarif_name, modified_by, diagnosa_desc,indication_desc)
                             SELECT
                                 tb.bill_id, GETDATE(), tb.NO_REGISTRATION, 
                                 FORMAT(GETDATE(), 'yyyymmddhhmm') + tb.no_registration,
@@ -228,7 +227,7 @@ class labRequest extends \App\Controllers\BaseController
                                 tb.class_id, k.name_of_class, tb.clinic_id_from, c.name_of_clinic,
                                 tb.status_pasien_id, s.name_of_status_pasien, tb.tarif_id,
                                 ABS(tb.ISRJ - 1), '{$isCito}', 0, tb.treatment,
-                                '$username'  -- replace this with the actual username variable if necessary
+                                '$username', tb.diagnosa_desc, tb.indication_desc  -- replace this with the actual username variable if necessary
                             FROM treatment_bill tb
                             JOIN pasien p ON tb.no_registration = p.no_registration
                             JOIN clinic c ON c.clinic_id = tb.CLINIC_ID_FROM
@@ -426,18 +425,26 @@ class labRequest extends \App\Controllers\BaseController
                             AND tb.trans_id = ?
                             AND tb.bill_id IN (SELECT kode FROM sharelis.dbo.kirimlis)
                             AND tb.clinic_id = 'P013'
-                            AND (
-                                kl.kode IS NULL 
-                                OR hl.Kode_Kunjungan IS NOT NULL
-                            )
+                            -- AND (
+                            --     kl.kode IS NULL 
+                            --     OR hl.Kode_Kunjungan IS NOT NULL
+                            -- )
                         ORDER BY
                             tb.treat_date;
                         ";
+
+
         $result = $db->query($checkSql, [$no_registration, $trans_id])->getResultArray();
+
+        $diag = $this->lowerKey($db->query("SELECT TOP 1 diagnosa_desc as diagnosaDesc		
+                FROM pasien_diagnosa
+                WHERE NO_REGISTRATION = ?
+                ORDER BY DATE_OF_DIAGNOSA DESC", [$no_registration])->getRowArray() ?? []);
 
         return $this->response->setStatusCode(200)->setJSON([
             'no_registration' => isset($no_registration) ? $no_registration : 'null',
-            'value' => $result
+            'value' => $result,
+            'diag' =>  $diag
         ]);
     }
 

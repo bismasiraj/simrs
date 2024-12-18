@@ -26,6 +26,7 @@ foreach ($pd as $key => $value) {
 $menu = [
     'assessmentmedis' => 0,
     'assessmentperawat' => 0,
+    'assessmentbidan' => 0,
     'cppt' => 0,
     'eresep' => 0,
     'lab' => 0,
@@ -63,6 +64,7 @@ $menu = [
     'permintaandarah' => 0,
     'pemeriksaanSaraf' => 0,
     'pemeriksaanKulit' => 0,
+    'reportEKlaim' => 0
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
@@ -86,6 +88,8 @@ if (user()->checkPermission("assessmentmedis", "r"))
     $menu['assessmentmedis'] = 1;
 if (user()->checkPermission("assessmentperawat", "r"))
     $menu['assessmentperawat'] = 1;
+if (user()->checkPermission("assessmentbidan", "r"))
+    $menu['assessmentbidan'] = 1;
 if (user()->checkPermission("cppt", "r"))
     $menu['cppt'] = 1;
 if (user()->checkPermission("eresep", "r"))
@@ -220,12 +224,12 @@ $currency_symbol = 'Rp. ';
                                         <!-- <li class="nav-item"><a id="overviewTab" class="nav-link" href="#overview" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-th text-primary"></i> Profil</a></li> -->
                                         <?php if ($menu['assessmentmedis'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Medis</a></li>
-                                            <!-- <li class="nav-item"><a id="assessmentmedisTab" class="nav-link border-bottom <?= isset($group[11]) ? 'active' : '' ?>" href="#assessmentmedis" data-bs-toggle="tab" aria-expanded="true" role="tab"><i class="fa fa-user-md text-primary"></i> Assessment Medis</a></li> -->
-                                            <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom <?= isset($group[13]) || isset($group[1]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li> -->
                                         <?php }
                                         if ($menu['assessmentperawat'] == 1) { ?>
                                             <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li>
-                                            <!-- <li class="nav-item"><a id="assessmentigdTab" class="nav-link border-bottom <?= isset($group[13]) ? 'active' : '' ?>" href="#assessmentigd" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Perawat</a></li> -->
+                                        <?php }
+                                        if ($menu['assessmentbidan'] == 1) { ?>
+                                            <li class="nav-item"><a id="assessmentbidanTab" class="nav-link border-bottom" href="#assessmentbidan" data-bs-toggle="tab" aria-expanded="true" role="tab">Assessment Bidan</a></li>
                                         <?php }
                                         if ($menu['cppt'] == 1) { ?>
                                             <li class="nav-item"><a id="cpptTab" class="nav-link border-bottom" href="#cppt" data-bs-toggle="tab" aria-expanded="true" role="tab"> CPPT</a></li>
@@ -392,6 +396,14 @@ $currency_symbol = 'Rp. ';
                                             <li class="nav-item"><a id="eklaimTab" class="nav-link border-bottom" href="#klaim" data-bs-toggle="tab" aria-expanded="true" role="tab">EKlaim</a></li>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['reportEKlaim'] == 1) {
+                                        ?>
+                                            <li class="nav-item"><a id="reportEKlaimTab" class="nav-link border-bottom"
+                                                    href="#reportEKlaim" data-bs-toggle="tab" aria-expanded="true"
+                                                    role="tab">Reporting EKlaim</a></li>
+                                        <?php
+                                        } ?>
+
                                         <!-- <li class="nav-item"><a id="tindakLanjutTab" class="nav-link border-bottom" href="#tindaklanjut" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindak Lanjut</a></li> -->
                                         <?php if ($visit['specialist_type_id'] == '1.05') {
                                         ?>
@@ -1026,6 +1038,32 @@ $currency_symbol = 'Rp. ';
                                             ]); ?>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['assessmentbidan'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/assessmentbidan', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+                                                'aParent' => $aParent,
+                                                'aType' => $aType,
+                                                'aParameter' => $aParameter,
+                                                'aValue' => $aValue,
+                                                'mappingAssessment' => $mappingAssessment
+                                            ]); ?>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['ordergizi'] == 1) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/ordergizi', [
@@ -1344,6 +1382,29 @@ $currency_symbol = 'Rp. ';
                                                 'aParameter' => $aParameter,
                                                 'aValue' => $aValue,
                                             ]) ?>
+                                        <?php
+                                        } ?>
+                                        <?php if ($menu['reportEKlaim'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/reportEKlaim', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+                                                'clinic' => $clinic,
+                                                'dokter' => $employee
+                                            ]); ?>
                                         <?php
                                         } ?>
                                     </div>
@@ -1742,7 +1803,7 @@ echo view('admin/patient/modal/hasilRad', [
 
     function initializeSearchTarif(theid, clinicIdTarif) {
         $("#" + theid).select2({
-            placeholder: "Input Tarif",
+            placeholder: "Item",
             theme: 'bootstrap-5',
             ajax: {
                 url: '<?= base_url(); ?>admin/patient/getTarif',
@@ -2127,8 +2188,32 @@ if ($menu['assessmentmedis'] == 1) {
         'mappingAssessment' => $mappingAssessment
     ]);
 }
-if (true) {
+if ($menu['assessmentbidan'] == 1) {
     echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
+        'title' => '',
+        'orgunit' => $orgunit,
+        'statusPasien' => $statusPasien,
+        'reason' => $reason,
+        'isattended' => $isattended,
+        'inasisPoli' => $inasisPoli,
+        'inasisFaskes' => $inasisFaskes,
+        'visit' => $visit,
+        'exam' => $exam,
+        'pd' => $pasienDiagnosa,
+        'suffer' => $suffer,
+        'diagCat' => $diagCat,
+        'employee' => $employee,
+        'pasienDiagnosaAll' => $pasienDiagnosaAll,
+        'pasienDiagnosa' => $pasienDiagnosa,
+        'aParent' => $aParent,
+        'aType' => $aType,
+        'aParameter' => $aParameter,
+        'aValue' => $aValue,
+        'mappingAssessment' => $mappingAssessment
+    ]);
+}
+if ($menu['assessmentbidan'] == 1) {
+    echo view('admin/patient/profilemodul/jsprofile/assessmentbidan_js', [
         'title' => '',
         'orgunit' => $orgunit,
         'statusPasien' => $statusPasien,

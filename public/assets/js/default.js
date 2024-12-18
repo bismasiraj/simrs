@@ -1961,6 +1961,32 @@ function datetimepickerbyidinitial(
   //   .val(moment().format("DD/MM/YYYY HH:mm"))
   //   .trigger("change");
 }
+function datepickerbyidinitial(
+  flatid,
+  initial = moment().format("DD/MM/YYYY HH:mm")
+) {
+  flatpickrInstances[flatid] = flatpickr("#" + flatid, {
+    enableTime: true,
+    dateFormat: "d/m/Y H:i", // Display format
+    time_24hr: true, // 24-hour time format
+    defaultDate: initial,
+    minuteIncrement: 1,
+  });
+  $("#" + flatid).prop("readonly", false);
+  $("#" + flatid).on("change", function () {
+    let theid = flatid.replace("flat", "");
+    let thevalue = $(this).val();
+    let formattedDate = moment(thevalue, "DD/MM/YYYY HH:mm").format(
+      "YYYY-MM-DD HH:mm"
+    );
+    $("#" + theid)
+      .val(formattedDate)
+      .trigger("change");
+  });
+  // $("#" + flatid)
+  //   .val(moment().format("DD/MM/YYYY HH:mm"))
+  //   .trigger("change");
+}
 function formatedDatetimeFlat(thedatetime) {
   let formatedDate = moment(thedatetime).format("DD/MM/YYYY HH:mm");
   return formatedDate;

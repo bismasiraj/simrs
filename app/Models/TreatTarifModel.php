@@ -183,7 +183,7 @@ class TreatTarifModel extends Model
                 ->join('treatment', 'treatment.treat_id=TREAT_TARIF.treat_id', 'inner')
                 // ->like('treat_tarif.implemented', '1')
                 // ->notLike('treat_tarif.treat_id', '010001')
-                ->like("cast(isnull(TREAT_TARIF.PERDA_ID,1) as varchar(10))", '1')
+                ->where("cast(isnull(TREAT_TARIF.PERDA_ID,1) as varchar(10)) in (1,2)")
                 ->where("TREAT_TARIF.TARIF_NAME like '%" . $search . "%'",)
                 // ->orWhere("tarif_id = '31010001'")
                 // ->whereNotIn('tarif_type', $tarif_type)

@@ -233,11 +233,11 @@ foreach ($aValue as $key => $value) {
             success: function(data) {
                 $("#formsavearpbtnid").html(`<i class="fa fa-check-circle"></i> <span>Simpan</span>`)
 
-                $("#formaddarp").find('input, select, textarea').each(function() {
-                    const key = $(this).attr('id'); // Use ID or placeholder as key
+                // $("#formaddarp").find('input, select, textarea').each(function() {
+                //     const key = $(this).attr('id'); // Use ID or placeholder as key
 
-                    localStorage.removeItem(key);
-                })
+                //     localStorage.removeItem(key);
+                // })
                 // $("#arpModal").modal("hide")
                 let formData = new FormData(document.getElementById("formaddarp"))
                 let formDataObject = {};
@@ -502,12 +502,12 @@ foreach ($aValue as $key => $value) {
         let bodyId = '<?= $visit['session_id']; ?>';
         let isnew = false;
         $.each(examForassessment, function(key, value) {
-            if (value.body_id == bodyId) {
+            if (value.body_id == bodyId && value.account_id) {
                 isnew = true;
             }
         })
         if (isnew) {
-            return alert("Anda sudah pernah membuat dokumen Assessment pada sesi " + bodyId + ". Silahkan refresh halaman jika memang sudah berganti sesi.");
+            alert("Anda sudah pernah membuat dokumen Assessment pada sesi " + bodyId + ". Silahkan buat sesi baru.");
         }
 
         $("#bodyDiagPerawat").html("")
@@ -675,14 +675,14 @@ foreach ($aValue as $key => $value) {
 
         generateSatelite()
 
-        $("#formaddarp").find('input, select, textarea').each(function() {
-            const key = $(this).attr('id'); // Use ID or placeholder as key
+        // $("#formaddarp").find('input, select, textarea').each(function() {
+        //     const key = $(this).attr('id'); // Use ID or placeholder as key
 
-            const savedValue = localStorage.getItem(key);
-            if (savedValue) {
-                $(this).val(savedValue);
-            }
-        })
+        //     const savedValue = localStorage.getItem(key);
+        //     if (savedValue) {
+        //         $(this).val(savedValue);
+        //     }
+        // })
         $("#arpModal").modal("show")
     }
 
@@ -1140,6 +1140,11 @@ foreach ($aValue as $key => $value) {
             $("#formaddarpbtnid").slideUp()
             $("#formeditarpid").slideUp()
             $("#formsignarpid").slideUp()
+            $("#formaddarp").find(".btn-add-doc").remove()
+        } else {
+            $("#formaddarpbtnid").slideDown()
+            $("#formeditarpid").slideDown()
+            $("#formsignarpid").slideDown()
             $("#formaddarp").find(".btn-add-doc").remove()
         }
     }

@@ -1,8 +1,3 @@
-<?php
-// echo "<pre>";
-// var_dump($val);
-// die();
-?>
 <!doctype html>
 <html lang="en">
 
@@ -350,31 +345,32 @@
         <div class="row">
             <h5 class="text-start">Apgar Score</h5>
         </div>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
-                    <td class="p-1" width="25%"></td>
-                    <?php foreach ($apgarWaktu as $key => $waktu) : ?>
-                        <th class="p-1" width="25%"><?= $waktu['p_description'] ?></th>
-                    <?php endforeach ?>
-                </tr>
-                <?php $totalSkor = 0; ?>
-                <?php foreach ($apgarData as $key => $row) : ?>
+        <?php if (isset($apgarData) && isset($apgarWaktu)) : ?>
+            <table class="table table-bordered">
+                <tbody>
                     <tr>
-                        <th class="p-1" width="25%"><?= $row['parameter_desc'] ?></th>
-                        <td class="p-1" width="25%"><?= '(' . $row['value_score_1'] . ') ' . $row['menit_1'] ?></td>
-                        <td class="p-1" width="25%"><?= '(' . $row['value_score_5'] . ') ' . $row['menit_5'] ?></td>
-                        <td class="p-1" width="25%"><?= '(' . $row['value_score_10'] . ') ' . $row['menit_10'] ?></td>
+                        <td class="p-1" width="25%"></td>
+                        <?php foreach ($apgarWaktu as $key => $waktu) : ?>
+                            <th class="p-1" width="25%"><?= $waktu['p_description'] ?></th>
+                        <?php endforeach ?>
                     </tr>
-                    <?php $totalSkor += $row['value_score_1'] + $row['value_score_5'] + $row['value_score_10']; ?>
-                <?php endforeach ?>
-                <tr>
-                    <th class="p-1" width="25%">Total Skor</th>
-                    <th class="p-1 text-center" width="75%" colspan="3"><?= $totalSkor ?></th>
-                </tr>
-            </tbody>
-        </table>
-
+                    <?php $totalSkor = 0; ?>
+                    <?php foreach ($apgarData as $key => $row) : ?>
+                        <tr>
+                            <th class="p-1" width="25%"><?= $row['parameter_desc'] ?></th>
+                            <td class="p-1" width="25%"><?= '(' . $row['value_score_1'] . ') ' . $row['menit_1'] ?></td>
+                            <td class="p-1" width="25%"><?= '(' . $row['value_score_5'] . ') ' . $row['menit_5'] ?></td>
+                            <td class="p-1" width="25%"><?= '(' . $row['value_score_10'] . ') ' . $row['menit_10'] ?></td>
+                        </tr>
+                        <?php $totalSkor += $row['value_score_1'] + $row['value_score_5'] + $row['value_score_10']; ?>
+                    <?php endforeach ?>
+                    <tr>
+                        <th class="p-1" width="25%">Total Skor</th>
+                        <th class="p-1 text-center" width="75%" colspan="3"><?= $totalSkor ?></th>
+                    </tr>
+                </tbody>
+            </table>
+        <?php endif; ?>
 
         <div class="row">
             <div class="col-auto" align="center">

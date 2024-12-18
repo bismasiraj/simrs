@@ -36,11 +36,8 @@
                         <th class="text-center" style="width: 20%;">Tanggal & Jam</th>
                         <th class="text-center" style="width: 10%;">Petugas</th>
                         <th class="text-center" style="width: 10%;">ALAT UKUR</th>
-                        <th class="text-center" style="width: 10%;">PROVING</th>
-                        <th class="text-center" style="width: 10%;">QUALITY</th>
-                        <th class="text-center" style="width: 10%;">REGIO</th>
-                        <th class="text-center" style="width: 10%;">SCALE</th>
-                        <th class="text-center" style="width: 10%;">TIMING</th>
+                        <th class="text-center" style="width: 10%;">TOTAL SCORE</th>
+                        <th class="text-center" style="width: 10%;">KESIMPULAN</th>
                         <th class="text-center" colspan="2" style="width: 10%;"></th>
                     </tr>
                 </thead>

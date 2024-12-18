@@ -497,7 +497,7 @@
         $('#armin_date').val('<?= $visit['in_date']; ?>')
         $('#armexit_date').val('<?= $visit['exit_date']; ?>')
         $('#armmodified_date').val(get_date())
-        $('#armmodified_by').val('<?= $visit['modified_by']; ?>')
+        $('#armmodified_by').val('<?= user()->username; ?>')
         $('#armnokartu').val('<?= $visit['pasien_id']; ?>')
         $('#armno_registration').val('<?= $visit['no_registration']; ?>')
         $('#armthename').val('<?= $visit['diantar_oleh']; ?>')
@@ -543,14 +543,14 @@
         }
         generateLokalis()
 
-        $("#formaddarm").find('input, select, textarea').each(function() {
-            const key = $(this).attr('id'); // Use ID or placeholder as key
+        // $("#formaddarm").find('input, select, textarea').each(function() {
+        //     const key = $(this).attr('id'); // Use ID or placeholder as key
 
-            const savedValue = localStorage.getItem(key);
-            if (savedValue) {
-                $(this).val(savedValue);
-            }
-        })
+        //     const savedValue = localStorage.getItem(key);
+        //     if (savedValue) {
+        //         $(this).val(savedValue);
+        //     }
+        // })
         $("#armModal").modal("show")
     }
 
@@ -1262,8 +1262,23 @@
 
                 }
             },
-            error: function(xhr) { // if error occured
-                alert("Error occured.please try again");
+            error: function(jqXHR, textStatus, errorThrown) {
+                let errorMessage = "An error occurred: ";
+
+                if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                    errorMessage = jqXHR.responseJSON.message;
+                } else if (textStatus === "timeout") {
+                    errorMessage = "The request timed out.";
+                } else if (textStatus === "error") {
+                    errorMessage = "Error: " + errorThrown;
+                } else if (textStatus === "abort") {
+                    errorMessage = "The request was aborted.";
+                } else {
+                    errorMessage = "Unknown error occurred.";
+                }
+
+                errorSwal(errorMessage);
+                $("#form1btn").html('<i class="fa fa-search"></i>')
             },
             complete: function() {}
         });

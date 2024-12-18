@@ -104,6 +104,12 @@ class TreatmentAkomodasiModel extends Model
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }
+    public function getPasienRanapBidan($nama = null, $kode = null, $alamat = null, $poli = null, $mulai = null, $akhir = null, $sudah = null, $dokter = null, $nokartu = null, $keluar = null, $x)
+    {
+        $sql = "SP_SEARCHKUNJUNGANRIAKOM_BPJS_BIDAN;1 @NAMA = '%$nama%', @KODE = '%$kode%', @ALAMAT = '%$alamat%', @POLI = '%$poli%', @SUDAH = '$sudah', @DOKTER = '%$dokter%', @KELUAR = '$keluar', @MULAI = '$mulai', @AKHIR = '$akhir', @X = '$x', @NOKARTU = '%$nokartu%'";
+        $result = $this->db->query(new RawSql($sql));
+        return $result->getResultArray();
+    }
     public function getregistermasuk($mulai, $akhir, $status, $rj, $poli)
     {
         $sql = "SP_EIS_Register_MASUK;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj', @POLI = '$poli'";
