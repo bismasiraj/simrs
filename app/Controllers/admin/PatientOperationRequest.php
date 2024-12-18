@@ -327,10 +327,18 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing vactination_id in request data']);
         }
 
-        $end_operation = null;
+        // $end_operation = null;
 
-        if (isset($formData['end_operation']) && !empty($formData['end_operation'])) {
-            $end_operation = date('Y-m-d\TH:i:s', strtotime($formData['end_operation']));
+        // if (isset($formData['end_operation']) && !empty($formData['end_operation'])) {
+        //     $end_operation = date('Y-m-d\TH:i:s', strtotime($formData['end_operation']));
+        // }
+        $dateFields = [
+            'start_operation',
+        ];
+        foreach ($dateFields as $field) {
+            if (isset($formData[$field]) && !empty($formData[$field])) {
+                $formData[$field] = $this->convertToDateFormat($formData[$field]);
+            }
         }
 
         $updateData = [
@@ -362,7 +370,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             'keluar_id' => $formData['keluar_id'],
             'diagnosa_pra' => $formData['diagnosa_pra'],
             'diagnosa_pasca' => $formData['diagnosa_pasca'],
-            'end_operation' =>  $end_operation,
+            // 'end_operation' =>  $end_operation,
             'start_anestesi' => $formData['start_anestesi'],
             'end_anestesi' => $formData['end_anestesi'],
             'result_id' => $formData['result_id'],
@@ -508,6 +516,15 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $vactinationId = $formData['vactination_id'];
         if (!isset($formData['vactination_id'])) {
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Missing vactination_id in request data']);
+        }
+        $dateFields = [
+            'end_operation',
+            'start_operation',
+        ];
+        foreach ($dateFields as $field) {
+            if (isset($formData[$field]) && !empty($formData[$field])) {
+                $formData[$field] = $this->convertToDateFormat($formData[$field]);
+            }
         }
 
         $updateData = [
@@ -1490,8 +1507,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
 
         if (isset($bloodblood_request)) {
             $bloodblood_request = [
-                '202412040411113432R6',
-                '20241204041114617B4V'
+                '202412040411113432R6', '20241204041114617B4V'
             ];
 
             $bloodmodel = new BloodRequestModel();
@@ -2093,7 +2109,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                             'sscondition_id' => new RawSql('newid()'),
                         ];
                     } else {
-                        throw new Exception('Invalid diagnosis data format.');
+                        $error = $db->error();
+                        throw new \Exception('Invalid diagnosis data format : ' . $error['message']);
                     }
                 }
 
@@ -2102,7 +2119,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     $insertPDS = $pds->insertBatch($diagnosaData);
 
                     if (!$insertPDS) {
-                        throw new \Exception('Failed to insert diagnosis');
+                        $error = $db->error();
+                        throw new \Exception('Failed to insert diagnosis : ' . $error['message']);
                     }
                 }
             }
@@ -2139,7 +2157,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                         ->set($anesthesiaPost)
                         ->update();
                     if (!$ex) {
-                        throw new \Exception('Failed to update anesthesi post');
+                        $error = $db->error();
+                        throw new \Exception('Failed to update anesthesi post : ' . $error['message']);
                     }
                 } else {
                     $anesthesiaPost['body_id'] = $this->get_bodyid();
@@ -2902,5 +2921,26 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             // If no valid date was found, return an error message or false
             return false; // Or you can return "Invalid date format" or handle the error as needed
         }
+    }
+    private function convertToDateFormat($date)
+    {
+        // Try to create a DateTime object using different possible formats
+        $formats = [
+            'Y-m-d H:i',    // e.g., 2024-12-17 07:00
+            'd/m/Y H:i',    // e.g., 18/12/2024 07:00
+            'd-m-Y H:i'     // e.g., 18-12-2024 07:00
+        ];
+
+        // Try each format to convert the date
+        foreach ($formats as $format) {
+            $dateTime = \DateTime::createFromFormat($format, $date);
+            if ($dateTime) {
+                // Convert to the desired format
+                return $dateTime->format('d-m-Y H:i:s');
+            }
+        }
+
+        // If no format matches, return the original value or handle errors as needed
+        return $date;
     }
 }

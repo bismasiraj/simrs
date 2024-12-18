@@ -2,13 +2,13 @@
 $jamMakan = '';
 switch ($shift) {
     case 'pagi':
-        $jamMakan = '07.30';
+        $jamMakan = '08.00';
         break;
     case 'siang':
         $jamMakan = '13.00';
         break;
     case 'malam':
-        $jamMakan = '19.00';
+        $jamMakan = '18.00';
         break;
 }
 
@@ -96,29 +96,29 @@ switch ($shift) {
                     <hr class="mt-0">
                     <table class="table table-borderless mb-0">
                         <tr>
-                            <td width="65px">Nama</td>
-                            <td width="1%">:</td>
-                            <td><?= $data['name_of_pasien']; ?></td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="75px">Nama</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="1%">:</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;"><?= strtoupper($data['name_of_pasien']); ?></td>
                         </tr>
                         <tr>
-                            <td width="65px">No.RM</td>
-                            <td width="1%">:</td>
-                            <td><?= $data['no_registration']; ?></td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="75px">No.RM</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="1%">:</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;"><?= strtoupper($data['no_registration']); ?></td>
                         </tr>
                         <tr>
-                            <td width="65px">Tanggal Lahir</td>
-                            <td width="1%">:</td>
-                            <td><?= ''; ?></td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="75px">Tanggal Lahir</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="1%">:</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;"><?= date_format(date_create($data['date_of_birth']), 'd-m-Y'); ?></td>
                         </tr>
                         <tr>
-                            <td width="65px">Ruangan</td>
-                            <td width="1%">:</td>
-                            <td><?= $clinic_name; ?></td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="75px">Ruangan</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="1%">:</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;"><?= strtoupper($clinic_name . ' | ' . @$data['name_of_class']); ?></td>
                         </tr>
                         <tr>
-                            <td width="65px">Diet</td>
-                            <td width="1%">:</td>
-                            <td><?= $data['bentuk'] . ', ' . $data['jenis'] . ', ' . $data['mineral'] . ', ' . $data['extra']; ?></td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="75px">Diet</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;" width="1%">:</td>
+                            <td class="fw-bold pb-0" style="font-size: 10px;"><?= strtoupper($data['bentuk'] . ', ' . $data['jenis'] . ', ' . $data['mineral'] . ', ' . $data['extra']); ?></td>
                         </tr>
                     </table>
                     <p class="text-center py-2 mb-0 fw-bold">Batas maksimal makanan dikonsumsi pada pukul <?= $jamMakan; ?></p>

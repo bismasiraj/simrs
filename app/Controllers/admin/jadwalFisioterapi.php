@@ -26,7 +26,7 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
 
         // $formData['visit_id'] = '2024052721452002230C3';
         $model = new FisioterapiModel();
-        $modelSchedule = new FisioterapiScheduleModel(); // baru havin 26 09
+        $modelSchedule = new FisioterapiScheduleModel();
         $modelDetail = new FisioterapiDetailModel();
 
         $data = $this->lowerKey(
@@ -36,7 +36,12 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
         );
         $dataSchedule = [];
         foreach ($data as $key => $row) {
-            $dataSchedule[$row['vactination_id']] = $this->lowerKey($modelSchedule->where('visit_id', $formData['visit_id'])->where('document_id', $row['vactination_id'])->findAll() ?? []);
+            $dataSchedule[$row['vactination_id']] = $this->lowerKey($modelSchedule
+                ->where('visit_id', $formData['visit_id'])
+                ->where('document_id', $row['vactination_id'])
+                ->orderBy('start_date', 'ASC')
+                ->orderBy('treatment_program', 'ASC')
+                ->findAll() ?? []);
         } // baru havin 26 09
 
         $dataDetail = $this->lowerKey(
@@ -49,13 +54,24 @@ class jadwalFisioterapi extends \App\Controllers\BaseController
             ORDER BY date_of_diagnosa DESC
             ")->getResultArray());
 
+
+        $pain = $this->lowerKey($db->query("select * from ASSESSMENT_PAIN_DETAIL where visit_id = '202410050857320537E72' and parameter_id = '01'
+            ")->getResultArray() ?? []);
+
+        $pain = array_map(function ($item) {
+            return $item['value_desc'];
+        }, $pain);
+
+        $pain = implode(", ", $pain);
+
+
         $kopprint = $this->lowerKey($db->query("SELECT * from ORGANIZATIONUNIT")->getRowArray());
 
         $success = !empty($data);
 
         return $this->response->setStatusCode(200)->setJSON([
             'success' => $success,
-            'value'   => ['fisioterapi' => $data, 'diagnosa' => $diagnosa, 'kop' => $kopprint, 'fioterapi_detail' => $dataDetail, 'fisioterapi_schedule' => $dataSchedule],
+            'value'   => ['fisioterapi' => $data, 'diagnosa' => $diagnosa, 'kop' => $kopprint, 'fioterapi_detail' => $dataDetail, 'fisioterapi_schedule' => $dataSchedule, 'monitoring_nyeri' => $pain],
 
 
         ]); // baru havin 26 09

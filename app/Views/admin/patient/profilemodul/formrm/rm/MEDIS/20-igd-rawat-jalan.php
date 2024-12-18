@@ -21,47 +21,47 @@
     <script src="<?= base_url(); ?>assets/libs/moment/min/moment.min.js"></script>
 
     <style>
-        .form-control:disabled,
-        .form-control[readonly] {
-            background-color: #FFF;
-            opacity: 1;
-        }
+    .form-control:disabled,
+    .form-control[readonly] {
+        background-color: #FFF;
+        opacity: 1;
+    }
 
-        .form-control,
-        .input-group-text {
-            background-color: #fff;
-            border: 1px solid #fff;
-            font-size: 12px;
-        }
+    .form-control,
+    .input-group-text {
+        background-color: #fff;
+        border: 1px solid #fff;
+        font-size: 12px;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            height: 29.7cm;
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        height: 29.7cm;
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
     </style>
 </head>
 
@@ -175,6 +175,7 @@
                 </tr>
             </tbody>
         </table>
+        <?php  if (!empty($val['gcs_desc']) && is_array($val['gcs_desc'])) { ?>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -187,11 +188,11 @@
                         <div class="row mb-2">
                             <div class="col-auto">
                                 <b>pGCS E / Respon Membuka Mata :</b> <span
-                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_e'] . '] ' . @$val['gsc_e_desc']; ?>.</span>
+                                    class="m-0 mt-1 p-0"><?= '['.@$val['gcs_e'].'] '. @$val['gsc_e_desc']; ?>.</span>
                                 <b>pGCS V / Respon Verbal Terbaik :</b> <span
-                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_v'] . '] ' . @$val['gsc_v_desc']; ?>.</span>
+                                    class="m-0 mt-1 p-0"><?= '['.@$val['gcs_v'].'] '. @$val['gsc_v_desc']; ?>.</span>
                                 <b>pGCS M / Respon Motorik Terbaik :</b> <span
-                                    class="m-0 mt-1 p-0"><?= '[' . @$val['gcs_m'] . '] ' . @$val['gsc_m_desc']; ?>.</span>
+                                    class="m-0 mt-1 p-0"><?= '['.@$val['gcs_m'].'] '. @$val['gsc_m_desc']; ?>.</span>
                             </div>
 
                         </div>
@@ -206,11 +207,13 @@
                 <tr>
                     <td class="p-1">
                         <b>Keadaan Umum</b>
-                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['namadiagnosa']) ? @$val['namadiagnosa'] : '-'; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['namadiagnosa']) ? @$val['namadiagnosa']:'-'; ?></p>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <?php } ?>
+
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -225,60 +228,188 @@
                 </tr>
             </tbody>
         </table>
+        <?php if ($visit['specialist_type_id'] === "1.12"): ?>
+        <table class="table table-bordered" id="statusDermatologiShow">
+            <tbody>
+                <tr>
+                    <td colspan="4" class="fw-bold">Status Dermatologik</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="row">
+                            <b class="col-12">I. Inspeksi</b>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td class="fw-bold">Lokasi</td>
+                                    <td class="fw-bold">UKK</td>
+                                    <td class="fw-bold">Distribusi</td>
+                                    <td class="fw-bold">Konfigurasi</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?= @$val['kulit']['sd_ins_location'] ?></td>
+                                    <td><?= @$val['kulit']['sd_ins_ukk'] ?></td>
+                                    <td><?= @$val['kulit']['sd_ins_distribution'] ?></td>
+                                    <td><?= @$val['kulit']['sd_ins_configuration'] ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Palpasi</b>
+                            <span class="col-12"><?= @$val['kulit']['sd_palpation'] ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Lain-Lain</b>
+                            <span class="col-12"><?= @$val['kulit']['sd_others'] ?></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="row">
+                            <b class="col-12">Status Venerologik</b>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Inspeksi</b>
+                            <span class="col-12"><?= @$val['kulit']['sv_inspection'] ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <b class="col-12">Palpasi</b>
+                            <span class="col-12"><?= @$val['kulit']['sv_palpation'] ?></span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php endif; ?>
+        <?php 
+        if ($visit['specialist_type_id'] === "1.16"):?>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Var/NRS</th>
+                    <th>Pupil Kiri</th>
+                    <th>Pupil kanan</th>
+                </tr>
+                <tr>
+                    <td><?= @$val['saraf']['vas_nrs']?></td>
+                    <td>
+                        <b>Diameter :</b><?= @$val['saraf']['left_diameter']?>
+                        <br><b>Refleks Cahaya :</b><?= @$val['saraf']['left_light_reflex']?>
+                        <br><b>Kornea:</b><?= @$val['saraf']['left_cornea']?>
+                        <br><b>Isokor Anisokor :</b><?= @$val['saraf']['left_isokor_anisokor']?>
+                    </td>
+                    <td>
+                        <b>Diameter :</b><?= @$val['saraf']['right_diameter']?>
+                        <br><b>Refleks Cahaya :</b><?= @$val['saraf']['right_light_reflex']?>
+                        <br><b>Kornea:</b><?= @$val['saraf']['right_cornea']?>
+                        <br><b>Isokor Anisokor :</b><?= @$val['saraf']['right_isokor_anisokor']?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Leher</th>
+                    <th>Gerak</th>
+                    <th>Kekuatan</th>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Kaku kuduk :</b><?= @$val['saraf']['stiff_neck']?>
+                        <br><b>Meningeal Sign :</b><?= @$val['saraf']['meningeal_sign']?>
+                        <br><b>Brudzinki I-IV :</b><?= @$val['saraf']['brudzinki_i_iv']?>
+                        <br><b>Kernig Sign:</b><?= @$val['saraf']['kernig_sign']?>
+                        <br><b>Dolls eye phenomena :</b><?= @$val['saraf']['dolls_eye_phenomenon']?>
+                        <br><b>Vertebra :</b><?= @$val['saraf']['vertebra']?>
+                        <br><b>Extremity :</b><?= @$val['saraf']['extremity']?>
+                    </td>
+                    <td>
+                        <b>Gerak Atas Kiri :</b><?= @$val['saraf']['motion_upper_left']?>
+                        <br><b>Gerak Atas Kanan :</b><?= @$val['saraf']['motion_upper_right']?>
+                        <br><b>Gerak Bawah Kiri :</b><?= @$val['saraf']['motion_lower_left']?>
+                        <br><b>Gerak Bawah Kanan :</b><?= @$val['saraf']['motion_lower_right']?>
+                    </td>
+                    <td>
+                        <b>Kekuatan Atas Kiri :</b><?= @$val['saraf']['strength_upper_left']?>
+                        <br><b>Kekuatan Atas Kanan :</b><?= @$val['saraf']['strength_upper_right']?>
+                        <br><b>Kekuatan Bawah Kiri:</b><?= @$val['saraf']['strength_lower_left']?>
+                        <br><b>Kekuatan Bawah Kanan :</b><?= @$val['saraf']['strength_lower_right']?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php endif;?>
 
         <table class="table table-bordered">
             <tbody>
                 <?php
-                // check jika data lokalis ada atau tidak
-                if (!empty($lokalis2)) {
-                    // jika ada maka lakukan perulangan untuk menampilkan data
-                    foreach ($lokalis2 as $key => $value) {
-                        // jika data lokalis memiliki value score = 2 maka tampilkan
-                        if ($value['value_score'] == 2) {
-                            // jika key pada data adalah ganjil
-                            if (($key + 1) % 2 != 0) {
-                                // jika data bukan data terakhir 
-                                if ($key + 1 != count($lokalis2)) {
-                                    echo '<tr>';
+                    // check jika data lokalis ada atau tidak
+                    if(!empty($lokalis2)){
+                        // jika ada maka lakukan perulangan untuk menampilkan data
+                        foreach ($lokalis2 as $key => $value) {
+                            // jika data lokalis memiliki value score = 2 maka tampilkan
+                            if ($value['value_score'] == 2) {
+                                // jika key pada data adalah ganjil
+                                if(($key+1) %2 != 0){
+                                    // jika data bukan data terakhir 
+                                    if($key+1 != count($lokalis2)){
+                                        echo '<tr>';
+                                        echo '<td class="p-1" style="width: 50%;">'
+                                        .'<b>'.$value['nama_lokalis']. '</b>'. '<p class="m-0 mt-0 p-0">'.$value['value_detail'].'</p>'.
+                                        '</td>';
+                                    }else{
+                                        echo '<tr>';
+                                        echo '<td class="p-1" colspan="2" style="width: 50%;">'
+                                        .'<b>'.$value['nama_lokalis']. '</b>'. '<p class="m-0 mt-0 p-0">'.$value['value_detail'].'</p>'.
+                                        '</td>';
+                                        echo '</tr>';
+                                    }
+                                }else{
                                     echo '<td class="p-1" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
-                                        '</td>';
-                                } else {
-                                    echo '<tr>';
-                                    echo '<td class="p-1" colspan="2" style="width: 50%;">'
-                                        . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
-                                        '</td>';
-                                    echo '</tr>';
-                                }
-                            } else {
-                                echo '<td class="p-1" style="width: 50%;">'
-                                    . '<b>' . $value['nama_lokalis'] . '</b>' . '<p class="m-0 mt-0 p-0">' . $value['value_desc'] . '</p>' .
+                                    .'<b>'.$value['nama_lokalis']. '</b>'.'<p class="m-0 mt-0 p-0">'.$value['value_detail'].'</p>'.
                                     '</td>';
-                                echo "<tr>";
+                                    echo "<tr>";
+                                }
                             }
+                             
                         }
                     }
-                }
-                ?>
+                    ?>
             </tbody>
         </table>
 
-
         <table class="table table-bordered">
             <tbody>
                 <?php
-                if (!empty($lokalis)) {
+                if(!empty($lokalis)){
                     foreach ($lokalis as $key => $value) {
                         if ($value['value_score'] == 3) {
                             $filepath = WRITEPATH . 'uploads/signatures/' . $value['value_detail'];
-
+                            
                             if (file_exists($filepath)) {
                                 $filedata = file_get_contents($filepath);
                                 $filedata64 = base64_encode($filedata);
                                 $selectlokalis[$key]['filedata64'] = $filedata64;
-
+                                
                                 echo '<tr>';
-                                echo '<th>' . $value['nama_lokalis'] . '</th>';
+                                echo '<th>'.$value['nama_lokalis'].'</th>';
                                 echo '<td style="width: 50%;">';
                                 echo '<img class="mt-3" src="data:image/jpeg;base64,' . $filedata64 . '" width="400px">';
                                 echo '</td>';
@@ -291,17 +422,64 @@
             </tbody>
         </table>
 
+        <?php 
+        if ($visit['specialist_type_id'] === "1.10"):?>
+        <?php
+            if (!empty($val['mata']) && is_array($val['mata'])) {
+            $result = [];
+            foreach ($val['mata'] as $item) {
+                $nama_lokalis = str_replace(["DEXTRA", "SINISTRA"], "", $item['nama_lokalis']); 
+                $nama_lokalis = trim($nama_lokalis); 
+                $value_info = $item['value_info'];
+                $value_detail = $item['value_detail'];
+
+                if (isset($result[$nama_lokalis])) {
+                    $result[$nama_lokalis][$value_info] = $value_detail;
+                } else {
+                    $result[$nama_lokalis] = [
+                        "SINISTRA" => $value_info === "SINISTRA" ? $value_detail : null,
+                        "nama_lokalis" => $nama_lokalis,
+                        "DEXTRA" => $value_info === "DEXTRA" ? $value_detail : null
+                    ];
+                }
+            }
+
+            $resultChunks = array_chunk($result, ceil(count($result) / 2), true);
+            echo "<div style='display: flex; gap: auto;'>";
+
+            foreach ($resultChunks as $chunk) {
+                echo "<div style='flex: 1;'>";
+                echo "<table border='1' class='table table-bordered'>";
+                echo "<tr><td class='fw-bold'>Oculus Dextra</td><td class='fw-bold text-center'>Keterangan</td><td class='fw-bold'>Oculus Sinistra</td></tr>";
+                foreach ($chunk as $row) {
+                    echo "<tr>";
+                    echo "<td>" . ($row['DEXTRA'] ?? '') . "</td>";
+                    echo "<td class='text-center'>{$row['nama_lokalis']}</td>";
+                    echo "<td>" . ($row['SINISTRA'] ?? '') . "</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+                echo "</div>";
+            }
+            
+            echo "</div>";
+        }
+        ?>
+
+        <?php endif;?>
+        <?php  if (!empty($val['pemeriksaan']) && is_array($val['pemeriksaan'])) { ?>
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td class="p-1" colspan="2">
                         <b>Catatan Obyektif</b>
-                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['pemeriksaan']) ? @$val['pemeriksaan'] : '-'; ?></p>
+                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['pemeriksaan']) ? @$val['pemeriksaan']:'-'; ?></p>
                     </td>
                 </tr>
             </tbody>
         </table>
-
+        <?php } ?>
+        <?php  if (!empty($val['ats_tipe']) && is_array($val['ats_tipe'])) { ?>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -310,48 +488,50 @@
                         <p class="m-0 mt-1 p-0"><?= !empty(@$val['ats_tipe']) ? @$val['ats_tipe'] : '-'; ?></p>
                     </td>
                 </tr>
-                <?php if (!empty($val['ats_tipe'])): ?>
-                    <tr>
-                        <td class="p-1">
-                            <b><?= @$val['ats_tipe']; ?></b>
-                            <p class="m-0 mt-1 p-0"><?= !empty(@$val['ats_item']) ? @$val['ats_item'] : '-'; ?></p>
-                        </td>
-                    </tr>
-                <?php endif; ?>
+                <?php if(!empty($val['ats_tipe'])): ?>
+                <tr>
+                    <td class="p-1">
+                        <b><?= @$val['ats_tipe']; ?></b>
+                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['ats_item']) ? @$val['ats_item']:'-'; ?></p>
+                    </td>
+                </tr>
+                <?php endif;?>
                 <?php if (!empty($val['hamil']) && ($val['hamil'] === "Hamil")): ?>
-                    <tr>
-                        <td class="p-1" colspan="2">
-                            <b>Hamil</b>
-                            <p class="m-0 mt-1 p-0"><?= !empty(@$val['hamil']) ? @$val['hamil'] : '-'; ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" colspan="2">
-                            <b>Umur Kehamilan</b>
-                            <p class="m-0 mt-1 p-0"></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" colspan="2">
-                            <b>G</b>
-                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_g']; ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" colspan="2">
-                            <b>P</b>
-                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_p']; ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-1" colspan="2">
-                            <b>A</b>
-                            <p class="m-0 mt-1 p-0"><?= @$val['hamil_a']; ?></p>
-                        </td>
-                    </tr>
-                <?php endif; ?>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <b>Hamil</b>
+                        <p class="m-0 mt-1 p-0"><?= !empty(@$val['hamil']) ? @$val['hamil']:'-'; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <b>Umur Kehamilan</b>
+                        <p class="m-0 mt-1 p-0"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <b>G</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_g']; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <b>P</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_p']; ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="p-1" colspan="2">
+                        <b>A</b>
+                        <p class="m-0 mt-1 p-0"><?= @$val['hamil_a']; ?></p>
+                    </td>
+                </tr>
+                <?php endif;?>
             </tbody>
         </table>
+        <?php } ?>
+
 
         <div class="row">
             <h4 class="text-start">Assessment (A)</h4>
@@ -476,7 +656,7 @@
         </table>
         <div class="row">
             <div class="col-auto" align="center">
-                <div>Sampangan, <?= tanggal_indo(date('Y-m-d')); ?></div>
+                <div>Semarang, <?= tanggal_indo(date('Y-m-d')); ?></div>
                 <br>
                 <div>Dokter</div>
                 <div class="mb-1">
@@ -504,41 +684,41 @@
 
 </body>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: '<?= @$val['dpjp']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+var qrcode = new QRCode(document.getElementById("qrcode"), {
+    text: '<?= @$val['dpjp']; ?>',
+    width: 150,
+    height: 150,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H // High error correction
+});
 </script>
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode1"), {
-        text: '<?= @$val['nama']; ?>',
-        width: 150,
-        height: 150,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H // High error correction
-    });
+var qrcode = new QRCode(document.getElementById("qrcode1"), {
+    text: '<?= @$val['nama']; ?>',
+    width: 150,
+    height: 150,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.H // High error correction
+});
 </script>
 
 <style>
-    @media print {
-        @page {
-            margin: none;
-            scale: 85;
-        }
-
-        .container {
-            width: 210mm;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
+@media print {
+    @page {
+        margin: none;
+        scale: 85;
     }
+
+    .container {
+        width: 210mm;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+}
 </style>
 <script type="text/javascript">
-    window.print();
+// window.print();
 </script>
 
 </html>

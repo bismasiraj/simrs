@@ -33,7 +33,7 @@ class Gizi extends \App\Controllers\BaseController
         WHERE EXAMINATION_DETAIL.visit_id = '" . $formData->visit_id . "' ORDER BY EXAMINATION_DETAIL.EXAMINATION_DATE DESC");
         $results = $this->lowerKey($query->getRowArray() ?? []);
 
-        $riwayat_alergi = $db->query("select histories from pasien_history where NO_REGISTRATION = '" . $formData->no_registration . "' and VALUE_ID = 'G0090101'");
+        $riwayat_alergi = $db->query("select histories from pasien_history where NO_REGISTRATION = '" . $formData->no_registration . "' and VALUE_ID = 'G0090102'");
         $riwayat_alergi = $this->lowerKey($riwayat_alergi->getRowArray() ?? []);
 
         $biokimia = $this->lowerKey($db->query("

@@ -6891,6 +6891,10 @@ This Function is used to Add Patient
         $treatment_plafond = @$body['treatment_plafond']; //$this->request->getPost('treatment_plafond');
         $nota_no = @$body['nota_no']; //$this->request->getPost('nota_no');
         $body_id = @$body['body_id']; //$this->request->getPost('nota_no');
+        $diagnosa_desc = @$body['diagnosa_desc']; //$this->request->getPost('diagnosa_desc');     Far baru 14/12 9:54
+        $indication_desc = @$body['indication_desc']; //$this->request->getPost('indication_desc');     Far baru 14/12 9:54
+
+
 
         // echo $treat_date;
 
@@ -7063,7 +7067,10 @@ This Function is used to Add Patient
             'class_id_plafond' => $class_id_plafond,
             'treatment_plafond' => $treatment_plafond,
             'doctor' => $doctor,
-            'body_id' => $body_id
+            'body_id' => $body_id,
+            'diagnosa_desc' => $diagnosa_desc, // Far baru 14/12 9:54
+            'indication_desc' => $indication_desc // Far baru 14/12 9:54
+
         ];
 
         $tbModel->save($data);

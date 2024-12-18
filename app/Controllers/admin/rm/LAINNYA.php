@@ -622,7 +622,7 @@ class lainnya extends \App\Controllers\BaseController
             $dataTables = $this->lowerKey($db->query("SELECT H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound, h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,
                                                         PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, null as kode,
                                                         reg_date AS tgl_hasil, norm, k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, 
-                                                        k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl
+                                                        k.pengirim_name, k.ruang_name, k.kelas_name, k.Tgl_Periksa, h.flag_hl,k.diagnosa_desc
                                                         FROM sharelis.dbo.hasillis h
                                                         LEFT OUTER JOIN sharelis.dbo.kirimlis k ON h.norm COLLATE database_default = k.no_pasien COLLATE 
                                                         database_default AND H.kode_kunjungan = K.Kode_Kunjungan
@@ -632,7 +632,8 @@ class lainnya extends \App\Controllers\BaseController
                                                         AND DATEADD(hour, 24, COALESCE('" . $visit['end_request'] . "', GETDATE()))
                                                         GROUP BY H.nolab_lis, H.kode_kunjungan, tarif_id, h.tarif_name, kel_pemeriksaan, urut_bound,
                                                         PARAMETER_NAME, hasil, satuan, NILAI_RUJUKAN, METODE_PERIKSA, k.Tgl_Periksa, reg_date, norm,
-                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name, h.flag_hl,h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi
+                                                        k.nama, k.alamat, k.date_of_birth, k.cara_bayar_name, k.pengirim_name, k.ruang_name, k.kelas_name,
+                                                         h.flag_hl,h.TGL_HASIL_SELESAI, h.Catatan, h.Rekomendasi,k.diagnosa_desc
                                                         ORDER BY urut_bound, kode_kunjungan, tarif_id")->getResultArray());
 
             $doctor = $this->lowerKey($db->query("SELECT fullname from EMPLOYEE_ALL where NONACTIVE= 0 and employee_id in (select employee_id from DOCTOR_SCHEDULE where clinic_id ='P013')")->getRowArray());

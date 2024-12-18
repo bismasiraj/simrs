@@ -33,7 +33,6 @@ class TreatmentBillModel extends Model
         'amount_paid_plafond',
         'discount',
         'subsidisat',
-
         'isrj',
         'pembulatan',
         'amount',
@@ -58,6 +57,7 @@ class TreatmentBillModel extends Model
         'employee_id_from',
         'class_room_id',
         'keluar_id',
+        'body_id',
 
         'account_id',
         'task_id',
@@ -123,9 +123,9 @@ class TreatmentBillModel extends Model
         'tipetarif',
         'treatment',
         'treatment_plafond',
-        'body_id'
+        'diagnosa_desc', // Far baru 14/12 9:54
+        'indication_desc', // Far baru 14/12 9:54
     ];
-
 
     public function getBill($nomor, $ke, $mulai, $akhir, $lunas, $klinik, $rj, $status, $nota, $trans, $start = null, $end = null)
     {
@@ -145,10 +145,10 @@ class TreatmentBillModel extends Model
         return array_values($data);
     }
 
-
     public function getharian($mulai, $akhir, $status, $rj)
     {
         $sql = "SP_EIS_TRANSAKSI;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj'";
+
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

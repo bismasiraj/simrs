@@ -83,6 +83,7 @@ $this->extend('layout/basiclayout', [
                                     </div>
                                 </form>
                                 <div class="d-flex justify-content-end gap-2">
+                                    <button class="btn btn-primary" id="sensusGizi" disabled><i class="fab fa-wpforms"></i> Sensus</button>
                                     <button class="btn btn-primary" id="generateGizi" disabled><i class="fas fa-cog"></i> Generate</button>
                                     <button class="btn btn-success" id="cetakGiziAll" disabled><i class="fas fa-print"></i> Cetak</button>
                                 </div>
@@ -362,7 +363,6 @@ $this->extend('layout/basiclayout', [
         $("#btn-search-gizi").on('click', (function(e) {
             e.preventDefault();
 
-            // getDataTable();
             renderData();
 
         }));
@@ -455,7 +455,7 @@ $this->extend('layout/basiclayout', [
                 cache: false,
                 processData: false,
                 success: function(res) {
-
+                    $('#sensusGizi').prop('disabled', false);
                     if (jsonObj.klinik.includes('%')) {
                         $('#generateGizi').prop('disabled', true);
                         $('#cetakGiziAll').prop('disabled', true);
@@ -493,71 +493,9 @@ $this->extend('layout/basiclayout', [
                                 date: date
                             })
 
-
-                        })
-                        .catch(error => {
-                            console.error(error); // Handle any errors
-                        });
-
-                },
-                error: function() {
-
-                }
-            });
-
-        }
-        const getDataTable = () => {
-            let formData = document.querySelector('#formSearchGizi')
-            let dataSend = new FormData(formData)
-            let jsonObj = {};
-            dataSend.forEach((value, key) => {
-                jsonObj[key] = value;
-            });
-            let date = jsonObj.akhir;
-
-            $.ajax({
-                url: '<?php echo base_url(); ?>admin/patient/getipddatatable',
-                type: "POST",
-                data: dataSend,
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function(res) {
-                    if (jsonObj.klinik.includes('%')) {
-                        $('#generateGizi').prop('disabled', true);
-                        $('#cetakGiziAll').prop('disabled', true);
-                        bangsal = '';
-                    } else {
-                        $('#generateGizi').prop('disabled', false);
-                        $('#cetakGiziAll').prop('disabled', false);
-                        bangsal = $('#iklinikGizi').val();
-                    }
-                    let templateHtml = '';
-                    getData({
-                            data: res?.data,
-                            date: date,
-                        })
-                        .then(data_diet => {
-
-                            templateHtml = dataTemplate({
-                                data: res.data,
-                                container: templateHtml,
-                                data_diet: data_diet,
+                            actionSensus({
                                 date: date,
-                            });
-                            $('#containerTableGizi').html(templateHtml);
-
-                            actionCetak();
-                            validasi();
-                            actionCetakAll({
-                                data_diet: data_diet,
-                                date: date,
-                                bangsal: bangsal,
-                            });
-                            actionGenerate({
-                                data_diet: data_diet,
-                                date: date
+                                bangsal: jsonObj.klinik,
                             })
 
 
@@ -571,6 +509,7 @@ $this->extend('layout/basiclayout', [
 
                 }
             });
+
         }
 
         const dataTemplate = (props) => {
@@ -792,6 +731,14 @@ $this->extend('layout/basiclayout', [
 
                     }
                 });
+            })
+        }
+
+        const actionSensus = (props) => {
+            $('#sensusGizi').off().on('click', function() {
+                let url = '<?= base_url() . 'admin/DietInap/sensus/'; ?>' + btoa(JSON.stringify(props.date)) + '/' + props.bangsal;
+                // // Redirect to the URL
+                window.open(url, '_blank');
             })
         }
 

@@ -668,8 +668,6 @@
                     jsonObj[key] = value;
                 });
 
-                jsonObj.operation_desc = $('#quill_operation_desc_12').text();
-
                 let diag_cats = dataSend.getAll('diag_cat[]');
                 let diag_ids = dataSend.getAll('diag_id[]');
                 let diag_names = dataSend.getAll('diag_name[]');
@@ -2097,7 +2095,7 @@
 
 
                 $("#loading-indicator").show();
-                console.log(jsonObj);
+
                 postData(jsonObj, 'admin/PatientOperationRequest/insertAnestesiaLengkap', (res) => {
                     if (res.respon === true) {
                         successSwal('Data berhasil diperbarui.');
@@ -2245,7 +2243,6 @@
                 })
 
 
-
                 $('#create-modal-permintaan-operasi').on('shown.bs.modal', function() {
                     let treatmentData = renderDropdownTreatment();
                     $('#tarif_id-permintaan_operasi').select2({
@@ -2257,7 +2254,8 @@
                     initializeQuillEditors();
                 });
 
-                // initializeQuillEditors();
+
+                initializeQuillEditors();
                 actionDropdownSpesialisas();
                 btnSaveActionRequestOperation(visit);
             });
@@ -2626,7 +2624,7 @@
                 initializeFlatpickrOperasi()
                 initializeQuillEditors();
             });
-            // initializeQuillEditors();
+            initializeQuillEditors();
         };
 
         const modalViewEditRequestOperation = (data) => {
@@ -2679,7 +2677,7 @@
             $('#transaksi-permintaan_operasi').val(result.transaksi);
             $('#layan-permintaan_operasi').val(result.layan);
             let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
-            $("#start_operation-permintaan_operasi").val(moment(currentDateTime).format("YYYY-MM-DD HH:mm"))
+            $("#start_operation-permintaan_operasi").val(currentDateTime)
             $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $('#rooms_id-permintaan_operasi').val(result?.rooms_id);
             $('#clinic_id_from-permintaan_operasi').val(result.clinic_id);
@@ -2724,7 +2722,7 @@
                 initializeQuillEditors();
             });
             initializeFlatpickrOperasi()
-            // initializeQuillEditors();
+            initializeQuillEditors();
             btnUpdateDataRequestOperation(result)
         };
 
@@ -2739,7 +2737,6 @@
             })
 
             let currentDateTime = moment(new Date(result.start_operation)).format("DD/MM/YYYY HH:mm")
-
             let currentDateTimeEnd = moment(result?.end_operation ? new Date(result?.end_operation) : new Date())
                 .format("DD/MM/YYYY HH:mm");
 
@@ -2789,8 +2786,8 @@
             $('#clinic_id-permintaan_operasi').val(result.clinic_id);
             $('#layan-permintaan_operasi').val(result.layan);
 
-            $("#start_operation-permintaan_operasi").val(moment(currentDateTime).format("YYYY-MM-DD HH:mm"))
-            $("#end_operation-permintaan_operasi").val(moment(currentDateTimeEnd).format("YYYY-MM-DD HH:mm"))
+            $("#start_operation-permintaan_operasi").val(currentDateTime)
+            $("#end_operation-permintaan_operasi").val(currentDateTimeEnd)
 
             $("#flatstart_operation-permintaan_operasi").val(currentDateTime).trigger("change");
             $("#flatend_operation-permintaan_operasi").val(currentDateTimeEnd).trigger("change");
@@ -2870,7 +2867,7 @@
             });
 
 
-            // initializeQuillEditors();
+            initializeQuillEditors();
             actionBtnUpdateAndInsert(result);
         };
 
@@ -5451,8 +5448,6 @@
                             } else {
                                 let radioOptions = '';
                                 if (props?.column_name?.toLowerCase() == 'terlayani') {
-                                    console.log(matchedData);
-                                    console.log(props?.get_data?.[props?.column_name?.toLowerCase()]);
                                     radioOptions = matchedData.map((item, index) => `
                                     <div class="form-check mb-0 pt-4">
                                         <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item.value_score}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item.value_score ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
@@ -5600,21 +5595,13 @@
 
         const initializeQuillEditors = (props) => {
             document.querySelectorAll('.quill-editor').forEach(editor => {
-                const instance = quillInstances[editor.id];
-                if (instance) {
-                    instance.off('text-change'); // Remove event listeners
-                    instance.root.innerHTML = ''; // Clear content
-                    delete quillInstances[editor.id]; // Remove instance
-                }
-            });
-
-            document.querySelectorAll('.quill-editor').forEach(editor => {
                 if (!quillInstances[editor.id]) {
                     const quill = new Quill(editor, {
                         theme: 'snow'
                     });
 
                     quillInstances[editor.id] = quill;
+
 
                     const inputField = document.querySelector(
                         `input[name="${editor.getAttribute('name')}"]`);
@@ -5697,7 +5684,7 @@
             };
 
             let droppdown = `
-                        <table class="table table-borderless my-4" id="data-dropdown">
+                        <table class="table table-borderless" id="data-dropdown">
                             <tbody>
                                 ${props?.map(e => `
                                     <tr class="bg-light">
@@ -6542,9 +6529,7 @@
         }; //new 01/08
 
         const convertDate = (dateString) => {
-            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm",
-                "YYYY-MM-DDTHH:mm"
-            ];
+            const formats = ["YYYY-MM-DD", "DD/MM/YYYY", "YYYY-MM-DD HH:mm", "DD/MM/YYYY HH:mm", "YYYY-MM-DDTHH:mm"];
             const parsedDate = moment(dateString, formats, true);
             if (parsedDate.isValid()) {
                 return parsedDate.format("YYYY-MM-DD HH:mm");

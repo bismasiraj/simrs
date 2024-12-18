@@ -27,53 +27,53 @@
 
 
     <style>
-        .table-container-split {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
+    .table-container-split {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+    }
 
-        .table-container-split table {
-            width: 45%;
-        }
+    .table-container-split table {
+        width: 45%;
+    }
 
-        @page {
-            size: A4;
-        }
+    @page {
+        size: A4;
+    }
 
-        body {
-            width: 21cm;
-            /* height: 29.7cm; */
-            margin: 0;
-            font-size: 12px;
-        }
+    body {
+        width: 21cm;
+        /* height: 29.7cm; */
+        margin: 0;
+        font-size: 12px;
+    }
 
-        .h1,
-        .h2,
-        .h3,
-        .h4,
-        .h5,
-        .h6,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-            margin-bottom: .3rem;
-            font-weight: 500;
-            line-height: 1.2;
-        }
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+        margin-bottom: .3rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
 
-        thead.border {
-            border-bottom: 1px solid black !important;
-            border-top: 1px solid black !important;
-        }
+    thead.border {
+        border-bottom: 1px solid black !important;
+        border-top: 1px solid black !important;
+    }
 
-        tbody.border {
-            border-bottom: 1px solid black !important;
-        }
+    tbody.border {
+        border-bottom: 1px solid black !important;
+    }
     </style>
 </head>
 
@@ -213,7 +213,7 @@
                         <th style="width: 5%;">Hasil</th>
                         <th style="width: 2%;">Flag</th>
                         <th style="width: 5%;">Satuan</th>
-                        <th style="width: 7%;">Nilai Rujukan</th>
+                        <th style="width: 10%;">Nilai Rujukan</th>
                         <th style="width: 15%;">Keterangan</th>
                     </tr>
                 </thead>
@@ -237,7 +237,7 @@
                     <div id="qrcode-container">
                         <div id="qrcode"></div>
                     </div>
-                    <div id="datetime-now"></div>
+                    <div id="datetime-now-valid"></div>
                 </div>
                 <div class="col"></div>
                 <div class="col-3" align="center">
@@ -248,15 +248,15 @@
                     <div id="validator-ttd"></div>
                 </div>
             </div>
-            <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab', 'eklaim'])) { ?>
-                <div class="d-flex justify-content-end mb-3">
-                    <button type="button" id="Print-labbbbb" onclick="window.print()"
-                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
-                        <i class="fas fa-print"></i> Cetak
-                    </button>
+            <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab','eklaim'])) { ?>
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button" id="Print-labbbbb" onclick="window.print()"
+                    data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
+                    <i class="fas fa-print"></i> Cetak
+                </button>
 
 
-                </div>
+            </div>
             <?php } ?>
         </form>
     </div>
@@ -264,6 +264,8 @@
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
+
+
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script> -->
@@ -271,24 +273,42 @@
 </body>
 
 <script>
-    $(document).ready(function() {
-        $("#datetime-now").html(`${moment(new Date()).format("DD/MM/YYYY HH:mm:ss")}`)
+$(document).ready(function() {
 
-        dataRenderTables();
-        renderDataPatient();
+    dataRenderTables();
+    renderDataPatient();
 
-    })
+})
 
-    const dataRenderTables = () => {
-        <?php $dataJsonTables = json_encode($dataTables); ?>
+const dataRenderTables = () => {
+    <?php $dataJsonTables = json_encode($dataTables); ?>
 
-        let dataTable = <?php echo $dataJsonTables; ?>;
+    let dataTable = <?php echo $dataJsonTables; ?>;
 
-        let groupedData = {};
+    const diagnosaList = [];
+    dataTable.forEach((item) => {
+        if (item.diagnosa_desc !== null && !diagnosaList.includes(item.diagnosa_desc)) {
+            diagnosaList.push(item.diagnosa_desc);
+        }
+    });
 
-        dataTable.forEach(e => {
-            if (e.tarif_name?.toLowerCase().includes("antigen")) {
-                $("#tindakan_medis").html(`<h6>Expertise :</h6>
+    let result;
+    if (diagnosaList.length === 0) {
+        result = "";
+    } else if (diagnosaList.length === 1) {
+        result = "1";
+    } else {
+        result = diagnosaList.join(" ,<br>");
+    }
+
+    $("#diagnosa_klinis").html(result);
+
+
+    let groupedData = {};
+
+    dataTable.forEach(e => {
+        if (e.tarif_name?.toLowerCase().includes("antigen")) {
+            $("#tindakan_medis").html(`<h6>Expertise :</h6>
             <p>Note: Rapid Antigen SARS-CoV-2
                 * Spesimen : Swab Nasofaring/ Orofaring
                 * Hasil negatif dapat terjadi pada kondisi kuantitas antigen pada spesimen di bawah level deteksi alat
@@ -298,34 +318,34 @@
                 probabilitas pretes relatif tinggi,
                 terutama bila pasien bergejala atau diketahui memikili kontak dengan orang yang terkonfirmasi COVID-19
             </p>`);
-            }
-            if (!groupedData[e.kel_pemeriksaan]) {
-                groupedData[e.kel_pemeriksaan] = {};
-            }
+        }
+        if (!groupedData[e.kel_pemeriksaan]) {
+            groupedData[e.kel_pemeriksaan] = {};
+        }
 
-            if (!groupedData[e.kel_pemeriksaan][e.tarif_name]) {
-                groupedData[e.kel_pemeriksaan][e.tarif_name] = [];
-            }
+        if (!groupedData[e.kel_pemeriksaan][e.tarif_name]) {
+            groupedData[e.kel_pemeriksaan][e.tarif_name] = [];
+        }
 
-            groupedData[e.kel_pemeriksaan][e.tarif_name].push(e);
-        });
+        groupedData[e.kel_pemeriksaan][e.tarif_name].push(e);
+    });
 
 
-        let dataResultTable = '';
+    let dataResultTable = '';
 
-        for (let kelPemeriksaan in groupedData) {
-            if (groupedData.hasOwnProperty(kelPemeriksaan)) {
-                dataResultTable += `<tr>
+    for (let kelPemeriksaan in groupedData) {
+        if (groupedData.hasOwnProperty(kelPemeriksaan)) {
+            dataResultTable += `<tr>
                                         <td colspan="6"><strong>${kelPemeriksaan}</strong></td>
                                     </tr>`;
-                for (let tarifName in groupedData[kelPemeriksaan]) {
-                    if (groupedData[kelPemeriksaan].hasOwnProperty(tarifName)) {
-                        dataResultTable += `<tr>
+            for (let tarifName in groupedData[kelPemeriksaan]) {
+                if (groupedData[kelPemeriksaan].hasOwnProperty(tarifName)) {
+                    dataResultTable += `<tr>
                                                 <td colspan="6" style="padding-left: 20px;"><strong>${tarifName}</strong></td>
                                             </tr>`;
 
-                        groupedData[kelPemeriksaan][tarifName].forEach(e => {
-                            dataResultTable += `<tr>
+                    groupedData[kelPemeriksaan][tarifName].forEach(e => {
+                        dataResultTable += `<tr>
                                                     <td style="padding-left: 40px;">${e.parameter_name}</td>
                                                     <td>
                                                         ${(e.flag_hl?.trim() || '') === '' ? '-' : 
@@ -341,124 +361,125 @@
                                                     </td>
                                                     <td>${!e.satuan? "-":e.satuan}</td>
                                                     <td>${!e.nilai_rujukan? "-":e.nilai_rujukan}</td>
-                                                    <td></td>
+                                                    <td>${!e.catatan? "-": e.catatan === "-" ? !e.rekomendasi ? "-" : e.rekomendasi : e.catatan }</td>
 
                                                 </tr>`;
-                        });
-                    }
+                    });
                 }
             }
         }
-        $("#render-tables").html(dataResultTable)
+    }
+    $("#render-tables").html(dataResultTable)
 
-        // render patient -
-        $("#noLab_rm").html(dataTable[0]?.nolab_lis + '/ ' + dataTable[0]?.norm)
-        $("#name_patient").html(dataTable[0]?.nama)
-        $("#adresss_patient").html(dataTable[0]?.alamat)
-        $("#date_check").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
-        $("#payment_method").html(dataTable[0]?.cara_bayar_name)
-        $("#doctor_send").html(dataTable[0]?.pengirim_name)
-        $("#room_poli").html(dataTable[0]?.ruang_name)
-        $("#class_pay").html(`${dataTable[0]?.kelas_name} - ${dataTable[0]?.cara_bayar_name}`)
+    // render patient -
+    $("#noLab_rm").html(dataTable[0]?.nolab_lis + '/ ' + dataTable[0]?.norm)
+    $("#name_patient").html(dataTable[0]?.nama)
+    $("#adresss_patient").html(dataTable[0]?.alamat)
+    $("#date_check").html(moment(dataTable[0]?.tgl_hasil).format("DD/MM/YYYY HH:mm:ss"))
+    $("#payment_method").html(dataTable[0]?.cara_bayar_name)
+    $("#doctor_send").html(dataTable[0]?.pengirim_name)
+    $("#room_poli").html(dataTable[0]?.ruang_name)
+    $("#class_pay").html(`${dataTable[0]?.kelas_name} - ${dataTable[0]?.cara_bayar_name}`)
+    $("#datetime-now-valid").html(`${moment(dataTable[0]?.tgl_hasil_selesai).format("DD/MM/YYYY HH:mm:ss")}`)
 
 
 
 
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: `https://www.pkusampangan.com/`, // Your text here
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
 
-        function addImageToQRCode() {
-            var qrElement = document.getElementById("qrcode");
-            var qrCanvas = qrElement.querySelector('canvas');
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: `https://www.pkusampangan.com/`, // Your text here
+        width: 70,
+        height: 70,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
 
-            var img = new Image();
-            img.src = '<?= base_url('assets/img/logo.png') ?>';
+    function addImageToQRCode() {
+        var qrElement = document.getElementById("qrcode");
+        var qrCanvas = qrElement.querySelector('canvas');
 
-            img.onload = function() {
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
+        var img = new Image();
+        img.src = '<?= base_url('assets/img/logo.png') ?>';
 
-                canvas.width = qrCanvas.width;
-                canvas.height = qrCanvas.height;
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
 
-                ctx.drawImage(qrCanvas, 0, 0, canvas.width, canvas.height);
+            canvas.width = qrCanvas.width;
+            canvas.height = qrCanvas.height;
 
-                var imgSize = Math.min(canvas.width, canvas.height) * 0.3;
-                var imgX = (canvas.width - imgSize) / 2;
-                var imgY = (canvas.height - imgSize) / 2;
+            ctx.drawImage(qrCanvas, 0, 0, canvas.width, canvas.height);
 
-                ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+            var imgSize = Math.min(canvas.width, canvas.height) * 0.3;
+            var imgX = (canvas.width - imgSize) / 2;
+            var imgY = (canvas.height - imgSize) / 2;
 
-                qrElement.innerHTML = '';
-                qrElement.appendChild(canvas);
-            };
-        }
+            ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
 
-        addImageToQRCode();
-
+            qrElement.innerHTML = '';
+            qrElement.appendChild(canvas);
+        };
     }
 
+    addImageToQRCode();
+
+}
 
 
-    const renderDataPatient = () => {
-        <?php $dataJson = json_encode($visit); ?>
-        let data = <?php echo $dataJson; ?>;
-        // console.log("sasa", data);
 
-        // render patient 
-        $("#gender_patient").html(data?.name_of_gender)
-        $("#doctor-responsible").html(data?.doctor_responsible)
+const renderDataPatient = () => {
+    <?php $dataJson = json_encode($visit); ?>
+    let data = <?php echo $dataJson; ?>;
+    // console.log("sasa", data);
 
-        $("#date_age").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
-        $("#no_tlp").html(data?.phone_number)
-        $("#diagnosa_klinis").html(data?.diagnosa)
-        $("#validator-ttd").html(data?.valid_users_p)
+    // render patient 
+    $("#gender_patient").html(data?.name_of_gender)
+    $("#doctor-responsible").html(data?.doctor_responsible)
 
-        var qrcode = new QRCode(document.getElementById("qrcode1"), {
-            text: `${data?.valid_users_p}`, // Your text here
-            width: 70,
-            height: 70,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H // High error correction
-        });
-    }
+    $("#date_age").html(moment(data?.date_of_birth).format("DD/MM/YYYY") + ' - ' + data?.age)
+    $("#no_tlp").html(data?.phone_number)
+    $("#validator-ttd").html(data?.valid_users_p)
+
+    var qrcode = new QRCode(document.getElementById("qrcode1"), {
+        text: `${data?.valid_users_p}`, // Your text here
+        width: 70,
+        height: 70,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // High error correction
+    });
+}
 </script>
 <style>
-    @media print {
-        @page {
-            margin: none;
-            /* scale: 85; */
-        }
-
-        .container {
-            width: 100%;
-            /* Sesuaikan dengan lebar kertas A4 */
-        }
-
-        td {
-            background-color: inherit;
-            color: inherit;
-            border: inherit;
-            padding: inherit;
-            text-align: inherit;
-        }
-
-        .d-flex button {
-            display: none;
-        }
-
+@media print {
+    @page {
+        margin: none;
+        /* scale: 85; */
     }
+
+    .container {
+        width: 100%;
+        /* Sesuaikan dengan lebar kertas A4 */
+    }
+
+    td {
+        background-color: inherit;
+        color: inherit;
+        border: inherit;
+        padding: inherit;
+        text-align: inherit;
+    }
+
+    .d-flex button {
+        display: none;
+    }
+
+}
 </style>
 
 <script type="text/javascript">
-    // window.print();
+// window.print();
 </script>
 
 </html>

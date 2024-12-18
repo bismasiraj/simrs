@@ -342,10 +342,10 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 if (res.value?.fisioterapi.length >= 1) {
                     getDataFisioterapiAll = res.value?.fisioterapi
                     getDataFisioterapiDetailAll = res.value?.fioterapi_detail || []
-
                     renderJadwalFisio({
                         data: res.value?.fisioterapi,
-                        data_schedule: res.value?.fisioterapi_schedule // baru havin 26 09
+                        data_schedule: res.value?.fisioterapi_schedule,
+                        monitoring_nyeri: res?.value?.monitoring_nyeri
                     });
                 } else {
                     $("#save-tabelsOdd").attr("disabled", "disabled");
@@ -413,7 +413,8 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             });
             $("#bodydataJadwalFisioterapi").html(resultData);
             renderShowJfisoDoc({
-                data_schedule: data?.data_schedule // baru havin 26 09
+                data_schedule: data?.data_schedule,
+                monitoring_nyeri: data?.monitoring_nyeri
             })
             deleteFisioTerapi()
         };
@@ -501,7 +502,8 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
                 }) // baru havin 26 09
 
                 renderUjiRehabMedic({
-                    data: resultdetailData ?? null
+                    data: resultdetailData ?? null,
+                    monitoring_nyeri: props?.monitoring_nyeri
                 })
 
                 $('#coverSendFisioterapi').addClass('show active');
@@ -535,6 +537,7 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             $('#other_desc-fisio').val(props?.fisioterapi.other_desc || '').toggle(!!props?.fisioterapi.other_desc);
 
             $('#suggestion-fisio').val(props?.fisioterapi.suggestion || '');
+            $('#goal-fisio').val(props?.fisioterapi.teraphy_goal || '');
             $('#evaluation_qty-fisio').val(props?.fisioterapi.evaluation_qty || 0);
 
             if (props?.fisioterapi?.suspect_worker) {
@@ -952,7 +955,7 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
             $("#flatdate-detail-vactination_date").val(props?.data?.vactination_date || "").trigger(
                 'change');
             $("#val-detail-treatment").val(props?.data?.treatment || "");
-            $("#val-detail-teraphy_result").val(props?.data?.teraphy_result || "");
+            $("#val-detail-teraphy_result").val(props?.data?.teraphy_result ?? (props?.monitoring_nyeri ?? ''));
             $("#val-detail-teraphy_conclusion").val(props?.data?.teraphy_conclusion || "");
             $("#val-detail-teraphy_recomendation").val(props?.data?.teraphy_recomendation || "");
             updateTreatmentResult();
@@ -966,11 +969,11 @@ ORDER BY TREAT_TARIF.TARIF_NAME")->getResultArray();
         };
 
         const initializeFlatpickrFisioterapi = () => {
-            // flatpickr(".datetimeflatpickr", {
-            //     enableTime: true,
-            //     dateFormat: "d/m/Y H:i", // Display format
-            //     time_24hr: true, // 24-hour time format
-            // });
+            flatpickr(".datetimeflatpickr", {
+                enableTime: true,
+                dateFormat: "d/m/Y H:i", // Display format
+                time_24hr: true, // 24-hour time format
+            });
 
             $(".datetimeflatpickr").prop("readonly", false);
 
