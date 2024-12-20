@@ -667,16 +667,18 @@
                 dataSend.forEach((value, key) => {
                     jsonObj[key] = value;
                 });
+                jsonObj.operation_desc = jsonObj.operation_desc_oprs008;
+                delete jsonObj.operation_desc_oprs008;
 
                 let diag_cats = dataSend.getAll('diag_cat[]');
-                let diag_ids = dataSend.getAll('diag_id[]');
+                let diag_descs = dataSend.getAll('diag_desc[]');
                 let diag_names = dataSend.getAll('diag_name[]');
                 let suffer_type = dataSend.getAll('suffer_type[]');
-
-                for (let i = 0; i < diag_ids.length; i++) {
+                console.log(diag_cats.length);
+                for (let i = 0; i < diag_cats.length; i++) {
                     let entry = {
                         diagnosa_cat: diag_cats[i],
-                        diagnosa_id: diag_ids[i],
+                        diagnosa_desc: diag_descs[i],
                         diagnosa_name: diag_names[i],
                         suffer_type: suffer_type[i],
                     };
@@ -827,11 +829,11 @@
                 $("#document_id_checklist_anestesi").val($(this).data('id')); //new
                 $("#document_id_informasi-post-operasi").val($(this).data('id')); //new
                 $("#apobody_id").val($(this).data('id')); //new
-
+                console.log('before assessmentPraOperasi');
                 assessmentPraOperasi({
                     vactination_id: $(this).data('id')
                 })
-
+                console.log('after assessmentPraOperasi');
 
                 cetakOperasi({
                     vactination_id: $(this).data('id'),
@@ -1053,17 +1055,15 @@
 
                 // Extract diagnosa fields
                 let diag_cat = dataSend.getAll('diag_cat[]');
-                let diag_id = dataSend.getAll('diag_id[]');
-                let diag_name = dataSend.getAll('diag_name[]');
+                let diag_desc = dataSend.getAll('diag_desc[]');
                 let suffer_type = dataSend.getAll('suffer_type[]');
 
                 jsonObj.diagnosa = [];
 
-                for (let i = 0; i < diag_id.length; i++) {
+                for (let i = 0; i < diag_cat.length; i++) {
                     let entry = {
                         diag_cat: diag_cat[i],
-                        diag_id: diag_id[i],
-                        diag_name: diag_name[i],
+                        diag_desc: diag_desc[i],
                         suffer_type: suffer_type[i],
                         pasien_diagnosa_id: dataSend.get('body_id')
                     };
@@ -1072,7 +1072,7 @@
                 }
 
 
-                ['diag_cat[]', 'diag_id[]', 'diag_name[]', 'suffer_type[]'].forEach(key => {
+                ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
                     dataSend.getAll(key).forEach((_, i) => {
                         jsonObj[key.replace('[]', `[${i}]`)] =
                             undefined;
@@ -1407,17 +1407,15 @@
                 jsonObj['document_id'] = props.vactination_id;
                 // Extract diagnosa fields
                 let diag_cat = dataSend.getAll('diag_cat[]');
-                let diag_id = dataSend.getAll('diag_id[]');
-                let diag_name = dataSend.getAll('diag_name[]');
+                let diag_desc = dataSend.getAll('diag_desc[]');
                 let suffer_type = dataSend.getAll('suffer_type[]');
 
                 jsonObj.diagnosa = [];
 
-                for (let i = 0; i < diag_id.length; i++) {
+                for (let i = 0; i < diag_cat.length; i++) {
                     let entry = {
                         diag_cat: diag_cat[i],
-                        diag_id: diag_id[i],
-                        diag_name: diag_name[i],
+                        diag_desc: diag_desc[i],
                         suffer_type: suffer_type[i],
                         pasien_diagnosa_id: dataSend.get('body_id')
                     };
@@ -1426,7 +1424,7 @@
                 }
 
 
-                ['diag_cat[]', 'diag_id[]', 'diag_name[]', 'suffer_type[]'].forEach(key => {
+                ['diag_cat[]', 'diag_desc[]', 'suffer_type[]'].forEach(key => {
                     dataSend.getAll(key).forEach((_, i) => {
                         jsonObj[key.replace('[]', `[${i}]`)] =
                             undefined;
@@ -2571,6 +2569,7 @@
             $('#keluar_id-permintaan_operasi').val(result.keluar_id);
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
+            $('#diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
             $('#end_operation-permintaan_operasi').val(result.end_operation)
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
@@ -2669,6 +2668,7 @@
             $('#keluar_id-permintaan_operasi').val(result.keluar_id);
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
+            $('#diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
             $('#end_operation-permintaan_operasi').val(result.end_operation)
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
@@ -2779,7 +2779,7 @@
             $('#keluar_id-permintaan_operasi').val(result.keluar_id);
             $('#diagnosa_pra-permintaan_operasi').val(result.diagnosa_pra);
             $('#diagnosa_pasca-permintaan_operasi').val(result.diagnosa_pasca);
-
+            $('#diagnosa_desc-permintaan_operasi').html(result.diagnosa_desc);
             $('#start_anestesi-permintaan_operasi').val(result.start_anestesi);
             $('#end_anestesi-permintaan_operasi').val(result.end_anestesi);
             $('#result_id-permintaan_operasi').val(result.result_id);
@@ -3535,7 +3535,7 @@
                 diagnosas.forEach((item, index) => {
 
                     addRowDiagDokter('bodyDiagPraOperation2-', pasienOperasiSelected?.vactination_id,
-                        item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat);
+                        item?.diagnosa_desc, item?.diagnosa_name, item?.diag_cat);
                 });
             }
 
@@ -4461,10 +4461,10 @@
                 diagnosas.forEach((item, index) => {
                     if (item.diag_cat == 13) {
                         addRowDiagDokter('bodyDiagPraOperation-', pasienOperasiSelected?.vactination_id,
-                            item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
+                            item?.diagnosa_desc, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
                     } else {
                         addRowDiagDokter('bodyDiagPascaOperation-', pasienOperasiSelected?.vactination_id,
-                            item?.diagnosa_id, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
+                            item?.diagnosa_desc, item?.diagnosa_name, item?.diag_cat, item?.diag_suffer);
                     }
                 });
             }
@@ -5376,35 +5376,35 @@
 
                             if (props?.p_type == 'GEN0022' || props?.p_type == 'GEN0021') {
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
-                                            <option value="" selected>Pilih</option>
-                                            ${selectOptions}
-                                        </select>
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
+                                <option value="" selected>Pilih</option>
+                                ${selectOptions}
+                            </select>
+                        </div>
+                    `;
                             } else if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
-                                            <option value="" selected>Pilih</option>
-                                            ${selectOptions}
-                                        </select>
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">
+                                <option value="" selected>Pilih</option>
+                                ${selectOptions}
+                            </select>
+                        </div>
+                    `;
                             } else {
 
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}">
-                                            <option value="" selected>Pilih</option>
-                                            ${selectOptions}
-                                        </select>
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <select class="form-select" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}">
+                                <option value="" selected>Pilih</option>
+                                ${selectOptions}
+                            </select>
+                        </div>
+                    `;
                             }
                             break;
 
@@ -5412,21 +5412,43 @@
                             initializeQuill = true; // Set flag to initialize Quill
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 htmlContent = `
-                                    <div class="form-group pb-5 pt-4">
-                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" value="${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}">
-                                        <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}</div>
-                                    </div>
-                                `;
+                        <div class="form-group pb-5 pt-4">
+                            <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" value="${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}">
+                            <div id="quill_${props?.p_type?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.p_type?.toLowerCase()}_${props?.parameter_id}'>${props?.get_data?.['value_id_'+props?.parameter_id] ?? ''}</div>
+                        </div>
+                    `;
                             } else {
 
-                                htmlContent = `
-                                    <div class="form-group pb-5 pt-4">
-                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
-                                        <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
-                                    </div>
-                                `;
+                                if (props.p_type != 'OPRS008') {
+                                    htmlContent = `
+                        <div class="form-group pb-5 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
+                            <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
+                        </div>
+                    `;
+                                } else {
+                                    if (props?.column_name != 'OPERATION_DESC') {
+                                        htmlContent = `
+                                <div class="form-group pb-5 pt-4">
+                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
+                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}" class="quill-editor" name='${props?.column_name?.toLowerCase()}'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
+                                </div>
+                            `;
+                                    } else {
+                                        htmlContent = `
+                                <div class="form-group pb-5 pt-4">
+                                    <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}_oprs008" value="${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}">
+                                    <div id="quill_${props?.column_name?.toLowerCase()}_${props?.parameter_id}_${props?.p_type}" class="quill-editor" name='${props?.column_name?.toLowerCase()}_oprs008'>${props?.get_data?.[props?.column_name?.toLowerCase()] ?? ''}</div>
+                                </div>
+                            `;
+                                    }
+
+                                }
+
                             }
                             break;
 
@@ -5434,41 +5456,41 @@
 
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 let radioOptions = matchedData.map((item, index) => `
-                                    <div class="form-check mb-0 pt-4">
-                                        <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === 0 && !props?.get_data?.['value_desc_' + props?.parameter_id] ? 'checked' : '')}>
-                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                                    </div>
-                                `).join('');
+                        <div class="form-check mb-0 pt-4">
+                            <input class="form-check-input" type="radio" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" data-score="${item?.value_score}" data-desc="${item?.value_desc}" value="${item[valueProp]}" ${props?.get_data?.['value_desc_'+ props?.parameter_id] === item.value_desc ? 'checked' : (index === 0 && !props?.get_data?.['value_desc_' + props?.parameter_id] ? 'checked' : '')}>
+                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                        </div>
+                    `).join('');
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        ${radioOptions}
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            ${radioOptions}
+                        </div>
+                    `;
                             } else {
                                 let radioOptions = '';
                                 if (props?.column_name?.toLowerCase() == 'terlayani') {
                                     radioOptions = matchedData.map((item, index) => `
-                                    <div class="form-check mb-0 pt-4">
-                                        <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item.value_score}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item.value_score ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
-                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                                    </div>
-                                `).join('');
+                        <div class="form-check mb-0 pt-4">
+                            <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item.value_score}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item.value_score ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
+                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                        </div>
+                    `).join('');
                                 } else {
                                     radioOptions = matchedData.map((item, index) => `
-                                    <div class="form-check mb-0 pt-4">
-                                        <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
-                                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                                    </div>
-                                `).join('');
+                        <div class="form-check mb-0 pt-4">
+                            <input class="form-check-input" type="radio" name="${props?.column_name?.toLowerCase()}" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" value="${item[valueProp]}" ${props?.get_data?.[props?.column_name?.toLowerCase()] === item[valueProp] ? 'checked' : (index === matchedData.length - 1 && !props?.get_data?.[props?.column_name?.toLowerCase()] ? 'checked' : '')}>
+                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+                        </div>
+                    `).join('');
                                 }
 
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                        ${radioOptions}
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                            ${radioOptions}
+                        </div>
+                    `;
                             }
 
                             break;
@@ -5487,21 +5509,21 @@
                         case 2:
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 htmlContent = `
-                                <div class="form-check mb-0 pt-4">
-                                    <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="">
-                                    <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score ?? ''}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="1" ${props?.get_data?.['value_id_'+props?.parameter_id] ?? "" === '1' ? 'checked' : ''}>
-                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                </div>
-                                `;
+                    <div class="form-check mb-0 pt-4">
+                        <input type="hidden" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="">
+                        <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score ?? ''}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="1" ${props?.get_data?.['value_id_'+props?.parameter_id] ?? "" === '1' ? 'checked' : ''}>
+                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                    </div>
+                    `;
                             } else {
 
                                 htmlContent = `
-                                <div class="form-check mb-0 pt-4">
-                                    <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
-                                    <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
-                                    <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                </div>
-                                `;
+                    <div class="form-check mb-0 pt-4">
+                        <input type="hidden" name="${props?.column_name?.toLowerCase()}" value="">
+                        <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="1" ${props?.get_data?.[props?.column_name?.toLowerCase()] ?? "" === '1' ? 'checked' : ''}>
+                        <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                    </div>
+                    `;
                             }
                             break;
 
@@ -5518,44 +5540,44 @@
                             }
 
                             htmlContent = `
-                        <div class="form-group mb-0 pt-4">
-                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                            <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                            <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
-                        </div>
-                             `;
+            <div class="form-group mb-0 pt-4">
+                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                <input class="form-control datetime-input" type="hidden" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ?  moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+                <input class="form-control datetime-input datetimeflatpickr" type="text" id="flat${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${ isAnastesi ? data_start_operation : props?.get_data?.[props?.column_name?.toLowerCase()] ? moment(new Date(props?.get_data?.[props?.column_name?.toLowerCase()])).format("DD/MM/YYYY HH:mm") : ''}" ${isAnastesi ? 'disabled' : ''}>
+            </div>
+                 `;
 
 
                             break;
                         case 6:
                             let multiOptions = matchedData?.map((item, index) => `
-                        <div class="form-check mb-0 pt-4">
-                            <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
-                            <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
-                        </div>
-                    `).join('');
+            <div class="form-check mb-0 pt-4">
+                <input type="checkbox" class="form-check-input" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}" name="${item?.value_info?.toLowerCase()}" value="${item.value_score}" ${props?.get_data?.[item?.value_info?.toLowerCase()] !== null ? 'checked' : ''}>
+                <label class="form-check-label" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}_${item[valueProp]}">${item.value_desc}</label>
+            </div>
+        `).join('');
                             htmlContent = `
-                        <div class="form-group mb-0 pt-4">
-                            <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                             ${multiOptions}
-                        </div>
-                    `;
+            <div class="form-group mb-0 pt-4">
+                <label class="fw-bold" for="${props?.column_name?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                 ${multiOptions}
+            </div>
+        `;
                             break;
                         case 1:
                             if (props?.p_type && validTypesRecoveryRoom.includes(props.p_type)) {
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${props?.get_data?.['value_desc_'+props?.parameter_id] == props?.parameter_desc ? props?.get_data?.['value_id_'+props?.parameter_id]: ''}" >
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                        <input type="text" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}"  data-score="${props?.value_score}" data-desc="${props?.parameter_desc}" name="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" value="${props?.get_data?.['value_desc_'+props?.parameter_id] == props?.parameter_desc ? props?.get_data?.['value_id_'+props?.parameter_id]: ''}" >
+                        </div>
+                    `;
                             } else {
                                 htmlContent = `
-                                    <div class="form-group mb-0 pt-4">
-                                        <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
-                                    <input type="${props?.column_name?.toLowerCase() == 'bleeding' ? 'number' : 'text' }" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
-                                    </div>
-                                `;
+                        <div class="form-group mb-0 pt-4">
+                            <label class="fw-bold" for="${props?.p_type?.toLowerCase()}_${props?.parameter_id}">${props?.parameter_desc}</label>
+                        <input type="${props?.column_name?.toLowerCase() == 'bleeding' ? 'number' : 'text' }" class="form-control form-thems" id="${props?.p_type?.toLowerCase()}_${props?.parameter_id}" name="${props?.column_name?.toLowerCase()}" value="${isAnastesi ? (props?.items[props?.column_name?.toLowerCase()] ?? '') : (props?.get_data?.[props?.column_name?.toLowerCase()] ?? '')}" ${isAnastesi ? 'disabled' : ''}>
+                        </div>
+                    `;
                             }
 
 
@@ -6267,7 +6289,7 @@
 
                     res.data.forEach((diagnosis) => {
                         addRowDiagDokter('bodyDiagLaporanAnesthesi-', props?.vactination_id,
-                            diagnosis?.diagnosa_id, diagnosis?.diagnosa_name, diagnosis
+                            diagnosis?.diagnosa_desc, diagnosis?.diagnosa_name, diagnosis
                             ?.diag_cat,
                             diagnosis?.suffer_type);
                     });
@@ -6295,7 +6317,7 @@
         }; // new update 30/07
 
 
-        function addRowDiagDokter(container, bodyId, diag_id = null, diag_name = null, diag_cat = null,
+        function addRowDiagDokter(container, bodyId, diag_desc = null, diag_name = null, diag_cat = null,
             diag_suffer =
             0) {
 
@@ -6312,8 +6334,11 @@
 
             let $row = $('<tr id="adiagdiag' + diagIndex + '">')
                 .append($('<td>')
-                    .append('<select id="adiagdiag_id' + diagIndex +
-                        '" class="form-control enablekan" name="diag_id[]" style="width: 100%"></select>')
+                    // .append('<select id="adiagdiag_id' + diagIndex +
+                    //     '" class="form-control enablekan" name="diag_id[]" style="width: 100%"></select>')
+                    .append('<input id="adiagdiag_desc' + diagIndex +
+                        '" name="diag_desc[]" placeholder="" type="text" class="form-control block enablekan" value="" style="width: 100%" />'
+                    )
                     .append('<input id="adiagdiag_name' + diagIndex +
                         '" name="diag_name[]" placeholder="" type="text" class="form-control block enablekan" value="" style="display: none" />'
                     )
@@ -6350,14 +6375,15 @@
             $("#" + container + bodyId).append($row);
 
             // Attach event handlers
-            $("#adiagdiag_id" + diagIndex).on('focus', function() {
-                removetextdiag(diagIndex);
-            }).on('change', function() {
-                selectedDiagnosa(diagIndex);
-            });
+            // $("#adiagdiag_id" + diagIndex).on('focus', function() {
+            //     removetextdiag(diagIndex);
+            // }).on('change', function() {
+            //     selectedDiagnosa(diagIndex);
+            // });
 
-            initializeDiagSelect2("adiagdiag_id" + diagIndex, diag_id, diag_name);
+            // initializeDiagSelect2("adiagdiag_id" + diagIndex, diag_id, diag_name);
             $("#adiagsuffer_type" + diagIndex).val(diag_suffer);
+            $("#adiagdiag_desc" + diagIndex).val(diag_desc);
             $("#adiagdiag_cat" + diagIndex).val(diag_cat);
         }
 
@@ -6521,7 +6547,7 @@
                     tbody.empty();
                     res.data.forEach((diagnosis) => {
                         addRowDiagDokter('bodyDiagLaporanAnesthesiLengkap-', props?.vactination_id,
-                            diagnosis.diagnosa_id, diagnosis.diagnosa_name, diagnosis.diag_cat,
+                            diagnosis.diagnosa_desc, diagnosis.diagnosa_name, diagnosis.diag_cat,
                             diagnosis.suffer_type);
                     });
                 }

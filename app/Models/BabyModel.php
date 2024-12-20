@@ -79,7 +79,8 @@ class BabyModel extends Model
         'chestcircumference',
         'valid_date',
         'valid_user',
-        'valid_pasien'
+        'valid_pasien',
+        'babyno'
     ];
     protected $useTimestamps = false;
 }

@@ -166,7 +166,7 @@ class RM3 extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
             return view("admin/patient/profilemodul/formrm/rm/RM3/RM-3-3.php", [
                 "visit" => $visit,
@@ -183,7 +183,7 @@ class RM3 extends \App\Controllers\BaseController
             $visit = json_decode($visit, true);
             $db = db_connect();
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
 
             return view("admin/patient/profilemodul/formrm/rm/RM3/RM-3-4.php", [
                 "visit" => $visit,

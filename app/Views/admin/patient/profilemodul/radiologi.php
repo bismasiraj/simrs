@@ -214,7 +214,7 @@ $result = array_change_key_case($result);
 
 </div>
 <!-- Modal -->
-<div class="modal fade modal-fullscreen" id="modalExpertise" aria-labelledby="ModalLabelExpertise" aria-hidden="true">
+<div class="modal fade modal-fullscreen" id="modalExpertise" aria-labelledby="ModalLabelExpertise">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
@@ -264,12 +264,14 @@ $result = array_change_key_case($result);
                                             <input type="text" id="modalNoFilm" class="form-control" name="no_film" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser', 'adminrad']) ? '' : 'disabled'; ?>>
                                         </div>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="mb-2">
-                                            <label for="formFile" class="form-label fw-bold">Upload berkas pendukung (optional)</label>
-                                            <input class="form-control" type="file" id="formFileExpertise" name="dokumen_expertise" accept="image/*" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser', 'adminrad']) ? '' : 'disabled'; ?>>
+                                    <?php if (user()->checkRoles(['dokterradiologi', 'superuser', 'adminrad'])) : ?>
+                                        <div class="col-6">
+                                            <div class="mb-2">
+                                                <label for="formFile" class="form-label fw-bold">Upload berkas pendukung (optional)</label>
+                                                <input class="form-control" type="file" id="formFileExpertise" name="dokumen_expertise" accept="image/*" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser', 'adminrad']) ? '' : 'disabled'; ?>>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="mb-2">
                                     <label for="modalHasilBaca" class="form-label fw-bold">Hasil Baca</label>
@@ -278,6 +280,16 @@ $result = array_change_key_case($result);
                                 <div class="mb-2">
                                     <label for="modalKesimpulan" class="form-label fw-bold">Kesimpulan</label>
                                     <textarea class="form-control quill-textarea-radiologi" id="modalKesimpulan" name="kesimpulan" rows="3" <?= user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'disabled'; ?>></textarea>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label for="diagnosisExpertise" class="form-label fw-bold">Diagnosis Klinis</label>
+                                        <input class="form-control" type="text" id="diagnosisExpertise" name="diagnosa_desc" readonly>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="indikasiExpertise" class="form-label fw-bold">Indikasi Medis</label>
+                                        <input class="form-control" type="text" id="indikasiExpertise" name="indication_desc" readonly>
+                                    </div>
                                 </div>
                                 <div class="mb-2">
                                     <input type="hidden" name="isvalid" value="0" id="modalIsValid">
@@ -298,12 +310,15 @@ $result = array_change_key_case($result);
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
+
                 </form>
             </div>
             <div class="modal-footer">
                 <?php if (user()->checkRoles(['dokterradiologi', 'superuser', 'adminrad'])) : ?>
-                    <button id="saveExpertise" type="submit" class="btn btn-primary">Simpan</button>
+                    <button id="saveExpertise" type="button" class="btn btn-primary">Simpan</button>
                     <button id="printExpertise" type="button" class="btn btn-success">Print</button>
                 <?php endif; ?>
                 <button id="batalExpertise" type="button" class="btn btn-danger" <?php user()->checkPermission("rad", 'c') && user()->checkRoles(['dokterradiologi', 'superuser']) ? '' : 'style="display:none;"'; ?>>Batalkan Tagihan</button>
@@ -315,7 +330,7 @@ $result = array_change_key_case($result);
 
 
 <!-- Modal Template -->
-<div class="modal fade modal-xl" id="modalTemplateExpertise" aria-hidden="true">
+<div class="modal fade modal-xl" id="modalTemplateExpertise">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">

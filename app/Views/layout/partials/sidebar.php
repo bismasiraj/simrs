@@ -74,6 +74,13 @@ $basecontroller->checkMenuActive('register');
                         </a>
                     </li>
                 <?php } ?>
+                <?php if (user()->checkRoles(['superuser', 'admin', 'bidan'])) { ?>
+                    <li class="<?= $basecontroller->checkMenuActive('vk'); ?>">
+                        <a href="<?php echo base_url(); ?>admin/patient/vk">
+                            <i class="mdi mdi-knife"></i> <span> VK</span>
+                        </a>
+                    </li>
+                <?php } ?>
                 <?php if (user()->checkRoles(['superuser', 'admin', 'ibs'])) { ?>
                     <li class="<?= $basecontroller->checkMenuActive('ibs'); ?>">
                         <a href="<?php echo base_url(); ?>admin/patient/kamaroperasi">

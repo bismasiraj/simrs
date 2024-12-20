@@ -156,6 +156,22 @@ abstract class BaseController extends Controller
             }
         }
     }
+    function getLastUrl($menuname)
+    {
+        $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $session = session();
+        $selectedMenu = [];
+        if (!empty($session->get('selectedMenu')))
+            $selectedMenu = $session->get('selectedMenu');
+        $selectedMenu[] = basename($actual_link);
+        // dd($selectedMenu);
+        foreach ($selectedMenu as $value) {
+            if ($menuname == $value) {
+                // return 'active';
+                return true;
+            }
+        }
+    }
 
     private $urlvclaim = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/';
     protected $keybridging = 'f3a070d3b5acc9f61653215f1ac5465d5dabe4b34f86e264e9eb162b4d92f70b';
@@ -733,7 +749,7 @@ abstract class BaseController extends Controller
             pd.IN_DATE,
             convert(varchar,P.date_of_birth,105),
             CAST(PD.AGEYEAR AS VARCHAR(2)) + ' th ' + CAST(PD.AGEMONTH AS VARCHAR(2)) + ' BL ' + CAST(PD.AGEDAY AS VARCHAR(2)) + ' HR'"
-        )->getRow());
+        )->getRow(0, 'array'));
 
         return $info;
     }

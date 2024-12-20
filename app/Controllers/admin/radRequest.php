@@ -22,7 +22,7 @@ class radRequest extends \App\Controllers\BaseController
 
         $queryInspection = "
             SELECT 
-            result_value,conclusion,specimen_id,result_id, treat_image, isvalid, iskritis,tarif_name, doctor
+            result_value,conclusion,specimen_id,result_id, treat_image, isvalid, iskritis,tarif_name, diagnosa_desc, indication_desc, doctor
             FROM 
                 TREAT_RESULTS TR
             WHERE 
@@ -382,6 +382,8 @@ class radRequest extends \App\Controllers\BaseController
                     'desc_english' => null,
                     'nota_no' => $getTreatment['nota_no'],
                     'kuitansi_id' => $getTreatment['kuitansi_id'],
+                    'diagnosa_desc' => isset($formData['diagnosa_desc']) ? $formData['diagnosa_desc'] : null,
+                    'indication_desc' => isset($formData['indication_desc']) ? $formData['indication_desc'] : null,
                     'isvalid' => !empty($formData['isvalid']) ? $formData['isvalid'] : 0,
                     'iskritis' => !empty($formData['iskritis']) ? $formData['iskritis'] : 0,
                     'valid_date' => null,
@@ -480,6 +482,8 @@ class radRequest extends \App\Controllers\BaseController
                     'specimen_id' => $formData['no_film'] ?? null,
                     'conclusion' => $formData['kesimpulan'] ?? null,
                     'result_value' => $formData['hasil_baca'] ?? null,
+                    'diagnosa_desc' => isset($formData['diagnosa_desc']) ? $formData['diagnosa_desc'] : null,
+                    'indication_desc' => isset($formData['indication_desc']) ? $formData['indication_desc'] : null,
                     'modified_date' => $date,
                     'modified_by' => user()->username,
                     'treat_image' => $uploadFile,

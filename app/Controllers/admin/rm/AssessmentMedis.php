@@ -5,68 +5,23 @@ namespace App\Controllers\Admin\rm;
 use App\Controllers\Admin\AssDermatovenerologi;
 use App\Controllers\Admin\AssNeurology;
 use App\Controllers\BaseController;
-use App\Models\Assessment\ADLModel;
-use App\Models\Assessment\AnakModel;
-use App\Models\Assessment\ApgarDetailModel;
-use App\Models\Assessment\BladderModel;
-use App\Models\Assessment\CirculationModel;
-use App\Models\Assessment\DekubitusModel;
-use App\Models\Assessment\DigestionModel;
-use App\Models\Assessment\EducationFormModel;
-use App\Models\Assessment\EducationIntegrationDetailModel;
-use App\Models\Assessment\EducationIntegrationModel;
-use App\Models\Assessment\EducationIntegrationPlanModel;
-use App\Models\Assessment\EducationIntegrationProvisionModel;
 use App\Models\Assessment\FallRiskDetailModel;
 use App\Models\Assessment\FallRiskModel;
 use App\Models\Assessment\GcsModel;
-use App\Models\Assessment\indicatorDetail;
-use App\Models\Assessment\indicatorDetailModel;
-use App\Models\Assessment\IndicatorModel;
-use App\Models\Assessment\IntegumenModel;
 use App\Models\Assessment\LokalisModel;
-use App\Models\Assessment\NeonatusModel;
-use App\Models\Assessment\NeurosensorisModel;
-use App\Models\Assessment\NutritionDetailModel;
-use App\Models\Assessment\NutritionModel;
 use App\Models\Assessment\PainDetilModel;
 use App\Models\Assessment\PainIntervensiModel;
 use App\Models\Assessment\PainMonitoringModel;
-use App\Models\Assessment\PasienDiagnosaPerawatModel;
-use App\Models\Assessment\PasienDiagnosasPerawatModel;
-use App\Models\Assessment\PasienTransferModel;
-use App\Models\Assessment\ReproductionModel;
 use App\Models\Assessment\RespirationModel;
-use App\Models\Assessment\SleepingModel;
-use App\Models\Assessment\SocialModel;
-use App\Models\Assessment\SocialonModel;
-use App\Models\Assessment\SpiritualDetailModel;
-use App\Models\Assessment\SpiritualModel;
-use App\Models\Assessment\TreatmentPerawatModel;
-use App\Models\Assessment\TriaseDetilModel;
-use App\Models\Assessment\VisionHearingModel;
-use App\Models\BabyModel;
-use App\Models\ClinicModel;
-use App\Models\DietInapModel;
-use App\Models\EducationModel;
-use App\Models\EmployeeAllModel;
 use App\Models\ExaminationDetailModel;
 use App\Models\ExaminationModel;
-use App\Models\InasisKontrolModel;
-use App\Models\NifasModel;
 use App\Models\OrganizationunitModel;
 use App\Models\PasienDiagnosaModel;
 use App\Models\PasienDiagnosasModel;
 use App\Models\PasienHistoryModel;
-use App\Models\PasienModel;
 use App\Models\PasienProceduresModel;
-use App\Models\PasienVisitationModel;
-use App\Models\PersalinanModel;
-use App\Models\TreatmentBillModel;
-use CodeIgniter\Controller;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
-use Myth\Auth\Models\UserModel;
 
 class AssessmentMedis extends BaseController
 {
@@ -93,6 +48,7 @@ class AssessmentMedis extends BaseController
                     $gcs = $controller->saveGcs($value["data"]);
             }
             if (str_contains($value["id"], "formPainMonitoring")) {
+                // return json_encode(!is_null($value["data"]) && $value["data"] != []);
                 if (!is_null($value["data"]) && $value["data"] != [])
                     $monitoring = $controller->savePainMonitoring($value["data"]);
             }

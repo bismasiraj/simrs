@@ -80,7 +80,7 @@ class Antrian extends \App\Controllers\BaseController
             ->where('display_ip !=', '')
             ->where('display_ip IS NOT NULL')
             ->get()
-            ->getRow();
+            ->getRow(0, 'array');
 
         if ($existingIp) {
             return $this->response->setJSON([
@@ -309,7 +309,7 @@ class Antrian extends \App\Controllers\BaseController
         $existingRecord = $builder->where('visit_id', $requestData->visit_id)
             ->where('id', $requestData->id)
             ->get()
-            ->getRow();
+            ->getRow(0, 'array');
 
 
         if (!$existingRecord) {
@@ -404,7 +404,7 @@ class Antrian extends \App\Controllers\BaseController
         $builder = $db->table('antrian_pendaftaran');
         $existingRecord = $builder->where('id', $requestData->id)
             ->get()
-            ->getRow();
+            ->getRow(0, 'array');
 
 
         if (!$existingRecord) {

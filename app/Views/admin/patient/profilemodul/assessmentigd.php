@@ -59,7 +59,7 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['fallrisk'] = 1;
     $menu['painmonitoring'] = 1;
     $menu['triase'] = 0;
-    $menu['apgar'] = 0;
+    $menu['apgar'] = 1;
     $menu['skrininggizi'] = 1;
     $menu['adl'] = 0;
     $menu['dekubitus'] = 1;
@@ -84,26 +84,26 @@ if ($visit['clinic_id'] == 'P012') {
     $menu['fallrisk'] = 1;
     $menu['painmonitoring'] = 1;
     $menu['triase'] = 0;
-    $menu['apgar'] = 0;
+    $menu['apgar'] = 1;
     $menu['skrininggizi'] = 1;
     $menu['adl'] = 0;
-    $menu['dekubitus'] = 1;
+    $menu['dekubitus'] = 0;
     $menu['stabilitas'] = 0;
     $menu['edukasiintegrasi'] = 0;
     $menu['formedukasi'] = 0;
     $menu['gcs'] = 1;
-    $menu['integumen'] = 1;
+    $menu['integumen'] = 0;
     $menu['anak'] = 1;
     $menu['neonatus'] = 1;
-    $menu['neurosensoris'] = 1;
-    $menu['pencernaan'] = 1;
+    $menu['neurosensoris'] = 0;
+    $menu['pencernaan'] = 0;
     $menu['pernapasan'] = 1;
-    $menu['perkemihan'] = 1;
+    $menu['perkemihan'] = 0;
     $menu['psikologi'] = 1;
     $menu['sirkulasi'] = 1;
     $menu['seksual'] = 1;
     $menu['social'] = 1;
-    $menu['tht'] = 1;
+    $menu['tht'] = 0;
     $menu['tidur'] = 1;
 }
 ?>
@@ -670,7 +670,83 @@ if ($visit['clinic_id'] == 'P012') {
                                         </div>
                                     </div>
                                 </div>
-                                <h4 id="subjectiveGroupHeader">S:</h4>
+                                <div class="accordion" id="accordionAssessmentAwal1">
+                                    <?php if ($menu['triase'] == 1) { ?>
+                                        <div id="arpTriage_Group" class="accordion-item">
+                                            <h2 class="accordion-header" id="004">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse004" aria-expanded="true" aria-controls="collapse004">
+                                                    <b>Triase</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapse004" class="accordion-collapse collapse" aria-labelledby="004" style="">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div id="bodyTriagePerawat">
+                                                            </div>
+                                                            <div class="row mb-4">
+                                                                <div class="col-md-12">
+                                                                    <div id="bodyTriagePerawatAddBtn" class="box-tab-tools text-center">
+                                                                        <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if ($menu['fallrisk'] == 1) { ?>
+                                        <div id="arpFallRisk_Group" class="accordion-item">
+                                            <h2 class="accordion-header" id="FallRiskPerawat">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskPerawat" aria-expanded="true" aria-controls="collapseFallRiskPerawat">
+                                                    <b>RESIKO JATUH</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapseFallRiskPerawat" class="accordion-collapse collapse" aria-labelledby="FallRiskPerawat" style="">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                            <div class="col-md-12">
+                                                                <div id="bodyFallRiskPerawat">
+                                                                </div>
+                                                                <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
+                                                                    <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if ($menu['painmonitoring'] == 1) { ?>
+                                        <div id="arpPainMonitoring_Group" class="accordion-item">
+                                            <h2 class="accordion-header" id="002">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse002" aria-expanded="true" aria-controls="collapse002">
+                                                    <b>Monitoring Nyeri</b>
+                                                </button>
+                                            </h2>
+                                            <div id="collapse002" class="accordion-collapse collapse" aria-labelledby="002" style="">
+                                                <div class="accordion-body text-muted">
+                                                    <div class="row">
+                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
+                                                            <div class="col-md-12">
+                                                                <div id="bodyPainMonitoringPerawat">
+                                                                </div>
+                                                                <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
+                                                                    <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                                <h4 id="subjectiveGroupHeader" class="mt-4">S:</h4>
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-12 mt-2 mb-4">
@@ -962,80 +1038,6 @@ if ($visit['clinic_id'] == 'P012') {
                             </div>
                             <div class="accordion" id="accordionAssessmentAwal">
                                 <?php foreach ($aParent as $key => $value) { ?>
-                                    <?php if ($value['parent_id'] == '001' && $menu['fallrisk'] == 1) { ?>
-                                        <div id="arpFallRisk_Group" class="accordion-item">
-                                            <h2 class="accordion-header" id="FallRiskPerawat">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFallRiskPerawat" aria-expanded="true" aria-controls="collapseFallRiskPerawat">
-                                                    <b>RESIKO JATUH</b>
-                                                </button>
-                                            </h2>
-                                            <div id="collapseFallRiskPerawat" class="accordion-collapse collapse" aria-labelledby="FallRiskPerawat" style="">
-                                                <div class="accordion-body text-muted">
-                                                    <div class="row">
-                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                            <div class="col-md-12">
-                                                                <div id="bodyFallRiskPerawat">
-                                                                </div>
-                                                                <div id="bodyFallRiskPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addFallRisk(1, 0, 'arpbody_id', 'bodyFallRiskPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                    <?php if ($value['parent_id'] == '002' && $menu['painmonitoring'] == 1) { ?>
-                                        <div id="arpPainMonitoring_Group" class="accordion-item">
-                                            <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                    <b><?= $value['parent_parameter']; ?></b>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" style="">
-                                                <div class="accordion-body text-muted">
-                                                    <div class="row">
-                                                        <form id="formassessmentigd" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
-                                                            <div class="col-md-12">
-                                                                <div id="bodyPainMonitoringPerawat">
-                                                                </div>
-                                                                <div id="bodyPainMonitoringPerawatAddBtn" class="col-md-12 text-center">
-                                                                    <a onclick="addPainMonitoring(1, 0, 'arpbody_id', 'bodyPainMonitoringPerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
-                                    <?php if ($value['parent_id'] == '004' && $menu['triase'] == 1) { ?>
-                                        <div id="arpTriage_Group" class="accordion-item">
-                                            <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<?= $value['parent_id']; ?>" aria-expanded="true" aria-controls="collapse<?= $value['parent_id']; ?>">
-                                                    <b><?= $value['parent_parameter']; ?></b>
-                                                </button>
-                                            </h2>
-                                            <div id="collapse<?= $value['parent_id']; ?>" class="accordion-collapse collapse" aria-labelledby="<?= $value['parent_id']; ?>" style="">
-                                                <div class="accordion-body text-muted">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div id="bodyTriagePerawat">
-                                                            </div>
-                                                            <div class="row mb-4">
-                                                                <div class="col-md-12">
-                                                                    <div id="bodyTriagePerawatAddBtn" class="box-tab-tools text-center">
-                                                                        <a onclick="addTriage(1,0,'arpbody_id', 'bodyTriagePerawat', false)" class="btn btn-primary btn-lg btn-to-hide" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Dokumen</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
                                     <?php if ($value['parent_id'] == '005' && $visit['specialist_type_id'] == "1.04" && $menu['apgar'] == 1) { ?>
                                         <div id="arpApgar_Group" class="accordion-item">
                                             <h2 class="accordion-header" id="<?= $value['parent_id']; ?>">

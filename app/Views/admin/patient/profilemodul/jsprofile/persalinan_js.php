@@ -12,16 +12,16 @@
     })
 </script>
 <script>
-    $(document).ready(function() {
-        $('#prslweight_placenta').on('input', function() {
-            var decimalInput = $(this).val();
-            var decimalPattern = /^[+-]?\d*\.?\d*$/;
+    // $(document).ready(function() {
+    //     $('#prslweight_placenta').on('input', function() {
+    //         var decimalInput = $(this).val();
+    //         var decimalPattern = /^[+-]?\d*\.?\d*$/;
 
-            if (!decimalPattern.test(decimalInput)) {
-                $(this).val(decimalInput.slice(0, -1)); // Remove last character if invalid
-            }
-        });
-    })
+    //         if (!decimalPattern.test(decimalInput)) {
+    //             $(this).val(decimalInput.slice(0, -1)); // Remove last character if invalid
+    //         }
+    //     });
+    // })
 </script>
 <script type="text/javascript">
     const getPersalinan = () => {
@@ -203,11 +203,11 @@
         let select = babyAll[key];
         let selectexam = {};
         $.each(babyExamAll, function(key, value) {
-            console.log(value.document_id)
-            console.log(select.baby_id)
+            // console.log(value.document_id)
+            // console.log(select.baby_id)
             if (value.document_id == select.baby_id) {
                 selectexam = value;
-                console.log(selectexam)
+                // console.log(selectexam)
             }
         })
 
@@ -222,6 +222,7 @@
             $("#bayiexam" + key).val(value)
         })
 
+        $("#bayiexamweight").val(selectexam['weight'] * 1000)
         if ($("#bayiexambody_id").val() == '') {
             $("#bayiexambody_id").val(get_bodyid())
         }
@@ -333,22 +334,23 @@
                     errorSwal(message);
                 } else if (res.status === "success") {
                     successSwal('Data berhasil diperbarui.');
-                    var isNewDocument = 0
-                    var data = res.data
-                    $.each(babyAll, function(key, value) {
-                        if (value.bayi_id == data.bayi_id) {
-                            babyAll[key] = data
-                            isNewDocument = 1
-                        }
-                    })
-                    if (isNewDocument != 1)
-                        babyAll.push(data)
+                    getPersalinan()
+                    // var isNewDocument = 0
+                    // var data = res.data
+                    // $.each(babyAll, function(key, value) {
+                    //     if (value.bayi_id == data.bayi_id) {
+                    //         babyAll[key] = data
+                    //         isNewDocument = 1
+                    //     }
+                    // })
+                    // if (isNewDocument != 1)
+                    //     babyAll.push(data)
 
-                    $("#prslBayiBody").html("")
-                    $.each(babyAll, function(key, value) {
-                        addRowBayiLahir(value, key)
-                    })
-                    disableBayi();
+                    // $("#prslBayiBody").html("")
+                    // $.each(babyAll, function(key, value) {
+                    //     addRowBayiLahir(value, key)
+                    // })
+                    // disableBayi();
                 }
                 clicked_submit_btn.button('reset');
             },
@@ -386,11 +388,10 @@
                         let message = res.message || "An error occurred. Please try again.";
                         errorSwal(message);
                     } else if (res.status === "success") {
-                        successSwal('Data berhasil diperbarui.');
                         var isNewDocument = 0
                         var norm = res.data
                         $("#bayibabyno").val(norm)
-
+                        $("#formBayiSaveBtn").trigger("click")
                     }
                     $("#formBayiRegisterBtn").html(btnHtml)
                 },

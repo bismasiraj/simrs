@@ -309,7 +309,7 @@ class labRequest extends \App\Controllers\BaseController
             $username = user()->username;
 
             $checkSql = "SELECT BODY_ID, file_image FROM pasien_penunjang WHERE BODY_ID = ? AND CLINIC_ID = 'P013' AND VISIT_ID = ?";
-            $result = $db->query($checkSql, [$nota_no, $visitId])->getRow();
+            $result = $db->query($checkSql, [$nota_no, $visitId])->getRow(0, 'array');
 
             if ($result) {
 
@@ -371,7 +371,8 @@ class labRequest extends \App\Controllers\BaseController
         $result = $db->query($checkSql, [$nota_no, $visitId])->getRow();
 
         if ($result) {
-            if ($result->file_image) {
+
+            if (isset($result->file_image) && $result->file_image) {
                 $filePath = WRITEPATH . $result->file_image;
                 if (file_exists($filePath)) {
                     $fileType = mime_content_type($filePath);

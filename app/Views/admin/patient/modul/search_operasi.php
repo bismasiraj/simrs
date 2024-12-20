@@ -1,7 +1,12 @@
 <?php
+
+use App\Controllers\Admin\Patient;
+
 $session = session();
 $gsPoli = $session->gsPoli;
 $permissions = user()->getPermissions();
+$basecontroller = new Patient();
+$cliniclist = array();
 ?>
 <div class="tab-pane tab-content-height
 <?php if ($giTipe == 1 || $giTipe == 2 || $giTipe == 6 || $giTipe == 73 || $giTipe == 50) echo "active"; ?>
@@ -26,23 +31,34 @@ $permissions = user()->getPermissions();
                                 <option value="%">Semua</option>
                                 <?php if (is_null(user()->employee_id)) { ?>
                                 <?php } ?>
-                                <?php $cliniclist = array();
-                                if ($giTipe != 2 && $giTipe != 5 && $giTipe != 6) {
-                                    foreach ($clinic as $key => $value) {
-                                        if ($clinic[$key]['stype_id'] == '1')
-                                            $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
-                                    }
-                                } else {
-                                    foreach ($clinic as $key => $value) {
-                                        if ($clinic[$key]['clinic_id'] == $gsPoli)
-                                            $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
-                                    }
-                                }
-                                asort($cliniclist);
+                                <?php
+                                if ($basecontroller->getLastUrl('vk')) {
                                 ?>
-                                <?php foreach ($cliniclist as $key => $value) { ?>
-                                    <option value="<?= $key; ?>"><?= $value; ?></option>
-                                <?php } ?>
+                                    <option value="P002">VK</option>
+                                <?php
+                                } else {
+                                ?>
+                                    <?php
+
+                                    if ($giTipe != 2 && $giTipe != 5 && $giTipe != 6) {
+                                        foreach ($clinic as $key => $value) {
+                                            if ($clinic[$key]['stype_id'] == '1')
+                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                        }
+                                    } else {
+                                        foreach ($clinic as $key => $value) {
+                                            if ($clinic[$key]['clinic_id'] == $gsPoli)
+                                                $cliniclist[$clinic[$key]['clinic_id']] = $clinic[$key]['name_of_clinic'];
+                                        }
+                                    }
+                                    asort($cliniclist);
+                                    ?>
+                                    <?php foreach ($cliniclist as $key => $value) { ?>
+                                        <option value="<?= $key; ?>"><?= $value; ?></option>
+                                    <?php } ?>
+                                <?php
+                                }
+                                ?>
                             </select>
                         </div>
                         <span class="text-danger" id="error_search_type"></span>

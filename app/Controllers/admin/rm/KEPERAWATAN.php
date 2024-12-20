@@ -2194,57 +2194,67 @@ class keperawatan extends \App\Controllers\BaseController
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
-            $query = "
-            SELECT 
-            apm.BODY_ID,
-            apm.EXAMINATION_DATE as TGL,
-            apm.DESCRIPTION as ASSESMENT,
-            apm.TOTAL_SCORE,
-            api.INTERVENSI_DATE,
-            api.INTERVENSI,
-            api.RUTE,
-            api.REASSESSMENT,
-            api.PETUGAS,
-            case when api.REASSESSMENT_DATE < '2000-01-01' then examination_date else api.REASSESSMENT_DATE end as REASSESSMENT_DATE,
-            apd.value_desc AS ALAT_UKUR
-            FROM ASSESSMENT_PAIN_MONITORING apm
-            INNER JOIN ASSESSMENT_PAIN_DETAIL apd ON apm.BODY_ID = apd.BODY_ID
-            INNER JOIN ASSESSMENT_PAIN_INTERVENSI api ON apm.BODY_ID = api.BODY_ID
-            ";
-            if (is_null($vactination_id)) {
-                $query .= "
-            WHERE apm.VISIT_ID = '{$visit['visit_id']}'";
-            } else {
-                $query .= "
-            WHERE apm.VISIT_ID = '{$visit['visit_id']}' AND apm.BODY_ID = '$vactination_id'";
+
+            $query = "SELECT 
+                        apm.BODY_ID,
+                        apm.EXAMINATION_DATE as TGL,
+                        apm.DESCRIPTION as ASSESMENT,
+                        apm.TOTAL_SCORE,
+                        api.INTERVENSI_DATE,
+                        api.INTERVENSI,
+                        api.RUTE,
+                        api.REASSESSMENT,
+                        api.PETUGAS,
+                        api.REASSESSMENT_DATE,
+                        ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION AS ALAT_UKUR
+                      FROM ASSESSMENT_PAIN_MONITORING apm
+                      INNER JOIN ASSESSMENT_PAIN_DETAIL apd ON apm.BODY_ID = apd.BODY_ID
+                      LEFT OUTER JOIN ASSESSMENT_PAIN_INTERVENSI api ON apm.BODY_ID = api.BODY_ID
+                      INNER JOIN ASSESSMENT_PARAMETER_TYPE ON apd.P_TYPE = ASSESSMENT_PARAMETER_TYPE.P_TYPE
+                      WHERE apm.VISIT_ID = '" . $visit['visit_id'] . "'";
+
+            if (!empty($vactination_id)) {
+                $query .= " AND apm.BODY_ID = '" . $vactination_id . "'";
             }
-            $query .= "
-            and apd.parameter_id = '01' 
-            group by 
-            apm.BODY_ID,
-            apm.EXAMINATION_DATE, 
-            apm.DESCRIPTION,
-            apm.TOTAL_SCORE,
-            api.INTERVENSI_DATE,
-            api.INTERVENSI,
-            api.RUTE,
-            api.REASSESSMENT,
-            api.PETUGAS,
-            apd.value_desc,
-            api.REASSESSMENT_DATE";
+
+            $query .= " GROUP BY 
+                        apm.BODY_ID,
+                        apm.EXAMINATION_DATE, 
+                        apm.DESCRIPTION,
+                        apm.TOTAL_SCORE,
+                        api.INTERVENSI_DATE,
+                        api.INTERVENSI,
+                        api.RUTE,
+                        api.REASSESSMENT,
+                        api.PETUGAS,
+                        ASSESSMENT_PARAMETER_TYPE.P_DESCRIPTION,
+                        api.REASSESSMENT_DATE";
+
             $select = $this->lowerKey($db->query($query)->getResultArray());
 
-            $selectorganization = $this->lowerKeyOne($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, "array"));
-            $selectinfo = $visit;
-            return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/20-monitoring-nyeri.php", [
-                "visit" => $visit,
-                'title' => $title,
-                "val" => $select,
-                "organization" => $selectorganization,
-                "info" => $selectinfo
-            ]);
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
+            $selectinfo = $this->query_template_info($db, $visit['visit_id'], $vactination_id);
+
+            if (isset($select[0])) {
+                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/20-monitoring-nyeri.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
+                ]);
+            } else {
+                return view("admin/patient/profilemodul/formrm/rm/KEPERAWATAN/20-monitoring-nyeri.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization,
+                    "info" => $selectinfo
+                ]);
+            }
         }
     }
+
     public function resiko_jatuh($visit, $vactination_id = null)
     {
         $title = "Monitoring Resiko Jatuh";

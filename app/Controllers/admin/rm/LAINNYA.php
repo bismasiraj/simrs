@@ -681,28 +681,31 @@ class lainnya extends \App\Controllers\BaseController
     // radiologi
     public function radiologi_cetak($visit, $vactination_id = null)
     {
-        $title = "HASIL PEMERIKSAAN LABORATORIUM";
+        $title = "HASIL PEMERIKSAAN RADIOLOGI";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
             $db = db_connect();
             $kopprintData = $this->kopprint();
 
-            $dataTables = $this->lowerKey($db->query("SELECT TREAT_RESULTS.ORG_UNIT_CODE, TREAT_RESULTS.RESULT_ID, TREAT_RESULTS.VISIT_ID, TREAT_RESULTS.NO_REGISTRATION, TREAT_RESULTS.TARIF_ID,
-                                                                 TREAT_RESULTS.TARIF_NAME, TREAT_RESULTS.EMPLOYEE_ID, TREAT_RESULTS.EMPLOYEE_ID_FROM, TREAT_RESULTS.PICKUP_DATE, TREAT_RESULTS.RESULT_VALUE,
-                                                                 TREAT_RESULTS.THENAME, TREAT_RESULTS.THEADDRESS, TREAT_RESULTS.AGEYEAR, TREAT_RESULTS.AGEMONTH, TREAT_RESULTS.AGEDAY, TREAT_RESULTS.nota_no,
-                                                                 TREAT_RESULTS.GENDER, TREAT_RESULTS.KAL_ID, TREAT_RESULTS.BOUND_ID, TREAT_RESULTS.MEASURE_ID, TREAT_RESULTS.DOCTOR_FROM,  TREAT_RESULTS.DOCTOR, C.NAME_OF_CLINIC, TREAT_RESULTS.PRINT_DATE, 
-                                                                 TREAT_RESULTS.PRINTED_BY, TREAT_RESULTS.PRINTQ, TREAT_RESULTS.description, TREAT_RESULTS.CONCLUSION,TREAT_RESULTS.THEID,TREAT_RESULTS.NOSEP, 
-                                                                 treat_results.isvalid, treat_results.valid_date, treat_results.iskritis FROM TREAT_RESULTS, CLINIC C WHERE 
-                                                                 TREAT_RESULTS.result_id = '" . $vactination_id . "' and treat_results.clinic_id = c.clinic_id ORDER BY TREAT_RESULTS.REAGENT_ID, 
-                                                                 TREAT_RESULTS.BOUND_ID")->getResultArray());
+            $data = $this->lowerKey($db->query("
+                                                                 SELECT 
+            result_value,conclusion,specimen_id,result_id, treat_image, isvalid, iskritis,tarif_name,pickup_date, nota_no, doctor
+            FROM 
+                TREAT_RESULTS TR
+            WHERE 
+                TR.VISIT_ID = '" . $visit['visit_id'] . "' -- @VISIT
+                AND TR.RESULT_ID = '" . $vactination_id . "'
+                AND TR.CLINIC_ID = 'P016' -- @POLI
+                AND TR.BILL_ID IN (SELECT BILL_ID FROM TREATMENT_BILL)
+                                                                 ")->getResultArray() ?? []);
 
             if (isset($visit)) {
                 return view("admin/patient/profilemodul/formrm/rm/hasil-pemeriksaan-radiologi.php", [
                     "visit" => $visit,
                     'title' => $title,
                     'kop' => $kopprintData[0],
-                    'dataTables' => $dataTables
+                    'dataTables' => $data
 
                 ]);
             } else {
@@ -710,7 +713,7 @@ class lainnya extends \App\Controllers\BaseController
                     "visit" => $visit,
                     'title' => $title,
                     'kop' => $kopprintData[0],
-                    'dataTables' => $dataTables
+                    'dataTables' => $data
 
                 ]);
             }

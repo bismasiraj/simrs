@@ -154,113 +154,124 @@
 
 
         <h5>The Sign In</h5>
-        <div class="d-flex flex-wrap mb-3">
-            <?php foreach ($theSignIn as $key => $signIn) : ?>
-                <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <b><?= $key ?></b>
+        <?php if (!empty($theSignIn)) : ?>
+            <div class="d-flex flex-wrap mb-3">
+                <?php foreach ($theSignIn as $key => $signIn) : ?>
+                    <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <b><?= $key ?></b>
 
-                </div>
-                <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <?php if ($signIn == "1") : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= isset($signIn) && !empty($signIn) ? '&#10003;' : '-'; ?></p>
-                    <?php else : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= $signIn ?? '-' ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach ?>
-        </div>
-
+                    </div>
+                    <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <?php if ($signIn == "1") : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= isset($signIn) && !empty($signIn) ? '&#10003;' : '-'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= $signIn ?? '-' ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php endif; ?>
         <h5>The Time Out</h5>
-        <div class="d-flex flex-wrap mb-3">
-            <?php foreach ($theTimeOut as $key => $timeOut) : ?>
-                <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <b><?= $key ?></b>
+        <?php if (!empty($theTimeOut)) : ?>
+            <div class="d-flex flex-wrap mb-3">
+                <?php foreach ($theTimeOut as $key => $timeOut) : ?>
+                    <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <b><?= $key ?></b>
 
-                </div>
-                <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <?php if ($timeOut == "1") : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= isset($timeOut) && !empty($timeOut) ? '&#10003;' : '-'; ?></p>
-                    <?php else : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= $timeOut ?? '-' ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach ?>
-        </div>
+                    </div>
+                    <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <?php if ($timeOut == "1") : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= isset($timeOut) && !empty($timeOut) ? '&#10003;' : '-'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= $timeOut ?? '-' ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php endif; ?>
         <b>Table Jumlah Instrumen</b>
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center align-middle" width="1%">No</th>
-                    <th class="text-center align-middle">Jenis</th>
-                    <th class="text-center align-middle">Jumlah Sebelum</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($instruments as $key => $instrumen) : ?>
+        <?php if (!empty($instruments)) : ?>
+            <table class="table table-bordered">
+                <thead class="table-light">
                     <tr>
-                        <td><?= $key + 1; ?></td>
-                        <td><?= $instrumen['brand_name']; ?></td>
-                        <td><?= $instrumen['quantity_before']; ?></td>
+                        <th class="text-center align-middle" width="1%">No</th>
+                        <th class="text-center align-middle">Jenis</th>
+                        <th class="text-center align-middle">Jumlah Sebelum</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($instruments as $key => $instrumen) : ?>
+                        <tr>
+                            <td><?= $key + 1; ?></td>
+                            <td><?= $instrumen['brand_name']; ?></td>
+                            <td><?= $instrumen['quantity_before']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
         <h5>The Sign Out</h5>
-        <div class="d-flex flex-wrap mb-3">
-            <?php foreach ($theSignOut as $key => $signOut) : ?>
-                <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <b><?= $key ?></b>
+        <?php if (!empty($theSignOut)) : ?>
+            <div class="d-flex flex-wrap mb-3">
+                <?php foreach ($theSignOut as $key => $signOut) : ?>
+                    <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <b><?= $key ?></b>
 
-                </div>
-                <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <?php if ($signOut == "1") : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= isset($signOut) && !empty($signOut) ? '&#10003;' : '-'; ?></p>
-                    <?php else : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= $signOut ?? '-' ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach ?>
-        </div>
+                    </div>
+                    <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <?php if ($signOut == "1") : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= isset($signOut) && !empty($signOut) ? '&#10003;' : '-'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= $signOut ?? '-' ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php endif; ?>
         <b>Table Instrumen</b>
-        <table class="table table-bordered">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center align-middle" width="1%">No</th>
-                    <th class="text-center align-middle">Jenis</th>
-                    <th class="text-center align-middle">Jumlah Sebelum</th>
-                    <th class="text-center align-middle">Jumlah Intra</th>
-                    <th class="text-center align-middle">Jumlah Tambahan</th>
-                    <th class="text-center align-middle">Jumlah Pasca</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($instruments as $key => $instrumen) : ?>
+        <?php if (!empty($instruments)) : ?>
+            <table class="table table-bordered">
+                <thead class="table-light">
                     <tr>
-                        <td><?= $key + 1; ?></td>
-                        <td><?= $instrumen['brand_name']; ?></td>
-                        <td><?= $instrumen['quantity_before']; ?></td>
-                        <td><?= $instrumen['quantity_intra']; ?></td>
-                        <td><?= $instrumen['quantity_additional']; ?></td>
-                        <td><?= $instrumen['quantity_after']; ?></td>
+                        <th class="text-center align-middle" width="1%">No</th>
+                        <th class="text-center align-middle">Jenis</th>
+                        <th class="text-center align-middle">Jumlah Sebelum</th>
+                        <th class="text-center align-middle">Jumlah Intra</th>
+                        <th class="text-center align-middle">Jumlah Tambahan</th>
+                        <th class="text-center align-middle">Jumlah Pasca</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <div class="d-flex flex-wrap mb-3">
-            <?php foreach ($theSignOut2 as $key => $signOut2) : ?>
-                <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <b><?= $key ?></b>
+                </thead>
+                <tbody>
+                    <?php foreach ($instruments as $key => $instrumen) : ?>
+                        <tr>
+                            <td><?= $key + 1; ?></td>
+                            <td><?= $instrumen['brand_name']; ?></td>
+                            <td><?= $instrumen['quantity_before']; ?></td>
+                            <td><?= $instrumen['quantity_intra']; ?></td>
+                            <td><?= $instrumen['quantity_additional']; ?></td>
+                            <td><?= $instrumen['quantity_after']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+        <?php if (!empty($theSignOut2)) : ?>
+            <div class="d-flex flex-wrap mb-3">
+                <?php foreach ($theSignOut2 as $key => $signOut2) : ?>
+                    <div class="col-10 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <b><?= $key ?></b>
 
-                </div>
-                <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
-                    <?php if ($signOut2 == "1") : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= isset($signOut2) && !empty($signOut2) ? '&#10003;' : '-'; ?></p>
-                    <?php else : ?>
-                        <p class="m-0 mt-1 p-0 text-center"><?= $signOut2 ?? '-' ?></p>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach ?>
-        </div>
+                    </div>
+                    <div class="col-2 p-1 border-collide" style="border: .5px solid #dee2e6; box-sizing:border-box;">
+                        <?php if ($signOut2 == "1") : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= isset($signOut2) && !empty($signOut2) ? '&#10003;' : '-'; ?></p>
+                        <?php else : ?>
+                            <p class="m-0 mt-1 p-0 text-center"><?= $signOut2 ?? '-' ?></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach ?>
+            </div>
+        <?php endif; ?>
         <div class=" row">
             <div class="col-auto" align="center">
                 <div>Dokter</div>

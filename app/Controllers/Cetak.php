@@ -324,7 +324,7 @@ class Cetak extends \App\Controllers\BaseController
             select assessment_operation_pra.*
             from assessment_operation_pra 
             where assessment_operation_pra.visit_id = '" . $visit['visit_id'] . "' and body_id = '" . $vactination_id . "'
-            ")->getResultArray());
+            ")->getResultArray() ?? []);
 
             if (!empty($select)) {
                 $selectlokalis = $this->lowerKey($db->query(
@@ -332,11 +332,11 @@ class Cetak extends \App\Controllers\BaseController
                     select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                     INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                     where body_id = '" . $vactination_id . "'"
-                )->getResultArray());
+                )->getResultArray() ?? []);
 
                 $selectDiagnosa = $this->lowerKey($db->query(
                     "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select[0]['body_id'] . "' "
-                )->getResultArray());
+                )->getResultArray()) ?? [];
 
                 $informasiMedis = array_slice($select[0], 8, 22);
 
@@ -345,14 +345,14 @@ class Cetak extends \App\Controllers\BaseController
                 $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS001');
             }
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
 
             if (isset($select[0])) {
                 return view("admin/patient/cetak/operasi/pra-operasi.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
-                    "informasiMedis" => $newData,
+                    "informasiMedis" => $newData ?? [],
                     "lokalis" => $selectlokalis,
                     "diagnosa" => $selectDiagnosa,
                     "organization" => $selectorganization
@@ -388,9 +388,9 @@ class Cetak extends \App\Controllers\BaseController
             ei.SATURASI as saturasi,
             format(round(ei.WEIGHT*10000/ei.height/ei.height,2), '0.##') as bmi
             from ASSESSMENT_ANESTHESIA 
-            left outer join EXAMINATION_info ei on ASSESSMENT_ANESTHESIA.BODY_ID = ei.PASIEN_DIAGNOSA_ID
-            where ASSESSMENT_ANESTHESIA.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '11'
-            ")->getResultArray());
+            left outer join EXAMINATION_detail ei on ASSESSMENT_ANESTHESIA.BODY_ID = ei.document_id
+            where ASSESSMENT_ANESTHESIA.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_ANESTHESIA.document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '11'
+            ")->getRowArray() ?? []);
 
 
             if (!empty($select)) {
@@ -399,15 +399,15 @@ class Cetak extends \App\Controllers\BaseController
                     select assessment_lokalis.*, ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as nama_lokalis from assessment_lokalis
                     INNER JOIN ASSESSMENT_PARAMETER_VALUE ON assessment_lokalis.VALUE_ID = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
                     where body_id = '" . $vactination_id . "' AND assessment_lokalis.VALUE_SCORE = 2"
-                )->getResultArray());
+                )->getResultArray() ?? []);
 
                 $selectDiagnosa = $this->lowerKey($db->query(
-                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select[0]['body_id'] . "' "
-                )->getResultArray());
+                    "select DIAGNOSA_NAME from PASIEN_DIAGNOSAS where PASIEN_DIAGNOSA_ID = '" . $select['body_id'] . "' "
+                )->getResultArray() ?? []);
 
-                $informasiMedis = array_splice($select[0], 13, 16);
-                $keadaanUmum = array_splice($select[0], 14, 3);
-                $perencanaanAnestesi = array_splice($select[0], 15, 7);
+                $informasiMedis = array_splice($select, 13, 16);
+                $keadaanUmum = array_splice($select, 14, 3);
+                $perencanaanAnestesi = array_splice($select, 15, 7);
 
                 $newData = [];
                 $newData2 = [];
@@ -418,22 +418,70 @@ class Cetak extends \App\Controllers\BaseController
                 $newData2 = $this->ConvertValue($perencanaanAnestesi, $newData2, 'OPRS006');
             }
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
-            if (isset($select[0])) {
+            if (isset($select)) {
                 return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
-                    "informasiMedis" => $newData,
-                    "perencanaanAnestesi" => $newData2,
-                    "keadaanUmum" => $newData3,
-                    "lokalis" => $selectlokalis,
-                    "diagnosa" => $selectDiagnosa,
+                    "informasiMedis" => $newData ?? [],
+                    "perencanaanAnestesi" => $newData2 ?? [],
+                    "keadaanUmum" => $newData3 ?? [],
+                    "lokalis" => $selectlokalis ?? [],
+                    "diagnosa" => $selectDiagnosa ?? [],
                     "organization" => $selectorganization
                 ]);
             } else {
                 return view("admin/patient/cetak/operasi/laporan-anesthesi.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "organization" => $selectorganization
+                ]);
+            }
+        }
+    }
+    public function cetak_laporan_pembedahan($visit, $vactination_id = null)
+    {
+        $title = "Laporan Pembedahan";
+        if ($this->request->is('get')) {
+            $visit = base64_decode($visit);
+            $visit = json_decode($visit, true);
+            $db = db_connect();
+
+            $select = $this->lowerKey($db->query("
+            select PASIEN_OPERASI.*, treat_tarif.tarif_name,ASSESSMENT_PARAMETER_VALUE.VALUE_DESC as tipe_operasi
+            from PASIEN_OPERASI
+            INNER JOIN treat_tarif ON PASIEN_OPERASI.TARIF_ID = treat_tarif.TARIF_ID
+            inner join ASSESSMENT_PARAMETER_VALUE on PASIEN_OPERASI.SURGERY_TYPE = ASSESSMENT_PARAMETER_VALUE.VALUE_ID
+            where PASIEN_OPERASI.visit_id = '" . $visit['visit_id'] . "' and PASIEN_OPERASI.VACTINATION_ID = '" . $vactination_id . "'
+            ")->getRowArray() ?? []);
+
+            $operation_team = $this->lowerKey($db->query("
+            SELECT DOCTOR, TASK from OPERATION_TEAM 
+            INNER JOIN OPERATION_TASK ON OPERATION_TEAM.TASK_ID = OPERATION_TASK.TASK_ID
+            WHERE OPERATION_ID = '" . $vactination_id . "' ORDER BY OPERATION_TASK.TASK_ID ASC
+            ")->getResultArray() ?? []);
+
+            $diagnosas = $this->lowerKey($db->query("
+            select diagnosa_name,diag_cat,suffer_type.suffer from PASIEN_DIAGNOSAS 
+            inner join suffer_type on pasien_diagnosas.suffer_type = suffer_type.suffer_type
+            where pasien_diagnosa_id = '" . $vactination_id . "' and diag_cat IN('13','14','15')
+            ")->getResultArray() ?? []);
+
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
+
+            if (isset($select)) {
+                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
+                    "visit" => $visit,
+                    'title' => $title,
+                    "val" => $select,
+                    'operation_team' => $operation_team,
+                    'diagnosas' => $diagnosas,
+                    "organization" => $selectorganization
+                ]);
+            } else {
+                return view("admin/patient/cetak/operasi/laporan-pembedahan.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "organization" => $selectorganization
@@ -453,7 +501,7 @@ class Cetak extends \App\Controllers\BaseController
             select ASSESSMENT_OPERATION_POST.*
             from ASSESSMENT_OPERATION_POST 
             where ASSESSMENT_OPERATION_POST.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
-            ")->getResultArray());
+            ")->getResultArray() ?? []);
 
 
             if (!empty($select)) {
@@ -464,14 +512,14 @@ class Cetak extends \App\Controllers\BaseController
 
                 $newData = $this->ConvertValue($informasiMedis, $newData, 'OPRS009');
             }
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
 
             if (isset($select[0])) {
                 return view("admin/patient/cetak/operasi/post-operasi.php", [
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
-                    "informasiMedis" => $newData,
+                    "informasiMedis" => $newData ?? [],
                     "organization" => $selectorganization
                 ]);
             } else {
@@ -494,35 +542,59 @@ class Cetak extends \App\Controllers\BaseController
 
             $select = $this->lowerKey($db->query("
             select ASSESSMENT_OPERATION.*,
-            ei.TEMPERATURE as suhu,
-            ei.TENSION_UPPER as tensi_atas,
-            ei.TENSION_BELOW as tensi_bawah,
-            ei.NADI as nadi,
-            ei.NAFAS as respirasi,
-            ei.WEIGHT as bb,
-            ei.HEIGHT as tb,
-            ei.IMT_SCORE,
-            ei.IMT_DESC,
-            ei.SATURASI as saturasi,
-            format(round(ei.WEIGHT*10000/ei.height/ei.height,2), '0.##') as bmi
+            ed.TEMPERATURE as suhu,
+            ed.TENSION_UPPER as tensi_atas,
+            ed.TENSION_BELOW as tensi_bawah,
+            ed.NADI as nadi,
+            ed.NAFAS as respirasi,
+            ed.WEIGHT as bb,
+            ed.HEIGHT as tb,
+            ed.IMT_SCORE,
+            ed.IMT_DESC,
+            ed.SATURASI as saturasi,
+            CASE
+                WHEN ed.HEIGHT = 0 THEN NULL
+                ELSE ROUND(ed.WEIGHT * 10000.0 / (ed.HEIGHT * ed.HEIGHT), 2)
+            END AS bmi
             from ASSESSMENT_OPERATION 
-            left outer join EXAMINATION_info ei on ASSESSMENT_OPERATION.document_id = ei.PASIEN_DIAGNOSA_ID
-            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and ei.ACCOUNT_ID = '10'
-            ")->getRow(0, 'array'));
-
+            left outer join EXAMINATION_detail ed on ASSESSMENT_OPERATION.document_id = ed.document_id
+            where ASSESSMENT_OPERATION.visit_id = '" . $visit['visit_id'] . "' and ASSESSMENT_OPERATION.document_id = '" . $vactination_id . "' and ed.ACCOUNT_ID = '10'
+            ")->getRowArray() ?? []);
             if (!empty($select)) {
 
                 $selectDiagnosa = $this->lowerKey($db->query("
                 SELECT PASIEN_DIAGNOSAS_NURSE.DIAG_NOTES FROM PASIEN_DIAGNOSA_NURSE
                 INNER JOIN PASIEN_DIAGNOSAS_NURSE ON PASIEN_DIAGNOSA_NURSE.BODY_ID = PASIEN_DIAGNOSAS_NURSE.BODY_ID
                 WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                ")->getResultArray());
+                ")->getResultArray() ?? []);
 
                 $selectDrain = $this->lowerKey($db->query("
                 SELECT DRAIN_TYPE,DRAIN_KINDS,SIZE,DESCRIPTION 
                 FROM ASSESSMENT_OPERATION_DRAIN WHERE DOCUMENT_ID = '" . $vactination_id . "'
-                ")->getResultArray());
+                ")->getResultArray() ?? []);
 
+                $selectInstrument = $this->lowerKey($db->query("
+                SELECT BRAND_NAME,QUANTITY_BEFORE,QUANTITY_INTRA,QUANTITY_ADDITIONAL,QUANTITY_AFTER 
+                FROM ASSESSMENT_INSTRUMENT WHERE DOCUMENT_ID = '" . $vactination_id . "'
+                ")->getResultArray() ?? []);
+                $instruments = [
+                    ['Quantity Before', 0, 0, 0],
+                    ['Quantity Intra', 0, 0, 0],
+                    ['Quantity Additional', 0, 0, 0],
+                    ['Quantity After', 0, 0, 0],
+                ];
+                foreach ($selectInstrument as $item) {
+                    $instruments[0][1] += $item['quantity_before'];
+                    $instruments[1][1] += $item['quantity_intra'];
+                    $instruments[2][1] += $item['quantity_additional'];
+                    $instruments[3][1] += $item['quantity_after'];
+                }
+                foreach ($selectInstrument as $index => $item) {
+                    $instruments[0][$index + 1] = $item['quantity_before'];
+                    $instruments[1][$index + 1] = $item['quantity_intra'];
+                    $instruments[2][$index + 1] = $item['quantity_additional'];
+                    $instruments[3][$index + 1] = $item['quantity_after'];
+                }
 
                 $aldrete = $this->lowerKey($db->query("
                       SELECT
@@ -553,8 +625,8 @@ class Cetak extends \App\Controllers\BaseController
                         WHERE DOCUMENT_ID = '" . $vactination_id . "'
                         AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS023'
                         GROUP BY BODY_ID, OBSERVATION_DATE;
-                ")->getResultArray());
-                $bromage = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_ANESTHESIA_RECOVERY where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and p_type = 'oprs024' ")->getResultArray());
+                ")->getResultArray() ?? []);
+                $bromage = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_ANESTHESIA_RECOVERY where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' and p_type = 'oprs024' ")->getResultArray() ?? []);
                 $steward = $this->lowerKey($db->query("
                     SELECT
                         BODY_ID, OBSERVATION_DATE,
@@ -576,7 +648,7 @@ class Cetak extends \App\Controllers\BaseController
                     WHERE DOCUMENT_ID = '" . $vactination_id . "'
                     AND ASSESSMENT_ANESTHESIA_RECOVERY.P_TYPE = 'OPRS025'
                     GROUP BY BODY_ID, OBSERVATION_DATE;
-                ")->getResultArray());
+                ")->getResultArray() ?? []);
 
 
                 $informasiMedis = array_slice($select, 8, 8);
@@ -593,7 +665,7 @@ class Cetak extends \App\Controllers\BaseController
                 $newData3 = $this->ConvertValue($informasiIntra2, $newData3, 'OPRS004');
                 $newData4 = $this->ConvertValue($informasiPasca, $newData4, 'OPRS005');
             }
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array') ?? []);
 
 
             if (isset($select)) {
@@ -601,15 +673,16 @@ class Cetak extends \App\Controllers\BaseController
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
-                    "informasiMedis" => $newData,
-                    "informasiIntra" => $newData2,
-                    "informasiIntra2" => $newData3,
-                    "informasiPasca" => $newData4,
-                    "diagnosas" => $selectDiagnosa,
-                    "drains" => $selectDrain,
-                    "aldrete" => $aldrete,
-                    "bromage" => $bromage,
-                    "steward" => $steward,
+                    "informasiMedis" => $newData ?? [],
+                    "informasiIntra" => $newData2 ?? [],
+                    "informasiIntra2" => $newData3 ?? [],
+                    "informasiPasca" => $newData4 ?? [],
+                    "diagnosas" => $selectDiagnosa ?? [],
+                    "drains" => $selectDrain ?? [],
+                    "instrument" => $instruments ?? [],
+                    "aldrete" => $aldrete ?? [],
+                    "bromage" => $bromage ?? [],
+                    "steward" => $steward ?? [],
                     "organization" => $selectorganization
                 ]);
             } else {
@@ -623,7 +696,7 @@ class Cetak extends \App\Controllers\BaseController
     }
     public function cetak_checklist_keselamatan($visit, $vactination_id = null)
     {
-        $title = "Asesmen Pra Operasi";
+        $title = "Checklist Keselamatan Operasi";
         if ($this->request->is('get')) {
             $visit = base64_decode($visit);
             $visit = json_decode($visit, true);
@@ -632,11 +705,11 @@ class Cetak extends \App\Controllers\BaseController
             $select = $this->lowerKey($db->query("
             select * FROM ASSESSMENT_OPERATION_CHECK
             where ASSESSMENT_OPERATION_CHECK.visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "'
-            ")->getRow(0, 'array'));
+            ")->getRowArray() ?? []);
 
 
-            $instruments = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INSTRUMENT where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' ")->getResultArray());
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $instruments = $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_INSTRUMENT where visit_id = '" . $visit['visit_id'] . "' and document_id = '" . $vactination_id . "' ")->getResultArray() ?? []);
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
             $theSignIn = array_slice($select, 8, 10);
             $theTimeOut = array_slice($select, 19, 20);
@@ -659,11 +732,11 @@ class Cetak extends \App\Controllers\BaseController
                     "visit" => $visit,
                     'title' => $title,
                     "val" => $select,
-                    "theSignIn" => $newData,
-                    "theTimeOut" => $newData2,
-                    "theSignOut" => $newData3,
-                    "theSignOut2" => $newData4,
-                    "instruments" => $instruments,
+                    "theSignIn" => $newData ?? [],
+                    "theTimeOut" => $newData2 ?? [],
+                    "theSignOut" => $newData3 ?? [],
+                    "theSignOut2" => $newData4 ?? [],
+                    "instruments" => $instruments ?? [],
                     "organization" => $selectorganization
                 ]);
             } else {
@@ -799,20 +872,8 @@ class Cetak extends \App\Controllers\BaseController
                 "
                 select * from ASSESSMENT_ANESTHESI_CHECKLIST where DOCUMENT_ID = '" . $vactination_id . "'
                 "
-            )->getRow());
-            // $query2 = $this->lowerKey($db->query(
-            //     "
-            //     select * from ASSESSMENT_PARAMETER WHERE P_TYPE = 'OPRS007'
-            //     "
-            // )->getResultArray());
-            // $arr = array_slice($query2, 3);
+            )->getRowArray() ?? []);
 
-            // $arrayNew = [];
-            // foreach ($arr as $key => $val) {
-            //     if ($val['entry_type'] == '8') {
-            //         $arrayNew[$val['parameter_desc']] = null;
-            //     }
-            // }
 
             $informasiTindakan = array_splice($query, 5, 26);
 
@@ -830,7 +891,7 @@ class Cetak extends \App\Controllers\BaseController
                 $index++;
             }
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRowArray() ?? []);
 
             $treatmentData = $this->getTreatment();
 
@@ -838,7 +899,7 @@ class Cetak extends \App\Controllers\BaseController
                 ->where('P_TYPE', 'OPRS007')
                 ->get();
             $resultArrayAParameter = $AParameter->getResultArray();
-            $selectAParameter = $this->lowerKey($resultArrayAParameter);
+            $selectAParameter = $this->lowerKey($resultArrayAParameter ?? []);
 
 
 
@@ -848,7 +909,7 @@ class Cetak extends \App\Controllers\BaseController
                 'title' => $title,
                 "val" => $query,
                 "organization" => $selectorganization,
-                "informasiTindakan" => $newData,
+                "informasiTindakan" => $newData ?? [],
                 "treatment" => $treatmentData
             ]);
         }
@@ -948,7 +1009,7 @@ class Cetak extends \App\Controllers\BaseController
 				left join pasien_operasi on assessment_anesthesia.document_id = pasien_operasi.vactination_id
                 where ASSESSMENT_ANESTHESIA.DOCUMENT_ID =  '" . $vactination_id . "'
                 "
-            )->getRowArray());
+            )->getRowArray() ?? []);
 
             $aldrete_score = $this->lowerKey($db->query(
                 "
@@ -1057,6 +1118,19 @@ class Cetak extends \App\Controllers\BaseController
 
             ")->getResultArray() ?? []);
 
+            $cairan = $this->lowerKey($db->query("
+                select examination_date,value_desc,fluid_amount,
+                MAX(CASE 
+                WHEN fluid_type IN('G0230301', 'G0230302') 
+                THEN 1 
+                ELSE 0 
+                END) AS cairan_masuk 
+                from assessment_fluid_balance
+                inner join assessment_parameter_value on assessment_fluid_balance.P_TYPE = assessment_parameter_value.p_type AND assessment_parameter_value.VALUE_ID = assessment_fluid_balance.FLUID_TYPE
+                where assessment_fluid_balance.P_TYPE = 'GEN0023' AND VISIT_ID = '" . $visit['visit_id'] . "'
+                group by examination_date, value_desc, fluid_amount
+            ")->getResultArray() ?? []);
+
             $asParameter  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
             $asParameterVal  =  $this->lowerKey($db->query("SELECT * FROM ASSESSMENT_PARAMETER_VALUE WHERE P_TYPE  LIKE 'OPRS%' ORDER BY P_TYPE")->getResultArray() ?? []);
 
@@ -1097,6 +1171,7 @@ class Cetak extends \App\Controllers\BaseController
                 "instruksi_post" => $instruksi_post,
                 "organization" => $selectorganization,
                 "cairan_masuk" => $cairan_masuk,
+                "cairan" => $cairan,
                 "aldrete_score" => $aldrete_score_group,
                 "steward_score" => $steward_score_group,
                 "bromage_score" => $bromage_score,
@@ -1254,8 +1329,6 @@ class Cetak extends \App\Controllers\BaseController
                 'skdp' => $skdp
 
             ]);
-
-            // return $this->response->setJSON($data);
         }
     }
 

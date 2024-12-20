@@ -33,6 +33,7 @@ class TreatmentBillModel extends Model
         'amount_paid_plafond',
         'discount',
         'subsidisat',
+
         'isrj',
         'pembulatan',
         'amount',
@@ -57,7 +58,6 @@ class TreatmentBillModel extends Model
         'employee_id_from',
         'class_room_id',
         'keluar_id',
-        'body_id',
 
         'account_id',
         'task_id',
@@ -123,9 +123,10 @@ class TreatmentBillModel extends Model
         'tipetarif',
         'treatment',
         'treatment_plafond',
-        'diagnosa_desc', // Far baru 14/12 9:54
-        'indication_desc', // Far baru 14/12 9:54
+        'diagnosa_desc',
+        'indication_desc',
     ];
+
 
     public function getBill($nomor, $ke, $mulai, $akhir, $lunas, $klinik, $rj, $status, $nota, $trans, $start = null, $end = null)
     {
@@ -135,20 +136,19 @@ class TreatmentBillModel extends Model
 
         $data = $result->getResultArray();
 
-        if ($mulai !== null && $akhir !== null) {
-            $data = array_filter($data, function ($row) use ($mulai, $akhir) {
-                $treatDate = substr($row['TREAT_DATE'], 0, 10);
-                return ($treatDate >= $mulai && $treatDate <= $akhir);
+        if ($start !== null && $end !== null) {
+            $data = array_filter($data, function ($row) use ($start, $end) {
+                $treatDate = $row['TREAT_DATE'];
+                return ($treatDate >= $start && $treatDate <= $end);
             });
         }
 
-        return array_values($data);
+        return $data;
     }
 
     public function getharian($mulai, $akhir, $status, $rj)
     {
         $sql = "SP_EIS_TRANSAKSI;1 @MULAI = '$mulai', @AKHIR = '$akhir', @STATUS = '$status', @RJ = '$rj'";
-
         $result = $this->db->query(new RawSql($sql));
         return $result->getResultArray();
     }

@@ -12,6 +12,7 @@ use App\Models\PasienVisitationModel;
 use App\Models\UserLoginModel;
 use CodeIgniter\Database\RawSql;
 use CodeIgniter\I18n\Time;
+use Config\Services;
 use Myth\Auth\Entities\User;
 use Myth\Auth\Models\UserModel;
 
@@ -128,6 +129,8 @@ in_date, pasien_visitation.diag_awal, pasien_visitation.conclusion, pasien_visit
     }
     public function homebase()
     {
+        // $cache = Services::cache();
+        // $cache->clean();
         return json_encode(user()->employee_id);
         $user              = new User($this->request->getPost($allowedPostFields));
 

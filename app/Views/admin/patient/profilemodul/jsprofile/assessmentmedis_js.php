@@ -427,10 +427,33 @@
 
             const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
             console.log(sortedMappingContentMap)
+            let val = avalue.filter(item => item.p_type == 'GEN0002')
             $.each(sortedMappingContentMap, function(key, value) {
                 if (value.doc_type == 1) {
                     window[value.doc_id](accMedisName)
                     $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
+                }
+                // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
+            })
+            console.log('bisma')
+            console.log(val)
+            $.each(sortedMappingContentMap, function(key, value) {
+
+                if (value.doc_type == 3) {
+                    $.each(val, function(key1, value1) {
+                        if (value.doc_id == value1.value_id) {
+                            $("#appendPemeriksaanFisikMedisBody").append(
+                                `<div class="col-sm-6 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arm${value1.p_type+ value1.parameter_id+ value1.value_id}">${value1.value_desc}</label>
+                                            <textarea id="arm{value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div>`
+                            )
+                        }
+                    })
                 }
                 // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
             })
@@ -586,31 +609,51 @@
         $("#accordionAssessmentMedis").html("")
 
         let mappingContentMap = JSON.parse(req);
-
-        const mappingOrderMap = new Map(mappingOrder.map(item => [item.name, item]));
-        console.log(mappingOrderMap)
+        let updatedMappingContentMap = mappingContentMap
+        // console.log(updatedMappingContentMap)
         // Update `mappingContentMap` based on `mappingOrder`
-        const updatedMappingContentMap = mappingContentMap.map(item => {
-            // Find the corresponding item in `mappingOrder` based on `doc_id`
-            const orderItem = mappingOrderMap.get(item.doc_id);
-            if (orderItem) {
-                return {
-                    ...item,
-                    theorder: orderItem.order
-                };
-            }
-            return item;
-        });
+        // const updatedMappingContentMap = mappingContentMap.map(item => {
+        //     // Find the corresponding item in `mappingOrder` based on `doc_id`
+        //     const orderItem = mappingOrderMap.get(item.doc_id);
+        //     if (orderItem) {
+        //         return {
+        //             ...item,
+        //             theorder: orderItem.order
+        //         };
+        //     }
+        //     return item;
+        // });
         // console.log(updatedMappingContentMap)
 
         const sortedMappingContentMap = updatedMappingContentMap.sort((a, b) => a.theorder - b.theorder);
-
-        // console.log(sortedMappingContentMap)
-
+        console.log(sortedMappingContentMap)
+        let val = avalue.filter(item => item.p_type == 'GEN0002')
         $.each(sortedMappingContentMap, function(key, value) {
             if (value.doc_type == 1) {
                 window[value.doc_id](accMedisName)
                 $("#armTitle").html("ASESMEN MEDIS " + value.specialist_type + titlerj)
+            }
+            // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
+        })
+        console.log('bisma')
+        console.log(val)
+        $.each(sortedMappingContentMap, function(key, value) {
+
+            if (value.doc_type == 3) {
+                $.each(val, function(key1, value1) {
+                    if (value.doc_id == value1.value_id) {
+                        $("#appendPemeriksaanFisikMedisBody").append(
+                            `<div class="col-sm-6 col-xs-12">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label for="arm${value1.p_type+ value1.parameter_id+ value1.value_id}">${value1.value_desc}</label>
+                                            <textarea id="arm{value1.p_type+ value1.parameter_id+ value1.value_id}" name="fisik${value1.value_id}" rows="2" class="form-control " autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div>`
+                        )
+                    }
+                })
             }
             // if (value.doc_type == 1 && value.specialist_type_id == pasienDiagnosa.specialist_type_id) {}
         })
@@ -1718,6 +1761,8 @@
         } else {
             $("#avtvs_status_id").prop("selectedIndex", 2);
         }
+
+
         $("#" + accordionId).append(
             '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingBodyPart">' +
@@ -1727,52 +1772,15 @@
             '</h2>' +
             '<div id="collapseBodyPart" class="accordion-collapse collapse show" aria-labelledby="headingBodyPart"  style="">' +
             '<div class="accordion-body text-muted">' +
-            '<div class="row">' +
-            <?php foreach ($aParameter as $key => $value) {
-                if ($visit['ageyear'] == 0 && $visit['agemonth'] == 0 && $visit['ageday'] <= 28) {
-                    $isneo = true;
-                } else {
-                    $isneo = false;
-                }
-                if ($isneo) {
-                    if ($value['p_type'] == 'GEN0002')
-                        foreach ($aValue as $key1 => $value1) {
-                            if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && ($value1['value_score'] == '2' || $value1['value_score'] == '6')) {
-            ?> '<div class="col-sm-6 col-xs-12">' +
-                            '<div class="mb-3">' +
-                            '<div class="form-group">' +
-                            '<label for="arm<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>' +
-                            `<textarea id="arm<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>" name="fisik<?= $value1['value_id']; ?>" rows="2" class="form-control " autocomplete="off" value></textarea>` +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-                        <?php
-                            }
-                        }
-                } else {
-                    if ($value['p_type'] == 'GEN0002')
-                        foreach ($aValue as $key1 => $value1) {
-                            if ($value['p_type'] == $value1['p_type'] && $value['parameter_id'] == $value1['parameter_id'] && $value1['value_score'] == '2') {
-                        ?> '<div class="col-sm-6 col-xs-12">' +
-                            '<div class="mb-3">' +
-                            '<div class="form-group">' +
-                            '<label for="arm<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>"><?= $value1['value_desc']; ?></label>' +
-                            `<textarea id="arm<?= $value1['p_type'] . $value1['parameter_id'] . $value1['value_id']; ?>" name="fisik<?= $value1['value_id']; ?>" rows="2" class="form-control " autocomplete="off" value></textarea>` +
-                            '</div>' +
-                            '</div>' +
-                            '</div>' +
-            <?php
-                            }
-                        }
-                }
-            } ?> '</div>' +
+            '<div id="appendPemeriksaanFisikMedisBody" class="row">' +
+            '</div>' +
             '</div>' +
             '</div>' +
             '</div>'
         )
-
-
     }
+
+
 
     function appendPenunjangTerapi(accordionId) {
         var accordionContent = `

@@ -1096,7 +1096,10 @@ This Function is used to Add Patient
                 } else {
                     $row[] = $first_action . "" . $kunjungan[$key]['diantar_oleh'] . " - " . $kunjungan[$key]['no_registration'] . "</a>";
                 }
-                $row[] = substr($kunjungan[$key]['visit_date'], 8, 2) . "/" . substr($kunjungan[$key]['visit_date'], 5, 2) . "/" . substr($kunjungan[$key]['visit_date'], 0, 4) . "<br>" . substr(@$kunjungan[$key]['date_of_birth'], 8, 2) . "/" . substr(@$kunjungan[$key]['date_of_birth'], 5, 2) . "/" . substr(@$kunjungan[$key]['date_of_birth'], 0, 4);
+                $row2 =  substr($kunjungan[$key]['visit_date'], 8, 2) . "/" . substr($kunjungan[$key]['visit_date'], 5, 2) . "/" . substr($kunjungan[$key]['visit_date'], 0, 4) . "<br>" . substr(@$kunjungan[$key]['tgl_lahir'], 8, 2) . "/" . substr(@$kunjungan[$key]['tgl_lahir'], 5, 2) . "/" . substr(@$kunjungan[$key]['tgl_lahir'], 0, 4);
+                if ($poli == 'P013' || $poli == 'P016' || $poli == 'P015')
+                    $row2 .= '<br><i>Pemeriksaan: <b>' . @$kunjungan[$key]['laboratorium'] . '</b></i>';
+                $row[] = $row2;
                 $row[] = $kunjungan[$key]['name_of_status_pasien'] . "/" . $kunjungan[$key]['name_of_gender'] . "/" . $kunjungan[$key]['nama_agama'] . "<br>" . $ranap;
                 $row[] = "<b>" . $kunjungan[$key]['name_of_clinic'] . "</b><br><b>" . $kunjungan[$key]['fullname'] . "</b><br>" . $kunjungan[$key]['name_of_class'];
                 // $row[] = $kunjungan[$key]['rm_in_date'];
@@ -2408,6 +2411,24 @@ This Function is used to Add Patient
 
             $ex = new ExaminationModel();
             $ex->save($dataexam);
+
+            $exd = new ExaminationDetailModel();
+
+            $dataToDuplicate = $exd->where('trans_id', @$visit['trans_id']) // Filter by visit_id
+                ->where('isnull(weight, 0) > 0') // Filter by body_id
+                ->first(); // Fetch all rows matching the conditions
+            if (!is_null($dataToDuplicate)) {
+                if (count($dataToDuplicate) > 0) {
+                    $dataToDuplicate = $this->lowerKeyOne($dataToDuplicate);
+                    // return json_encode(($dataToDuplicate));
+                    // Step 2: Prepare the data with the new body_id
+                    $dataToDuplicate['body_id'] = $session_id;  // Change body_id to '124'
+                    $dataToDuplicate['document_id'] = $session_id;  // Change body_id to '124'
+                    $dataToDuplicate['modified_by'] = user()->username;  // Change body_id to '124'
+                    // Step 3: Insert the new data into the table
+                    $exd->save($dataToDuplicate);
+                }
+            }
         }
 
         return redirect()->to(base_url() . 'admin/patient/profileranap' . '/' . $id . '/' . $taold . '/' . $session_id);
@@ -7225,7 +7246,17 @@ This Function is used to Add Patient
 
         return $this->searchingTemplate($giTipe, $title);
     }
+    public function vk()
+    {
+        $title = 'VK';
+        $giTipe = 6;
 
+        $session = session();
+        $sessionData = ['gsPoli' => 'P002'];
+        $session->set($sessionData);
+
+        return $this->searchingTemplate($giTipe, $title);
+    }
     public function addPresc()
     {
         // dd($this->request->is('post'));

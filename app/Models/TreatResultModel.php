@@ -69,7 +69,9 @@ class TreatResultModel extends Model
         'file_image',
         'isvalid',
         'iskritis',
-        'valid_date'
+        'valid_date',
+        'diagnosa_desc',
+        'indication_desc',
     ];
     // Dates
     protected $useTimestamps = false;

@@ -100,8 +100,7 @@
                     </p>
                 </div>
                 <div class="col-auto" align="center">
-                    <img class="mt-2" src="<?= base_url() ?>assets/img/kemenkes.png" width="70px">
-                    <img class="mt-2" src="<?= base_url() ?>assets/img/kars-bintang.png" width="70px">
+                    <img class="mt-2" src="<?= base_url() ?>assets/img/paripurna.png" width="100px">
                 </div>
             </div>
             <br>

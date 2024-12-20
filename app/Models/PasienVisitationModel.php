@@ -316,6 +316,7 @@ class PasienVisitationModel extends Model
             pv.modified_date,
             pv.responpost_vklaim,
             pv.asalrujukan,
+            pv.tgl_lahir,
             pv.kdpoli_eks,
               pv.diagnosa")
                 ->where("(

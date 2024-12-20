@@ -196,11 +196,50 @@ $permissions = user()->getPermissions();
                 <form id="formprescription" accept-charset="utf-8" action="" enctype="multipart/form-data" method="post" class="ptt10">
                     <div class="row">
                         <div class="col-md-4"></div>
-                        <div id="headerPrescriptionDetailModal" class="col-md-4"></div>
+                        <div id="headerMedicalItemDetailModal" class="col-md-4"></div>
                         <div class="col-md-4"></div>
-
                     </div>
-                    <div class="row">
+                    <div class="row" id="divMedicalItem">
+                        <div class="col-md-2 col-sm-2 col-xs-2"></div>
+                        <div id="" class="col-md-8 col-sm-8 col-sm-12">
+                            <div class="card border border-1 rounded-4 m-2 p-2">
+                                <h3 class="card-title text-center">Medical Item</h3>
+                                <div class="card-body">
+                                    <div class="mb-3 row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12">
+                                            <!-- <input type="hidden" name="visit" id="eresepvisit" value="<?= base64_encode(json_encode($visit)); ?>"> -->
+                                            <table id="bhpTable" class="table table-hover table-prescription" style="display: block;">
+                                                <thead class="table-primary" style="text-align: center;">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 30%;">Nama Item</th class="text-center">
+                                                        <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
+                                                        <th class="text-center" colspan="3" style="width: 30%;">Keterangan</th class="text-center">
+                                                        <!-- <th class="text-center" style="width: 12,5%;"></th class="text-center"> -->
+                                                        <th class="text-center" style="width: 12,5%;"></th class="text-center">
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="bhpBody">
+                                                </tbody>
+                                            </table>
+                                            <?php if (user()->checkPermission("medicalitem", "c")) {
+                                            ?>
+                                                <div id="medItemBtnGroup" class="row">
+                                                    <div class="col-md-12">
+                                                        <div id="eresepAdds" class="box-tab-tools text-center">
+                                                            <a data-toggle="modal" onclick="addNR()" class="btn btn-primary btn-lg btn-to-hide" id="addNrBtn" style="width: 300px"><i class=" fa fa-plus"></i> Tambah Medical Item</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php
+                                            } ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-2"></div>
+                    </div>
+                    <div class="row" id="divEresep">
                         <div id="divNonRacikan" class="col-md-6 col-sm-6 col-sm-12">
                             <div class="card border border-1 rounded-4 m-2 p-2">
                                 <h3 class="card-title text-center">Non Racikan</h3>

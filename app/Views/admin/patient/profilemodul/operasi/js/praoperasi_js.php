@@ -1,147 +1,158 @@
 <script>
+    let coba = [];
     $(document).ready(function() {
         // appendDiagnosa(accordionId, bodyId, pasienDiagnosa)
-        appendLokalisOperation("accordionPraOperasiSurgeryBody")
+        // appendLokalisOperation("accordionPraOperasiSurgeryBody")
     })
-</script>
-<script>
-    let coba = [];
-    const appendLokalisOperation = (accordionId) => {
+    const appendLokalisOperation = (accordionId, data) => {
+        let filteredData = aparameter?.filter(item => item?.p_type === 'OPRS002');
+        let accordionContent = ``;
 
-        var accordionContent = ``
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == 'OPRS002') {
-                $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
-                        value1.value_score == '3') {
-                        accordionContent += `<div class="col-sm-12 col-md-12 col-lg-12">
-                                    <div class="mb-4">
-                                        <h5 class="font-size-14 mb-4 badge bg-primary">` + value1.value_desc + `:</h5>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <canvas id="canvas` + value1.p_type + value1.parameter_id + value1
-                            .value_id + `" width="450" height="450" style="border: 1px solid #000;"></canvas>
-                                                <input type="hidden" name="lokalis` + value1.value_id +
-                            `" id="lokalis` + value1.value_id + `">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="lokalis` + value1.value_id + `desc">Deskripsi</label>
-                                                    <textarea name="lokalis` + value1.value_id + `desc" id="lokalis` +
-                            value1.value_id + `desc" class="form-control" cols="30" rows="10"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <button id="undo` + value1.value_id + `" class="btn btn-primary" type="button"> Undo</button>
-                                                <button id="clear` + value1.value_id + `" class="btn btn-danger" type="button"> Clear</button>
-                                            </div>
-                                        </div>
+
+        $.each(filteredData, function(key, value) {
+            $.each(avalue, function(key1, value1) {
+                if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id && value1.value_score == '3') {
+
+                    let matchedData = data.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase()) ?? '';
+
+                    let description = matchedData ? matchedData.value_desc : '';
+
+                    accordionContent += `
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="mb-4">
+                            <h5 class="font-size-14 mb-4 badge bg-primary">${value1.value_desc}:</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <canvas id="canvas${value1.p_type}${value1.parameter_id}${value1.value_id}" width="450" height="450" style="border: 1px solid #000;"></canvas>
+                                    <input type="hidden" name="lokalis${value1.value_id}" id="lokalis${value1.value_id}">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="lokalis${value1.value_id}desc">Deskripsi</label>
+                                        <textarea name="lokalis${value1.value_id}desc" id="lokalis${value1.value_id}desc" class="form-control" cols="30" rows="10">${description}</textarea>
                                     </div>
-                                </div>`
-                    }
-                })
-            }
-        })
+                                </div>
+                                <div class="col-md-6">
+                                    <button id="undo${value1.value_id}" class="btn btn-primary" type="button">Undo</button>
+                                    <button id="clear${value1.value_id}" class="btn btn-danger" type="button">Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+        });
+
         $("#" + accordionId).html(accordionContent);
 
-        generateLokalisOperation()
-    }
+        generateLokalisOperation({
+            data: data
+        });
+    };
 </script>
 <script>
-    const generateLokalisOperation = () => {
+    const generateLokalisOperation = (props) => {
 
-        $.each(aparameter, function(key, value) {
-            if (value.p_type == 'OPRS002') {
-                $.each(avalue, function(key1, value1) {
-                    if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
-                        value1.value_score == '3') {
-                        var canvas = document.getElementById('canvas' + value1.p_type + value1
-                            .parameter_id + value1.value_id);
-                        const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
-                        var ctx = canvas.getContext('2d');
-                        var drawing = false;
-                        var line = []; // Store points for the current line being drawn
-                        let drawingHistory = [];
+        let filteredData = aparameter?.filter(item => item?.p_type === 'OPRS002');
 
-                        var img = new Image();
+        $.each(filteredData, function(key, value) {
+            $.each(avalue, function(key1, value1) {
+                if (value.p_type == value1.p_type && value.parameter_id == value1.parameter_id &&
+                    value1.value_score == '3') {
+                    var canvas = document.getElementById('canvas' + value1.p_type + value1.parameter_id + value1.value_id);
+                    const canvasDataInput = document.getElementById('lokalis' + value1.value_id);
+                    var ctx = canvas.getContext('2d');
+                    var drawing = false;
+                    var line = [];
+                    let drawingHistory = [];
+
+                    var img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+
+                    let matchedData = props?.data?.find(item => item.value_id.toUpperCase() === value1.value_id.toUpperCase());
+                    img.src = matchedData.filedata64 ? img.src = 'data:image/png;base64,' + matchedData.filedata64 : img.src = '<?= base_url() ?>assets/img/asesmen' + value1.value_info;
+
+
+                    canvas.addEventListener('mousedown', startDrawing);
+                    canvas.addEventListener('mousemove', draw);
+                    canvas.addEventListener('mouseup', stopDrawing);
+                    canvas.addEventListener('mouseout', stopDrawing);
+
+                    function startDrawing(e) {
+                        drawing = true;
+                        draw(e);
+                        line = []; // Clear the current line
+                        line.push({
+                            x: e.offsetX,
+                            y: e.offsetY
+                        }); // Add the starting point of the line
+                    }
+
+                    function draw(e) {
+                        if (!drawing) return;
+
+                        ctx.lineWidth = 2;
+                        ctx.lineCap = 'round';
+                        ctx.strokeStyle = '#000';
+
+                        const x = e.offsetX;
+                        const y = e.offsetY;
+
+                        ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top);
+                        line.push({
+                            x,
+                            y
+                        }); // Add the current point to the line
+                    }
+
+                    function stopDrawing() {
+                        drawing = false;
+                        ctx.beginPath();
+                        drawingHistory.push(line);
+                    }
+
+                    // Clear canvas and reset image
+                    $("#clear" + value1.value_id).on("click", function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        drawingHistory = []; // Clear the drawing history
                         img.onload = function() {
                             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         };
-                        img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
-
-                        canvas.addEventListener('mousedown', startDrawing);
-                        canvas.addEventListener('mousemove', draw);
-                        canvas.addEventListener('mouseup', stopDrawing);
-                        canvas.addEventListener('mouseout', stopDrawing);
-
-                        function startDrawing(e) {
-                            drawing = true;
-                            draw(e);
-                            line = []; // Clear the current line
-                            line.push({
-                                x: e.offsetX,
-                                y: e.offsetY
-                            }); // Add the starting point of the line
+                        // Reset to the image from value_detail if available
+                        if (matchedData && matchedData.value_detail) {
+                            img.src = '<?= base_url('assets/img/asesmen') ?>' + matchedData.value_detail;
+                        } else {
+                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1.value_info;
                         }
+                    });
 
-                        function draw(e) {
-                            if (!drawing) return;
-
-                            ctx.lineWidth = 2;
-                            ctx.lineCap = 'round';
-                            ctx.strokeStyle = '#000';
-
-                            const x = e.offsetX;
-                            const y = e.offsetY;
-
-                            ctx.lineTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY -
-                                canvas.getBoundingClientRect().top);
-                            ctx.stroke();
-                            ctx.beginPath();
-                            ctx.moveTo(e.clientX - canvas.getBoundingClientRect().left, e.clientY -
-                                canvas.getBoundingClientRect().top);
-                            line.push({
-                                x,
-                                y
-                            }); // Add the current point to the line
-                        }
-
-                        function stopDrawing() {
-                            drawing = false;
-                            ctx.beginPath();
-                            drawingHistory.push(line);
-                        }
-                        $("#clear" + value1.value_id).on("click", function() {
+                    // Undo drawing
+                    $("#undo" + value1.value_id).on("click", function() {
+                        if (drawingHistory.length > 0) {
+                            // Remove the last line from the drawing history
+                            drawingHistory.pop();
+                            // Clear the canvas
                             ctx.clearRect(0, 0, canvas.width, canvas.height);
-                            drawingHistory = []; // Clear the drawing history
-                            img.onload = function() {
-                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            };
-                            img.src = '<?= base_url('assets/img/asesmen') ?>' + value1
-                                .value_info;
-                        })
-                        $("#undo" + value1.value_id).on("click", function() {
-                            if (drawingHistory.length > 0) {
-                                // Remove the last line from the drawing history
-                                drawingHistory.pop();
-                                // Clear the canvas
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                // Redraw the remaining lines
-                                drawingHistory.forEach(line => {
-                                    for (let i = 1; i < line.length; i++) {
-                                        ctx.beginPath();
-                                        ctx.moveTo(line[i - 1].x, line[i - 1].y);
-                                        ctx.lineTo(line[i].x, line[i].y);
-                                        ctx.stroke();
-                                    }
-                                });
-                            }
-                        })
-                    }
-                })
-            }
-        })
-    }
+                            // Redraw the remaining lines
+                            drawingHistory.forEach(line => {
+                                for (let i = 1; i < line.length; i++) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(line[i - 1].x, line[i - 1].y);
+                                    ctx.lineTo(line[i].x, line[i].y);
+                                    ctx.stroke();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    };
 
     const saveCanvasOperasiData = () => {
         <?php foreach ($aParameter as $key => $value) {
@@ -164,6 +175,7 @@
 </script>
 <script>
     const initiatePraOperasi = (props, res) => {
+
         enablePraOperasi()
         let opsSelected = props
 
@@ -199,18 +211,17 @@
             coba = blood
 
             $.each(diagnosa, function(key, value) {
-                if (value.pasien_diagnosa_id == bodyId) {
-                    addRowDiagDokter('bodyDiagPraOperation', '', value.diagnosa_id, value.diagnosa_name, value
+                if (value.pasien_diagnosa_id == props?.body_id) {
+                    addRowDiagDokter('bodyDiagPraOperation', '', value.diagnosa_desc, value.diagnosa_name, value
                         .diag_cat, value.diag_suffer)
                 }
             })
             $.each(blood, function(key, value) {
-                if (value.pasien_diagnosa_id == bodyId) {
+                if (value.pasien_diagnosa_id == props?.body_id) {
                     addBloodRequest('bodyBloodRequest', value.body_id, value)
                 }
             })
-
-            appendLokalisOperation("accordionPraOperasiSurgeryBody")
+            appendLokalisOperation("accordionPraOperasiSurgeryBody", res?.lokalis)
 
             $.each(praoperasi, function(key, value) {
                 $.each(value, function(key1, value1) {
@@ -229,7 +240,7 @@
             })
 
             $.each(lokalis, function(key, value) {
-                if (value.body_id = bodyId) {
+                if (value.body_id = props?.body_id) {
                     $("#lokalis" + value.value_id).val(value.value_detail)
                     $("#lokalis" + value.value_id + "desc").val(value.value_desc)
                     let valid = String(value.value_id)
@@ -244,19 +255,18 @@
                     img.src = "data:image/png;base64," + value.filedata64;
                 }
             })
+
         }
     }
 
     const assessmentPraOperasi = (props) => {
-        $("#pra-operasiTab").off().on("click", e => {
-            e.preventDefault();
-            const visit = <?= json_encode($visit) ?>;
-            postData({
-                body_id: props?.vactination_id
-            }, 'admin/PatientOperationRequest/getDataPraOperasi', res => {
+        console.log(props?.vactination_id);
+        const visit = <?= json_encode($visit) ?>;
+        postData({
+            body_id: props?.vactination_id
+        }, 'admin/PatientOperationRequest/getDataPraOperasi', res => {
 
-                initiatePraOperasi(props, res);
-            });
+            initiatePraOperasi(props, res);
         });
 
         $("button[name='signrm']").each(function() {
@@ -311,20 +321,6 @@
     $("#formPraOperasiEditBtn").on("click", () => {
         enablePraOperasi();
     });
-    // $("#addbloodrequest2").on("click", () => {
-
-    //     const container = 'bodyBloodRequest';
-    //     const bodyId = get_bodyid();
-    //     const bloodselected = [];
-
-
-    //     addBloodRequest(container, bodyId, bloodselected);
-    // });
-
-
-    // $("#adddiagnosaPraOperasi").on("click", () => {
-    //     addRowDiagDokter('bodyDiagPraOperation', '');
-    // });
 </script>
 <script>
     const enablePraOperasi = () => {

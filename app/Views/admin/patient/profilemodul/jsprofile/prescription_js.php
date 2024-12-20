@@ -72,7 +72,7 @@
         $("#eresepTitle").html("E-Resep")
         $("#eresepBtnGroup").slideDown()
         $("#medItemBtnGroup").slideUp()
-
+        $("#generateResepGroup").show()
     })
     $("#medicalitemTab").on("click", function() {
         $("#jenisresep").val(8)
@@ -80,6 +80,7 @@
         $("#eresepTitle").html("Medical Item")
         $("#eresepBtnGroup").slideUp()
         $("#medItemBtnGroup").slideDown()
+        $("#generateResepGroup").hide()
     })
     $("#formEditPrescrBtn").on("click", function() {
         if ($("#resepno").val() == '%') {
@@ -220,7 +221,12 @@
                     <table id="" class="table table-hover table-prescription" style="display: block;">
                             <thead class="table-primary" style="text-align: center;">
                                 <tr>
-                                    <th class="text-center" style="width: 30%;">Nama Obat</th class="text-center">
+                                    <th class="text-center" style="width: 30%;">`
+        if (jenisresep == '8')
+            thetable += 'Nama Item'
+        else
+            thetable += 'Nama Obat'
+        thetable += `</th class="text-center">
                                     <th class="text-center" colspan="2" style="width: 10%;">Jumlah</th class="text-center">
                                 </tr>
                             </thead>
@@ -654,10 +660,10 @@
                         });
                         errorSwal(message);
                     } else {
+                        successSwal(data.message);
                         $("#formAddPrescrBtn").slideUp()
                         $("#formEditPrescrBtn").slideDown()
                         $("#formprescription").find("input, textarea, select, .btn-btnnr, .btn-btnr, .btn-danger").prop("disabled", true)
-                        successSwal(data.message);
 
                         $("#prescRItemBody").html("")
                         resepDetail = [];
@@ -729,14 +735,14 @@
         $("#resepno").val(resepSelected)
 
         if (jnsrsp == '8') {
-            $("#eresepTable").html(`<thead class="table-primary" style="text-align: center;">
+            $("#bhpTable").html(`<thead class="table-primary" style="text-align: center;">
                                         <tr>
-                                            <th class="text-center" style="width: 60%;">Nama Obat</th class="text-center">
+                                            <th class="text-center" style="width: 60%;">Nama Item</th class="text-center">
                                             <th class="text-center" colspan="2" style="width: 30%;">Jumlah</th class="text-center">
                                             <th class="text-center" style="width: 5%;"></th class="text-center">
                                         </tr>
                                     </thead>
-                                    <tbody id="eresepNonRacikBody">
+                                    <tbody id="bhpBody">
 
                                                     </tbody>
                                     `)
@@ -760,8 +766,10 @@
 
         if (data.length > 0) {
             // $("#modalPrescriptionTitle").html(`${data[0].doctor_from} | ${data[0].resep_no} | ${data[0].treat_date}`)
-            $("#modalPrescriptionTitle").html(`E-Resep`)
-
+            if (jnsrsp == '8')
+                $("#modalPrescriptionTitle").html(`Medical Item`)
+            else
+                $("#modalPrescriptionTitle").html(`E-Resep`)
 
             $("#headerPrescriptionDetailModal").html(`
                 <h4 class="text-center">RS PKU Muhammadiyah Sampangan</h4>
@@ -840,6 +848,13 @@
 
         resepOrder = 0;
 
+        if (jnsrsp == '8') {
+            $("#divMedicalItem").show()
+            $("#divEresep").hide()
+        } else {
+            $("#divMedicalItem").hide()
+            $("#divEresep").show()
+        }
         if (resepDetail.length > 0) {
             // $("#eresepTable").html("")
             $("#formprescription").find("input, textarea, select").prop("disabled", false)
@@ -875,15 +890,7 @@
 
 
 
-        if (jnsrsp == '8') {
-            $("#divRacikan").hide()
-            $("#eresepBtnGroup").hide()
-            $("#medItemBtnGroup").show()
-        } else {
-            $("#divRacikan").show()
-            $("#eresepBtnGroup").show()
-            $("#medItemBtnGroup").hide()
-        }
+
         // if ($("#eresepBody table").length == 0) {
         //     console.log(soldstatusarray.includes($("#jenisresep").val()))
         //     console.log('asdf')
@@ -1022,17 +1029,23 @@
     }
     const addRowObat = (obatType, resepKe = null, resep = null, keyvisit = null) => {
 
-        let bodytable = '';
+        let bodyracik = '';
+        let bodyNonRacik = '';
 
         if (keyvisit == null) {
-            bodytable = '#eresepsRacikBody';
+            bodyracik = '#eresepsRacikBody';
         } else {
-            bodytable = "#body" + keyvisit;
+            bodyracik = "#body" + keyvisit;
         }
 
         resep_no = $("#resepno").val()
 
         var soldstatus = $("#jenisresep").val()
+        if (soldstatus == '8') {
+            bodyNonRacik = 'bhpBody';
+        } else {
+            bodyNonRacik = 'eresepNonRacikBody';
+        }
         if (resep == null) {
             var racikan = 0;
 
@@ -1205,94 +1218,10 @@
             }
         }
 
-
-
-
-        // if (racikan == 1) {
-        //     var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine1' + resepKe + '" id="dosisLine1' + resepKe + '" class="form-control">';
-        //     dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
-        //     option.forEach((element, key) => {
-        //         dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
-        //     });
-        //     dosisDiv = dosisDiv + '</select>';
-
-        //     var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + resepKe + '\')" name="dosisLine2' + resepKe + '" id="dosisLine2' + resepKe + '" class="form-control">';
-        //     dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
-        //     optionJml.forEach((element, key) => {
-        //         dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
-        //     });
-        //     dosis2Div = dosis2Div + '</select>';
-
-        //     var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa2' + resepKe + '" id="signa2' + resepKe + '" class="form-control">';
-        //     signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
-        //     signa2Param.forEach((element, key) => {
-        //         signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
-        //     });
-        //     signa2Div = signa2Div + '</select>';
-
-        //     var signa4Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa4' + resepKe + '" id="signa4' + resepKe + '" class="form-control">';
-        //     signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
-        //     signa4Param.forEach((element, key) => {
-        //         signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
-        //     });
-        //     signa4Div = signa4Div + '</select>';
-
-
-        //     var signa5Div = '<select onchange="generateDescription2NR(\'' + resepKe + '\')" name="signa5' + resepKe + '" id="signa5' + resepKe + '" class="form-control">';
-        //     signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
-        //     signa5Param.forEach((element, key) => {
-        //         signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
-        //     });
-        //     signa5Div = signa5Div + '</select>';
-        // } else {
-        //     var dosisDiv = '<select placeholder="1x Sehari" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine1' + billId + '" id="dosisLine1' + billId + '" class="form-control">';
-        //     dosisDiv = dosisDiv + "<option value='' disabled selected hidden>1x Sehari</option>"
-        //     option.forEach((element, key) => {
-        //         dosisDiv = dosisDiv + "<option value='" + option[key] + "'>" + option[key] + "</option>"
-        //     });
-        //     dosisDiv = dosisDiv + '</select>';
-
-        //     var dosis2Div = '<select placeholder="1" onchange="generateDescription2NR(\'' + billId + '\')" name="dosisLine2' + billId + '" id="dosisLine2' + billId + '" class="form-control">';
-        //     dosis2Div = dosis2Div + "<option value='' disabled selected hidden>1</option>"
-        //     optionJml.forEach((element, key) => {
-        //         dosis2Div = dosis2Div + "<option value='" + optionJml[key] + "'>" + optionJml[key] + "</option>"
-        //     });
-        //     dosis2Div = dosis2Div + '</select>';
-
-        //     var signa2Div = '<select placeholder="Tablet" onchange="generateDescription2NR(\'' + billId + '\')" name="signa2' + billId + '" id="signa2' + billId + '" class="form-control">';
-        //     signa2Div = signa2Div + "<option value='' disabled selected hidden>Tablet</option>"
-        //     signa2Param.forEach((element, key) => {
-        //         signa2Div = signa2Div + "<option value='" + signa2Param[key].meaning + "'>" + signa2Param[key].signa + ' - ' + signa2Param[key].meaning + "</option>"
-        //     });
-        //     signa2Div = signa2Div + '</select>';
-
-        //     var signa4Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa4' + billId + '" id="signa4' + billId + '" class="form-control">';
-        //     signa4Div = signa4Div + "<option value='' disabled selected hidden>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Sebelum Makan'>Sebelum Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Setelah Makan'>Setelah Makan</option>"
-        //     signa4Div = signa4Div + "<option value='Pada Saat Makan Makan'>Pada Saat Makan Makan</option>"
-        //     signa4Param.forEach((element, key) => {
-        //         signa4Div = signa4Div + "<option value='" + signa4Param[key].meaning + "'>" + signa4Param[key].signa + ' - ' + signa4Param[key].meaning + "</option>"
-        //     });
-        //     signa4Div = signa4Div + '</select>';
-
-
-        //     var signa5Div = '<select onchange="generateDescription2NR(\'' + billId + '\')" name="signa5' + billId + '" id="signa5' + billId + '" class="form-control">';
-        //     signa5Div = signa5Div + "<option value='' disabled selected hidden>Melalui Mulut</option>"
-        //     signa5Param.forEach((element, key) => {
-        //         signa5Div = signa5Div + "<option value='" + signa5Param[key].meaning + "'>" + signa5Param[key].signa + ' - ' + signa5Param[key].meaning + "</option>"
-        //     });
-        //     signa5Div = signa5Div + '</select>';
-        // }
-
-
         if (racikan == 0 || racikan == 3 || racikan == 4 || racikan == 15) { //non racikan
             tarifId = '1201008';
             treatment = "PEMBELIAN OBAT NON RACIKAN"
-            // $(bodytable).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+            // $(bodyracik).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
             //             <thead class="table-primary" style="text-align: center;">
             //                 <tr>
             //                     <th id="${resepNo}${resepKe}oddstatus" colspan="11"> ${doctorFrom} | ${resepNo} | ${treatDate}</th>
@@ -1309,7 +1238,7 @@
             //             <tbody id="${resepNo}${resepKe}">
             //             </tbody>
             //         </table>`)
-            // $(bodytable).append(`
+            // $(bodyracik).append(`
             //             <tbody id="${resepNo}${resepKe}">
             //             </tbody>`)
 
@@ -1319,7 +1248,7 @@
                 $(`#${resepNo}${resepKe}oddstatus`).html(`${doctorFrom} | ${resepNo} | ${treatDate} | <span class="text-center text-danger">ODD Telah Selesai</span>`)
 
 
-            $(`#eresepNonRacikBody`).append(`
+            $(`#` + bodyNonRacik).append(`
                 <tr id="${billId}" class="non-racikan table-success ${billId}">
                     <td class="d-none">
                         <input type="text" name="resep_ke[]" id="aorresep_ke${billId}" placeholder="" value="" class="form-control text-right" readonly>
@@ -1369,7 +1298,7 @@
                 }
             }
         } else if (racikan == 1 && theOrder == '1') { //racikan
-            $(bodytable).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
+            $(bodyracik).append(`<table id="${resepNo}${resepKe}table" class="table table-hover table-prescription" style="display: block;">
                     <thead class="table-primary" style="text-align: center;">
                         <tr>
                             <th class="text-start" style="width: 30%;"><h5>BUNGKUS: </h5></th class="text-center">

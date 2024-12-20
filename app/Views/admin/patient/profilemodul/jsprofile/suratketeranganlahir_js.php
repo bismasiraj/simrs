@@ -20,6 +20,9 @@
                 $('#baby_birth').attr('disabled', true)
             })
 
+            // getSKL()
+        })
+        $("#suratketeranganlahirTab").on("click", function() {
             getSKL()
         })
         const getSKL = () => {
@@ -33,6 +36,9 @@
                 contentType: false,
                 cache: false,
                 processData: false,
+                beforeSend: function() {
+                    $("#bodydataSKL").html(loadingScreen())
+                },
                 success: function(data) {
                     $("#bodydataSKL").html("");
 
@@ -55,6 +61,7 @@
                     getDetailSKL();
                     getModalDeleteSKL();
                     actionCetakSKL();
+                    $('#formSKL')[0].reset();
                 },
                 error: function() {
 
@@ -76,7 +83,7 @@
             postData(jsonObj, 'admin/SuratKeteranganLahir/insertData', (res) => {
                 if (res.respon === true) {
                     successSwal('Data berhasil disimpan.');
-                    $('#formSKL')[0].reset();
+                    // $('#formSKL')[0].reset();
                 } else {
                     console.log('errorr');
                 }

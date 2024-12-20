@@ -1418,7 +1418,7 @@ class DocCetak extends \App\Controllers\BaseController
                 "
                 select * from ASSESSMENT_ANESTHESI_CHECKLIST where DOCUMENT_ID = '" . $vactination_id . "'
                 "
-            )->getRow());
+            )->getRow(0, 'array'));
             // $query2 = $this->lowerKey($db->query(
             //     "
             //     select * from ASSESSMENT_PARAMETER WHERE P_TYPE = 'OPRS007'

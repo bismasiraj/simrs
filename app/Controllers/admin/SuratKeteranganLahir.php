@@ -127,7 +127,7 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
         $visit_id = $body['visit_id'];
 
 
-        $query = $this->lowerKey($this->model->query("SELECT * FROM baby WHERE visit_id='" . $visit_id . "' AND baby_id = '" . $baby_id . "' ")->getRow());
+        $query = $this->lowerKey($this->model->query("SELECT * FROM baby WHERE visit_id='" . $visit_id . "' AND baby_id = '" . $baby_id . "' ")->getRow(0, 'array'));
 
         $data = $this->lowerKey($query);
 
@@ -172,7 +172,7 @@ class SuratKeteranganLahir extends \App\Controllers\BaseController
 				LEFT OUTER JOIN JOB_CATEGORY ON PASIEN.JOB_ID = JOB_CATEGORY.JOB_ID
                 WHERE BABY.visit_id = '" . $decoded_visit['visit_id'] . "' AND BABY.baby_id = '" . $decoded_visit['baby_id'] . "'
                 "
-            )->getRow());
+            )->getRow(0, 'array'));
 
 
             return view("admin/patient/profilemodul/cetak-suratketeranganlahir.php", [

@@ -33,7 +33,7 @@
         <div class="row">
             <div class="col-6">
                 <div>
-                    <img src="<?= base_url('bpjs.jpeg') ?>" alt="BPJS KESEHATAN" style="width: 230px;">
+                    <img src="<?= base_url() ?>assets/img/bpjs.jpeg" alt="BPJS KESEHATAN" style="width: 230px;">
                 </div>
                 <form action="" method="">
                     <div class="form-group row mt-2 align-items-center">

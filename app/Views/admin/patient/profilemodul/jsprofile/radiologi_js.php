@@ -159,9 +159,11 @@
         tarifDataJson = $("#" + container).val();
         tarifData = JSON.parse(tarifDataJson);
 
-        var i = $('#radChargesBody tr').length + 1;
+        $("#searchTarifRad").val(null).trigger('change');
+
+        var i = $('#radChargesBody tr.number').length + 1;
         var key = 'rad' + i
-        $("#radChargesBody").append($("<tr id=\"" + key + "\">")
+        $("#radChargesBody").append($("<tr id=\"" + key + "\" class='number'>")
             .append($("<td>").html(String(i) + "."))
             .append($("<td>").attr("id", "araddisplaytreatment" + key).html(tarifData.tarif_name).append($("<p>").html('<?= $visit['fullname']; ?>')))
             .append($("<td>").html('<select id="arademployee_id' + key + '" class="form-select" name="employee_id[]" onchange="changeFullnameDoctor(\'arad\',\'' + key + '\')">' +
@@ -177,7 +179,6 @@
                 .append($("<p>").html('<?= $visit['name_of_status_pasien']; ?>'))
             )
             .append($("<td>").attr("id", "araddisplayamount_paid" + key).html(formatCurrency(parseFloat(tarifData.amount))))
-            .append($("<td>").attr("id", "araddisplayamount_plafond" + key).html((parseFloat(tarifData.amount))))
             // .append($("<td>").attr("id", "araddisplayamount_paid_plafond" + key).html(formatCurrency(0)))
             // .append($("<td>").attr("id", "araddisplaydiscount" + key).html(formatCurrency(0)))
             // .append($("<td>").attr("id", "araddisplaysubsidisat" + key).html(formatCurrency(0)))
@@ -194,7 +195,35 @@
             )
         )
 
-
+        $("#radChargesBody").append($("<tr style='height: 80px;'>")
+            .append($("<td>"))
+            .append($("<td>").attr("colspan", "2").html(`
+                        <div class="form-group">
+                        <label class="form-label fw-bold">Diagnosis Klinis</label>
+                            <div class="input-group">
+                                <input id="araddiagnosa_descrad${i}" 
+                                    class="form-control fit" 
+                                    style="width: 70%;" 
+                                    placeholder="Diagnosis Klinis" 
+                                    name="diagnosa_desc[]" 
+                                    value="">
+                            </div>
+                        </div>
+                    `))
+            .append($("<td>").attr("colspan", "4").html(`
+                        <div class="form-group">
+                            <label class="form-label fw-bold">Indikasi Medis</label>
+                            <div class="input-group">
+                                <input id="aradindication_descrad${i}" 
+                                    class="form-control fit" 
+                                    style="width: 70%;" 
+                                    placeholder="Indikasi Medis" 
+                                    name="indication_desc[]" 
+                                    value="">
+                            </div>
+                        </div>
+                    `))
+        );
         $("#radChargesBody")
             .append('<input type="hidden" name="quantity[]" id="aradquantity' + key + '" placeholder="" value="0" class="form-control" >')
             .append('<input name="treatment[]" id="aradtreatment' + key + '" type="hidden" value="' + tarifData.tarif_name + '" class="form-control" />')
@@ -399,26 +428,39 @@
 
     const actionModalExpertise = (bill, identifier) => {
         let data = JSON.parse(decodeURIComponent(bill));
-
+        console.log(data);
         jsonObj = {};
 
         jsonObj.bill_id = data?.bill_id
         jsonObj.visit_id = data?.visit_id
         $('#template_jenis_pemeriksaan').val([]).trigger('change');
-
-
         postData(jsonObj, 'admin/radRequest/getDataByID', (res) => {
-
             if (res.respon) {
-                $('#modalJenisTindakan').text(data.tarif_name + ' (' + data.doctor + ')')
-                $('#modalTanggalTindakan').text(moment(data.treat_date).format('LL'))
+                $('#modalJenisTindakan').text(res?.data.tarif_name + ' (' + res?.data.doctor + ')') // perubahan bagian ini dari data.doctor ke res.doctor
+                $('#modalTanggalTindakan').text(moment(data.treat_date).format('DD-MM-YYYY'))
                 $('#modalNilaiTindakan').text(data.tagihan)
                 $('#modalBill').val(data.bill_id)
                 $('#modalVisit').val(data.visit_id)
-                $('#modalNoFilm').val(res.data.specimen_id)
-                $('#modalHasilBaca').val(res.data.result_value)
-                $('#modalKesimpulan').val(res.data.conclusion)
-                $('#modalIsValid').val(res.data.isvalid)
+
+                let diagnosa_desc = res?.data?.diagnosa_desc;
+                let indication_desc = res?.data?.indication_desc;
+
+                // Check if the value is empty or undefined and fallback to data if needed
+                if (diagnosa_desc == null || diagnosa_desc === '') {
+                    diagnosa_desc = data?.diagnosa_desc ?? res?.data?.diagnosa_desc;
+                }
+                if (indication_desc == null || indication_desc === '') {
+                    indication_desc = data?.indication_desc ?? res?.data?.indication_desc;
+                }
+
+                // Set the values in the inputs
+                $('#diagnosisExpertise').val(diagnosa_desc);
+                $('#indikasiExpertise').val(indication_desc);
+
+                $('#modalNoFilm').val(res?.data.specimen_id)
+                $('#modalHasilBaca').val(res?.data.result_value)
+                $('#modalKesimpulan').val(res?.data.conclusion)
+                $('#modalIsValid').val(res?.data.isvalid)
                 $('#printExpertise').attr('data-id', res?.data?.result_id)
                 if ($('#modalIsValid').val() == '1') {
                     $('#isValidExpertise').html('Tervalidasi');
@@ -457,9 +499,13 @@
                 } else {
                     $('#imagePreviewExpertise').attr('src', '').hide();
                 }
+
+                printExpertise({
+                    result_id: res?.data?.result_id
+                });
             } else {
-                $('#modalJenisTindakan').text(data.treatment + ' (' + data.doctor + ')')
-                $('#modalTanggalTindakan').text(moment(data.treat_date).format('LL'))
+                $('#modalJenisTindakan').text(data?.treatment + ' (' + data?.doctor + ')')
+                $('#modalTanggalTindakan').text(moment(data.treat_date).format('DD-MM-YYYY'))
                 $('#modalNilaiTindakan').text(data.tagihan)
                 $('#modalBill').val(data.bill_id)
                 $('#modalVisit').val(data.visit_id)
@@ -484,49 +530,26 @@
             $('#formFileExpertise').val('')
             $('#modalIsValid').val(0)
             $('#modalIsKritis').val(0)
+            $('#diagnosisExpertise').val('');
+            $('#indikasiExpertise').val('');
             $('#printExpertise').attr('data-id', '')
         }
+        //new 19-12-2024
+        const printExpertise = (props) => {
+            $('#printExpertise').off().on('click', function(e) {
+                e.preventDefault();
 
-        $('#printExpertise').off().on('click', function(e) {
-            e.preventDefault();
+                let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
 
-            let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+                // Construct the URL
+                let url = '<?= base_url() . '/admin/rm/LAINNYA/radiologi_cetak/'; ?>' + visitEncoded + '/' +
+                    props?.result_id;
 
-            // Construct the URL
-            let url = '<?= base_url() . '/admin/rm/LAINNYA/radiologi_cetak/'; ?>' + visitEncoded + '/' +
-                $(this).data('id');
+                // Redirect to the URL
+                window.open(url, '_blank'); // Open in a new tab
+            })
+        }
 
-            // Redirect to the URL
-            window.open(url, '_blank'); // Open in a new tab
-        })
-
-        // $('#formExpertise').off('submit').on('submit', e => {
-        //     e.preventDefault();
-        //     let formExpertise = document.querySelector('#formExpertise');
-        //     let formData = new FormData(formExpertise)
-
-        //     $.ajax({
-        //         url: '<?php echo base_url(); ?>admin/radRequest/insertExpertise',
-        //         type: "POST",
-        //         data: formData,
-        //         dataType: 'json',
-        //         contentType: false,
-        //         cache: false,
-        //         processData: false,
-        //         success: function(data) {
-        //             successSwal('Data berhasil disimpan');
-        //             $("#modalExpertise").modal("hide")
-        //             $(`[data-id="${identifier}quantity${data.bill_id}"]`).val(data.treat_bill.quantity)
-        //             $(`[data-id="${identifier}displayamount_paid${data.bill_id}"]`).html(data.treat_bill.amount_paid)
-        //             // $(`#${identifier}quantity${data.treat_bill.bill_id}`).val(data.treat_bill.quantity)
-        //             // $(`#${identifier}displayamount_paid${data.treat_bill.bill_id}`).val(data.treat_bill.amount_paid)
-        //         },
-        //         error: function() {
-        //             errorSwal('Data gagal disimpan');
-        //             $("#modalExpertise").modal("hide")
-        //         }
-        //     });
-        // });
 
         $('#saveExpertise').off().on('click', function(e) {
             e.preventDefault();
@@ -578,7 +601,6 @@
             });
         });
     };
-
 
     document.getElementById('formFileExpertise').addEventListener('change', function(event) {
         const file = event.target.files[0];
@@ -672,6 +694,21 @@
     $('#imagePreviewExpertise').on('click', function() {
 
     })
+
+    const printExpertise = (props) => {
+        $('#printExpertise').off().on('click', function(e) {
+            e.preventDefault();
+
+            let visitEncoded = '<?= base64_encode(json_encode($visit)); ?>'
+
+            // Construct the URL
+            let url = '<?= base_url() . '/admin/rm/LAINNYA/radiologi_cetak/'; ?>' + visitEncoded + '/' +
+                props?.result_id;
+
+            // Redirect to the URL
+            window.open(url, '_blank'); // Open in a new tab
+        })
+    }
 </script>
 <script>
     const quillEditor = document.querySelectorAll('.quill-textarea-radiologi');

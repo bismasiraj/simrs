@@ -371,7 +371,7 @@ foreach ($examDetail as $key => $value) {
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                     $("#formPainMonitoringEditBtn" + bodyId).slideUp()
                     $("#formPainMonitoringSignBtn" + bodyId).slideDown()
-                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select, option").prop("disabled", false)
                 })
 
                 if (flag == 1) {
@@ -379,7 +379,7 @@ foreach ($examDetail as $key => $value) {
                     $("#formPainMonitoringSaveBtn" + bodyId).slideDown()
                     $("#formPainMonitoringEditBtn" + bodyId).slideUp()
 
-                    $("#formPainMonitoring" + bodyId).find("input, textarea, select").prop("disabled", false)
+                    $("#formPainMonitoring" + bodyId).find("input, textarea, select, option").prop("disabled", false)
 
                 } else {
                     var maindataset = painMonitoring[index]
@@ -1130,7 +1130,7 @@ foreach ($examDetail as $key => $value) {
                     $("#formTriageSaveBtn" + bodyId).slideDown()
                     $("#formTriageEditBtn" + bodyId).slideUp()
                     $("#formTriage" + bodyId).find("input, textarea, select").prop("disabled", false)
-
+                    $("#aParamTriage" + bodyId).val('ASES028').trigger("change")
                 } else {
                     var triageset = triage[index]
 
@@ -1211,7 +1211,7 @@ foreach ($examDetail as $key => $value) {
                             if (value2.value_info == value.value_id && value2.parameter_id == value1.parameter_id && value2.p_type == p_type) {
                                 $("#tbodyAssessment" + parent_id + body_id + value.value_id + value1.parameter_id).append(
                                     '<div class="form-check mb-3">' +
-                                    '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' +
+                                    '<input name="val' + value2.value_id + '" class="form-check-input" type="checkbox" id="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '" onclick="updateATS(' + value2.value_score + ',\'' + body_id + '\')">' +
                                     '<label class="form-check-label" for="' + parent_id + body_id + value.value_id + value1.parameter_id + value2.value_id + '">' + value2.value_desc + '</label>' +
                                     '</div>'
                                 )
@@ -1227,6 +1227,10 @@ foreach ($examDetail as $key => $value) {
                 });
             }
         })
+    }
+
+    function updateATS(score, bodyId) {
+        $("#aTriageTotalScore" + bodyId).val(score)
     }
 
     function getTriage(bodyId, container) {
@@ -1331,10 +1335,6 @@ foreach ($examDetail as $key => $value) {
                     '<h4 class="card-title"> Apgar' +
                     '</h4>' +
                     '<div class="row mt-4">' +
-
-
-
-
                     '</div>' +
                     '<div class="row">' +
                     '<div class="col-md-12">' +
@@ -1355,7 +1355,7 @@ foreach ($examDetail as $key => $value) {
                             }
                             break;
                         }
-                    } ?> '</tr>' +
+                    } ?> '<th class="text-center">Total</th></tr>' +
                     '</thead>' +
                     '<tbody id="bodyAssessment005' + bodyId + '">' +
                     <?php foreach ($apgarType as $key1 => $value1) {
@@ -1365,7 +1365,7 @@ foreach ($examDetail as $key => $value) {
                             foreach ($aParameter as $key2 => $value2) {
                                 if ($value2['p_type'] == $value1['p_type']) {
 
-                            ?> '<td><select id="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>' + bodyId + '" name="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>" class="form-control" onchange="totalApgar(\'<?= @$value2['parameter_id']; ?>\', \'' + bodyId + '\')">' +
+                            ?> '<td><select id="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>' + bodyId + '" name="<?= @$value['parent_id'] . $value1['p_type'] . $value2['parameter_id']; ?>" class="form-control" onchange="totalApgar(\'<?= @$value1['p_type']; ?>\', \'' + bodyId + '\')">' +
                                     <?php foreach ($aValue as $key3 => $value3) {
                                         if ($value3['parameter_id'] == $value2['parameter_id'] && $value3['p_type'] == $value1['p_type']) {
                                     ?> '<option value="<?= $value3['value_id']; ?>"><?= $value3['value_desc']; ?></option>' +
@@ -1375,20 +1375,11 @@ foreach ($examDetail as $key => $value) {
                             <?php
                                 }
                             }
-                            ?> '</tr>' +
+                            ?> `<td id="totalapgar005<?= $value1['p_type']; ?>${bodyId}" class="text-center">0</td></tr>` +
                     <?php
                         }
-                    } ?> '</tr>' + '</tbody>' +
-                    `<tfoot>
-                        <tr>
-                            <td>Total Score</td>
-                            <td id="totalapgar00501${bodyId}">6</td>
-                            <td id="totalapgar00502${bodyId}">6</td>
-                            <td id="totalapgar00503${bodyId}">6</td>
-                            <td id="totalapgar00504${bodyId}">6</td>
-                            <td id="totalapgar00505${bodyId}">6</td>
-                        </tr>
-                    </tfoot>` +
+                    } ?> '' + '</tbody>' +
+
                     '</table>' +
                     '</div>' +
                     '<div class="panel-footer text-end mb-4">' +
@@ -1493,18 +1484,25 @@ foreach ($examDetail as $key => $value) {
 
     }
 
-    function totalApgar(parameterId, bodyId) {
-        let menit1 = parseInt((String)($(`#005ASES032${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES032${parameterId}${bodyId}`).val().length) - 1)) - 1;
-        menit1 = 2 - menit1
-        console.log(menit1)
-        let menit5 = parseInt((String)($(`#005ASES033${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES033${parameterId}${bodyId}`).val().length) - 1)) - 1;
-        menit5 = 2 - menit5
-        console.log(menit5)
-        let menit10 = parseInt((String)($(`#005ASES034${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES034${parameterId}${bodyId}`).val().length) - 1)) - 1;
-        menit10 = 2 - menit10
-        console.log(menit10)
-        let total = menit1 + menit5 + menit10
-        $(`#totalapgar005${parameterId}${bodyId}`).html(total)
+    function totalApgar(p_type, bodyId) {
+        // let menit1 = parseInt((String)($(`#005ASES032${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES032${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        // menit1 = 2 - menit1
+        // console.log(menit1)
+        // let menit5 = parseInt((String)($(`#005ASES033${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES033${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        // menit5 = 2 - menit5
+        // console.log(menit5)
+        // let menit10 = parseInt((String)($(`#005ASES034${parameterId}${bodyId}`).val()).charAt((String)($(`#005ASES034${parameterId}${bodyId}`).val().length) - 1)) - 1;
+        // menit10 = 2 - menit10
+        // console.log(menit10)
+        // let total = menit1 + menit5 + menit10
+
+        var param1 = parseInt((String)($(`#005${p_type}01${bodyId}`).val()).charAt((String)($(`#005${p_type}01${bodyId}`).val().length) - 1)) - 1;
+        let param2 = parseInt((String)($(`#005${p_type}02${bodyId}`).val()).charAt((String)($(`#005${p_type}02${bodyId}`).val().length) - 1)) - 1;
+        let param3 = parseInt((String)($(`#005${p_type}03${bodyId}`).val()).charAt((String)($(`#005${p_type}03${bodyId}`).val().length) - 1)) - 1;
+        let param4 = parseInt((String)($(`#005${p_type}04${bodyId}`).val()).charAt((String)($(`#005${p_type}04${bodyId}`).val().length) - 1)) - 1;
+        let param5 = parseInt((String)($(`#005${p_type}05${bodyId}`).val()).charAt((String)($(`#005${p_type}05${bodyId}`).val().length) - 1)) - 1;
+        let total = param1 + param2 + param3 + param4 + param5
+        $(`#totalapgar005${p_type}${bodyId}`).html(total)
     }
 
     function aValueParamApgar(parent_id, p_type, body_id, flag) {

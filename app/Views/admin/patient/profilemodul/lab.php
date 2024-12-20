@@ -9,72 +9,72 @@ $permissions = user()->getPermissions();
 ?>
 
 <style>
-/* Table Fit */
-table.table-fit {
-    width: auto !important;
-    table-layout: auto !important;
-}
+    /* Table Fit */
+    table.table-fit {
+        width: auto !important;
+        table-layout: auto !important;
+    }
 
-table.table-fit thead th,
-table.table-fit tfoot th,
-table.table-fit tbody td,
-table.table-fit tfoot td {
-    width: auto !important;
-}
+    table.table-fit thead th,
+    table.table-fit tfoot th,
+    table.table-fit tbody td,
+    table.table-fit tfoot td {
+        width: auto !important;
+    }
 
-/* General Styles */
-.LabLIS-uploader {
-    display: block;
-    margin: 0 auto;
-    max-width: 600px;
-}
+    /* General Styles */
+    .LabLIS-uploader {
+        display: block;
+        margin: 0 auto;
+        max-width: 600px;
+    }
 
-.LabLIS-uploader label {
-    cursor: pointer;
-}
+    .LabLIS-uploader label {
+        cursor: pointer;
+    }
 
-.LabLIS-hidden {
-    display: none;
-}
+    .LabLIS-hidden {
+        display: none;
+    }
 
-.LabLIS-progress {
-    display: block;
-    width: 100%;
-    height: 8px;
-    border-radius: 4px;
-    background-color: #eee;
-    overflow: hidden;
-}
+    .LabLIS-progress {
+        display: block;
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background-color: #eee;
+        overflow: hidden;
+    }
 
-.LabLIS-progress[value]::-webkit-progress-bar {
-    background-color: #eee;
-}
+    .LabLIS-progress[value]::-webkit-progress-bar {
+        background-color: #eee;
+    }
 
-.LabLIS-progress[value]::-webkit-progress-value {
-    background: linear-gradient(to right, #2d2d6f 0%, #454cad 50%);
-    border-radius: 4px;
-}
+    .LabLIS-progress[value]::-webkit-progress-value {
+        background: linear-gradient(to right, #2d2d6f 0%, #454cad 50%);
+        border-radius: 4px;
+    }
 
-.LabLIS-progress[value]::-moz-progress-bar {
-    background: linear-gradient(to right, #2d2d6f 0%, #454cad 50%);
-    border-radius: 4px;
-}
+    .LabLIS-progress[value]::-moz-progress-bar {
+        background: linear-gradient(to right, #2d2d6f 0%, #454cad 50%);
+        border-radius: 4px;
+    }
 
-/* Image and PDF Display */
-#LabLIS-file-image {
-    max-width: 180px;
-    display: block;
-}
+    /* Image and PDF Display */
+    #LabLIS-file-image {
+        max-width: 180px;
+        display: block;
+    }
 
-#LabLIS-file-preview {
-    max-width: 100%;
-    height: 500px;
-    display: block;
-}
+    #LabLIS-file-preview {
+        max-width: 100%;
+        height: 500px;
+        display: block;
+    }
 
-#LabLIS-notimage {
-    font-size: 16px;
-}
+    #LabLIS-notimage {
+        font-size: 16px;
+    }
 </style>
 <div class="tab-pane" id="lab" role="tabpanel">
     <div class="row">
@@ -116,9 +116,9 @@ table.table-fit tfoot td {
                                 <a class="nav-link" href="#hasil-lab-tab" data-bs-toggle="tab">Hasil LIS</a>
                             </li>
                             <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                            <li class="nav-item text-center flex-fill">
-                                <a class="nav-link" href="#bridging-lab-tab" data-bs-toggle="tab">Bridging LIS</a>
-                            </li>
+                                <li class="nav-item text-center flex-fill">
+                                    <a class="nav-link" href="#bridging-lab-tab" data-bs-toggle="tab">Bridging LIS</a>
+                                </li>
                             <?php } ?>
                             <li class="nav-item text-center flex-fill">
                                 <a class="nav-link" href="#bloodrequest-lab-tab" data-bs-toggle="tab">Blood Request</a>
@@ -144,14 +144,14 @@ table.table-fit tfoot td {
                                                     <div class="form-group">
                                                         <label for="startDateLab">Start Date</label>
                                                         <input type="text" id="startDateLab"
-                                                            class="form-control   dateflatpickr">
+                                                            class="form-control   dateflatpickr-lab">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label for="endDateLab">End Date</label>
                                                         <input type="text" id="endDateLab"
-                                                            class="form-control   dateflatpickr">
+                                                            class="form-control   dateflatpickr-lab">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -189,23 +189,23 @@ table.table-fit tfoot td {
                                             </div>
                                             <?php if (user()->checkPermission("lab", 'c') || user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
 
-                                            <div class="row mt-3">
-                                                <!-- Pencarian Tarif -->
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="searchTarifLab">Pencarian Tarif</label>
-                                                        <div class="input-group">
-                                                            <select id="searchTarifLab" class="form-control fit"
-                                                                style="width: 70%;"></select>
-                                                            <button type="button"
-                                                                class="btn btn-primary   addcharges align-items-end"
-                                                                onclick='addBillLab("searchTarifLab")'>
-                                                                <i class="fa fa-plus"></i> Tambah
-                                                            </button>
+                                                <div class="row mt-3">
+                                                    <!-- Pencarian Tarif -->
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label for="searchTarifLab">Pencarian Tarif</label>
+                                                            <div class="input-group">
+                                                                <select id="searchTarifLab" class="form-control fit"
+                                                                    style="width: 70%;"></select>
+                                                                <button type="button"
+                                                                    class="btn btn-primary   addcharges align-items-end"
+                                                                    onclick='addBillLab("searchTarifLab")'>
+                                                                    <i class="fa fa-plus"></i> Tambah
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             <?php } ?>
                                         </div>
                                     </div>
@@ -238,17 +238,17 @@ table.table-fit tfoot td {
                                 </div>
                                 <?php if (user()->checkPermission('rad', 'c')) {
                                 ?>
-                                <div class="d-flex justify-content-end mb-3">
-                                    <button type="button" id="formSaveBillLabBtn" name="save"
-                                        data-loading-text="<?php echo lang('processing') ?>"
-                                        class="btn btn-primary me-2">
-                                        <i class="fa fa-check-circle"></i> Simpan
-                                    </button>
-                                    <button type="button" id="formsign" name="signrm" onclick="signRM()"
-                                        data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
-                                        <i class="fa fa-signature"></i> Sign
-                                    </button>
-                                </div>
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <button type="button" id="formSaveBillLabBtn" name="save"
+                                            data-loading-text="<?php echo lang('processing') ?>"
+                                            class="btn btn-primary me-2">
+                                            <i class="fa fa-check-circle"></i> Simpan
+                                        </button>
+                                        <button type="button" id="formsign" name="signrm" onclick="signRM()"
+                                            data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning">
+                                            <i class="fa fa-signature"></i> Sign
+                                        </button>
+                                    </div>
                                 <?php
                                 } ?>
                             </div>
@@ -270,7 +270,7 @@ table.table-fit tfoot td {
                                                                 <label for="startDateLIS" class="form-label">Start
                                                                     Date</label>
                                                                 <input type="text" id="startDateLIS"
-                                                                    class="form-control   dateflatpickr">
+                                                                    class="form-control   dateflatpickr-lab">
 
                                                             </div>
                                                             <!-- End Date Input -->
@@ -279,7 +279,7 @@ table.table-fit tfoot td {
                                                                     Date</label>
                                                                 <div class="d-flex">
                                                                     <input type="text" id="endDateLIS"
-                                                                        class="form-control   dateflatpickr">
+                                                                        class="form-control   dateflatpickr-lab">
                                                                 </div>
                                                             </div>
                                                             <!-- Search Button -->
@@ -291,12 +291,12 @@ table.table-fit tfoot td {
                                                             </div>
                                                             <!-- Cito Checkbox -->
                                                             <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                                                            <div class="col-md-4 mb-3 pt-4">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    id="citoCheckbox" name="citoCheckbox">
-                                                                <label class="form-check-label"
-                                                                    for="citoCheckbox">Cito</label>
-                                                            </div>
+                                                                <div class="col-md-4 mb-3 pt-4">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        id="citoCheckbox" name="citoCheckbox">
+                                                                    <label class="form-check-label"
+                                                                        for="citoCheckbox">Cito</label>
+                                                                </div>
                                                             <?php } ?>
 
                                                         </div>
@@ -332,15 +332,15 @@ table.table-fit tfoot td {
 
                                             <!-- Center Panel for Buttons -->
                                             <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                                            <div
-                                                class="col-md-2 d-flex flex-column justify-content-center align-items-center">
-                                                <button type="button" class="btn btn-primary mb-2" id="moveRight">
-                                                    <i class="fas fa-arrow-right"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-primary" id="moveLeft">
-                                                    <i class="fas fa-arrow-left"></i>
-                                                </button>
-                                            </div>
+                                                <div
+                                                    class="col-md-2 d-flex flex-column justify-content-center align-items-center">
+                                                    <button type="button" class="btn btn-primary mb-2" id="moveRight">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" id="moveLeft">
+                                                        <i class="fas fa-arrow-left"></i>
+                                                    </button>
+                                                </div>
                                             <?php } ?>
 
                                             <!-- Right Panel -->
@@ -370,12 +370,12 @@ table.table-fit tfoot td {
 
                                         <!-- Save Button Positioned at the Bottom -->
                                         <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                                        <div class="row mt-3">
-                                            <div class="col-12 text-end">
-                                                <button type="button" class="btn btn-success"
-                                                    id="saveLabLIS">Save</button>
+                                            <div class="row mt-3">
+                                                <div class="col-12 text-end">
+                                                    <button type="button" class="btn btn-success"
+                                                        id="saveLabLIS">Save</button>
+                                                </div>
                                             </div>
-                                        </div>
                                         <?php } ?>
                                     </form>
                                 </div>
@@ -390,18 +390,20 @@ table.table-fit tfoot td {
                                                 <div class="row">
 
                                                     <div class="col-md-2 ">
-                                                        <label for="startDateLIS" class="form-label">Start
+                                                        <label for="startDateLISHasil" class="form-label">Start
                                                             Date</label>
-                                                        <input type="date" id="startDateLISHasil" name="startDateLIS"
-                                                            class="form-control   dateflatpickr">
+                                                        <input type="date" id="startDateLISHasil"
+                                                            name="startDateLISHasil"
+                                                            class="form-control   dateflatpickr-lab">
                                                     </div>
 
                                                     <div class="col-md-2 ">
-                                                        <label for="endDateLIS" class="form-label">End
+                                                        <label for="endDateLISHasil" class="form-label">End
                                                             Date</label>
                                                         <div class="d-flex">
-                                                            <input type="date" id="endDateLISHasil" name="endDateLIS"
-                                                                class="form-control   me-3 dateflatpickr">
+                                                            <input type="date" id="endDateLISHasil"
+                                                                name="endDateLISHasil"
+                                                                class="form-control   me-3 dateflatpickr-lab">
                                                         </div>
                                                     </div>
 
@@ -489,7 +491,7 @@ table.table-fit tfoot td {
                                                                     class="form-label">Start Date</label>
                                                                 <input type="text" name="start_date"
                                                                     id="startDateBloodRequest"
-                                                                    class="form-control dateflatpickr">
+                                                                    class="form-control dateflatpickr-lab">
                                                             </div>
                                                             <!-- End Date Input -->
                                                             <div class="col-md-3 mb-3">
@@ -498,7 +500,7 @@ table.table-fit tfoot td {
                                                                 <div class="d-flex">
                                                                     <input type="text" name="end_date"
                                                                         id="endDateBloodRequest"
-                                                                        class="form-control   dateflatpickr">
+                                                                        class="form-control   dateflatpickr-lab">
                                                                 </div>
                                                             </div>
                                                             <!-- Search Button -->
@@ -565,12 +567,12 @@ table.table-fit tfoot td {
 
                                     <!-- Save Button Positioned at the Bottom -->
                                     <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                                    <div class="row mt-3">
-                                        <div class="col-12 text-end">
-                                            <button type="button" class="btn btn-primary"
-                                                id="saveLabBloodRequest">Save</button>
+                                        <div class="row mt-3">
+                                            <div class="col-12 text-end">
+                                                <button type="button" class="btn btn-primary"
+                                                    id="saveLabBloodRequest">Save</button>
+                                            </div>
                                         </div>
-                                    </div>
                                     <?php } ?>
 
                                 </div>
@@ -619,10 +621,10 @@ table.table-fit tfoot td {
                     <div class="form-group">
                         <div class="mb-2">
                             <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
-                            <label for="formFileBridge" class="form-label fw-bold">Upload berkas pendukung
-                                (optional)</label>
-                            <input class="form-control" type="file" id="formFileBridge" name="dokumen_Bridge"
-                                accept="image/*,application/pdf">
+                                <label for="formFileBridge" class="form-label fw-bold">Upload berkas pendukung
+                                    (optional)</label>
+                                <input class="form-control" type="file" id="formFileBridge" name="dokumen_Bridge"
+                                    accept="image/*,application/pdf">
                             <?php } ?>
                         </div>
                         <div class="mb-2">
@@ -638,7 +640,7 @@ table.table-fit tfoot td {
             <div class="modal-footer">
                 <?php if (user()->checkPermission("lab", 'c') && user()->checkRoles(['dokterlab', 'superuser', 'adminlab'])) { ?>
 
-                <button id="saveBridge" type="button" class="btn btn-primary">Simpan</button>
+                    <button id="saveBridge" type="button" class="btn btn-primary">Simpan</button>
                 <?php } ?>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>

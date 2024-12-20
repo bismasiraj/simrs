@@ -134,8 +134,8 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                                 <div class="form-group">
                                                                     <label>TFU</label>
                                                                     <div class="position-relative">
-                                                                        <input onchange="" type="text" name="tfu" id="avttfu" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                        <span class="h6" id="badge-avttfu"></span>
+                                                                        <input onchange="" type="text" name="tfu" id="prslexamtfu" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-prslexamtfu"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -143,8 +143,8 @@ $persalinanv = array_filter($aValue, function ($value) {
                                                                 <div class="form-group">
                                                                     <label>Kontraksi Uterus</label>
                                                                     <div class="position-relative">
-                                                                        <input onchange="" type="text" name="uterus" id="avtuterus" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
-                                                                        <span class="h6" id="badge-avtuterus"></span>
+                                                                        <input onchange="" type="text" name="uterus" id="prslexamuterus" placeholder="" value="" class="form-control vitalsignclass" autocomplete="off">
+                                                                        <span class="h6" id="badge-prslexamuterus"></span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -295,7 +295,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                         </div><!--./col-md-8-->
                                         <!-- INI HISTORY PART -->
                                         <div class="panel-footer text-end mb-4">
-                                            <button type="button" id="formPersalinanAddBtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right"><i class="fa fa-plus"></i> <span>Tambah</span></button>
+                                            <button type="button" id="formPersalinanAddBtn" name="save" data-loading-text="Tambah" class="btn btn-info pull-right d-none"><i class="fa fa-plus"></i> <span>Tambah</span></button>
                                             <button type="submit" id="formPersalinanSaveBtn" name="edit" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-primary pull-right"><i class="fa fa-check-circle"></i> <span>Simpan</span></button>
                                             <button type="button" id="formPersalinanEditBtn" name="editrm" onclick="" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-secondary pull-right"><i class="fa fa-edit"></i> <span>Edit</span></button>
                                             <button type="button" id="formPersalinanSignBtn" name="signrm" onclick="signRM()" data-loading-text="<?php echo lang('processing') ?>" class="btn btn-warning pull-right"><i class="fa fa-signature"></i> <span>Sign</span></button>
@@ -366,7 +366,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                 <div class="form-group">
                                     <label>Jenis Partus</label>
                                     <div class=" position-relative">
-                                        <select name="partus" id="bayipartus" placeholder="" value="" class="form-select">
+                                        <select name="partus" id="bayipartus" placeholder="" value="" class="form-select" required>
                                             <option value="1">Spontan Pervaginam</option>
                                             <option value="2">Sectio Caesarea</option>
                                             <option value="3">Vacum Ekstraksi</option>
@@ -378,7 +378,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                 <div class="form-group">
                                     <label>Indikasi</label>
                                     <div class="position-relative">
-                                        <input type="text" name="indication" id="bayiindication" placeholder="" value="" class="form-control">
+                                        <input type="text" name="indication" id="bayiindication" placeholder="" value="" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -433,11 +433,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>Jenis EWS</label>
                                         <select class="form-select" name="vs_status_id" id="bayiexamvs_status_id">
-                                            <!-- <option value="" selected>-- pilih --</option>
-                                            <option value="1">Dewasa</option>
-                                            <option value="4">Anak</option> -->
-                                            <option value="5">Neonatus</option>
-                                            <!-- <option value="10" selected>Obsetric</option> -->
+                                            <option value="5" selected>Neonatus</option>
                                         </select>
                                     </div>
                                 </div>
@@ -445,7 +441,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>BB(gr)</label>
                                         <div class=" position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="weight" id="bayiexamweight" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="weight" id="bayiexamweight" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bb"></span>
                                         </div>
                                     </div>
@@ -454,7 +450,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>PB(cm)</label>
                                         <div class="position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="height" id="bayiexamheight" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="height" id="bayiexamheight" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bayiheight"></span>
                                         </div>
                                     </div>
@@ -463,7 +459,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>Suhu(°C)</label>
                                         <div class="position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="temperature" id="bayiexamtemperature" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="temperature" id="bayiexamtemperature" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bayitemperature"></span>
                                         </div>
                                     </div>
@@ -472,7 +468,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>Nadi(/menit)</label>
                                         <div class="position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="nadi" id="bayiexamnadi" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="nadi" id="bayiexamnadi" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bayinadi"></span>
                                         </div>
                                     </div>
@@ -481,12 +477,12 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group"><label>T.Darah(mmHg)</label>
                                         <div class="col-sm-12 " style="display: flex;  align-items: center;">
                                             <div class="position-relative">
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_upper" id="bayiexamtension_upper" placeholder="" value="" class="form-control">
+                                                <input onchange="" type="text" name="tension_upper" id="bayiexamtension_upper" placeholder="" value="" class="form-control" required>
                                                 <span class="h6" id="badge-bayitension_upper"></span>
                                             </div>
                                             <h4 class="mx-2">/</h4>
                                             <div class="position-relative">
-                                                <input onchange="vitalsignInput(this)" type="text" name="tension_below" id="bayiexamtension_below" placeholder="" value="" class="form-control">
+                                                <input onchange="" type="text" name="tension_below" id="bayiexamtension_below" placeholder="" value="" class="form-control" required>
                                                 <span class="h6" id="badge-bayitension_below"></span>
                                             </div>
                                         </div>
@@ -496,7 +492,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>Saturasi(SpO2%)</label>
                                         <div class="position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="saturasi" id="bayiexamsaturasi" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="saturasi" id="bayiexamsaturasi" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bayisaturasi"></span>
                                         </div>
                                     </div>
@@ -505,7 +501,7 @@ $persalinanv = array_filter($aValue, function ($value) {
                                     <div class="form-group">
                                         <label>Nafas/RR(/menit)</label>
                                         <div class="position-relative">
-                                            <input onchange="vitalsignInput(this)" type="text" name="nafas" id="bayiexamnafas" placeholder="" value="" class="form-control">
+                                            <input onchange="" type="text" name="nafas" id="bayiexamnafas" placeholder="" value="" class="form-control" required>
                                             <span class="h6" id="badge-bayinafas"></span>
                                         </div>
                                     </div>
@@ -615,12 +611,12 @@ $persalinanv = array_filter($aValue, function ($value) {
                                 <div class="col-xs-6 col-sm-6 col-md-3 mt-2">
                                     <div class="form-group">
                                         <label>Proteinuria (Perhari)</label>
-                                        <select class="form-select" name="proteinuria" id="prslexamproteinuria" onchange="vitalsignInput(this)">
+                                        <select class="form-select" name="proteinuria" id="bayiexamproteinuria" onchange="vitalsignInput(this)">
                                             <option value="0">-</option>
                                             <option value="2">+</option>
                                             <option value="3">++</option>
                                         </select>
-                                        <span class="h6" id="badge-prslexamproteinuria"></span>
+                                        <span class="h6" id="badge-bayiexamproteinuria"></span>
                                     </div>
                                 </div>
                                 <!-- <div class="col-xs-6 col-sm-6 col-md-3 mt-2">

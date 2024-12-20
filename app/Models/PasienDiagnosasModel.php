@@ -9,7 +9,7 @@ class PasienDiagnosasModel extends Model
     protected $table      = 'pasien_diagnosas';
     protected $primaryKey = 'pasien_diagnosa_id';
 
-    protected $useAutoIncrement = false;
+    protected $useAutoIncrement = true;
 
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
@@ -17,6 +17,7 @@ class PasienDiagnosasModel extends Model
     protected $allowedFields = [
         'pasien_diagnosa_id',
         'diagnosa_id',
+        'diagnosa_desc',
         'diagnosa_name',
         'diag_cat',
         'suffer_type',

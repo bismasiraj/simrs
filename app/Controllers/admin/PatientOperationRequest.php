@@ -1334,8 +1334,7 @@ class PatientOperationRequest extends \App\Controllers\BaseController
         $model = new PatientOperationRequestModel();
         $request = service('request');
         $formData = $request->getJSON(true);
-
-
+        $db = db_connect();
         $data = array_filter($formData, function ($value) {
             return !is_null($value) && $value !== '';
         });
@@ -1360,47 +1359,58 @@ class PatientOperationRequest extends \App\Controllers\BaseController
             $data['patologi_date'] = $this->formatDateString($data['patologi_date']);
         }
 
-
-
-        $existingRecord = $model->where('vactination_id', $data['vactination_id'])->first();
-
-        if ($existingRecord) {
-
-            $model->update($data['vactination_id'], $data);
-        } else {
-
-            $model->insert($data);
-        }
-
-
-        if (!empty($data['diagnosas'])) {
-            $pds = new PasienDiagnosasModel();
-            $pds->where('pasien_diagnosa_id', $data['vactination_id'])->delete();
-            // return json_encode($body_id);
-
-            foreach ($data['diagnosas'] as $key => $value) {
-                $dataDiag = [];
-                $dataDiag['pasien_diagnosa_id'] = $data['vactination_id'];
-                $dataDiag['diagnosa_id'] = $data['diagnosas'][$key]['diagnosa_id'];
-                $dataDiag['diagnosa_name'] = $data['diagnosas'][$key]['diagnosa_name'];
-                $dataDiag['diag_cat'] = $data['diagnosas'][$key]['diagnosa_cat'];
-                $dataDiag['suffer_type'] = $data['diagnosas'][$key]['suffer_type'];
-                $dataDiag['modified_by'] = user()->username;
-                $dataDiag['modified_date'] = date('Y-m-d H:i:s');
-                $dataDiag['sscondition_id'] = new RawSql('newid()');
-                try {
-                    $pds->insert($dataDiag);
-                } catch (\Throwable $th) {
+        $db->transStart();
+        try {
+            $existingRecord = $model->where('vactination_id', $data['vactination_id'])->first();
+            if ($existingRecord) {
+                $update = $model->update($data['vactination_id'], $data);
+                if (!$update) {
+                    $error = $db->error();
+                    throw new \Exception('Update Pembedahan failed: ' . $error['message']);
+                }
+            } else {
+                $insert = $model->insert($data);
+                if (!$insert) {
+                    $error = $db->error();
+                    throw new \Exception('Insert Pembedahan failed: ' . $error['message']);
                 }
             }
+
+
+            if (!empty($data['diagnosas'])) {
+                $pds = new PasienDiagnosasModel();
+                $pds->where('pasien_diagnosa_id', $data['vactination_id'])->delete();
+                // return json_encode($body_id);
+                $insertDiagnosa = [];
+                foreach ($data['diagnosas'] as $key => $value) {
+                    $dataDiag = [];
+                    $dataDiag['pasien_diagnosa_id'] = $data['vactination_id'];
+                    $dataDiag['diagnosa_id'] = new RawSql('newid()');
+                    $dataDiag['diagnosa_desc'] = $data['diagnosas'][$key]['diagnosa_desc'];
+                    $dataDiag['diagnosa_name'] = !empty($data['diagnosas'][$key]['diagnosa_name']) ? $data['diagnosas'][$key]['diagnosa_name'] : null;
+                    $dataDiag['diag_cat'] = $data['diagnosas'][$key]['diagnosa_cat'];
+                    $dataDiag['suffer_type'] = $data['diagnosas'][$key]['suffer_type'];
+                    $dataDiag['modified_by'] = user()->username;
+                    $dataDiag['modified_date'] = date('Y-m-d H:i:s');
+                    $dataDiag['sscondition_id'] = new RawSql('newid()');
+                    $insertDiagnosa[] = $pds->insert($dataDiag);
+                }
+                if (!$insertDiagnosa) {
+                    $error = $db->error();
+                    throw new \Exception('Insert Diagnosa failed: error when insert ' . $data['diagnosas'][$key]['diagnosa_desc']);
+                }
+            }
+
+            $db->transComplete();
+            return $this->response->setJSON([
+                'message' => 'Data saved successfully.',
+                'respon' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return $this->response->setJSON(['message' => 'Data save failed.', 'respon' => false, 'error' => $e->getMessage()]);
         }
-
-
-        return $this->response->setJSON([
-            'message' => 'Data saved successfully.',
-            'respon' => true,
-            'data' => $data
-        ]);
     }
 
 
@@ -1867,8 +1877,8 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     if (is_array($diagnosis) && isset($diagnosis['pasien_diagnosa_id'])) {
                         $diagnosaData[] = [
                             'pasien_diagnosa_id' => $diagnosis['pasien_diagnosa_id'],
-                            'diagnosa_id' => $diagnosis['diag_id'],
-                            'diagnosa_name' => $diagnosis['diag_name'],
+                            'diagnosa_id' => new RawSql('newid()'),
+                            'diagnosa_desc' => $diagnosis['diag_desc'],
                             'diag_cat' => $diagnosis['diag_cat'],
                             'suffer_type' => $diagnosis['suffer_type'],
                             'modified_by' => user()->username,
@@ -2101,8 +2111,9 @@ class PatientOperationRequest extends \App\Controllers\BaseController
                     if (is_array($diagnosis)) {
                         $diagnosaData[] = [
                             'pasien_diagnosa_id' => $formData['pasien_diagnosa_id'],
-                            'diagnosa_id' => $diagnosis['diag_id'],
-                            'diagnosa_name' => $diagnosis['diag_name'],
+                            'diagnosa_id' => new RawSql('newid()'),
+                            'diagnosa_desc' => $diagnosis['diag_desc'],
+                            'diagnosa_name' => !empty($diagnosis['diag_name']) ? $diagnosis['diag_name'] : null,
                             'diag_cat' => $diagnosis['diag_cat'],
                             'suffer_type' => $diagnosis['suffer_type'],
                             'modified_by' => user()->username,

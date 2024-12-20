@@ -64,7 +64,7 @@ $menu = [
     'permintaandarah' => 0,
     'pemeriksaanSaraf' => 0,
     'pemeriksaanKulit' => 0,
-    'reportEKlaim' => 0
+    'reportEKlaim' => 1
 ];
 if ($visit['specialist_type_id'] == '1.05') {
     $menu['nifas'] = 1;
@@ -150,6 +150,8 @@ if (user()->checkPermission("penunjangmedis", "r"))
     $menu['penunjang'] = 1;
 if (user()->checkPermission("patologi", "r"))
     $menu['patologi'] = 1;
+// if (user()->checkPermission("reportEKlaim", "r"))
+//     $menu['reportEKlaim'] = 1;
 ?>
 
 <?php $this->section('content') ?>
@@ -295,7 +297,7 @@ $currency_symbol = 'Rp. ';
                                         } ?>
                                         <?php if ($menu['fall'] == 1) {
                                         ?>
-                                            <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Fall Risk</a></li>
+                                            <li class="nav-item"><a id="fallTab" class="nav-link border-bottom" href="#fall" data-bs-toggle="tab" aria-expanded="true" role="tab">Resiko Jatuh</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['gcs'] == 1) {
@@ -376,7 +378,7 @@ $currency_symbol = 'Rp. ';
                                         } ?>
                                         <?php if ($menu['patientOperationRequest'] == 1) {
                                         ?>
-                                            <li class="nav-item"><a id="patientOperationRequestTab" class="nav-link border-bottom" href="#patientOperationRequest" data-bs-toggle="tab" aria-expanded="true" role="tab">Operasi Pasien</a></li>
+                                            <li class="nav-item"><a id="patientOperationRequestTab" class="nav-link border-bottom" href="#patientOperationRequest" data-bs-toggle="tab" aria-expanded="true" role="tab">Tindakan Operasi</a></li>
                                         <?php
                                         } ?>
                                         <?php if ($menu['gizi'] == 1) {
@@ -1300,6 +1302,29 @@ $currency_symbol = 'Rp. ';
                                             ]) ?>
                                         <?php
                                         } ?>
+                                        <?php if ($menu['reportEKlaim'] == 1) {
+                                        ?>
+                                            <?php echo view('admin/patient/profilemodul/reportEKlaim', [
+                                                'title' => '',
+                                                'orgunit' => $orgunit,
+                                                'statusPasien' => $statusPasien,
+                                                'reason' => $reason,
+                                                'isattended' => $isattended,
+                                                'inasisPoli' => $inasisPoli,
+                                                'inasisFaskes' => $inasisFaskes,
+                                                'visit' => $visit,
+                                                'exam' => $exam,
+                                                'pd' => $pasienDiagnosa,
+                                                'suffer' => $suffer,
+                                                'diagCat' => $diagCat,
+                                                'employee' => $employee,
+                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
+                                                'pasienDiagnosa' => $pasienDiagnosa,
+                                                'clinic' => $clinic,
+                                                'dokter' => $employee
+                                            ]); ?>
+                                        <?php
+                                        } ?>
                                         <?php if ($menu['persalinan'] == 1) {
                                         ?>
                                             <?php echo view('admin/patient/profilemodul/persalinan', [
@@ -1384,29 +1409,7 @@ $currency_symbol = 'Rp. ';
                                             ]) ?>
                                         <?php
                                         } ?>
-                                        <?php if ($menu['reportEKlaim'] == 1) {
-                                        ?>
-                                            <?php echo view('admin/patient/profilemodul/reportEKlaim', [
-                                                'title' => '',
-                                                'orgunit' => $orgunit,
-                                                'statusPasien' => $statusPasien,
-                                                'reason' => $reason,
-                                                'isattended' => $isattended,
-                                                'inasisPoli' => $inasisPoli,
-                                                'inasisFaskes' => $inasisFaskes,
-                                                'visit' => $visit,
-                                                'exam' => $exam,
-                                                'pd' => $pasienDiagnosa,
-                                                'suffer' => $suffer,
-                                                'diagCat' => $diagCat,
-                                                'employee' => $employee,
-                                                'pasienDiagnosaAll' => $pasienDiagnosaAll,
-                                                'pasienDiagnosa' => $pasienDiagnosa,
-                                                'clinic' => $clinic,
-                                                'dokter' => $employee
-                                            ]); ?>
-                                        <?php
-                                        } ?>
+
                                     </div>
                                 </div>
                             </div>
@@ -2188,7 +2191,7 @@ if ($menu['assessmentmedis'] == 1) {
         'mappingAssessment' => $mappingAssessment
     ]);
 }
-if ($menu['assessmentbidan'] == 1) {
+if (true) {
     echo view('admin/patient/profilemodul/jsprofile/assessmentigd_js', [
         'title' => '',
         'orgunit' => $orgunit,

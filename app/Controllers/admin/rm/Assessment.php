@@ -4640,7 +4640,7 @@ class Assessment extends BaseController
             org_unit_code,
             visit_id,
             baby_id,
-            
+            babyno,
             inspection_date,
             baby_ke,
             no_registration,
@@ -4864,6 +4864,10 @@ class Assessment extends BaseController
 
         $model = new BabyModel();
 
+        // if ((float)$weight > 1000) {
+        // }
+        $weight = $weight / 1000;
+        // return json_encode($weight);
         try {
             // Attempt to save data
             $model->save($data);
@@ -4888,6 +4892,7 @@ class Assessment extends BaseController
                     "height" => @$height,
                     "awareness" => @$awareness,
                     "saturasi" => @$saturasi,
+                    "general_condition" => @$general_condition,
                     "arm_diameter" => @$arm_diameter,
                     "oxygen_usage" => @$oxygen_usage,
                     "awareness" => @$awareness,
@@ -4898,7 +4903,7 @@ class Assessment extends BaseController
                     "modified_from" => "P002",
                     "petugas_id" => user()->username,
                     "petugas" => user()->getFullname(),
-                    'vs_status_id' => '2',
+                    'vs_status_id' => @$vs_status_id,
                     'valid_date' => @$valid_date,
                     'valid_user' => @$valid_user,
                     'valid_pasien' => @$valid_pasien
@@ -5071,7 +5076,7 @@ class Assessment extends BaseController
                                 NULL,
                                 kode_agama,
                                 NULL,
-                                '@$gender',
+                                '$gender',
                                 coverage_id,
                                 family_status_id,
                                 kk_no,
@@ -5443,7 +5448,7 @@ class Assessment extends BaseController
             //         "
             // )->getResultArray());
 
-            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow());
+            $selectorganization = $this->lowerKey($db->query("SELECT * FROM ORGANIZATIONUNIT")->getRow(0, 'array'));
             // $selectinfo = $this->query_template_info($db, '202406140643270000A44', '20240614173754692');
             $selectinfo = $visit;
 
